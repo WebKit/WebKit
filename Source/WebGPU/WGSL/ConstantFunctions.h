@@ -1395,12 +1395,7 @@ UNARY_OPERATION(ReverseBits, Integer, [&]<typename T>(T e) -> T {
     return result;
 })
 
-UNARY_OPERATION(Round, Float, [&]<typename T>(T v) -> T {
-    auto rounded = std::round(v);
-    if (rounded - v == 0.5 && fmod(rounded, 2))
-        return rounded - 1;
-    return rounded;
-})
+UNARY_OPERATION(Round, Float, WRAP_STD(rint))
 
 UNARY_OPERATION(Saturate, Float, [&](auto e) {
     return std::min(std::max(e, static_cast<decltype(e)>(0)), static_cast<decltype(e)>(1));

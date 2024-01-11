@@ -1893,6 +1893,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "pack4x8snorm", "pack_float_to_snorm4x8"_s },
             { "pack4x8unorm", "pack_float_to_unorm4x8"_s },
             { "reverseBits", "reverse_bits"_s },
+            { "round", "rint"_s },
             { "sign", "__wgslSign"_s },
             { "unpack2x16snorm", "unpack_snorm2x16_to_float"_s },
             { "unpack2x16unorm", "unpack_unorm2x16_to_float"_s },
