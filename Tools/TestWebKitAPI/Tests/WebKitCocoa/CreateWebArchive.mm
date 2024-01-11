@@ -1251,7 +1251,9 @@ TEST(WebArchive, SaveResourcesInlineStyle)
 
 static const char* htmlDataBytesForLink = R"TESTRESOURCE(
 <head>
-<link href="style.css" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="preload" href="Ahem-10000A.ttf" as="font" type="font/ttf">
+<link rel="stylesheet" href="style.css">
 </head>
 <div><p id="console">Hello</p></div>
 <script>
@@ -1275,6 +1277,13 @@ div {
     background-image: url("files/image.png");
 }
 )TESTRESOURCE";
+static const char* manifestDataBytesForLink = R"TESTRESOURCE(
+{
+    "name": "webarchivetest",
+    "short_name": "wat",
+    "description": "This is a test app."
+}
+)TESTRESOURCE";
 
 TEST(WebArchive, SaveResourcesLink)
 {
@@ -1288,6 +1297,8 @@ TEST(WebArchive, SaveResourcesLink)
     NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForLink length:strlen(htmlDataBytesForLink)];
     NSData *cssData = [NSData dataWithBytes:cssDataBytesForLink length:strlen(cssDataBytesForLink)];
     NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSData *manifestData = [NSData dataWithBytes:manifestDataBytesForLink length:strlen(manifestDataBytesForLink)];
+    NSData *fontData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"Ahem-10000A" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"]];
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSData *data = nil;
         NSString *mimeType = nil;
@@ -1300,6 +1311,12 @@ TEST(WebArchive, SaveResourcesLink)
         } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/style.css"]) {
             mimeType = @"text/css";
             data = cssData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/manifest.json"]) {
+            mimeType = @"application/json";
+            data = manifestData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/Ahem-10000A.ttf"]) {
+            mimeType = @"font/ttf";
+            data = fontData;
         }
 
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
@@ -1327,11 +1344,17 @@ TEST(WebArchive, SaveResourcesLink)
         NSString *resourceDirectoryPath =[directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
         NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:nil];
         NSSet *savedFileNames = [NSSet setWithArray:resourceFileNames];
-        NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:@"image.png", @"style.css", nil]];
+        NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:@"image.png", @"style.css", @"manifest.json", @"Ahem-10000A.ttf", nil]];
         EXPECT_TRUE([savedFileNames isEqualToSet:expectedFileNames]);
+        for (NSString *savedFileName in resourceFileNames) {
+            // image.png is not subresource in main resource file.
+            if ([savedFileName isEqualToString:@"image.png"])
+                continue;
 
-        NSString *styleResourceFileName = [resourceDirectoryName stringByAppendingPathComponent:@"style.css"];
-        EXPECT_TRUE([savedMainResource containsString:styleResourceFileName]);
+            NSString *savedFileRelativePath = [resourceDirectoryName stringByAppendingPathComponent:savedFileName];
+            EXPECT_TRUE([savedMainResource containsString:savedFileRelativePath]);
+        }
+
         NSString *styleResourceFilePath = [resourceDirectoryPath stringByAppendingPathComponent:@"style.css"];
         NSString *savedStyleResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:styleResourceFilePath] encoding:NSUTF8StringEncoding];
         EXPECT_TRUE([savedStyleResource containsString:@"url(\"image.png\")"]);

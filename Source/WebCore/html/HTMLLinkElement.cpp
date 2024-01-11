@@ -615,17 +615,25 @@ std::optional<LinkIconType> HTMLLinkElement::iconType() const
     return m_relAttribute.iconType;
 }
 
+static bool mayFetchResource(LinkRelAttribute relAttribute)
+{
+    // https://html.spec.whatwg.org/multipage/links.html#linkTypes
+    return relAttribute.isStyleSheet
+        || relAttribute.isLinkModulePreload
+        || relAttribute.isLinkPreload
+#if ENABLE(APPLICATION_MANIFEST)
+        || relAttribute.isApplicationManifest
+#endif
+        || !!relAttribute.iconType;
+}
+
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    // Favicons are handled by a special case in LegacyWebArchive::create()
-    if (m_relAttribute.iconType)
+    if (!mayFetchResource(m_relAttribute))
         return;
 
-    if (!m_relAttribute.isStyleSheet)
-        return;
-    
     // Append the URL of this link element.
     addSubresourceURL(urls, href());
 
