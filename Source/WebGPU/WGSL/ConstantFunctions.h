@@ -1031,6 +1031,8 @@ CONSTANT_FUNCTION(Dot4I8Packed)
     return { { result } };
 }
 
+CONSTANT_FUNCTION(Sqrt);
+
 CONSTANT_FUNCTION(Length)
 {
     ASSERT(arguments.size() == 1);
@@ -1043,7 +1045,7 @@ CONSTANT_FUNCTION(Length)
         CALL(tmp, Multiply, resultType, { element, element });
         CALL_MOVE(result, Add, resultType, { result, tmp });
     }
-    return { { result } };
+    return constantSqrt(resultType, { result });
 }
 
 UNARY_OPERATION(Exp, Float, WRAP_STD(exp));
@@ -1345,8 +1347,6 @@ CONSTANT_FUNCTION(Reflect)
         return reflect.operator()<double>();
     RELEASE_ASSERT_NOT_REACHED();
 }
-
-CONSTANT_FUNCTION(Sqrt);
 
 CONSTANT_FUNCTION(Refract)
 {
