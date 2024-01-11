@@ -1391,7 +1391,7 @@ UNARY_OPERATION(ReverseBits, Integer, [&]<typename T>(T e) -> T {
     unsigned v = e;
     T result = 0;
     for (unsigned k = 0; k < 32; ++k)
-        result |= (v & (31 - k)) << k;
+        result |= !!(v & (1 << (31 - k))) << k;
     return result;
 })
 
