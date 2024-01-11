@@ -106,6 +106,17 @@ struct DMABufFeedback {
     ~DMABufFeedback() = default;
 
     struct Tranche {
+        Tranche() = default;
+        ~Tranche() = default;
+        Tranche(const Tranche&) = delete;
+        Tranche& operator=(const Tranche&) = delete;
+        Tranche(Tranche&& other)
+            : flags(other.flags)
+            , formats(WTFMove(other.formats))
+        {
+            other.flags = 0;
+        }
+
         uint32_t flags { 0 };
         Vector<uint16_t> formats;
     };
