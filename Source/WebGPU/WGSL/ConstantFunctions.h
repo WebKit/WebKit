@@ -1318,7 +1318,9 @@ UNARY_OPERATION(QuantizeToF16, F32, [&](float arg) -> ConstantResult {
     return { { static_cast<float>(*converted) } };
 });
 
-UNARY_OPERATION(Radians, Float, [&]<typename T>(T arg) -> T { return arg * std::numbers::pi / 180; })
+UNARY_OPERATION(Radians, Float, [&]<typename T>(T arg) -> T {
+    return arg * (std::numbers::pi / static_cast<T>(180));
+})
 
 CONSTANT_FUNCTION(Reflect)
 {
