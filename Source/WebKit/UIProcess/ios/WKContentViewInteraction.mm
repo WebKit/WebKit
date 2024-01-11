@@ -12601,43 +12601,49 @@ inline static NSArray<NSString *> *deleteSelectionCommands(UITextStorageDirectio
     return @[ ];
 }
 
-inline static NSString *moveSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
+inline static NSArray<NSString *> *moveSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
 {
     BOOL backward = direction == UITextStorageDirectionBackward;
     switch (granularity) {
     case UITextGranularityCharacter:
-        return backward ? @"MoveBackward" : @"MoveForward";
+        return @[ backward ? @"MoveBackward" : @"MoveForward" ];
     case UITextGranularityWord:
-        return backward ? @"MoveWordBackward" : @"MoveWordForward";
+        return @[ backward ? @"MoveWordBackward" : @"MoveWordForward" ];
     case UITextGranularitySentence:
-        return backward ? @"MoveToBeginningOfSentence" : @"MoveToEndOfSentence";
+        return @[ backward ? @"MoveToBeginningOfSentence" : @"MoveToEndOfSentence" ];
     case UITextGranularityParagraph:
-        return backward ? @"MoveToBeginningOfParagraph" : @"MoveToEndOfParagraph";
+        return @[
+            backward ? @"MoveBackward" : @"MoveForward",
+            backward ? @"MoveToBeginningOfParagraph" : @"MoveToEndOfParagraph"
+        ];
     case UITextGranularityLine:
-        return backward ? @"MoveToBeginningOfLine" : @"MoveToEndOfLine";
+        return @[ backward ? @"MoveToBeginningOfLine" : @"MoveToEndOfLine" ];
     case UITextGranularityDocument:
-        return backward ? @"MoveToBeginningOfDocument" : @"MoveToEndOfDocument";
+        return @[ backward ? @"MoveToBeginningOfDocument" : @"MoveToEndOfDocument" ];
     }
     ASSERT_NOT_REACHED();
     return nil;
 }
 
-inline static NSString *extendSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
+inline static NSArray<NSString *> *extendSelectionCommand(UITextStorageDirection direction, UITextGranularity granularity)
 {
     BOOL backward = direction == UITextStorageDirectionBackward;
     switch (granularity) {
     case UITextGranularityCharacter:
-        return backward ? @"MoveBackwardAndModifySelection" : @"MoveForwardAndModifySelection";
+        return @[ backward ? @"MoveBackwardAndModifySelection" : @"MoveForwardAndModifySelection" ];
     case UITextGranularityWord:
-        return backward ? @"MoveWordBackwardAndModifySelection" : @"MoveWordForwardAndModifySelection";
+        return @[ backward ? @"MoveWordBackwardAndModifySelection" : @"MoveWordForwardAndModifySelection" ];
     case UITextGranularitySentence:
-        return backward ? @"MoveToBeginningOfSentenceAndModifySelection" : @"MoveToEndOfSentenceAndModifySelection";
+        return @[ backward ? @"MoveToBeginningOfSentenceAndModifySelection" : @"MoveToEndOfSentenceAndModifySelection" ];
     case UITextGranularityParagraph:
-        return backward ? @"MoveToBeginningOfParagraphAndModifySelection" : @"MoveToEndOfParagraphAndModifySelection";
+        return @[
+            backward ? @"MoveBackwardAndModifySelection" : @"MoveForwardAndModifySelection",
+            backward ? @"MoveToBeginningOfParagraphAndModifySelection" : @"MoveToEndOfParagraphAndModifySelection"
+        ];
     case UITextGranularityLine:
-        return backward ? @"MoveToBeginningOfLineAndModifySelection" : @"MoveToEndOfLineAndModifySelection";
+        return @[ backward ? @"MoveToBeginningOfLineAndModifySelection" : @"MoveToEndOfLineAndModifySelection" ];
     case UITextGranularityDocument:
-        return backward ? @"MoveToBeginningOfDocumentAndModifySelection" : @"MoveToEndOfDocumentAndModifySelection";
+        return @[ backward ? @"MoveToBeginningOfDocumentAndModifySelection" : @"MoveToEndOfDocumentAndModifySelection" ];
     }
     ASSERT_NOT_REACHED();
     return nil;
@@ -12683,7 +12689,8 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)moveInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    [self _executeEditCommand:moveSelectionCommand(direction, granularity)];
+    for (NSString *command in moveSelectionCommand(direction, granularity))
+        [self _executeEditCommand:command];
 }
 
 - (void)moveInLayoutDirection:(UITextLayoutDirection)direction
@@ -12693,7 +12700,8 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)extendInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity
 {
-    [self _executeEditCommand:extendSelectionCommand(direction, granularity)];
+    for (NSString *command in extendSelectionCommand(direction, granularity))
+        [self _executeEditCommand:command];
 }
 
 - (void)extendInLayoutDirection:(UITextLayoutDirection)direction
