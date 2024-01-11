@@ -125,16 +125,16 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
     sharedWorker.setInitializationData(WTFMove(initializationData));
     sharedWorker.setFetchResult(WTFMove(fetchResult));
 
-    if (auto* connection = m_contextConnections.get(sharedWorker.registrableDomain()))
+    if (auto* connection = m_contextConnections.get(sharedWorker.topRegistrableDomain()))
         sharedWorker.launch(*connection);
     else
-        createContextConnection(sharedWorker.registrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
+        createContextConnection(sharedWorker.topRegistrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
 }
 
 bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain& registrableDomain) const
 {
     for (auto& sharedWorker : m_sharedWorkers.values()) {
-        if (registrableDomain.matches(sharedWorker->url()))
+        if (registrableDomain == sharedWorker->topRegistrableDomain())
             return true;
     }
     return false;
@@ -197,7 +197,7 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::contextConnectionCreated(%p) webProcessIdentifier=%" PRIu64, &contextConnection, contextConnection.webProcessIdentifier().toUInt64());
     auto& registrableDomain = contextConnection.registrableDomain();
     for (auto& sharedWorker : m_sharedWorkers.values()) {
-        if (!registrableDomain.matches(sharedWorker->url()))
+        if (registrableDomain != sharedWorker->topRegistrableDomain())
             continue;
 
         sharedWorker->didCreateContextConnection(contextConnection);

@@ -68,9 +68,9 @@ WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier
     return allWorkers().get(identifier);
 }
 
-WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
+WebCore::RegistrableDomain WebSharedWorker::topRegistrableDomain() const
 {
-    return WebCore::RegistrableDomain { url() };
+    return WebCore::RegistrableDomain { m_key.origin.topOrigin };
 }
 
 void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)
@@ -173,7 +173,7 @@ std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObje
 
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
-    return m_server.contextConnectionForRegistrableDomain(registrableDomain());
+    return m_server.contextConnectionForRegistrableDomain(topRegistrableDomain());
 }
 
 } // namespace WebKit

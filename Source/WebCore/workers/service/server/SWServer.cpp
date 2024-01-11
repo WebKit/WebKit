@@ -189,7 +189,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, Complet
 
     LOG(ServiceWorker, "Adding registration from store for %s", data.registration.key.loggingString().utf8().data());
 
-    auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
+    auto registrableDomain = WebCore::RegistrableDomain(data.registration.key.topOrigin());
     validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, m_scopeToRegistrationMap.contains(data.registration.key), [this, weakThis = WeakPtr { *this }, data = WTFMove(data), completionHandler = WTFMove(completionHandler)] (bool isValid) mutable {
         ASSERT(isMainThread());
         if (!weakThis)
@@ -455,7 +455,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
-    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), jobData.type, m_scopeToRegistrationMap.contains(jobData.registrationKey()), [this, weakThis = WeakPtr { *this }, jobData = WTFMove(jobData)] (bool isValid) mutable {
+    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.topOrigin), jobData.type, m_scopeToRegistrationMap.contains(jobData.registrationKey()), [this, weakThis = WeakPtr { *this }, jobData = WTFMove(jobData)] (bool isValid) mutable {
         if (!weakThis)
             return;
         if (m_hasServiceWorkerEntitlement || isValid) {
@@ -833,7 +833,7 @@ LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain
 
 void SWServer::tryInstallContextData(const std::optional<ProcessIdentifier>& requestingProcessIdentifier, ServiceWorkerContextData&& data)
 {
-    RegistrableDomain registrableDomain(data.scriptURL);
+    RegistrableDomain registrableDomain(data.registration.key.topOrigin());
     auto* connection = contextConnectionForRegistrableDomain(registrableDomain);
     if (!connection) {
         auto firstPartyForCookies = data.registration.key.firstPartyForCookies();
@@ -950,14 +950,14 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     }
 
     if (!contextConnection) {
-        auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker.registrableDomain(), [] {
+        auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker.topRegistrableDomain(), [] {
             return HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
         }).iterator->value;
         serviceWorkerRunRequestsForOrigin.ensure(worker.identifier(), [&] {
             return Vector<RunServiceWorkerCallback> { };
         }).iterator->value.append(WTFMove(callback));
 
-        createContextConnection(worker.registrableDomain(), worker.serviceWorkerPageIdentifier());
+        createContextConnection(worker.topRegistrableDomain(), worker.serviceWorkerPageIdentifier());
         return;
     }
 
@@ -998,7 +998,7 @@ void SWServer::markAllWorkersForRegistrableDomainAsTerminated(const RegistrableD
 {
     Vector<SWServerWorker*> terminatedWorkers;
     for (auto& worker : m_runningOrTerminatingWorkers.values()) {
-        if (worker->registrableDomain() == registrableDomain)
+        if (worker->topRegistrableDomain() == registrableDomain)
             terminatedWorkers.append(worker.ptr());
     }
     for (auto& terminatedWorker : terminatedWorkers)
@@ -1275,7 +1275,7 @@ SWServer::ShouldDelayRemoval SWServer::removeContextConnectionIfPossible(const R
         return ShouldDelayRemoval::No;
 
     for (auto& worker : m_runningOrTerminatingWorkers.values()) {
-        if (worker->isRunning() && worker->registrableDomain() == domain && worker->shouldContinue())
+        if (worker->isRunning() && worker->topRegistrableDomain() == domain && worker->shouldContinue())
             return ShouldDelayRemoval::Yes;
     }
 
@@ -1673,7 +1673,7 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
         }
 
         if (!worker->contextConnection())
-            createContextConnection(worker->registrableDomain(), worker->serviceWorkerPageIdentifier());
+            createContextConnection(worker->topRegistrableDomain(), worker->serviceWorkerPageIdentifier());
 
         runServiceWorkerIfNecessary(serviceWorkerIdentifier, [callback = WTFMove(callback)](auto* contextConnection) mutable {
             if (!contextConnection) {
