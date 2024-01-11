@@ -6160,7 +6160,7 @@ ShouldTakeNearSuspendedAssertions:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
+      default: defaultShouldTakeNearSuspendedAssertion()
     WebCore:
       default: true
 

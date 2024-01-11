@@ -55,6 +55,7 @@ enum class SDKAlignedBehavior {
     ExpiredOnlyReloadBehavior,
     ForbidsDotPrefixedFonts,
     FullySuspendsBackgroundContent,
+    FullySuspendsBackgroundContentImmediately,
     HasUIContextMenuInteraction,
     HTMLDocumentSupportedPropertyNames,
     InitializeWebKit2MainThreadAssertion,

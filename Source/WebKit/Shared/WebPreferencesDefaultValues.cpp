@@ -232,6 +232,16 @@ bool defaultShouldDropNearSuspendedAssertionAfterDelay()
 #endif
 }
 
+bool defaultShouldTakeNearSuspendedAssertion()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContentImmediately);
+    return !newSDK;
+#else
+    return true;
+#endif
+}
+
 bool defaultLiveRangeSelectionEnabled()
 {
 #if PLATFORM(IOS_FAMILY)

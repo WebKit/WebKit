@@ -390,7 +390,9 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     if (willShutDown == WillShutDown::Yes)
         return;
 
-    send(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), 0);
+    // The WebProcess might be task_suspended at this point, so use sendWithAsyncReply to resume
+    // the process via a background activity long enough to process the IPC if necessary.
+    sendWithAsyncReply(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), []() { });
 
     if (m_isInProcessCache) {
         // WebProcessProxy objects normally keep the process pool alive but we do not want this to be the case
@@ -1758,16 +1760,25 @@ void WebProcessProxy::didDropLastAssertion()
 
 void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler)
 {
-#if PLATFORM(MAC)
-    if (isInProcessCache()) {
-        // We don't free caches in cached WebProcesses on macOS for performance reasons.
-        // Cached WebProcess will anyway shutdown on memory pressure.
+#if ENABLE(WEBPROCESS_CACHE)
+    if (isInProcessCache() || !m_suspendedPages.isEmptyIgnoringNullReferences() || (canTerminateAuxiliaryProcess() && canBeAddedToWebProcessCache())) {
+        // We avoid freeing caches if:
+        //
+        //  1. The process is already in the WebProcess cache.
+        //  2. The process is already in the back/forward cache.
+        //  3. The process might end up in the process cache (canTerminateAuxiliaryProcess() && canBeAddedToWebProcessCache())
+        //
+        // The idea here is that we want these cached processes to retain useful data if they're
+        // reused. They have a low jetsam priority and will be killed by our low memory handler or
+        // the kernel if necessary.
         return completionHandler();
     }
-#endif
-    // We don't slim down the process in the PrepareToSuspend IPC, we delay clearing the
-    // caches until we release the suspended assertion.
+    // When the WebProcess cache is enabled, instead of freeing caches in the PrepareToSuspend
+    // we free caches here just before we drop our last process assertion.
     sendWithAsyncReply(Messages::WebProcess::ReleaseMemory(), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+#else
+    completionHandler();
+#endif
 }
 
 String WebProcessProxy::environmentIdentifier() const
