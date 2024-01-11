@@ -233,7 +233,7 @@ static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_EGCli slowP
     CCallHelpers::Jump doNotTrash = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2);
 
     jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
-    jit.prepareForTailCallSlow(GPRInfo::returnValueGPR);
+    jit.prepareForTailCallSlow(RegisterSet { GPRInfo::returnValueGPR });
 
     doNotTrash.link(&jit);
     jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
@@ -330,7 +330,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     emitPointerValidation(jit, GPRInfo::regT4, JSEntryPtrTag);
     if (isTailCall) {
         jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
-        jit.prepareForTailCallSlow(GPRInfo::regT4);
+        jit.prepareForTailCallSlow(RegisterSet { GPRInfo::regT4 });
     }
     jit.farJump(GPRInfo::regT4, JSEntryPtrTag);
 

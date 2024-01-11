@@ -360,18 +360,11 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
         if (isTailCall) {
             found.link(&jit);
             prepareForTailCall();
-
-            GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
-            jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
-            jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
-
+            jit.transferPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
             jit.farJump(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         } else {
             found.link(&jit);
-            GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
-            jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
-            jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeCall());
-
+            jit.transferPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeCall());
             jit.call(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         }
     } else {
