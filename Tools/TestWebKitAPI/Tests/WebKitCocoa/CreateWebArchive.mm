@@ -427,7 +427,7 @@ TEST(WebArchive, SaveResourcesValidFileName)
     NSMutableString *mutableFileName = [NSMutableString stringWithCapacity:256];
     for (unsigned i = 0; i < 256; ++i)
         [mutableFileName appendString:@"x"];
-    NSArray *tests = [NSArray arrayWithObjects:[NSString stringWithString:mutableFileName], @"a/image.png", @"b/image.png", @"image.png(1)", @"webarchivetest://host/file:image.png", @"image1/", @"image2///", @"image3.png/./", @"image4/content/../", nil];
+    NSArray *tests = [NSArray arrayWithObjects:[NSString stringWithString:mutableFileName], @"a/image.png", @"b/image.png", @"image.png(1)", @"webarchivetest://host/file:image.png", @"image1/", @"image2///", @"image3.png/./", @"image4/content/../", @"image5%20file.png", @"image 6.png", nil];
     NSMutableString *mutableHTMLString = [NSMutableString string];
     NSString *scriptString = [NSString stringWithFormat:@"<script>count = 0; function onImageLoad() { if (++count == %d) window.webkit.messageHandlers.testHandler.postMessage('done'); }</script>", (int)tests.count];
     [mutableHTMLString appendString:scriptString];
@@ -460,13 +460,15 @@ TEST(WebArchive, SaveResourcesValidFileName)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
     Util::run(&messageReceived);
 
-    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png(1)", @"image.png(1)(1)", @"file%3Aimage.png", @"image1", @"file", @"image3.png", @"image4", nil]];
+    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png-1", @"image.png-1-", @"file-image.png", @"image1", @"file", @"image3.png", @"image4", @"image5-file.png", @"image-6.png", nil]];
     static bool saved = false;
     [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
-        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:[directoryURL URLByAppendingPathComponent:@"host_files"].path error:nil];
+        NSString *resourceDirectoryName = @"host_files";
+        NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:[directoryURL URLByAppendingPathComponent:resourceDirectoryName].path error:nil];
         NSSet *savedFileNames = [NSSet setWithArray:resourceFileNames];
         EXPECT_TRUE([savedFileNames isEqualToSet:expectedFileNames]);
+
         saved = true;
     }];
     Util::run(&saved);

@@ -60,6 +60,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
 
@@ -79,16 +80,44 @@ static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("We
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
 
+static bool isUnreservedURICharacter(UChar character)
+{
+    return isASCIIAlphanumeric(character) || character == '-' || character == '.' || character == '_' || character == '~';
+}
+
+static String getFileNameFromURIComponent(StringView input)
+{
+    auto decodedInput = WTF::URLParser::formURLDecode(input);
+    if (!decodedInput)
+        return { };
+
+    unsigned length = decodedInput->length();
+    if (!length)
+        return { };
+
+    StringBuilder result;
+    result.reserveCapacity(length);
+    for (unsigned index = 0; index < length; ++index) {
+        UChar character = decodedInput->characterAt(index);
+        if (isUnreservedURICharacter(character)) {
+            result.append(character);
+            continue;
+        }
+        result.append('-');
+    }
+
+    return result.toString();
+}
+
 static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
 {
-    auto extractedFileName = url.lastPathComponent().toString();
+    auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
-    fileName = FileSystem::encodeForFileName(fileName);
 
     unsigned count = 0;
     do {
         if (count)
-            fileName = makeString(fileName, '(', count, ')');
+            fileName = makeString(fileName, '-', count);
         if (fileName.sizeInBytes() > maxFileNameSizeInBytes)
             fileName = fileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
         ++count;
