@@ -298,9 +298,12 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
 
 void GStreamerMediaEndpoint::restartIce()
 {
+    if (isStopped())
+        return;
+
     GST_DEBUG_OBJECT(m_pipeline.get(), "restarting ICE");
-    // WIP in https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/1877
-    initiate(true, gst_structure_new("webrtcbin-offer-options", "ice-restart", G_TYPE_BOOLEAN, TRUE, nullptr));
+    // WIP: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4611
+    // We should re-initiate negotiation with the ice-restart offer option set to true.
 }
 
 static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement* webrtcBin, const char* name)
