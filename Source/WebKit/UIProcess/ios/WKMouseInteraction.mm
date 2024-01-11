@@ -82,6 +82,15 @@
     [_interaction _updateMouseTouches:touches];
 }
 
+#if PLATFORM(MACCATALYST)
+
+- (UIEventButtonMask)_defaultAllowedMouseButtons
+{
+    return UIEventButtonMaskPrimary | UIEventButtonMaskSecondary;
+}
+
+#endif
+
 @end
 
 @implementation WKMouseInteraction {
