@@ -642,12 +642,12 @@ void PluginView::handleEvent(Event& event)
         event.setDefaultHandled();
 }
 
-bool PluginView::handleEditingCommand(const String& commandName, const String&)
+bool PluginView::handleEditingCommand(const String& commandName, const String& argument)
 {
     if (!m_isInitialized)
         return false;
 
-    return m_plugin->handleEditingCommand(commandName);
+    return m_plugin->handleEditingCommand(commandName, argument);
 }
     
 bool PluginView::isEditingCommandEnabled(const String& commandName)

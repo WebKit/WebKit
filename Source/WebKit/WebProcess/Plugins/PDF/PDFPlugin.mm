@@ -1834,7 +1834,7 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
     return false;
 }
     
-bool PDFPlugin::handleEditingCommand(StringView commandName)
+bool PDFPlugin::handleEditingCommand(const String& commandName, const String&)
 {
     if (commandName == "copy"_s)
         [m_pdfLayerController copySelection];
@@ -1849,7 +1849,7 @@ bool PDFPlugin::handleEditingCommand(StringView commandName)
     return true;
 }
 
-bool PDFPlugin::isEditingCommandEnabled(StringView commandName)
+bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
     if (commandName == "copy"_s || commandName == "takeFindStringFromSelection"_s)
         return [m_pdfLayerController currentSelection];

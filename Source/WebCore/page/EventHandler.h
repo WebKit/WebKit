@@ -90,6 +90,7 @@ class PlatformWheelEvent;
 class RemoteFrame;
 class RenderBox;
 class RenderElement;
+class RenderEmbeddedObject;
 class RenderLayer;
 class RenderWidget;
 class ScrollableArea;
@@ -409,6 +410,7 @@ private:
     bool startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection, ScrollGranularity, RenderBox*, bool isKeyRepeat);
     bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection, ScrollGranularity, RenderBox*, bool isKeyRepeat);
     bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection, ScrollGranularity, Node*, bool isKeyRepeat);
+    bool startKeyboardScrollAnimationOnPlugin(ScrollDirection, ScrollGranularity, RenderEmbeddedObject&, bool isKeyRepeat);
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);

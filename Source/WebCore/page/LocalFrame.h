@@ -147,7 +147,7 @@ public:
 
     Editor& editor() { return document()->editor(); }
     const Editor& editor() const { return document()->editor(); }
-    CheckedRef<Editor> checkedEditor();
+    WEBCORE_EXPORT CheckedRef<Editor> checkedEditor();
     CheckedRef<const Editor> checkedEditor() const;
 
     EventHandler& eventHandler() { return m_eventHandler; }

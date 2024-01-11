@@ -41,6 +41,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
+#include <WebCore/Editor.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
@@ -726,6 +727,26 @@ bool UnifiedPDFPlugin::requestScrollToPosition(const ScrollPosition& position, c
     return scrollingCoordinator.requestScrollToPosition(*this, position, options);
 }
 
+bool UnifiedPDFPlugin::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return false;
+
+    auto& scrollingCoordinator = *page->scrollingCoordinator();
+    return scrollingCoordinator.requestStartKeyboardScrollAnimation(*this, scrollData);
+}
+
+bool UnifiedPDFPlugin::requestStopKeyboardScrollAnimation(bool immediate)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return false;
+
+    auto& scrollingCoordinator = *page->scrollingCoordinator();
+    return scrollingCoordinator.requestStopKeyboardScrollAnimation(*this, immediate);
+}
+
 enum class AltKeyIsActive : bool { No, Yes };
 
 static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTypes pdfElementTypes, AltKeyIsActive altKeyIsActive = AltKeyIsActive::No)
@@ -955,13 +976,21 @@ bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
     return false;
 }
 
-bool UnifiedPDFPlugin::handleEditingCommand(StringView commandName)
+bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const String& argument)
 {
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+    if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s) {
+        m_frame->coreLocalFrame()->checkedEditor()->command(commandName).execute(argument);
+        return true;
+    }
     return false;
 }
 
-bool UnifiedPDFPlugin::isEditingCommandEnabled(StringView commandName)
+bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
+    if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s)
+        return true;
     return false;
 }
 
