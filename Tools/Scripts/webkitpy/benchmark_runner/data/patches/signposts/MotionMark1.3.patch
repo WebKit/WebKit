@@ -16,8 +16,8 @@ index 1aa630356cff167ec370961d7256920a21d6c508..ef393bcdebc03d2aad9c52c3caef5ad0
              var suiteResults = self._suitesResults[suite.name] || {};
              suiteResults[test.name] = testData;
              self._suitesResults[suite.name] = suiteResults;
-diff --git a/tests/resources/main.js b/tests/resources/main.js
-index 212470bfb1b93e25db7966a2192b3ab84a1ace84..b90324994aa9be4e02de269e356d190c19f11292 100644
+diff --git a/MotionMark/tests/resources/main.js b/MotionMark/tests/resources/main.js
+index ca7f2a9783dcbaa9334d7c896981addce846a98a..f549cca8bc9260c224d5be271d16ed0ef1ad7057 100644
 --- a/tests/resources/main.js
 +++ b/tests/resources/main.js
 @@ -889,6 +889,8 @@ Benchmark = Utilities.createClass(
