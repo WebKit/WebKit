@@ -31,6 +31,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/WeakHashSet.h>
 
@@ -81,7 +82,7 @@ public:
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase&);
 
     void injectPageIntoNewProcess();
-    void processDidTerminate();
+    void processDidTerminate(WebCore::ProcessIdentifier);
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 

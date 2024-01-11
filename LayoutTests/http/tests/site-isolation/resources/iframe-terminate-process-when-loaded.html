@@ -1,2 +1,10 @@
-<script> onload = () => { window.internals.terminateWebContentProcess() } </script>
+<script> onload = () => {
+    if (window.location.search == "?timeout=true") {
+        setTimeout(()=>{
+            window.internals.terminateWebContentProcess()
+        }, 0)
+    } else {
+        window.internals.terminateWebContentProcess()
+    }
+} </script>
 <body style='background-color:green'/>

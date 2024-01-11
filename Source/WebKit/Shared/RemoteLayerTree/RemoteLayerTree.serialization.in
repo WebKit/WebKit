@@ -87,6 +87,7 @@ enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
     WebCore::PlatformLayerIdentifier m_rootLayerID;
+    WebCore::ProcessIdentifier m_processIdentifier;
     WebKit::ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;

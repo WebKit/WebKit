@@ -33,6 +33,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
@@ -139,6 +140,8 @@ public:
 
     virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
     virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
+
+    virtual void remotePageProcessCrashed(WebCore::ProcessIdentifier) { }
 
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);

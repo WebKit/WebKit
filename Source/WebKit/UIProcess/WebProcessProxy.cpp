@@ -1161,7 +1161,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         page->dispatchProcessDidTerminate(reason);
 
     for (auto& remotePage : m_remotePages)
-        remotePage.processDidTerminate();
+        remotePage.processDidTerminate(coreProcessIdentifier());
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)

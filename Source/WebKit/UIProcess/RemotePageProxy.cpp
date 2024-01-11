@@ -89,8 +89,10 @@ void RemotePageProxy::injectPageIntoNewProcess()
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(parameters)), 0);
 }
 
-void RemotePageProxy::processDidTerminate()
+void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
+    if (m_page && m_page->drawingArea())
+        m_page->drawingArea()->remotePageProcessCrashed(processIdentifier);
     for (auto& frame : m_frames)
         frame.remoteProcessDidTerminate();
 }
