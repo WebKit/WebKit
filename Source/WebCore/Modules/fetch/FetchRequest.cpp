@@ -165,7 +165,8 @@ static inline std::optional<Exception> processInvalidSignal(ScriptExecutionConte
     ASCIILiteral message { "FetchRequestInit.signal should be undefined, null or an AbortSignal object. This will throw in a future release."_s };
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
 
-    if (is<Document>(context) && downcast<Document>(context).quirks().shouldIgnoreInvalidSignal())
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (document && document->quirks().shouldIgnoreInvalidSignal())
         return { };
 
     RELEASE_LOG_ERROR(ResourceLoading, "FetchRequestInit.signal should be undefined, null or an AbortSignal object.");

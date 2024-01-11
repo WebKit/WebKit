@@ -435,8 +435,8 @@ MediaProducerMediaStateFlags MediaStreamTrack::mediaState() const
     if (m_ended || !isCaptureTrack())
         return MediaProducer::IsNotPlaying;
 
-    RefPtr context = scriptExecutionContext();
-    if (!context || !is<Document>(context) || !downcast<Document>(context)->page())
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document || !document->page())
         return MediaProducer::IsNotPlaying;
 
     return sourceCaptureState(source());
@@ -530,7 +530,6 @@ void MediaStreamTrack::updateToPageMutedState()
     if (!context)
         return;
 
-    ASSERT(is<Document>(context));
     auto& document = downcast<Document>(*context);
     auto* page = document.page();
     if (!page)
@@ -691,11 +690,11 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::configureTrackRendering()
 {
-    RefPtr context = scriptExecutionContext();
-    if (!context || !is<Document>(context))
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document)
         return;
 
-    downcast<Document>(context)->updateIsPlayingMedia();
+    document->updateIsPlayingMedia();
 
     // 4.3.1
     // ... media from the source only flows when a MediaStreamTrack object is both unmuted and enabled

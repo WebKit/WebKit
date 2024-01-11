@@ -431,12 +431,11 @@ public:
     {
         ASSERT(event.type() == eventNames().contextmenuEvent);
 
-        RefPtr target = event.target();
-        if (!is<Node>(target.get()))
+        RefPtr target = dynamicDowncast<Node>(event.target());
+        if (!target)
             return;
-        Ref node = downcast<Node>(target.releaseNonNull());
 
-        auto* page = node->document().page();
+        auto* page = target->document().page();
         if (!page)
             return;
 
@@ -601,12 +600,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
                 if (RefPtr cues = textTrack->cues()) {
                     for (unsigned i = 0; i < cues->length(); ++i) {
-                        RefPtr cue = cues->item(i);
-                        if (!is<VTTCue>(cue.get()))
-                            continue;
-
-                        auto& vttCue = downcast<VTTCue>(*cue);
-                        chapterMenuItems.append(createMenuItem(RefPtr { &vttCue }, vttCue.text()));
+                        if (RefPtr vttCue = dynamicDowncast<VTTCue>(cues->item(i)))
+                            chapterMenuItems.append(createMenuItem(vttCue.copyRef(), vttCue->text()));
                     }
                 }
 

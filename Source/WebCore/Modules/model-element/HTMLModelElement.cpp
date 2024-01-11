@@ -339,14 +339,14 @@ PlatformLayerIdentifier HTMLModelElement::platformLayerID()
     if (!page)
         return { };
 
-    if (!is<RenderLayerModelObject>(this->renderer()))
+    auto* renderLayerModelObject = dynamicDowncast<RenderLayerModelObject>(this->renderer());
+    if (!renderLayerModelObject)
         return { };
 
-    auto& renderLayerModelObject = downcast<RenderLayerModelObject>(*this->renderer());
-    if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
+    if (!renderLayerModelObject->isComposited() || !renderLayerModelObject->layer() || !renderLayerModelObject->layer()->backing())
         return { };
 
-    RefPtr graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
+    RefPtr graphicsLayer = renderLayerModelObject->layer()->backing()->graphicsLayer();
     if (!graphicsLayer)
         return { };
 
@@ -403,7 +403,6 @@ void HTMLModelElement::defaultEventHandler(Event& event)
     if (type != eventNames().mousedownEvent && type != eventNames().mousemoveEvent && type != eventNames().mouseupEvent)
         return;
 
-    ASSERT(is<MouseEvent>(event));
     auto& mouseEvent = downcast<MouseEvent>(event);
 
     if (mouseEvent.button() != MouseButton::Left)

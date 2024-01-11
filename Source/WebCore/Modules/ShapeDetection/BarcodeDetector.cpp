@@ -43,9 +43,8 @@ namespace WebCore {
 
 ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(ScriptExecutionContext& scriptExecutionContext, const BarcodeDetectorOptions& barcodeDetectorOptions)
 {
-    if (is<Document>(scriptExecutionContext)) {
-        const auto& document = downcast<Document>(scriptExecutionContext);
-        const auto* page = document.page();
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        RefPtr page = document->page();
         if (!page)
             return Exception { ExceptionCode::AbortError };
         auto backing = page->chrome().createBarcodeDetector(barcodeDetectorOptions.convertToBacking());
@@ -72,9 +71,8 @@ BarcodeDetector::~BarcodeDetector() = default;
 
 ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& scriptExecutionContext, GetSupportedFormatsPromise&& promise)
 {
-    if (is<Document>(scriptExecutionContext)) {
-        const auto& document = downcast<Document>(scriptExecutionContext);
-        const auto* page = document.page();
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        RefPtr page = document->page();
         if (!page)
             return Exception { ExceptionCode::AbortError };
         page->chrome().getBarcodeDetectorSupportedFormats(([promise = WTFMove(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {

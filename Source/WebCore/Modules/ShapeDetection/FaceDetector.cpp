@@ -42,9 +42,8 @@ namespace WebCore {
 
 ExceptionOr<Ref<FaceDetector>> FaceDetector::create(ScriptExecutionContext& scriptExecutionContext, const FaceDetectorOptions& faceDetectorOptions)
 {
-    if (is<Document>(scriptExecutionContext)) {
-        const auto& document = downcast<Document>(scriptExecutionContext);
-        const auto* page = document.page();
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        RefPtr page = document->page();
         if (!page)
             return Exception { ExceptionCode::AbortError };
         auto backing = page->chrome().createFaceDetector(faceDetectorOptions.convertToBacking());

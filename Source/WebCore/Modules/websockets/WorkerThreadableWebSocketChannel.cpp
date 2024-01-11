@@ -410,7 +410,6 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
 
     m_loaderProxy.postTaskToLoader([peer = m_peer, url = url.isolatedCopy(), protocol = protocol.isolatedCopy()](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
-        ASSERT(context.isDocument());
         ASSERT(peer);
 
         auto& document = downcast<Document>(context);
