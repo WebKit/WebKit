@@ -255,11 +255,6 @@ public:
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Label slowPath, OptimizingCallLinkInfo* info)
-    {
-        m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
-    }
-    
     void addWeakReference(JSCell* target)
     {
         m_graph.m_plan.weakReferences().addLazily(target);
@@ -441,17 +436,6 @@ protected:
         CompileTimeCallLinkInfo info;
     };
     
-    struct JSDirectCallRecord {
-        JSDirectCallRecord(Label slowPath, OptimizingCallLinkInfo* info)
-            : slowPath(slowPath)
-            , info(info)
-        {
-        }
-        
-        Label slowPath;
-        OptimizingCallLinkInfo* info;
-    };
-    
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;
     Vector<InlineCacheWrapper<JITGetByIdWithThisGenerator>, 4> m_getByIdsWithThis;
     Vector<InlineCacheWrapper<JITGetByValGenerator>, 4> m_getByVals;
@@ -465,7 +449,6 @@ protected:
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;
-    Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;
     Vector<DFG::OSREntryData> m_osrEntry;

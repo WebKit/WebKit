@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallMode.h"
 #include "JSCPtrTag.h"
 #include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
@@ -55,8 +56,67 @@ public:
 #if ENABLE(JIT)
         PolymorphicCallNode,
 #endif
+        DirectCall,
         CachedCall,
     };
+
+    enum CallType : uint8_t {
+        None,
+        Call,
+        CallVarargs,
+        Construct,
+        ConstructVarargs,
+        TailCall,
+        TailCallVarargs,
+        DirectCall,
+        DirectConstruct,
+        DirectTailCall
+    };
+
+    static CallMode callModeFor(CallType callType)
+    {
+        switch (callType) {
+        case Call:
+        case CallVarargs:
+        case DirectCall:
+            return CallMode::Regular;
+        case TailCall:
+        case TailCallVarargs:
+        case DirectTailCall:
+            return CallMode::Tail;
+        case Construct:
+        case ConstructVarargs:
+        case DirectConstruct:
+            return CallMode::Construct;
+        case None:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    static bool isDirect(CallType callType)
+    {
+        switch (callType) {
+        case DirectCall:
+        case DirectTailCall:
+        case DirectConstruct:
+            return true;
+        case Call:
+        case CallVarargs:
+        case TailCall:
+        case TailCallVarargs:
+        case Construct:
+        case ConstructVarargs:
+            return false;
+        case None:
+            RELEASE_ASSERT_NOT_REACHED();
+            return false;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
 
     explicit CallLinkInfoBase(CallSiteType callSiteType)
         : m_callSiteType(callSiteType)

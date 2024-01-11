@@ -1574,6 +1574,8 @@ void CodeBlock::finalizeJITInlineCaches()
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_callLinkInfos)
             callLinkInfo->visitWeak(vm());
+        for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_directCallLinkInfos)
+            callLinkInfo->visitWeak(vm());
         if (auto* jitData = dfgJITData()) {
             for (auto& callLinkInfo : jitData->callLinkInfos())
                 callLinkInfo.visitWeak(vm());

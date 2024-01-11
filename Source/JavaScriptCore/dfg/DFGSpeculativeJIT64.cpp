@@ -726,7 +726,10 @@ void SpeculativeJIT::emitCall(Node* node)
     unsigned numPassedArgs = 0;
     unsigned numAllocatedArgs = 0;
 
-    auto [ callLinkInfo, callLinkInfoConstant ] = addCallLinkInfo(m_currentNode->origin.semantic);
+    CompileTimeCallLinkInfo callLinkInfo;
+    LinkableConstant callLinkInfoConstant;
+    if (!isDirect)
+        std::tie(callLinkInfo, callLinkInfoConstant) = addCallLinkInfo(m_currentNode->origin.semantic);
 
     // Gotta load the arguments somehow. Varargs is trickier.
     if (isVarargs || isForwardVarargs) {
@@ -863,9 +866,11 @@ void SpeculativeJIT::emitCall(Node* node)
                     globalObjectTemp.emplace(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, callLinkInfoGPR));
                     globalObjectGPR = globalObjectTemp->gpr();
                 }
-            }
-            if (!isDirect)
                 callee.use();
+            } else {
+                GPRTemporary callLinkInfoTemp(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
+                callLinkInfoGPR = callLinkInfoTemp.gpr();
+            }
 
             shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
             shuffleData.numLocals = m_graph.frameRegisterCount();
@@ -885,7 +890,7 @@ void SpeculativeJIT::emitCall(Node* node)
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
 
-            if (m_graph.m_plan.isUnlinked())
+            if (m_graph.m_plan.isUnlinked() || isDirect)
                 shuffleData.registers[callLinkInfoGPR] = ValueRecovery::inGPR(callLinkInfoGPR, DataFormatJS);
             shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
         } else {
@@ -929,7 +934,7 @@ void SpeculativeJIT::emitCall(Node* node)
         // We also do not keep GPRTemporary (it is immediately destroyed) because
         // 1. We do not want to keep the register locked in the following sequence of the Call.
         // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
-        if (m_graph.m_plan.isUnlinked()) {
+        if (m_graph.m_plan.isUnlinked() || isDirect) {
             GPRTemporary callLinkInfoTemp(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
             callLinkInfoGPR = callLinkInfoTemp.gpr();
         }
@@ -966,9 +971,11 @@ void SpeculativeJIT::emitCall(Node* node)
         addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
     };
     
-    std::visit([&](auto* callLinkInfo) {
-        callLinkInfo->setUpCall(callType, calleeGPR);
-    }, callLinkInfo);
+    if (!isDirect) {
+        std::visit([&](auto* callLinkInfo) {
+            callLinkInfo->setUpCall(callType, calleeGPR);
+        }, callLinkInfo);
+    }
 
     if (node->op() == CallDirectEval) {
         // We want to call operationCallDirectEvalSloppy/operationCallDirectEvalStrict but we don't want to overwrite the parameter area in
@@ -1007,52 +1014,51 @@ void SpeculativeJIT::emitCall(Node* node)
     
     if (isDirect) {
         ASSERT(!m_graph.m_plan.isUnlinked());
-        auto* linkedCallLinkInfo = std::get<OptimizingCallLinkInfo*>(callLinkInfo);
-        linkedCallLinkInfo->setExecutableDuringCompilation(executable);
-        linkedCallLinkInfo->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
+        auto* callLinkInfo = jitCode()->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic);
+        callLinkInfo->setCallType(callType);
+        callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);
-            
+
             Label mainPath = label();
             emitStoreCallSiteIndex(callSite);
 
-            linkedCallLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&]{
-                linkedCallLinkInfo->setFrameShuffleData(shuffleData);
+            auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, executable, callLinkInfoGPR, scopedLambda<void()>([&] {
                 CallFrameShuffler(*this, shuffleData).prepareForTailCall();
             }));
-            Label slowPath = label();
-            
-            silentSpillAllRegisters(InvalidGPRReg);
-            callOperation(operationLinkDirectCall, TrustedImmPtr(linkedCallLinkInfo), calleeGPR);
-            silentFillAllRegisters();
-            exceptionCheck();
-            jump().linkTo(mainPath, this);
-            
+            if (!slowCases.empty()) {
+                slowCases.link(this);
+
+                silentSpillAllRegisters(InvalidGPRReg);
+                callOperation(operationLinkDirectCall, callLinkInfoGPR, calleeGPR);
+                silentFillAllRegisters();
+                exceptionCheck();
+                jump().linkTo(mainPath, this);
+            }
+
             useChildren(node);
-            
-            addJSDirectCall(slowPath, linkedCallLinkInfo);
             return;
         }
-        
+
         Label mainPath = label();
         emitStoreCallSiteIndex(callSite);
-        linkedCallLinkInfo->emitDirectFastPath(*this);
-        Jump done = jump();
-        
-        Label slowPath = label();
-        if (isX86())
-            pop(selectScratchGPR(calleeGPR));
+        auto slowCases = callLinkInfo->emitDirectFastPath(*this, executable, callLinkInfoGPR);
+        if (!slowCases.empty()) {
+            Jump done = jump();
 
-        callOperation(operationLinkDirectCall, TrustedImmPtr(linkedCallLinkInfo), calleeGPR);
-        exceptionCheck();
-        jump().linkTo(mainPath, this);
-        
-        done.link(this);
-        
+            slowCases.link(this);
+            if (isX86())
+                pop(selectScratchGPR(calleeGPR, callLinkInfoGPR));
+
+            callOperation(operationLinkDirectCall, callLinkInfoGPR, calleeGPR);
+            exceptionCheck();
+            jump().linkTo(mainPath, this);
+
+            done.link(this);
+        }
+
         setResultAndResetStack();
-        
-        addJSDirectCall(slowPath, linkedCallLinkInfo);
         return;
     }
     

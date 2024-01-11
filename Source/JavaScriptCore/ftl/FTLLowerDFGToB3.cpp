@@ -11383,6 +11383,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
             patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
         }
+        patchpoint->numGPScratchRegisters = 1;
         
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
@@ -11394,6 +11395,7 @@ IGNORE_CLANG_WARNINGS_END
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
                 
                 GPRReg calleeGPR = params[!isTail].gpr();
+                GPRReg callLinkInfoGPR = params.gpScratch(0);
 
                 exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
                 
@@ -11407,6 +11409,8 @@ IGNORE_CLANG_WARNINGS_END
                     auto toSave = params.unavailableRegisters();
                     shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatCell);
                     toSave.add(calleeGPR, IgnoreVectors);
+                    toSave.add(callLinkInfoGPR, IgnoreVectors);
+                    shuffleData.registers[callLinkInfoGPR] = ValueRecovery::inGPR(callLinkInfoGPR, DataFormatJS);
                     for (unsigned i = 0; i < numPassedArgs; ++i) {
                         ValueRecovery recovery = params[1 + i].recoveryForJSValue();
                         shuffleData.args.append(recovery);
@@ -11421,77 +11425,62 @@ IGNORE_CLANG_WARNINGS_END
                     shuffleData.numParameters = jit.codeBlock()->numParameters();
                     shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
                     
-                    auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
-                    callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
-                    callLinkInfo->setExecutableDuringCompilation(executable);
+                    auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin);
+                    callLinkInfo->setCallType(CallLinkInfo::DirectTailCall);
                     if (numAllocatedArgs > numPassedArgs)
-                        callLinkInfo->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
+                        callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 
                     CCallHelpers::Label mainPath = jit.label();
                     jit.store32(
                         CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-                    callLinkInfo->emitDirectTailCallFastPath(jit, scopedLambda<void()>([&]{
-                        callLinkInfo->setFrameShuffleData(shuffleData);
+                    auto slowCases = callLinkInfo->emitDirectTailCallFastPath(jit, executable, callLinkInfoGPR, scopedLambda<void()>([&] {
                         CallFrameShuffler(jit, shuffleData).prepareForTailCall();
                     }));
-                    
-                    jit.abortWithReason(JITDidReturnFromTailCall);
-                    
-                    CCallHelpers::Label slowPath = jit.label();
-                    callOperation(
-                        *state, toSave, jit,
-                        semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
-                        InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo), calleeGPR).call();
-                    jit.jump().linkTo(mainPath, &jit);
 
-                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                        callLinkInfo->setCodeLocations(
-                            linkBuffer.locationOf<JSInternalPtrTag>(slowPath),
-                            CodeLocationLabel<JSInternalPtrTag>());
-                    });
+                    jit.abortWithReason(JITDidReturnFromTailCall);
+
+                    if (!slowCases.empty()) {
+                        slowCases.link(&jit);
+                        callOperation(
+                            *state, toSave, jit,
+                            semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
+                            InvalidGPRReg, callLinkInfoGPR, calleeGPR).call();
+                        jit.jump().linkTo(mainPath, &jit);
+                    }
                     return;
                 }
                 
-                auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
-                callLinkInfo->setUpCall(
-                    isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
-
-                callLinkInfo->setExecutableDuringCompilation(executable);
+                auto* callLinkInfo = state->jitCode->common.m_directCallLinkInfos.add(semanticNodeOrigin);
+                callLinkInfo->setCallType(isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall);
                 if (numAllocatedArgs > numPassedArgs)
-                    callLinkInfo->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
+                    callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 
                 CCallHelpers::Label mainPath = jit.label();
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-                callLinkInfo->emitDirectFastPath(jit);
+                auto slowCases = callLinkInfo->emitDirectFastPath(jit, executable, callLinkInfoGPR);
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-params.proc().frameSize()),
                     GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
                 
-                params.addLatePath(
-                    [=] (CCallHelpers& jit) {
-                        AllowMacroScratchRegisterUsage allowScratch(jit);
-                        
-                        CCallHelpers::Label slowPath = jit.label();
-                        if (isX86())
-                            jit.pop(CCallHelpers::selectScratchGPR(calleeGPR));
-                        
-                        callOperation(
-                            *state, params.unavailableRegisters(), jit,
-                            semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
-                            InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo),
-                            calleeGPR).call();
-                        jit.jump().linkTo(mainPath, &jit);
-                        
-                        jit.addLinkTask(
-                            [=] (LinkBuffer& linkBuffer) {
-                                callLinkInfo->setCodeLocations(
-                                    linkBuffer.locationOf<JSInternalPtrTag>(slowPath), 
-                                    CodeLocationLabel<JSInternalPtrTag>());
-                            });
-                    });
+                if (!slowCases.empty()) {
+                    params.addLatePath(
+                        [=] (CCallHelpers& jit) {
+                            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                            slowCases.link(&jit);
+                            if (isX86())
+                                jit.pop(CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR));
+
+                            callOperation(
+                                *state, params.unavailableRegisters(), jit,
+                                semanticNodeOrigin, exceptions.get(), operationLinkDirectCall,
+                                InvalidGPRReg, callLinkInfoGPR, calleeGPR).call();
+                            jit.jump().linkTo(mainPath, &jit);
+                        });
+                }
             });
         
         if (isTail)

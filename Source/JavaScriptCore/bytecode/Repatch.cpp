@@ -144,18 +144,11 @@ void linkMonomorphicCall(
 
 static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef<JITStubRoutinePtrTag> codeRef)
 {
-    if (callLinkInfo.isDirect()) {
-#if ENABLE(JIT)
-        callLinkInfo.clearCodeBlock();
-        static_cast<OptimizingCallLinkInfo&>(callLinkInfo).initializeDirectCall();
-#endif
-    } else {
-        linkSlowPathTo(vm, callLinkInfo, codeRef);
+    linkSlowPathTo(vm, callLinkInfo, codeRef);
 
-        if (callLinkInfo.stub())
-            callLinkInfo.revertCallToStub();
-        callLinkInfo.clearCallee(); // This also clears the inline cache both for data and code-based caches.
-    }
+    if (callLinkInfo.stub())
+        callLinkInfo.revertCallToStub();
+    callLinkInfo.clearCallee(); // This also clears the inline cache both for data and code-based caches.
     callLinkInfo.clearSeen();
     callLinkInfo.clearStub();
     if (callLinkInfo.isOnList())
@@ -1785,24 +1778,12 @@ void repatchInstanceOf(
         repatchSlowPathCall(codeBlock, stubInfo, operationInstanceOfGaveUp);
 }
 
-void linkDirectCall(
-    CallFrame* callFrame, OptimizingCallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    CodePtr<JSEntryPtrTag> codePtr)
+void linkDirectCall(CallFrame* callFrame, DirectCallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, CodePtr<JSEntryPtrTag> codePtr)
 {
-    ASSERT(!callLinkInfo.stub());
-    
     // DirectCall is only used from DFG / FTL.
     CodeBlock* callerCodeBlock = callFrame->codeBlock();
-
-    VM& vm = callerCodeBlock->vm();
-    
     ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setCodeBlock(vm, callerCodeBlock, jsCast<FunctionCodeBlock*>(calleeCodeBlock));
-    if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
-
-    callLinkInfo.setDirectCallTarget(jsCast<FunctionCodeBlock*>(calleeCodeBlock), CodeLocationLabel<JSEntryPtrTag>(codePtr));
-
+    callLinkInfo.setCallTarget(jsCast<FunctionCodeBlock*>(calleeCodeBlock), CodeLocationLabel<JSEntryPtrTag>(codePtr));
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(callerCodeBlock, callFrame, &callLinkInfo);
 }

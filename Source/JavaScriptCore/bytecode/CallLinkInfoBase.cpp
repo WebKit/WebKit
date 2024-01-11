@@ -43,6 +43,9 @@ void CallLinkInfoBase::unlink(VM& vm)
         static_cast<PolymorphicCallNode*>(this)->unlinkImpl(vm);
         break;
 #endif
+    case CallSiteType::DirectCall:
+        static_cast<DirectCallLinkInfo*>(this)->unlinkImpl(vm);
+        break;
     case CallSiteType::CachedCall:
         static_cast<CachedCall*>(this)->unlinkImpl(vm);
         break;

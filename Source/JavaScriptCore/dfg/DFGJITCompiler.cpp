@@ -289,13 +289,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
                 linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
         }, record.info);
     }
-    
-    for (auto& record : m_jsDirectCalls) {
-        auto& info = *record.info;
-        info.setCodeLocations(
-            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
-            CodeLocationLabel<JSInternalPtrTag>());
-    }
 
     if (m_graph.m_plan.isUnlinked()) {
         m_jitCode->m_unlinkedCallLinkInfos = FixedVector<UnlinkedCallLinkInfo>(m_unlinkedCallLinkInfos.size());
