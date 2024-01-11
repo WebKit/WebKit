@@ -20,8 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import json
+import os
+import socket
 
 
 def load_password(name, default=None):
@@ -35,3 +36,12 @@ def load_password(name, default=None):
     except Exception as e:
         print(f'Error in finding {name} in passwords.json\n')
     return default
+
+
+def get_custom_suffix():
+    hostname = socket.gethostname().strip()
+    if 'dev' in hostname:
+        return '-dev'
+    if 'uat' in hostname:
+        return '-uat'
+    return ''

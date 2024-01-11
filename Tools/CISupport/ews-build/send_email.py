@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@ import socket
 
 from email.mime.text import MIMEText
 
-from .utils import load_password
+from .utils import load_password, get_custom_suffix
 
-custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
+custom_suffix = get_custom_suffix()
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
-FROM_EMAIL = 'ews@webkit{}.org'.format(custom_suffix)
+FROM_EMAIL = f'ews@webkit{custom_suffix}.org'
 IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
 SERVER = 'localhost'

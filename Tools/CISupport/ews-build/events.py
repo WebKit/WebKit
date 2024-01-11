@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,14 +39,14 @@ from twisted.internet.defer import succeed
 from twisted.python import log
 
 from .twisted_additions import TwistedAdditions
-from .utils import load_password
+from .utils import load_password, get_custom_suffix
 
-custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
+custom_suffix = get_custom_suffix()
 
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix)
+    EVENT_SERVER_ENDPOINT = f'https://ews.webkit{custom_suffix}.org/results/'
     MAX_GITHUB_DESCRIPTION = 140
     STEPS_TO_REPORT = [
         'analyze-api-tests-results', 'analyze-compile-webkit-results', 'analyze-jsc-tests-results',
@@ -187,7 +187,7 @@ class Events(service.BuildbotService):
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
         build['description'] = builder.get('description', '?')
 
-        if self.extractProperty(build, 'github.number') and ('uat' not in custom_suffix):
+        if self.extractProperty(build, 'github.number') and (custom_suffix == ''):
             self.buildFinishedGitHub(build)
 
         data = {
