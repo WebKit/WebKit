@@ -99,7 +99,7 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Scri
 
 void WebSWServerToContextConnection::skipWaiting(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+    if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
         worker->skipWaiting();
 
     send(Messages::WebSWContextManagerConnection::SkipWaitingCompleted { requestIdentifier });
