@@ -317,6 +317,16 @@ function testStructNewDefault() {
      )
   `).exports.main();
 
+  compile(`
+     (module
+       (rec (type (struct (field (ref null 0)))))
+       (func (param (ref null 0)))
+       (func
+         (struct.new_default 0)
+         (call 0))
+     )
+  `);
+
   assert.throws(
     () => compile(`
             (module
