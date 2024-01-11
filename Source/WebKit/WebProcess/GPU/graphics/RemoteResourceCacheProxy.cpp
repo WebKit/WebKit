@@ -229,8 +229,10 @@ void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentif
 
 void RemoteResourceCacheProxy::clearRenderingResourceMap()
 {
-    for (auto& renderingResource : m_renderingResources.values())
-        renderingResource.get()->removeObserver(*this);
+    for (auto& weakRenderingResource : m_renderingResources.values()) {
+        if (RefPtr renderingResource = weakRenderingResource.get())
+            renderingResource->removeObserver(*this);
+    }
     m_renderingResources.clear();
 }
 
