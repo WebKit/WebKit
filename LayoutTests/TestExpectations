@@ -7445,3 +7445,6 @@ http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
 webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
 
 webkit.org/b/266986 imported/w3c/web-platform-tests/css/css-pseudo/highlight-pseudos-computed.html [ Failure ]
+
+# At the time of writing this test consumes all available IOSurfaces. If the next test is image-buffer-backend-variants.html, that will fail.
+fast/canvas/2d.context.many.small.html [ Slow Skip ]
