@@ -1695,6 +1695,23 @@ void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthent
 }
 #endif
 
+#if PLATFORM(PLAYSTATION)
+void WebChromeClient::postAccessibilityNotification(WebCore::AccessibilityObject&, WebCore::AXObjectCache::AXNotification)
+{
+    notImplemented();
+}
+
+void WebChromeClient::postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, const String&)
+{
+    notImplemented();
+}
+
+void WebChromeClient::postAccessibilityFrameLoadingEventNotification(WebCore::AccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent)
+{
+    notImplemented();
+}
+#endif
+
 void WebChromeClient::animationDidFinishForElement(const Element& element)
 {
     protectedPage()->animationDidFinishForElement(element);

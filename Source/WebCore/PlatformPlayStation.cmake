@@ -20,7 +20,6 @@ list(APPEND WebCore_SOURCES
 
     editing/libwpe/EditorLibWPE.cpp
 
-    page/playstation/ChromePlayStation.cpp
     page/playstation/ResourceUsageOverlayPlayStation.cpp
     page/playstation/ResourceUsageThreadPlayStation.cpp
 

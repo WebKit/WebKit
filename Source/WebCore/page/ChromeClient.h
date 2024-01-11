@@ -500,17 +500,17 @@ public:
     virtual void AXFinishFrameLoad() = 0;
 #endif
 
+#if PLATFORM(PLAYSTATION)
+    virtual void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) = 0;
+    virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) = 0;
+    virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent) = 0;
+#endif
+
     virtual bool selectItemWritingDirectionIsNatural() = 0;
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
     // Checks if there is an opened popup, called by RenderMenuList::showPopup().
     virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const = 0;
     virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const = 0;
-
-    virtual void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) { }
-#if PLATFORM(PLAYSTATION)
-    virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
-    virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent) { }
-#endif
 
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
