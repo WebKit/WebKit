@@ -116,7 +116,7 @@ private:
 
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be nullptr after the parser is stopped.
-    CheckedPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore
