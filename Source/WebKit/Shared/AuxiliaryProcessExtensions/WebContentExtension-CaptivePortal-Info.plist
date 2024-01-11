@@ -5,7 +5,7 @@
 	<key>EXAppExtensionAttributes</key>
 	<dict>
 		<key>EXExtensionPointIdentifier</key>
-		<string>com.apple.web-browser-engine.content</string>
+		<string>com.apple.webkit.webcontent.captiveportal.extension</string>
 	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>

@@ -67,26 +67,26 @@ SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEServiceManager);
 namespace WebKit {
 
 #if USE(EXTENSIONKIT)
-static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, bool isRetryingLaunch)
+static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client)
 {
     switch (processType) {
     case ProcessLauncher::ProcessType::Web: {
         if (client && client->shouldEnableLockdownMode())
-            return { "com.apple.WebKit.WebContent"_s, isRetryingLaunch ? @"com.apple.WebKit.WebContentExtension.CaptivePortal" : @"com.apple.WebKit.WebContent.CaptivePortal" };
-        return { "com.apple.WebKit.WebContent"_s, isRetryingLaunch ? @"com.apple.WebKit.WebContentExtension" : @"com.apple.WebKit.WebContent" };
+            return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension.CaptivePortal" };
+        return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension" };
     }
     case ProcessLauncher::ProcessType::Network:
-        return { "com.apple.WebKit.Networking"_s, isRetryingLaunch ? @"com.apple.WebKit.NetworkingExtension" : @"com.apple.WebKit.Networking" };
+        return { "com.apple.WebKit.Networking"_s, @"com.apple.WebKit.NetworkingExtension" };
 #if ENABLE(GPU_PROCESS)
     case ProcessLauncher::ProcessType::GPU:
-        return { "com.apple.WebKit.GPU"_s, isRetryingLaunch ? @"com.apple.WebKit.GPUExtension" : @"com.apple.WebKit.GPU" };
+        return { "com.apple.WebKit.GPU"_s, @"com.apple.WebKit.GPUExtension" };
 #endif
     }
 }
 
 static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLauncher::ProcessType processType, ProcessLauncher::Client* client, std::function<void(ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)> handler)
 {
-    auto [name, identifier] = serviceNameAndIdentifier(processType, client, processLauncher.isRetryingLaunch());
+    auto [name, identifier] = serviceNameAndIdentifier(processType, client);
 
     auto configuration = adoptNS([alloc_SEServiceConfigurationInstance() initWithServiceIdentifier:identifier.get()]);
     _SEServiceManager* manager = [get_SEServiceManagerClass() performSelector:@selector(sharedInstance)];
@@ -159,19 +159,6 @@ void ProcessLauncher::launchProcess()
         }
         if (error) {
             NSLog(@"Error launching process %@ error %@", process, error);
-            RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8().data(), String([error localizedFailureReason]).utf8().data());
-#if PLATFORM(IOS)
-            // Fallback to legacy extension identifiers
-            // This fallback is temporary and should be removed when possible. See rdar://120793705.
-            callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
-                auto launcher = weakProcessLauncher.get();
-                if (!launcher || launcher->isRetryingLaunch())
-                    return;
-                launcher->setIsRetryingLaunch();
-                launcher->launchProcess();
-            });
-#else
-            // Fallback to XPC service launch
             callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
                 auto launcher = weakProcessLauncher.get();
                 if (!launcher)
@@ -180,7 +167,6 @@ void ProcessLauncher::launchProcess()
                 launcher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
                 launcher->finishLaunchingProcess(name);
             });
-#endif
             [process invalidate];
             return;
         }
