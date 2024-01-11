@@ -72,7 +72,7 @@ private:
     explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);
     void initialize();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);

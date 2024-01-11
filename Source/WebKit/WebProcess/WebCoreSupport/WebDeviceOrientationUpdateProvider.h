@@ -54,7 +54,7 @@ private:
     void deviceMotionChanged(double, double, double, double, double, double, std::optional<double>, std::optional<double>, std::optional<double>) final;
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     WeakPtr<WebPage> m_page;
     WebCore::PageIdentifier m_pageIdentifier;

@@ -77,7 +77,7 @@ private:
 
     // IPC::MessageReceiver
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
     
     void didShowNotification(const WTF::UUID& notificationID);
     void didClickNotification(const WTF::UUID& notificationID);

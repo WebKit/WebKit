@@ -39,6 +39,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebCore {
@@ -60,7 +61,7 @@ public:
 
     void invalidate();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     bool supportsFullScreen(bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*);
@@ -92,7 +93,7 @@ protected:
     void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);
 
-    void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveWebFullScreenManagerMessage(IPC::Connection&, IPC::Message&);
 
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;

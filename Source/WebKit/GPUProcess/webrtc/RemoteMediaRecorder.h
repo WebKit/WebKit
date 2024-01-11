@@ -61,7 +61,7 @@ public:
     unsigned audioBitRate() const { return m_writer->audioBitRate(); }
     unsigned videoBitRate() const { return m_writer->videoBitRate(); }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     RemoteMediaRecorder(GPUConnectionToWebProcess&, MediaRecorderIdentifier, Ref<WebCore::MediaRecorderPrivateWriter>&&, bool recordAudio);

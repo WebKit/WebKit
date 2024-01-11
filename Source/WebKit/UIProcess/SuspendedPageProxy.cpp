@@ -273,32 +273,32 @@ WebPageProxy& SuspendedPageProxy::page() const
     return m_page.get();
 }
 
-void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
+    ASSERT(message.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidSuspendAfterProcessSwap::name()) {
+    if (message.messageName() == Messages::WebPageProxy::DidSuspendAfterProcessSwap::name()) {
         didProcessRequestToSuspend(SuspensionState::Suspended);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap::name()) {
+    if (message.messageName() == Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap::name()) {
         didProcessRequestToSuspend(SuspensionState::FailedToSuspend);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidDestroyNavigation>(connection, decoder, this, &SuspendedPageProxy::didDestroyNavigation);
+    if (message.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidDestroyNavigation>(connection, message, this, &SuspendedPageProxy::didDestroyNavigation);
         return;
     }
 
 #if !LOG_DISABLED
-    if (!messageNamesToIgnoreWhileSuspended().contains(decoder.messageName()))
-        LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", description(decoder.messageName()));
+    if (!messageNamesToIgnoreWhileSuspended().contains(message.messageName()))
+        LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", description(message.messageName()));
 #endif
 }
 
-bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&)
 {
     return false;
 }

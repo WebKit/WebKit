@@ -35,6 +35,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -46,7 +47,7 @@ public:
     NetworkContentRuleListManager(NetworkProcess&);
     ~NetworkContentRuleListManager();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     using BackendCallback = CompletionHandler<void(WebCore::ContentExtensions::ContentExtensionsBackend&)>;
     void contentExtensionsBackend(UserContentControllerIdentifier, BackendCallback&&);

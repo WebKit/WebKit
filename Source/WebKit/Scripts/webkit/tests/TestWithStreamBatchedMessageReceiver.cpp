@@ -26,8 +26,8 @@
 #include "TestWithStreamBatched.h"
 
 #include "ArgumentCoders.h" // NOLINT
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithStreamBatchedMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
@@ -37,17 +37,17 @@
 
 namespace WebKit {
 
-void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
+void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Message&& message)
 {
-    if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.protectedConnection(), decoder, this, &TestWithStreamBatched::sendString);
-    UNUSED_PARAM(decoder);
+    if (message.messageName() == Messages::TestWithStreamBatched::SendString::name())
+        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.protectedConnection(), WTFMove(message), this, &TestWithStreamBatched::sendString);
+    UNUSED_PARAM(message);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)
     if (connection.protectedConnection()->ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -56,9 +56,9 @@ void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection&
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBatched_SendString>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBatched_SendString>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStreamBatched::SendString::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStreamBatched::SendString::Arguments>(globalObject, message);
 }
 
 }

@@ -205,7 +205,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     static ViewGestureController* controllerForGesture(WebPageProxyIdentifier, GestureID);
 

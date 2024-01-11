@@ -35,6 +35,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -57,7 +58,7 @@ public:
     void stopUpdating();
 
     void networkProcessCrashed();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     bool didReceiveNetworkList() const { return m_didReceiveNetworkList; }
     const Vector<RTCNetwork>& networkList() const { return m_networkList; }

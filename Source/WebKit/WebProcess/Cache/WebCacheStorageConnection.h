@@ -34,6 +34,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class Encoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -46,7 +47,7 @@ public:
 
     ~WebCacheStorageConnection();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
     void networkProcessConnectionClosed();
 
 private:

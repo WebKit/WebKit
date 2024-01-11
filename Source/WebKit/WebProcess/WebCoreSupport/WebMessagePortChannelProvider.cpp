@@ -111,7 +111,7 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
 {
     auto iterator = m_inProcessPortMessages.find(remoteTarget);
     if (iterator != m_inProcessPortMessages.end()) {
-        iterator->value.append(WTFMove(message));
+        iterator->value.append(message);
         WebProcess::singleton().messagesAvailableForPort(remoteTarget);
         return;
     }

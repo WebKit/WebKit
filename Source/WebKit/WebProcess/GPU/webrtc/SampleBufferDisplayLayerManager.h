@@ -41,7 +41,7 @@ public:
     void addLayer(SampleBufferDisplayLayer&);
     void removeLayer(SampleBufferDisplayLayer&);
 
-    void didReceiveLayerMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveLayerMessage(IPC::Connection&, IPC::Message&);
     RefPtr<WebCore::SampleBufferDisplayLayer> createLayer(WebCore::SampleBufferDisplayLayer::Client&);
 
 private:

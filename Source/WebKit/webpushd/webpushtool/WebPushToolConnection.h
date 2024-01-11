@@ -78,7 +78,7 @@ private:
     void sendAuditToken();
 
     bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
-    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Message*)>&&) const final;
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 

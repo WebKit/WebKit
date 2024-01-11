@@ -58,7 +58,7 @@ public:
     RemoteRemoteCommandListenerIdentifier identifier() const { return m_identifier; }
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess&, RemoteRemoteCommandListenerIdentifier&&);

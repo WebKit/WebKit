@@ -84,7 +84,7 @@ private:
 
 #if USE(LIBWEBRTC)
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 #endif
 
 #if USE(LIBWEBRTC)

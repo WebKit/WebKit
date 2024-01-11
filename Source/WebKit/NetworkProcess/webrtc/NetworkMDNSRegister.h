@@ -48,6 +48,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace PAL {
@@ -67,7 +68,7 @@ public:
     NetworkMDNSRegister(NetworkConnectionToWebProcess&);
     ~NetworkMDNSRegister();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 #if ENABLE_MDNS
     void closeAndForgetService(DNSServiceRef);

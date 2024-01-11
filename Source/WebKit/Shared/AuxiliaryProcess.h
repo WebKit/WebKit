@@ -135,7 +135,7 @@ protected:
     static void stopNSRunLoop();
 #endif
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
 #if OS(LINUX)
     void didReceiveMemoryPressureEvent(bool isCritical);

@@ -291,13 +291,13 @@ void WebSWServerToContextConnection::startFetch(ServiceWorkerFetchTask& task)
     task.start(*this);
 }
 
-void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    auto iterator = m_ongoingFetches.find(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID()));
+    auto iterator = m_ongoingFetches.find(ObjectIdentifier<FetchIdentifierType>(message.destinationID));
     if (iterator == m_ongoingFetches.end())
         return;
 
-    iterator->value->didReceiveMessage(connection, decoder);
+    iterator->value->didReceiveMessage(connection, message);
 }
 
 void WebSWServerToContextConnection::registerFetch(ServiceWorkerFetchTask& task)

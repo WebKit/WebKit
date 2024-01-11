@@ -224,62 +224,63 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
 }
 #endif
 
-bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Message& message)
 {
+    const auto messageReceiverName = message.messageReceiverName();
 #if ENABLE(VIDEO)
-    if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
-        WebProcess::singleton().remoteMediaPlayerManager().didReceivePlayerMessage(connection, decoder);
+    if (messageReceiverName == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
+        WebProcess::singleton().remoteMediaPlayerManager().didReceivePlayerMessage(connection, message);
         return true;
     }
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    if (decoder.messageReceiverName() == Messages::UserMediaCaptureManager::messageReceiverName()) {
+    if (messageReceiverName == Messages::UserMediaCaptureManager::messageReceiverName()) {
         if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
-            captureManager->didReceiveMessageFromGPUProcess(connection, decoder);
+            captureManager->didReceiveMessageFromGPUProcess(connection, message);
         return true;
     }
 
-    if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
+    if (messageReceiverName == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
+        sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, message);
         return true;
     }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, decoder);
+    if (messageReceiverName == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
+        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, message);
         return true;
     }
 #endif
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
+    if (messageReceiverMap().dispatchMessage(connection, message))
         return true;
 
 #if USE(AUDIO_SESSION)
-    if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {
+    if (messageReceiverName == Messages::RemoteAudioSession::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The RemoteAudioSession object has beed destroyed");
         return true;
     }
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    if (decoder.messageReceiverName() == Messages::MediaSourcePrivateRemote::messageReceiverName()) {
+    if (messageReceiverName == Messages::MediaSourcePrivateRemote::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The MediaSourcePrivateRemote object has beed destroyed");
         return true;
     }
 
-    if (decoder.messageReceiverName() == Messages::SourceBufferPrivateRemote::messageReceiverName()) {
+    if (messageReceiverName == Messages::SourceBufferPrivateRemote::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The SourceBufferPrivateRemote object has beed destroyed");
         return true;
     }
 #endif
 
-    if (decoder.messageReceiverName() == Messages::RemoteAudioHardwareListener::messageReceiverName()) {
+    if (messageReceiverName == Messages::RemoteAudioHardwareListener::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The RemoteAudioHardwareListener object has beed destroyed");
         return true;
     }
 
-    if (decoder.messageReceiverName() == Messages::RemoteRemoteCommandListener::messageReceiverName()) {
+    if (messageReceiverName == Messages::RemoteRemoteCommandListener::messageReceiverName()) {
         RELEASE_LOG_ERROR(Media, "The RemoteRemoteCommandListener object has beed destroyed");
         return true;
     }
@@ -287,9 +288,9 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     return false;
 }
 
-bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
+    return messageReceiverMap().dispatchSyncMessage(connection, message, replyEncoder);
 }
 
 void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>&& info)

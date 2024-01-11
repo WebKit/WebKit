@@ -66,7 +66,7 @@ public:
     ~RemoteGraphicsContextGLProxy();
 
     // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 

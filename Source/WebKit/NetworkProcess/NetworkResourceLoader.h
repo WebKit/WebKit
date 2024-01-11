@@ -103,7 +103,7 @@ public:
     void transferToNewWebProcess(NetworkConnectionToWebProcess&, const NetworkResourceLoadParameters&);
 
     // Message handlers.
-    void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Message&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
 

@@ -12,6 +12,7 @@ Platform/IPC/Decoder.cpp
 Platform/IPC/Encoder.cpp
 Platform/IPC/IPCUtilities.cpp
 Platform/IPC/JSIPCBinding.cpp
+Platform/IPC/Message.cpp
 Platform/IPC/MessageReceiveQueueMap.cpp
 Platform/IPC/MessageReceiverMap.cpp
 Platform/IPC/MessageSender.cpp

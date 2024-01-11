@@ -85,7 +85,7 @@ private:
     void initialize(const NetworkProcessCreationParameters&) override;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
     void didLoadData(LegacyCustomProtocolID, const IPC::DataReference&);

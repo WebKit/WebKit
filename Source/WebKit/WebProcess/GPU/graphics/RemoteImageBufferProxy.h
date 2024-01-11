@@ -62,7 +62,7 @@ public:
     void backingStoreWillChange();
     std::unique_ptr<WebCore::SerializedImageBuffer> sinkIntoSerializedImageBuffer() final;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     // Messages
     void didCreateBackend(std::optional<ImageBufferBackendHandle>);

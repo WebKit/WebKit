@@ -49,7 +49,7 @@ public:
 
     SampleBufferDisplayLayerIdentifier identifier() const { return m_identifier; }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     WebCore::LayerHostingContextID hostingContextID() const final { return m_hostingContextID.value_or(0); }
 

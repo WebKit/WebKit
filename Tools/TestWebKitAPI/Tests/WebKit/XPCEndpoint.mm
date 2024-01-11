@@ -59,7 +59,7 @@ private:
 
             auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromEndpoint);
-            xpc_connection_send_message(connection, message.get());
+            xpc_connection_send_message(connection, WTFMove(message).get());
         }
     }
 };

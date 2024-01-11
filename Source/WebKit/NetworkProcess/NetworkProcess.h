@@ -429,7 +429,7 @@ public:
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
-    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Message&);
 
     void terminate() override;
     void platformTerminate();
@@ -444,8 +444,8 @@ private:
     bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
 
     // DownloadManager::Client
@@ -456,7 +456,7 @@ private:
     AuthenticationManager& downloadsAuthenticationManager() override;
 
     // Message Handlers
-    bool didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&, CompletionHandler<void()>&&);
     void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&,  CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
 

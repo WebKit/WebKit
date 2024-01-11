@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "Decoder.h"
 #include "IPCSemaphore.h"
+#include "Message.h"
 #include "MessageNames.h"
 #include "StreamClientConnectionBuffer.h"
 #include "StreamServerConnection.h"
@@ -110,8 +111,8 @@ private:
     public:
         DedicatedConnectionClient(Connection::Client&);
         // Connection::Client overrides.
-        void didReceiveMessage(Connection&, Decoder&) final;
-        bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+        void didReceiveMessage(Connection&, Message&) final;
+        bool didReceiveSyncMessage(Connection&, Message&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName) final;
     private:
@@ -240,7 +241,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
         return { { Error::CantWaitForSyncReplies } };
 
-    auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
+    auto decoderResult = [&]() -> std::optional<Connection::MessageOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
@@ -252,10 +253,16 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             if (!replySpan)
                 return makeUnexpected(Error::FailedToAcquireReplyBufferSpan);
 
-            auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
-            if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
-                ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
-                return WTFMove(decoder);
+            auto decoder = makeUniqueRef<Decoder>(*replySpan);
+            Message message {
+                WTFMove(decoder),
+                m_currentDestinationID,
+                OptionSet<MessageFlags>()
+            };
+            if (message.messageName() != MessageName::ProcessOutOfStreamMessage) {
+                // FIXME: Return an error if it's not? This is definitely coming from an untrusted source.
+                ASSERT(message.messageName() == MessageName::SyncMessageReply);
+                return message;
             }
         } else
             m_buffer.resetClientOffset();
@@ -268,9 +275,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         return std::nullopt;
 
     if (decoderResult->has_value()) {
-        std::optional<typename T::ReplyArguments> replyArguments;
-        auto& decoder = decoderResult->value();
-        *decoder >> replyArguments;
+        auto replyArguments = decoderResult.value()->decoder->template decode<typename T::ReplyArguments>();
         if (replyArguments)
             return { { WTFMove(*replyArguments) } };
         return { Error::FailedToDecodeReplyArguments };

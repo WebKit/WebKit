@@ -255,7 +255,7 @@ private:
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
     // IPC::MessageReceiver (Implemented by generated code in WebAutomationSessionMessageReceiver.cpp).
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     // Called by WebAutomationSession messages.
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);

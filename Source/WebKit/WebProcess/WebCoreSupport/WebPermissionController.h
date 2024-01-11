@@ -50,7 +50,7 @@ public:
     ~WebPermissionController();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     explicit WebPermissionController(WebProcess&);

@@ -43,7 +43,7 @@ namespace WebKit {
 class IPCStreamTesterProxy final : public IPC::MessageReceiver {
 public:
     // IPC::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 private:
     IPCStreamTesterProxy() = default;
     ~IPCStreamTesterProxy() = default;

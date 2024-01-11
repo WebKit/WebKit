@@ -1516,14 +1516,14 @@ void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
-bool WebProcessPool::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool WebProcessPool::dispatchMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    return m_messageReceiverMap.dispatchMessage(connection, decoder);
+    return m_messageReceiverMap.dispatchMessage(connection, message);
 }
 
-bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebProcessPool::dispatchSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
+    return m_messageReceiverMap.dispatchSyncMessage(connection, message, replyEncoder);
 }
 
 void WebProcessPool::setEnhancedAccessibility(bool flag)

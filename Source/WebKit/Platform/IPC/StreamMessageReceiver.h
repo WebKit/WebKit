@@ -31,12 +31,13 @@ namespace IPC {
 
 class StreamServerConnection;
 class Decoder;
+struct Message;
 
 class StreamMessageReceiver : public ThreadSafeRefCounted<StreamMessageReceiver> {
 public:
     virtual ~StreamMessageReceiver() { }
 
-    virtual void didReceiveStreamMessage(StreamServerConnection&, Decoder&) = 0;
+    virtual void didReceiveStreamMessage(StreamServerConnection&, Message&) = 0;
 };
 
 } // namespace IPC

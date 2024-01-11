@@ -48,7 +48,7 @@ public:
     virtual void pageWasNotifiedOfNotificationPermission() = 0;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 };
 
 } // namespace WebKit

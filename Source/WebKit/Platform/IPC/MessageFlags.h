@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace IPC {
 
 enum class MessageFlags : uint8_t {

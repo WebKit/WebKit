@@ -71,7 +71,7 @@ public:
 
     ~WebResourceLoader();
 
-    void didReceiveWebResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveWebResourceLoaderMessage(IPC::Connection&, IPC::Message&);
 
     WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 

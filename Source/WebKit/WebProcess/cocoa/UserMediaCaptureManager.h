@@ -54,7 +54,7 @@ public:
 
     static const char* supplementName();
 
-    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
     void setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames);
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
@@ -119,7 +119,7 @@ private:
     };
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages::UserMediaCaptureManager
     void sourceStopped(WebCore::RealtimeMediaSourceIdentifier, bool didFail);

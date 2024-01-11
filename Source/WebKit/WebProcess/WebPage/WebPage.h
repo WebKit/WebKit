@@ -579,8 +579,8 @@ public:
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
     void setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
@@ -1447,7 +1447,7 @@ public:
 
     bool isSuspended() const { return m_isSuspended; }
 
-    void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveWebPageMessage(IPC::Connection&, IPC::Message&);
 
     template<typename T>
     SendSyncResult<T> sendSyncWithDelayedReply(T&& message, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
@@ -1704,7 +1704,7 @@ private:
 
     void getPlatformEditorStateCommon(const WebCore::LocalFrame&, EditorState&) const;
 
-    bool didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     void updateSizeForCSSDefaultViewportUnits();
     void updateSizeForCSSSmallViewportUnits();

@@ -26,8 +26,8 @@
 #include "TestWithoutUsingIPCConnection.h"
 
 #include "ArgumentCoders.h" // NOLINT
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithoutUsingIPCConnectionMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
@@ -37,23 +37,23 @@
 
 namespace WebKit {
 
-void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)
+void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Message&& message, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::name())
-        return IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument>(decoder, this, &TestWithoutUsingIPCConnection::messageWithoutArgument);
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::name())
-        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndEmptyReply);
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::name())
-        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndReplyWithArgument);
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgument::name())
-        return IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgument>(decoder, this, &TestWithoutUsingIPCConnection::messageWithArgument);
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::name())
-        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndEmptyReply);
-    if (decoder.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::name())
-        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument>(decoder, WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndReplyWithArgument);
-    UNUSED_PARAM(decoder);
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::name())
+        return IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument>(WTFMove(message), this, &TestWithoutUsingIPCConnection::messageWithoutArgument);
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::name())
+        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply>(WTFMove(message), WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndEmptyReply);
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::name())
+        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument>(WTFMove(message), WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithoutArgumentAndReplyWithArgument);
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgument::name())
+        return IPC::handleMessageWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgument>(WTFMove(message), this, &TestWithoutUsingIPCConnection::messageWithArgument);
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::name())
+        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply>(WTFMove(message), WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndEmptyReply);
+    if (message.messageName() == Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::name())
+        return IPC::handleMessageAsyncWithoutUsingIPCConnection<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument>(WTFMove(message), WTFMove(replyHandler), this, &TestWithoutUsingIPCConnection::messageWithArgumentAndReplyWithArgument);
+    UNUSED_PARAM(message);
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -62,45 +62,45 @@ void TestWithoutUsingIPCConnection::didReceiveMessageWithReplyHandler(IPC::Decod
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgument::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndEmptyReply::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithoutArgumentAndReplyWithArgument::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgument::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgument::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndEmptyReply::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithoutUsingIPCConnection::MessageWithArgumentAndReplyWithArgument::ReplyArguments>(globalObject, message);
 }
 
 }

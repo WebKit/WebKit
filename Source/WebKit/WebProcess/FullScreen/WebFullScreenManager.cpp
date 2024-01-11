@@ -149,9 +149,9 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
 #endif
 }
 
-void WebFullScreenManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebFullScreenManager::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    didReceiveWebFullScreenManagerMessage(connection, decoder);
+    didReceiveWebFullScreenManagerMessage(connection, message);
 }
 
 bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)

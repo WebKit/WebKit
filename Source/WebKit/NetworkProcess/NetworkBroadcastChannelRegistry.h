@@ -45,7 +45,7 @@ public:
 
     void removeConnection(IPC::Connection&);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     void registerChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
     void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);

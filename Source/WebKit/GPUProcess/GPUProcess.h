@@ -143,8 +143,8 @@ private:
     bool canExitUnderMemoryPressure() const;
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveGPUProcessMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    void didReceiveGPUProcessMessage(IPC::Connection&, IPC::Message&);
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);

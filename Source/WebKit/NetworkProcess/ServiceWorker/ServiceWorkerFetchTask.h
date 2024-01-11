@@ -73,7 +73,7 @@ public:
 
     void start(WebSWServerToContextConnection&);
     void cancelFromClient();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     void continueDidReceiveFetchResponse();
     void continueFetchTaskWith(WebCore::ResourceRequest&&);

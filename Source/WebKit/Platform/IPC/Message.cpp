@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Message.h"
 
-#if ENABLE(WEB_RTC)
-
-#include <WebCore/MDNSRegisterError.h>
-#include <WebCore/ProcessQualified.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
+#include "Decoder.h"
 
 namespace IPC {
-class Connection;
-class Decoder;
+
+MessageName Message::messageName() const
+{
+    return decoder->messageName();
 }
 
-namespace WebKit {
+bool Message::matches(const ReceiverMatcher& matcher) const
+{
+    return matcher.matches(messageReceiverName(), destinationID);
+}
 
-class WebMDNSRegister : public CanMakeWeakPtr<WebMDNSRegister> {
-public:
-    WebMDNSRegister() = default;
+ShouldDispatchWhenWaitingForSyncReply Message::shouldDispatchMessageWhenWaitingForSyncReply() const
+{
+    if (messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
+        return ShouldDispatchWhenWaitingForSyncReply::Yes;
+    if (messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply))
+        return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
+    return ShouldDispatchWhenWaitingForSyncReply::No;
+}
 
-    void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+bool Message::shouldUseFullySynchronousModeForTesting() const
+{
+    return messageFlags.contains(MessageFlags::UseFullySynchronousModeForTesting);
+}
 
-    void didReceiveMessage(IPC::Connection&, IPC::Message&);
+bool Message::shouldMaintainOrderingWithAsyncMessages() const
+{
+    return messageFlags.contains(MessageFlags::MaintainOrderingWithAsyncMessages);
+}
 
-private:
-    void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+#if ENABLE(IPC_TESTING_API)
+bool Message::hasSyncMessageDeserializationFailure() const
+{
+    return messageFlags.contains(MessageFlags::SyncMessageDeserializationFailure);
+}
+#endif
 
-    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
-};
+}
 
-} // namespace WebKit
-
-#endif // ENABLE(WEB_RTC)

@@ -1415,6 +1415,7 @@
 		57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */; };
 		57FE686D2604827800BF45E4 /* _WKAuthenticatorAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57FE688C260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */; };
+		5C0C2B692B4CE4F3004473B0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0C2B682B4CE4F3004473B0 /* Message.h */; };
 		5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E8324101F7000486F9B /* FrameTreeNodeData.h */; };
 		5C121E89241029C900486F9B /* _WKFrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E882410290D00486F9B /* _WKFrameTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C139DA629DB82E500D5117B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -5739,6 +5740,8 @@
 		5C046A1C290B26CF00FF7820 /* TextTrackPrivateRemoteConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextTrackPrivateRemoteConfiguration.serialization.in; sourceTree = "<group>"; };
 		5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateRelayed.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
+		5C0C2B682B4CE4F3004473B0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		5C0C2B6A2B4E6B00004473B0 /* Message.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Message.cpp; sourceTree = "<group>"; };
 		5C121E8324101F7000486F9B /* FrameTreeNodeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTreeNodeData.h; sourceTree = "<group>"; };
 		5C121E852410276F00486F9B /* APIFrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameTreeNode.h; sourceTree = "<group>"; };
 		5C121E862410290D00486F9B /* _WKFrameTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFrameTreeNode.mm; sourceTree = "<group>"; };
@@ -9150,6 +9153,8 @@
 				7B9FC5AB28A3B440007570E7 /* IPCUtilities.h */,
 				9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */,
 				9B47908E253151CC00EC11AB /* JSIPCBinding.h */,
+				5C0C2B6A2B4E6B00004473B0 /* Message.cpp */,
+				5C0C2B682B4CE4F3004473B0 /* Message.h */,
 				9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
 				7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */,
@@ -15583,6 +15588,7 @@
 				A15799B72584433200528236 /* MediaTrackReader.h in Headers */,
 				93E799DB276121080074008A /* MemoryStorageArea.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
+				5C0C2B692B4CE4F3004473B0 /* Message.h in Headers */,
 				9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
 				7BDD9DDC28D205C6004CDF48 /* MessageObserver.h in Headers */,

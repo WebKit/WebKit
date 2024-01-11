@@ -203,46 +203,47 @@ bool NetworkProcess::shouldTerminate()
     return false;
 }
 
-void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(message.messageName()), message.destinationID);
         ASSERT_NOT_REACHED();
         return;
     }
 
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
+    if (messageReceiverMap().dispatchMessage(connection, message))
         return;
 
-    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
-        AuxiliaryProcess::didReceiveMessage(connection, decoder);
+    const auto messageReceiverName = message.messageReceiverName();
+    if (messageReceiverName == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, message);
         return;
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (decoder.messageReceiverName() == Messages::NetworkContentRuleListManager::messageReceiverName()) {
-        m_networkContentRuleListManager.didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkContentRuleListManager::messageReceiverName()) {
+        m_networkContentRuleListManager.didReceiveMessage(connection, message);
         return;
     }
 #endif
 
-    didReceiveNetworkProcessMessage(connection, decoder);
+    didReceiveNetworkProcessMessage(connection, message);
 }
 
-bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     ASSERT(parentProcessConnection() == &connection);
     if (parentProcessConnection() != &connection) {
-        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(decoder.messageName()), decoder.destinationID());
+        WTFLogAlways("Ignored message '%s' because it did not come from the UIProcess (destination=%" PRIu64 ")", description(message.messageName()), message.destinationID);
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (messageReceiverMap().dispatchSyncMessage(connection, message, replyEncoder))
         return true;
 
-    return didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessMessage(connection, message, replyEncoder);
 }
 
 void NetworkProcess::stopRunLoopIfNecessary()

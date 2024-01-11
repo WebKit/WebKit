@@ -63,15 +63,15 @@ void RemoteSampleBufferDisplayLayerManager::close()
     });
 }
 
-bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (!decoder.destinationID())
+    if (!message.destinationID)
         return false;
 
-    auto identifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
+    auto identifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(message.destinationID);
     Locker lock(m_layersLock);
     if (auto* layer = m_layers.get(identifier))
-        layer->didReceiveMessage(connection, decoder);
+        layer->didReceiveMessage(connection, message);
     return true;
 }
 

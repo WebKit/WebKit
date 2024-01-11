@@ -52,7 +52,7 @@ private:
     void motionChanged(double, double, double, double, double, double, std::optional<double>, std::optional<double>, std::optional<double>) final;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     WebPageProxy& m_page;
 };

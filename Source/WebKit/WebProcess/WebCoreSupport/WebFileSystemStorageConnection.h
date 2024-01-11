@@ -67,7 +67,7 @@ class WebFileSystemStorageConnection final : public WebCore::FileSystemStorageCo
 public:
     static Ref<WebFileSystemStorageConnection> create(Ref<IPC::Connection>&&);
     void connectionClosed();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 private:
     explicit WebFileSystemStorageConnection(Ref<IPC::Connection>&&);

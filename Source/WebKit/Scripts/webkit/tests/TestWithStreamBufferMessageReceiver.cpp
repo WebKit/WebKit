@@ -25,8 +25,8 @@
 #include "config.h"
 #include "TestWithStreamBuffer.h"
 
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "StreamConnectionBuffer.h" // NOLINT
 #include "TestWithStreamBufferMessages.h" // NOLINT
 
@@ -36,18 +36,18 @@
 
 namespace WebKit {
 
-void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithStreamBuffer::SendStreamBuffer::name())
-        return IPC::handleMessage<Messages::TestWithStreamBuffer::SendStreamBuffer>(connection, decoder, this, &TestWithStreamBuffer::sendStreamBuffer);
+    if (message.messageName() == Messages::TestWithStreamBuffer::SendStreamBuffer::name())
+        return IPC::handleMessage<Messages::TestWithStreamBuffer::SendStreamBuffer>(connection, WTFMove(message), this, &TestWithStreamBuffer::sendStreamBuffer);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -56,9 +56,9 @@ void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::D
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, message);
 }
 
 }

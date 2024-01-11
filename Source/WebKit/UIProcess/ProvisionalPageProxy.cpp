@@ -577,165 +577,165 @@ void ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation()
     send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
 }
 
-void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
+    ASSERT(message.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidStartProgress::name()
-        || decoder.messageName() == Messages::WebPageProxy::DidChangeProgress::name()
-        || decoder.messageName() == Messages::WebPageProxy::DidFinishProgress::name()
-        || decoder.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
-        || decoder.messageName() == Messages::WebPageProxy::WillGoToBackForwardListItem::name()
+    if (message.messageName() == Messages::WebPageProxy::DidStartProgress::name()
+        || message.messageName() == Messages::WebPageProxy::DidChangeProgress::name()
+        || message.messageName() == Messages::WebPageProxy::DidFinishProgress::name()
+        || message.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
+        || message.messageName() == Messages::WebPageProxy::WillGoToBackForwardListItem::name()
 #if USE(QUICK_LOOK)
-        || decoder.messageName() == Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame::name()
-        || decoder.messageName() == Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame::name()
+        || message.messageName() == Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame::name()
+        || message.messageName() == Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame::name()
 #endif
-        || decoder.messageName() == Messages::WebPageProxy::CreateInspectorTarget::name()
-        || decoder.messageName() == Messages::WebPageProxy::DestroyInspectorTarget::name()
-        || decoder.messageName() == Messages::WebPageProxy::SendMessageToInspectorFrontend::name()
+        || message.messageName() == Messages::WebPageProxy::CreateInspectorTarget::name()
+        || message.messageName() == Messages::WebPageProxy::DestroyInspectorTarget::name()
+        || message.messageName() == Messages::WebPageProxy::SendMessageToInspectorFrontend::name()
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        || decoder.messageName() == Messages::WebPageProxy::DidInitiateLoadForResource::name()
-        || decoder.messageName() == Messages::WebPageProxy::DidSendRequestForResource::name()
-        || decoder.messageName() == Messages::WebPageProxy::DidReceiveResponseForResource::name()
+        || message.messageName() == Messages::WebPageProxy::DidInitiateLoadForResource::name()
+        || message.messageName() == Messages::WebPageProxy::DidSendRequestForResource::name()
+        || message.messageName() == Messages::WebPageProxy::DidReceiveResponseForResource::name()
 #endif
         )
     {
-        m_page->didReceiveMessage(connection, decoder);
+        m_page->didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidDestroyNavigation>(connection, decoder, this, &ProvisionalPageProxy::didDestroyNavigation);
+    if (message.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidDestroyNavigation>(connection, message, this, &ProvisionalPageProxy::didDestroyNavigation);
         return;
     }
 
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::WebPageProxy::RegisterWebProcessAccessibilityToken::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::RegisterWebProcessAccessibilityToken>(connection, decoder, this, &ProvisionalPageProxy::registerWebProcessAccessibilityToken);
+    if (message.messageName() == Messages::WebPageProxy::RegisterWebProcessAccessibilityToken::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::RegisterWebProcessAccessibilityToken>(connection, message, this, &ProvisionalPageProxy::registerWebProcessAccessibilityToken);
         return;
     }
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    if (decoder.messageName() == Messages::WebPageProxy::BindAccessibilityTree::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::BindAccessibilityTree>(connection, decoder, this, &ProvisionalPageProxy::bindAccessibilityTree);
+    if (message.messageName() == Messages::WebPageProxy::BindAccessibilityTree::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::BindAccessibilityTree>(connection, message, this, &ProvisionalPageProxy::bindAccessibilityTree);
         return;
     }
 #endif
 
-    if (decoder.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::BackForwardAddItem>(connection, decoder, this, &ProvisionalPageProxy::backForwardAddItem);
+    if (message.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::BackForwardAddItem>(connection, message, this, &ProvisionalPageProxy::backForwardAddItem);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess>(connection, decoder, this, &ProvisionalPageProxy::logDiagnosticMessageFromWebProcess);
+    if (message.messageName() == Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess>(connection, message, this, &ProvisionalPageProxy::logDiagnosticMessageFromWebProcess);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess>(connection, decoder, this, &ProvisionalPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess);
+    if (message.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess>(connection, message, this, &ProvisionalPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess>(connection, decoder, this, &ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess);
+    if (message.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess>(connection, message, this, &ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::StartURLSchemeTask::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::StartURLSchemeTask>(connection, decoder, this, &ProvisionalPageProxy::startURLSchemeTask);
+    if (message.messageName() == Messages::WebPageProxy::StartURLSchemeTask::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::StartURLSchemeTask>(connection, message, this, &ProvisionalPageProxy::startURLSchemeTask);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionAsync::name()) {
-        IPC::handleMessageAsync<Messages::WebPageProxy::DecidePolicyForNavigationActionAsync>(connection, decoder, this, &ProvisionalPageProxy::decidePolicyForNavigationActionAsync);
+    if (message.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionAsync::name()) {
+        IPC::handleMessageAsync<Messages::WebPageProxy::DecidePolicyForNavigationActionAsync>(connection, message, this, &ProvisionalPageProxy::decidePolicyForNavigationActionAsync);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
-        IPC::handleMessageAsync<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &ProvisionalPageProxy::decidePolicyForResponse);
+    if (message.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
+        IPC::handleMessageAsync<Messages::WebPageProxy::DecidePolicyForResponse>(connection, message, this, &ProvisionalPageProxy::decidePolicyForResponse);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidChangeProvisionalURLForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidChangeProvisionalURLForFrame>(connection, decoder, this, &ProvisionalPageProxy::didChangeProvisionalURLForFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidChangeProvisionalURLForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidChangeProvisionalURLForFrame>(connection, message, this, &ProvisionalPageProxy::didChangeProvisionalURLForFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidNavigateWithNavigationData::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidNavigateWithNavigationData>(connection, decoder, this, &ProvisionalPageProxy::didNavigateWithNavigationData);
+    if (message.messageName() == Messages::WebPageProxy::DidNavigateWithNavigationData::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidNavigateWithNavigationData>(connection, message, this, &ProvisionalPageProxy::didNavigateWithNavigationData);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidPerformClientRedirect::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidPerformClientRedirect>(connection, decoder, this, &ProvisionalPageProxy::didPerformClientRedirect);
+    if (message.messageName() == Messages::WebPageProxy::DidPerformClientRedirect::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidPerformClientRedirect>(connection, message, this, &ProvisionalPageProxy::didPerformClientRedirect);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidCreateMainFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCreateMainFrame>(connection, decoder, this, &ProvisionalPageProxy::didCreateMainFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidCreateMainFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidCreateMainFrame>(connection, message, this, &ProvisionalPageProxy::didCreateMainFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidStartProvisionalLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidStartProvisionalLoadForFrame>(connection, decoder, this, &ProvisionalPageProxy::didStartProvisionalLoadForFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidStartProvisionalLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidStartProvisionalLoadForFrame>(connection, message, this, &ProvisionalPageProxy::didStartProvisionalLoadForFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidFailProvisionalLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidFailProvisionalLoadForFrame>(connection, decoder, this, &ProvisionalPageProxy::didFailProvisionalLoadForFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidFailProvisionalLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidFailProvisionalLoadForFrame>(connection, message, this, &ProvisionalPageProxy::didFailProvisionalLoadForFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidCommitLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame>(connection, decoder, this, &ProvisionalPageProxy::didCommitLoadForFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidCommitLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame>(connection, message, this, &ProvisionalPageProxy::didCommitLoadForFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame>(connection, decoder, this, &ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame);
+    if (message.messageName() == Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame>(connection, message, this, &ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame);
         return;
     }
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidPerformServerRedirect::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidPerformServerRedirect>(connection, decoder, this, &ProvisionalPageProxy::didPerformServerRedirect);
+    if (message.messageName() == Messages::WebPageProxy::DidPerformServerRedirect::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidPerformServerRedirect>(connection, message, this, &ProvisionalPageProxy::didPerformServerRedirect);
         return;
     }
 
 #if USE(QUICK_LOOK)
-    if (decoder.messageName() == Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame::name()) {
-        IPC::handleMessageAsync<Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame>(connection, decoder, this, &ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame);
+    if (message.messageName() == Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame::name()) {
+        IPC::handleMessageAsync<Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame>(connection, message, this, &ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame);
         return;
     }
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-    if (decoder.messageName() == Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame>(connection, decoder, this, &ProvisionalPageProxy::contentFilterDidBlockLoadForFrame);
+    if (message.messageName() == Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::ContentFilterDidBlockLoadForFrame>(connection, message, this, &ProvisionalPageProxy::contentFilterDidBlockLoadForFrame);
         return;
     }
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation>(connection, decoder, this, &ProvisionalPageProxy::didCreateContextInWebProcessForVisibilityPropagation);
+    if (message.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation>(connection, message, this, &ProvisionalPageProxy::didCreateContextInWebProcessForVisibilityPropagation);
         return;
     }
 #endif
 
-    LOG(ProcessSwapping, "Unhandled message %s from provisional process", description(decoder.messageName()));
+    LOG(ProcessSwapping, "Unhandled message %s from provisional process", description(message.messageName()));
 }
 
-bool ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    if (decoder.messageName() == Messages::WebPageProxy::BackForwardGoToItem::name())
-        return IPC::handleMessageSynchronous<Messages::WebPageProxy::BackForwardGoToItem>(connection, decoder, replyEncoder, this, &ProvisionalPageProxy::backForwardGoToItem);
+    if (message.messageName() == Messages::WebPageProxy::BackForwardGoToItem::name())
+        return IPC::handleMessageSynchronous<Messages::WebPageProxy::BackForwardGoToItem>(connection, message, replyEncoder, this, &ProvisionalPageProxy::backForwardGoToItem);
 
-    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionSync::name())
-        return IPC::handleMessageSynchronous<Messages::WebPageProxy::DecidePolicyForNavigationActionSync>(connection, decoder, replyEncoder, this, &ProvisionalPageProxy::decidePolicyForNavigationActionSync);
+    if (message.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionSync::name())
+        return IPC::handleMessageSynchronous<Messages::WebPageProxy::DecidePolicyForNavigationActionSync>(connection, message, replyEncoder, this, &ProvisionalPageProxy::decidePolicyForNavigationActionSync);
 
-    return m_page->didReceiveSyncMessage(connection, decoder, replyEncoder);
+    return m_page->didReceiveSyncMessage(connection, message, replyEncoder);
 }
 
 IPC::Connection* ProvisionalPageProxy::messageSenderConnection() const

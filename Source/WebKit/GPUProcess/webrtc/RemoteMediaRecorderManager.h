@@ -53,14 +53,14 @@ public:
     explicit RemoteMediaRecorderManager(GPUConnectionToWebProcess&);
     ~RemoteMediaRecorderManager();
 
-    void didReceiveRemoteMediaRecorderMessage(IPC::Connection&, IPC::Decoder&);
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveRemoteMediaRecorderMessage(IPC::Connection&, IPC::Message&);
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
 
     bool allowsExitUnderMemoryPressure() const;
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
     void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(std::optional<WebCore::ExceptionData>&&, String&&, unsigned, unsigned)>&&);
     void releaseRecorder(MediaRecorderIdentifier);
 

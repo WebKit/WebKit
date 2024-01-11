@@ -73,7 +73,7 @@ private:
 
     WebCore::WebGPU::ShaderModule& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&&);
 

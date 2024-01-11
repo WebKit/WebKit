@@ -60,8 +60,8 @@ private:
     explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
 
     // IPC::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);

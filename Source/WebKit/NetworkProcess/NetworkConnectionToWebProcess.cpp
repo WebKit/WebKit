@@ -231,101 +231,103 @@ void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader&
         m_networkProcess->addKeptAliveLoad(takenLoader.releaseNonNull());
 }
 
-void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
+    const auto messageReceiverName = message.messageReceiverName();
+
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
-    ASSERT_WITH_SECURITY_IMPLICATION(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+    ASSERT_WITH_SECURITY_IMPLICATION(messageReceiverName != Messages::NetworkProcess::messageReceiverName());
 
-    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
-        didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
+        didReceiveNetworkConnectionToWebProcessMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::NetworkBroadcastChannelRegistry::messageReceiverName()) {
+    if (messageReceiverName == Messages::NetworkBroadcastChannelRegistry::messageReceiverName()) {
         if (auto* networkSession = this->networkSession())
-            networkSession->broadcastChannelRegistry().didReceiveMessage(connection, decoder);
+            networkSession->broadcastChannelRegistry().didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
+    if (messageReceiverName == Messages::NetworkResourceLoader::messageReceiverName()) {
         RELEASE_ASSERT(RunLoop::isMain());
-        RELEASE_ASSERT(decoder.destinationID());
-        if (auto* loader = m_networkResourceLoaders.get(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
-            loader->didReceiveNetworkResourceLoaderMessage(connection, decoder);
+        RELEASE_ASSERT(message.destinationID);
+        if (auto* loader = m_networkResourceLoaders.get(AtomicObjectIdentifier<WebCore::ResourceLoader>(message.destinationID)))
+            loader->didReceiveNetworkResourceLoaderMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
-        if (auto* channel = m_networkSocketChannels.get(AtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
-            channel->didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkSocketChannel::messageReceiverName()) {
+        if (auto* channel = m_networkSocketChannels.get(AtomicObjectIdentifier<WebSocketIdentifierType>(message.destinationID)))
+            channel->didReceiveMessage(connection, message);
         return;
     }
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
+    if (messageReceiverName == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         NETWORK_PROCESS_MESSAGE_CHECK(m_networkProcess->builtInNotificationsEnabled());
         if (auto* networkSession = this->networkSession())
-            networkSession->notificationManager().didReceiveMessage(connection, decoder);
+            networkSession->notificationManager().didReceiveMessage(connection, message);
         return;
     }
 #endif
 #if USE(LIBWEBRTC)
-    if (decoder.messageReceiverName() == Messages::NetworkRTCMonitor::messageReceiverName()) {
-        rtcProvider().didReceiveNetworkRTCMonitorMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkRTCMonitor::messageReceiverName()) {
+        rtcProvider().didReceiveNetworkRTCMonitorMessage(connection, message);
         return;
     }
 #endif
 #if ENABLE(WEB_RTC)
-    if (decoder.messageReceiverName() == Messages::NetworkMDNSRegister::messageReceiverName()) {
-        mdnsRegister().didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkMDNSRegister::messageReceiverName()) {
+        mdnsRegister().didReceiveMessage(connection, message);
         return;
     }
 #endif
 
-    if (decoder.messageReceiverName() == Messages::NetworkTransportSession::messageReceiverName()) {
-        if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(decoder.destinationID())))
-            networkTransportSession->didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::NetworkTransportSession::messageReceiverName()) {
+        if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(message.destinationID)))
+            networkTransportSession->didReceiveMessage(connection, message);
         return;
     }
     
-    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
-            m_swConnection->didReceiveMessage(connection, decoder);
+            m_swConnection->didReceiveMessage(connection, message);
         return;
     }
-    if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSWServerToContextConnection::messageReceiverName()) {
         if (m_swContextConnection)
-            m_swContextConnection->didReceiveMessage(connection, decoder);
+            m_swContextConnection->didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::ServiceWorkerFetchTask::messageReceiverName()) {
+    if (messageReceiverName == Messages::ServiceWorkerFetchTask::messageReceiverName()) {
         if (m_swContextConnection)
-            m_swContextConnection->didReceiveFetchTaskMessage(connection, decoder);
+            m_swContextConnection->didReceiveFetchTaskMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::WebSharedWorkerServerConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSharedWorkerServerConnection::messageReceiverName()) {
         if (m_sharedWorkerConnection)
-            m_sharedWorkerConnection->didReceiveMessage(connection, decoder);
+            m_sharedWorkerConnection->didReceiveMessage(connection, message);
         return;
     }
-    if (decoder.messageReceiverName() == Messages::WebSharedWorkerServerToContextConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSharedWorkerServerToContextConnection::messageReceiverName()) {
         if (m_sharedWorkerContextConnection)
-            m_sharedWorkerContextConnection->didReceiveMessage(connection, decoder);
+            m_sharedWorkerContextConnection->didReceiveMessage(connection, message);
         return;
     }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
-        return paymentCoordinator().didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
+        return paymentCoordinator().didReceiveMessage(connection, message);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
-        m_ipcTester.didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveMessage(connection, message);
         return;
     }
 #endif
@@ -336,7 +338,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
 #endif
 
-    WTFLogAlways("Unhandled network process message '%s'", description(decoder.messageName()));
+    WTFLogAlways("Unhandled network process message '%s'", description(message.messageName()));
     ASSERT_NOT_REACHED();
 }
 
@@ -385,28 +387,30 @@ void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
 }
 #endif
 
-bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
+bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& reply)
 {
+    const auto messageReceiverName = message.messageReceiverName();
+
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
-    ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+    ASSERT(messageReceiverName != Messages::NetworkProcess::messageReceiverName());
 
-    if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName())
-        return didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
+    if (messageReceiverName == Messages::NetworkConnectionToWebProcess::messageReceiverName())
+        return didReceiveSyncNetworkConnectionToWebProcessMessage(connection, message, reply);
 
-    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
-            return m_swConnection->didReceiveSyncMessage(connection, decoder, reply);
+            return m_swConnection->didReceiveSyncMessage(connection, message, reply);
         return false;
     }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
-        return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
+    if (messageReceiverName == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
+        return paymentCoordinator().didReceiveSyncMessage(connection, message, reply);
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName())
-        return m_ipcTester.didReceiveSyncMessage(connection, decoder, reply);
+    if (messageReceiverName == Messages::IPCTester::messageReceiverName())
+        return m_ipcTester.didReceiveSyncMessage(connection, message, reply);
 #endif
 
     // Add new receiver name tests above this.
@@ -415,7 +419,7 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
         return true;
 #endif
 
-    WTFLogAlways("Unhandled network process message '%s'", description(decoder.messageName()));
+    WTFLogAlways("Unhandled network process message '%s'", description(message.messageName()));
     ASSERT_NOT_REACHED();
     return false;
 }

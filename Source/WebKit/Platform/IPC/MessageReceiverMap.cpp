@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MessageReceiverMap.h"
 
-#include "Decoder.h"
+#include "Message.h"
 #include "MessageReceiver.h"
 
 namespace IPC {
@@ -116,32 +116,34 @@ void MessageReceiverMap::invalidate()
     m_messageReceivers.clear();
 }
 
-bool MessageReceiverMap::dispatchMessage(Connection& connection, Decoder& decoder)
+bool MessageReceiverMap::dispatchMessage(Connection& connection, Message& message)
 {
-    if (auto messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
-        ASSERT(!decoder.destinationID());
+    const auto messageReceiverName = message.messageReceiverName();
+    if (auto messageReceiver = m_globalMessageReceivers.get(messageReceiverName)) {
+        ASSERT(!message.destinationID);
 
-        messageReceiver->didReceiveMessage(connection, decoder);
+        messageReceiver->didReceiveMessage(connection, message);
         return true;
     }
 
-    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
-        messageReceiver->didReceiveMessage(connection, decoder);
+    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(messageReceiverName, message.destinationID))) {
+        messageReceiver->didReceiveMessage(connection, message);
         return true;
     }
 
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
+bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Message& message, UniqueRef<Encoder>& replyEncoder)
 {
-    if (auto messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
-        ASSERT(!decoder.destinationID());
-        return messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
+    const auto messageReceiverName = message.messageReceiverName();
+    if (auto messageReceiver = m_globalMessageReceivers.get(messageReceiverName)) {
+        ASSERT(!message.destinationID);
+        return messageReceiver->didReceiveSyncMessage(connection, message, replyEncoder);
     }
 
-    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID())))
-        return messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
+    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(messageReceiverName, message.destinationID)))
+        return messageReceiver->didReceiveSyncMessage(connection, message, replyEncoder);
 
     return false;
 }

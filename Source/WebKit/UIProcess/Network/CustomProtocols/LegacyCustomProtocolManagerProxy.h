@@ -68,7 +68,7 @@ private:
     Ref<NetworkProcessProxy> protectedProcess();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     WeakRef<NetworkProcessProxy> m_networkProcessProxy;
 };

@@ -51,16 +51,16 @@ RemotePageDrawingAreaProxy::~RemotePageDrawingAreaProxy()
         m_drawingArea->removeRemotePageDrawingAreaProxy(*this);
 }
 
-void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
     if (m_drawingArea)
-        m_drawingArea->didReceiveMessage(connection, decoder);
+        m_drawingArea->didReceiveMessage(connection, message);
 }
 
-bool RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+bool RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder)
 {
     if (m_drawingArea)
-        return m_drawingArea->didReceiveSyncMessage(connection, decoder, encoder);
+        return m_drawingArea->didReceiveSyncMessage(connection, message, encoder);
     ASSERT_NOT_REACHED();
     return false;
 }

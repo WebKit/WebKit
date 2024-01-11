@@ -57,7 +57,7 @@ public:
 
     GPUProcessConnection& gpuProcessConnection();
 
-    void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceivePlayerMessage(IPC::Connection&, IPC::Message&);
 
     void deleteRemoteMediaPlayer(WebCore::MediaPlayerIdentifier);
 

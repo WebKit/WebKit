@@ -555,7 +555,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID) && decoder->decode(checkAssumedReadAccessToResourceURL)) {
             if (RefPtr page = WebProcessProxy::webPage(pageID)) {
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-                send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), decoder->destinationID());
+                send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), message.encoder->destinationID());
             }
         } else
             ASSERT_NOT_REACHED();
@@ -580,7 +580,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             if (RefPtr item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), parameters->sandboxExtensionHandle);
         }
-        send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), decoder->destinationID());
+        send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), message.encoder->destinationID());
         return false;
     }
     return true;
@@ -1056,32 +1056,32 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 }
 #endif
 
-void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (dispatchMessage(connection, decoder))
+    if (dispatchMessage(connection, message))
         return;
 
-    if (protectedProcessPool()->dispatchMessage(connection, decoder))
+    if (protectedProcessPool()->dispatchMessage(connection, message))
         return;
 
-    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
-        didReceiveWebProcessProxyMessage(connection, decoder);
+    if (message.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName()) {
+        didReceiveWebProcessProxyMessage(connection, message);
         return;
     }
 
     // FIXME: Add unhandled message logging.
 }
 
-bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    if (dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (dispatchSyncMessage(connection, message, replyEncoder))
         return true;
 
-    if (protectedProcessPool()->dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (protectedProcessPool()->dispatchSyncMessage(connection, message, replyEncoder))
         return true;
 
-    if (decoder.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
-        return didReceiveSyncWebProcessProxyMessage(connection, decoder, replyEncoder);
+    if (message.messageReceiverName() == Messages::WebProcessProxy::messageReceiverName())
+        return didReceiveSyncWebProcessProxyMessage(connection, message, replyEncoder);
 
     // FIXME: Add unhandled message logging.
     return false;

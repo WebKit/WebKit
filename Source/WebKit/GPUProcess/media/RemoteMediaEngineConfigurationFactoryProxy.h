@@ -41,12 +41,12 @@ public:
     RemoteMediaEngineConfigurationFactoryProxy();
     virtual ~RemoteMediaEngineConfigurationFactoryProxy();
 
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
 
 private:
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, CompletionHandler<void(WebCore::MediaCapabilitiesDecodingInfo&&)>&&);

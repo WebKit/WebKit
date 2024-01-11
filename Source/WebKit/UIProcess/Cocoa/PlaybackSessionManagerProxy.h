@@ -200,7 +200,7 @@ private:
     friend class VideoPresentationManagerProxy;
 
     explicit PlaybackSessionManagerProxy(WebPageProxy&);
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     typedef std::tuple<RefPtr<PlaybackSessionModelContext>, RefPtr<WebCore::PlatformPlaybackSessionInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);

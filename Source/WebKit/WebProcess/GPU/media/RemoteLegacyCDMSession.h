@@ -48,7 +48,7 @@ public:
     ~RemoteLegacyCDMSession();
 
     // MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     const RemoteLegacyCDMSessionIdentifier& identifier() const { return m_identifier; }
 

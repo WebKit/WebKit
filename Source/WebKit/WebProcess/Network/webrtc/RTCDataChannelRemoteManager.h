@@ -49,7 +49,7 @@ private:
     void initialize();
 
     // IPC::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void sendData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);

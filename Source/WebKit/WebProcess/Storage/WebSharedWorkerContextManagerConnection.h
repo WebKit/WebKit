@@ -56,7 +56,7 @@ public:
     void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent) final;
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier) final;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     // IPC Messages.

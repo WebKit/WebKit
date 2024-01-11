@@ -87,7 +87,7 @@ public:
     ~RemoteGraphicsContextGL() override;
     void stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection);
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 #if PLATFORM(MAC)
     void displayWasReconfigured();
 #endif

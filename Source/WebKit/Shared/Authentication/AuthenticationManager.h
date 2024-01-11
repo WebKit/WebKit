@@ -99,7 +99,7 @@ private:
 #endif
     
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     AuthenticationChallengeIdentifier addChallengeToChallengeMap(UniqueRef<Challenge>&&);
     bool shouldCoalesceChallenge(WebPageProxyIdentifier, AuthenticationChallengeIdentifier, const WebCore::AuthenticationChallenge&) const;

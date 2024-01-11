@@ -158,7 +158,7 @@ public:
 
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void setVP9VTBSupport(bool supportVP9VTB) { m_supportVP9VTB = supportVP9VTB; }
     bool supportVP9VTB() const { return m_supportVP9VTB; }

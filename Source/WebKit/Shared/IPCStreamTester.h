@@ -50,7 +50,7 @@ public:
     void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 private:
     IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
     ~IPCStreamTester();

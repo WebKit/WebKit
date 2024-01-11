@@ -42,13 +42,13 @@ public:
     RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteMediaSessionHelperProxy();
 
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
 
     void overridePresentingApplicationPIDIfNeeded();
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void startMonitoringWirelessRoutes();

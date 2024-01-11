@@ -5796,39 +5796,40 @@ bool WebPage::windowAndWebPageAreFocused() const
     return isVisible() && m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 
-void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
+    const auto messageReceiverName = message.messageReceiverName();
+    if (messageReceiverName == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())
-            inspector->didReceiveMessage(connection, decoder);
+            inspector->didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::WebInspectorUI::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebInspectorUI::messageReceiverName()) {
         if (WebInspectorUI* inspectorUI = this->inspectorUI())
-            inspectorUI->didReceiveMessage(connection, decoder);
+            inspectorUI->didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::RemoteWebInspectorUI::messageReceiverName()) {
+    if (messageReceiverName == Messages::RemoteWebInspectorUI::messageReceiverName()) {
         if (RemoteWebInspectorUI* remoteInspectorUI = this->remoteInspectorUI())
-            remoteInspectorUI->didReceiveMessage(connection, decoder);
+            remoteInspectorUI->didReceiveMessage(connection, message);
         return;
     }
 
 #if ENABLE(FULLSCREEN_API)
-    if (decoder.messageReceiverName() == Messages::WebFullScreenManager::messageReceiverName()) {
-        fullScreenManager()->didReceiveMessage(connection, decoder);
+    if (messageReceiverName == Messages::WebFullScreenManager::messageReceiverName()) {
+        fullScreenManager()->didReceiveMessage(connection, message);
         return;
     }
 #endif
 
-    didReceiveWebPageMessage(connection, decoder);
+    didReceiveWebPageMessage(connection, message);
 }
 
-bool WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    return didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncWebPageMessage(connection, message, replyEncoder);
 }
 
 #if ENABLE(ASYNC_SCROLLING)

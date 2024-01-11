@@ -161,21 +161,21 @@ void Encoder::reserve(size_t size)
 
 void Encoder::encodeHeader()
 {
-    *this << defaultMessageFlags;
     *this << m_messageName;
+    *this << defaultMessageFlags;
     *this << m_destinationID;
 }
 
 OptionSet<MessageFlags>& Encoder::messageFlags()
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
-    static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the third byte of the buffer for message flags.");
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer() + sizeof(m_messageName));
 }
 
 const OptionSet<MessageFlags>& Encoder::messageFlags() const
 {
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer() + sizeof(m_messageName));
 }
 
 uint8_t* Encoder::grow(size_t alignment, size_t size)

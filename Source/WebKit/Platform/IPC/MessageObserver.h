@@ -34,6 +34,7 @@ namespace IPC {
 
 class Decoder;
 class Encoder;
+struct Message;
 
 enum class SendOption : uint8_t;
 
@@ -41,7 +42,7 @@ class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
 public:
     virtual ~MessageObserver() = default;
     virtual void willSendMessage(const Encoder&, OptionSet<SendOption>) = 0;
-    virtual void didReceiveMessage(const Decoder&) = 0;
+    virtual void didReceiveMessage(const Message&) = 0;
 };
 
 }

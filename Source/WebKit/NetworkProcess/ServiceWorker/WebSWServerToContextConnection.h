@@ -64,12 +64,12 @@ public:
     IPC::Connection& ipcConnection() const;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void startFetch(ServiceWorkerFetchTask&);
     void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
 
-    void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Message&);
 
     void setThrottleState(bool isThrottleable);
     bool isThrottleable() const { return m_isThrottleable; }

@@ -46,7 +46,7 @@ private:
     RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceIdentifier&&, RemoteCDMInstanceConfiguration&&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&);

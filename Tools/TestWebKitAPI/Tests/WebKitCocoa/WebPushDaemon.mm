@@ -213,7 +213,7 @@ public:
 
 private:
     bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
-    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Message*)>&&) const final;
 
     OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&&) const;
 
@@ -253,7 +253,7 @@ bool WebPushXPCConnectionMessageSender::performSendWithoutUsingIPCConnection(Uni
     return true;
 }
 
-bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Message*)>&& completionHandler) const
 {
     auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
 
@@ -276,9 +276,20 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
         size_t dataSize { 0 };
         const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
         auto decoder = IPC::Decoder::create({ data, dataSize }, { });
-        ASSERT(decoder);
-
-        completionHandler(decoder.get());
+        if (!decoder)
+            return completionHandler(nullptr);
+        auto messageFlags = decoder->decode<OptionSet<IPC::MessageFlags>>();
+        if (!messageFlags)
+            return completionHandler(nullptr);
+        auto destinationID = decoder->decode<uint64_t>();
+        if (!destinationID)
+            return completionHandler(nullptr);
+        IPC::Message message {
+            makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+            *destinationID,
+            *messageFlags
+        };
+        completionHandler(&message);
     }).get());
 
     return true;

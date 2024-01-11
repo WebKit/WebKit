@@ -62,7 +62,7 @@ private:
     IPC::Connection& ensureConnection();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void configurationChanged(RemoteAudioSessionConfiguration&&);

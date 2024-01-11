@@ -94,7 +94,7 @@ public:
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     WebCore::MediaPlayerIdentifier identifier() const final { return m_id; }

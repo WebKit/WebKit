@@ -47,10 +47,10 @@ RemoteMediaRecorderManager::~RemoteMediaRecorderManager()
 {
 }
 
-void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto* recorder = m_recorders.get(ObjectIdentifier<MediaRecorderIdentifierType>(decoder.destinationID())))
-        recorder->didReceiveMessage(connection, decoder);
+    if (auto* recorder = m_recorders.get(ObjectIdentifier<MediaRecorderIdentifierType>(message.destinationID)))
+        recorder->didReceiveMessage(connection, message);
 }
 
 void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options, CompletionHandler<void(std::optional<ExceptionData>&&, String&&, unsigned, unsigned)>&& completionHandler)

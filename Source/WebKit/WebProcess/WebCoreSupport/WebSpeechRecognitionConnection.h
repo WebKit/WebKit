@@ -61,7 +61,7 @@ private:
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

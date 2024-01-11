@@ -133,7 +133,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void addProcessPool(WebProcessPool&);
     void removeProcessPool(WebProcessPool&);

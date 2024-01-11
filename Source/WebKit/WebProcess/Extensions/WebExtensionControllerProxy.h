@@ -74,7 +74,7 @@ private:
     explicit WebExtensionControllerProxy(const WebExtensionControllerParameters&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
 #if PLATFORM(COCOA)
     void load(const WebExtensionContextParameters&);

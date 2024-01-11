@@ -96,7 +96,7 @@ public:
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);

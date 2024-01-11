@@ -101,7 +101,7 @@ public:
 
     void invalidate();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void setUpPlaybackControlsManager(WebCore::HTMLMediaElement&);
     void clearPlaybackControlsManager();

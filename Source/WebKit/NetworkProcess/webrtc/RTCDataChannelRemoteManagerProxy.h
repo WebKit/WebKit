@@ -48,7 +48,7 @@ private:
     RTCDataChannelRemoteManagerProxy();
 
     // IPC::WorkQueueMessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // To source
     void sendData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);

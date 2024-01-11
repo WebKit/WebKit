@@ -162,13 +162,13 @@ std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObje
 }
 
 template<typename T>
-static std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
+static std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* globalObject, IPC::Message& message)
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     auto* array = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
     T* dummyArguments = nullptr;
-    return putJSValueForDecodeArgumentInArray<>(globalObject, decoder, array, 0, dummyArguments);
+    return putJSValueForDecodeArgumentInArray<>(globalObject, message.decoder, array, 0, dummyArguments);
 }
 
 // The bindings implementation will call the function templates below to decode a message.
@@ -180,9 +180,9 @@ static std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObjec
 // to know all the message argument types, and need to be recompiled only when the message itself
 // changes.
 template<MessageName>
-std::optional<JSC::JSValue> jsValueForDecodedMessage(JSC::JSGlobalObject*, IPC::Decoder&);
+std::optional<JSC::JSValue> jsValueForDecodedMessage(JSC::JSGlobalObject*, IPC::Message&);
 template<MessageName>
-std::optional<JSC::JSValue> jsValueForDecodedMessageReply(JSC::JSGlobalObject*, IPC::Decoder&);
+std::optional<JSC::JSValue> jsValueForDecodedMessageReply(JSC::JSGlobalObject*, IPC::Message&);
 
 }
 

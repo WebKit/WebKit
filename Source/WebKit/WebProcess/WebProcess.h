@@ -590,12 +590,12 @@ private:
 
     // IPC::Connection::Client
     friend class WebConnectionToUIProcess;
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) final;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
-    void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveWebProcessMessage(IPC::Connection&, IPC::Message&);
 
 #if PLATFORM(MAC)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);

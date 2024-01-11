@@ -37,6 +37,7 @@ enum class SendOption : uint8_t;
 enum class SendSyncOption : uint8_t;
 struct AsyncReplyIDType;
 struct ConnectionAsyncReplyHandler;
+struct Message;
 template<typename> struct ConnectionSendSyncResult;
 using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
@@ -74,7 +75,7 @@ public:
     virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) const;
 
     template<typename T, typename C> inline bool sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler) const;
-    virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>&&) const;
+    virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Message*)>&&) const;
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);
 

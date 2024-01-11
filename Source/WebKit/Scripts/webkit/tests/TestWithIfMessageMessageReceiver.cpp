@@ -28,8 +28,8 @@
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #include "ArgumentCoders.h" // NOLINT
 #endif
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithIfMessageMessages.h" // NOLINT
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #include <wtf/text/WTFString.h> // NOLINT
@@ -41,24 +41,24 @@
 
 namespace WebKit {
 
-void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+    if (message.messageName() == Messages::TestWithIfMessage::LoadURL::name())
+        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, WTFMove(message), this, &TestWithIfMessage::loadURL);
 #endif
 #if PLATFORM(GTK)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
+    if (message.messageName() == Messages::TestWithIfMessage::LoadURL::name())
+        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, WTFMove(message), this, &TestWithIfMessage::loadURL);
 #endif
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -68,15 +68,15 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 namespace IPC {
 
 #if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, message);
 }
 #endif
 #if PLATFORM(GTK)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, message);
 }
 #endif
 

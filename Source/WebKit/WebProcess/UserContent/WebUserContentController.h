@@ -89,7 +89,7 @@ private:
 #endif
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void removeContentWorlds(const Vector<ContentWorldIdentifier>&);
 

@@ -154,7 +154,7 @@ private:
     }
 
     void startListeningForIPC();
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     SharedVideoFrameReader& sharedVideoFrameReader();
