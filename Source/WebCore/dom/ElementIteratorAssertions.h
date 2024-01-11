@@ -38,7 +38,7 @@ public:
     void clear();
 
 private:
-    CheckedPtr<const Document> m_document;
+    WeakPtr<const Document, WeakPtrImplWithEventTargetData> m_document;
     uint64_t m_initialDOMTreeVersion;
     std::optional<ScriptDisallowedScope> m_eventDispatchAssertion;
 };
