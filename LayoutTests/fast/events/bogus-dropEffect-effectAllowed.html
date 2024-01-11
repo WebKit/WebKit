@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <style>
 #dropTarget, #dragMe { text-align: center; display: table-cell; vertical-align: middle }
 #dropTarget {width: 256px; height: 256px; border: 1px dashed}
@@ -13,34 +14,34 @@
     var dropEffectElem;
     var consoleElm;
     var event;
-    
+
     window.onload = function()
     {
         dragMe = document.getElementById("dragMe");
         dropTarget = document.getElementById("dropTarget");
         consoleElm = document.getElementById("console");
-        
+
         if (!dragMe || !dropTarget || !consoleElm)
             return;
-        
+
         dragMe.ondragstart = dragStart;
         dragMe.ondragend = dragEnd;
-        
+
         dropTarget.ondragenter = dragEntered;
         dropTarget.ondragover = dragOver;
         dropTarget.ondrop = drop;
-        
+
         runTest();
     }
-    
+
     function dragStart(e)
     {
         var validEffectAllowedList = ["all", "copy", "copyLink", "copyMove", "link", "linkMove", "move", "none", "uninitialized"];
         var effectAllowedListToTest = ["all", "copy", "bogus", "copyLink", "wrong", "copyMove", "linkCopyMove", "link",
-            "linkMove", "move", "none", "uninitialized", "dummy", "bogus", "fake", "illegal"];
-        
+            "linkMove", "move", "none", "uninitialized", "dummy", "bogus", "fake", "illegal", null, undefined , ""];
+
         event = e;
-        
+
         for (var i = 0; i < effectAllowedListToTest.length; i++) {
             var effectAllowedBefore = e.dataTransfer.effectAllowed;
             e.dataTransfer.effectAllowed = effectAllowedListToTest[i];
@@ -49,33 +50,33 @@
             else
                 shouldBeEqualToString("event.dataTransfer.effectAllowed", effectAllowedBefore);
         }
-        
+
         e.dataTransfer.setData('Text', e.target.textContent);
     }
-    
+
     function dragEnd(e)
     {
         return;
     }
-    
+
     function dragEntered(e)
     {
         dragEnteredAndUpdated(e);
     }
-    
+
     function dragOver(e)
     {
         dragEnteredAndUpdated(e);
     }
-    
+
     function dragEnteredAndUpdated(e)
     {
         var validDropEffectList = ["none", "copy", "link", "move", "link"];
         var dropEffectListToTest = ["all", "copy", "bogus", "copyLink", "wrong", "copyMove", "linkCopyMove", "link",
-            "linkMove", "move", "none", "uninitialized", "dummy", "bogus", "fake", "illegal"];
-        
+            "linkMove", "move", "none", "uninitialized", "dummy", "bogus", "fake", "illegal", null, undefined , ""];
+
         event = e;
-        
+
         for (var i = 0; i < dropEffectListToTest.length; i++) {
             var dropEffectBefore = e.dataTransfer.dropEffect;
             e.dataTransfer.dropEffect = dropEffectListToTest[i];
@@ -89,12 +90,12 @@
 
         cancelDrag(e);
     }
-    
+
     function drop(e)
     {
         cancelDrag(e);
     }
-    
+
     function cancelDrag(e)
     {
         e.preventDefault();
@@ -104,15 +105,15 @@
     {
         if (!window.eventSender)
             return;
-            
+
         if (window.testRunner)
             testRunner.dumpAsText();
-            
+
         var startX = dragMe.offsetLeft + 10;
         var startY = dragMe.offsetTop + dragMe.offsetHeight / 2;
         var endX = dropTarget.offsetLeft + 10;
         var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2;
-        
+
         eventSender.mouseMoveTo(startX, startY);
         eventSender.mouseDown();
         eventSender.leapForward(100);
