@@ -26,6 +26,7 @@
 #pragma once
 
 #import "Color.h"
+#import "TextAttachmentForSerialization.h"
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
@@ -120,11 +121,12 @@ struct WEBCORE_EXPORT AttributedString {
             Vector<double>,
             ParagraphStyleWithTableAndListIDs,
             RetainPtr<NSPresentationIntent>,
-            RetainPtr<NSTextAttachment>,
             RetainPtr<NSShadow>,
             RetainPtr<NSDate>,
             ColorFromCGColor,
-            ColorFromPlatformColor
+            ColorFromPlatformColor,
+            TextAttachmentFileWrapper,
+            TextAttachmentMissingImage
         > value;
     };
 

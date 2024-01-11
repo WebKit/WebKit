@@ -7214,6 +7214,21 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Submenu,
 };
 
+#if PLATFORM(COCOA)
+header: <WebCore/TextAttachmentForSerialization.h>
+[CustomHeader] struct WebCore::TextAttachmentMissingImage {
+}
+
+[CustomHeader] struct WebCore::TextAttachmentFileWrapper {
+#if !PLATFORM(IOS_FAMILY)
+    bool ignoresOrientation;
+#endif
+    String preferredFilename;
+    RetainPtr<CFDataRef> data;
+    String accessibilityLabel;
+}
+#endif
+
 [Nested] enum class WebCore::PopupMenuStyle::Size : uint8_t {
     Normal,
     Small,

@@ -196,6 +196,7 @@ editing/cocoa/HTMLConverter.mm @no-unify
 editing/cocoa/WebArchiveResourceFromNSAttributedString.mm
 editing/cocoa/WebArchiveResourceWebResourceHandler.mm
 editing/cocoa/WebContentReaderCocoa.mm
+editing/cocoa/WebCoreTextAttachment.mm
 editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm
 editing/mac/DictionaryLookupLegacy.mm
