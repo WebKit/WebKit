@@ -33,6 +33,7 @@
 #include "RemoteAudioSessionProxy.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/CoreAudioCaptureSource.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <wtf/HashCountedSet.h>
 
 namespace WebKit {
@@ -194,6 +195,11 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
 
 void RemoteAudioSessionProxyManager::updatePresentingProcesses()
 {
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled())
+        return;
+#endif
+
     Vector<audit_token_t> presentingProcesses;
 
     if (auto token = m_gpuProcess.parentProcessConnection()->getAuditToken())
