@@ -1334,9 +1334,9 @@ CONSTANT_FUNCTION(Reflect)
 
     const auto& reflect = [&]<typename T>() -> ConstantResult {
         CALL(dot, Dot, elementType, { e2, e1 });
-        CALL(prod, Multiply, resultType, { dot, e2 });
-        CALL(doubleResult, Multiply, resultType, { static_cast<T>(2), e2 });
-        return constantMinus(resultType, { e1, doubleResult });
+        CALL(doubleResult, Multiply, resultType, { static_cast<T>(2), dot });
+        CALL(prod, Multiply, resultType, { doubleResult, e2 });
+        return constantMinus(resultType, { e1, prod });
     };
 
     if (primitive.kind == Types::Primitive::F32)
