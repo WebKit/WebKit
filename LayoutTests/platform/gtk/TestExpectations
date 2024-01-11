@@ -2677,3 +2677,5 @@ webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/
 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Crash ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-nested-clip-path.svg [ Failure ]
+
+fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
