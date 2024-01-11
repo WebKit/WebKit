@@ -58,9 +58,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
-  default: 'Test262Error: Expected SameValue(«�», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
   default: 'Test262Error: Expected a CustomError but got a Test262Error'
   strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
@@ -79,15 +76,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
 test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
-  default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'
-test/built-ins/RegExp/prototype/Symbol.split/u-lastindex-adv-thru-failure.js:
-  default: 'Test262Error: Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«2», «1») to be true'
-test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
-  default: 'Test262Error: Expected SameValue(«�», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
@@ -1134,9 +1122,6 @@ test/language/import/import-assertions/json-value-string.js:
   module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
 test/language/import/import-assertions/json-via-namespace.js:
   module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/literals/regexp/u-astral-char-class-invert.js:
-  default: 'Test262Error: Expected SameValue(«�», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/language/module-code/import-assertions/eval-gtbndng-indirect-faux-assertion.js:
   raw: "SyntaxError: Unexpected token '*'. import call expects one or two arguments."
 test/language/module-code/import-assertions/import-assertion-empty.js:
