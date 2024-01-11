@@ -3959,13 +3959,12 @@ public:
         Location resultLocation = allocate(result);
         emitMove(allocationResult, resultLocation);
 
-        // It's sufficient to check if the first arg is a reftype as they all are or none are.
-        if (args.size() > 0 && (args[0].type() == TypeKind::Ref || args[0].type() == TypeKind::RefNull))
-            emitWriteBarrier(resultLocation.asGPR());
-
         // If args.isEmpty() then allocationResult.asTemp() == result.asTemp() so we will consume our result.
-        if (args.size())
+        if (args.size()) {
             consume(allocationResult);
+            if (isRefType(getArrayElementType(typeIndex).unpacked()))
+                emitWriteBarrier(resultLocation.asGPR());
+        }
 
         LOG_INSTRUCTION("ArrayNewFixed", typeIndex, args.size(), RESULT(result));
         return { };
@@ -4124,7 +4123,7 @@ public:
 
         emitArraySetUnchecked(typeIndex, arrayref, index, value);
 
-        if (value.type() == TypeKind::Ref || value.type() == TypeKind::RefNull)
+        if (isRefType(getArrayElementType(typeIndex).unpacked()))
             emitWriteBarrier(arrayLocation.asGPR());
         consume(arrayref);
 
