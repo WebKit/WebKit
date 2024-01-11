@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> subtree, Vector<RetainPtr<CGPDFObjectRef>>& values)
+static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> subtree, Vector<CGPDFObjectRef>& values)
 {
     CGPDFArrayRef names = nullptr;
     if (CGPDFDictionaryGetArray(subtree.get(), "Names", &names)) {
@@ -80,12 +80,12 @@ static void getAllScriptsInPDFDocument(RetainPtr<CGPDFDocumentRef> pdfDocument, 
         return;
 
     // The names are arbitrary. We are only interested in the values.
-    Vector<RetainPtr<CGPDFObjectRef>> objects;
+    Vector<CGPDFObjectRef> objects;
     appendValuesInPDFNameSubtreeToVector(javaScriptNameTree, objects);
 
     for (auto object : objects) {
         CGPDFDictionaryRef javaScriptAction = nullptr;
-        if (!CGPDFObjectGetValue(object.get(), kCGPDFObjectTypeDictionary, &javaScriptAction))
+        if (!CGPDFObjectGetValue(object, kCGPDFObjectTypeDictionary, &javaScriptAction))
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".
