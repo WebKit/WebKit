@@ -26,8 +26,15 @@
 PRODUCT_NAME = com.apple.WebKit.Networking;
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
 
-INFOPLIST_FILE[sdk=embedded*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist;
+INFOPLIST_FILE_EMBEDDED = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist;
+INFOPLIST_FILE[sdk=embedded*] = $(INFOPLIST_FILE_EMBEDDED);
 INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist;
+INFOPLIST_FILE[sdk=iphone*] = ;
+INFOPLIST_FILE[sdk=iphone*17.0*] = $(INFOPLIST_FILE_EMBEDDED);
+INFOPLIST_FILE[sdk=iphone*17.1*] = $(INFOPLIST_FILE_EMBEDDED);
+INFOPLIST_FILE[sdk=iphone*17.2*] = $(INFOPLIST_FILE_EMBEDDED);
+INFOPLIST_FILE[sdk=iphone*17.3*] = $(INFOPLIST_FILE_EMBEDDED);
+INFOPLIST_FILE[sdk=iphone*18.0*] = $(INFOPLIST_FILE_EMBEDDED);
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS);
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(SOURCE_VERSION_LDFLAGS);

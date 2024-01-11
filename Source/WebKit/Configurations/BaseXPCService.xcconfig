@@ -36,18 +36,27 @@ APP_ICON_Debug = WebKit.icns;
 APP_ICON_Release = WebKit.icns;
 APP_ICON_Production = ;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(CONFIGURATION)) *.xib MediaFormatReader.bundle;
+EXCLUDED_EMBEDDED = $(EXCLUDED_SOURCE_FILE_NAMES_$(CONFIGURATION)) *.xib MediaFormatReader.bundle
+EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = $(EXCLUDED_EMBEDDED);
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macos*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(CONFIGURATION)) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_Production = WebKit.icns;
 EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *.xib;
 
-// Disable install on platform that are launching WebKit processes as extensions.
-SKIP_INSTALL[sdk=iphone*] = YES;
-SKIP_INSTALL[sdk=iphone*17.0*] = NO;
-SKIP_INSTALL[sdk=iphone*17.1*] = NO;
-SKIP_INSTALL[sdk=iphone*17.2*] = NO;
-SKIP_INSTALL[sdk=iphone*17.3*] = NO;
-SKIP_INSTALL[sdk=iphone*18.0*] = NO;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*17.0*] = $(EXCLUDED_EMBEDDED);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*17.1*] = $(EXCLUDED_EMBEDDED);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*17.2*] = $(EXCLUDED_EMBEDDED);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*17.3*] = $(EXCLUDED_EMBEDDED);
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*18.0*] = $(EXCLUDED_EMBEDDED);
+
+// Disable code signing on platform that are launching WebKit processes as extensions, since the bundle will be empty, then.
+CS_IDENTITY = $(CODE_SIGN_IDENTITY);
+CODE_SIGN_IDENTITY[sdk=iphone*] = ;
+CODE_SIGN_IDENTITY[sdk=iphone*17.0*] = $(CS_IDENTITY);
+CODE_SIGN_IDENTITY[sdk=iphone*17.1*] = $(CS_IDENTITY);
+CODE_SIGN_IDENTITY[sdk=iphone*17.2*] = $(CS_IDENTITY);
+CODE_SIGN_IDENTITY[sdk=iphone*17.3*] = $(CS_IDENTITY);
+CODE_SIGN_IDENTITY[sdk=iphone*18.0*] = $(CS_IDENTITY);
 
 WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS = -Xlinker -no_inits;
 WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(WK_ANY_SANITIZER_ENABLED)_$(ENABLE_LLVM_PROFILE_GENERATION));
