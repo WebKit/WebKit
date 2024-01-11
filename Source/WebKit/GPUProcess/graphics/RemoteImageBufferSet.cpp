@@ -216,7 +216,7 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
 
         // If the copy-forward touched pixels that are about to be painted, then they
         // won't be 'clear' any more.
-        if (copyRect.intersects(scaledRect))
+        if (copyRect.intersects(enclosingIntRect(scaledRect)))
             m_frontBufferIsCleared = false;
     }
 
