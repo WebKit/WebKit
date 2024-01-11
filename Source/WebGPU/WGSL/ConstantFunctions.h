@@ -1217,13 +1217,34 @@ UNARY_OPERATION(InverseSqrt, Float, [&]<typename T>(T arg) -> T {
 CONSTANT_FUNCTION(Ldexp)
 {
     UNUSED_PARAM(resultType);
-    return scalarOrVector([&](const auto& e1, auto& e2) -> ConstantValue {
-        if (auto* abstractE2 = std::get_if<int64_t>(&e2))
-            return std::get<double>(e1) * std::pow(2.0, static_cast<double>(*abstractE2));
-        if (auto* f32E1 = std::get_if<float>(&e1))
-            return *f32E1 * std::pow(2.f, static_cast<float>(std::get<int32_t>(e2)));
-        if (auto* f16E1 = std::get_if<half>(&e1))
-            return static_cast<half>(*f16E1 * std::pow(2.f, static_cast<float>(std::get<int32_t>(e2))));
+    return scalarOrVector([&](const auto& e1, auto& e2) -> ConstantResult {
+        if (auto* abstractE1 = std::get_if<double>(&e1)) {
+            auto abstractE2 = std::get<int64_t>(e2);
+            constexpr int64_t bias = 1023;
+            if (abstractE2 + bias <= 0)
+                return { static_cast<double>(0) };
+            if (abstractE2 > bias + 1)
+                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+            return { std::ldexp(*abstractE1, abstractE2) };
+        }
+
+        auto i32E2 = std::get<int32_t>(e2);
+        if (auto* f32E1 = std::get_if<float>(&e1)) {
+            constexpr int32_t bias = 127;
+            if (i32E2 + bias <= 0)
+                return { static_cast<float>(0) };
+            if (i32E2 > bias + 1)
+                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+            return { std::ldexp(*f32E1, i32E2) };
+        }
+        if (auto* f16E1 = std::get_if<half>(&e1)) {
+            constexpr int32_t bias = 15;
+            if (i32E2 + bias <= 0)
+                return { static_cast<half>(0) };
+            if (i32E2 > bias + 1)
+                return makeUnexpected(makeString("e2 must be less than or equal to ", String::number(bias + 1)));
+            return { static_cast<half>(std::ldexp(*f16E1, i32E2)) };
+        }
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
