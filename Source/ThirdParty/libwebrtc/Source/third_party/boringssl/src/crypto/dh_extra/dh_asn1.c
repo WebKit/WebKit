@@ -110,10 +110,6 @@ DH *DH_parse_parameters(CBS *cbs) {
     goto err;
   }
 
-  if (!dh_check_params_fast(ret)) {
-    goto err;
-  }
-
   return ret;
 
 err:

@@ -6,7 +6,6 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
-%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -112,7 +111,7 @@ $L$poly_fast_tls_ad:
 	adc	r11,r9
 	adc	r12,0
 
-	ret
+	DB	0F3h,0C3h		;repret
 $L$hash_ad_loop:
 
 	cmp	r8,16
@@ -221,7 +220,7 @@ $L$hash_ad_tail_loop:
 
 
 $L$hash_ad_done:
-	ret
+	DB	0F3h,0C3h		;repret
 
 
 
@@ -242,7 +241,6 @@ $L$SEH_begin_chacha20_poly1305_open:
 
 
 
-_CET_ENDBR
 	push	rbp
 
 	push	rbx
@@ -1891,7 +1889,7 @@ $L$open_sse_finalize:
 
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$open_sse_128:
 
@@ -2149,7 +2147,6 @@ $L$SEH_begin_chacha20_poly1305_seal:
 
 
 
-_CET_ENDBR
 	push	rbp
 
 	push	rbx
@@ -3978,7 +3975,7 @@ $L$do_length_block:
 
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$seal_sse_128:
 

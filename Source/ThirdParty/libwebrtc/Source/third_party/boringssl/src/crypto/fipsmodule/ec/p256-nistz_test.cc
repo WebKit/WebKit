@@ -109,10 +109,13 @@ TEST(P256_NistzTest, BEEU) {
   }
 #endif
 
-  const EC_GROUP *group = EC_group_p256();
+  bssl::UniquePtr<EC_GROUP> group(
+      EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1));
+  ASSERT_TRUE(group);
+
   BN_ULONG order_words[P256_LIMBS];
   ASSERT_TRUE(
-      bn_copy_words(order_words, P256_LIMBS, EC_GROUP_get0_order(group)));
+      bn_copy_words(order_words, P256_LIMBS, EC_GROUP_get0_order(group.get())));
 
   BN_ULONG in[P256_LIMBS], out[P256_LIMBS];
   EC_SCALAR in_scalar, out_scalar, result;
@@ -151,9 +154,9 @@ TEST(P256_NistzTest, BEEU) {
     // Calculate out*in and confirm that it equals one, modulo the order.
     OPENSSL_memcpy(in_scalar.words, in, sizeof(in));
     OPENSSL_memcpy(out_scalar.words, out, sizeof(out));
-    ec_scalar_to_montgomery(group, &in_scalar, &in_scalar);
-    ec_scalar_to_montgomery(group, &out_scalar, &out_scalar);
-    ec_scalar_mul_montgomery(group, &result, &in_scalar, &out_scalar);
+    ec_scalar_to_montgomery(group.get(), &in_scalar, &in_scalar);
+    ec_scalar_to_montgomery(group.get(), &out_scalar, &out_scalar);
+    ec_scalar_mul_montgomery(group.get(), &result, &in_scalar, &out_scalar);
 
     EXPECT_EQ(0, OPENSSL_memcmp(kOneMont, &result, sizeof(kOneMont)));
 
@@ -194,7 +197,7 @@ static std::string FieldElementToString(const BN_ULONG a[P256_LIMBS]) {
   std::string ret;
   for (size_t i = P256_LIMBS-1; i < P256_LIMBS; i--) {
     char buf[2 * BN_BYTES + 1];
-    snprintf(buf, sizeof(buf), BN_HEX_FMT2, a[i]);
+    BIO_snprintf(buf, sizeof(buf), BN_HEX_FMT2, a[i]);
     ret += buf;
   }
   return ret;

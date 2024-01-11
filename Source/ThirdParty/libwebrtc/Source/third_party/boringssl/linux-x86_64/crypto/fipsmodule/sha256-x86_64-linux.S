@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 
 .extern	OPENSSL_ia32cap_P
@@ -14,7 +21,6 @@
 .align	16
 sha256_block_data_order:
 .cfi_startproc	
-_CET_ENDBR
 	leaq	OPENSSL_ia32cap_P(%rip),%r11
 	movl	0(%r11),%r9d
 	movl	4(%r11),%r10d
@@ -1731,7 +1737,7 @@ _CET_ENDBR
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue:
-	ret
+	.byte	0xf3,0xc3
 .cfi_endproc	
 .size	sha256_block_data_order,.-sha256_block_data_order
 .section	.rodata
@@ -1985,7 +1991,7 @@ sha256_block_data_order_shaext:
 
 	movdqu	%xmm1,(%rdi)
 	movdqu	%xmm2,16(%rdi)
-	ret
+	.byte	0xf3,0xc3
 .cfi_endproc	
 .size	sha256_block_data_order_shaext,.-sha256_block_data_order_shaext
 .type	sha256_block_data_order_ssse3,@function
@@ -3098,7 +3104,7 @@ sha256_block_data_order_ssse3:
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_ssse3:
-	ret
+	.byte	0xf3,0xc3
 .cfi_endproc	
 .size	sha256_block_data_order_ssse3,.-sha256_block_data_order_ssse3
 .type	sha256_block_data_order_avx,@function
@@ -4173,7 +4179,11 @@ sha256_block_data_order_avx:
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_avx:
-	ret
+	.byte	0xf3,0xc3
 .cfi_endproc	
 .size	sha256_block_data_order_avx,.-sha256_block_data_order_avx
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif
