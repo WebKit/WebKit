@@ -1616,7 +1616,7 @@ CONSTANT_FUNCTION(Unpack2x16unorm)
 {
     UNUSED_PARAM(resultType);
     auto argument = std::get<uint32_t>(arguments[0]);
-    auto packed = bitwise_cast<std::array<int16_t, 2>>(argument);
+    auto packed = bitwise_cast<std::array<uint16_t, 2>>(argument);
     ConstantVector result(2);
     for (unsigned i = 0; i < 2; ++i) {
         auto e = static_cast<float>(packed[i]);
