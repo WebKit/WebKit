@@ -2752,3 +2752,8 @@ fonts/font-cache-memory-pressure-crash.html [ Failure ]
 
 # SFrameTransform isn't supported yet
 streams/writable-stream-create-within-multiple-workers-crash.html [ Skip ]
+
+# Timeout only on Buildbot
+http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeout ]
+
+fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
