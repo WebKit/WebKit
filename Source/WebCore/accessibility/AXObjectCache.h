@@ -35,7 +35,6 @@
 #include "Timer.h"
 #include "VisibleUnits.h"
 #include <limits.h>
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -654,7 +653,7 @@ private:
     // Object creation.
     Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
