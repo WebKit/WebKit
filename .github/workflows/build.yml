@@ -17,42 +17,42 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: macos-12
+          - runner: macos-12-large
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64-debug
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Debug
-          - runner: macOS-arm64
+          - runner: macos-13-xlarge
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64-debug
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
-          - runner: macos-12
+          - runner: macos-12-large
             lto_flag: -flto='full'
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macos-12
+          - runner: macos-12-large
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macOS-arm64
+          - runner: macos-13-xlarge
             lto_flag: -flto='full'
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macOS-arm64
+          - runner: macos-13-xlarge
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64
