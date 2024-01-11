@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,10 @@ namespace WebCore {
 
 struct FullscreenOptions {
     enum class NavigationUI : uint8_t { Auto, Show, Hide };
+    enum class KeyboardLock : uint8_t { None, Browser, System };
 
     NavigationUI navigationUI { NavigationUI::Auto };
+    KeyboardLock keyboardLock { KeyboardLock::None };
 };
 
 } // namespace WebCore

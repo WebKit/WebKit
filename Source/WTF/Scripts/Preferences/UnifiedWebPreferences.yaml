@@ -2817,6 +2817,21 @@ FullScreenEnabled:
     WebCore:
       default: false
 
+FullScreenKeyboardLock:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Fullscreen API based Keyboard Lock"
+  humanReadableDescription: "Fullscreen API based Keyboard Lock"
+  condition: ENABLE(FULLSCREEN_API)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FullscreenRequirementForScreenOrientationLockingEnabled:
   type: bool
   status: embedder
