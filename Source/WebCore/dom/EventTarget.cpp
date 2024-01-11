@@ -114,9 +114,6 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (listenerCreatedFromScript)
         InspectorInstrumentation::didAddEventListener(*this, eventType, listener.get(), options.capture);
 
-    if (typeInfo.isInCategory(EventCategory::Wheel))
-        invalidateEventListenerRegions();
-
     eventListenersDidChange();
     return true;
 }
@@ -158,9 +155,6 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
     InspectorInstrumentation::willRemoveEventListener(*this, eventType, listener, options.capture);
 
     if (data->eventListenerMap.remove(eventType, listener, options.capture)) {
-        if (eventNames().typeInfoForEvent(eventType).isInCategory(EventCategory::Wheel))
-            invalidateEventListenerRegions();
-
         eventListenersDidChange();
         return true;
     }
@@ -404,35 +398,11 @@ void EventTarget::removeAllEventListeners()
 
     auto* data = eventTargetData();
     if (data && !data->eventListenerMap.isEmpty()) {
-        auto& eventNames = WebCore::eventNames();
-        if (data->eventListenerMap.contains(eventNames.wheelEvent) || data->eventListenerMap.contains(eventNames.mousewheelEvent))
-            invalidateEventListenerRegions();
-
         data->eventListenerMap.clear();
         eventListenersDidChange();
     }
 
     threadData.setIsInRemoveAllEventListeners(false);
-}
-
-void EventTarget::invalidateEventListenerRegions()
-{
-    if (auto* element = dynamicDowncast<Element>(*this)) {
-        element->invalidateEventListenerRegions();
-        return;
-    }
-
-    // Unable the protect the document as it may have started destruction.
-    auto* document = [&]() -> Document* {
-        if (auto* document = dynamicDowncast<Document>(*this))
-            return document;
-        if (auto* window = dynamicDowncast<LocalDOMWindow>(*this))
-            return window->document();
-        return nullptr;
-    }();
-
-    if (document)
-        document->invalidateEventListenerRegions();
 }
 
 } // namespace WebCore

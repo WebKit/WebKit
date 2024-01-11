@@ -2934,6 +2934,7 @@ void Document::removeAllEventListeners()
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
+    // FIXME: What about disconnected nodes.
     for (RefPtr node = firstChild(); node; node = NodeTraversal::next(*node))
         node->removeAllEventListeners();
 
@@ -2941,6 +2942,7 @@ void Document::removeAllEventListeners()
     m_touchEventTargets = nullptr;
 #endif
     m_wheelEventTargets = nullptr;
+    invalidateEventListenerRegions();
 }
 
 void Document::suspendDeviceMotionAndOrientationUpdates()

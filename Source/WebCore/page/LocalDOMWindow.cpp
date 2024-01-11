@@ -2064,9 +2064,10 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
     if (document) {
         document->didAddEventListenersOfType(eventType);
-        if (typeInfo.isInCategory(EventCategory::Wheel))
+        if (typeInfo.isInCategory(EventCategory::Wheel)) {
             document->didAddWheelEventHandler(*document);
-        else if (isTouchRelatedEventType(typeInfo, *document))
+            document->invalidateEventListenerRegions();
+        } else if (isTouchRelatedEventType(typeInfo, *document))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames.storageEvent)
             didAddStorageEventListener(*this);
@@ -2319,9 +2320,10 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
     if (document) {
         document->didRemoveEventListenersOfType(eventType);
-        if (typeInfo.isInCategory(EventCategory::Wheel))
+        if (typeInfo.isInCategory(EventCategory::Wheel)) {
             document->didRemoveWheelEventHandler(*document);
-        else if (isTouchRelatedEventType(typeInfo, *document))
+            document->invalidateEventListenerRegions();
+        } else if (isTouchRelatedEventType(typeInfo, *document))
             document->didRemoveTouchEventHandler(*document);
     }
 

@@ -224,7 +224,6 @@ private:
     virtual void derefEventTarget() = 0;
 
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
-    void invalidateEventListenerRegions();
 };
 
 inline bool EventTarget::hasEventListeners() const

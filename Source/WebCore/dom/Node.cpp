@@ -2296,32 +2296,34 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
 
-    targetNode->document().didAddEventListenersOfType(eventType);
+    Ref document = targetNode->document();
+    document->didAddEventListenersOfType(eventType);
 
     auto& eventNames = WebCore::eventNames();
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
-    if (typeInfo.isInCategory(EventCategory::Wheel))
-        targetNode->document().didAddWheelEventHandler(*targetNode);
-    else if (isTouchRelatedEventType(typeInfo, *targetNode))
-        targetNode->document().didAddTouchEventHandler(*targetNode);
+    if (typeInfo.isInCategory(EventCategory::Wheel)) {
+        document->didAddWheelEventHandler(*targetNode);
+        document->invalidateEventListenerRegions();
+    } else if (isTouchRelatedEventType(typeInfo, *targetNode))
+        document->didAddTouchEventHandler(*targetNode);
     else if (typeInfo.isInCategory(EventCategory::MouseClickRelated))
-        targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
+        document->didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && typeInfo.type() == EventType::scroll) {
-        if (auto* window = targetNode->document().domWindow())
+    if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
+        if (auto* window = document->domWindow())
             window->incrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
     if (isTouchRelatedEventType(typeInfo, *targetNode))
-        targetNode->document().addTouchEventListener(*targetNode);
+        document->addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (typeInfo.isInCategory(EventCategory::Gesture))
-        targetNode->document().addTouchEventHandler(*targetNode);
+        document->addTouchEventHandler(*targetNode);
 #endif
 
     return true;
@@ -2337,34 +2339,36 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
         return false;
 
-    targetNode->document().didRemoveEventListenersOfType(eventType);
+    Ref document = targetNode->document();
+    document->didRemoveEventListenersOfType(eventType);
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
     auto& eventNames = WebCore::eventNames();
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
-    if (typeInfo.isInCategory(EventCategory::Wheel))
-        targetNode->document().didRemoveWheelEventHandler(*targetNode);
-    else if (isTouchRelatedEventType(typeInfo, *targetNode))
-        targetNode->document().didRemoveTouchEventHandler(*targetNode);
+    if (typeInfo.isInCategory(EventCategory::Wheel)) {
+        document->didRemoveWheelEventHandler(*targetNode);
+        document->invalidateEventListenerRegions();
+    } else if (isTouchRelatedEventType(typeInfo, *targetNode))
+        document->didRemoveTouchEventHandler(*targetNode);
     else if (typeInfo.isInCategory(EventCategory::MouseClickRelated))
-        targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
+        document->didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && typeInfo.type() == EventType::scroll) {
-        if (auto* window = targetNode->document().domWindow())
+    if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
+        if (auto* window = document->domWindow())
             window->decrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
     if (isTouchRelatedEventType(typeInfo, *targetNode))
-        targetNode->document().removeTouchEventListener(*targetNode);
+        document->removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (typeInfo.isInCategory(EventCategory::Gesture))
-        targetNode->document().removeTouchEventHandler(*targetNode);
+        document->removeTouchEventHandler(*targetNode);
 #endif
 
     return true;
