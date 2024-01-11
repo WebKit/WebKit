@@ -466,6 +466,7 @@ void SourceBuffer::removedFromMediaSource()
     m_private->removedFromMediaSource();
     m_private->detach();
     m_source = nullptr;
+    m_extraMemoryCost = 0;
 }
 
 Ref<SourceBuffer::ComputeSeekPromise> SourceBuffer::computeSeekTime(const SeekTarget& target)
