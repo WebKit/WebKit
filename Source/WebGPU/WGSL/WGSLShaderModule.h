@@ -123,6 +123,9 @@ public:
     bool usesDot4U8Packed() const { return m_usesDot4U8Packed; }
     void setUsesDot4U8Packed() { m_usesDot4U8Packed = true; }
 
+    bool usesExtractBits() const { return m_usesExtractBits; }
+    void setUsesExtractBits() { m_usesExtractBits = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -288,6 +291,7 @@ private:
     bool m_usesSampleIndex { false };
     bool m_usesDot4I8Packed { false };
     bool m_usesDot4U8Packed { false };
+    bool m_usesExtractBits { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

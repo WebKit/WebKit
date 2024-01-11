@@ -1053,6 +1053,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesDot4I8Packed();
             else if (targetName == "dot4U8Packed"_s)
                 m_shaderModule.setUsesDot4U8Packed();
+            else if (targetName == "extractBits"_s)
+                m_shaderModule.setUsesExtractBits();
             target.m_inferredType = result;
             return;
         }

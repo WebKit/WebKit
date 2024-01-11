@@ -414,6 +414,19 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
+    if (m_callGraph.ast().usesExtractBits()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "auto o = min(offset, 32u);\n");
+            m_stringBuilder.append(m_indent, "auto c = min(count, 32u - o);\n");
+            m_stringBuilder.append(m_indent, "return extract_bits(e, o, c);\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -1865,7 +1878,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
-            { "extractBits", "extract_bits"_s },
+            { "extractBits", "__wgslExtractBits"_s },
             { "faceForward", "faceforward"_s },
             { "firstLeadingBit", "__wgslFirstLeadingBit"_s },
             { "firstTrailingBit", "__wgslFirstTrailingBit"_s },
