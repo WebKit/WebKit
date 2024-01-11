@@ -40,7 +40,7 @@ struct WebKit::WebExtensionScriptInjectionParameters {
 
 struct WebKit::WebExtensionScriptInjectionResultParameters {
     std::optional<String> error;
-    std::optional<String> result;
+    std::optional<String> resultJSON;
     std::optional<WebKit::WebExtensionFrameIdentifier> frameID;
 }
 

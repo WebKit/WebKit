@@ -33,7 +33,7 @@ namespace WebKit {
 
 struct WebExtensionScriptInjectionResultParameters {
     std::optional<String> error;
-    std::optional<String> result;
+    std::optional<String> resultJSON;
     std::optional<WebExtensionFrameIdentifier> frameID;
 };
 

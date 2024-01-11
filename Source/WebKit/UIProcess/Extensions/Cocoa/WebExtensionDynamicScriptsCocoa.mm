@@ -184,7 +184,7 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
     WebExtensionScriptInjectionResultParameters parameters;
 
     if (resultOfExecution)
-        parameters.result = resultOfExecution;
+        parameters.resultJSON = encodeJSONString(resultOfExecution, JSONOptions::FragmentsAllowed);
 
     if (info)
         parameters.frameID = toWebExtensionFrameIdentifier(info);

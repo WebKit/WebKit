@@ -92,10 +92,8 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
     // tabs.executeScript() only returns an array of the injection result.
     if (returnExecutionResultOnly) {
         for (auto& parameters : parametersVector) {
-            if (parameters.result)
-                [results addObject:parameters.result.value()];
-            else
-                [results addObject:NSNull.null];
+            id result = parameters.resultJSON ? parseJSON(parameters.resultJSON.value(), JSONOptions::FragmentsAllowed) : nil;
+            [results addObject:result ?: NSNull.null];
         }
 
         return [results copy];
@@ -104,10 +102,8 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
     for (auto& parameters : parametersVector) {
         auto *result = [NSMutableDictionary dictionaryWithCapacity:3];
 
-        if (parameters.result)
-            result[@"result"] = parameters.result.value();
-        else
-            result[@"result"] = NSNull.null;
+        id value = parameters.resultJSON ? parseJSON(parameters.resultJSON.value(), JSONOptions::FragmentsAllowed) : nil;
+        result[@"result"] = value ?: NSNull.null;
 
         ASSERT(parameters.frameID);
         if (parameters.frameID)
