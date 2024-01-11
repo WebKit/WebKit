@@ -39,6 +39,7 @@
 #import <MapKit/MapKit.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -128,13 +129,16 @@ static void checkCGRectIsEqualToCGRectWithLogging(CGRect expected, CGRect observ
 
 static void checkRichTextTypePrecedesPlainTextType(DragAndDropSimulator *simulator)
 {
-    // At least one of "com.apple.flat-rtfd" or "public.rtf" is expected to have higher precedence than "public.utf8-plain-text".
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
-    auto indexOfRTFType = [registeredTypes indexOfObject:(__bridge NSString *)kUTTypeRTF];
-    auto indexOfFlatRTFDType = [registeredTypes indexOfObject:(__bridge NSString *)kUTTypeFlatRTFD];
-    auto indexOfPlainTextType = [registeredTypes indexOfObject:(__bridge NSString *)kUTTypeUTF8PlainText];
+    auto indexOfHTMLType = [registeredTypes indexOfObject:UTTypeHTML.identifier];
+    auto indexOfRTFType = [registeredTypes indexOfObject:UTTypeRTF.identifier];
+    auto indexOfFlatRTFDType = [registeredTypes indexOfObject:UTTypeFlatRTFD.identifier];
+    auto indexOfPlainTextType = [registeredTypes indexOfObject:UTTypeUTF8PlainText.identifier];
     EXPECT_NE((NSInteger)indexOfPlainTextType, NSNotFound);
-    EXPECT_TRUE((indexOfRTFType != NSNotFound && indexOfRTFType < indexOfPlainTextType) || (indexOfFlatRTFDType != NSNotFound && indexOfFlatRTFDType < indexOfPlainTextType));
+    BOOL hasHighFidelityRTF = indexOfRTFType != NSNotFound && indexOfRTFType < indexOfPlainTextType;
+    BOOL hasHighFidelityFlatRTFD = indexOfFlatRTFDType != NSNotFound && indexOfFlatRTFDType < indexOfPlainTextType;
+    BOOL hasHighFidelityHTML = indexOfHTMLType != NSNotFound && indexOfHTMLType < indexOfPlainTextType;
+    EXPECT_TRUE(hasHighFidelityHTML || hasHighFidelityFlatRTFD || hasHighFidelityRTF);
 }
 
 static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DragAndDropSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
