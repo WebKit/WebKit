@@ -118,7 +118,7 @@ public:
     ServiceWorkerContextData contextData() const;
 
     WEBCORE_EXPORT const ClientOrigin& origin() const;
-    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    const RegistrableDomain& topRegistrableDomain() const { return m_topRegistrableDomain; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
@@ -176,7 +176,7 @@ private:
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;
-    RegistrableDomain m_registrableDomain;
+    RegistrableDomain m_topRegistrableDomain;
     bool m_isSkipWaitingFlagSet { false };
     Vector<CompletionHandler<void(bool)>> m_whenActivatedHandlers;
     MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
