@@ -1461,9 +1461,9 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
         String mid;
         GUniqueOutPtr<GstWebRTCSessionDescription> description;
         g_object_get(m_webrtcBin.get(), "local-description", &description.outPtr(), nullptr);
-        if (description) {
-            if (const auto* media = gst_sdp_message_get_media(description->sdp, sdpMLineIndex))
-                mid = makeString(gst_sdp_media_get_attribute_val(media, "mid"));
+        if (description && sdpMLineIndex < gst_sdp_message_medias_len(description->sdp)) {
+            const auto media = gst_sdp_message_get_media(description->sdp, sdpMLineIndex);
+            mid = makeString(gst_sdp_media_get_attribute_val(media, "mid"));
         }
 
         auto descriptions = descriptionsFromWebRTCBin(m_webrtcBin.get());
