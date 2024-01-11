@@ -175,6 +175,9 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
             if (webKitDMABufVideoSinkIsEnabled() && webKitDMABufVideoSinkProbePlatform())
                 return adoptRef(*new TextureMapperPlatformLayerProxyDMABuf);
 #endif
+#if USE(GSTREAMER_HOLEPUNCH)
+            return adoptRef(*new TextureMapperPlatformLayerProxyGL(true));
+#endif
             return adoptRef(*new TextureMapperPlatformLayerProxyGL);
         }());
 #endif
@@ -3242,9 +3245,6 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 #if USE(NICOSIA)
 void MediaPlayerPrivateGStreamer::swapBuffersIfNeeded()
 {
-#if USE(GSTREAMER_HOLEPUNCH)
-    pushNextHolePunchBuffer();
-#endif
 }
 #else
 RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamer::proxy() const

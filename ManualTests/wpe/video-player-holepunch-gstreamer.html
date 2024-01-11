@@ -23,11 +23,18 @@
       If everything is working fine, there should be a transparent rectangle of 400x400 just
       below this.
     </p>
+    <p>
+      After 5s the controls should be shown over the transparent rectangle.
+    </p>
     <video id="video"></video>
     <script type="text/javascript">
       var v = document.getElementById("video");
       v.src = "../../LayoutTests/media/content/long-test.mp4";
       v.play();
+
+      setTimeout(function() {
+        v.controls = true;
+      }, 5000);
     </script>
   </body>
 </html>

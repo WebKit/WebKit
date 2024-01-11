@@ -46,11 +46,22 @@
       }, 5000);
 
       setTimeout(function() {
+        v.controls = true;
+        log.innerHTML = "Showing media controls on the second video. They should be visible over the transparent rectangle";
+      }, 8000);
+
+      setTimeout(function() {
+        v.controls = false;
         s.type = "video/mp4";
         v.load();
         v.play();
         log.innerHTML = "Playing third video. The video (or a transparent rectangle if GStreamer holepunch is enabled) should be visible";
       }, 10000);
+
+      setTimeout(function() {
+        v.controls = true;
+        log.innerHTML = "Showing media controls on the third video. They should be visible over video or the transparent rectangle";
+      }, 13000);
     </script>
   </body>
 </html>

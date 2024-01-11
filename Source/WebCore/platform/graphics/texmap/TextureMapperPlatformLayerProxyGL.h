@@ -44,7 +44,7 @@ namespace WebCore {
 class TextureMapperPlatformLayerProxyGL final : public TextureMapperPlatformLayerProxy {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    TextureMapperPlatformLayerProxyGL();
+    TextureMapperPlatformLayerProxyGL(bool disableBufferInvalidation = false);
     virtual ~TextureMapperPlatformLayerProxyGL();
 
     bool isGLBased() const override { return true; }
@@ -67,6 +67,7 @@ private:
 
     std::unique_ptr<TextureMapperPlatformLayerBuffer> m_currentBuffer;
     std::unique_ptr<TextureMapperPlatformLayerBuffer> m_pendingBuffer;
+    bool m_disableBufferInvalidation;
 
     Lock m_wasBufferDroppedLock;
     Condition m_wasBufferDroppedCondition;
