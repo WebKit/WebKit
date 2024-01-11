@@ -4648,6 +4648,11 @@ static bool relationCausesCycle(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType, AddSymmetricRelation addSymmetricRelation)
 {
+    AXTRACE("AXObjectCache::addRelation"_s);
+    AXLOG(origin);
+    AXLOG(target);
+    AXLOG(relationType);
+
     if (!validRelation(origin, target, relationType))
         return;
 
@@ -4710,6 +4715,8 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType)
 {
+    AXTRACE("AXObjectCache::removeRelations"_s);
+
     auto* object = get(&origin);
     if (!object)
         return;

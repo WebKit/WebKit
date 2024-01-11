@@ -508,6 +508,26 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(un
     return elementForAttributeAtIndex(NSAccessibilityLinkedUIElementsAttribute, index);
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::controllerElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXControllers", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXControllerFor", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXDescribedBy", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::descriptionForElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXDescriptionFor", index);
+}
+
 JSValueRef AccessibilityUIElement::detailsElements() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -515,8 +535,17 @@ JSValueRef AccessibilityUIElement::detailsElements() const
     if ([elements isKindOfClass:NSArray.class])
         return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(elements.get()));
     END_AX_OBJC_EXCEPTIONS
-
     return { };
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXDetailsElements", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::detailsForElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXDetailsFor", index);
 }
 
 JSValueRef AccessibilityUIElement::errorMessageElements() const
@@ -526,13 +555,22 @@ JSValueRef AccessibilityUIElement::errorMessageElements() const
     if ([elements isKindOfClass:NSArray.class])
         return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(elements.get()));
     END_AX_OBJC_EXCEPTIONS
-
     return { };
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
 {
-    return elementForAttributeAtIndex(NSAccessibilityOwnsAttribute, index);
+    return elementForAttributeAtIndex(@"AXErrorMessageElements", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::errorMessageForElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXErrorMessageFor", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::flowFromElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(@"AXFlowFrom", index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
@@ -540,22 +578,24 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(
     return elementForAttributeAtIndex(NSAccessibilityLinkedUIElementsAttribute, index);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned index)
 {
-    // Per spec, aria-controls is exposed via AXLinkedUIElements on the Mac.
-    // Note that a few other things are exposed via AXLinkedUIElements (aria-flowto), so this function
-    // may provide unexpected results for tests that use a combination of these attributes.
-    return linkedUIElementAtIndex(index);
+    return elementForAttributeAtIndex(@"AXLabelledBy", index);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned index)
 {
-    return elementForAttributeAtIndex(@"AXDetailsElements", index);
+    return elementForAttributeAtIndex(@"AXLabelFor", index);
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned index)
 {
-    return elementForAttributeAtIndex(@"AXErrorMessageElements", index);
+    return elementForAttributeAtIndex(@"AXOwners", index);
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
+{
+    return elementForAttributeAtIndex(NSAccessibilityOwnsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)

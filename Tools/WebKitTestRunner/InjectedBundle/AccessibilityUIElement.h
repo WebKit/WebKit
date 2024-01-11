@@ -254,43 +254,24 @@ public:
     RefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
-    // ARIA specific
-    RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
+    // Relationships.
+    // FIXME: replace all ***AtIndex methods with ones that return an array and make the naming consistent.
+    RefPtr<AccessibilityUIElement> controllerElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(COCOA) || USE(ATSPI)
+    RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> descriptionForElementAtIndex(unsigned);
     JSValueRef detailsElements() const;
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> detailsForElementAtIndex(unsigned);
     JSValueRef errorMessageElements() const;
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
-#else
-    JSValueRef detailsElements() const { return { }; }
-    RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned) { return nullptr; }
-    JSValueRef errorMessageElements() const { return { }; }
-    RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
-#endif
-
-#if USE(ATSPI)
+    RefPtr<AccessibilityUIElement> errorMessageForElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> flowFromElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaFlowToReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaDetailsReferencingElementAtIndex(unsigned);
-    RefPtr<AccessibilityUIElement> ariaErrorMessageReferencingElementAtIndex(unsigned);
-#else
-    RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaFlowToReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaDetailsReferencingElementAtIndex(unsigned) { return nullptr; }
-    RefPtr<AccessibilityUIElement> ariaErrorMessageReferencingElementAtIndex(unsigned) { return nullptr; }
-#endif
+    RefPtr<AccessibilityUIElement> labelForElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ownerElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
 
     // ARIA Drag and Drop
     bool ariaIsGrabbed() const;
