@@ -151,13 +151,15 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
 
         std::swap(m_frontBuffer, m_backBuffer);
+
+        if (m_frontBuffer) {
+            auto previousState = m_frontBuffer->setNonVolatile();
+            if (previousState == SetNonVolatileResult::Empty)
+                m_previouslyPaintedRect = std::nullopt;
+        }
     }
 
-    if (m_frontBuffer) {
-        auto previousState = m_frontBuffer->setNonVolatile();
-        if (previousState == SetNonVolatileResult::Empty)
-            m_previouslyPaintedRect = std::nullopt;
-    } else {
+    if (!m_frontBuffer) {
         m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
@@ -165,12 +167,12 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ensureFrontBufferForDisplay - swapped to ["
         << m_frontBuffer << ", " << m_backBuffer << ", " << m_secondaryBackBuffer << "]");
 
-    if (outputData.displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay) {
+    if (outputData.displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
         m_backend->createDisplayListRecorder(m_frontBuffer, m_displayListIdentifier);
-        if (m_frontBuffer) {
-            auto* sharing = m_frontBuffer->toBackendSharing();
-            outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-        }
+
+    if (m_frontBuffer) {
+        auto* sharing = m_frontBuffer->toBackendSharing();
+        outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     }
 
     outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(m_frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };

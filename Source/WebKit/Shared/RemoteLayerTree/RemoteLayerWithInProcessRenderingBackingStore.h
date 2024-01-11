@@ -35,7 +35,7 @@ public:
 
     bool isRemoteLayerWithInProcessRenderingBackingStore() const final { return true; }
 
-    void prepareToDisplay();
+    void prepareToDisplay() final;
     void createContextAndPaintContents() final;
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
 

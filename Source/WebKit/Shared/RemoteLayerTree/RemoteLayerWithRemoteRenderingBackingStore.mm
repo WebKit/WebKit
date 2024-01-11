@@ -62,6 +62,11 @@ bool RemoteLayerWithRemoteRenderingBackingStore::frontBufferMayBeVolatile() cons
     return m_bufferSet->requestedVolatility().contains(BufferInSetType::Front);
 }
 
+void RemoteLayerWithRemoteRenderingBackingStore::prepareToDisplay()
+{
+    m_contentsBufferHandle = std::nullopt;
+}
+
 void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
 {
     m_contentsBufferHandle = std::nullopt;

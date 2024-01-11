@@ -112,6 +112,7 @@ public:
     bool performDelegatedLayerDisplay();
 
     void paintContents();
+    virtual void prepareToDisplay() = 0;
     virtual void createContextAndPaintContents() = 0;
 
     virtual Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() = 0;
