@@ -409,7 +409,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "{\n");
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e < 0), T(0), e == 0);\n");
+            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n");
         }
         m_stringBuilder.append(m_indent, "}\n");
     }
