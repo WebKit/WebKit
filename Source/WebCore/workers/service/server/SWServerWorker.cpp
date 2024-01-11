@@ -60,11 +60,11 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_contentSecurityPolicy(contentSecurityPolicy)
     , m_crossOriginEmbedderPolicy(crossOriginEmbedderPolicy)
     , m_referrerPolicy(WTFMove(referrerPolicy))
-    , m_registrableDomain(m_data.scriptURL)
+    , m_topRegistrableDomain(m_registrationKey.topOrigin())
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
     , m_terminationIfPossibleTimer(*this, &SWServerWorker::terminationIfPossibleTimerFired)
-    , m_lastNavigationWasAppInitiated(m_server->clientIsAppInitiatedForRegistrableDomain(m_registrableDomain))
+    , m_lastNavigationWasAppInitiated(m_server->clientIsAppInitiatedForRegistrableDomain(m_topRegistrableDomain))
 {
     m_data.scriptURL.removeFragmentIdentifier();
 
@@ -176,7 +176,7 @@ const ClientOrigin& SWServerWorker::origin() const
 
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    return m_server ? m_server->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
+    return m_server ? m_server->contextConnectionForRegistrableDomain(topRegistrableDomain()) : nullptr;
 }
 
 void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
@@ -435,7 +435,7 @@ void SWServerWorker::terminationIfPossibleTimerFired()
         return;
 
     terminate();
-    m_server->removeContextConnectionIfPossible(registrableDomain());
+    m_server->removeContextConnectionIfPossible(topRegistrableDomain());
 }
 
 bool SWServerWorker::isClientActiveServiceWorker(ScriptExecutionContextIdentifier clientIdentifier) const
