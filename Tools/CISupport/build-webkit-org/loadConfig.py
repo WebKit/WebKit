@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -109,9 +109,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
         for step in builder["factory"].steps:
             step_name = step.buildStep().name
             if len(step_name) > STEP_NAME_LENGTH_LIMIT:
-                raise Exception('step name "{}" is longer than maximum allowed by Buildbot ({} characters).'.format(step_name, STEP_NAME_LENGTH_LIMIT))
+                raise Exception(f'step name "{step_name}" is longer than maximum allowed by Buildbot ({STEP_NAME_LENGTH_LIMIT} characters).')
             if not buildbot_identifiers.ident_re.match(step_name):
-                raise Exception('step name "{}" is not a valid buildbot identifier.'.format(step_name))
+                raise Exception(f'step name "{step_name}" is not a valid buildbot identifier.')
 
         if platform.startswith('mac'):
             category = 'AppleMac'
@@ -151,10 +151,10 @@ def checkValidWorker(worker):
         raise Exception('Worker is None or Empty.')
 
     if not worker.get('name'):
-        raise Exception('Worker "{}" does not have name defined.'.format(worker))
+        raise Exception(f'Worker "{worker}" does not have name defined.')
 
     if not worker.get('platform'):
-        raise Exception('Worker {} does not have platform defined.'.format(worker['name']))
+        raise Exception(f"Worker {worker['name']} does not have platform defined.")
 
 
 def checkValidBuilder(config, builder):
@@ -162,33 +162,33 @@ def checkValidBuilder(config, builder):
         raise Exception('Builder is None or Empty.')
 
     if not builder.get('name'):
-        raise Exception('Builder "{}" does not have name defined.'.format(builder))
+        raise Exception(f'Builder "{builder}" does not have name defined.')
 
     if not buildbot_identifiers.ident_re.match(builder['name']):
-        raise Exception('Builder name {} is not a valid buildbot identifier.'.format(builder['name']))
+        raise Exception(f"Builder name {builder['name']} is not a valid buildbot identifier.")
 
     if len(builder['name']) > BUILDER_NAME_LENGTH_LIMIT:
-        raise Exception('Builder name {} is longer than maximum allowed by Buildbot ({} characters).'.format(builder['name'], BUILDER_NAME_LENGTH_LIMIT))
+        raise Exception(f"Builder name {builder['name']} is longer than maximum allowed by Buildbot ({BUILDER_NAME_LENGTH_LIMIT} characters).")
 
     if 'configuration' in builder and builder['configuration'] not in ['debug', 'production', 'release']:
-        raise Exception('Invalid configuration: {} for builder: {}'.format(builder.get('configuration'), builder.get('name')))
+        raise Exception(f"Invalid configuration: {builder.get('configuration')} for builder: {builder.get('name')}")
 
     if not builder.get('factory'):
-        raise Exception('Builder {} does not have factory defined.'.format(builder['name']))
+        raise Exception(f"Builder {builder['name']} does not have factory defined.")
 
     if not builder.get('platform'):
-        raise Exception('Builder {} does not have platform defined.'.format(builder['name']))
+        raise Exception(f"Builder {builder['name']} does not have platform defined.")
 
     for trigger in builder.get('triggers') or []:
         if not doesTriggerExist(config, trigger):
-            raise Exception('Trigger: {} in builder {} does not exist in list of Trigerrable schedulers.'.format(trigger, builder['name']))
+            raise Exception(f"Trigger: {trigger} in builder {builder['name']} does not exist in list of Trigerrable schedulers.")
 
 
 def checkValidSchedulers(config, schedulers):
     for scheduler in config.get('schedulers') or []:
         if scheduler.get('type') == 'Triggerable':
             if not isTriggerUsedByAnyBuilder(config, scheduler['name']) and 'build' not in scheduler['name'].lower():
-                raise Exception('Trigger: {} is not used by any builder in config.json'.format(scheduler['name']))
+                raise Exception(f"Trigger: {scheduler['name']} is not used by any builder in config.json")
 
 
 def doesTriggerExist(config, trigger):
@@ -213,7 +213,7 @@ def checkWorkersAndBuildersForConsistency(config, workers, builders):
                 if not result:
                     result = worker
                 else:
-                    raise Exception('Duplicate worker entry found for {}.'.format(worker['name']))
+                    raise Exception(f"Duplicate worker entry found for {worker['name']}.")
         return result
 
     for worker in workers:
@@ -224,11 +224,10 @@ def checkWorkersAndBuildersForConsistency(config, workers, builders):
         for worker_name in builder['workernames']:
             worker = _find_worker_with_name(workers, worker_name)
             if worker is None:
-                raise Exception('Builder {} has worker {}, which is not defined in workers list!'.format(builder['name'], worker_name))
+                raise Exception(f"Builder {builder['name']} has worker {worker_name}, which is not defined in workers list!")
 
             if worker['platform'] != builder['platform'] and worker['platform'] != '*' and builder['platform'] != '*':
-                raise Exception('Builder "{0}" is for platform "{1}", but has worker "{2}" for platform "{3}"!'.format(
-                    builder['name'], builder['platform'], worker['name'], worker['platform']))
+                raise Exception(f"Builder {builder['name']} is for platform {builder['platform']}, but has worker {worker['name']} for platform {worker['platform']}!")
 
 
 def getInvalidTags():

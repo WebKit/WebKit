@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -125,7 +125,7 @@ class TestWithFailureCount(shell.Test):
             if self.failedTestCount:
                 status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
             else:
-                status += ' ({})'.format(Results[self.results])
+                status += f' ({Results[self.results]})'
 
         return {'step': status}
 
@@ -611,7 +611,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
     command = [
         "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--no-build", "--no-fail-fast",
-        "--json-output={0}".format(jsonFileName),
+        f"--json-output={jsonFileName}",
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
@@ -844,7 +844,7 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         "python3",
         "Tools/Scripts/run-api-tests",
         "--no-build",
-        "--json-output={0}".format(jsonFileName),
+        f"--json-output={jsonFileName}",
         WithProperties("--%(configuration)s"),
         "--verbose",
         "--buildbot-master", CURRENT_HOSTNAME,
@@ -998,7 +998,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
         "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--no-build", "--cloop",
         "--no-jsc-stress", "--no-fail-fast",
-        "--json-output={0}".format(jsonFileName),
+        f"--json-output={jsonFileName}",
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
@@ -1039,7 +1039,7 @@ class Run32bitJSCTests(TestWithFailureCount):
         "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--32-bit", "--no-build",
         "--no-fail-fast", "--no-jit", "--no-testair", "--no-testb3", "--no-testmasm",
-        "--json-output={0}".format(jsonFileName),
+        f"--json-output={jsonFileName}",
         WithProperties("--%(configuration)s"),
         "--builder-name", WithProperties("%(buildername)s"),
         "--build-number", WithProperties("%(buildnumber)s"),
@@ -1164,7 +1164,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
     jsonFileName = "webdriver_tests.json"
-    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", f"--json-output={jsonFileName}", WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
     cancelled_due_to_huge_logs = False
     line_count = 0
@@ -1428,13 +1428,13 @@ class PrintConfiguration(steps.ShellSequence):
         if match:
             os_version = match.group(1).strip()
             os_name = self.convert_build_to_os_name(os_version)
-            configuration = 'OS: {} ({})'.format(os_name, os_version)
+            configuration = f'OS: {os_name} ({os_version})'
 
         xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
         match = re.search(xcode_re, logText)
         if match:
             xcode_version = match.group(1).strip()
-            configuration += ', Xcode: {}'.format(xcode_version)
+            configuration += f', Xcode: {xcode_version}'
         return {'step': configuration}
 
 
@@ -1484,8 +1484,8 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
 
             if not step:
                 step = self
-            step.addURL('Updated to {}'.format(identifier), self.url_for_identifier(identifier))
-            self.descriptionDone = 'Identifier: {}'.format(identifier)
+            step.addURL(f'Updated to {identifier}', self.url_for_identifier(identifier))
+            self.descriptionDone = f'Identifier: {identifier}'
         else:
             self.descriptionDone = 'Failed to find identifier'
             self.setProperty('archive_revision', self.getProperty('got_revision'))
@@ -1498,7 +1498,7 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
         return None
 
     def url_for_identifier(self, identifier):
-        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+        return 'f{COMMITS_INFO_URL}{identifier}'
 
     def getResultSummary(self):
         if self.results != SUCCESS:

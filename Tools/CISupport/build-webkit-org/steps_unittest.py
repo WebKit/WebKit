@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ class ExpectMasterShellCommand(object):
         return self
 
     def __repr__(self):
-        return 'ExpectMasterShellCommand({0})'.format(repr(self.args))
+        return f'ExpectMasterShellCommand({repr(self.args)})'
 
 
 class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
@@ -133,7 +133,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
     def _checkSpawnProcess(self, processProtocol, executable, args, env, path, usePTY, **kwargs):
         got = (executable, args, env, path, usePTY)
         if not self._expected_local_commands:
-            self.fail('got local command {0} when no further commands were expected'.format(got))
+            self.fail(f'got local command {got} when no further commands were expected')
         local_command = self._expected_local_commands.pop(0)
         try:
             self.assertEqual(got, (local_command.args[0], local_command.args, local_command.env, local_command.path, local_command.usePTY))
@@ -183,8 +183,8 @@ class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.Test
         for build_step in build_step_classes:
             if 'name' in vars(build_step[1]):
                 name = build_step[1].name
-                self.assertFalse(' ' in name, 'step name "{}" contain space.'.format(name))
-                self.assertTrue(buildbot_identifiers.ident_re.match(name), 'step name "{}" is not a valid buildbot identifier.'.format(name))
+                self.assertFalse(' ' in name, f'step name "{name}" contain space.')
+                self.assertTrue(buildbot_identifiers.ident_re.match(name), f'step name "{name}" is not a valid buildbot identifier.')
 
 
 class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
@@ -1098,7 +1098,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
@@ -1112,7 +1112,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
