@@ -159,7 +159,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(un
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
 #endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::controllerElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::descriptionForElementAtIndex(unsigned) { return nullptr; }
@@ -173,7 +173,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::flowFromElementAtIndex(un
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::labelForElementAtIndex(unsigned) { return nullptr; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsigned) { return nullptr; }
-#endif // PLATFORM(WIN)
+#endif // PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 
 } // namespace WTR
 #endif // ENABLE(ACCESSIBILITY)
