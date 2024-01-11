@@ -27,3 +27,4 @@
 
 WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WebKit::WebPageProxy&, WebKit::WebURLSchemeTask&);
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
+WebKit::WebPageProxy& webkitURISchemeRequestGetWebPage(WebKitURISchemeRequest*);

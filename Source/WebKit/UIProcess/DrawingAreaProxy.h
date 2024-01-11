@@ -33,11 +33,12 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <stdint.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 namespace WTF {
@@ -124,7 +125,7 @@ public:
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
-    WebPageProxy& page() const { return m_webPageProxy; }
+    WebPageProxy& page() const;
     virtual void viewWillStartLiveResize() { };
     virtual void viewWillEndLiveResize() { };
 
@@ -140,6 +141,8 @@ public:
     virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
     virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
 
+    virtual void remotePageProcessCrashed(WebCore::ProcessIdentifier) { }
+
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
 
@@ -147,7 +150,7 @@ protected:
 
     DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    CheckedRef<WebPageProxy> m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     Ref<WebProcessProxy> m_webProcessProxy;
 
     WebCore::IntSize m_size;

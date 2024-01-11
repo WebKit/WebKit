@@ -27,9 +27,9 @@
 
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ResourceError;
@@ -43,7 +43,7 @@ namespace WebKit {
 class WebFrame;
 class WebURLSchemeHandlerProxy;
 
-class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy>, public CanMakeCheckedPtr {
+class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy>, public CanMakeWeakPtr<WebURLSchemeTaskProxy> {
 public:
     static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader, WebFrame& webFrame)
     {

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKey.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CommonCryptoUtilities.h"
 
 namespace WebCore {
@@ -41,5 +39,3 @@ Vector<uint8_t> CryptoKey::randomData(size_t size)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

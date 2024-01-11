@@ -23,6 +23,7 @@
 #include "config.h"
 #include "CachedSVGDocument.h"
 
+#include "ParserContentPolicy.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 
@@ -57,7 +58,7 @@ void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const 
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.
         auto document = SVGDocument::create(nullptr, m_settings, response().url());
-        document->setContent(m_decoder->decodeAndFlush(data->makeContiguous()->data(), data->size()));
+        document->setMarkupUnsafe(m_decoder->decodeAndFlush(data->makeContiguous()->data(), data->size()), { ParserContentPolicy::AllowDeclarativeShadowRoots });
         m_document = WTFMove(document);
     }
     CachedResource::finishLoading(data, metrics);

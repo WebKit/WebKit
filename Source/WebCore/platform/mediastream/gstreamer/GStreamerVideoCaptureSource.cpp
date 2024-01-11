@@ -183,9 +183,6 @@ void GStreamerVideoCaptureSource::captureEnded()
 
 void GStreamerVideoCaptureSource::startProducingData()
 {
-    if (m_capturer->pipeline())
-        return;
-
     m_capturer->setupPipeline();
 
     if (m_deviceType == CaptureDevice::DeviceType::Camera)
@@ -251,7 +248,7 @@ const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
 void GStreamerVideoCaptureSource::generatePresets()
 {
     Vector<VideoPreset> presets;
-    GRefPtr<GstCaps> caps = adoptGRef(m_capturer->caps());
+    auto caps = m_capturer->caps();
     for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
         GstStructure* str = gst_caps_get_structure(caps.get(), i);
 

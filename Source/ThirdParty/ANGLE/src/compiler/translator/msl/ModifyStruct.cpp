@@ -156,7 +156,8 @@ class ConvertStructState : angle::NonCopyable
                        IdGen &idGen,
                        const ModifyStructConfig &config,
                        ModifiedStructMachineries &outMachineries,
-                       const bool isUBO)
+                       const bool isUBO,
+                       const bool useAttributeAliasing)
         : mCompiler(compiler),
           config(config),
           symbolEnv(symbolEnv),
@@ -164,7 +165,8 @@ class ConvertStructState : angle::NonCopyable
           symbolTable(symbolEnv.symbolTable()),
           idGen(idGen),
           outMachineries(outMachineries),
-          isUBO(isUBO)
+          isUBO(isUBO),
+          useAttributeAliasing(useAttributeAliasing)
     {}
 
     ~ConvertStructState()
@@ -231,6 +233,18 @@ class ConvertStructState : angle::NonCopyable
 
             OriginalAccess *original = &BuildPathAccess(symbolEnv, originalParam, info.pathItems);
             ModifiedAccess *modified = &AccessField(modifiedParam, info.pathName);
+            if (useAttributeAliasing)
+            {
+                std::string placeholderName("ANGLE_ALIASED_");
+                placeholderName += info.pathName.data();
+
+                TType *placeholderType = new TType(modified->getType());
+                placeholderType->setQualifier(EvqSpecConst);
+
+                modified = new TIntermSymbol(
+                    new TVariable(&symbolTable, sh::ImmutableString(placeholderName),
+                                  placeholderType, SymbolType::AngleInternal));
+            }
 
             const TType ot = original->getType();
             const TType mt = modified->getType();
@@ -371,7 +385,7 @@ class ConvertStructState : angle::NonCopyable
             reflection->addOriginalName(structure.uniqueId().get(), structure.name().data());
             const Name name = idGen.createNewName(structure.name().data());
             if (!TryCreateModifiedStruct(mCompiler, symbolEnv, idGen, config, structure, name,
-                                         outMachineries, isUBORecurse, config.allowPadding))
+                                         outMachineries, isUBORecurse, config.allowPadding, false))
             {
                 return false;
             }
@@ -632,6 +646,7 @@ class ConvertStructState : angle::NonCopyable
     IdGen &idGen;
     ModifiedStructMachineries &outMachineries;
     const bool isUBO;
+    const bool useAttributeAliasing;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1045,9 +1060,11 @@ bool sh::TryCreateModifiedStruct(TCompiler &compiler,
                                  const Name &modifiedStructName,
                                  ModifiedStructMachineries &outMachineries,
                                  const bool isUBO,
-                                 const bool allowPadding)
+                                 const bool allowPadding,
+                                 const bool useAttributeAliasing)
 {
-    ConvertStructState state(compiler, symbolEnv, idGen, config, outMachineries, isUBO);
+    ConvertStructState state(compiler, symbolEnv, idGen, config, outMachineries, isUBO,
+                             useAttributeAliasing);
     size_t identicalFieldCount = 0;
 
     const TFieldList &originalFields = originalStruct.fields();
@@ -1064,7 +1081,8 @@ bool sh::TryCreateModifiedStruct(TCompiler &compiler,
 
     state.finalize(allowPadding);
 
-    if (identicalFieldCount == originalFields.size() && !state.hasPacking() && !state.hasPadding())
+    if (identicalFieldCount == originalFields.size() && !state.hasPacking() &&
+        !state.hasPadding() && !useAttributeAliasing)
     {
         return false;
     }

@@ -114,6 +114,10 @@ public:
     RefPtr<RemoteImageBufferSetProxy> createRemoteImageBufferSet();
     void releaseRemoteImageBufferSet(RemoteImageBufferSetProxy&);
 
+#if USE(GRAPHICS_LAYER_WC)
+    Function<bool()> flushImageBuffers();
+#endif
+
     std::unique_ptr<RemoteDisplayListRecorderProxy> createDisplayListRecorder(WebCore::RenderingResourceIdentifier, const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
 
     struct BufferSet {

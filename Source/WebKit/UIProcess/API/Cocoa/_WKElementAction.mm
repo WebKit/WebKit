@@ -81,12 +81,18 @@ static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"
 
 - (id)_initWithTitle:(NSString *)title actionHandler:(WKElementActionHandlerInternal)handler type:(_WKElementActionType)type assistant:(WKActionSheetAssistant *)assistant
 {
+    return [self _initWithTitle:title actionHandler:handler type:type assistant:assistant disabled:NO];
+}
+
+- (id)_initWithTitle:(NSString *)title actionHandler:(WKElementActionHandlerInternal)handler type:(_WKElementActionType)type assistant:(WKActionSheetAssistant *)assistant disabled:(BOOL)disabled
+{
     if (!(self = [super init]))
         return nil;
 
     _title = adoptNS([title copy]);
     _type = type;
     _actionHandler = [handler copy];
+    _disabled = disabled;
     _defaultActionSheetAssistant = assistant;
     return self;
 }
@@ -127,6 +133,11 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 }
 
 + (instancetype)_elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle assistant:(WKActionSheetAssistant *)assistant
+{
+    return [self _elementActionWithType:type customTitle:customTitle assistant:assistant disabled:NO];
+}
+
++ (instancetype)_elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle assistant:(WKActionSheetAssistant *)assistant disabled:(BOOL)disabled
 {
     NSString *title = @"";
     WKElementActionHandlerInternal handler = nil;
@@ -211,15 +222,20 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return nil;
     }
 
-    return adoptNS([[self alloc] _initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type assistant:assistant]).autorelease();
+    return adoptNS([[self alloc] _initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type assistant:assistant disabled:disabled]).autorelease();
 }
 
 + (instancetype)_elementActionWithType:(_WKElementActionType)type info:(_WKActivatedElementInfo *)info assistant:(WKActionSheetAssistant *)assistant
 {
+    return [self _elementActionWithType:type info:info assistant:assistant disabled:NO];
+}
+
++ (instancetype)_elementActionWithType:(_WKElementActionType)type info:(_WKActivatedElementInfo *)info assistant:(WKActionSheetAssistant *)assistant disabled:(BOOL)disabled
+{
     NSString *customTitle = nil;
     if (type == _WKElementActionTypeCopy && info.type == _WKActivatedElementTypeLink && !info._isImage)
         customTitle = WEB_UI_STRING_KEY("Copy Link", "Copy Link (ActionSheet)", "Title for Copy Link button");
-    return [self _elementActionWithType:type customTitle:customTitle assistant:assistant];
+    return [self _elementActionWithType:type customTitle:customTitle assistant:assistant disabled:disabled];
 }
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle
@@ -385,11 +401,16 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
     UIImage *image = [_WKElementAction imageForElementActionType:self.type];
     UIActionIdentifier identifier = elementActionTypeToUIActionIdentifier(self.type);
 
-    return [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[retainedSelf = retainPtr(self), retainedInfo = retainPtr(elementInfo)] (UIAction *) {
+    UIAction *action = [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[retainedSelf = retainPtr(self), retainedInfo = retainPtr(elementInfo)] (UIAction *) {
         auto elementAction = retainedSelf.get();
         RELEASE_LOG(ContextMenu, "Executing action for type: %s", elementActionTypeToUIActionIdentifier([elementAction type]).UTF8String);
         [elementAction runActionWithElementInfo:retainedInfo.get()];
     }];
+
+    if (self.disabled)
+        action.attributes |= UIMenuElementAttributesDisabled;
+
+    return action;
 }
 #else
 + (UIImage *)imageForElementActionType:(_WKElementActionType)actionType

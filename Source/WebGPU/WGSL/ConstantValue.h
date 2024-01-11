@@ -173,15 +173,12 @@ std::optional<To> convertFloat(From value)
 
     static To max;
     static To lowest;
-    static To min;
     if constexpr (std::is_floating_point<To>::value) {
         max = std::numeric_limits<To>::max();
         lowest = std::numeric_limits<To>::lowest();
-        min = std::numeric_limits<To>::min();
     } else {
         max = 0x1.ffcp15;
         lowest = -max;
-        min = 0x1.0p-14;
     }
 
     if (value > max)
@@ -190,8 +187,6 @@ std::optional<To> convertFloat(From value)
         return std::nullopt;
     if (std::isnan(value))
         return std::nullopt;
-    if (std::abs(value) < min)
-        return { 0 };
 
     return { value };
 }

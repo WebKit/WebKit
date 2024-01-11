@@ -72,7 +72,6 @@ private:
     Ref<WebCore::MediaPromise> sourceBufferPrivateBufferedChanged(const Vector<WebCore::PlatformTimeRanges>&, uint64_t) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<WebCore::MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime&) final;
-    void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
 

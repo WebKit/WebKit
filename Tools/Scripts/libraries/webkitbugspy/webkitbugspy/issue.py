@@ -56,6 +56,7 @@ class Issue(object):
         self.tracker = tracker
         self._original = None
         self._duplicates = None
+        self._related = None
 
         self._link = None
         self._title = None
@@ -140,6 +141,15 @@ class Issue(object):
         if self._duplicates is None:
             self.tracker.populate(self, 'duplicates')
         return self._duplicates
+
+    @property
+    def related(self):
+        if self._related is None:
+            self.tracker.populate(self, 'related')
+        return self._related
+
+    def relate(self, **relations):
+        return self.tracker.relate(self, **relations)
 
     @property
     def assignee(self):

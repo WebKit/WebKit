@@ -54,7 +54,6 @@ public:
     bool isSupportedPropertyName(const AtomString&);
 
 private:
-    static constexpr auto CreateHTMLFrameSetElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLFrameSetElement(const QualifiedName&, Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
@@ -62,7 +61,6 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     void willAttachRenderers() final;
-    bool rendererIsNeeded(const RenderStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     
     void defaultEventHandler(Event&) final;

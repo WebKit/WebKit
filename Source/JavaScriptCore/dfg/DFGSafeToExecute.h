@@ -257,6 +257,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SameValue:
     case CheckTypeInfoFlags:
     case ParseInt:
+    case ToIntegerOrInfinity:
+    case ToLength:
     case OverridesHasInstance:
     case IsEmpty:
     case TypeOfIsUndefined:

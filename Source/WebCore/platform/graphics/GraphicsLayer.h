@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "GraphicsTypes.h"
 #include "HTMLMediaElementIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
 #include "MediaPlayerEnums.h"
@@ -48,13 +49,8 @@
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/CheckedRef.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
-
-#if ENABLE(CSS_COMPOSITING)
-#include "GraphicsTypes.h"
-#endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 #include "AcceleratedEffectStack.h"
@@ -265,7 +261,7 @@ protected:
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
 // which may have associated transformation and animations.
 
-class GraphicsLayer : public RefCounted<GraphicsLayer>, public CanMakeCheckedPtr {
+class GraphicsLayer : public RefCounted<GraphicsLayer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t {
@@ -464,10 +460,8 @@ public:
     virtual void setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect) { m_backdropFiltersRect = backdropFiltersRect; }
     const FloatRoundedRect& backdropFiltersRect() const { return m_backdropFiltersRect; }
 
-#if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return m_blendMode; }
     virtual void setBlendMode(BlendMode blendMode) { m_blendMode = blendMode; }
-#endif
 
     // Some GraphicsLayers paint only the foreground or the background content
     OptionSet<GraphicsLayerPaintingPhase> paintingPhase() const { return m_paintingPhase; }
@@ -595,7 +589,7 @@ public:
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
 
-    enum class CustomAppearance : uint8_t {
+    enum class CustomAppearance : bool {
         None,
         ScrollingShadow
     };
@@ -766,9 +760,7 @@ protected:
     ScrollingNodeID m_scrollingNodeID { 0 };
 #endif
 
-#if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode { BlendMode::Normal };
-#endif
 
     const Type m_type;
     CustomAppearance m_customAppearance { CustomAppearance::None };
@@ -849,15 +841,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 // Outside the WebCore namespace for ease of invocation from the debugger.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::GraphicsLayer::CustomAppearance> {
-    using values = EnumValues<
-        WebCore::GraphicsLayer::CustomAppearance,
-        WebCore::GraphicsLayer::CustomAppearance::None,
-        WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow
-    >;
-};
-
-} // namespace WTF

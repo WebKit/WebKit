@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023, 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +36,8 @@
 #include "SVGFilterElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGMaskElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGResourceElementClient.h"
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -94,13 +95,13 @@ void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const A
         targetElement->removeReferencingCSSClient(*client);
 }
 
-Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
+ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
 {
-    Vector<std::pair<AtomString, QualifiedName>> referencedResources;
+    SVGElementIdentifierAndTagPairs referencedResources;
     if (is<ReferencePathOperation>(style.clipPath())) {
         auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
         if (!clipPath.fragment().isEmpty())
-            referencedResources.append({ clipPath.fragment(), SVGNames::clipPathTag });
+            referencedResources.append({ clipPath.fragment(), { SVGNames::clipPathTag } });
     }
 
     if (style.hasFilter()) {
@@ -110,13 +111,16 @@ Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedS
             if (filterOperation.type() == FilterOperation::Type::Reference) {
                 const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                 if (!referenceFilterOperation.fragment().isEmpty())
-                    referencedResources.append({ referenceFilterOperation.fragment(), SVGNames::filterTag });
+                    referencedResources.append({ referenceFilterOperation.fragment(), { SVGNames::filterTag } });
             }
         }
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document.settings().layerBasedSVGEngineEnabled() && style.hasPositionedMask()) {
+    if (!document.settings().layerBasedSVGEngineEnabled())
+        return referencedResources;
+
+    if (style.hasPositionedMask()) {
         // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
         auto* maskImage = style.maskImage();
         auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document) : URL();
@@ -124,29 +128,43 @@ Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedS
         if (!reresolvedURL.isEmpty()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
             if (!resourceID.isEmpty())
-                referencedResources.append({ resourceID, SVGNames::maskTag });
+                referencedResources.append({ resourceID, { SVGNames::maskTag } });
         }
+    }
+
+    // FIXME: [LBSE] Implement support for patterns
+    const auto& svgStyle = style.svgStyle();
+    if (svgStyle.fillPaintType() >= SVGPaintType::URINone) {
+        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(svgStyle.fillPaintUri(), document);
+        if (!resourceID.isEmpty())
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag } });
+    }
+
+    if (svgStyle.strokePaintType() >= SVGPaintType::URINone) {
+        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(svgStyle.strokePaintUri(), document);
+        if (!resourceID.isEmpty())
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag } });
     }
 #endif
 
     return referencedResources;
 }
 
-void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, const Vector<std::pair<AtomString, QualifiedName>>& referencedResources)
+void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, const ReferencedSVGResources::SVGElementIdentifierAndTagPairs& referencedResources)
 {
     HashSet<AtomString> oldKeys;
     for (auto& key : m_elementClients.keys())
         oldKeys.add(key);
 
-    for (auto& [targetID, tagName] : referencedResources) {
-        RefPtr element = elementForResourceID(treeScope, targetID, tagName);
+    for (auto& [targetID, tagNames] : referencedResources) {
+        RefPtr element = elementForResourceIDs(treeScope, targetID, tagNames);
         if (!element)
             continue;
 
         addClientForTarget(*element, targetID);
         oldKeys.remove(targetID);
     }
-    
+
     for (auto& targetID : oldKeys)
         removeClientForTarget(treeScope, targetID);
 }
@@ -161,6 +179,21 @@ RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeS
 
     return downcast<SVGElement>(WTFMove(element));
 }
+
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceIDs(TreeScope& treeScope, const AtomString& resourceID, const QualifiedNames& tagNames)
+{
+    RefPtr element = treeScope.getElementById(resourceID);
+    if (!element)
+        return nullptr;
+
+    for (const auto& tagName : tagNames) {
+        if (element->hasTagName(tagName))
+            return downcast<SVGElement>(WTFMove(element));
+    }
+
+    return nullptr;
+}
+
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(TreeScope& treeScope, const ReferencePathOperation& clipPath)
@@ -193,6 +226,16 @@ RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& 
 
     RefPtr element = elementForResourceID(treeScope, resourceID, SVGNames::maskTag);
     return element ? downcast<SVGMaskElement>(WTFMove(element)) : nullptr;
+}
+
+RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScope& treeScope, const String& uri)
+{
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, treeScope.documentScope());
+    if (resourceID.isEmpty())
+        return nullptr;
+
+    // FIXME: [LBSE] Implement pattern support
+    return elementForResourceIDs(treeScope, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag });
 }
 #endif
 

@@ -53,9 +53,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, CheckedPtr<WebUserContentControllerProxy>>& webUserContentControllerProxies()
+static HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>& webUserContentControllerProxies()
 {
-    static NeverDestroyed<HashMap<UserContentControllerIdentifier, CheckedPtr<WebUserContentControllerProxy>>> proxies;
+    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>> proxies;
     return proxies;
 }
 
@@ -69,7 +69,7 @@ WebUserContentControllerProxy::WebUserContentControllerProxy()
     , m_userScripts(API::Array::create())
     , m_userStyleSheets(API::Array::create())
 {
-    webUserContentControllerProxies().add(m_identifier, this);
+    webUserContentControllerProxies().add(m_identifier, *this);
 }
 
 WebUserContentControllerProxy::~WebUserContentControllerProxy()

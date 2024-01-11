@@ -1,0 +1,3 @@
+
+PASS Ensure there is no scroll anchoring adjustment in the main frame.
+

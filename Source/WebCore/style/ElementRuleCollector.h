@@ -108,21 +108,21 @@ private:
 
     void addElementInlineStyleProperties(bool includeSMILProperties);
 
-    void matchShadowPseudoElementRules(CascadeLevel);
+    void matchUserAgentPartRules(CascadeLevel);
     void matchHostPseudoClassRules(CascadeLevel);
     void matchSlottedPseudoElementRules(CascadeLevel);
     void matchPartPseudoElementRules(CascadeLevel);
     void matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel);
 
-    void collectMatchingShadowPseudoElementRules(const MatchRequest&);
+    void collectMatchingUserAgentPartRules(const MatchRequest&);
 
     void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
-    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const Element* scopingRoot = nullptr);
+    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const ContainerNode* scopingRoot = nullptr);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
     struct ScopingRootWithDistance {
-        const Element* scopingRoot { nullptr };
+        const ContainerNode* scopingRoot { nullptr };
         unsigned distance { std::numeric_limits<unsigned>::max() };
     };
     std::pair<bool, std::optional<Vector<ScopingRootWithDistance>>> scopeRulesMatch(const RuleData&, const MatchRequest&);

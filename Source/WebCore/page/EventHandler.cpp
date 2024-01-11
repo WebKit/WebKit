@@ -64,6 +64,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
 #include "HandleUserInputEventResult.h"
 #include "HitTestRequest.h"
@@ -91,6 +92,7 @@
 #include "PointerCaptureController.h"
 #include "PointerEventTypeNames.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
@@ -3348,8 +3350,10 @@ void EventHandler::clearLatchedState()
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::clearLatchedState()");
-    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
-        scrollLatchingController->removeLatchingStateForFrame(protectedFrame());
+    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists()) {
+        // Unable to ref the frame as it may have started destruction.
+        scrollLatchingController->removeLatchingStateForFrame(m_frame);
+    }
 #endif
 }
 
@@ -3793,7 +3797,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     UserGestureType gestureType = userGestureTypeForPlatformEvent(initialKeyEvent);
 
     auto canRequestDOMPaste = frame->protectedDocument()->quirks().needsDisableDOMPasteAccessQuirk() ? CanRequestDOMPaste::No : CanRequestDOMPaste::Yes;
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed, std::nullopt, canRequestDOMPaste);
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, frame->protectedDocument().get(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed, initialKeyEvent.authorizationToken(), canRequestDOMPaste);
     UserTypingGestureIndicator typingGestureIndicator(frame);
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
@@ -3831,7 +3835,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
 
         if (element.focused() && userHasInteractedViaKeyword) {
-            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClassType::FocusVisible, true);
+            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClass::FocusVisible, true);
             element.setHasFocusVisible(true);
         }
     };
@@ -4587,6 +4591,13 @@ bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direct
     if (!view)
         return false;
 
+    if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(m_frame->document())) {
+        if (RefPtr plugin = dynamicDowncast<RenderEmbeddedObject>(pluginDocument->pluginElement()->renderer())) {
+            if (startKeyboardScrollAnimationOnPlugin(direction, granularity, *plugin, isKeyRepeat))
+                return true;
+        }
+    }
+
     auto* animator = view->scrollAnimator().keyboardScrollingAnimator();
     return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
 }
@@ -4612,6 +4623,20 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(Scroll
     return false;
 }
 
+bool EventHandler::startKeyboardScrollAnimationOnPlugin(ScrollDirection direction, ScrollGranularity granularity, RenderEmbeddedObject& plugin, bool isKeyRepeat)
+{
+    if (!plugin.usesAsyncScrolling())
+        return false;
+    ScrollingNodeID scroller = plugin.scrollingNodeID();
+    ScrollableArea* scrollableArea = m_frame->view()->scrollableAreaForScrollingNodeID(scroller);
+    if (!scrollableArea)
+        return false;
+    auto* animator = scrollableArea->scrollAnimator().keyboardScrollingAnimator();
+    if (!animator)
+        return false;
+    return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
+}
+
 bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection direction, ScrollGranularity granularity, Node* startingNode, bool isKeyRepeat)
 {
     RefPtr node = startingNode;
@@ -4626,6 +4651,11 @@ bool EventHandler::startKeyboardScrollAnimationOnEnclosingScrollableContainer(Sc
         auto renderer = node->renderer();
         if (!renderer)
             return false;
+
+        if (RefPtr plugin = dynamicDowncast<RenderEmbeddedObject>(renderer)) {
+            if (startKeyboardScrollAnimationOnPlugin(direction, granularity, *plugin, isKeyRepeat))
+                return true;
+        }
 
         RenderBox& renderBox = renderer->enclosingBox();
         if (!renderer->isRenderListBox() && startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(direction, granularity, &renderBox, isKeyRepeat))

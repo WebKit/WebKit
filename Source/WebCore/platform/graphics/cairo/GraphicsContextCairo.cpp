@@ -142,7 +142,7 @@ void GraphicsContextCairo::drawRect(const FloatRect& rect, float borderThickness
     Cairo::drawRect(*this, rect, borderThickness, fillColor(), strokeStyle(), strokeColor());
 }
 
-void GraphicsContextCairo::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void GraphicsContextCairo::drawNativeImageInternal(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto& state = this->state();
     Cairo::drawPlatformImage(*this, nativeImage.platformImage().get(), destRect, srcRect, { options, state.imageInterpolationQuality() }, state.alpha(), Cairo::ShadowState(state));
@@ -185,6 +185,12 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect)
 {
     auto& state = this->state();
     Cairo::fillRect(*this, rect, Cairo::FillSource(state), Cairo::ShadowState(state));
+}
+
+void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    auto& state = this->state();
+    Cairo::fillRect(*this, rect, Cairo::FillSource(state, gradient, gradientSpaceTransform), Cairo::ShadowState(state));
 }
 
 void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)

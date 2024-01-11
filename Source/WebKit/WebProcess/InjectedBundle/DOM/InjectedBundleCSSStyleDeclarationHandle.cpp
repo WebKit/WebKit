@@ -29,14 +29,14 @@
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CSSStyleDeclaration.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-using DOMStyleDeclarationHandleCache = HashMap<SingleThreadWeakRef<CSSStyleDeclaration>, CheckedPtr<InjectedBundleCSSStyleDeclarationHandle>>;
+using DOMStyleDeclarationHandleCache = HashMap<SingleThreadWeakRef<CSSStyleDeclaration>, WeakRef<InjectedBundleCSSStyleDeclarationHandle>>;
 
 static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
 {
@@ -55,13 +55,12 @@ RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclaratio
     if (!styleDeclaration)
         return nullptr;
 
-    DOMStyleDeclarationHandleCache::AddResult result = domStyleDeclarationHandleCache().add(*styleDeclaration, nullptr);
-    if (!result.isNewEntry)
-        return result.iterator->value.get();
-
-    auto styleDeclarationHandle = adoptRef(*new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
-    result.iterator->value = styleDeclarationHandle.ptr();
-    return styleDeclarationHandle;
+    RefPtr<InjectedBundleCSSStyleDeclarationHandle> newHandle;
+    auto result = domStyleDeclarationHandleCache().ensure(*styleDeclaration, [&] {
+        newHandle = adoptRef(*new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
+        return WeakRef { *newHandle };
+    });
+    return newHandle ? newHandle.releaseNonNull() : Ref { result.iterator->value.get() };
 }
 
 InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle(CSSStyleDeclaration& styleDeclaration)

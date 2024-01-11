@@ -22,6 +22,7 @@ JSTestCallbackFunction.h:
 JSTestCallbackFunctionRethrow.h: 
 JSTestCallbackFunctionWithThisObject.h: 
 JSTestCallbackFunctionWithTypedefs.h: 
+JSTestCallbackFunctionWithVariadic.h: 
 JSTestCallbackInterface.h: 
 JSTestClassWithJSBuiltinConstructor.h: 
 JSTestConditionalIncludes.h: TestMixinInterface.idl

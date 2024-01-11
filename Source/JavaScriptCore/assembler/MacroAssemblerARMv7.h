@@ -117,7 +117,7 @@ public:
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return ARMv7Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return ARMv7Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
-    template <Assembler::CopyFunction copy>
+    template<MachineCodeCopyMode copy>
     ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return ARMv7Assembler::link<copy>(record, from, fromInstruction, to); }
 
     struct ArmAddress {
@@ -2868,6 +2868,18 @@ public:
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
+    }
+
+    void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        auto passCase = branch32(cond, left, right);
+        move(elseCase, dest);
+        auto done = jump();
+
+        passCase.link(this);
+        move(thenCase, dest);
+
+        done.link(this);
     }
 
     ALWAYS_INLINE DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)

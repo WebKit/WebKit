@@ -302,8 +302,8 @@ private:
     void windowReceivedMessage(HWND, UINT, WPARAM, LPARAM) override;
 #endif
 
-    CheckedPtr<WebPageProxy> m_inspectedPage;
-    CheckedPtr<WebPageProxy> m_inspectorPage;
+    WeakPtr<WebPageProxy> m_inspectedPage;
+    WeakPtr<WebPageProxy> m_inspectorPage;
     std::unique_ptr<API::InspectorClient> m_inspectorClient;
     WebPageProxyIdentifier m_inspectedPageIdentifier;
 

@@ -23,16 +23,16 @@ class CLDeviceVk : public CLDeviceImpl
 
     Info createInfo(cl::DeviceType type) const override;
 
-    cl_int getInfoUInt(cl::DeviceInfo name, cl_uint *value) const override;
-    cl_int getInfoULong(cl::DeviceInfo name, cl_ulong *value) const override;
-    cl_int getInfoSizeT(cl::DeviceInfo name, size_t *value) const override;
-    cl_int getInfoStringLength(cl::DeviceInfo name, size_t *value) const override;
-    cl_int getInfoString(cl::DeviceInfo name, size_t size, char *value) const override;
+    angle::Result getInfoUInt(cl::DeviceInfo name, cl_uint *value) const override;
+    angle::Result getInfoULong(cl::DeviceInfo name, cl_ulong *value) const override;
+    angle::Result getInfoSizeT(cl::DeviceInfo name, size_t *value) const override;
+    angle::Result getInfoStringLength(cl::DeviceInfo name, size_t *value) const override;
+    angle::Result getInfoString(cl::DeviceInfo name, size_t size, char *value) const override;
 
-    cl_int createSubDevices(const cl_device_partition_property *properties,
-                            cl_uint numDevices,
-                            CreateFuncs &subDevices,
-                            cl_uint *numDevicesRet) override;
+    angle::Result createSubDevices(const cl_device_partition_property *properties,
+                                   cl_uint numDevices,
+                                   CreateFuncs &subDevices,
+                                   cl_uint *numDevicesRet) override;
 };
 
 }  // namespace rx

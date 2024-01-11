@@ -1415,6 +1415,16 @@ private:
             break;
         }
 
+        case ToIntegerOrInfinity:
+        case ToLength: {
+            // We expect this node to almost always produce an int32. However,
+            // it's possible it produces Infinity or integers out of int32 range. We
+            // rely on the heap prediction since the @toIntegerOrInfinity() call profiled
+            // its result.
+            setPrediction(m_currentNode->getHeapPrediction());
+            break;
+        }
+
         case IdentityWithProfile: {
             setPrediction(m_currentNode->getForcedPrediction());
             break;

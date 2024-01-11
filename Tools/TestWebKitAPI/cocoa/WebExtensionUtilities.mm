@@ -360,17 +360,17 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
-    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL | _WKWebExtensionTabChangedPropertiesLoading forTab:self];
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
-    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL forTab:self];
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesURL | _WKWebExtensionTabChangedPropertiesLoading forTab:self];
+    [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation

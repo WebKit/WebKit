@@ -114,7 +114,6 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
@@ -260,7 +259,6 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_CAP: ts << "cap"; break;
     case CSSUnitType::CSS_CH: ts << "ch"; break;
     case CSSUnitType::CSS_IC: ts << "ic"; break;
-    case CSSUnitType::CSS_COUNTER_NAME: ts << "counter_name"; break;
     case CSSUnitType::CSS_CALC: ts << "calc"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER: ts << "calc_percentage_with_number"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH: ts << "calc_percentage_with_length"; break;

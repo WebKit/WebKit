@@ -70,7 +70,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    CheckedRef<NetworkProcessProxy> m_networkProcessProxy;
+    WeakRef<NetworkProcessProxy> m_networkProcessProxy;
 };
 
 } // namespace WebKit

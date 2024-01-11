@@ -331,6 +331,11 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
     if (updatePreference(m_preferences.useSCContentSharingPicker, preferences.useSCContentSharingPicker))
         PlatformMediaSessionManager::setUseSCContentSharingPicker(*m_preferences.useSCContentSharingPicker);
 #endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (updatePreference(m_preferences.mediaCapabilityGrantsEnabled, preferences.mediaCapabilityGrantsEnabled))
+        PlatformMediaSessionManager::setMediaCapabilityGrantsEnabled(*m_preferences.mediaCapabilityGrantsEnabled);
+#endif
 }
 
 bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference)

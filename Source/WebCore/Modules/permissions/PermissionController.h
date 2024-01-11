@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

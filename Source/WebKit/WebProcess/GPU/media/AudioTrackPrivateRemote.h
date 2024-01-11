@@ -60,7 +60,7 @@ private:
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    AudioTrackKind m_kind { None };
+    AudioTrackKind m_kind { AudioTrackKind::None };
     WebCore::TrackID m_id;
     AtomString m_label;
     AtomString m_language;

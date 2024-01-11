@@ -61,6 +61,10 @@ bool PlatformMediaSessionManager::m_vp8DecoderEnabled;
 bool PlatformMediaSessionManager::m_vp9SWDecoderEnabled;
 #endif
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+bool PlatformMediaSessionManager::s_mediaCapabilityGrantsEnabled;
+#endif
+
 static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionManager()
 {
     static NeverDestroyed<std::unique_ptr<PlatformMediaSessionManager>> platformMediaSessionManager;
@@ -806,6 +810,18 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 }
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+bool PlatformMediaSessionManager::mediaCapabilityGrantsEnabled()
+{
+    return s_mediaCapabilityGrantsEnabled;
+}
+
+void PlatformMediaSessionManager::setMediaCapabilityGrantsEnabled(bool mediaCapabilityGrantsEnabled)
+{
+    s_mediaCapabilityGrantsEnabled = mediaCapabilityGrantsEnabled;
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PlatformMediaSessionManager::logChannel() const

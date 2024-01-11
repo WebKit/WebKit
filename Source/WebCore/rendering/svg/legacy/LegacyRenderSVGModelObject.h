@@ -65,13 +65,11 @@ public:
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
-    LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
     void willBeDestroyed() override;
 
 private:
-    bool isLegacyRenderSVGModelObject() const final { return true; }
-
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     void absoluteFocusRingQuads(Vector<FloatQuad>&) final;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2009, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (c) 2020 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
@@ -411,10 +411,7 @@ public:
     bool descendantDependentFlagsAreDirty() const
     {
         return m_visibleDescendantStatusDirty || m_visibleContentStatusDirty || m_hasSelfPaintingLayerDescendantDirty
-#if ENABLE(CSS_COMPOSITING)
-            || m_hasNotIsolatedBlendingDescendantsStatusDirty
-#endif
-        ;
+            || m_hasNotIsolatedBlendingDescendantsStatusDirty;
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -515,10 +512,8 @@ public:
 
     void updateTransform();
     
-#if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
     void willRemoveChildWithBlendMode();
-#endif
 
     const LayoutSize& offsetForInFlowPosition() const { return m_offsetForPosition; }
 
@@ -774,7 +769,6 @@ public:
     bool canBeBackdropRoot() const { return m_canBeBackdropRoot; }
     bool isBackdropRoot() const { return hasBackdropFilterDescendantsWithoutRoot() && canBeBackdropRoot(); }
 
-#if ENABLE(CSS_COMPOSITING)
     inline bool hasBlendMode() const;
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
@@ -790,12 +784,6 @@ public:
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
     bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return m_hasNotIsolatedBlendingDescendantsStatusDirty; }
-#else
-    bool hasBlendMode() const { return false; }
-    bool isolatesCompositedBlending() const { return false; }
-    bool isolatesBlending() const { return false; }
-    bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return false; }
-#endif
 
     bool isComposited() const { return m_backing != nullptr; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
@@ -866,7 +854,7 @@ public:
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
 
     bool isRenderFragmentedFlow() const { return renderer().isRenderFragmentedFlow(); }
-    bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow; }
+    bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::FragmentedFlowState::NotInsideFlow; }
     bool isDirtyRenderFragmentedFlow() const
     {
         ASSERT(isRenderFragmentedFlow());
@@ -897,7 +885,6 @@ private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
-    void setParent(RenderLayer*);
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
@@ -1164,7 +1151,6 @@ private:
     bool shouldBeSelfPaintingLayer() const;
 
     void dirtyAncestorChainVisibleDescendantStatus();
-    void setAncestorChainHasVisibleDescendant();
     
     bool computeHasVisibleContent() const;
 
@@ -1187,10 +1173,8 @@ private:
     void updateFiltersAfterStyleChange(StyleDifference, const RenderStyle* oldStyle);
     void updateFilterPaintingStrategy();
 
-#if ENABLE(CSS_COMPOSITING)
     void updateAncestorChainHasBlendingDescendants();
     void dirtyAncestorChainHasBlendingDescendants();
-#endif
 
     Ref<ClipRects> parentClipRects(const ClipRectsContext&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
@@ -1284,12 +1268,10 @@ private:
     bool m_layerListMutationAllowed : 1;
 #endif
 
-#if ENABLE(CSS_COMPOSITING)
     unsigned m_blendMode : 5; // BlendMode
     bool m_hasNotIsolatedCompositedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
-#endif
     bool m_repaintRectsValid : 1;
 
     RenderLayerModelObject& m_renderer;

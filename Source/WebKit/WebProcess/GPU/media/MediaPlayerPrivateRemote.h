@@ -121,7 +121,7 @@ public:
     void firstVideoFrameAvailable();
     void renderingModeChanged();
 #if PLATFORM(COCOA)
-    void layerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID>&&, const WebCore::IntSize&);
+    void layerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID>&&, const WebCore::FloatSize&);
     WebCore::FloatSize videoLayerSize() const final;
     void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&) final;
 #endif

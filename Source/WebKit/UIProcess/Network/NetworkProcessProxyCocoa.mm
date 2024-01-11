@@ -30,6 +30,7 @@
 #import "NetworkProcessMessages.h"
 #import "WebProcessPool.h"
 #import "XPCEndpoint.h"
+#import <wtf/EnumTraits.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -80,7 +81,7 @@ NetworkProcessProxy::XPCEventHandler::XPCEventHandler(const NetworkProcessProxy&
 
 bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& process)
 {
-    RELEASE_LOG(Process, "%p - NetworkProcessProxy::sendXPCEndpointToProcess(%p) state = %d has connection = %d XPC endpoint message = %p", this, &process, process.state(), process.hasConnection(), xpcEndpointMessage());
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::sendXPCEndpointToProcess(%p) state = %d has connection = %d XPC endpoint message = %p", this, &process, enumToUnderlyingType(process.state()), process.hasConnection(), xpcEndpointMessage());
 
     if (process.state() != AuxiliaryProcessProxy::State::Running)
         return false;

@@ -13,7 +13,7 @@ an actual link
 
       (interaction regions [
         (interaction (-4,196) width=94.19 height=27)
-        (borderRadius 8.00)])
+        (cornerRadius 8.00)])
       )
     )
   )

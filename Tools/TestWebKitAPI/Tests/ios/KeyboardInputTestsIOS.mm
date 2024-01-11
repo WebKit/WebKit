@@ -665,6 +665,26 @@ TEST(KeyboardInputTests, OverrideTextInputTraits)
     EXPECT_EQ(keyboardType, [webView effectiveTextInputTraits].keyboardType);
 }
 
+TEST(KeyboardInputTests, ClearSelectedTextRange)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<input id='textField' value='hello' />"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"textField.focus()"];
+    [webView objectByEvaluatingJavaScript:@"textField.select()"];
+    auto selectedTextBeforeClearing = [webView selectedText];
+    EXPECT_WK_STREQ(selectedTextBeforeClearing, "hello");
+
+    [webView textInputContentView].selectedTextRange = nil;
+    auto selectedTextAfterClearing = [webView selectedText];
+    EXPECT_WK_STREQ(selectedTextAfterClearing, "");
+}
+
 TEST(KeyboardInputTests, DisableSpellChecking)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

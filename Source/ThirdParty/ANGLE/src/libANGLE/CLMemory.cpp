@@ -9,6 +9,8 @@
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLImage.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
 
@@ -43,13 +45,16 @@ MemFlags InheritMemFlags(MemFlags flags, Memory *parent)
 
 }  // namespace
 
-cl_int Memory::setDestructorCallback(MemoryCB pfnNotify, void *userData)
+angle::Result Memory::setDestructorCallback(MemoryCB pfnNotify, void *userData)
 {
     mDestructorCallbacks->emplace(pfnNotify, userData);
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Memory::getInfo(MemInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Memory::getInfo(MemInfo name,
+                              size_t valueSize,
+                              void *value,
+                              size_t *valueSizeRet) const
 {
     static_assert(
         std::is_same<cl_uint, cl_bool>::value && std::is_same<cl_uint, cl_mem_object_type>::value,
@@ -113,7 +118,7 @@ cl_int Memory::getInfo(MemInfo name, size_t valueSize, void *value, size_t *valu
             copySize  = mProperties.size() * sizeof(decltype(mProperties)::value_type);
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -122,7 +127,7 @@ cl_int Memory::getInfo(MemInfo name, size_t valueSize, void *value, size_t *valu
         // as described in the Memory Object Info table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -133,7 +138,7 @@ cl_int Memory::getInfo(MemInfo name, size_t valueSize, void *value, size_t *valu
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 Memory::~Memory()
@@ -154,33 +159,31 @@ Memory::Memory(const Buffer &buffer,
                PropArray &&properties,
                MemFlags flags,
                size_t size,
-               void *hostPtr,
-               cl_int &errorCode)
+               void *hostPtr)
     : mContext(&context),
       mProperties(std::move(properties)),
       mFlags(flags),
       mHostPtr(flags.isSet(CL_MEM_USE_HOST_PTR) ? hostPtr : nullptr),
-      mImpl(context.getImpl().createBuffer(buffer, size, hostPtr, errorCode)),
+      mImpl(nullptr),
       mSize(size),
       mMapCount(0u)
-{}
+{
+    ANGLE_CL_IMPL_TRY(context.getImpl().createBuffer(buffer, size, hostPtr, &mImpl));
+}
 
-Memory::Memory(const Buffer &buffer,
-               Buffer &parent,
-               MemFlags flags,
-               size_t offset,
-               size_t size,
-               cl_int &errorCode)
+Memory::Memory(const Buffer &buffer, Buffer &parent, MemFlags flags, size_t offset, size_t size)
     : mContext(parent.mContext),
       mFlags(InheritMemFlags(flags, &parent)),
       mHostPtr(parent.mHostPtr != nullptr ? static_cast<char *>(parent.mHostPtr) + offset
                                           : nullptr),
       mParent(&parent),
       mOffset(offset),
-      mImpl(parent.mImpl->createSubBuffer(buffer, flags, size, errorCode)),
+      mImpl(nullptr),
       mSize(size),
       mMapCount(0u)
-{}
+{
+    ANGLE_CL_IMPL_TRY(parent.mImpl->createSubBuffer(buffer, flags, size, &mImpl));
+}
 
 Memory::Memory(const Image &image,
                Context &context,
@@ -189,16 +192,36 @@ Memory::Memory(const Image &image,
                const cl_image_format &format,
                const ImageDescriptor &desc,
                Memory *parent,
-               void *hostPtr,
-               cl_int &errorCode)
+               void *hostPtr)
     : mContext(&context),
       mProperties(std::move(properties)),
       mFlags(InheritMemFlags(flags, parent)),
       mHostPtr(flags.isSet(CL_MEM_USE_HOST_PTR) ? hostPtr : nullptr),
       mParent(parent),
-      mImpl(context.getImpl().createImage(image, flags, format, desc, hostPtr, errorCode)),
-      mSize(mImpl ? mImpl->getSize(errorCode) : 0u),
+      mImpl(nullptr),
+      mSize(0u),
       mMapCount(0u)
-{}
+{
+    ANGLE_CL_IMPL_TRY(context.getImpl().createImage(image, flags, format, desc, hostPtr, &mImpl));
+    switch (image.getDescriptor().type)
+    {
+        case MemObjectType::Image1D_Array:
+            mSize = image.getSliceSize() * image.getDescriptor().arraySize;
+            break;
+        case MemObjectType::Image2D:
+            mSize = image.getSliceSize();
+            break;
+        case MemObjectType::Image2D_Array:
+            mSize = image.getSliceSize() * image.getDescriptor().arraySize;
+            break;
+        case MemObjectType::Image3D:
+            mSize = image.getSliceSize() * image.getDescriptor().depth;
+            break;
+        default:
+            // 1D, 1D-buffer and buffer
+            mSize = image.getRowSize();
+            break;
+    }
+}
 
 }  // namespace cl

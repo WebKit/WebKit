@@ -2795,7 +2795,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../WTF/Scripts/generate-tapi-filelist.py",
-				"$(TEMP_FILE_DIR)/all-product-headers.yaml",
 			);
 			name = "Generate TAPI filelist";
 			outputFileListPaths = (
@@ -2806,7 +2805,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${SCRIPT_INPUT_FILE_1}\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\" \nfi\n";
+			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    if [ -z ${PROJECT_GUID} ]; then\n        \"${SCRIPT_INPUT_FILE_0}\" --from=\"${TEMP_FILE_DIR}/all-product-headers.yaml\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n    else\n        \"${SCRIPT_INPUT_FILE_0}\" --from=\"${CONFIGURATION_TEMP_DIR}/${PROJECT}-${PROJECT_GUID}-VFS/all-product-headers.yaml\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n    fi\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\" \nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

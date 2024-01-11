@@ -113,7 +113,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
         }
         if (timeout.didTimeOut())
             break;
-        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
+        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acquire);
         if (clientLimit == oldClientLimit) {
             if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
                 return std::nullopt;

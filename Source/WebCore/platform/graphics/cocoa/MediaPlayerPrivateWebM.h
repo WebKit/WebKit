@@ -64,6 +64,7 @@ class SharedBuffer;
 class TextTrackRepresentation;
 class TrackBuffer;
 class VideoFrame;
+class VideoMediaSampleRenderer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateWebM;
 class WebCoreDecompressionSession;
@@ -196,7 +197,6 @@ private:
     void reenqueueMediaForTime(TrackBuffer&, TrackID, const MediaTime&);
     void notifyClientWhenReadyForMoreSamples(TrackID);
 
-    bool canSetMinimumUpcomingPresentationTime(TrackID) const;
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&);
     void clearMinimumUpcomingPresentationTime(TrackID);
 
@@ -270,7 +270,7 @@ private:
     StdUnorderedMap<TrackID, UniqueRef<TrackBuffer>> m_trackBufferMap;
     PlatformTimeRanges m_buffered;
 
-    RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
+    RefPtr<VideoMediaSampleRenderer> m_videoLayer;
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     Ref<SourceBufferParserWebM> m_parser;
     const Ref<WTF::WorkQueue> m_appendQueue;

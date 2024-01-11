@@ -1071,7 +1071,10 @@ void SpeculativeJIT::emitCall(Node* node)
                 CallFrameShuffler(*this, shuffleData).prepareForTailCall();
             } else {
                 emitRestoreCalleeSaves();
-                prepareForTailCallSlow(callLinkInfoGPR);
+                RegisterSet preserved;
+                if (callLinkInfoGPR != InvalidGPRReg)
+                    preserved.add(callLinkInfoGPR, IgnoreVectors);
+                prepareForTailCallSlow(WTFMove(preserved));
             }
         }));
     } else {
@@ -4823,6 +4826,16 @@ void SpeculativeJIT::compile(Node* node)
 
     case ParseInt: {
         compileParseInt(node);
+        break;
+    }
+
+    case ToIntegerOrInfinity: {
+        compileToIntegerOrInfinity(node);
+        break;
+    }
+
+    case ToLength: {
+        compileToLength(node);
         break;
     }
 

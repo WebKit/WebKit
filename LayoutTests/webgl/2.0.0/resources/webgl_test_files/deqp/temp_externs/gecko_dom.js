@@ -272,8 +272,6 @@ Window.prototype.home = function() {};
 
 Window.prototype.openDialog;
 Window.prototype.releaseEvents;
-Window.prototype.scrollByLines;
-Window.prototype.scrollByPages;
 
 /**
  * @param {string} uri

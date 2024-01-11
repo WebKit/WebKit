@@ -74,28 +74,24 @@ void LegacyRenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff
 
 void LegacyRenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* effect)
 {
-    auto parent = this->parent();
-    if (!is<LegacyRenderSVGResourceFilter>(parent))
+    CheckedPtr parent = dynamicDowncast<LegacyRenderSVGResourceFilter>(this->parent());
+    if (!parent)
         return;
 
-    auto& filterRenderer = downcast<LegacyRenderSVGResourceFilter>(*parent);
-
     if (effect)
-        filterRenderer.markFilterForRepaint(*effect);
+        parent->markFilterForRepaint(*effect);
 
-    filterRenderer.markAllClientLayersForInvalidation();
+    parent->markAllClientLayersForInvalidation();
 }
 
 void LegacyRenderSVGResourceFilterPrimitive::markFilterEffectForRebuild()
 {
-    auto parent = this->parent();
-    if (!is<LegacyRenderSVGResourceFilter>(parent))
+    CheckedPtr parent = dynamicDowncast<LegacyRenderSVGResourceFilter>(this->parent());
+    if (!parent)
         return;
 
-    auto& filterRenderer = downcast<LegacyRenderSVGResourceFilter>(*parent);
-
-    filterRenderer.markFilterForRebuild();
-    filterRenderer.markAllClientLayersForInvalidation();
+    parent->markFilterForRebuild();
+    parent->markAllClientLayersForInvalidation();
 }
 
 } // namespace WebCore

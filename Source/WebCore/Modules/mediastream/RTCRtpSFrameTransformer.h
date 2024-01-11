@@ -38,7 +38,7 @@ class CryptoKey;
 
 class RTCRtpSFrameTransformer : public ThreadSafeRefCounted<RTCRtpSFrameTransformer, WTF::DestructionThread::Main> {
 public:
-    enum class CompatibilityMode { None, H264, VP8 };
+    enum class CompatibilityMode : uint8_t { None, H264, VP8 };
 
     WEBCORE_EXPORT static Ref<RTCRtpSFrameTransformer> create(CompatibilityMode = CompatibilityMode::None);
     WEBCORE_EXPORT ~RTCRtpSFrameTransformer();
@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>);
 
-    enum class Error { KeyID, Authentication, Syntax, Other };
+    enum class Error : uint8_t { KeyID, Authentication, Syntax, Other };
     struct ErrorInformation {
         Error error;
         String message;

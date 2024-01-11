@@ -36,6 +36,7 @@
 #import <UIKit/UIPasteboard.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 
@@ -501,6 +502,35 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
 }
 
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
+
+#if HAVE(UI_PASTE_CONFIGURATION)
+
+TEST(UIPasteboardTests, PasteConfigurationContainsValidUniformTypeIdentifiers)
+{
+    RetainPtr regex = [NSRegularExpression regularExpressionWithPattern:@"^[A-Za-z0-9\\-.\\u0080-\\uFFFF]+$" options:0 error:nil];
+    auto verifyPasteConfigurationContainsValidUniformTypeIdentifiers = [regex](TestWKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"simple"];
+        for (NSString *typeIdentifier in webView.textInputContentView.pasteConfiguration.acceptableTypeIdentifiers) {
+            for (NSString *component in [typeIdentifier componentsSeparatedByString:@"."]) {
+                BOOL numberOfMatches = [regex numberOfMatchesInString:component options:0 range:NSMakeRange(0, component.length)];
+                EXPECT_GT(numberOfMatches, 0);
+                if (!numberOfMatches)
+                    NSLog(@"Failed: invalid UTI component '%@' in '%@'", component, typeIdentifier);
+            }
+        }
+    };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+    verifyPasteConfigurationContainsValidUniformTypeIdentifiers(webView.get());
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+
+    auto webViewWithAttachmentElementEnabled = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    verifyPasteConfigurationContainsValidUniformTypeIdentifiers(webViewWithAttachmentElementEnabled.get());
+}
+
+#endif // HAVE(UI_PASTE_CONFIGURATION)
 
 } // namespace TestWebKitAPI
 

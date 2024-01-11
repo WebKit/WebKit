@@ -53,8 +53,9 @@ bool CSSCounterValue::equals(const CSSCounterValue& other) const
 
 String CSSCounterValue::customCSSText() const
 {
-    auto listStyleSeparator = m_counterStyle->valueID() == CSSValueDecimal ? ""_s : ", "_s;
-    auto listStyleLiteral = m_counterStyle->valueID() == CSSValueDecimal ? ""_s : counterStyleCSSText();
+    bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent() == "decimal"_s);
+    auto listStyleSeparator = isDecimal ? ""_s : ", "_s;
+    auto listStyleLiteral = isDecimal ? ""_s : counterStyleCSSText();
     if (m_separator.isEmpty())
         return makeString("counter("_s, m_identifier, listStyleSeparator, listStyleLiteral, ')');
     StringBuilder result;

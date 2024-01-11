@@ -870,8 +870,9 @@ void TextureMapper::drawBlurred(const BitmapTexture& sourceTexture, const FloatR
     auto directionVector = direction == Direction::X ? FloatPoint(1, 0) : FloatPoint(0, 1);
     glUniform2f(program->blurDirectionLocation(), directionVector.x(), directionVector.y());
 
-    std::array<float, SimplifiedGaussianKernelMaxHalfSize> kernel;
-    std::array<float, SimplifiedGaussianKernelMaxHalfSize> offset;
+    // Zero-filled arrays for GLES<300
+    std::array<float, SimplifiedGaussianKernelMaxHalfSize> kernel = { };
+    std::array<float, SimplifiedGaussianKernelMaxHalfSize> offset = { };
     int simplifiedKernelHalfSize = computeGaussianKernel(radius, kernel, offset);
     glUniform1fv(program->gaussianKernelLocation(), SimplifiedGaussianKernelMaxHalfSize, kernel.data());
     glUniform1fv(program->gaussianKernelOffsetLocation(), SimplifiedGaussianKernelMaxHalfSize, offset.data());

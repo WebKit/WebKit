@@ -5007,9 +5007,9 @@ class WebCore::RealtimeMediaSourceSettings {
     uint32_t sampleRate();
     uint32_t sampleSize();
     bool echoCancellation();
-    AtomString deviceId();
+    String deviceId();
     String groupId();
-    AtomString label();
+    String label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
     WebCore::MeteringMode whiteBalanceMode();
@@ -5072,8 +5072,8 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::CapabilityRange sampleRate();
     WebCore::CapabilityRange sampleSize();
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
-    AtomString deviceId();
-    AtomString groupId();
+    String deviceId();
+    String groupId();
     WebCore::CapabilityRange focusDistance();
     Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityRange zoom();
@@ -5583,8 +5583,9 @@ struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
     WebCore::ElementIdentifier elementIdentifier;
     WebCore::FloatRect rectInLayerCoordinates;
-    float borderRadius;
+    float cornerRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
+    std::optional<WebCore::Path> clipPath;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {
@@ -7212,3 +7213,84 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Separator,
     Submenu,
 };
+
+[Nested] enum class WebCore::PopupMenuStyle::Size : uint8_t {
+    Normal,
+    Small,
+    Mini,
+    Large,
+};
+
+header: <WebCore/PredefinedColorSpace.h>
+enum class WebCore::PredefinedColorSpace : uint8_t {
+    SRGB
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    , DisplayP3
+#endif
+};
+
+header: <WebCore/TransformOperation.h>
+enum class WebCore::TransformOperationType : uint8_t {
+    ScaleX,
+    ScaleY,
+    Scale,
+    TranslateX,
+    TranslateY,
+    Translate,
+    RotateX,
+    RotateY,
+    Rotate,
+    SkewX,
+    SkewY,
+    Skew,
+    Matrix,
+    ScaleZ,
+    Scale3D,
+    TranslateZ,
+    Translate3D,
+    RotateZ,
+    Rotate3D,
+    Matrix3D,
+    Perspective,
+    Identity,
+    None
+};
+
+enum class WebCore::GraphicsContextGLSurfaceBuffer : bool;
+
+[Nested] enum class WebCore::GraphicsLayer::CustomAppearance : bool;
+
+[OptionSet] enum class GCGLErrorCode : uint8_t {
+    ContextLost,
+    InvalidFramebufferOperation,
+    OutOfMemory,
+    InvalidOperation,
+    InvalidValue,
+    InvalidEnum
+};
+
+#if ENABLE(VIDEO)
+
+header: <WebCore/AudioTrackPrivate.h>
+[Nested] enum class WebCore::AudioTrackPrivate::Kind : uint8_t {
+    Alternative,
+    Description,
+    Main,
+    MainDesc,
+    Translation,
+    Commentary,
+    None
+};
+
+header: <WebCore/VideoTrackPrivate.h>
+[Nested] enum class WebCore::VideoTrackPrivate::Kind : uint8_t {
+    Alternative,
+    Captions,
+    Main,
+    Sign,
+    Subtitles,
+    Commentary,
+    None
+};
+
+#endif

@@ -39,6 +39,7 @@
 #import "UTIUtilities.h"
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <objc/runtime.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/CString.h>
 
@@ -365,7 +366,9 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
             [contentInfo setEntireLengthAvailableOnDemand:YES];
 
         if (![m_avRequest dataRequest]) {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avRequest finishLoading];
+            END_BLOCK_OBJC_EXCEPTIONS
             stopLoading();
         }
     }
@@ -384,7 +387,9 @@ void WebCoreAVFResourceLoader::loadFailed(const ResourceError& error)
 
 void WebCoreAVFResourceLoader::loadFinished()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_avRequest finishLoading];
+    END_BLOCK_OBJC_EXCEPTIONS
     stopLoading();
 }
 
@@ -429,7 +434,9 @@ void WebCoreAVFResourceLoader::newDataStoredInSharedBuffer(const FragmentedShare
         return;
 
     if (dataRequest.currentOffset + dataRequest.requestedLength >= dataRequest.requestedOffset) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [m_avRequest finishLoading];
+        END_BLOCK_OBJC_EXCEPTIONS
         stopLoading();
     }
 }

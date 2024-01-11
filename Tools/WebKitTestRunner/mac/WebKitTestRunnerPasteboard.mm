@@ -30,6 +30,7 @@
 
 #import "NSPasteboardAdditions.h"
 #import <objc/runtime.h>
+#import <pal/spi/mac/NSPasteboardSPI.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 
@@ -196,6 +197,11 @@ static RetainPtr<NSMutableDictionary> localPasteboards WTF_GUARDED_BY_LOCK(local
 - (NSData *)dataForType:(NSString *)dataType
 {
     return [_dataByType objectForKey:dataType];
+}
+
+- (NSData *)_dataWithoutConversionForType:(NSString *)type securityScoped:(BOOL)securityScoped
+{
+    return [self dataForType:type];
 }
 
 - (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType

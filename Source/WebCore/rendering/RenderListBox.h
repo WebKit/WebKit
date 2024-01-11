@@ -166,6 +166,8 @@ private:
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);
 
+    void scrollToPosition(int positionIndex);
+
     using PaintFunction = Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
     void paintItem(PaintInfo&, const LayoutPoint&, const PaintFunction&);
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class UnifiedOriginStorageLevel : uint8_t {
@@ -44,16 +42,3 @@ inline std::optional<UnifiedOriginStorageLevel> convertToUnifiedOriginStorageLev
 }
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::UnifiedOriginStorageLevel> {
-    using values = EnumValues<
-        WebKit::UnifiedOriginStorageLevel,
-        WebKit::UnifiedOriginStorageLevel::None,
-        WebKit::UnifiedOriginStorageLevel::Basic,
-        WebKit::UnifiedOriginStorageLevel::Standard
-    >;
-};
-
-} // namespace WTF

@@ -23,6 +23,7 @@
 #include "RealtimeIncomingVideoSourceGStreamer.h"
 
 #include "GStreamerCommon.h"
+#include "GStreamerRegistryScanner.h"
 #include "GStreamerWebRTCUtils.h"
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
@@ -63,6 +64,85 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     start();
 }
 
+void RealtimeIncomingVideoSourceGStreamer::configureForInputCaps(const GRefPtr<GstCaps>& caps)
+{
+    bool forceEarlyVideoDecoding = !g_strcmp0(g_getenv("WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING"), "1");
+    GST_DEBUG_OBJECT(bin(), "Configuring for input caps: %" GST_PTR_FORMAT "%s", caps.get(), forceEarlyVideoDecoding ? " and early decoding" : "");
+    if (!forceEarlyVideoDecoding) {
+        auto structure = gst_caps_get_structure(caps.get(), 0);
+        ASSERT(gst_structure_has_name(structure, "application/x-rtp"));
+        auto encodingNameValue = makeString(gst_structure_get_string(structure, "encoding-name"));
+        auto mediaType = makeString("video/x-"_s, encodingNameValue.convertToASCIILowercase());
+        auto codecCaps = adoptGRef(gst_caps_new_empty_simple(mediaType.ascii().data()));
+
+        auto& scanner = GStreamerRegistryScanner::singleton();
+        if (scanner.areCapsSupported(GStreamerRegistryScanner::Configuration::Decoding, codecCaps, true)) {
+            GST_DEBUG_OBJECT(bin(), "Hardware video decoder detected, deferring decoding to the source client");
+            createParser();
+            return;
+        }
+    }
+
+    GST_DEBUG_OBJECT(bin(), "Preparing video decoder for depayloaded RTP packets");
+    auto decodebin = makeGStreamerElement("decodebin3", nullptr);
+
+    g_signal_connect(decodebin, "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin*, GstElement* element, gpointer) {
+        auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        auto classifiers = elementClass.split('/');
+        if (!classifiers.contains("Depayloader"_s))
+            return;
+
+        configureVideoRTPDepayloader(element);
+    }), nullptr);
+
+    g_signal_connect(decodebin, "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer userData) {
+        auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        auto classifiers = elementClass.split('/');
+        if (!classifiers.contains("Decoder"_s) || !classifiers.contains("Video"_s))
+            return;
+
+        configureMediaStreamVideoDecoder(element);
+        auto pad = adoptGRef(gst_element_get_static_pad(element, "src"));
+        gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+            auto self = reinterpret_cast<RealtimeIncomingVideoSourceGStreamer*>(userData);
+            if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM) {
+                auto event = GST_PAD_PROBE_INFO_EVENT(info);
+                if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS) {
+                    GstCaps* caps;
+                    gst_event_parse_caps(event, &caps);
+                    self->m_videoSize = getVideoResolutionFromCaps(caps).value_or(FloatSize { 0, 0 });
+                }
+                return GST_PAD_PROBE_OK;
+            }
+            self->m_decodedVideoFrames++;
+            return GST_PAD_PROBE_OK;
+        }, userData, nullptr);
+    }), this);
+
+    g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](RealtimeIncomingVideoSourceGStreamer* source, GstPad* pad) {
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(source->m_tee.get(), "sink"));
+        gst_pad_link(pad, sinkPad.get());
+
+        gst_element_sync_state_with_parent(source->m_tee.get());
+        gst_element_sync_state_with_parent(source->m_queue.get());
+        gst_element_sync_state_with_parent(source->m_fakeVideoSink.get());
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(source->bin()), GST_DEBUG_GRAPH_SHOW_ALL, GST_OBJECT_NAME(source->bin()));
+    }), this);
+
+    m_queue = makeGStreamerElement("queue", nullptr);
+    m_fakeVideoSink = makeGStreamerElement("fakevideosink", nullptr);
+    g_object_set(m_fakeVideoSink.get(), "enable-last-sample", FALSE, nullptr);
+
+    gst_bin_add_many(GST_BIN_CAST(bin()), decodebin, m_queue.get(), m_fakeVideoSink.get(), nullptr);
+
+    gst_element_link_many(m_tee.get(), m_queue.get(), m_fakeVideoSink.get(), nullptr);
+    gst_element_sync_state_with_parent(m_queue.get());
+    gst_element_sync_state_with_parent(m_fakeVideoSink.get());
+
+    gst_element_link(m_valve.get(), decodebin);
+    m_isDecoding = true;
+}
+
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::settings()
 {
     if (m_currentSettings)
@@ -96,21 +176,27 @@ void RealtimeIncomingVideoSourceGStreamer::settingsDidChange(OptionSet<RealtimeM
         m_currentSettings = std::nullopt;
 }
 
+void RealtimeIncomingVideoSourceGStreamer::ensureSizeAndFramerate(const GRefPtr<GstCaps>& caps)
+{
+    if (auto size = getVideoResolutionFromCaps(caps.get()))
+        setSize({ static_cast<int>(size->width()), static_cast<int>(size->height()) });
+
+    int frameRateNumerator, frameRateDenominator;
+    auto* structure = gst_caps_get_structure(caps.get(), 0);
+    if (!gst_structure_get_fraction(structure, "framerate", &frameRateNumerator, &frameRateDenominator))
+        return;
+
+    double framerate;
+    gst_util_fraction_to_double(frameRateNumerator, frameRateDenominator, &framerate);
+    setFrameRate(framerate);
+}
+
 void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& sample)
 {
     ASSERT(isMainThread());
     auto* buffer = gst_sample_get_buffer(sample.get());
     auto* caps = gst_sample_get_caps(sample.get());
-    if (auto size = getVideoResolutionFromCaps(caps))
-        setSize({ static_cast<int>(size->width()), static_cast<int>(size->height()) });
-
-    int frameRateNumerator, frameRateDenominator;
-    auto* structure = gst_caps_get_structure(caps, 0);
-    if (gst_structure_get_fraction(structure, "framerate", &frameRateNumerator, &frameRateDenominator)) {
-        double framerate;
-        gst_util_fraction_to_double(frameRateNumerator, frameRateDenominator, &framerate);
-        setFrameRate(framerate);
-    }
+    ensureSizeAndFramerate(GRefPtr<GstCaps>(caps));
 
     videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), size(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
@@ -118,6 +204,20 @@ void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
 const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()
 {
     m_stats.reset(gst_structure_new_empty("incoming-video-stats"));
+
+    if (m_isDecoding) {
+        uint64_t droppedVideoFrames = 0;
+        GUniqueOutPtr<GstStructure> stats;
+        g_object_get(m_fakeVideoSink.get(), "stats", &stats.outPtr(), nullptr);
+        if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+            return m_stats.get();
+
+        gst_structure_set(m_stats.get(), "frames-decoded", G_TYPE_UINT64, m_decodedVideoFrames, "frames-dropped", G_TYPE_UINT64, droppedVideoFrames, nullptr);
+        if (!m_videoSize.isZero())
+            gst_structure_set(m_stats.get(), "frame-width", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.width()), "frame-height", G_TYPE_UINT, static_cast<unsigned>(m_videoSize.height()), nullptr);
+        return m_stats.get();
+    }
+
     forEachVideoFrameObserver([&](auto& observer) {
         auto stats = observer.queryAdditionalStats();
         if (!stats)

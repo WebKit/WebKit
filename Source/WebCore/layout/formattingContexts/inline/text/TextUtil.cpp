@@ -124,7 +124,7 @@ InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTe
 }
 
 template <typename TextIterator>
-static void fallbackFontsForRunWithIterator(WeakHashSet<const Font>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
+static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
 {
     auto isRTL = run.rtl();
     auto isSmallCaps = fontCascade.isSmallCaps();

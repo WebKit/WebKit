@@ -5,30 +5,33 @@ Test calcMode discrete with from-to animation on colors with alpha channel. You 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS parseAlphaFromColor() is 0.4
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS parseAlphaFromColor() is 0.6
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS parseAlphaFromColor() is 0.6
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS parseAlphaFromColor() is 0.8
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS parseAlphaFromColor() is 0.8
-PASS rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
-PASS parseAlphaFromColor() is 0.4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS colors[0] is 0
+PASS colors[1] is 255
+PASS colors[2] is 255
+PASS colors[3] is 0.4
+PASS colors[0] is 255
+PASS colors[1] is 0
+PASS colors[2] is 0
+PASS colors[3] is 0.6
+PASS colors[0] is 255
+PASS colors[1] is 0
+PASS colors[2] is 0
+PASS colors[3] is 0.6
+PASS colors[0] is 0
+PASS colors[1] is 255
+PASS colors[2] is 255
+PASS colors[3] is 0.8
+PASS colors[0] is 0
+PASS colors[1] is 255
+PASS colors[2] is 255
+PASS colors[3] is 0.8
+PASS colors[0] is 0
+PASS colors[1] is 255
+PASS colors[2] is 255
+PASS colors[3] is 0.4
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -198,22 +198,22 @@ static PseudoId pseudoForScrollbarPart(ScrollbarPart part)
         case ForwardButtonStartPart:
         case BackButtonEndPart:
         case ForwardButtonEndPart:
-            return PseudoId::ScrollbarButton;
+            return PseudoId::WebKitScrollbarButton;
         case BackTrackPart:
         case ForwardTrackPart:
-            return PseudoId::ScrollbarTrackPiece;
+            return PseudoId::WebKitScrollbarTrackPiece;
         case ThumbPart:
-            return PseudoId::ScrollbarThumb;
+            return PseudoId::WebKitScrollbarThumb;
         case TrackBGPart:
-            return PseudoId::ScrollbarTrack;
+            return PseudoId::WebKitScrollbarTrack;
         case ScrollbarBGPart:
-            return PseudoId::Scrollbar;
+            return PseudoId::WebKitScrollbar;
         case NoPart:
         case AllParts:
             break;
     }
     ASSERT_NOT_REACHED();
-    return PseudoId::Scrollbar;
+    return PseudoId::WebKitScrollbar;
 }
 
 void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)

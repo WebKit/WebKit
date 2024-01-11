@@ -361,6 +361,7 @@ NS_ASSUME_NONNULL_END
 - (void)task:(WebCoreNSURLSessionDataTask *)task addSecurityOrigin:(Ref<WebCore::SecurityOrigin>&&)origin
 {
     UNUSED_PARAM(task);
+    ASSERT(isMainThread());
     _origins.add(WTFMove(origin));
 }
 
@@ -417,6 +418,7 @@ NS_ASSUME_NONNULL_END
 
 - (BOOL)isCrossOrigin:(const WebCore::SecurityOrigin &)origin
 {
+    ASSERT(isMainThread());
     for (auto& responseOrigin : _origins) {
         if (!origin.isSameOriginDomain(*responseOrigin))
             return true;
@@ -716,7 +718,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 {
     self.taskIdentifier = identifier;
     self.session = session;
-    self.state = NSURLSessionTaskStateSuspended;
+    self->_state = NSURLSessionTaskStateSuspended;
     self.priority = NSURLSessionTaskPriorityDefault;
 
     // CoreMedia will explicitly add a user agent header. Remove if present.
@@ -781,7 +783,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 @synthesize countOfBytesSent = _countOfBytesSent;
 @synthesize countOfBytesExpectedToSend = _countOfBytesExpectedToSend;
 @synthesize countOfBytesExpectedToReceive = _countOfBytesExpectedToReceive;
-@synthesize state = _state;
 @synthesize priority = _priority;
 
 - (NSURLRequest *)originalRequest
@@ -824,12 +825,19 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return _response.get();
 }
 
+- (NSURLSessionTaskState)state
+{
+    return _state;
+}
+
 - (void)cancel
 {
     if (self.state == NSURLSessionTaskStateCompleted)
         return;
-    self.state = NSURLSessionTaskStateCanceling;
+    self->_state = NSURLSessionTaskStateCanceling;
     callOnMainThread([protectedSelf = retainPtr(self)] {
+        if (protectedSelf.get().state == NSURLSessionTaskStateCompleted)
+            return;
         [protectedSelf _cancel];
         [protectedSelf _resource:nullptr loadFinishedWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil] metrics:NetworkLoadMetrics { }];
     });
@@ -838,11 +846,16 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)suspend
 {
     callOnMainThread([protectedSelf = RetainPtr<WebCoreNSURLSessionDataTask>(self)] {
+        auto state = protectedSelf.get().state;
+        if (state == NSURLSessionTaskStateCompleted
+            || state == NSURLSessionTaskStateCanceling)
+            return;
+
         // NSURLSessionDataTasks must start over after suspending, so while
         // we could defer loading at this point, instead cancel and restart
         // upon resume so as to adhere to NSURLSessionDataTask semantics.
         [protectedSelf _cancel];
-        protectedSelf.get().state = NSURLSessionTaskStateSuspended;
+        protectedSelf->_state = NSURLSessionTaskStateSuspended;
     });
 }
 
@@ -853,7 +866,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
             return;
 
         [protectedSelf _restart];
-        protectedSelf.get().state = NSURLSessionTaskStateRunning;
+        protectedSelf->_state = NSURLSessionTaskStateRunning;
     });
 }
 
@@ -986,7 +999,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     if (self.state == NSURLSessionTaskStateCompleted)
         return;
-    self.state = NSURLSessionTaskStateCompleted;
+    self->_state = NSURLSessionTaskStateCompleted;
 
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };

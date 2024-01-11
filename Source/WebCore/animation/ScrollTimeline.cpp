@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSScrollValue.h"
+#include "CSSValuePool.h"
 #include "Element.h"
 
 namespace WebCore {

@@ -73,10 +73,10 @@ public:
         return &vm.unlinkedFunctionExecutableSpace();
     }
 
-    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor = false)
+    static UnlinkedFunctionExecutable* create(VM& vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, std::optional<Vector<Identifier>>&& generatorOrAsyncWrapperFunctionParameterNames, std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor = false)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm))
-            UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, inlineAttribute, scriptMode, WTFMove(parentScopeTDZVariables), WTFMove(parentPrivateNameEnvironment), derivedContextType, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
+            UnlinkedFunctionExecutable(vm, vm.unlinkedFunctionExecutableStructure.get(), source, node, unlinkedFunctionKind, constructAbility, inlineAttribute, scriptMode, WTFMove(parentScopeTDZVariables), WTFMove(generatorOrAsyncWrapperFunctionParameterNames), WTFMove(parentPrivateNameEnvironment), derivedContextType, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
         instance->finishCreation(vm);
         return instance;
     }
@@ -182,6 +182,13 @@ public:
         return m_rareData->m_parentScopeTDZVariables;
     }
 
+    const FixedVector<Identifier>* generatorOrAsyncWrapperFunctionParameterNames() const
+    {
+        if (!m_rareData)
+            return nullptr;
+        return &m_rareData->m_generatorOrAsyncWrapperFunctionParameterNames;
+    }
+
     const PrivateNameEnvironment* parentPrivateNameEnvironment() const
     {
         if (!m_rareData)
@@ -225,6 +232,7 @@ public:
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
+        FixedVector<Identifier> m_generatorOrAsyncWrapperFunctionParameterNames;
         FixedVector<JSTextPosition> m_classFieldLocations;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
     };
@@ -246,7 +254,7 @@ public:
     }
 
 private:
-    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, InlineAttribute, JSParserScriptMode, RefPtr<TDZEnvironmentLink>, std::optional<PrivateNameEnvironment>, JSC::DerivedContextType, JSC::NeedsClassFieldInitializer, PrivateBrandRequirement, bool isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable(VM&, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, InlineAttribute, JSParserScriptMode, RefPtr<TDZEnvironmentLink>, std::optional<Vector<Identifier>>&&, std::optional<PrivateNameEnvironment>, JSC::DerivedContextType, JSC::NeedsClassFieldInitializer, PrivateBrandRequirement, bool isBuiltinDefaultClassConstructor);
     UnlinkedFunctionExecutable(Decoder&, const CachedFunctionExecutable&);
 
     DECLARE_VISIT_CHILDREN;

@@ -60,6 +60,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
 
@@ -79,16 +80,44 @@ static const CFStringRef LegacyWebArchiveResourceTextEncodingNameKey = CFSTR("We
 static const CFStringRef LegacyWebArchiveResourceResponseKey = CFSTR("WebResourceResponse");
 static const CFStringRef LegacyWebArchiveResourceResponseVersionKey = CFSTR("WebResourceResponseVersion");
 
+static bool isUnreservedURICharacter(UChar character)
+{
+    return isASCIIAlphanumeric(character) || character == '-' || character == '.' || character == '_' || character == '~';
+}
+
+static String getFileNameFromURIComponent(StringView input)
+{
+    auto decodedInput = WTF::URLParser::formURLDecode(input);
+    if (!decodedInput)
+        return { };
+
+    unsigned length = decodedInput->length();
+    if (!length)
+        return { };
+
+    StringBuilder result;
+    result.reserveCapacity(length);
+    for (unsigned index = 0; index < length; ++index) {
+        UChar character = decodedInput->characterAt(index);
+        if (isUnreservedURICharacter(character)) {
+            result.append(character);
+            continue;
+        }
+        result.append('-');
+    }
+
+    return result.toString();
+}
+
 static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames)
 {
-    auto extractedFileName = url.lastPathComponent().toString();
+    auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
-    fileName = FileSystem::encodeForFileName(fileName);
 
     unsigned count = 0;
     do {
         if (count)
-            fileName = makeString(fileName, '(', count, ')');
+            fileName = makeString(fileName, '-', count);
         if (fileName.sizeInBytes() > maxFileNameSizeInBytes)
             fileName = fileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
         ++count;
@@ -459,6 +488,11 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (frame->page() && frame->page()->settings().isScriptEnabled())
         markupExclusionRules.append(MarkupExclusionRule { AtomString { "noscript"_s }, { } });
 
+    // This archive is created for saving, and all subresources URLs will be rewritten to relative file paths
+    // based on the main resource file.
+    if (!mainResourceFilePath.isEmpty())
+        markupExclusionRules.append(MarkupExclusionRule { AtomString { "base"_s }, { } });
+
     Vector<Ref<Node>> nodeList;
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, std::nullopt, { }, { }, ShouldIncludeShadowDOM::Yes, markupExclusionRules);
     auto nodeType = node.nodeType();
@@ -724,7 +758,16 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             extension = makeString(".", extension);
         auto mainFrameFilePathWithExtension = mainFrameFilePath.endsWith(extension) ? mainFrameFilePath : makeString(mainFrameFilePath, extension);
         auto filePathWithExtension = frame.isMainFrame() ? mainFrameFilePathWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
-        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes, markupExclusionRules);
+
+        ResolveURLs resolveURLs = ResolveURLs::No;
+        // Base element is excluded, so all URLs should be replaced with absolute URL.
+        bool baseElementExcluded = WTF::anyOf(markupExclusionRules, [&] (auto& rule) {
+            return rule.elementLocalName == "base"_s;
+        });
+        if (!document->baseElementURL().isEmpty() && baseElementExcluded)
+            resolveURLs = ResolveURLs::Yes;
+
+        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, resolveURLs, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes, markupExclusionRules);
         mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), filePathWithExtension);
     }
 

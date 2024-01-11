@@ -44,9 +44,9 @@ class PipelineLayout;
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, renderPipelineDescriptor, colorAttachmentCount, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)
@@ -76,9 +76,12 @@ public:
 
     Device& device() const { return m_device; }
     PipelineLayout& pipelineLayout() const;
+    bool colorTargetsMatch(MTLRenderPassColorAttachmentDescriptorArray*, uint32_t) const;
+    bool depthAttachmentMatches(MTLRenderPassDepthAttachmentDescriptor*) const;
+    bool stencilAttachmentMatches(MTLRenderPassStencilAttachmentDescriptor*) const;
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor*, uint32_t colorAttachmentCount, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
@@ -93,7 +96,9 @@ private:
     float m_depthBiasSlopeScale { 0 };
     float m_depthBiasClamp { 0 };
     uint32_t m_sampleMask { UINT32_MAX };
-    MTLDepthStencilDescriptor *m_depthStencilDescriptor;
+    MTLRenderPipelineDescriptor* m_renderPipelineDescriptor { nil };
+    uint32_t m_colorAttachmentCount { 0 };
+    MTLDepthStencilDescriptor *m_depthStencilDescriptor { nil };
     id<MTLDepthStencilState> m_depthStencilState;
     Ref<PipelineLayout> m_pipelineLayout;
 };

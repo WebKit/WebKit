@@ -145,12 +145,6 @@ function createCSSMediaRule()
     return rule;
 }
 
-function createCSSValueList()
-{
-    // FIXME: Not working in Firefox, not sure why.
-    return createFromMarkup("<style>a { font-family: b, c }</style>").sheet.cssRules.item(0).style.getPropertyCSSValue("font-family");
-}
-
 function createMediaList()
 {
     return createCSSMediaRule().media;
@@ -219,10 +213,6 @@ shouldBe("nonNumericPolicy('createCSSStyleSheet().insertRule(ruleText, x)')", "'
 shouldBe("nonNumericPolicy('createCSSStyleSheet().deleteRule(x)')", "'any type allowed (but not omitted)'");
 shouldBe("nonNumericPolicy('createCSSStyleSheet().addRule(selector, styleText, x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('createCSSStyleSheet().removeRule(x)')", "'any type allowed'");
-
-// CSSValueList
-
-shouldBe("nonNumericPolicy('createCSSValueList().item(x)')", "'any type allowed (but not omitted)'");
 
 // Document
 

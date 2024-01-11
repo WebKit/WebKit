@@ -1687,6 +1687,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->verifyWindowOpenUserGestureFromUIProcess();
 }
 
+- (BOOL)_mediaCapabilityGrantsEnabled
+{
+    return _preferences->mediaCapabilityGrantsEnabled();
+}
+
+- (void)_setMediaCapabilityGrantsEnabled:(BOOL)mediaCapabilityGrantsEnabled
+{
+    _preferences->setMediaCapabilityGrantsEnabled(mediaCapabilityGrantsEnabled);
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

@@ -46,7 +46,6 @@ struct IOSurfaceFormatInfo
 static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
     {GL_RED,      GL_UNSIGNED_BYTE,                1, GL_RED,  GL_RED,  GL_UNSIGNED_BYTE              },
     {GL_RED,      GL_UNSIGNED_SHORT,               2, GL_RED,  GL_RED,  GL_UNSIGNED_SHORT             },
-    {GL_R16UI,    GL_UNSIGNED_SHORT,               2, GL_RED,  GL_RED,  GL_UNSIGNED_SHORT             },
     {GL_RG,       GL_UNSIGNED_BYTE,                2, GL_RG,   GL_RG,   GL_UNSIGNED_BYTE              },
     {GL_RG,       GL_UNSIGNED_SHORT,               4, GL_RG,   GL_RG,   GL_UNSIGNED_SHORT             },
     {GL_RGB,      GL_UNSIGNED_BYTE,                4, GL_RGBA, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV   },

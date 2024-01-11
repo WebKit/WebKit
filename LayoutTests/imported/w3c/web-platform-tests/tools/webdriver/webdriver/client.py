@@ -295,9 +295,7 @@ class Actions:
         return ActionSequence(self.session, *args, **kwargs)
 
 
-class Window:
-    identifier = "window-fcc6-11e5-b4f8-330a88ab9d7f"
-
+class BrowserWindow:
     def __init__(self, session):
         self.session = session
 
@@ -310,27 +308,24 @@ class Window:
 
         return handles
 
-    # The many "type: ignore" comments here and below are to silence mypy's
-    # "Decorated property not supported" error, which is due to a limitation
-    # in mypy, see https://github.com/python/mypy/issues/1362.
-    @property  # type: ignore
+    @property
     @command
     def rect(self):
         return self.session.send_session_command("GET", "window/rect")
 
-    @rect.setter  # type: ignore
+    @rect.setter
     @command
     def rect(self, new_rect):
         self.session.send_session_command("POST", "window/rect", new_rect)
 
-    @property  # type: ignore
+    @property
     @command
     def size(self):
         """Gets the window size as a tuple of `(width, height)`."""
         rect = self.rect
         return (rect["width"], rect["height"])
 
-    @size.setter  # type: ignore
+    @size.setter
     @command
     def size(self, new_size):
         """Set window size by passing a tuple of `(width, height)`."""
@@ -343,14 +338,14 @@ class Window:
             # for Android. Revert this once it is implemented.
             pass
 
-    @property  # type: ignore
+    @property
     @command
     def position(self):
         """Gets the window position as a tuple of `(x, y)`."""
         rect = self.rect
         return (rect["x"], rect["y"])
 
-    @position.setter  # type: ignore
+    @position.setter
     @command
     def position(self, new_position):
         """Set window position by passing a tuple of `(x, y)`."""
@@ -374,59 +369,6 @@ class Window:
     @command
     def fullscreen(self):
         return self.session.send_session_command("POST", "window/fullscreen")
-
-    @classmethod
-    def from_json(cls, json, session):
-        uuid = json[Window.identifier]
-        return cls(uuid, session)
-
-
-class Frame:
-    identifier = "frame-075b-4da1-b6ba-e579c2d3230a"
-
-    def __init__(self, session):
-        self.session = session
-
-    @classmethod
-    def from_json(cls, json, session):
-        uuid = json[Frame.identifier]
-        return cls(uuid, session)
-
-
-class ShadowRoot:
-    identifier = "shadow-6066-11e4-a52e-4f735466cecf"
-
-    def __init__(self, session, id):
-        """
-        Construct a new shadow root representation.
-
-        :param id: Shadow root UUID which must be unique across
-            all browsing contexts.
-        :param session: Current ``webdriver.Session``.
-        """
-        self.id = id
-        self.session = session
-
-    @classmethod
-    def from_json(cls, json, session):
-        uuid = json[ShadowRoot.identifier]
-        return cls(session, uuid)
-
-    def send_shadow_command(self, method, uri, body=None):
-        url = f"shadow/{self.id}/{uri}"
-        return self.session.send_session_command(method, url, body)
-
-    @command
-    def find_element(self, strategy, selector):
-        body = {"using": strategy,
-                "value": selector}
-        return self.send_shadow_command("POST", "element", body)
-
-    @command
-    def find_elements(self, strategy, selector):
-        body = {"using": strategy,
-                "value": selector}
-        return self.send_shadow_command("POST", "elements", body)
 
 
 class Find:
@@ -475,12 +417,12 @@ class UserPrompt:
     def accept(self):
         self.session.send_session_command("POST", "alert/accept")
 
-    @property  # type: ignore
+    @property
     @command
     def text(self):
         return self.session.send_session_command("GET", "alert/text")
 
-    @text.setter  # type: ignore
+    @text.setter
     @command
     def text(self, value):
         body = {"text": value}
@@ -515,7 +457,7 @@ class Session:
         self.extension_cls = extension
 
         self.timeouts = Timeouts(self)
-        self.window = Window(self)
+        self.window = BrowserWindow(self)
         self.find = Find(self)
         self.alert = UserPrompt(self)
         self.actions = Actions(self)
@@ -660,12 +602,12 @@ class Session:
         url = urlparse.urljoin("session/%s/" % self.session_id, uri)
         return self.send_command(method, url, body, timeout)
 
-    @property  # type: ignore
+    @property
     @command
     def url(self):
         return self.send_session_command("GET", "url")
 
-    @url.setter  # type: ignore
+    @url.setter
     @command
     def url(self, url):
         if urlparse.urlsplit(url).netloc is None:
@@ -685,12 +627,12 @@ class Session:
     def refresh(self):
         return self.send_session_command("POST", "refresh")
 
-    @property  # type: ignore
+    @property
     @command
     def title(self):
         return self.send_session_command("GET", "title")
 
-    @property  # type: ignore
+    @property
     @command
     def source(self):
         return self.send_session_command("GET", "source")
@@ -702,12 +644,12 @@ class Session:
 
         return value["handle"]
 
-    @property  # type: ignore
+    @property
     @command
     def window_handle(self):
         return self.send_session_command("GET", "window")
 
-    @window_handle.setter  # type: ignore
+    @window_handle.setter
     @command
     def window_handle(self, handle):
         body = {"handle": handle}
@@ -723,12 +665,12 @@ class Session:
 
         return self.send_session_command("POST", url, body)
 
-    @property  # type: ignore
+    @property
     @command
     def handles(self):
         return self.send_session_command("GET", "window/handles")
 
-    @property  # type: ignore
+    @property
     @command
     def active_element(self):
         return self.send_session_command("GET", "element/active")
@@ -798,7 +740,44 @@ class Session:
     def screenshot(self):
         return self.send_session_command("GET", "screenshot")
 
-class Element:
+
+class ShadowRoot:
+    identifier = "shadow-6066-11e4-a52e-4f735466cecf"
+
+    def __init__(self, session, id):
+        """
+        Construct a new shadow root representation.
+
+        :param id: Shadow root UUID which must be unique across
+            all browsing contexts.
+        :param session: Current ``webdriver.Session``.
+        """
+        self.id = id
+        self.session = session
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[ShadowRoot.identifier]
+        return cls(session, uuid)
+
+    def send_shadow_command(self, method, uri, body=None):
+        url = f"shadow/{self.id}/{uri}"
+        return self.session.send_session_command(method, url, body)
+
+    @command
+    def find_element(self, strategy, selector):
+        body = {"using": strategy,
+                "value": selector}
+        return self.send_shadow_command("POST", "element", body)
+
+    @command
+    def find_elements(self, strategy, selector):
+        body = {"using": strategy,
+                "value": selector}
+        return self.send_shadow_command("POST", "elements", body)
+
+
+class WebElement:
     """
     Representation of a web element.
 
@@ -807,13 +786,12 @@ class Element:
     """
     identifier = "element-6066-11e4-a52e-4f735466cecf"
 
-    def __init__(self, id, session):
+    def __init__(self, session, id):
         """
         Construct a new web element representation.
 
-        :param id: Web element UUID which must be unique across
-            all browsing contexts.
         :param session: Current ``webdriver.Session``.
+        :param id: Web element UUID which must be unique across all browsing contexts.
         """
         self.id = id
         self.session = session
@@ -822,13 +800,13 @@ class Element:
         return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def __eq__(self, other):
-        return (isinstance(other, Element) and self.id == other.id and
+        return (isinstance(other, WebElement) and self.id == other.id and
                 self.session == other.session)
 
     @classmethod
     def from_json(cls, json, session):
-        uuid = json[Element.identifier]
-        return cls(uuid, session)
+        uuid = json[WebElement.identifier]
+        return cls(session, uuid)
 
     def send_element_command(self, method, uri, body=None):
         url = "element/%s/%s" % (self.id, uri)
@@ -856,12 +834,12 @@ class Element:
     def send_keys(self, text):
         return self.send_element_command("POST", "value", {"text": text})
 
-    @property  # type: ignore
+    @property
     @command
     def text(self):
         return self.send_element_command("GET", "text")
 
-    @property  # type: ignore
+    @property
     @command
     def name(self):
         return self.send_element_command("GET", "name")
@@ -870,12 +848,12 @@ class Element:
     def style(self, property_name):
         return self.send_element_command("GET", "css/%s" % property_name)
 
-    @property  # type: ignore
+    @property
     @command
     def rect(self):
         return self.send_element_command("GET", "rect")
 
-    @property  # type: ignore
+    @property
     @command
     def selected(self):
         return self.send_element_command("GET", "selected")
@@ -884,7 +862,7 @@ class Element:
     def screenshot(self):
         return self.send_element_command("GET", "screenshot")
 
-    @property  # type: ignore
+    @property
     @command
     def shadow_root(self):
         return self.send_element_command("GET", "shadow")
@@ -893,8 +871,55 @@ class Element:
     def attribute(self, name):
         return self.send_element_command("GET", "attribute/%s" % name)
 
+    @command
+    def get_computed_label(self):
+        return self.send_element_command("GET", "computedlabel")
+
+    @command
+    def get_computed_role(self):
+        return self.send_element_command("GET", "computedrole")
+
     # This MUST come last because otherwise @property decorators above
     # will be overridden by this.
     @command
     def property(self, name):
         return self.send_element_command("GET", "property/%s" % name)
+
+class WebFrame:
+    identifier = "frame-075b-4da1-b6ba-e579c2d3230a"
+
+    def __init__(self, session, id):
+        self.id = id
+        self.session = session
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
+
+    def __eq__(self, other):
+        return (isinstance(other, WebFrame) and self.id == other.id and
+                self.session == other.session)
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[WebFrame.identifier]
+        return cls(session, uuid)
+
+
+class WebWindow:
+    identifier = "window-fcc6-11e5-b4f8-330a88ab9d7f"
+
+    def __init__(self, session, id):
+        self.id = id
+        self.session = session
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
+
+    def __eq__(self, other):
+        return (isinstance(other, WebWindow) and self.id == other.id and
+                self.session == other.session)
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[WebWindow.identifier]
+        return cls(session, uuid)

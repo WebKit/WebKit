@@ -52,7 +52,6 @@
             var rule = rules[0];
             var mediaRule = rules[1];            
             var style = rule.style;
-            var value = style.getPropertyCSSValue('color');
             var mediaList = mediaRule.media;
 
 
@@ -78,15 +77,6 @@
                     attributes: [
                         // cssText detects syntax errors, such as JS null, and sets the value to the empty string.
                         {name: 'cssText', expectedNull: ''}
-                    ]
-                },
-                {
-                    type: 'CSSValue',
-                    elementToUse: value,
-                    attributes: [
-                        // for now, setting cssText does not doing anything. When it gets implemented, the expectedNull
-                        // should become the empty string. 
-                        {name: 'cssText', expectedNull: 'black'}
                     ]
                 },
                 {

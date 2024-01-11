@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +28,7 @@
 #include "LegacyRenderSVGResourceLinearGradient.h"
 #include "LegacyRenderSVGResourceRadialGradient.h"
 #include "NodeName.h"
+#include "RenderSVGResourceGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStopElement.h"
 #include "SVGTransformable.h"
@@ -76,11 +78,24 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGGradientElement::invalidateGradientResource()
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto* gradientRenderer = dynamicDowncast<RenderSVGResourceGradient>(renderer()))
+            gradientRenderer->invalidateGradient();
+        return;
+    }
+#endif
+
+    updateSVGRendererForElementChange();
+}
+
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        invalidateGradientResource();
         return;
     }
 
@@ -90,11 +105,10 @@ void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 void SVGGradientElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
-
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    updateSVGRendererForElementChange();
+    invalidateGradientResource();
 }
 
 GradientColorStops SVGGradientElement::buildStops()

@@ -42,7 +42,7 @@ public:
     }
 #endif
 
-    CoreIPCDate(const CFDateRef date)
+    CoreIPCDate(CFDateRef date)
         : m_absoluteTime(CFDateGetAbsoluteTime(date))
     {
     }

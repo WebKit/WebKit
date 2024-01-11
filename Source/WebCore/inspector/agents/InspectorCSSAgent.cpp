@@ -379,7 +379,7 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
     }
 }
 
-bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoClassType)
+bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClass pseudoClass)
 {
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
@@ -392,7 +392,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (!nodeId)
         return false;
 
-    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClassType);
+    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClass);
 }
 
 std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
@@ -416,22 +416,8 @@ std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudo
         return Protocol::CSS::PseudoId::Selection;
     case PseudoId::Highlight:
         return Protocol::CSS::PseudoId::Highlight;
-    case PseudoId::Scrollbar:
-        return Protocol::CSS::PseudoId::Scrollbar;
-    case PseudoId::ScrollbarThumb:
-        return Protocol::CSS::PseudoId::ScrollbarThumb;
-    case PseudoId::ScrollbarButton:
-        return Protocol::CSS::PseudoId::ScrollbarButton;
-    case PseudoId::ScrollbarTrack:
-        return Protocol::CSS::PseudoId::ScrollbarTrack;
-    case PseudoId::ScrollbarTrackPiece:
-        return Protocol::CSS::PseudoId::ScrollbarTrackPiece;
-    case PseudoId::ScrollbarCorner:
-        return Protocol::CSS::PseudoId::ScrollbarCorner;
     case PseudoId::SpellingError:
         return Protocol::CSS::PseudoId::SpellingError;
-    case PseudoId::Resizer:
-        return Protocol::CSS::PseudoId::Resizer;
     case PseudoId::ViewTransition:
         return Protocol::CSS::PseudoId::ViewTransition;
     case PseudoId::ViewTransitionGroup:
@@ -442,6 +428,20 @@ std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudo
         return Protocol::CSS::PseudoId::ViewTransitionOld;
     case PseudoId::ViewTransitionNew:
         return Protocol::CSS::PseudoId::ViewTransitionNew;
+    case PseudoId::WebKitResizer:
+        return Protocol::CSS::PseudoId::WebKitResizer;
+    case PseudoId::WebKitScrollbar:
+        return Protocol::CSS::PseudoId::WebKitScrollbar;
+    case PseudoId::WebKitScrollbarThumb:
+        return Protocol::CSS::PseudoId::WebKitScrollbarThumb;
+    case PseudoId::WebKitScrollbarButton:
+        return Protocol::CSS::PseudoId::WebKitScrollbarButton;
+    case PseudoId::WebKitScrollbarTrack:
+        return Protocol::CSS::PseudoId::WebKitScrollbarTrack;
+    case PseudoId::WebKitScrollbarTrackPiece:
+        return Protocol::CSS::PseudoId::WebKitScrollbarTrackPiece;
+    case PseudoId::WebKitScrollbarCorner:
+        return Protocol::CSS::PseudoId::WebKitScrollbarCorner;
 
     default:
         ASSERT_NOT_REACHED();
@@ -938,31 +938,31 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
         switch (*pseudoClass) {
         case Protocol::CSS::ForceablePseudoClass::Active:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Active);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Active);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Hover:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Hover);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Hover);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Focus:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Focus);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Focus);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusVisible:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusVisible);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusVisible);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusWithin:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusWithin);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusWithin);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Target:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Target);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Target);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Visited:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Visited);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Visited);
             break;
         }
     }

@@ -697,10 +697,6 @@
 
 // Failures introduced after switching to the direct Metal backend
 
-// Metal doesn't support attribute alias yet
-6297 MAC METAL : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = FAIL
-6297 MAC METAL : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
-
 // Some trig functions have precision issues when fast math is enabled in Metal shader compilation
 8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_fragment.scalar = FAIL
 8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_vertex.scalar = FAIL

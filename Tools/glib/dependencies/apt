@@ -94,18 +94,24 @@ PACKAGES=(
     libglib2.0-bin
 
     # These are dependencies necessary for building the jhbuild.
+    bison
+    flex
     git
+    gobject-introspection
     gsettings-desktop-schemas-dev
     gyp
     libegl1-mesa-dev
     libexpat1-dev
     $(aptIfExists libfdk-aac-dev)
+    libgirepository1.0-dev
     libgles2-mesa-dev
     liborc-0.4-dev
     libproxy-dev
     libpsl-dev
+    libssl-dev
     libtool-bin
     libxml-libxml-perl
+    nasm
     python3-setuptools
     uuid-dev
     yasm

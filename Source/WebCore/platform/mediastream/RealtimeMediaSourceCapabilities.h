@@ -33,7 +33,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -129,7 +129,7 @@ public:
         ReadWrite = 1,
     };
     
-    RealtimeMediaSourceCapabilities(CapabilityRange&& width, CapabilityRange&& height, CapabilityRange&& aspectRatio, CapabilityRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityRange&& volume, CapabilityRange&& sampleRate, CapabilityRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityRange&& focusDistance, Vector<MeteringMode>&& whiteBalanceModes, CapabilityRange&& zoom, bool torch, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceCapabilities(CapabilityRange width, CapabilityRange height, CapabilityRange aspectRatio, CapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityRange volume, CapabilityRange sampleRate, CapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, CapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, CapabilityRange zoom, bool torch, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
@@ -194,12 +194,12 @@ public:
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
     bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    const AtomString& deviceId() const { return m_deviceId; }
-    void setDeviceId(const AtomString& id)  { m_deviceId = id; }
+    const String& deviceId() const { return m_deviceId; }
+    void setDeviceId(const String& id)  { m_deviceId = id; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomString& groupId() const { return m_groupId; }
-    void setGroupId(const AtomString& id)  { m_groupId = id; }
+    const String& groupId() const { return m_groupId; }
+    void setGroupId(const String& id)  { m_groupId = id; }
 
     bool supportsFocusDistance() const { return m_supportedConstraints.supportsFocusDistance(); }
     const CapabilityRange& focusDistance() const { return m_focusDistance; }
@@ -220,6 +220,8 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
+    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
+
 private:
     CapabilityRange m_width;
     CapabilityRange m_height;
@@ -230,8 +232,8 @@ private:
     CapabilityRange m_sampleRate;
     CapabilityRange m_sampleSize;
     EchoCancellation m_echoCancellation { EchoCancellation::ReadOnly };
-    AtomString m_deviceId;
-    AtomString m_groupId;
+    String m_deviceId;
+    String m_groupId;
     CapabilityRange m_focusDistance;
 
     Vector<MeteringMode> m_whiteBalanceModes;

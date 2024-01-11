@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmHKDF.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -82,5 +80,3 @@ ExceptionOr<size_t> CryptoAlgorithmHKDF::getKeyLength(const CryptoAlgorithmParam
 }
     
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

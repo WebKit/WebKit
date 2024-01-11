@@ -773,92 +773,6 @@ public:
 
 #endif // CPU(ARM64)
 
-#if CPU(MIPS)
-#define NUMBER_OF_ARGUMENT_REGISTERS 4u
-#define NUMBER_OF_CALLEE_SAVES_REGISTERS 2u
-
-class GPRInfo {
-public:
-    typedef GPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 11;
-    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
-
-    // regT0 must be v0 for returning a 32-bit value.
-    // regT1 must be v1 for returning a pair of 32-bit value.
-
-    // Temporary registers.
-    static constexpr GPRReg regT0 = MIPSRegisters::v0;
-    static constexpr GPRReg regT1 = MIPSRegisters::v1;
-    static constexpr GPRReg regT2 = MIPSRegisters::t2;
-    static constexpr GPRReg regT3 = MIPSRegisters::t3;
-    static constexpr GPRReg regT4 = MIPSRegisters::t4;
-    static constexpr GPRReg regT5 = MIPSRegisters::t5;
-    static constexpr GPRReg regT6 = MIPSRegisters::t6;
-    static constexpr GPRReg regT7 = MIPSRegisters::a0;
-    static constexpr GPRReg regT8 = MIPSRegisters::a1;
-    static constexpr GPRReg regT9 = MIPSRegisters::a2;
-    static constexpr GPRReg regT10 = MIPSRegisters::a3;
-
-    static constexpr GPRReg regCS0 = MIPSRegisters::s0; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS1 = MIPSRegisters::s1; // jitDataRegister
-
-    // These registers match the baseline JIT.
-    static constexpr GPRReg callFrameRegister = MIPSRegisters::fp;
-    static constexpr GPRReg jitDataRegister = regCS1;
-    static constexpr GPRReg metadataTableRegister = regCS0;
-
-    // These constants provide the names for the general purpose argument & return value registers.
-    static constexpr GPRReg argumentGPR0 = MIPSRegisters::a0;
-    static constexpr GPRReg argumentGPR1 = MIPSRegisters::a1;
-    static constexpr GPRReg argumentGPR2 = MIPSRegisters::a2;
-    static constexpr GPRReg argumentGPR3 = MIPSRegisters::a3;
-    static constexpr GPRReg nonArgGPR0 = regT4;
-    static constexpr GPRReg returnValueGPR = regT0;
-    static constexpr GPRReg returnValueGPR2 = regT1;
-    static constexpr GPRReg nonPreservedNonReturnGPR = regT2;
-    static constexpr GPRReg nonPreservedNonArgumentGPR0 = regT0;
-    static constexpr GPRReg nonPreservedNonArgumentGPR1 = regT1;
-
-    static constexpr GPRReg handlerGPR = InvalidGPRReg;
-
-    static constexpr GPRReg toRegister(unsigned index)
-    {
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfRegisters);
-        constexpr GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9, regT10 };
-        return registerForIndex[index];
-    }
-
-    static GPRReg toArgumentRegister(unsigned index)
-    {
-        ASSERT(index < numberOfArgumentRegisters);
-        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
-        return registerForIndex[index];
-    }
-
-    static unsigned toIndex(GPRReg reg)
-    {
-        ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 32);
-        static const unsigned indexForRegister[32] = {
-            InvalidIndex, InvalidIndex, 0, 1, 7, 8, 9, 10,
-            InvalidIndex, InvalidIndex, 2, 3, 4, 5, 6, InvalidIndex,
-            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
-            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
-        };
-        return indexForRegister[reg];
-    }
-
-    static const char* debugName(GPRReg reg)
-    {
-        ASSERT(reg != InvalidGPRReg);
-        return MacroAssembler::gprName(reg);
-    }
-
-    static constexpr unsigned InvalidIndex = 0xffffffff;
-};
-
-#endif // CPU(MIPS)
-
 #if CPU(RISCV64)
 
 #define NUMBER_OF_ARGUMENT_REGISTERS 8u
@@ -1188,13 +1102,8 @@ public:
             GPRInfo::regT4,        GPRInfo::regT5,
             GPRInfo::regT6,        GPRInfo::regT7,
             GPRInfo::regCS0);
-#elif CPU(MIPS)
-        return pickJSR<OperationType, ArgNum>(
-            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1,
-            GPRInfo::argumentGPR2, GPRInfo::argumentGPR3,
-            GPRInfo::regT2,        GPRInfo::regT3,
-            GPRInfo::regT4,        GPRInfo::regT5,
-            GPRInfo::regT6);
+#else
+#  error "Unsupported architecture"
 #endif
 #endif
     }

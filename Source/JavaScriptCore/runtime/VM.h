@@ -271,11 +271,7 @@ struct ScratchBuffer {
         size_t m_activeLength;
         double pad; // Make sure m_buffer is double aligned.
     } u;
-#if CPU(MIPS) && (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == 2)
-    alignas(8) void* m_buffer[0];
-#else
     void* m_buffer[0];
-#endif
 };
 #if COMPILER(MSVC)
 #pragma warning(pop)

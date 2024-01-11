@@ -1725,6 +1725,8 @@
 
 (define (syscall-unix-in-use-after-launch)
     (syscall-number
+        SYS_ftruncate
+        SYS_fsync
         SYS___disable_threadsignal
         SYS___mac_syscall
         SYS_access
@@ -1852,11 +1854,17 @@
     SYS_umask
     SYS_work_interval_ctl))
 
+(define (syscall-appcache)
+    (syscall-number
+        SYS_guarded_open_np
+        SYS_guarded_close_np
+        SYS_guarded_pwrite_np
+        SYS_unlink))
+
 (define (syscall-unix-downlevels)
     (syscall-number
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
-        SYS_ftruncate
         SYS_msync
         SYS_rename))
 
@@ -1866,7 +1874,6 @@
         SYS_change_fdguard_np
         SYS_chmod
         SYS_fchmod
-        SYS_fsync
         SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
         SYS_guarded_close_np
         SYS_guarded_open_np
@@ -1902,6 +1909,8 @@
     (allow syscall-unix (syscall-unix-downlevels)))
 (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+(with-filter (require-not (state-flag "AppCacheDisabled"))
+     (allow syscall-unix (syscall-appcache)))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)

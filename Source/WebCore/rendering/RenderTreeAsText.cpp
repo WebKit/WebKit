@@ -719,12 +719,10 @@ inline void writeLayerUsingGeometryType(TextStream& ts, const RenderLayer& layer
             ts << " (shared backing of " << layer.backingProviderLayer() << ")";
     }
 
-#if ENABLE(CSS_COMPOSITING)
     if (layer.isolatesBlending())
         ts << " isolatesBlending";
     if (layer.hasBlendMode())
         ts << " blendMode: " << compositeOperatorName(CompositeOperator::SourceOver, layer.blendMode());
-#endif
     
     ts << "\n";
 }

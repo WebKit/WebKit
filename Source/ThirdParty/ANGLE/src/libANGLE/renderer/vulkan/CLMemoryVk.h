@@ -20,6 +20,11 @@ class CLMemoryVk : public CLMemoryImpl
   public:
     CLMemoryVk(const cl::Memory &memory);
     ~CLMemoryVk() override;
+
+    angle::Result createSubBuffer(const cl::Buffer &buffer,
+                                  cl::MemFlags flags,
+                                  size_t size,
+                                  CLMemoryImpl::Ptr *subBufferOut) override;
 };
 
 }  // namespace rx

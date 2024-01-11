@@ -546,9 +546,15 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define OFFLINE_ASM_ALT_ENTRY_DIRECTIVE(label)
 #endif
 
+#if OS(DARWIN)
+#define OFFLINE_ASM_TEXT_SECTION ".section __TEXT,__jsc_int,regular,pure_instructions\n"
+#else
+#define OFFLINE_ASM_TEXT_SECTION ".text\n"
+#endif
+
 #if CPU(ARM_THUMB2)
 #define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
-    ".text\n"                                    \
+    OFFLINE_ASM_TEXT_SECTION                     \
     ALIGNMENT                                    \
     ALT_ENTRY(label)                             \
     ".globl " SYMBOL_STRING(label) "\n"          \
@@ -558,7 +564,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     SYMBOL_STRING(label) ":\n"
 #elif CPU(ARM64)
 #define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
-    ".text\n"                                   \
+    OFFLINE_ASM_TEXT_SECTION                    \
     ALIGNMENT                                   \
     ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
@@ -566,7 +572,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     SYMBOL_STRING(label) ":\n"
 #else
 #define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
-    ".text\n"                                   \
+    OFFLINE_ASM_TEXT_SECTION                    \
     ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
     HIDE_SYMBOL(label) "\n"                     \

@@ -56,13 +56,13 @@ enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 class ComplexTextController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, WeakHashSet<const Font>* fallbackFonts = 0, bool forTextEmphasis = false);
+    ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, SingleThreadWeakHashSet<const Font>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     class ComplexTextRun;
     WEBCORE_EXPORT ComplexTextController(const FontCascade&, const TextRun&, Vector<Ref<ComplexTextRun>>&);
 
     // Advance and emit glyphs up to the specified character.
-    WEBCORE_EXPORT void advance(unsigned to, GlyphBuffer* = nullptr, GlyphIterationStyle = IncludePartialGlyphs, WeakHashSet<const Font>* fallbackFonts = nullptr);
+    WEBCORE_EXPORT void advance(unsigned to, GlyphBuffer* = nullptr, GlyphIterationStyle = IncludePartialGlyphs, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr);
 
     // Compute the character offset for a given x coordinate.
     unsigned offsetForPosition(float x, bool includePartialGlyphs);
@@ -191,7 +191,7 @@ private:
 
     Vector<String> m_stringsFor8BitRuns;
 
-    WeakHashSet<const Font>* m_fallbackFonts { nullptr };
+    SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     const FontCascade& m_font;
     const TextRun& m_run;

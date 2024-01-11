@@ -113,6 +113,12 @@ void AccessibilityObject::init()
     m_role = determineAccessibilityRole();
 }
 
+AXID AccessibilityObject::treeID() const
+{
+    auto* cache = axObjectCache();
+    return cache ? cache->treeID() : AXID();
+}
+
 inline ProcessID AccessibilityObject::processID() const
 {
     return presentingApplicationPID();
@@ -174,6 +180,9 @@ OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlags() const
     if (hasAncestorFlag(AXAncestorFlag::IsInCell) || matchesAncestorFlag(AXAncestorFlag::IsInCell))
         computedFlags.set(AXAncestorFlag::IsInCell, 1);
 
+    if (hasAncestorFlag(AXAncestorFlag::IsInRow) || matchesAncestorFlag(AXAncestorFlag::IsInRow))
+        computedFlags.set(AXAncestorFlag::IsInRow, 1);
+
     return computedFlags;
 }
 
@@ -210,6 +219,8 @@ bool AccessibilityObject::matchesAncestorFlag(AXAncestorFlag flag) const
         return role == AccessibilityRole::DescriptionListTerm;
     case AXAncestorFlag::IsInCell:
         return role == AccessibilityRole::Cell;
+    case AXAncestorFlag::IsInRow:
+        return role == AccessibilityRole::Row;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -264,6 +275,14 @@ bool AccessibilityObject::isInCell() const
         return m_ancestorFlags.contains(AXAncestorFlag::IsInCell);
 
     return hasAncestorMatchingFlag(AXAncestorFlag::IsInCell);
+}
+
+bool AccessibilityObject::isInRow() const
+{
+    if (ancestorFlagsAreInitialized())
+        return m_ancestorFlags.contains(AXAncestorFlag::IsInRow);
+
+    return hasAncestorMatchingFlag(AXAncestorFlag::IsInRow);
 }
 
 // ARIA marks elements as having their accessible name derive from either their contents, or their author provide name.
@@ -1263,7 +1282,7 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
         FloatRect r = quad.enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style().hasEffectiveAppearance())
-                obj->theme().adjustRepaintRect(*obj, r);
+                obj->theme().inflateRectForControlRenderer(*obj, r);
             result.unite(r);
         }
     }
@@ -4381,6 +4400,17 @@ String AccessibilityObject::outerHTML() const
 {
     auto* element = this->element();
     return element ? element->outerHTML() : String();
+}
+
+bool AccessibilityObject::ignoredByRowAncestor() const
+{
+    auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& ancestor) {
+        // If an object has a table cell ancestor (before a table row), that is a cell's contents, so don't ignore it.
+        // Similarly, if an object has a table ancestor (before a row), that could be a row, row group or other container, so don't ignore it.
+        return ancestor.isTableCell() || ancestor.isTableRow() || ancestor.isTable();
+    });
+
+    return ancestor && ancestor->isTableRow();
 }
 
 namespace Accessibility {

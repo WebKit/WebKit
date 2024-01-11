@@ -377,6 +377,11 @@ static inline bool rendererObscuresBackground(const RenderElement& rootElement)
     if (rootElement.isComposited())
         return false;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (rootElement.hasClipPath() && rootElement.isRenderSVGRoot())
+        return false;
+#endif
+
     auto* rendererForBackground = rootElement.view().rendererForRootBackground();
     if (!rendererForBackground)
         return false;

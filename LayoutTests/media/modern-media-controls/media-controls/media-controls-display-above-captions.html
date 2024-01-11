@@ -9,7 +9,7 @@ const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media); 
 const container = shadowRoot.querySelector(".media-controls-container");
 shouldBe("container.childElementCount", "2");
-shouldBeEqualToString("container.firstElementChild.getAttribute('pseudo')", "-webkit-media-text-track-container");
+shouldBeEqualToString("container.firstElementChild.getAttribute('useragentpart')", "-webkit-media-text-track-container");
 shouldBeTrue("container.lastElementChild.classList.contains('media-controls')");
 
 </script>

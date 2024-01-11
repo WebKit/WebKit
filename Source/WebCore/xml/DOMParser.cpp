@@ -44,7 +44,7 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
     Ref document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
-    document->parseMarkupUnsafe(string, { });
+    document->setMarkupUnsafe(string, { });
     if (m_contextDocument) {
         document->setURL(m_contextDocument->url());
         document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());

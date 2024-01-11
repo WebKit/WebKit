@@ -27,6 +27,7 @@
 #import "TextureView.h"
 
 #import "APIConversions.h"
+#import "CommandEncoder.h"
 
 namespace WebGPU {
 
@@ -53,6 +54,11 @@ void TextureView::setLabel(String&& label)
     m_texture.label = label;
 }
 
+id<MTLTexture> TextureView::parentTexture() const
+{
+    return m_parentTexture.texture();
+}
+
 bool TextureView::previouslyCleared() const
 {
     return m_parentTexture.previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
@@ -65,12 +71,12 @@ void TextureView::setPreviouslyCleared()
 
 uint32_t TextureView::width() const
 {
-    return static_cast<uint32_t>(m_texture.width);
+    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).width;
 }
 
 uint32_t TextureView::height() const
 {
-    return static_cast<uint32_t>(m_texture.height);
+    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
 }
 
 WGPUTextureUsageFlags TextureView::usage() const
@@ -83,19 +89,70 @@ uint32_t TextureView::sampleCount() const
     return m_parentTexture.sampleCount();
 }
 
-WGPUTextureFormat TextureView::format() const
+WGPUTextureFormat TextureView::parentFormat() const
 {
     return m_parentTexture.format();
 }
 
-uint32_t TextureView::mipLevelCount() const
+WGPUTextureFormat TextureView::format() const
+{
+    return m_descriptor.format;
+}
+
+uint32_t TextureView::parentMipLevelCount() const
 {
     return m_parentTexture.mipLevelCount();
+}
+
+uint32_t TextureView::mipLevelCount() const
+{
+    return m_descriptor.mipLevelCount;
+}
+
+uint32_t TextureView::baseMipLevel() const
+{
+    return m_descriptor.baseMipLevel;
+}
+
+WGPUTextureAspect TextureView::aspect() const
+{
+    return m_descriptor.aspect;
+}
+
+uint32_t TextureView::arrayLayerCount() const
+{
+    return m_descriptor.arrayLayerCount;
+}
+
+uint32_t TextureView::baseArrayLayer() const
+{
+    return m_descriptor.baseArrayLayer;
+}
+
+WGPUTextureViewDimension TextureView::dimension() const
+{
+    return m_descriptor.dimension;
 }
 
 bool TextureView::isDestroyed() const
 {
     return m_parentTexture.isDestroyed();
+}
+
+void TextureView::destroy()
+{
+    m_texture = nil;
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeInvalid();
+
+    m_commandEncoder = nullptr;
+}
+
+void TextureView::setCommandEncoder(CommandEncoder& commandEncoder)
+{
+    m_commandEncoder = &commandEncoder;
+    if (isDestroyed())
+        commandEncoder.makeSubmitInvalid();
 }
 
 } // namespace WebGPU

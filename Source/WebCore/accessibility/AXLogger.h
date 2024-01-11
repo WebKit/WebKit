@@ -61,6 +61,7 @@ public:
     void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);
     void log(const AccessibilitySearchCriteria&);
     void log(AccessibilityObjectInclusion);
+    void log(AXRelationType);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void log(AXIsolatedTree&);
 #endif

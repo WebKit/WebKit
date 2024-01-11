@@ -60,7 +60,7 @@ private:
 
     void didUpdateState(GraphicsContextState&) final { }
 
-    void drawNativeImageInternal(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
+    void drawNativeImageInternal(NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { };
 
@@ -80,6 +80,7 @@ private:
     void fillPath(const Path&) final { }
     void strokePath(const Path&) final { }
     void fillRect(const FloatRect&) final { }
+    void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final { }
     void fillRect(const FloatRect&, const Color&) final { }
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }

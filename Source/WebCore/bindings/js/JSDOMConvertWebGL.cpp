@@ -175,18 +175,21 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
             return jsStringWithCache(lexicalGlobalObject.vm(), value);
         }, [&] (const Vector<bool>& values) -> JSValue {
             MarkedArgumentBuffer list;
+            list.ensureCapacity(values.size());
             for (auto& value : values)
                 list.append(jsBoolean(value));
             RELEASE_ASSERT(!list.hasOverflowed());
             return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         }, [&] (const Vector<int>& values) -> JSValue {
             MarkedArgumentBuffer list;
+            list.ensureCapacity(values.size());
             for (auto& value : values)
                 list.append(jsNumber(value));
             RELEASE_ASSERT(!list.hasOverflowed());
             return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         }, [&] (const Vector<unsigned>& values) -> JSValue {
             MarkedArgumentBuffer list;
+            list.ensureCapacity(values.size());
             for (auto& value : values)
                 list.append(jsNumber(value));
             RELEASE_ASSERT(!list.hasOverflowed());

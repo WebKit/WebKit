@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,-14) size 418x119 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,-14) size 418x119
+layer at (0,0) size 60x10
+  RenderSVGRect {rect} at (0,14) size 60x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+layer at (199,26.97) size 219x79
+  RenderSVGPath {path} at (199,40.97) size 219x78.03 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
+layer at (0,-14) size 134x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 135x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 135x18
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 19 width 134.23: "Shoud not be shown."
+layer at (20,10) size 100x100
+  RenderSVGRect {rect} at (20,10) size 100x100 [stroke={[type=SOLID] [color=#0000FF] [stroke width=1.33]}] [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=100.00] [height=100.00]

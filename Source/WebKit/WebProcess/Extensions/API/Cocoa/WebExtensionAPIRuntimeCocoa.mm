@@ -45,6 +45,7 @@
 #import "WebProcess.h"
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 
 static NSString * const idKey = @"id";
 static NSString * const frameIdKey = @"frameId";
@@ -54,6 +55,41 @@ static NSString * const originKey = @"origin";
 static NSString * const nameKey = @"name";
 static NSString * const reasonKey = @"reason";
 static NSString * const previousVersionKey = @"previousVersion";
+
+namespace WebKit {
+
+using ReplyCallbackAggregator = EagerCallbackAggregator<void(id)>;
+
+}
+
+@interface _WKReplyCallbackAggregator : NSObject
+
+- (instancetype)initWithAggregator:(WebKit::ReplyCallbackAggregator&)aggregator;
+
+@property (nonatomic, readonly) WebKit::ReplyCallbackAggregator& aggregator;
+
+@end
+
+@implementation _WKReplyCallbackAggregator {
+    RefPtr<WebKit::ReplyCallbackAggregator> _aggregator;
+}
+
+- (instancetype)initWithAggregator:(WebKit::ReplyCallbackAggregator&)aggregator
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _aggregator = &aggregator;
+
+    return self;
+}
+
+- (WebKit::ReplyCallbackAggregator&)aggregator
+{
+    return *_aggregator;
+}
+
+@end
 
 namespace WebKit {
 
@@ -427,13 +463,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebCore::DOMW
     id message = parseJSON(messageJSON, { JSONOptions::FragmentsAllowed });
     auto *senderInfo = toWebAPI(senderParameters);
 
-    __block bool anyListenerHandledMessage = false;
-    bool sentReply = false;
-
-    __block auto handleReply = [&sentReply, completionHandler = WTFMove(completionHandler)](id replyMessage) mutable {
-        if (sentReply)
-            return;
-
+    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](id replyMessage) mutable {
         NSString *replyMessageJSON;
         if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
             replyMessageJSON = value._toJSONString;
@@ -443,11 +473,14 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebCore::DOMW
         if (replyMessageJSON.length > webExtensionMaxMessageLength)
             replyMessageJSON = nil;
 
-        sentReply = true;
         completionHandler(replyMessageJSON ? std::optional(String(replyMessageJSON)) : std::nullopt);
-    };
+    }, nil);
 
-    enumerateFramesAndNamespaceObjects(makeBlockPtr(^(WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
+    // This ObjC wrapper is need for the inner reply block, which is required to be a compiled block.
+    auto *callbackAggregatorWrapper = [[_WKReplyCallbackAggregator alloc] initWithAggregator:callbackAggregator];
+
+    bool anyListenerHandledMessage = false;
+    enumerateFramesAndNamespaceObjects([&, callbackAggregatorWrapper = RetainPtr { callbackAggregatorWrapper }](WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
         // Skip all frames that don't match if a target frame identifier is specified.
         if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
             return;
@@ -457,8 +490,11 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebCore::DOMW
             return;
 
         for (auto& listener : namespaceObject.runtime().onMessage().listeners()) {
+            // Using BlockPtr for this call does not work, since JSValue needs a compiled block
+            // with a signature to translate the JS function arguments. Having the block capture
+            // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
             id returnValue = listener->call(message, senderInfo, ^(id replyMessage) {
-                handleReply(replyMessage);
+                callbackAggregatorWrapper.get().aggregator(replyMessage);
             });
 
             if (dynamic_objc_cast<NSNumber>(returnValue).boolValue) {
@@ -476,13 +512,13 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebCore::DOMW
                 if (error)
                     return;
 
-                handleReply(replyMessage);
+                callbackAggregatorWrapper.get().aggregator(replyMessage);
             }];
         }
-    }).get(), world);
+    }, world);
 
-    if (!sentReply && !anyListenerHandledMessage)
-        handleReply(nil);
+    if (!anyListenerHandledMessage)
+        callbackAggregator.get()(nil);
 }
 
 void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON)>&& completionHandler)

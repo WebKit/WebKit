@@ -105,7 +105,6 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
     auto* clipRendererPtr = graphicsElement.renderer();
     ASSERT(clipRendererPtr);
     ASSERT(clipRendererPtr->hasLayer());
-    ASSERT(is<RenderSVGModelObject>(clipRendererPtr));
     auto& clipRenderer = downcast<RenderSVGModelObject>(*clipRendererPtr);
 
     AffineTransform clipPathTransform;

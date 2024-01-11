@@ -122,6 +122,8 @@ void MockRealtimeAudioSourceGStreamer::stopProducingData()
 {
     m_capturer->stop();
     MockRealtimeAudioSource::stopProducingData();
+    m_caps = nullptr;
+    m_streamFormat.reset();
 }
 
 void MockRealtimeAudioSourceGStreamer::captureEnded()

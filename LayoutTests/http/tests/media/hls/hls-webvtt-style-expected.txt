@@ -3,8 +3,8 @@ EVENT(addtrack)
 EXPECTED (video.textTracks.length == '1') OK
 RUN(video.textTracks[0].mode = 'showing')
 EVENT(cuechange)
-RUN(textTrackContainer = window.internals.shadowRoot(video).querySelector("div[pseudo=-webkit-media-text-track-container]"))
-RUN(cue = textTrackContainer.querySelector("span[pseudo=cue]"))
+RUN(textTrackContainer = window.internals.shadowRoot(video).querySelector("div[useragentpart=-webkit-media-text-track-container]"))
+RUN(cue = textTrackContainer.querySelector("span[useragentpart=cue]"))
 EXPECTED (getComputedStyle(cue).backgroundColor == 'rgba(255, 0, 0, 0.5)') OK
 EXPECTED (getComputedStyle(cue.children[0]).backgroundColor == 'rgba(0, 0, 0, 0)') OK
 EXPECTED (getComputedStyle(cue.children[1]).backgroundColor == 'rgb(0, 255, 0)') OK

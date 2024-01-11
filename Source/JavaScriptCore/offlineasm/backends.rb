@@ -26,7 +26,6 @@ require "arm"
 require "arm64"
 require "ast"
 require "x86"
-require "mips"
 require "riscv64"
 require "cloop"
 
@@ -44,7 +43,6 @@ BACKENDS =
      "ARMv7",
      "ARM64",
      "ARM64E",
-     "MIPS",
      "RISCV64",
      "C_LOOP",
      "C_LOOP_WIN"
@@ -64,7 +62,6 @@ WORKING_BACKENDS =
      "ARMv7",
      "ARM64",
      "ARM64E",
-     "MIPS",
      "RISCV64",
      "C_LOOP",
      "C_LOOP_WIN"

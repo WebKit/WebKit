@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_CTR.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
@@ -315,6 +313,4 @@ auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator &=(c
     return *this;
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

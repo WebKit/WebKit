@@ -295,6 +295,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t, ExpressionType, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&);
@@ -827,6 +831,46 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewDefault(uint32_t, Ex
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayLen(ExpressionType, ExpressionType&) { return { }; }
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayFill(uint32_t typeIndex, ExpressionType, ExpressionType, ExpressionType, ExpressionType)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(typeIndex, getCurrentInstructionLength());
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayCopy(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcArrayIndex, ExpressionType, ExpressionType, ExpressionType)
+{
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(9);
+    auto arrayCopyData = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(arrayCopyData, dstArrayIndex, uint32_t);
+    WRITE_TO_METADATA(arrayCopyData + 4, srcArrayIndex, uint32_t);
+    WRITE_TO_METADATA(arrayCopyData + 8, getCurrentInstructionLength(), uint8_t);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitElem(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcElementIndex, ExpressionType, ExpressionType)
+{
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(9);
+    auto arrayInitElemData = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(arrayInitElemData, dstArrayIndex, uint32_t);
+    WRITE_TO_METADATA(arrayInitElemData + 4, srcElementIndex, uint32_t);
+    WRITE_TO_METADATA(arrayInitElemData + 8, getCurrentInstructionLength(), uint8_t);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitData(uint32_t dstArrayIndex, ExpressionType, ExpressionType, uint32_t srcDataIndex, ExpressionType, ExpressionType)
+{
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(9);
+    auto arrayInitDataData = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(arrayInitDataData, dstArrayIndex, uint32_t);
+    WRITE_TO_METADATA(arrayInitDataData + 4, srcDataIndex, uint32_t);
+    WRITE_TO_METADATA(arrayInitDataData + 8, getCurrentInstructionLength(), uint8_t);
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNewDefault(uint32_t, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) { return { }; }

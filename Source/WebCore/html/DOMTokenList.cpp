@@ -156,7 +156,7 @@ ExceptionOr<bool> DOMTokenList::toggle(const AtomString& token, std::optional<bo
     return true;
 }
 
-static inline void replaceInOrderedSet(Vector<AtomString>& tokens, size_t tokenIndex, const AtomString& newToken)
+static inline void replaceInOrderedSet(Vector<AtomString, 1>& tokens, size_t tokenIndex, const AtomString& newToken)
 {
     ASSERT(tokenIndex != notFound);
     ASSERT(tokenIndex < tokens.size());
@@ -219,7 +219,7 @@ void DOMTokenList::setValue(const AtomString& value)
     m_element.setAttribute(m_attributeName, value);
 }
 
-void DOMTokenList::updateTokensFromAttributeValue(StringView value)
+void DOMTokenList::updateTokensFromAttributeValue(const AtomString& value)
 {
     // Clear tokens but not capacity.
     m_tokens.shrink(0);
@@ -234,8 +234,13 @@ void DOMTokenList::updateTokensFromAttributeValue(StringView value)
         unsigned end = start + 1;
         while (end < value.length() && !isASCIIWhitespace(value[end]))
             ++end;
+        bool wholeAttributeIsSingleToken = !start && end == value.length();
+        if (wholeAttributeIsSingleToken) {
+            m_tokens.append(value);
+            break;
+        }
 
-        auto tokenView = value.substring(start, end - start);
+        auto tokenView = StringView { value }.substring(start, end - start);
         if (!addedTokens.contains<StringViewHashTranslator>(tokenView)) {
             auto token = tokenView.toAtomString();
             m_tokens.append(token);
@@ -266,6 +271,18 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
     if (m_tokens.isEmpty() && !m_element.hasAttribute(m_attributeName))
         return;
 
+    if (m_tokens.isEmpty()) {
+        m_element.setAttribute(m_attributeName, emptyAtom());
+        return;
+    }
+
+    bool wholeAttributeIsSingleToken = m_tokens.size() == 1;
+    if (wholeAttributeIsSingleToken) {
+        SetForScope inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
+        m_element.setAttribute(m_attributeName, m_tokens[0]);
+        return;
+    }
+
     // https://dom.spec.whatwg.org/#concept-ordered-set-serializer
     StringBuilder builder;
     for (auto& token : tokens()) {
@@ -279,7 +296,7 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
     m_element.setAttribute(m_attributeName, serializedValue);
 }
 
-Vector<AtomString>& DOMTokenList::tokens()
+Vector<AtomString, 1>& DOMTokenList::tokens()
 {
     if (m_tokensNeedUpdating)
         updateTokensFromAttributeValue(m_element.getAttribute(m_attributeName));

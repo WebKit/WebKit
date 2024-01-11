@@ -113,7 +113,7 @@ public:
     bool hasEligibleContainmentForSizeQuery() const;
 
     Color selectionColor(CSSPropertyID) const;
-    const RenderStyle* selectionPseudoStyle() const;
+    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;
@@ -294,8 +294,8 @@ public:
     void clearNeedsLayoutForDescendants();
 
 protected:
-    RenderElement(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
-    RenderElement(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -338,7 +338,7 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
@@ -347,6 +347,8 @@ private:
 
     RenderObject* firstChildSlow() const final { return firstChild(); }
     RenderObject* lastChildSlow() const final { return lastChild(); }
+
+    RenderElement* rendererForPseudoStyleAcrossShadowBoundary() const;
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new

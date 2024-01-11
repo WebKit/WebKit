@@ -940,13 +940,9 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // a height change, we revert our height back to the intrinsic height before returning.
     if (heightSpecified)
         setHeight(oldHeight);
-    else if (clampedContent) {
+    else if (clampedContent && clampedContent->renderer) {
         auto contentOffset = [&] {
             auto* clampedRenderer = clampedContent->renderer.get();
-            if (!clampedRenderer) {
-                ASSERT_NOT_REACHED();
-                return contentBoxLocation().y();
-            }
             auto contentLogicalTop = clampedRenderer->logicalTop() + clampedRenderer->contentBoxLocation().y();
             for (auto* ancestor = clampedRenderer->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
                 if (ancestor == this)
@@ -1006,6 +1002,10 @@ static std::optional<LayoutUnit> getHeightForLineCount(const RenderBlockFlow& bl
 {
     if (block.childrenInline()) {
         for (auto lineBox = InlineIterator::firstLineBoxFor(block); lineBox; lineBox.traverseNext()) {
+            auto hasInlineContent = lineBox->firstLeafBox();
+            if (!hasInlineContent)
+                continue;
+
             if (++count == lineCount)
                 return LayoutUnit { lineBox->contentLogicalBottom() } + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
         }
@@ -1097,8 +1097,10 @@ std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexi
     }
 
     auto lineClamp = *layoutState.lineClamp();
-    if (!lineClamp.clampedContentLogicalHeight)
-        return { };
+    if (!lineClamp.clampedContentLogicalHeight) {
+        // We've managed to run line clamping but it came back with no clamped content (i.e. there are fewer lines than the line-clamp limit).
+        return RenderDeprecatedFlexibleBox::ClampedContent { };
+    }
     return RenderDeprecatedFlexibleBox::ClampedContent { *lineClamp.clampedContentLogicalHeight, lineClamp.clampedRenderer };
 }
 

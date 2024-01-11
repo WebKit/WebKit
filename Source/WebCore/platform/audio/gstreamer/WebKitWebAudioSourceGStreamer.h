@@ -20,6 +20,7 @@
 
 #if USE(GSTREAMER)
 
+#include "AudioBus.h"
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 
@@ -30,7 +31,7 @@ typedef struct _WebKitWebAudioSrc WebKitWebAudioSrc;
 
 GType webkit_web_audio_src_get_type();
 
+void webkitWebAudioSourceSetBus(WebKitWebAudioSrc*, RefPtr<WebCore::AudioBus>);
 void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc*, Function<void(Function<void()>&&)>&&);
 
 #endif // USE(GSTREAMER)
-

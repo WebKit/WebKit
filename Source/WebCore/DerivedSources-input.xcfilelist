@@ -657,6 +657,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCStatsReport.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTrackEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCTransformEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RedEyeReduction.idl
+$(PROJECT_DIR)/Modules/mediastream/VideoTrackGenerator.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElement.idl
 $(PROJECT_DIR)/Modules/model-element/HTMLModelElementCamera.idl
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/activity-indicator.css
@@ -1208,6 +1209,7 @@ $(PROJECT_DIR)/css/CSSPaintCallback.idl
 $(PROJECT_DIR)/css/CSSPaintSize.idl
 $(PROJECT_DIR)/css/CSSProperties.json
 $(PROJECT_DIR)/css/CSSPropertyRule.idl
+$(PROJECT_DIR)/css/CSSPseudoSelectors.json
 $(PROJECT_DIR)/css/CSSRule.idl
 $(PROJECT_DIR)/css/CSSRuleList.idl
 $(PROJECT_DIR)/css/CSSScopeRule.idl
@@ -1243,7 +1245,7 @@ $(PROJECT_DIR)/css/MediaQueryList.idl
 $(PROJECT_DIR)/css/MediaQueryListEvent.idl
 $(PROJECT_DIR)/css/SVGCSSValueKeywords.in
 $(PROJECT_DIR)/css/SelectorPseudoClassAndCompatibilityElementMap.in
-$(PROJECT_DIR)/css/SelectorPseudoElementTypeMap.in
+$(PROJECT_DIR)/css/SelectorPseudoElementMap.in
 $(PROJECT_DIR)/css/StyleMedia.idl
 $(PROJECT_DIR)/css/StyleSheet.idl
 $(PROJECT_DIR)/css/StyleSheetList.idl
@@ -1255,18 +1257,16 @@ $(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/htmlSwitchControl.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
-$(PROJECT_DIR)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
-$(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
 $(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/process-css-properties.py
+$(PROJECT_DIR)/css/process-css-pseudo-selectors.py
 $(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/ruby.css
 $(PROJECT_DIR)/css/svg.css
-$(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
 $(PROJECT_DIR)/css/typedom/CSSOMVariableReferenceValue.idl
@@ -1308,6 +1308,7 @@ $(PROJECT_DIR)/css/typedom/transform/CSSSkewY.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformComponent.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformValue.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTranslate.idl
+$(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl
@@ -1379,10 +1380,11 @@ $(PROJECT_DIR)/dom/ElementInternals.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
 $(PROJECT_DIR)/dom/EventInit.idl
+$(PROJECT_DIR)/dom/EventInterfaces.in
 $(PROJECT_DIR)/dom/EventListener.idl
 $(PROJECT_DIR)/dom/EventListenerOptions.idl
 $(PROJECT_DIR)/dom/EventModifierInit.idl
-$(PROJECT_DIR)/dom/EventNames.in
+$(PROJECT_DIR)/dom/EventNames.json
 $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
@@ -1462,6 +1464,7 @@ $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
+$(PROJECT_DIR)/dom/make-event-names.py
 $(PROJECT_DIR)/dom/make_event_factory.pl
 $(PROJECT_DIR)/dom/make_names.pl
 $(PROJECT_DIR)/domjit/DOMJITAbstractHeapRepository.yaml
@@ -1757,8 +1760,6 @@ $(PROJECT_DIR)/page/LocalDOMWindow+Selection.idl
 $(PROJECT_DIR)/page/LocalDOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/LocalDOMWindow.idl
 $(PROJECT_DIR)/page/Location.idl
-$(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
-$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/NavigateEvent.idl
 $(PROJECT_DIR)/page/Navigation.idl
 $(PROJECT_DIR)/page/NavigationCurrentEntryChangeEvent.idl
@@ -1767,6 +1768,8 @@ $(PROJECT_DIR)/page/NavigationHistoryEntry.idl
 $(PROJECT_DIR)/page/NavigationInterceptHandler.idl
 $(PROJECT_DIR)/page/NavigationNavigationType.idl
 $(PROJECT_DIR)/page/NavigationTransition.idl
+$(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
+$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl

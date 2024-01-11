@@ -2057,20 +2057,73 @@ JSC_DEFINE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame* calleeFrame, J
 
 JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
-    sanitizeStackForVM(globalObject->vm());
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
     ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
 
-    linkPolymorphicCall(globalObject, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-    
+    CallFrame* callerFrame = calleeFrame->callerFrame();
+    JSCell* owner = callerFrame->codeOwnerCell();
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
     return result;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSCell* calleeAsFunctionCell;
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
+    JSCell* calleeAsFunctionCell;
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
-    sanitizeStackForVM(globalObject->vm());
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
     JSCell* calleeAsFunctionCellIgnored;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     return virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 
@@ -3935,7 +3988,7 @@ JSC_DEFINE_JIT_OPERATION(operationLookupExceptionHandlerFromCallerFrame, void, (
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ASSERT(callFrame->isStackOverflowFrame());
+    ASSERT(callFrame->isPartiallyInitializedFrame());
     ASSERT(jsCast<ErrorInstance*>(vm.exceptionForInspection()->value().asCell())->isStackOverflowError());
     genericUnwind(vm, callFrame);
     ASSERT(vm.targetMachinePCForThrow);

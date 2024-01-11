@@ -4072,8 +4072,11 @@ JSC_DEFINE_HOST_FUNCTION(functionCallFromCPP, (JSGlobalObject* globalObject, Cal
         return JSValue::encode(jsUndefined());
 
     MarkedArgumentBuffer arguments;
-    for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
-        arguments.append(callFrame->argument(i));
+    if (callFrame->argumentCount() > 2) {
+        arguments.ensureCapacity(callFrame->argumentCount() - 2);
+        for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
+            arguments.append(callFrame->argument(i));
+    }
     ASSERT(!arguments.hasOverflowed());
     RETURN_IF_EXCEPTION(scope, { });
 

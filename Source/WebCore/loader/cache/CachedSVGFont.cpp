@@ -31,6 +31,7 @@
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "ParserContentPolicy.h"
 #include "SVGDocument.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
@@ -81,7 +82,7 @@ bool CachedSVGFont::ensureCustomFontData()
 
             ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
 
-            externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size()));
+            externalSVGDocument->setMarkupUnsafe(decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size()), { ParserContentPolicy::AllowDeclarativeShadowRoots });
             sawError = decoder->sawError();
             m_externalSVGDocument = WTFMove(externalSVGDocument);
         }

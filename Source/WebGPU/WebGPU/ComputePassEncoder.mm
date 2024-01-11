@@ -38,7 +38,7 @@ namespace WebGPU {
 ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
-    , m_parentEncoder(&parentEncoder)
+    , m_parentEncoder(parentEncoder)
 {
     m_parentEncoder->lock(true);
 
@@ -51,9 +51,11 @@ ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeComma
     }
 }
 
-ComputePassEncoder::ComputePassEncoder(Device& device)
+ComputePassEncoder::ComputePassEncoder(CommandEncoder& parentEncoder, Device& device)
     : m_device(device)
+    , m_parentEncoder(parentEncoder)
 {
+    m_parentEncoder->lock(true);
 }
 
 ComputePassEncoder::~ComputePassEncoder()
@@ -105,11 +107,6 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
 
 void ComputePassEncoder::endPass()
 {
-    if (!m_parentEncoder) {
-        ASSERT(!m_computeCommandEncoder);
-        return;
-    }
-
     if (m_debugGroupStackSize || !isValid()) {
         m_parentEncoder->makeInvalid();
         return;

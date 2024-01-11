@@ -9,6 +9,6 @@ PASS @scope nested within style rule
 PASS Parent pseudo class within scope-start
 PASS Parent pseudo class within scope-end
 PASS Parent pseudo class within body of nested @scope
-FAIL Implicit rule within nested @scope  assert_equals: expected "1" but got "auto"
-FAIL Implicit rule within nested @scope (proximity) assert_equals: expected "1" but got "2"
+PASS Implicit rule within nested @scope
+PASS Implicit rule within nested @scope (proximity)
 

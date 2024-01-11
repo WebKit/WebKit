@@ -9,6 +9,8 @@
 
 #include "test_utils/ANGLETest.h"
 
+#include "media/etc2bc_srgb8_alpha8.inc"
+
 using namespace angle;
 
 namespace
@@ -365,8 +367,8 @@ class ETCToBCTextureTest : public ANGLETest<>
         "}\n";
     ETCToBCTextureTest() : mEtcTexture(0u)
     {
-        setWindowWidth(16);
-        setWindowHeight(16);
+        setWindowWidth(256);
+        setWindowHeight(256);
         setConfigRedBits(8);
         setConfigGreenBits(8);
         setConfigBlueBits(8);
@@ -389,7 +391,7 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8UnormToBC1_2D)
     ANGLE_SKIP_TEST_IF(
         !IsVulkan() || !IsNVIDIA() ||
         !getEGLWindow()->isFeatureEnabled(Feature::SupportsComputeTranscodeEtcToBc) ||
-        !IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc"));
+        !IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
     glViewport(0, 0, kWidth, kHeight);
     glBindTexture(GL_TEXTURE_2D, mEtcTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGB8_ETC2, kTexSize, kTexSize);
@@ -410,7 +412,7 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8UnormToBC1_Cube)
     ANGLE_SKIP_TEST_IF(
         !IsVulkan() || !IsNVIDIA() ||
         !getEGLWindow()->isFeatureEnabled(Feature::SupportsComputeTranscodeEtcToBc) ||
-        !IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc"));
+        !IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
     glViewport(0, 0, kWidth, kHeight);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, mEtcTexture);
@@ -456,18 +458,18 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8UnormToBC1_2DArray)
     ANGLE_SKIP_TEST_IF(
         !IsVulkan() || !IsNVIDIA() ||
         !getEGLWindow()->isFeatureEnabled(Feature::SupportsComputeTranscodeEtcToBc) ||
-        !IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc"));
+        !IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
     glViewport(0, 0, kWidth, kHeight);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D_ARRAY, mEtcTexture);
     static constexpr int kArraySize = 6;
     uint32_t data[2 * kArraySize]   = {
-          kEtcAllZero[0], kEtcAllZero[1],  // array 0
-          kEtcRGBData[0], kEtcRGBData[1],  // array 1
-          kEtcRGBData[0], kEtcRGBData[1],  // array 2
-          kEtcAllZero[0], kEtcAllZero[1],  // array 3
-          kEtcAllZero[0], kEtcAllZero[1],  // array 4
-          kEtcAllZero[0], kEtcAllZero[1],  // array 5
+        kEtcAllZero[0], kEtcAllZero[1],  // array 0
+        kEtcRGBData[0], kEtcRGBData[1],  // array 1
+        kEtcRGBData[0], kEtcRGBData[1],  // array 2
+        kEtcAllZero[0], kEtcAllZero[1],  // array 3
+        kEtcAllZero[0], kEtcAllZero[1],  // array 4
+        kEtcAllZero[0], kEtcAllZero[1],  // array 5
     };
     glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_COMPRESSED_RGB8_ETC2, kTexSize, kTexSize, kArraySize);
     glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, kTexSize, kTexSize, kArraySize,
@@ -500,7 +502,7 @@ TEST_P(ETCToBCTextureTest, ETC2Rgb8UnormToBC1_partial)
 {
     ANGLE_SKIP_TEST_IF(!IsVulkan() || !IsNVIDIA() ||
                        getEGLWindow()->isFeatureEnabled(Feature::SupportsComputeTranscodeEtcToBc) ||
-                       !IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc"));
+                       !IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
     glViewport(0, 0, kWidth, kHeight);
     glBindTexture(GL_TEXTURE_2D, mEtcTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGB8_ETC2, kTexSize * 3, kTexSize * 3);
@@ -604,6 +606,26 @@ TEST_P(ETCToBCTextureTest, ETC2Rgba8UnormToBC3_Lod)
     glUniform1i(texPos, 0);
     drawQuad(program, "position", 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(kExpectedRGBAColor[0]), kAbsError);
+}
+
+// Tests GPU compute transcode ETC2_SRGB8_ALPHA8 to BC3
+TEST_P(ETCToBCTextureTest, ETC2SrgbAlpha8UnormToBC3)
+{
+    ANGLE_SKIP_TEST_IF(
+        !IsVulkan() || !IsNVIDIA() ||
+        !getEGLWindow()->isFeatureEnabled(Feature::SupportsComputeTranscodeEtcToBc) ||
+        !IsGLExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb"));
+
+    glViewport(0, 0, pixel_width, pixel_height);
+    glBindTexture(GL_TEXTURE_2D, mEtcTexture);
+    EXPECT_GL_NO_ERROR();
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, pixel_width,
+                           pixel_height, 0, sizeof(etc2bc_srgb8_alpha8), etc2bc_srgb8_alpha8);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    draw2DTexturedQuad(0.5f, 1.0f, false);
+    EXPECT_PIXEL_ALPHA_NEAR(96, 160, 255, kAbsError);
+    EXPECT_PIXEL_ALPHA_NEAR(88, 148, 0, kAbsError);
 }
 
 // Tests GPU compute transcode R11 Signed to BC4

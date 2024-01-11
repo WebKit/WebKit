@@ -41,21 +41,15 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
 {
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
-ALLOW_DEPRECATED_DECLARATIONS_END
+RetainPtr<_SECapability> AssertionCapability::platformCapability() const
 {
 #if USE(EXTENSIONKIT)
-#if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)
-    return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-#else
-    if ([get_SECapabilitiesClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
-        return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
-    return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name];
+    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:willInvalidate:didInvalidate:)])
+        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
+    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
+        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
 #endif
-#else
     return nil;
-#endif
 }
 
 } // namespace WebKit

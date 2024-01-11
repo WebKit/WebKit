@@ -98,7 +98,8 @@ void JITStubRoutineSet::markSlow(uintptr_t address)
     if (result) {
         auto markIfContained = [&] (const Routine& routine, uintptr_t address) {
             if (routine.startAddress <= address && address < routine.routine->endAddress()) {
-                routine.routine->m_mayBeExecuting = true;
+                if (!routine.routine->m_isCodeImmutable)
+                    routine.routine->m_mayBeExecuting = true;
                 return true;
             }
             return false;

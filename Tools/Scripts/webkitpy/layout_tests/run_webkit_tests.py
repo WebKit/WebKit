@@ -353,6 +353,9 @@ def parse_args(args):
             "--use-gpu-process", action="store_true", default=False,
             help=("Enable all GPU process related features, also set additional expectations and the result report flavor.")),
         optparse.make_option(
+            "--site-isolation", action="store_true", default=False,
+            help=("Run each test in a cross origin iframe with and without site isolation enabled and compare the results. Uses site-isolation test expectations")),
+        optparse.make_option(
             "--no-use-gpu-process", action="store_true", default=False,
             help=("Disable GPU process for DOM rendering.")),
         optparse.make_option(
@@ -472,6 +475,15 @@ def _set_up_derived_options(port, options):
         if not options.additional_platform_directory:
             options.additional_platform_directory = []
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
+
+    if port.port_name == "mac" and options.site_isolation:
+        options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginIframe=true'
+        host = Host()
+        host.initialize_scm()
+        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
+        if not options.additional_platform_directory:
+            options.additional_platform_directory = []
+        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
 
     if options.additional_platform_directory:
         additional_platform_directories = []

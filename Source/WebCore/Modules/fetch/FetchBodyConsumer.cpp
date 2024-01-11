@@ -29,6 +29,7 @@
 #include "config.h"
 #include "FetchBodyConsumer.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMFormData.h"
 #include "FetchBodyOwner.h"
 #include "FormData.h"

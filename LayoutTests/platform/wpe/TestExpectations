@@ -842,8 +842,6 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Timeout Pass ]
 
 webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
-webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
-
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
@@ -914,8 +912,6 @@ webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
 
-webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
-
 # Flaky tests detected from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure Pass ]
@@ -939,7 +935,8 @@ webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-voices.html [ Crash Pa
 webkit.org/b/252878 fast/visual-viewport/resize-event-fired-window-resized.html [ Pass Timeout ]
 webkit.org/b/252878 gamepad/gamepad-event-handlers.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/media/video-play-waiting.html [ Failure Pass ]
-webkit.org/b/252878 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass Timeout ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/252878 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass Timeout ]
 webkit.org/b/252878 http/wpt/fetch/fetch-in-pagehide.html [ Failure Pass ]
 webkit.org/b/252878 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
 webkit.org/b/252878 imported/blink/compositing/squashing/squashing-does-not-stop-transform-propagation.html [ ImageOnlyFailure Pass ]
@@ -995,7 +992,8 @@ webkit.org/b/257624 accessibility/iframe-within-cell.html [ Crash Pass ]
 webkit.org/b/257624 animations/3d/full-rotation-animation.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 fast/events/wheel/wheelevent-in-text-node.html [ Pass Timeout ]
 webkit.org/b/257624 fast/mediastream/get-user-media-on-loadedmetadata.html [ Crash Pass ]
-webkit.org/b/257624 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass ]
+# Uncomment when webkit.org/b/266711 is fixed
+#webkit.org/b/257624 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass ]
 webkit.org/b/257624 fast/mediastream/MediaStream-video-element-track-stop.html [ Failure Pass Timeout ]
 webkit.org/b/257624 fast/scrolling/scrolling-inside-scrolled-overflowarea.html [ Pass Timeout ]
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Failure Pass ]
@@ -1007,7 +1005,8 @@ webkit.org/b/257624 imported/blink/compositing/video/video-controls-layer-creati
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1a.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1c.html [ ImageOnlyFailure Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/defer-script/async-script-2.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/svg/import/text-intro-02-b-manual.svg [ Failure Missing Pass ]
@@ -1353,8 +1352,6 @@ webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ Ima
 webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-webkit.org/b/141699 fast/css/has-attachment.html [ Failure ]
-
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
 
@@ -1547,6 +1544,7 @@ fast/encoding/backslash-encoding-jp.html [ Skip ] # Timeout.
 fast/encoding/char-encoding-mac.html [ Skip ] # Timeout.
 fast/encoding/char-encoding.html [ Skip ] # Timeout.
 fast/html/transient-activation.html [ Skip ] # Timeout.
+fast/html/history-action-user-activation.html [ Skip ] # Timeout.
 fast/mediastream/video-srcObject-set-twice.html [ Skip ] # Timeout.
 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ Skip ] # Timeout.
 fast/text/large-synthetic-bold-with-scale-transform.html [ Skip ] # Timeout.
@@ -1690,6 +1688,7 @@ webkit.org/b/266573 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/te
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb16f-rgb-float.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgba16f-rgba-half_float.html [ Failure Crash ]
+webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rg8-rg-unsigned_byte.html [ Failure Crash ]
@@ -1697,3 +1696,21 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb565-rgb-unsigned_short_5_6_5.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba16f-rgba-float.html [ Failure Crash ]
+# Also webkit.org/b/266573
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r32f-red-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rg32f-rg-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb565-rgb-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure Crash ]
+
+webkit.org/b/266671 http/wpt/webcodecs/videoFrame-rect.html [ Failure ]
+
+webkit.org/b/266711 fast/mediastream/microphone-change-while-capturing.html [ Pass Crash ]
+webkit.org/b/266711 media/modern-media-controls/audio/audio-controls-styles.html [ Failure Crash ]
+webkit.org/b/266711 webrtc/canvas-to-peer-connection.html  [ Failure Timeout Crash ]
+webkit.org/b/266711 webrtc/release-after-getting-track.html [ Pass Crash ]
+webkit.org/b/266711 fast/mediastream/applyConstraints-deviceId.html [ Pass Crash ]
+webkit.org/b/266711 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass Crash ]

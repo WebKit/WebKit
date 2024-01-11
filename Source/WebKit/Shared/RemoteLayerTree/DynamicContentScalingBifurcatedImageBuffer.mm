@@ -50,6 +50,8 @@ WebCore::GraphicsContext& DynamicContentScalingBifurcatedImageBuffer::context() 
 
 std::optional<WebCore::DynamicContentScalingDisplayList> DynamicContentScalingBifurcatedImageBuffer::dynamicContentScalingDisplayList()
 {
+    if (!m_dynamicContentScalingBackend)
+        return std::nullopt;
     auto* sharing = static_cast<WebCore::ImageBufferBackend&>(*m_dynamicContentScalingBackend).toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return std::nullopt;

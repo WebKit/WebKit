@@ -25,6 +25,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,
 // and for propagating count changes when nodes are added or removed.

@@ -294,6 +294,8 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
             return shouldRemove;
         });
         m_temporaryBlobPathsByConnection.remove(connection);
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -1671,7 +1673,8 @@ void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const 
 
 void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
 {
-    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).unlockStorage(connection.uniqueID());
+    if (auto cacheStorageManager = originStorageManager(origin).existingCacheStorageManager())
+        cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
 void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)

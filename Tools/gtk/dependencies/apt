@@ -9,7 +9,6 @@ PACKAGES+=(
     libedit-dev
     libfaad-dev
     libffi-dev
-    libgirepository1.0-dev
     libgl1-mesa-dev
     $(aptIfExists libgl1-mesa-glx)
     $(aptIfExists libgtk-4-dev)
@@ -32,7 +31,6 @@ PACKAGES+=(
     libxcomposite-dev
     libxt-dev
     libxtst-dev
-    nasm
     unifdef
     xfonts-utils
 
@@ -48,9 +46,6 @@ PACKAGES+=(
     $(aptIfExists python-yaml)
 
     # These are dependencies necessary for building the jhbuild.
-    bison
-    flex
-    gobject-introspection
     icon-naming-utils
     libcups2-dev
     libevdev-dev
@@ -61,7 +56,6 @@ PACKAGES+=(
     libmtdev-dev
     libp11-kit-dev
     libpciaccess-dev
-    libssl-dev
     libtiff5-dev
     libudev-dev
     libunistring-dev

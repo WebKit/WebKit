@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 200x500
+  RenderSVGRoot {svg} at (0,0) size 200x500 [bgcolor=#CCCCCC]
+layer at (0,0) size 200x500
+  RenderSVGViewportContainer at (0,0) size 200x500
+layer at (50,50) size 100x100
+  RenderSVGEllipse {circle} at (50,50) size 100x100 [stroke={[type=SOLID] [color=#00000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=100.00] [cy=100.00] [r=50.00]
+layer at (37,37) size 20x20
+  RenderSVGEllipse {circle} at (37,37) size 20x20 [stroke={[type=SOLID] [color=#00000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=47.00] [cy=47.00] [r=10.00]

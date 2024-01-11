@@ -31,7 +31,10 @@ bool Image::IsTypeValid(MemObjectType imageType)
     return true;
 }
 
-cl_int Image::getInfo(ImageInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Image::getInfo(ImageInfo name,
+                             size_t valueSize,
+                             void *value,
+                             size_t *valueSizeRet) const
 {
     size_t valSizeT       = 0u;
     void *valPointer      = nullptr;
@@ -87,7 +90,7 @@ cl_int Image::getInfo(ImageInfo name, size_t valueSize, void *value, size_t *val
             copySize  = sizeof(mDesc.numSamples);
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -96,7 +99,7 @@ cl_int Image::getInfo(ImageInfo name, size_t valueSize, void *value, size_t *val
         // as described in the Image Object Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -107,7 +110,7 @@ cl_int Image::getInfo(ImageInfo name, size_t valueSize, void *value, size_t *val
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 Image::~Image() = default;
@@ -142,17 +145,8 @@ Image::Image(Context &context,
              const cl_image_format &format,
              const ImageDescriptor &desc,
              Memory *parent,
-             void *hostPtr,
-             cl_int &errorCode)
-    : Memory(*this,
-             context,
-             std::move(properties),
-             flags,
-             format,
-             desc,
-             parent,
-             hostPtr,
-             errorCode),
+             void *hostPtr)
+    : Memory(*this, context, std::move(properties), flags, format, desc, parent, hostPtr),
       mFormat(format),
       mDesc(desc)
 {}

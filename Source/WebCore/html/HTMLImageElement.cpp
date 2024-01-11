@@ -77,7 +77,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document, CreateHTMLImageElement)
+    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUnique<HTMLImageLoader>(*this))

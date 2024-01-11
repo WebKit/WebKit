@@ -22,7 +22,7 @@
 
 namespace API {
 
-Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy& page)
+Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)
 {
     return adoptRef(*new HitTestResult(hitTestResultData, page));
 }

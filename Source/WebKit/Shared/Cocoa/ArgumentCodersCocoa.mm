@@ -311,18 +311,18 @@ NSType typeFromObject(id object)
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
 #if USE(PASSKIT)
-    if ([object isKindOfClass:PAL::getCNPhoneNumberClass()])
+    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPhoneNumberClass()])
         return NSType::CNPhoneNumber;
-    if ([object isKindOfClass:PAL::getCNPostalAddressClass()])
+    if (PAL::isContactsFrameworkAvailable() && [object isKindOfClass:PAL::getCNPostalAddressClass()])
         return NSType::CNPostalAddress;
-    if ([object isKindOfClass:PAL::getPKContactClass()])
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKContactClass()])
         return NSType::PKContact;
 #endif
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
-    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
+    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
         return NSType::DDActionContext;
 #endif
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])

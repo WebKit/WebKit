@@ -94,17 +94,12 @@ class ProgramPipelineState final : angle::NonCopyable
     // current executables, because they may have been unsuccessfully relinked.
     ShaderMap<SharedProgramExecutable> mProgramExecutables;
 
+    // Mapping from program's UBOs into the program executable's UBOs.
+    ShaderMap<ProgramPipelineUniformBlockIndexMap> mUniformBlockMap;
+
     // A list of executables to be garbage collected.  This is populated as the pipeline is
     // notified about program relinks, but cannot immediately destroy the old executables due to
     // lack of access to context.
-    //
-    // TODO: add a test where program is bound to PPO.  Then Program is linked successfully, then
-    // again linked unsuccessfully.  Using the PPO should use the executable from the successful
-    // link.
-    //
-    // TODO: add a test where program is bound to PPO.  Then Program is linked successfully 2x, then
-    // again linked unsuccessfully.  Using the PPO should use the executable from the second
-    // successful link.  This is to make sure we can support discarding an existing
     std::vector<SharedProgramExecutable> mProgramExecutablesToDiscard;
 
     GLboolean mValid;

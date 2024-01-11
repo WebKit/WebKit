@@ -37,10 +37,13 @@ namespace WebCore {
 struct GPUDepthStencilState {
     WebGPU::DepthStencilState convertToBacking() const
     {
+        std::optional<WebGPU::CompareFunction> optionalDepthCompare;
+        if (depthCompare)
+            optionalDepthCompare = WebCore::convertToBacking(*depthCompare);
         return {
             .format = WebCore::convertToBacking(format),
             .depthWriteEnabled = depthWriteEnabled,
-            .depthCompare = WebCore::convertToBacking(depthCompare),
+            .depthCompare = optionalDepthCompare,
             .stencilFront = stencilFront.convertToBacking(),
             .stencilBack = stencilBack.convertToBacking(),
             .stencilReadMask = stencilReadMask ? std::optional { *stencilReadMask } : std::nullopt,
@@ -53,8 +56,8 @@ struct GPUDepthStencilState {
 
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
 
-    bool depthWriteEnabled { false };
-    GPUCompareFunction depthCompare { GPUCompareFunction::Always };
+    std::optional<bool> depthWriteEnabled;
+    std::optional<GPUCompareFunction> depthCompare;
 
     GPUStencilFaceState stencilFront;
     GPUStencilFaceState stencilBack;

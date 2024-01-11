@@ -963,13 +963,12 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setNodeValue(Protocol::DOM::Nod
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDOMAgent::getSupportedEventNames()
 {
-    auto eventNames = JSON::ArrayOf<String>::create();
+    auto list = JSON::ArrayOf<String>::create();
 
-#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name""_s);
-    DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
-#undef DOM_EVENT_NAMES_ADD
+    for (auto& event : eventNames().allEventNames())
+        list->addItem(event);
 
-    return eventNames;
+    return list;
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -1474,10 +1473,9 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(const String&
 
         auto isInUserAgentShadowTree = descendantElement.isInUserAgentShadowTree();
         auto pseudoId = descendantElement.pseudoId();
-        auto& pseudo = descendantElement.pseudo();
 
         for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::Match::PseudoElement || selector->value() != pseudo))
+            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::Match::PseudoElement || selector->value() != descendantElement.userAgentPart()))
                 continue;
 
             SelectorChecker::CheckingContext context(SelectorChecker::Mode::ResolvingStyle);
@@ -2491,7 +2489,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
 static bool containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
-    return is<Text>(node) && downcast<Text>(*node).data().containsOnly<isASCIIWhitespace>();
+    return is<Text>(node) && downcast<Text>(*node).containsOnlyASCIIWhitespace();
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)

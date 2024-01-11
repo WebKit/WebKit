@@ -82,7 +82,7 @@ private:
     id<MTLBuffer> m_visibilityBuffer { nil };
     id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
     uint32_t m_count { 0 };
-    WGPUQueryType m_type { WGPUQueryType_Occlusion };
+    WGPUQueryType m_type { WGPUQueryType_Force32 };
 
     // rdar://91371495 is about how we can't just naively transform PassDescriptor.timestampWrites into MTLComputePassDescriptor.sampleBufferAttachments.
     // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data

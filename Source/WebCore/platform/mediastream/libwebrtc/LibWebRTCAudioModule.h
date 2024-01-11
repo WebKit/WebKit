@@ -77,7 +77,7 @@ private:
 
     int32_t ActiveAudioLayer(AudioLayer*) const final { return shouldNotBeCalled(-1); }
     int32_t Init() final { return 0; }
-    int32_t Terminate() final { return 0; }
+    int32_t Terminate() final;
     bool Initialized() const final { return true; }
     int16_t PlayoutDevices() final { return 0; }
     int16_t RecordingDevices() final { return 0; }

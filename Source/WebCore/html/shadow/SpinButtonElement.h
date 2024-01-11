@@ -68,7 +68,6 @@ public:
     void forwardEvent(Event&);
 
 private:
-    static constexpr auto CreateSpinButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     SpinButtonElement(Document&, SpinButtonOwner&);
 
     void willDetachRenderers() override;

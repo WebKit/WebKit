@@ -80,7 +80,7 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
     return colorSpace;
 }
 
-void MediaPlayerPrivateRemote::layerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID>&& inlineLayerHostingContextId, const IntSize& presentationSize)
+void MediaPlayerPrivateRemote::layerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID>&& inlineLayerHostingContextId, const FloatSize& presentationSize)
 {
     RefPtr player = m_player.get();
     if (!player)

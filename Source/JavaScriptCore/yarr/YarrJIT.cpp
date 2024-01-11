@@ -4567,7 +4567,7 @@ public:
             // matchingContext is the 5th argument, it is found on the stack.
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
             m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, 7 * sizeof(void*)), matchingContext);
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#elif CPU(ARM_THUMB2)
             // Not enough argument registers: try to load the 5th argument from the stack
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
 

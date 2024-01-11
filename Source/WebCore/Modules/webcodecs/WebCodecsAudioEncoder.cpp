@@ -156,11 +156,12 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec);
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        AudioEncoder::PostTaskCallback postTaskCallback = [weakThis = WeakPtr { *this }, identifier](auto&& task) {
+        AudioEncoder::PostTaskCallback postTaskCallback = [weakThis = ThreadSafeWeakPtr { *this }, identifier](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                if (!weakThis)
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::MediaElement, WTFMove(task));
+                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
             });
         };
 
@@ -181,10 +182,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
 
         m_baseConfiguration = config;
 
-        AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this, weakThis = WeakPtr { *this }](auto&& result) {
-            if (!weakThis)
-                return;
-
+        AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this](auto&& result) {
             if (!result.has_value()) {
                 closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
                 return;
@@ -275,8 +273,9 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
         ++m_beingEncodedQueueSize;
         --m_encodeQueueSize;
         scheduleDequeueEvent();
-        m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }, [this, weakedThis = WeakPtr { *this }](auto&& result) {
-            if (!weakedThis)
+        m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }, [this, weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             --m_beingEncodedQueueSize;
@@ -301,8 +300,9 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
     m_pendingFlushPromises.append(WTFMove(promise));
     m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalEncoder->flush([this, weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
             m_pendingFlushPromises.takeFirst()->resolve();

@@ -127,7 +127,6 @@ public:
 
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(const AtomString&);
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName);
-    WEBCORE_EXPORT Ref<NodeList> getElementsByName(const AtomString& elementName);
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(const AtomString& classNames);
     Ref<RadioNodeList> radioNodeList(const AtomString&);
 
@@ -144,7 +143,7 @@ public:
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
 
 protected:
-    explicit ContainerNode(Document&, ConstructionType = CreateContainer);
+    explicit ContainerNode(Document&, NodeType, OptionSet<TypeFlag> = { });
 
     friend void removeDetachedChildrenInContainer(ContainerNode&);
 
@@ -175,9 +174,10 @@ private:
     Node* m_lastChild { nullptr };
 };
 
-inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
-    : Node(document, type)
+inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
+    : Node(document, type, typeFlags | TypeFlag::IsContainerNode)
 {
+    ASSERT(!isTextNode());
 }
 
 inline unsigned Node::countChildNodes() const
@@ -216,72 +216,6 @@ inline void collectChildNodes(Node& node, NodeVector& children)
     for (Node* child = node.firstChild(); child; child = child->nextSibling())
         children.append(*child);
 }
-
-class ChildNodesLazySnapshot {
-    WTF_MAKE_NONCOPYABLE(ChildNodesLazySnapshot);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit ChildNodesLazySnapshot(Node& parentNode)
-        : m_currentNode(parentNode.firstChild())
-        , m_currentIndex(0)
-        , m_hasSnapshot(false)
-    {
-        m_nextSnapshot = latestSnapshot;
-        latestSnapshot = this;
-    }
-
-    ALWAYS_INLINE ~ChildNodesLazySnapshot()
-    {
-        latestSnapshot = m_nextSnapshot;
-    }
-
-    // Returns 0 if there is no next Node.
-    RefPtr<Node> nextNode()
-    {
-        if (LIKELY(!hasSnapshot())) {
-            RefPtr<Node> node = WTFMove(m_currentNode);
-            if (node)
-                m_currentNode = node->nextSibling();
-            return node;
-        }
-        if (m_currentIndex >= m_snapshot.size())
-            return nullptr;
-        return m_snapshot[m_currentIndex++];
-    }
-
-    void takeSnapshot()
-    {
-        if (hasSnapshot())
-            return;
-        m_hasSnapshot = true;
-        Node* node = m_currentNode.get();
-        while (node) {
-            m_snapshot.append(node);
-            node = node->nextSibling();
-        }
-    }
-
-    ChildNodesLazySnapshot* nextSnapshot() { return m_nextSnapshot; }
-    bool hasSnapshot() { return m_hasSnapshot; }
-
-    static void takeChildNodesLazySnapshot()
-    {
-        ChildNodesLazySnapshot* snapshot = latestSnapshot;
-        while (snapshot && !snapshot->hasSnapshot()) {
-            snapshot->takeSnapshot();
-            snapshot = snapshot->nextSnapshot();
-        }
-    }
-
-private:
-    static ChildNodesLazySnapshot* latestSnapshot;
-
-    RefPtr<Node> m_currentNode;
-    unsigned m_currentIndex;
-    bool m_hasSnapshot;
-    Vector<RefPtr<Node>> m_snapshot; // Lazily instantiated.
-    ChildNodesLazySnapshot* m_nextSnapshot;
-};
 
 inline void Node::setParentNode(ContainerNode* parent)
 {

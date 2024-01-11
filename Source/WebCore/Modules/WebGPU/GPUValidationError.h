@@ -48,6 +48,7 @@ public:
 
     WebGPU::ValidationError* backing() { return m_backing.get(); }
     const WebGPU::ValidationError* backing() const { return m_backing.get(); }
+    String stack() const { return "_"_s; }
 
 private:
     GPUValidationError(String&& message)

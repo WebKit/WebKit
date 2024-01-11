@@ -76,14 +76,14 @@ private:
     void invalidateStyleForTree(Element&, SelectorMatchingState*);
     void invalidateStyleForDescendants(Element&, SelectorMatchingState*);
     void invalidateInShadowTreeIfNeeded(Element&);
-    void invalidateShadowPseudoElements(ShadowRoot&);
+    void invalidateUserAgentParts(ShadowRoot&);
     void invalidateStyleWithMatchElement(Element&, MatchElement);
 
     struct RuleInformation {
         bool hasSlottedPseudoElementRules { false };
         bool hasHostPseudoClassRules { false };
         bool hasHostPseudoClassRulesMatchingInShadowTree { false };
-        bool hasShadowPseudoElementRules { false };
+        bool hasUserAgentPartRules { false };
         bool hasCuePseudoElementRules { false };
         bool hasPartPseudoElementRules { false };
     };

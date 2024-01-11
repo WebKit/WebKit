@@ -25,14 +25,19 @@
 
 #pragma once
 
+#include "MediaPromiseTypes.h"
+
 #include <CoreMedia/CMTime.h>
-#include <functional>
+#include <atomic>
+#include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 typedef CFTypeRef CMBufferRef;
@@ -48,28 +53,35 @@ typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT WebCoreDecompressionSession : public ThreadSafeRefCounted<WebCoreDecompressionSession> {
+class VideoDecoder;
+
+class WEBCORE_EXPORT WebCoreDecompressionSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCoreDecompressionSession> {
 public:
     static Ref<WebCoreDecompressionSession> createOpenGL() { return adoptRef(*new WebCoreDecompressionSession(OpenGL)); }
     static Ref<WebCoreDecompressionSession> createRGB() { return adoptRef(*new WebCoreDecompressionSession(RGB)); }
 
+    ~WebCoreDecompressionSession();
     void invalidate();
     bool isInvalidated() const { return m_invalidated; }
 
     void enqueueSample(CMSampleBufferRef, bool displaying = true);
     bool isReadyForMoreMediaData() const;
-    void requestMediaDataWhenReady(std::function<void()>);
+    void requestMediaDataWhenReady(Function<void()>&&);
     void stopRequestingMediaData();
-    void notifyWhenHasAvailableVideoFrame(std::function<void()>);
+    void notifyWhenHasAvailableVideoFrame(Function<void()>&&);
+    void decodedFrameWhenAvailable(Function<void(RetainPtr<CMSampleBufferRef>&&)>&&);
 
     RetainPtr<CVPixelBufferRef> decodeSampleSync(CMSampleBufferRef);
 
     void setTimebase(CMTimebaseRef);
-    CMTimebaseRef timebase() const { return m_timebase.get(); }
+    RetainPtr<CMTimebaseRef> timebase() const;
 
     enum ImageForTimeFlags { ExactTime, AllowEarlier, AllowLater };
     RetainPtr<CVPixelBufferRef> imageForTime(const MediaTime&, ImageForTimeFlags = ExactTime);
     void flush();
+
+    void setErrorListener(Function<void(OSStatus)>&&);
+    void removeErrorListener();
 
     unsigned totalVideoFrames() const { return m_totalVideoFrames; }
     unsigned droppedVideoFrames() const { return m_droppedVideoFrames; }
@@ -86,15 +98,20 @@ private:
     };
     WebCoreDecompressionSession(Mode);
 
-    void ensureDecompressionSessionForSample(CMSampleBufferRef);
+    RetainPtr<VTDecompressionSessionRef> ensureDecompressionSessionForSample(CMSampleBufferRef);
 
+    void setTimebaseWithLockHeld(CMTimebaseRef);
+    void enqueueCompressedSample(CMSampleBufferRef, bool displaying);
     void decodeSample(CMSampleBufferRef, bool displaying);
-    void enqueueDecodedSample(CMSampleBufferRef, bool displaying);
+    void enqueueDecodedSample(CMSampleBufferRef);
+    void maybeDecodeNextSample();
     void handleDecompressionOutput(bool displaying, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
     RetainPtr<CVPixelBufferRef> getFirstVideoFrame();
     void resetAutomaticDequeueTimer();
     void automaticDequeue();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
+    void finishCurrentDecodingAndDecodeNextSample();
+    void finishCurrentDecodingAndReportError(OSStatus);
 
     static CMTime getDecodeTime(CMBufferRef, void* refcon);
     static CMTime getPresentationTime(CMBufferRef, void* refcon);
@@ -107,31 +124,54 @@ private:
     void decreaseQosTier();
     void updateQosWithDecodeTimeStatistics(double ratio);
 
+    bool isUsingVideoDecoder(CMSampleBufferRef) const;
+    Ref<MediaPromise> initializeVideoDecoder(FourCharCode);
+
     static const CMItemCount kMaximumCapacity = 120;
     static const CMItemCount kHighWaterMark = 60;
     static const CMItemCount kLowWaterMark = 15;
 
     Mode m_mode;
-    RetainPtr<VTDecompressionSessionRef> m_decompressionSession;
+    mutable Lock m_lock;
+    RetainPtr<VTDecompressionSessionRef> m_decompressionSession WTF_GUARDED_BY_LOCK(m_lock);
     RetainPtr<CMBufferQueueRef> m_producerQueue;
     RetainPtr<CMBufferQueueRef> m_consumerQueue;
-    RetainPtr<CMTimebaseRef> m_timebase;
-    Ref<WorkQueue> m_decompressionQueue;
-    Ref<WorkQueue> m_enqueingQueue;
-    OSObjectPtr<dispatch_source_t> m_timerSource;
-    std::function<void()> m_notificationCallback;
-    std::function<void()> m_hasAvailableFrameCallback;
-    RetainPtr<CFArrayRef> m_qosTiers;
-    int m_currentQosTier { 0 };
-    unsigned m_framesSinceLastQosCheck { 0 };
+    RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
+    const Ref<WorkQueue> m_decompressionQueue;
+    const Ref<WorkQueue> m_enqueingQueue;
+    OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
+    Function<void()> m_notificationCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Function<void()> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Function<void(RetainPtr<CMSampleBufferRef>&&)> m_newDecodedFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RetainPtr<CFArrayRef> m_qosTiers WTF_GUARDED_BY_LOCK(m_lock);
+    int m_currentQosTier WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    std::atomic<unsigned> m_framesSinceLastQosCheck { 0 };
     double m_decodeRatioMovingAverage { 0 };
 
-    bool m_invalidated { false };
-    bool m_hardwareDecoderEnabled { true };
-    int m_framesBeingDecoded { 0 };
-    unsigned m_totalVideoFrames { 0 };
-    unsigned m_droppedVideoFrames { 0 };
-    unsigned m_corruptedVideoFrames { 0 };
+    std::atomic<bool> m_isUsingVideoDecoder { true };
+    std::unique_ptr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_videoDecoderCreationFailed { false };
+    std::atomic<bool> m_decodePending { false };
+    struct PendingDecodeData {
+        MonotonicTime startTime;
+        bool displaying { false };
+    };
+    std::optional<PendingDecodeData> m_pendingDecodeData WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
+    // A VideoDecoder can't process more than one request at a time.
+    // Handle the case should the DecompressionSession be used even if isReadyForMoreMediaData() returned false;
+    Deque<std::pair<RetainPtr<CMSampleBufferRef>, bool>> m_pendingSamples WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
+    bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get()) { false };
+    OSStatus m_lastDecodingError WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get()) { noErr };
+
+    Function<void(OSStatus)> m_errorListener WTF_GUARDED_BY_CAPABILITY(mainThread);
+
+    std::atomic<bool> m_invalidated { false };
+    std::atomic<bool> m_hardwareDecoderEnabled { true };
+    std::atomic<int> m_framesBeingDecoded { 0 };
+    std::atomic<unsigned> m_totalVideoFrames { 0 };
+    std::atomic<unsigned> m_droppedVideoFrames { 0 };
+    std::atomic<unsigned> m_corruptedVideoFrames { 0 };
+    std::atomic<bool> m_deliverDecodedFrames { false };
     MediaTime m_totalFrameDelay;
 };
 

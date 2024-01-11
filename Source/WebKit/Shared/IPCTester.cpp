@@ -81,7 +81,7 @@ static int sendTestMessage(IPC::DataReference buffer, void* context)
     BinarySemaphore semaphore;
     auto decoder = IPC::Decoder::create(buffer, [&semaphore] (IPC::DataReference) { semaphore.signal(); }, { }); // NOLINT
     if (decoder) {
-        testedConnection->dispatchIncomingMessageForTesting(WTFMove(decoder));
+        testedConnection->dispatchIncomingMessageForTesting(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
         semaphore.wait();
     }
     return 0;

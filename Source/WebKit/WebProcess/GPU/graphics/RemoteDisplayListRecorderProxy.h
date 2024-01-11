@@ -89,7 +89,7 @@ private:
     void recordDrawDecomposedGlyphs(const WebCore::Font&, const WebCore::DecomposedGlyphs&) final;
     void recordDrawDisplayListItems(const Vector<WebCore::DisplayList::Item>&, const WebCore::FloatPoint& destination);
     void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
-    void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatSize& imageSize, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
+    void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&);
     void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
     void recordBeginTransparencyLayer(float) final;
@@ -105,6 +105,7 @@ private:
     void recordFillRect(const WebCore::FloatRect&) final;
     void recordFillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&) final;
     void recordFillRectWithGradient(const WebCore::FloatRect&, WebCore::Gradient&) final;
+    void recordFillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&) final;
     void recordFillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) final;
     void recordFillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) final;
     void recordFillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;

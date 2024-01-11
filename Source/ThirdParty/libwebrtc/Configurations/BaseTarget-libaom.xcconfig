@@ -1,0 +1,45 @@
+// Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+CLANG_WARN_STRICT_PROTOTYPES = NO;
+CLANG_WARN_IMPLICIT_FUNCTION_DECLARATION = NO;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+GCC_WARN_UNUSED_FUNCTION = NO;
+
+WARNING_CFLAGS = $(inherited) -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-unused-function;
+
+// FIXME: Enable x86 optimization
+HEADER_SEARCH_PATHS[arch=x86_64] = $(inherited) Source/third_party/libaom/source/config/linux/generic Source/third_party/libaom/source/libaom Source/third_party/libaom/source/config;
+HEADER_SEARCH_PATHS[arch=arm64*] = $(inherited) Source/third_party/libaom/source/config/linux/arm64-cpu-detect Source/third_party/libaom/source/libaom Source/third_party/libaom/source/config;
+
+USE_HEADERMAP = NO;
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CONFIG_REALTIME_ONLY=1 CONFIG_TUNE_VMAF=0
+
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_$(WK_IS_CATALYST))
+GCC_PREPROCESSOR_DEFINITIONS_YES = WEBRTC_WEBKIT_MAC_CATALIST

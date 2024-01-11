@@ -58,7 +58,7 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy({ RenderingBackendIdentifier::generate(), webPage.webPageProxyIdentifier(), webPage.identifier() }, RunLoop::main()));
+    return create({ RenderingBackendIdentifier::generate(), webPage.webPageProxyIdentifier(), webPage.identifier() }, RunLoop::main());
 }
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
@@ -123,7 +123,7 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     auto result = streamConnection().sendSync(std::forward<T>(message), destination, defaultTimeout);
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error()));
     }
     return result;
 }
@@ -514,6 +514,22 @@ bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
     }
     return false;
 }
+
+#if USE(GRAPHICS_LAYER_WC)
+
+// Because RemoteRenderingBackend and RemoteImageBuffer share a single stream connection at the moment,
+// it is sufficient to flush the single command queue.
+// This should take Vector<Ref<ImageBuffer>> as an argument if a RemoteImageBuffer uses own stream connection.
+Function<bool()> RemoteRenderingBackendProxy::flushImageBuffers()
+{
+    IPC::Semaphore flushSemaphore;
+    send(Messages::RemoteRenderingBackend::Flush(flushSemaphore));
+    return [flushSemaphore = WTFMove(flushSemaphore)]() mutable {
+        return flushSemaphore.waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+    };
+}
+
+#endif // USE(GRAPHICS_LAYER_WC)
 
 } // namespace WebKit
 

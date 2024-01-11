@@ -77,6 +77,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         &SVGNames::polylineTag,
         &SVGNames::rectTag,
         &SVGNames::svgTag,
+        &SVGNames::switchTag,
         &SVGNames::textTag,
         &SVGNames::useTag,
 
@@ -98,7 +99,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         &SVGNames::foreignObjectTag,
 
         // Elements that we ignore, as it doesn't make any sense.
-        // defs, pattern, switch (FIXME: Mail SVG WG about these)
+        // defs, pattern (FIXME: Mail SVG WG about these)
         // symbol (is converted to a svg element, when referenced by use, we can safely ignore it.)
     };
     static NeverDestroyed set = tagSet(tags);
@@ -152,12 +153,12 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& chainableResou
 static inline String targetReferenceFromResource(SVGElement& element)
 {
     String target;
-    if (is<SVGPatternElement>(element))
-        target = downcast<SVGPatternElement>(element).href();
-    else if (is<SVGGradientElement>(element))
-        target = downcast<SVGGradientElement>(element).href();
-    else if (is<SVGFilterElement>(element))
-        target = downcast<SVGFilterElement>(element).href();
+    if (auto* svgPattern = dynamicDowncast<SVGPatternElement>(element))
+        target = svgPattern->href();
+    else if (auto* svgGradient = dynamicDowncast<SVGGradientElement>(element))
+        target = svgGradient->href();
+    else if (auto* svgFilter = dynamicDowncast<SVGFilterElement>(element))
+        target = svgFilter->href();
     else
         ASSERT_NOT_REACHED();
 
@@ -201,8 +202,6 @@ static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(Tre
 std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
 {
     ASSERT(renderer.element());
-    ASSERT_WITH_SECURITY_IMPLICATION(renderer.element()->isSVGElement());
-
     if (!renderer.element())
         return nullptr;
 
@@ -225,11 +224,10 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
 
     std::unique_ptr<SVGResources> foundResources;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (is<ReferencePathOperation>(style.clipPath())) {
+        if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
             // FIXME: -webkit-clip-path should support external resources
             // https://bugs.webkit.org/show_bug.cgi?id=127032
-            auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
-            AtomString id(clipPath.fragment());
+            AtomString id(clipPath->fragment());
             if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, id))
                 ensureResources(foundResources).setClipper(clipper);
             else
@@ -240,9 +238,8 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             const FilterOperations& filterOperations = style.filter();
             if (filterOperations.size() == 1) {
                 const FilterOperation& filterOperation = *filterOperations.at(0);
-                if (filterOperation.type() == FilterOperation::Type::Reference) {
-                    const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
-                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), element.document());
+                if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation)) {
+                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), element.document());
                     if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(treeScope, id))
                         ensureResources(foundResources).setFilter(filter);
                     else
@@ -311,22 +308,38 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     return foundResources;
 }
 
-void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
+void SVGResources::layoutDifferentRootIfNeeded(const RenderElement& resourcesClient)
 {
-    auto layoutDifferentRootIfNeeded = [&](RenderElement* container) {
+    const LegacyRenderSVGRoot* clientRoot = nullptr;
+
+    auto layoutDifferentRootIfNeeded = [&](LegacyRenderSVGResourceContainer* container) {
         if (!container)
             return;
+
         auto* root = SVGRenderSupport::findTreeRootObject(*container);
-        if (svgRoot == root || root->isInLayout())
+        if (root->isInLayout())
             return;
+
+        if (!clientRoot)
+            clientRoot = SVGRenderSupport::findTreeRootObject(resourcesClient);
+
+        if (clientRoot == root)
+            return;
+
         container->layoutIfNeeded();
     };
-    layoutDifferentRootIfNeeded(clipper());
-    layoutDifferentRootIfNeeded(masker());
-    layoutDifferentRootIfNeeded(filter());
-    layoutDifferentRootIfNeeded(markerStart());
-    layoutDifferentRootIfNeeded(markerMid());
-    layoutDifferentRootIfNeeded(markerEnd());
+
+    if (m_clipperFilterMaskerData) {
+        layoutDifferentRootIfNeeded(m_clipperFilterMaskerData->clipper.get());
+        layoutDifferentRootIfNeeded(m_clipperFilterMaskerData->masker.get());
+        layoutDifferentRootIfNeeded(m_clipperFilterMaskerData->filter.get());
+    }
+
+    if (m_markerData) {
+        layoutDifferentRootIfNeeded(m_markerData->markerStart.get());
+        layoutDifferentRootIfNeeded(m_markerData->markerMid.get());
+        layoutDifferentRootIfNeeded(m_markerData->markerEnd.get());
+    }
 }
 
 bool SVGResources::markerReverseStart() const

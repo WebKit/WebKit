@@ -362,7 +362,7 @@ static const char* fragmentTemplateCommon =
 
             vec4 total = texture2D(s_sampler, texCoord) * u_gaussianKernel[0];
 
-            for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
+            for (int i = 1; i < GaussianKernelHalfSize; i++) {
                 vec2 offset = step * u_gaussianKernelOffset[i];
                 total += texture2D(s_sampler, clamp(texCoord + offset, min, max)) * u_gaussianKernel[i];
                 total += texture2D(s_sampler, clamp(texCoord - offset, min, max)) * u_gaussianKernel[i];
@@ -379,7 +379,7 @@ static const char* fragmentTemplateCommon =
 
             float total = texture2D(s_sampler, texCoord).a * u_gaussianKernel[0];
 
-            for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
+            for (int i = 1; i < GaussianKernelHalfSize; i++) {
                 vec2 offset = step * u_gaussianKernelOffset[i];
                 total += texture2D(s_sampler, clamp(texCoord + offset, min, max)).a * u_gaussianKernel[i];
                 total += texture2D(s_sampler, clamp(texCoord - offset, min, max)).a * u_gaussianKernel[i];
@@ -519,6 +519,8 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     optionsApplierBuilder.append(\
         (options & TextureMapperShaderProgram::Applier) ? ENABLE_APPLIER(Applier) : DISABLE_APPLIER(Applier))
 
+    unsigned glVersion = GLContext::current()->version();
+
     StringBuilder optionsApplierBuilder;
     SET_APPLIER_FROM_OPTIONS(TextureRGB);
     SET_APPLIER_FROM_OPTIONS(TextureYUV);
@@ -562,6 +564,11 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
 
     // Append the options.
     fragmentShaderBuilder.append(optionsApplierBuilder.toString());
+
+    if (glVersion >= 300)
+        fragmentShaderBuilder.append(GLSL_DIRECTIVE(define GaussianKernelHalfSize u_gaussianKernelHalfSize));
+    else
+        fragmentShaderBuilder.append(GLSL_DIRECTIVE(define GaussianKernelHalfSize GAUSSIAN_KERNEL_MAX_HALF_SIZE));
 
     // Append the common header.
     fragmentShaderBuilder.append(fragmentTemplateHeaderCommon);

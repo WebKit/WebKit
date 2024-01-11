@@ -183,18 +183,20 @@ public:
 
             m_source->removeVideoFrameObserver(*this);
 
-            m_source->applyConstraints(WTFMove(constraints), [this, weakThis = WTFMove(weakThis), &constraints, callback = WTFMove(callback)](auto&& result) mutable {
+            m_source->applyConstraints(WTFMove(constraints), [this, weakThis = WTFMove(weakThis), &constraints, callback = WTFMove(callback)](auto&& error) mutable {
                 if (!weakThis) {
                     callback(RealtimeMediaSource::ApplyConstraintsError { { }, { } });
                     return;
                 }
 
-                if (!result && updateVideoConstraints(constraints))
+                if (!error) {
+                    updateVideoConstraints(constraints);
                     m_settings = { };
+                }
 
                 m_source->addVideoFrameObserver(*this, { m_widthConstraint, m_heightConstraint }, m_frameRateConstraint);
 
-                callback(WTFMove(result));
+                callback(WTFMove(error));
             });
 
             return GenericPromise::createAndResolve();

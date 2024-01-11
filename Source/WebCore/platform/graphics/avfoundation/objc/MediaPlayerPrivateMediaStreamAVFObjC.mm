@@ -1078,7 +1078,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     AffineTransform videoTransform = videoTransformationMatrix(*m_imagePainter.videoFrame);
     FloatRect transformedDestRect = valueOrDefault(videoTransform.inverse()).mapRect(destRect);
     context.concatCTM(videoTransform);
-    context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
+    context.drawNativeImage(*image, transformedDestRect, imageRect);
 }
 
 RefPtr<VideoFrame> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameForCurrentTime()

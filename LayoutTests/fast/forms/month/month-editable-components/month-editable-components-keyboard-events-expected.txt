@@ -6,33 +6,45 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Digit keys
 PASS input.value is "2012-09"
-PASS changeEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 1
 PASS inputEventsFired is 4
 
 Digit keys with leading zero
 PASS input.value is "0034-05"
-PASS changeEventsFired is 3
+PASS changeEventsFired is 0
+PASS inputEventsFired is 3
+PASS changeEventsFired is 1
 PASS inputEventsFired is 3
 
 Digit keys and backspace key
 PASS input.value is "2020-02"
-PASS changeEventsFired is 6
+PASS changeEventsFired is 0
+PASS inputEventsFired is 6
+PASS changeEventsFired is 1
 PASS inputEventsFired is 6
 
 Digit keys with timeout
 PASS input.value is "0001-02"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 
 Digit keys clamp value
 PASS input.value is "9999-12"
-PASS changeEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 1
 PASS inputEventsFired is 4
 
 Left/Right arrow keys
 PASS input.value is "0002-02"
 PASS input.value is "0002-03"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 
 Left/Right arrow keys (vertical-lr)
@@ -40,7 +52,9 @@ PASS input.value is "2020-01"
 PASS input.value is "2020-02"
 PASS input.value is "2020-01"
 PASS input.value is "2020-12"
-PASS changeEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 0
 PASS inputEventsFired is 4
 
 Left/Right arrow keys (vertical-rl)
@@ -48,7 +62,9 @@ PASS input.value is "2020-01"
 PASS input.value is "2020-02"
 PASS input.value is "2020-01"
 PASS input.value is "2020-12"
-PASS changeEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 0
 PASS inputEventsFired is 4
 
 Advance field keys
@@ -58,7 +74,9 @@ PASS input.value is "0005-06"
 PASS input.value is "0006-06"
 PASS input.value is "0007-06"
 PASS input.value is "0008-06"
-PASS changeEventsFired is 6
+PASS changeEventsFired is 0
+PASS inputEventsFired is 6
+PASS changeEventsFired is 1
 PASS inputEventsFired is 6
 
 Up/Down arrow keys
@@ -66,19 +84,25 @@ PASS input.value is "2020-01"
 PASS input.value is "2020-02"
 PASS input.value is "2020-01"
 PASS input.value is "2020-12"
-PASS changeEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 0
 PASS inputEventsFired is 4
 
 Up/Down arrow keys (vertical-lr)
 PASS input.value is "0002-02"
 PASS input.value is "0002-03"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 
 Up/Down arrow keys (vertical-rl)
 PASS input.value is "0002-02"
 PASS input.value is "0002-03"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 
 Tab key
@@ -88,15 +112,21 @@ PASS input.value is "0002-03"
 PASS document.activeElement.id is "before"
 PASS changeEventsFired is 2
 PASS inputEventsFired is 2
+PASS changeEventsFired is 2
+PASS inputEventsFired is 2
 
 Backspace key
 PASS input.value is ""
 PASS input.value is "2020-07"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 
 Delete key
 PASS input.value is ""
+PASS changeEventsFired is 0
+PASS inputEventsFired is 1
 PASS changeEventsFired is 1
 PASS inputEventsFired is 1
 
@@ -105,7 +135,9 @@ PASS input.value is "2020-09"
 PASS input.value is "2020-01"
 PASS input.value is "2020-01"
 PASS input.value is "0002-01"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 PASS successfullyParsed is true
 

@@ -52,9 +52,9 @@ public:
     {
         return adoptRef(*new ComputePassEncoder(computeCommandEncoder, descriptor, parentEncoder, device));
     }
-    static Ref<ComputePassEncoder> createInvalid(Device& device)
+    static Ref<ComputePassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device)
     {
-        return adoptRef(*new ComputePassEncoder(device));
+        return adoptRef(*new ComputePassEncoder(parentEncoder, device));
     }
 
     ~ComputePassEncoder();
@@ -75,7 +75,7 @@ public:
 
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>, const WGPUComputePassDescriptor&, CommandEncoder&, Device&);
-    ComputePassEncoder(Device&);
+    ComputePassEncoder(CommandEncoder&, Device&);
 
     bool validatePopDebugGroup() const;
 
@@ -95,7 +95,7 @@ private:
     MTLSize m_threadsPerThreadgroup;
     Vector<uint32_t> m_computeDynamicOffsets;
     const ComputePipeline* m_pipeline { nullptr };
-    RefPtr<CommandEncoder> m_parentEncoder;
+    Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
 };
 

@@ -232,7 +232,7 @@
     "web-platform-tests/mediacapture-fromelement": "import",
     "web-platform-tests/mediacapture-handle": "skip",
     "web-platform-tests/mediacapture-image": "skip",
-    "web-platform-tests/mediacapture-insertable-streams": "skip",
+    "web-platform-tests/mediacapture-insertable-streams": "import",
     "web-platform-tests/mediacapture-record": "import",
     "web-platform-tests/mediacapture-region": "skip",
     "web-platform-tests/mediacapture-streams": "import",

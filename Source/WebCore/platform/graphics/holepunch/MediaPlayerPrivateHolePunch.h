@@ -29,7 +29,7 @@
 #include <wtf/WeakPtr.h>
 
 #if USE(NICOSIA)
-#include "NicosiaContentLayerTextureMapperImpl.h"
+#include "NicosiaContentLayer.h"
 #else
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #endif
@@ -43,7 +43,7 @@ class MediaPlayerPrivateHolePunch
     , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
     , public RefCounted<MediaPlayerPrivateHolePunch>
 #if USE(NICOSIA)
-    , public Nicosia::ContentLayerTextureMapperImpl::Client
+    , public Nicosia::ContentLayer::Client
 #else
     , public PlatformLayer
 #endif

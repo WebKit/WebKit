@@ -559,7 +559,7 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
         bool isNoOp = false;
         ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, 0, count, instances, type,
                             indices, false, &isNoOp));
-        if (!isNoOp)
+        if (!isNoOp && genIndicesCount > 0)
         {
             if (baseVertex == 0 && baseInstance == 0)
             {
@@ -638,7 +638,7 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
         bool isNoOp = false;
         ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, 0, count, instances, type,
                             indices, false, &isNoOp));
-        if (!isNoOp)
+        if (!isNoOp && genIndicesCount > 0)
         {
             if (baseVertex == 0 && baseInstance == 0)
             {
@@ -2356,13 +2356,15 @@ void ContextMtl::onTransformFeedbackInactive(const gl::Context *context, Transfo
     endEncoding(true);
 }
 
-void ContextMtl::queueEventSignal(const mtl::SharedEventRef &event, uint64_t value)
+#if ANGLE_MTL_EVENT_AVAILABLE
+uint64_t ContextMtl::queueEventSignal(id<MTLEvent> event, uint64_t value)
 {
     ensureCommandBufferReady();
     mCmdBuffer.queueEventSignal(event, value);
+    return mCmdBuffer.getQueueSerial();
 }
 
-void ContextMtl::serverWaitEvent(const mtl::SharedEventRef &event, uint64_t value)
+void ContextMtl::serverWaitEvent(id<MTLEvent> event, uint64_t value)
 {
     ensureCommandBufferReady();
 
@@ -2371,6 +2373,7 @@ void ContextMtl::serverWaitEvent(const mtl::SharedEventRef &event, uint64_t valu
 
     mCmdBuffer.serverWaitEvent(event, value);
 }
+#endif
 
 void ContextMtl::updateProgramExecutable(const gl::Context *context)
 {

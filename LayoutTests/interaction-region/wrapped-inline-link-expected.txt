@@ -19,24 +19,10 @@ Line
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=37.32 height=27)
-        (borderRadius 8 8 0 0),
-        (interaction (-4,23) width=38 height=20)
-        (borderRadius 0.00),
-        (interaction (-4,43) width=38 height=20)
-        (borderRadius 0.00),
-        (interaction (-4,63) width=38 height=20)
-        (borderRadius 0 0 8 8),
-        (interaction (6,82) width=65.34 height=27)
-        (borderRadius 8 8 0 0),
-        (interaction (72,94) width=41 height=15)
-        (borderRadius 0 8 0 0),
-        (interaction (6,109) width=107 height=12)
-        (borderRadius 0 0 8 0),
-        (interaction (6,121) width=71 height=12)
-        (borderRadius 0 0 8 0),
-        (interaction (6,133) width=38 height=12)
-        (borderRadius 0 0 8 8)])
+        (interaction (-4,-4) width=37.32 height=87)
+        (clipPath move to (0,8), add line to (0,8), add curve to (0,3.58) (3.58,0) (8,0), add line to (29.32,0), add line to (29.32,0), add curve to (33.74,0) (37.32,3.58) (37.32,8), add line to (37.32,16.50), add line to (37.32,20), add line to (37.32,23.50), add line to (37.32,27), add line to (37.32,36.50), add line to (37.32,40), add line to (37.32,43.50), add line to (37.32,47), add line to (37.32,56.50), add line to (37.32,60), add line to (37.32,63.50), add line to (37.32,67), add line to (37.32,79), add line to (37.32,79), add curve to (37.32,83.42) (33.74,87) (29.32,87), add line to (8,87), add line to (8,87), add curve to (3.58,87) (0,83.42) (0,79), add line to (0,70.50), add line to (0,67), add line to (0,63.50), add line to (0,60), add line to (0,50.50), add line to (0,47), add line to (0,43.50), add line to (0,40), add line to (0,30.50), add line to (0,27), add line to (0,23.50), add line to (0,20), close subpath),
+        (interaction (6,82) width=106.20 height=63)
+        (clipPath move to (0,6), add line to (0,6), add curve to (0,2.69) (2.69,0) (6,0), add line to (59.34,0), add line to (59.34,0), add curve to (62.65,0) (65.34,2.69) (65.34,6), add line to (65.34,6), add line to (65.34,6), add curve to (65.34,9.31) (68.02,12) (71.34,12), add line to (98.20,12), add line to (98.20,12), add curve to (102.61,12) (106.20,15.58) (106.20,20), add line to (106.20,31), add line to (106.20,31), add curve to (106.20,35.42) (102.61,39) (98.20,39), add line to (76.66,39), add line to (76.66,39), add curve to (73.35,39) (70.66,41.69) (70.66,45), add line to (70.66,45), add line to (70.66,45), add curve to (70.66,48.31) (67.98,51) (64.66,51), add line to (43.32,51), add line to (43.32,51), add curve to (40.01,51) (37.32,53.69) (37.32,57), add line to (37.32,57), add line to (37.32,57), add curve to (37.32,60.31) (34.63,63) (31.32,63), add line to (6,63), add line to (6,63), add curve to (2.69,63) (0,60.31) (0,57), add line to (0,57), add line to (0,51), add line to (0,40.50), add line to (0,39), add line to (0,37.50), add line to (0,36), add line to (0,28.50), add line to (0,27), add line to (0,25.50), add line to (0,24), add line to (0,18), add line to (0,12), close subpath)])
       )
     )
   )

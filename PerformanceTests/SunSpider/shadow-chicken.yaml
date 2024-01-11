@@ -30,5 +30,5 @@
   cmd: runShadowChicken
 
 - path: tests/v8-v6
-  cmd: runShadowChicken
+  cmd: if 'arm' == $architecture; skip; else runShadowChicken; end
 

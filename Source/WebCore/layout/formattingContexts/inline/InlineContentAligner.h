@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "InlineDisplayContent.h"
+#include "InlineDisplayLine.h"
+#include "LayoutUnits.h"
+
 namespace WebCore {
 namespace Layout {
 

@@ -206,8 +206,8 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
 
 static void buildNodeHighlight(Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    RenderObject* renderer = node.renderer();
-    if (!renderer)
+    auto* renderer = node.renderer();
+    if (!renderer || renderer->isSkippedContent())
         return;
 
     buildRendererHighlight(renderer, highlightConfig, highlight, coordinateSystem);
@@ -305,8 +305,8 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const In
 
 static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
 {
-    RenderObject* renderer = node.renderer();
-    if (!renderer || !is<RenderBox>(renderer))
+    auto* renderer = node.renderer();
+    if (!renderer || renderer->isSkippedContent() || !is<RenderBox>(renderer))
         return;
 
     const ShapeOutsideInfo* shapeOutsideInfo = downcast<RenderBox>(renderer)->shapeOutsideInfo();
@@ -1140,12 +1140,12 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (bounds.isEmpty())
         return { };
 
-    Element* element = effectiveElementForNode(node);
+    auto* element = effectiveElementForNode(node);
     if (!element)
         return { };
 
-    RenderObject* renderer = node.renderer();
-    if (!renderer)
+    auto* renderer = node.renderer();
+    if (!renderer || renderer->isSkippedContent())
         return { };
 
     String elementTagName = element->nodeName();

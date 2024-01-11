@@ -29,7 +29,10 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import <WebCore/RuntimeApplicationChecks.h>
+#import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
@@ -41,6 +44,8 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
+    [WKBaseScrollView _overrideAddGestureRecognizerIfNeeded];
+
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
@@ -53,7 +58,24 @@
     return self;
 }
 
-- (void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
++ (void)_overrideAddGestureRecognizerIfNeeded
+{
+    static bool hasOverridenAddGestureRecognizer = false;
+    if (std::exchange(hasOverridenAddGestureRecognizer, true))
+        return;
+
+    if (WebCore::IOSApplication::isHimalaya() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScrollViewSubclassImplementsAddGestureRecognizer)) {
+        // This check can be removed and -_wk_addGestureRecognizer: can be renamed to -addGestureRecognizer: once the 喜马拉雅 app updates to a version of
+        // the iOS 17 SDK with this WKBaseScrollView refactoring. Otherwise, the call to `-[super addGestureRecognizer:]` below will fail, due to how this
+        // app uses `class_getInstanceMethod` and `method_setImplementation` to intercept and override all calls to `-[UIView addGestureRecognizer:]`.
+        return;
+    }
+
+    auto method = class_getInstanceMethod(self.class, @selector(_wk_addGestureRecognizer:));
+    class_addMethod(self.class, @selector(addGestureRecognizer:), method_getImplementation(method), method_getTypeEncoding(method));
+}
+
+- (void)_wk_addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     if (self.panGestureRecognizer == gestureRecognizer) {
         if (!_axisLockingPanGestureRecognizer) {

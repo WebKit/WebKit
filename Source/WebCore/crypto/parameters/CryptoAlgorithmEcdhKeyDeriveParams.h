@@ -27,8 +27,6 @@
 
 #include "CryptoAlgorithmParameters.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoKey;
@@ -43,5 +41,3 @@ public:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(EcdhKeyDeriveParams)
-
-#endif // ENABLE(WEB_CRYPTO)

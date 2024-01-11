@@ -160,6 +160,9 @@ enum class TapHandlingResult : uint8_t;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
 - (void)_resetScrollViewInsetAdjustmentBehavior;
 
+- (void)_beginAnimatedFullScreenExit;
+- (void)_endAnimatedFullScreenExit;
+
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
 
@@ -201,9 +204,6 @@ enum class TapHandlingResult : uint8_t;
 
 @property (nonatomic, readonly) BOOL _haveSetUnobscuredSafeAreaInsets;
 @property (nonatomic, readonly) BOOL _hasOverriddenLayoutParameters;
-@property (nonatomic, readonly) std::optional<CGSize> _viewLayoutSizeOverride;
-@property (nonatomic, readonly) std::optional<CGSize> _minimumUnobscuredSizeOverride;
-@property (nonatomic, readonly) std::optional<CGSize> _maximumUnobscuredSizeOverride;
 - (void)_resetContentOffset;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;

@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -89,15 +89,19 @@ shouldThrow("transform.setTranslate()");
 shouldThrow("transform.setTranslate(transform)");
 shouldThrow("transform.setTranslate(svgElement)");
 shouldThrow("transform.setTranslate('aString')");
-shouldBeUndefined("transform.setTranslate(1, transform)");
-shouldBeUndefined("transform.setTranslate(1, svgElement)");
-shouldBeUndefined("transform.setTranslate(1, 'aString')");
-shouldBeUndefined("transform.setTranslate(transform, 1)");
-shouldBeUndefined("transform.setTranslate(svgElement, 1)");
-shouldBeUndefined("transform.setTranslate('aString', 1)");
-shouldBeUndefined("transform.setTranslate(transform, transform)");
-shouldBeUndefined("transform.setTranslate(svgElement, svgElement)");
-shouldBeUndefined("transform.setTranslate('aString', 'aString')");
+shouldThrow("transform.setTranslate(1, transform)");
+shouldThrow("transform.setTranslate(1, svgElement)");
+shouldThrow("transform.setTranslate(1, 'aString')");
+shouldThrow("transform.setTranslate(transform, 1)");
+shouldThrow("transform.setTranslate(svgElement, 1)");
+shouldThrow("transform.setTranslate('aString', 1)");
+shouldThrow("transform.setTranslate(transform, transform)");
+shouldThrow("transform.setTranslate(svgElement, svgElement)");
+shouldThrow("transform.setTranslate('aString', 'aString')");
+shouldThrow("transform.setTranslate(NaN, 1)");
+shouldThrow("transform.setTranslate(Infinity, 1)");
+shouldThrow("transform.setTranslate(1, NaN)");
+shouldThrow("transform.setTranslate(1, Infinity)");
 
 debug("");
 debug("Check passing invalid arguments to 'setScale'");
@@ -105,15 +109,19 @@ shouldThrow("transform.setScale()");
 shouldThrow("transform.setScale(transform)");
 shouldThrow("transform.setScale(svgElement)");
 shouldThrow("transform.setScale('aString')");
-shouldBeUndefined("transform.setScale(1, transform)");
-shouldBeUndefined("transform.setScale(1, svgElement)");
-shouldBeUndefined("transform.setScale(1, 'aString')");
-shouldBeUndefined("transform.setScale(transform, 1)");
-shouldBeUndefined("transform.setScale(svgElement, 1)");
-shouldBeUndefined("transform.setScale('aString', 1)");
-shouldBeUndefined("transform.setScale(transform, transform)");
-shouldBeUndefined("transform.setScale(svgElement, svgElement)");
-shouldBeUndefined("transform.setScale('aString', 'aString')");
+shouldThrow("transform.setScale(1, transform)");
+shouldThrow("transform.setScale(1, svgElement)");
+shouldThrow("transform.setScale(1, 'aString')");
+shouldThrow("transform.setScale(transform, 1)");
+shouldThrow("transform.setScale(svgElement, 1)");
+shouldThrow("transform.setScale('aString', 1)");
+shouldThrow("transform.setScale(transform, transform)");
+shouldThrow("transform.setScale(svgElement, svgElement)");
+shouldThrow("transform.setScale('aString', 'aString')");
+shouldThrow("transform.setScale(NaN, 1)");
+shouldThrow("transform.setScale(Infinity, 1)");
+shouldThrow("transform.setScale(1, NaN)");
+shouldThrow("transform.setScale(1, Infinity)");
 
 debug("");
 debug("Check passing invalid arguments to 'setRotate'");
@@ -124,26 +132,34 @@ shouldThrow("transform.setRotate('aString')");
 shouldThrow("transform.setRotate(1, transform)");
 shouldThrow("transform.setRotate(1, svgElement)");
 shouldThrow("transform.setRotate(1, 'aString')");
-shouldBeUndefined("transform.setRotate(1, 1, transform)");
-shouldBeUndefined("transform.setRotate(1, 1, svgElement)");
-shouldBeUndefined("transform.setRotate(1, 1, 'aString')");
+shouldThrow("transform.setRotate(1, 1, transform)");
+shouldThrow("transform.setRotate(1, 1, svgElement)");
+shouldThrow("transform.setRotate(1, 1, 'aString')");
+shouldThrow("transform.setRotate(NaN, 1, 1)");
+shouldThrow("transform.setRotate(Infinity, 1, 1)");
+shouldThrow("transform.setRotate(1, NaN, 1)");
+shouldThrow("transform.setRotate(1, Infinity, 1)");
+shouldThrow("transform.setRotate(1, 1, NaN)");
+shouldThrow("transform.setRotate(1, 1, Infinity)");
 
 debug("");
 debug("Check passing invalid arguments to 'setSkewX'");
 shouldThrow("transform.setSkewX()");
-shouldBeUndefined("transform.setSkewX(transform)");
-shouldBeUndefined("transform.setSkewX(svgElement)");
-shouldBeUndefined("transform.setSkewX('aString')");
+shouldThrow("transform.setSkewX(transform)");
+shouldThrow("transform.setSkewX(svgElement)");
+shouldThrow("transform.setSkewX('aString')");
+shouldThrow("transform.setSkewX(NaN)");
+shouldThrow("transform.setSkewX(Infinity)");
 
 debug("");
 debug("Check passing invalid arguments to 'setSkewY'");
 shouldThrow("transform.setSkewY()");
-shouldBeUndefined("transform.setSkewY(transform)");
-shouldBeUndefined("transform.setSkewY(svgElement)");
-shouldBeUndefined("transform.setSkewY('aString')");
-
+shouldThrow("transform.setSkewY(transform)");
+shouldThrow("transform.setSkewY(svgElement)");
+shouldThrow("transform.setSkewY('aString')");
+shouldThrow("transform.setSkewY(NaN)");
+shouldThrow("transform.setSkewY(Infinity)");
 successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

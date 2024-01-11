@@ -905,7 +905,6 @@ set(webrtc_SOURCES
     Source/webrtc/logging/rtc_event_log/events/rtc_event_video_send_stream_config.cc
     Source/webrtc/logging/rtc_event_log/ice_logger.cc
     Source/webrtc/logging/rtc_event_log/rtc_event_log_impl.cc
-    Source/webrtc/logging/rtc_event_log/rtc_event_processor.cc
     Source/webrtc/logging/rtc_event_log/rtc_stream_config.cc
     Source/webrtc/media/base/adapted_video_track_source.cc
     Source/webrtc/media/base/codec.cc
@@ -1427,10 +1426,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/third_party/g722/g722_encode.c
     Source/webrtc/modules/third_party/portaudio/pa_ringbuffer.c
     Source/webrtc/modules/video_capture/device_info_impl.cc
-    Source/webrtc/modules/video_capture/linux/device_info_linux.cc
-    Source/webrtc/modules/video_capture/linux/device_info_v4l2.cc
-    Source/webrtc/modules/video_capture/linux/video_capture_linux.cc
-    Source/webrtc/modules/video_capture/linux/video_capture_v4l2.cc
     Source/webrtc/modules/video_capture/video_capture_factory.cc
     Source/webrtc/modules/video_capture/video_capture_factory_null.cc
     Source/webrtc/modules/video_capture/video_capture_impl.cc
@@ -1591,10 +1586,10 @@ set(webrtc_SOURCES
     Source/webrtc/pc/sctp_transport.cc
     Source/webrtc/pc/sctp_utils.cc
     Source/webrtc/pc/sdp_offer_answer.cc
-    Source/webrtc/pc/sdp_serializer.cc
     Source/webrtc/pc/sdp_utils.cc
     Source/webrtc/pc/session_description.cc
     Source/webrtc/pc/simulcast_description.cc
+    Source/webrtc/pc/simulcast_sdp_serializer.cc
     Source/webrtc/pc/srtp_filter.cc
     Source/webrtc/pc/srtp_session.cc
     Source/webrtc/pc/srtp_transport.cc
@@ -1746,7 +1741,6 @@ set(webrtc_SOURCES
     Source/webrtc/stats/rtc_stats_report.cc
     Source/webrtc/system_wrappers/source/clock.cc
     Source/webrtc/system_wrappers/source/cpu_features.cc
-    Source/webrtc/system_wrappers/source/cpu_features_linux.cc
     Source/webrtc/system_wrappers/source/cpu_info.cc
     Source/webrtc/system_wrappers/source/denormal_disabler.cc
     Source/webrtc/system_wrappers/source/field_trial.cc
@@ -1776,9 +1770,9 @@ set(webrtc_SOURCES
     Source/webrtc/video/frame_cadence_adapter.cc
     Source/webrtc/video/frame_decode_timing.cc
     Source/webrtc/video/frame_dumping_decoder.cc
+    Source/webrtc/video/frame_dumping_encoder.cc
     Source/webrtc/video/frame_encode_metadata_writer.cc
     Source/webrtc/video/quality_limitation_reason_tracker.cc
-    Source/webrtc/video/quality_threshold.cc
     Source/webrtc/video/receive_statistics_proxy.cc
     Source/webrtc/video/render/incoming_video_stream.cc
     Source/webrtc/video/render/video_render_frames.cc
@@ -1802,6 +1796,14 @@ set(webrtc_SOURCES
     Source/webrtc/video/video_stream_buffer_controller.cc
     Source/webrtc/video/video_stream_decoder2.cc
     Source/webrtc/video/video_stream_encoder.cc
+    Source/webrtc/modules/rtp_rtcp/source/flexfec_03_header_reader_writer.cc
+    Source/webrtc/p2p/base/stun_dictionary.cc
+    Source/webrtc/rtc_base/async_dns_resolver.cc
+    Source/webrtc/rtc_base/bitrate_tracker.cc
+    Source/webrtc/rtc_base/frequency_tracker.cc
+    Source/webrtc/rtc_base/network/received_packet.cc
+    Source/webrtc/rtc_tools/video_encoder/encoded_image_file_writer.cc
+    Source/webrtc/rtc_tools/video_encoder/video_encoder.cc
 
     $<TARGET_OBJECTS:libsrtp>
 )
@@ -2060,7 +2062,14 @@ else ()
         set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 0)
     else()
         list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/video_capture/linux/device_info_linux.cc
+            Source/webrtc/modules/video_capture/linux/device_info_v4l2.cc
+            Source/webrtc/modules/video_capture/linux/video_capture_linux.cc
+            Source/webrtc/modules/video_capture/linux/video_capture_v4l2.cc
+
             Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc
+
+            Source/webrtc/system_wrappers/source/cpu_features_linux.cc
         )
         set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 1)
     endif ()
@@ -2099,7 +2108,7 @@ endif ()
 add_library(webrtc STATIC ${webrtc_SOURCES})
 
 target_compile_options(webrtc PRIVATE
-    "$<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>"
+    "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2a>"
     "-UHAVE_CONFIG_H"
     "-DWEBRTC_WEBKIT_BUILD=1"
     "-w"
@@ -2673,7 +2682,6 @@ if (APPLE)
         Source/third_party/libvpx/source/config/linux/ppc64/vpx_config.c
         Source/third_party/libvpx/source/libvpx/vp8/vp8_ratectrl_rtc.cc
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_tpl_model.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3.c
         Source/third_party/libvpx/source/libvpx/vpx/src/vpx_tpl.c
     )
 
@@ -2694,6 +2702,7 @@ if (APPLE)
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_mmx.c
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_x86.c
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/vp8_asm_stubs.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse4.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse4.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse4.c
@@ -2934,8 +2943,9 @@ if (APPLE)
         )
         target_compile_options(vpx PRIVATE -mavx2)
     else ()
+        # Use the linux configuration instead of iOS on Cocoa arm64 platforms.
         list(APPEND vpx_INCLUDE_DIRECTORIES
-            Source/third_party/libvpx/source/config/ios/arm64
+            Source/third_party/libvpx/source/config/linux/arm64-highbd
         )
     endif ()
     target_include_directories(vpx PRIVATE ${vpx_INCLUDE_DIRECTORIES})

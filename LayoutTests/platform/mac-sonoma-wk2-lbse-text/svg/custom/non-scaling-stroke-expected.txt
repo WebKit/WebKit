@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 400x50
+  RenderSVGHiddenContainer {defs} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGTransformableContainer {g} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#00000000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#00000000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGTransformableContainer {use} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#000000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGTransformableContainer {use} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGTransformableContainer {use} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+layer at (0,0) size 400x50
+  RenderSVGTransformableContainer {use} at (0,0) size 400x50
+layer at (0,0) size 400x50
+  RenderSVGRect {rect} at (0,0) size 400x50 [stroke={[type=SOLID] [color=#008000] [stroke width=15.00]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]

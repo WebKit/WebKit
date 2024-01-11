@@ -28,9 +28,10 @@
 #if USE(EXTENSIONKIT)
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-#if __has_include(<ServiceExtensions/SEServiceManager_Private.h>)
-#import <ServiceExtensions/SEServiceManager_Private.h>
+#if __has_include(<ServiceExtensions/ServiceExtensions_Private.h>)
+#import <ServiceExtensions/ServiceExtensions_Private.h>
 #else
 
 @class _SEContentProcess;
@@ -72,7 +73,7 @@ typedef void(^_SEServiceInteruptionHandler)();
 @property (readonly) BOOL isValid;
 @end
 
-@interface _SECapabilities : NSObject
+@interface _SECapability : NSObject
 @end
 
 NS_REFINED_FOR_SWIFT
@@ -82,7 +83,7 @@ NS_REFINED_FOR_SWIFT
 
 - (void)invalidate;
 
-- (nullable id<_SEGrant>)grantCapabilities:(_SECapabilities *)capabilities error:(NSError * _Nullable *)error;
+- (nullable id<_SEGrant>)grantCapability:(_SECapability *)capability error:(NSError * _Nullable *)error;
 
 @end
 
@@ -104,13 +105,41 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-@interface _SECapabilities (IPI)
+NS_ASSUME_NONNULL_BEGIN
+
+@interface _SECapability (SPI)
 - (BOOL)setActive:(BOOL)active;
-+ (instancetype)mediaWithWebsite:(NSString*)website;
++ (instancetype)mediaWithWebsite:(NSString *)website;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;
 @property (nonatomic, readonly) NSString *mediaEnvironment;
 @end
+
+@interface _SEHostingHandle: NSObject
+-(instancetype)initFromXPCRepresentation:(xpc_object_t)xpcRepresentation;
+-(xpc_object_t)xpcRepresentation;
+@end
+
+@interface _SEHostable: NSObject
++(_SEHostable*)createHostableWithOptions:(NSDictionary*)dict error:(NSError**)error;
+@property (nonatomic, readonly) _SEHostingHandle* handle;
+@property (nonatomic, strong) CALayer *layer;
+@end
+
+@interface _SEHostingView: UIView
+@property (nonatomic, retain) _SEHostingHandle* handle;
+@end
+
+@interface _SEHostingUpdateCoordinator : NSObject
+-(instancetype)init;
+-(instancetype)initFromXPCRepresentation:(xpc_object_t)xpcRepresentation;
+-(xpc_object_t)xpcRepresentation;
+-(void)addHostable:(_SEHostable*)hostable;
+-(void)addHostingView:(_SEHostingView*)hostingView;
+-(void)commit;
+@end
+
+NS_ASSUME_NONNULL_END
 
 #endif // USE(EXTENSIONKIT)

@@ -42,7 +42,6 @@ struct IOSurfaceFormatInfo
 };
 
 // clang-format off
-// NOTE(hqle): Support R16_UINT once GLES3 is complete.
 // GL_RGB is a special case. The native angle::FormatID would be either R8G8B8A8_UNORM
 // or B8G8R8A8_UNORM based on the IOSurface's pixel format.
 constexpr std::array<IOSurfaceFormatInfo, 9> kIOSurfaceFormats = {{

@@ -47,6 +47,8 @@ public:
     GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&&, CaptureDevice::DeviceType);
     virtual ~GStreamerCapturer();
 
+    void tearDown(bool disconnectSignals = true);
+
     void addObserver(Observer&);
     void removeObserver(Observer&);
     void forEachObserver(const Function<void(Observer&)>&);
@@ -54,7 +56,7 @@ public:
     void setupPipeline();
     void start();
     void stop();
-    GstCaps* caps();
+    WARN_UNUSED_RETURN GRefPtr<GstCaps> caps();
 
     GstElement* makeElement(const char* factoryName);
     virtual GstElement* createSource();
@@ -72,7 +74,7 @@ public:
     CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
     const String& devicePersistentId() const { return m_device ? m_device->persistentId() : emptyString(); }
 
-    void stopDevice();
+    void stopDevice(bool disconnectSignals);
 
 protected:
     GRefPtr<GstElement> m_sink;

@@ -52,13 +52,13 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
     // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
     // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers
     // need to respect the translations induced by their corresponding use elements x/y attributes.
-    if (is<SVGUseElement>(element))
-        return &downcast<SVGUseElement>(element);
+    if (auto* useElement = dynamicDowncast<SVGUseElement>(element))
+        return useElement;
 
     if (element.isInShadowTree() && is<SVGGElement>(element)) {
         SVGElement* correspondingElement = element.correspondingElement();
-        if (is<SVGUseElement>(correspondingElement))
-            return downcast<SVGUseElement>(correspondingElement);
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(correspondingElement))
+            return useElement;
     }
 
     return nullptr;

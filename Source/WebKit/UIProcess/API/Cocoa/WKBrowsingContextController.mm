@@ -87,9 +87,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static HashMap<CheckedPtr<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
+static HashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
 {
-    static NeverDestroyed<HashMap<CheckedPtr<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
+    static NeverDestroyed<HashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
     return browsingContextControllerMap;
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -99,8 +99,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBrowsingContextController.class, self))
         return;
 
-    ASSERT(browsingContextControllerMap().get(_page.get()) == self);
-    browsingContextControllerMap().remove(_page.get());
+    ASSERT(browsingContextControllerMap().get(*_page) == self);
+    browsingContextControllerMap().remove(*_page);
 
     _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
 
@@ -626,8 +626,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pageLoadStateObserver = makeUnique<WebKit::PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
-    ASSERT(!browsingContextControllerMap().contains(_page.get()));
-    browsingContextControllerMap().set(_page.get(), self);
+    ASSERT(!browsingContextControllerMap().contains(*_page));
+    browsingContextControllerMap().set(*_page, self);
 
     return self;
 }

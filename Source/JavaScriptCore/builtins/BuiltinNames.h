@@ -65,7 +65,6 @@ namespace JSC {
     macro(ShadowRealm) \
     macro(RegExp) \
     macro(min) \
-    macro(trunc) \
     macro(create) \
     macro(defineProperty) \
     macro(defaultPromiseThen) \
@@ -118,6 +117,8 @@ namespace JSC {
     macro(nextMethod) \
     macro(asyncGeneratorQueueItemNext) \
     macro(this) \
+    macro(toIntegerOrInfinity) \
+    macro(toLength) \
     macro(importMapStatus) \
     macro(importInRealm) \
     macro(evalInRealm) \

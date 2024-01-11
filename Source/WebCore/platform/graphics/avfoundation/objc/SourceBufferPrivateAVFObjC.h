@@ -68,6 +68,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateAVFObjC;
 class TimeRanges;
 class AudioTrackPrivate;
+class VideoMediaSampleRenderer;
 class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
@@ -210,7 +211,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Vector<Function<void()>> m_pendingTrackChangeTasks;
     Deque<std::pair<TrackID, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
-    RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
+    RefPtr<VideoMediaSampleRenderer> m_videoLayer;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
 ALLOW_NEW_API_WITHOUT_GUARDS_END

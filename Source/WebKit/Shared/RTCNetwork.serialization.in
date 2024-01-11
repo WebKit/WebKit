@@ -55,6 +55,7 @@ struct WebKit::RTCNetwork {
     Vector<WebKit::RTC::Network::InterfaceAddress> ips;
 };
 
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
 header: "RTCWebKitEncodedFrameInfo.h"
 [CustomHeader] struct webrtc::WebKitEncodedFrameInfo {
     uint32_t width
@@ -103,5 +104,6 @@ enum class webrtc::VideoContentType : uint8_t {
   UNSPECIFIED,
   SCREENSHARE,
 };
+#endif
 
 #endif

@@ -34,6 +34,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -48,7 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
 using namespace HTMLNames;
 
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document& document)
-    : HTMLFrameOwnerElement(tagName, document, CreateHTMLFrameElementBase)
+    : HTMLFrameOwnerElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 

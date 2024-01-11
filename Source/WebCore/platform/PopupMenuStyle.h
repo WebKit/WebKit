@@ -36,14 +36,14 @@ class PopupMenuStyle {
 public:
     enum PopupMenuType { SelectPopup, AutofillPopup };
     enum BackgroundColorType { DefaultBackgroundColor, CustomBackgroundColor };
-    enum PopupMenuSize {
-        PopupMenuSizeNormal,
-        PopupMenuSizeSmall,
-        PopupMenuSizeMini,
-        PopupMenuSizeLarge,
+    enum class Size : uint8_t {
+        Normal,
+        Small,
+        Mini,
+        Large,
     };
 
-    PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, bool visible, bool isDisplayNone, bool hasDefaultAppearance, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, PopupMenuSize menuSize = PopupMenuSizeNormal)
+    PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, bool visible, bool isDisplayNone, bool hasDefaultAppearance, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, Size menuSize = Size::Normal)
         : m_foregroundColor(foreground)
         , m_backgroundColor(background)
         , m_font(font)
@@ -70,7 +70,7 @@ public:
     bool hasTextDirectionOverride() const { return m_hasTextDirectionOverride; }
     BackgroundColorType backgroundColorType() const { return m_backgroundColorType; }
     PopupMenuType menuType() const { return m_menuType; }
-    PopupMenuSize menuSize() const { return m_menuSize; }
+    Size menuSize() const { return m_menuSize; }
 
 private:
     Color m_foregroundColor;
@@ -84,21 +84,7 @@ private:
     bool m_hasTextDirectionOverride;
     BackgroundColorType m_backgroundColorType;
     PopupMenuType m_menuType;
-    PopupMenuSize m_menuSize;
+    Size m_menuSize;
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PopupMenuStyle::PopupMenuSize> {
-    using values = EnumValues<
-        WebCore::PopupMenuStyle::PopupMenuSize,
-        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeNormal,
-        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeSmall,
-        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeMini,
-        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeLarge
-    >;
-};
-
-} // namespace WTF

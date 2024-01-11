@@ -743,6 +743,11 @@ void PlatformCALayerRemote::setContents(CFTypeRef value)
 
 void PlatformCALayerRemote::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
+    setRemoteDelegatedContents({ ImageBufferBackendHandle { MachSendRight { contents.surface } }, contents.finishedFence, contents.surfaceIdentifier });
+}
+
+void PlatformCALayerRemote::setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents& contents)
+{
     ASSERT(m_acceleratesDrawing);
     ensureBackingStore();
     m_properties.backingStoreOrProperties.store->setDelegatedContents(contents);
@@ -825,13 +830,11 @@ void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer& sourceLayer)
     m_properties.notePropertiesChanged(LayerChange::FiltersChanged);
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void PlatformCALayerRemote::setBlendMode(BlendMode blendMode)
 {
     m_properties.blendMode = blendMode;
     m_properties.notePropertiesChanged(LayerChange::BlendModeChanged);
 }
-#endif
 
 bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filters)
 {

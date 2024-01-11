@@ -1,20 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<!DOCTYPE html>
+<html>
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Test content with attr</title>
-	<style type="text/css">
-		a:after {
-			content: '(href=' attr(href) ')';
-		}
-	</style>
-	<script type="text/javascript">
-		function changeHref() {
-			document.getElementById("toChange").href = "4";
-		}
-	</script>
+    <meta charset="utf-8">
+    <title>Test content with attr</title>
+    <style>
+        a {
+            text-decoration: none;
+        }
+        a::after {
+            content: '(href=' attr(href) ')';
+        }
+    </style>
+    <script>
+        function changeHref() {
+            document.getElementById("toChange").href = "4";
+        }
+    </script>
 </head>
 <body onload="changeHref();">
 <p>Each link below should display the text "n(href=n)" where n is a number</p>

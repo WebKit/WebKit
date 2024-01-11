@@ -1062,12 +1062,10 @@ public:
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
 
-#if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
     inline bool isInSubtreeWithBlendMode() const;
 
     inline void setIsolation(Isolation);
-#endif
 
     inline BlendMode blendMode() const;
     inline bool hasBlendMode() const;
@@ -1744,6 +1742,7 @@ public:
     constexpr bool isDisplayInlineType() const;
     constexpr bool isOriginalDisplayInlineType() const;
     constexpr bool isDisplayFlexibleOrGridBox() const;
+    constexpr bool isDisplayDeprecatedFlexibleBox() const;
     constexpr bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const;
     constexpr bool isDisplayRegionType() const;
     constexpr bool isDisplayBlockLevel() const;
@@ -1964,7 +1963,6 @@ public:
     static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();
     static QuotesData* initialQuotes() { return nullptr; }
-    static inline const AtomString& initialContentAltText();
 
 #if ENABLE(DARK_MODE_CSS)
     static constexpr StyleColorScheme initialColorScheme();
@@ -2067,10 +2065,8 @@ public:
 
     static inline FilterOperations initialBackdropFilter();
 
-#if ENABLE(CSS_COMPOSITING)
     static constexpr BlendMode initialBlendMode();
     static constexpr Isolation initialIsolation();
-#endif
 
     static constexpr MathStyle initialMathStyle();
 

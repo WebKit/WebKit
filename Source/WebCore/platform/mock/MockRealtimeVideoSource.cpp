@@ -579,7 +579,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         context.drawText(drawingState.statsFont(), TextRun(string), statsLocation);
     } else if (!name().isNull()) {
         statsLocation.move(0, drawingState.statsFontSize());
-        context.drawText(drawingState.statsFont(), TextRun { name().string() }, statsLocation);
+        context.drawText(drawingState.statsFont(), TextRun { name() }, statsLocation);
     }
 
     FloatPoint bipBopLocation(captureSize.width() * .6, captureSize.height() * .6);

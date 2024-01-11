@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmEd25519.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyOKP.h"
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
@@ -61,5 +59,4 @@ ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key
     return verifyEd25519(key.platformKey(), key.keySizeInBytes(), signature, data);
 }
 
-}
-#endif
+} // namespace WebCore

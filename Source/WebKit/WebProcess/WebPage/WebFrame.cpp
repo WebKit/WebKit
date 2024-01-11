@@ -248,7 +248,8 @@ FrameInfoData WebFrame::info() const
         frameID(),
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
         getCurrentProcessID(),
-        isFocused()
+        isFocused(),
+        coreLocalFrame() ? coreLocalFrame()->loader().errorOccurredInLoading() : false
     };
 
     return info;

@@ -400,7 +400,7 @@ function testArraySet() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.set arrayref to type (ref null <array:0>) expected arrayref, in function at index 0"
+    "WebAssembly.Module doesn't validate: array.set arrayref to type (ref null <array:0>) expected (ref null <array:1>), in function at index 0"
   );
 
   {
@@ -615,7 +615,7 @@ function testArrayTable() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: array.get arrayref to type RefNull expected arrayref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: array.get arrayref to type (ref null array) expected (ref null <array:0>), in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   // Invalid non-defaultable table type.
@@ -669,6 +669,32 @@ function testArrayTable() {
   }
 }
 
+function testArrayLimit() {
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (array i8))
+        (start 0)
+        (func
+          (array.new 0 (i32.const 1) (i32.const 2_147_483_648)) drop))
+    `),
+    WebAssembly.RuntimeError,
+    "Failed to allocate new array"
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (array i8))
+        (start 0)
+        (func
+          (array.new_default 0 (i32.const 2_147_483_648)) drop))
+    `),
+    WebAssembly.RuntimeError,
+    "Failed to allocate new array"
+  );
+}
+
 testArrayDeclaration();
 testArrayJS();
 testArrayNew();
@@ -677,3 +703,4 @@ testArrayGet();
 testArraySet();
 testArrayLen();
 testArrayTable();
+testArrayLimit();

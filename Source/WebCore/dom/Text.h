@@ -58,14 +58,14 @@ public:
     String debugDescription() const final;
 
 protected:
-    Text(Document& document, String&& data, ConstructionType type)
-        : CharacterData(document, WTFMove(data), type)
+    Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
+        : CharacterData(document, WTFMove(data), type, typeFlags | TypeFlag::IsText)
     {
+        ASSERT(!isContainerNode());
     }
 
 private:
     String nodeName() const override;
-    NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges) final;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@ private:
     Entries m_strings;
     CheckedUint32 m_accumulatedStringsLength;
     CheckedUint32 m_stringsCount;
+    bool m_hasOverflowed { false };
     bool m_isAll8Bit { true };
     JSString* m_lastString { nullptr };
 };
@@ -85,6 +86,9 @@ inline void JSStringJoiner::reserveCapacity(JSGlobalObject* globalObject, size_t
 inline JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
 {
     if (m_stringsCount == 1) {
+        // If m_stringsCount is 1, then there's no chance of an overflow because m_strings
+        // is a Vector<Entry, 16>, and has at least space for 16 entries.
+        ASSERT(!m_hasOverflowed);
         if (m_lastString)
             return m_lastString;
         return jsString(globalObject->vm(), m_strings[0].m_view.toString());
@@ -105,7 +109,7 @@ ALWAYS_INLINE void JSStringJoiner::append(JSString* jsString, StringViewWithUnde
     }
     m_accumulatedStringsLength += string.view.length();
     m_isAll8Bit = m_isAll8Bit && string.view.is8Bit();
-    m_strings.append({ WTFMove(string), 0 });
+    m_hasOverflowed |= !m_strings.tryAppend({ WTFMove(string), 0 });
     m_lastString = jsString;
 }
 
@@ -114,14 +118,14 @@ ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)
     ASSERT(string.is8Bit());
     ++m_stringsCount;
     m_accumulatedStringsLength += string.length();
-    m_strings.append({ { string, string }, 0 });
+    m_hasOverflowed |= !m_strings.tryAppend({ { string, string }, 0 });
     m_lastString = nullptr;
 }
 
 ALWAYS_INLINE void JSStringJoiner::appendEmptyString()
 {
     ++m_stringsCount;
-    m_strings.append({ { { }, { } }, 0 });
+    m_hasOverflowed |= !m_strings.tryAppend({ { { }, { } }, 0 });
     m_lastString = nullptr;
 }
 

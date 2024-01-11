@@ -46,6 +46,10 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 
+#if USE(GRAPHICS_LAYER_WC)
+    Flush(IPC::Semaphore semaphore) NotStreamEncodable
+#endif
+
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
     MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
 

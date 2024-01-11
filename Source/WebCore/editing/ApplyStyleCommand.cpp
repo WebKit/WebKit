@@ -1180,13 +1180,6 @@ bool ApplyStyleCommand::nodeFullySelected(Element& element, const Position& star
     return firstPositionInOrBeforeNode(&element) >= start && lastPositionInOrAfterNode(&element).upstream() <= end;
 }
 
-bool ApplyStyleCommand::nodeFullyUnselected(Element& element, const Position& start, const Position& end) const
-{
-    // The tree may have changed and Position::upstream() relies on an up-to-date layout.
-    element.protectedDocument()->updateLayoutIgnorePendingStylesheets();
-    return lastPositionInOrAfterNode(&element).upstream() < start || firstPositionInOrBeforeNode(&element) > end;
-}
-
 void ApplyStyleCommand::splitTextAtStart(const Position& start, const Position& end)
 {
     ASSERT(is<Text>(start.containerNode()));

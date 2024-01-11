@@ -27,7 +27,6 @@
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGResourceElementClient.h"
-#include "SVGResourcesCache.h"
 
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
@@ -38,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGHiddenContainer(type, element, WTFMove(style))
+    : RenderSVGHiddenContainer(type, element, WTFMove(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
     ASSERT(isRenderSVGResourceContainer());

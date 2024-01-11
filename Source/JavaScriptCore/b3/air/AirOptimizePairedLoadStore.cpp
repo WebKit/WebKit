@@ -32,7 +32,9 @@
 #include "AirArgInlines.h"
 #include "AirCode.h"
 #include "AirInst.h"
+#include "AirInstInlines.h"
 #include "AirPhaseScope.h"
+#include "CCallHelpers.h"
 #include <wtf/Range.h>
 
 namespace JSC { namespace B3 { namespace Air {

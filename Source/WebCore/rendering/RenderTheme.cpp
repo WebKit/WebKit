@@ -61,7 +61,6 @@
 #include "SearchFieldCancelButtonPart.h"
 #include "SearchFieldPart.h"
 #include "SearchFieldResultsPart.h"
-#include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
 #include "SliderThumbPart.h"
 #include "SliderTrackPart.h"
@@ -75,6 +74,7 @@
 #include "Theme.h"
 #include "ToggleButtonPart.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentParts.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -362,43 +362,43 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
 
     if (element->isInUserAgentShadowTree()) {
-        auto& pseudo = element->shadowPseudoId();
+        auto& part = element->userAgentPart();
 
 #if ENABLE(DATALIST_ELEMENT)
-        if (pseudo == ShadowPseudoIds::webkitListButton())
+        if (part == UserAgentParts::webkitListButton())
             return StyleAppearance::ListButton;
 #endif
 
-        if (pseudo == ShadowPseudoIds::webkitCapsLockIndicator())
+        if (part == UserAgentParts::webkitCapsLockIndicator())
             return StyleAppearance::CapsLockIndicator;
 
-        if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
+        if (part == UserAgentParts::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;
 
         if (RefPtr button = dynamicDowncast<SearchFieldResultsButtonElement>(element)) {
             if (!button->canAdjustStyleForAppearance())
                 return StyleAppearance::None;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
+            if (part == UserAgentParts::webkitSearchDecoration())
                 return StyleAppearance::SearchFieldDecoration;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
+            if (part == UserAgentParts::webkitSearchResultsDecoration())
                 return StyleAppearance::SearchFieldResultsDecoration;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
+            if (part == UserAgentParts::webkitSearchResultsButton())
                 return StyleAppearance::SearchFieldResultsButton;
         }
 
-        if (pseudo == ShadowPseudoIds::webkitSliderThumb())
+        if (part == UserAgentParts::webkitSliderThumb())
             return StyleAppearance::SliderThumbHorizontal;
 
-        if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
+        if (part == UserAgentParts::webkitInnerSpinButton())
             return StyleAppearance::InnerSpinButton;
 
-        if (pseudo == ShadowPseudoIds::thumb())
+        if (part == UserAgentParts::thumb())
             return StyleAppearance::SwitchThumb;
 
-        if (pseudo == ShadowPseudoIds::track())
+        if (part == UserAgentParts::track())
             return StyleAppearance::SwitchTrack;
     }
 
@@ -1262,7 +1262,7 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 
 // FIXME: iOS does not use this so arguably this should be better abstracted. Or maybe we should
 // investigate if we can bring the various ports closer together.
-void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
 {
     auto appearance = style.effectiveAppearance();
 
@@ -1351,29 +1351,29 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwi
 
 void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
 void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 #endif
 
 void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
@@ -1504,9 +1504,14 @@ void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* elem
     adjustSliderThumbSize(style, element);
 }
 
-void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    // FIXME: This probably has the same flaw as
+    // RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle() by not taking
+    // min-width/min-height into account.
+    auto controlSize = Theme::singleton().controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, style.effectiveZoom());
+    style.setLogicalWidth(WTFMove(controlSize.width));
+    style.setLogicalHeight(WTFMove(controlSize.height));
 }
 
 void RenderTheme::purgeCaches()

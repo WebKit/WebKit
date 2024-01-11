@@ -68,7 +68,7 @@ private:
     void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
     void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
-    void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
     void recordBeginTransparencyLayer(float) final;
@@ -84,6 +84,7 @@ private:
     void recordFillRect(const FloatRect&) final;
     void recordFillRectWithColor(const FloatRect&, const Color&) final;
     void recordFillRectWithGradient(const FloatRect&, Gradient&) final;
+    void recordFillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&) final;
     void recordFillCompositedRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) final;
     void recordFillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
     void recordFillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;

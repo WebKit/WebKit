@@ -51,8 +51,7 @@ static WebExtensionFrameParameters frameParametersForFrame(_WKFrameTreeNode *fra
 
     return {
         // errorOccured
-        // FIXME: Correctly populate this based on whether or not an error occurred loading this frame
-        false,
+        (bool)frameInfo._errorOccurred,
 
         // url
         extensionContext->hasPermission(frameURL, tab) ? std::optional { frameURL } : std::nullopt,

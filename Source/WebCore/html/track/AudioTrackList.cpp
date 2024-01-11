@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrack.h"
-#include "ScriptExecutionContext.h"
+#include "ContextDestructionObserverInlines.h"
 
 namespace WebCore {
 

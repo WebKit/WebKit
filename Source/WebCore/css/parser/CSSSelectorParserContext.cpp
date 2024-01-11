@@ -40,6 +40,9 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , grammarAndSpellingPseudoElementsEnabled(context.grammarAndSpellingPseudoElementsEnabled)
     , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
     , highlightAPIEnabled(context.highlightAPIEnabled)
+#if ENABLE(SERVICE_CONTROLS)
+    , imageControlsEnabled(context.imageControlsEnabled)
+#endif
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
     , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
@@ -54,6 +57,9 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , grammarAndSpellingPseudoElementsEnabled(document.settings().grammarAndSpellingPseudoElementsEnabled())
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
     , highlightAPIEnabled(document.settings().highlightAPIEnabled())
+#if ENABLE(SERVICE_CONTROLS)
+    , imageControlsEnabled(document.settings().imageControlsEnabled())
+#endif
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
     , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
@@ -70,6 +76,9 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.grammarAndSpellingPseudoElementsEnabled,
         context.hasPseudoClassEnabled,
         context.highlightAPIEnabled,
+#if ENABLE(SERVICE_CONTROLS)
+        context.imageControlsEnabled,
+#endif
         context.popoverAttributeEnabled,
         context.thumbAndTrackPseudoElementsEnabled,
         context.viewTransitionsEnabled

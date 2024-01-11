@@ -195,7 +195,7 @@ void SVGSMILElement::buildPendingResource()
         target = WTFMove(result.element);
         id = WTFMove(result.identifier);
     }
-    RefPtr svgTarget = is<SVGElement>(target) && target->isConnected() ? downcast<SVGElement>(target.get()) : nullptr;
+    RefPtr svgTarget = target && target->isConnected() ? dynamicDowncast<SVGElement>(*target) : nullptr;
 
     if (svgTarget != targetElement())
         setTargetElement(svgTarget.get());
@@ -583,11 +583,12 @@ void SVGSMILElement::connectConditions()
             condition.m_syncbase = treeScope().getElementById(condition.m_baseID);
             if (!condition.m_syncbase)
                 continue;
-            if (!is<SVGSMILElement>(*condition.m_syncbase)) {
+            auto* svgSMILElement = dynamicDowncast<SVGSMILElement>(*condition.m_syncbase);
+            if (!svgSMILElement) {
                 condition.m_syncbase = nullptr;
                 continue;
             }
-            downcast<SVGSMILElement>(*condition.m_syncbase).addTimeDependent(this);
+            svgSMILElement->addTimeDependent(this);
         }
     }
 }

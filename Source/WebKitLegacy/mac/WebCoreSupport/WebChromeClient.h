@@ -232,10 +232,8 @@ private:
 
     void wheelEventHandlersChanged(bool) final { }
 
-#if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) final;

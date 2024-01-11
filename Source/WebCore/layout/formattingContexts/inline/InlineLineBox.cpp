@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineLineBox.h"
 
+#include "InlineFormattingUtils.h"
 #include "InlineLevelBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
@@ -125,13 +126,6 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
     logicalRect.expandVertically(verticalBorderAndPadding);
     logicalRect.moveVertically(-(boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0_lu)));
     return logicalRect;
-}
-
-InlineRect LineBox::logicalRectForOpaqueBox(const Line::Run& opaqueRun, const BoxGeometry& boxGeometry) const
-{
-    ASSERT(opaqueRun.isOpaque());
-    ASSERT(opaqueRun.layoutBox().style().isOriginalDisplayInlineType());
-    return { { }, m_rootInlineBox.logicalLeft() + opaqueRun.logicalLeft(), boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
 }
 
 } // namespace Layout

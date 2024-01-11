@@ -104,6 +104,12 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
+void RemoteLayerTreeDrawingAreaProxy::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)
+{
+    if (m_remoteLayerTreeHost)
+        m_remoteLayerTreeHost->remotePageProcessCrashed(processIdentifier);
+}
+
 void RemoteLayerTreeDrawingAreaProxy::viewWillStartLiveResize()
 {
     if (auto scrollingCoordinator = m_webPageProxy->scrollingCoordinatorProxy())

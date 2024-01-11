@@ -2,7 +2,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="data:text/css,#test-element{text-decoration:line-through}">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -177,15 +177,6 @@ shouldBe("resultArray[1].item", "cssRuleList.item(1)");
 shouldBe("resultArray[2].i", "'2'");
 shouldBe("resultArray[2].item", "cssRuleList.item(2)");
 
-// CSSValueList
-var cssValueList = window.getComputedStyle(document.getElementsByTagName('ol')[0]).getPropertyCSSValue('border-spacing');
-resultArray = iterateList(cssValueList);
-shouldBe("resultArray.length", "10");
-shouldBe("resultArray[0].i", "'0'");
-shouldBe("resultArray[0].item", "cssValueList.item(0)");
-shouldBe("resultArray[1].i", "'1'");
-shouldBe("resultArray[1].item", "cssValueList.item(1)");
-
 // MediaList
 var mediaList = document.styleSheets[3].cssRules[0].media;
 resultArray = iterateList(mediaList);
@@ -201,6 +192,5 @@ debug("");
 
 document.body.removeChild(testingGround);
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

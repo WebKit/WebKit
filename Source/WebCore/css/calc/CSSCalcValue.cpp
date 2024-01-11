@@ -93,28 +93,28 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 {
     switch (node.type()) {
     case CalcExpressionNodeType::Number: {
-        float value = downcast<CalcExpressionNumber>(node).value(); // double?
+        float value = uncheckedDowncast<CalcExpressionNumber>(node).value(); // double?
         return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(value));
     }
     case CalcExpressionNodeType::Length: {
-        auto& length = downcast<CalcExpressionLength>(node).length();
+        auto& length = uncheckedDowncast<CalcExpressionLength>(node).length();
         return createCSS(length, style);
     }
 
     case CalcExpressionNodeType::Negation: {
-        auto childNode = createCSS(*downcast<CalcExpressionNegation>(node).child(), style);
+        auto childNode = createCSS(*uncheckedDowncast<CalcExpressionNegation>(node).child(), style);
         if (!childNode)
             return nullptr;
         return CSSCalcNegateNode::create(childNode.releaseNonNull());
     }
     case CalcExpressionNodeType::Inversion: {
-        auto childNode = createCSS(*downcast<CalcExpressionInversion>(node).child(), style);
+        auto childNode = createCSS(*uncheckedDowncast<CalcExpressionInversion>(node).child(), style);
         if (!childNode)
             return nullptr;
         return CSSCalcInvertNode::create(childNode.releaseNonNull());
     }
     case CalcExpressionNodeType::Operation: {
-        auto& operationNode = downcast<CalcExpressionOperation>(node);
+        auto& operationNode = uncheckedDowncast<CalcExpressionOperation>(node);
         auto& operationChildren = operationNode.children();
         CalcOperator op = operationNode.getOperator();
         
@@ -258,7 +258,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     }
     case CalcExpressionNodeType::BlendLength: {
         // FIXME: (http://webkit.org/b/122036) Create a CSSCalcExpressionNode equivalent of CalcExpressionBlendLength.
-        auto& blend = downcast<CalcExpressionBlendLength>(node);
+        auto& blend = uncheckedDowncast<CalcExpressionBlendLength>(node);
         float progress = blend.progress();
         return CSSCalcOperationNode::create(CalcOperator::Add, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
     }

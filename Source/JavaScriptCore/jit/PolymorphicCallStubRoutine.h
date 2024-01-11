@@ -31,6 +31,7 @@
 #include "CallLinkInfoBase.h"
 #include "CallVariant.h"
 #include "GCAwareJITStubRoutine.h"
+#include <wtf/ButterflyArray.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
@@ -80,27 +81,44 @@ private:
     CodeBlock* const m_codeBlock;
 };
 
-class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine {
+class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine, public ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot> {
 public:
     friend class JITStubRoutine;
 
-    PolymorphicCallStubRoutine(
-        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner,
-        CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
-        UniqueArray<uint32_t>&& fastCounts);
-    
     CallVariantList variants() const;
     bool hasEdges() const;
     CallEdgeList edges() const;
 
     void clearCallNodesFor(CallLinkInfo*);
-    
+
     template<typename Functor>
     void forEachDependentCell(const Functor& functor)
     {
         for (auto& variant : m_variants)
             functor(variant.get());
     }
+
+    static Ref<PolymorphicCallStubRoutine> create(
+        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner,
+        CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<PolymorphicCallCase, 16>& cases,
+        UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting)
+    {
+        return adoptRef(*createImpl(0, 0, code, vm, owner, callerFrame, callLinkInfo, cases, WTFMove(fastCounts), notUsingCounting));
+    }
+
+    static Ref<PolymorphicCallStubRoutine> create(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<PolymorphicCallCase, 16>& cases, const Vector<CallSlot, 16>& callSlots, bool notUsingCounting)
+    {
+        return adoptRef(*createImpl(0, callSlots.size(), code, vm, owner, callerFrame, callLinkInfo, cases, callSlots, notUsingCounting));
+    }
+
+    PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize,
+        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner,
+        CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase, 16>&,
+        UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting);
+
+    PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner, CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase, 16>&, const Vector<CallSlot, 16>&, bool notUsingCounting);
+
+    using ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot>::operator delete;
 
 private:
     template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
@@ -112,6 +130,7 @@ private:
     FixedVector<WriteBarrier<JSCell>> m_variants;
     UniqueArray<uint32_t> m_fastCounts;
     Bag<PolymorphicCallNode> m_callNodes;
+    bool m_notUsingCounting : 1 { false };
 };
 
 } // namespace JSC

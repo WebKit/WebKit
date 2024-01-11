@@ -80,7 +80,8 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 }
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
-    : m_originalURL(o.m_originalURL)
+    : CanMakeWeakPtr<StyleSheetContents>()
+    , m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_layerRulesBeforeImportRules(o.m_layerRulesBeforeImportRules.size())
     , m_importRules(o.m_importRules.size())
@@ -326,7 +327,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     return true;
 }
 
-void StyleSheetContents::wrapperDeleteRule(unsigned index)
+bool StyleSheetContents::wrapperDeleteRule(unsigned index)
 {
     ASSERT(m_isMutable);
     ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
@@ -334,7 +335,7 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
     unsigned childVectorIndex = index;
     if (childVectorIndex < m_layerRulesBeforeImportRules.size()) {
         m_layerRulesBeforeImportRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_layerRulesBeforeImportRules.size();
 
@@ -342,19 +343,21 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
         m_importRules[childVectorIndex]->cancelLoad();
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_importRules.size();
 
     if (childVectorIndex < m_namespaceRules.size()) {
+        // Deleting @namespace rule when list contains anything other than @import or @namespace rules is not allowed.
         if (!m_childRules.isEmpty())
-            return;
+            return false;
         m_namespaceRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_namespaceRules.size();
 
     m_childRules.remove(childVectorIndex);
+    return true;
 }
 
 void StyleSheetContents::parserAddNamespace(const AtomString& prefix, const AtomString& uri)
@@ -518,13 +521,13 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
         case StyleRuleType::Style:
-            return downcast<StyleRule>(rule).properties().traverseSubresources(handler);
+            return uncheckedDowncast<StyleRule>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::StyleWithNesting:
-            return downcast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
+            return uncheckedDowncast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
-            return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
+            return uncheckedDowncast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:
-            if (auto* cachedResource = downcast<StyleRuleImport>(rule).cachedCSSStyleSheet())
+            if (auto* cachedResource = uncheckedDowncast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
             return false;
         case StyleRuleType::CounterStyle:

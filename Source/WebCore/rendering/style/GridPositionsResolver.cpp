@@ -375,16 +375,19 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
     if (finalPosition.isAuto() && initialPosition.isSpan() && !initialPosition.namedGridLine().isNull())
         initialPosition.setSpanPosition(1, String());
 
-    if (isIndefiniteSpan(initialPosition, finalPosition) && is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem).isSubgrid(direction)) {
-        // Indefinite span for an item that is subgridded in this axis.
-        int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).map.size();
+    if (isIndefiniteSpan(initialPosition, finalPosition)) {
+        auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem);
+        if (renderGrid && renderGrid->isSubgrid(direction)) {
+            // Indefinite span for an item that is subgridded in this axis.
+            int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).map.size();
 
-        if (initialPosition.isAuto()) {
-            // Set initial position to span <line names - 1>
-            initialPosition.setSpanPosition(std::max(1, lineCount - 1), String());
-        } else {
-            // Set final position to span <line names - 1>
-            finalPosition.setSpanPosition(std::max(1, lineCount - 1), String());
+            if (initialPosition.isAuto()) {
+                // Set initial position to span <line names - 1>
+                initialPosition.setSpanPosition(std::max(1, lineCount - 1), String());
+            } else {
+                // Set final position to span <line names - 1>
+                finalPosition.setSpanPosition(std::max(1, lineCount - 1), String());
+            }
         }
     }
 }

@@ -22,8 +22,8 @@
                 await waitFor(video, 'seeked');
 
                 window.internals.ensureUserAgentShadowRoot(video);
-                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('div[pseudo=-webkit-media-text-track-region]')", null, "!=", 1000);
-                region = window.internals.shadowRoot(video).querySelector('div[pseudo=-webkit-media-text-track-region]');
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('div[useragentpart=-webkit-media-text-track-region]')", null, "!=", 1000);
+                region = window.internals.shadowRoot(video).querySelector('div[useragentpart=-webkit-media-text-track-region]');
                 await testExpected("region.offsetLeft == 0", true);
                 await testExpected("region.offsetTop == 0", true);
                 endTest();

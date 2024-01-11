@@ -26,8 +26,6 @@
 #include "config.h"
 #include "VideoDecoder.h"
 
-#if ENABLE(WEB_CODECS)
-
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include "LibWebRTCVPXVideoDecoder.h"
 #endif
@@ -57,25 +55,36 @@ void VideoDecoder::create(const String& codecName, const Config& config, CreateC
     createLocalDecoder(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
 }
 
+#define LE_CHR(a, b, c, d) (((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
+
+String VideoDecoder::fourCCToCodecString(uint32_t fourCC)
+{
+    switch (fourCC) {
+    case LE_CHR('v', 'p', '0', '8'): return "vp8"_s;
+    case LE_CHR('v', 'p', '0', '9'): return "vp09.00"_s;
+    case LE_CHR('a', 'v', '0', '1'): return "av01."_s;
+    default:
+            return nullString();
+    }
+}
 
 void VideoDecoder::createLocalDecoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
 {
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    UNUSED_PARAM(config);
     if (codecName == "vp8"_s) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
     if (codecName.startsWith("vp09.00"_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
     if (codecName.startsWith("vp09.02"_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
     if (codecName.startsWith("av01."_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
 #elif USE(GSTREAMER)
@@ -95,5 +104,3 @@ VideoDecoder::VideoDecoder() = default;
 VideoDecoder::~VideoDecoder() = default;
 
 }
-
-#endif // ENABLE(WEB_CODECS)

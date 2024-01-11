@@ -75,10 +75,8 @@ public:
     void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
     EventTarget* errorEventTarget() final { return nullptr; };
 
-#if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { return false; }
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { return false; }
-#endif
 
     JSC::VM& vm() final { return m_vm; }
 

@@ -73,5 +73,9 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimateElementBase)
         return element.hasTagName(WebCore::SVGNames::animateTag) || element.hasTagName(WebCore::SVGNames::animateColorTag)
             || element.hasTagName(WebCore::SVGNames::animateTransformTag) || element.hasTagName(WebCore::SVGNames::setTag);
     }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* svgElement = dynamicDowncast<WebCore::SVGElement>(node);
+        return svgElement && isType(*svgElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

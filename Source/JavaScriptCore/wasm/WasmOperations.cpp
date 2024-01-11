@@ -675,6 +675,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
 
     unsigned iterationCount = 0;
     MarkedArgumentBuffer buffer;
+    buffer.ensureCapacity(signature->returnCount());
     JSValue result = JSValue::decode(encResult);
     forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
         if (buffer.size() < signature->returnCount()) {
@@ -1133,6 +1134,29 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint3
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
     return arraySet(instance, typeIndex, arrayValue, index, value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t offset, EncodedJSValue value, uint32_t size))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return toUCPUStrictInt32(arrayFill(instance, typeIndex, arrayValue, offset, value, size));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (Instance* instance, EncodedJSValue dst, uint32_t dstOffset, EncodedJSValue src, uint32_t srcOffset, uint32_t size))
+{
+    return toUCPUStrictInt32(arrayCopy(instance, dst, dstOffset, src, srcOffset, size));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (Instance* instance, EncodedJSValue dst, uint32_t dstOffset, uint32_t srcElementIndex, uint32_t srcOffset, uint32_t size))
+{
+    return toUCPUStrictInt32(arrayInitElem(instance, dst, dstOffset, srcElementIndex, srcOffset, size));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayInitData, UCPUStrictInt32, (Instance* instance, EncodedJSValue dst, uint32_t dstOffset, uint32_t srcDataIndex, uint32_t srcOffset, uint32_t size))
+{
+    return toUCPUStrictInt32(arrayInitData(instance, dst, dstOffset, srcDataIndex, srcOffset, size));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* targetRTT))

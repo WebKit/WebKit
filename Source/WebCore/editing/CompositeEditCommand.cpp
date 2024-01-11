@@ -976,6 +976,9 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
 {
+    if (!isRichlyEditablePosition(position))
+        return;
+
     auto textNode = dynamicDowncast<Text>(position.protectedDeprecatedNode());
     if (!textNode || !textNode->length())
         return;

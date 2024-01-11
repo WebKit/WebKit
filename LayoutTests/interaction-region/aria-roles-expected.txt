@@ -18,17 +18,17 @@ This works like a switch.
 
       (interaction regions [
         (interaction (0,0) width=800 height=20)
-        (borderRadius 8.00),
+        (cornerRadius 8.00),
         (interaction (0,20) width=800 height=20)
-        (borderRadius 8.00),
+        (cornerRadius 8.00),
         (interaction (40,56) width=760 height=20)
-        (borderRadius 8.00),
+        (cornerRadius 8.00),
         (interaction (40,76) width=760 height=20)
-        (borderRadius 8.00),
+        (cornerRadius 8.00),
         (interaction (40,96) width=760 height=20)
-        (borderRadius 8.00),
+        (cornerRadius 8.00),
         (interaction (0,132) width=800 height=20)
-        (borderRadius 8.00)])
+        (cornerRadius 8.00)])
       )
     )
   )

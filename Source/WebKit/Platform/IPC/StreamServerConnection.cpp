@@ -99,7 +99,7 @@ void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, ui
     ASSERT_UNUSED(didRemove, didRemove);
 }
 
-void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
+void StreamServerConnection::enqueueMessage(Connection&, UniqueRef<Decoder>&& message)
 {
     {
         Locker locker { m_outOfStreamMessagesLock };
@@ -234,10 +234,8 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
         Locker locker { m_outOfStreamMessagesLock };
         if (m_outOfStreamMessages.isEmpty())
             return false;
-        message = m_outOfStreamMessages.takeFirst();
+        message = m_outOfStreamMessages.takeFirst().moveToUniquePtr();
     }
-    if (!message)
-        return false;
 
     RefPtr<StreamMessageReceiver> receiver;
     {

@@ -1,0 +1,3 @@
+
+FAIL When the animation ends, only the 'onend' attribute + IDL listeners and the 'endEvent' listener should be called assert_equals: expected 1 but got 0
+

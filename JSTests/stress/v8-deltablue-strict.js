@@ -1,4 +1,5 @@
 //@ $skipModes << :lockdown if $buildType == "debug"
+//@ skip if $memoryLimited
 
 "use strict";
 

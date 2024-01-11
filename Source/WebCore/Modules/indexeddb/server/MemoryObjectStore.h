@@ -55,7 +55,7 @@ class MemoryBackingStoreTransaction;
 
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
-class MemoryObjectStore : public RefCounted<MemoryObjectStore> {
+class MemoryObjectStore : public RefCounted<MemoryObjectStore>, public CanMakeWeakPtr<MemoryObjectStore> {
 public:
     static Ref<MemoryObjectStore> create(const IDBObjectStoreInfo&);
 

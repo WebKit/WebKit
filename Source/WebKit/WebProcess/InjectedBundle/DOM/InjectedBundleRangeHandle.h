@@ -28,9 +28,9 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class IntRect;
@@ -44,7 +44,7 @@ class InjectedBundleNodeHandle;
 class InjectedBundleScriptWorld;
 class WebImage;
 
-class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle>, public CanMakeCheckedPtr {
+class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle>, public CanMakeWeakPtr<InjectedBundleRangeHandle> {
 public:
     static RefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);

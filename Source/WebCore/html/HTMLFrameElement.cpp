@@ -49,10 +49,9 @@ Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLFrameElement(tagName, document));
 }
 
-bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
+bool HTMLFrameElement::rendererIsNeeded(const RenderStyle& style)
 {
-    // For compatibility, frames render even when display: none is set.
-    return canLoad();
+    return HTMLFrameElementBase::rendererIsNeeded(style) && canLoad();
 }
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

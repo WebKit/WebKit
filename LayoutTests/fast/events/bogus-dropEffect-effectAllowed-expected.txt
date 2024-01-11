@@ -19,6 +19,9 @@ PASS event.dataTransfer.effectAllowed is "uninitialized"
 PASS event.dataTransfer.effectAllowed is "uninitialized"
 PASS event.dataTransfer.effectAllowed is "uninitialized"
 PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
 PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "copy"
 PASS event.dataTransfer.dropEffect is "copy"
@@ -36,6 +39,9 @@ PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "copy"
 PASS event.dataTransfer.dropEffect is "copy"
 PASS event.dataTransfer.dropEffect is "copy"
@@ -51,6 +57,12 @@ PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
 PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.dropEffect is "none"
+
+TEST COMPLETE
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

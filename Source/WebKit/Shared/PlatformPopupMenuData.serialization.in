@@ -25,7 +25,7 @@ struct WebKit::PlatformPopupMenuData {
     WebKit::FontInfo fontInfo;
     bool shouldPopOver;
     bool hideArrows;
-    WebCore::PopupMenuStyle::PopupMenuSize menuSize;
+    WebCore::PopupMenuStyle::Size menuSize;
 #endif
 #if PLATFORM(WIN)
     int m_clientPaddingLeft;

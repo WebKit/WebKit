@@ -10,6 +10,25 @@
 
 #include "libANGLE/renderer/CLtypes.h"
 
+#define ANGLE_CL_RETURN_ERROR(error) \
+    do                               \
+    {                                \
+        cl::gClErrorTls = error;     \
+        return angle::Result::Stop;  \
+    } while (0)
+
+#define ANGLE_CL_TRY(expression)                           \
+    do                                                     \
+    {                                                      \
+        const cl_int ANGLE_LOCAL_VAR = expression;         \
+        if (ANGLE_UNLIKELY(ANGLE_LOCAL_VAR != CL_SUCCESS)) \
+        {                                                  \
+            ANGLE_CL_RETURN_ERROR(ANGLE_LOCAL_VAR);        \
+        }                                                  \
+    } while (0)
+
+#define ANGLE_CL_IMPL_TRY(EXPR) ANGLE_TRY_TEMPLATE(EXPR, (void))
+
 namespace cl
 {
 
@@ -27,6 +46,8 @@ inline bool OverlapRegions(size_t offset1, size_t offset2, size_t size)
 }
 
 bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensions &extensions);
+
+extern thread_local cl_int gClErrorTls;
 
 }  // namespace cl
 

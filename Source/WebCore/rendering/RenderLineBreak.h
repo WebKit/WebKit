@@ -36,9 +36,7 @@ public:
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.
-    ASCIILiteral renderName() const final { return m_isWBR ? "RenderWordBreak"_s : "RenderBR"_s; }
-
-    bool isWBR() const final { return m_isWBR; }
+    ASCIILiteral renderName() const final { return isWBR() ? "RenderWordBreak"_s : "RenderBR"_s; }
 
     std::unique_ptr<LegacyInlineElementBox> createInlineBox();
     LegacyInlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
@@ -88,7 +86,6 @@ private:
 
     LegacyInlineElementBox* m_inlineBoxWrapper;
     mutable int m_cachedLineHeight;
-    bool m_isWBR;
 };
 
 } // namespace WebCore

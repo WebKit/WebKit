@@ -455,7 +455,6 @@ set(WTF_SOURCES
     ApproximateTime.cpp
     Assertions.cpp
     AutomaticThread.cpp
-    Bag.cpp
     BitVector.cpp
     BloomFilter.cpp
     CPUTime.cpp

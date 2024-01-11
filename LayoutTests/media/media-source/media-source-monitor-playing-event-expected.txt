@@ -16,7 +16,7 @@ RUN(sourceBuffer.appendBuffer(sample))
 EVENT(canplaythrough)
 EVENT(playing)
 EVENT(updateend)
-video.readyState : HAVE_ENOUGH_DATA
+EXPECTED (video.readyState >= readyStateString.indexOf("HAVE_CURRENT_DATA") == 'true') OK
 RUN(sourceBuffer.remove(0,10))
 EVENT(waiting)
 EVENT(updateend)

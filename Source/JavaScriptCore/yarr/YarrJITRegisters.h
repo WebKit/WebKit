@@ -79,22 +79,6 @@ public:
     static constexpr GPRReg returnRegister2 = ARM64Registers::x1;
 
     static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
-#elif CPU(MIPS)
-    static constexpr GPRReg input = MIPSRegisters::a0;
-    static constexpr GPRReg index = MIPSRegisters::a1;
-    static constexpr GPRReg length = MIPSRegisters::a2;
-    static constexpr GPRReg output = MIPSRegisters::a3;
-
-    // t0 is reserved for MacroAssemblerMIPS.
-    // t1 is reserved for MacroAssemblerMIPS.
-    static constexpr GPRReg regT0 = MIPSRegisters::t2;
-    static constexpr GPRReg regT1 = MIPSRegisters::t3;
-    static constexpr GPRReg regT2 = MIPSRegisters::t4;
-    static constexpr GPRReg initialStart = MIPSRegisters::t5;
-
-    static constexpr GPRReg returnRegister = MIPSRegisters::v0;
-    static constexpr GPRReg returnRegister2 = MIPSRegisters::v1;
-
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
     // Argument registers

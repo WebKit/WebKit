@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT virtual void dispatchEvent(Event&);
     WEBCORE_EXPORT virtual void uncaughtExceptionInEventHandler();
 
+    static const AtomString& legacyTypeForEvent(const Event&);
+
     // Used for legacy "onevent" attributes.
     template<typename JSMaybeErrorEventListener>
     void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
@@ -148,8 +150,26 @@ public:
         return nullptr;
     }
 
+    template<typename CallbackType>
+    void enumerateEventListenerTypes(CallbackType callback) const
+    {
+        if (auto* data = eventTargetData())
+            data->eventListenerMap.enumerateEventListenerTypes(callback);
+    }
+
+    template<typename CallbackType>
+    bool containsMatchingEventListener(CallbackType callback) const
+    {
+        if (auto* data = eventTargetData())
+            return data->eventListenerMap.containsMatchingEventListener(callback);
+        return false;
+    }
+
     bool hasEventTargetData() const { return hasEventTargetFlag(EventTargetFlag::HasEventTargetData); }
     bool isNode() const { return hasEventTargetFlag(EventTargetFlag::IsNode); }
+
+    bool isInGCReacheableRefMap() const { return hasEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap); }
+    void setIsInGCReacheableRefMap(bool flag) { setEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap, flag); }
 
 protected:
     enum ConstructNodeTag { ConstructNode };
@@ -161,15 +181,26 @@ protected:
 
     WEBCORE_EXPORT virtual ~EventTarget();
 
+    // Flags for ownership & relationship.
     enum class EventTargetFlag : uint16_t {
-        HasEventTargetData                          = 1 << 0,
-        IsNode                                      = 1 << 1,
+        HasEventTargetData = 1 << 0,
+        IsNode = 1 << 1,
+        IsInGCReachableRefMap = 1 << 2,
+        // Node bits
+        IsConnected = 1 << 3,
+        IsInShadowTree = 1 << 4,
+        HasBeenInUserAgentShadowTree = 1 << 5,
         // Element bits
-        HasDuplicateAttribute                       = 1 << 2,
-        HasLangAttr                                 = 1 << 3,
-        HasXMLLangAttr                              = 1 << 4,
-        EffectiveLangKnownToMatchDocumentElement    = 1 << 5,
-        EverHadSmoothScroll                         = 1 << 6,
+        HasSyntheticAttrChildNodes = 1 << 6,
+        HasDuplicateAttribute = 1 << 7,
+        HasLangAttr = 1 << 8,
+        HasXMLLangAttr = 1 << 9,
+        HasFormAssociatedCustomElementInterface = 1 << 10,
+        HasShadowRootContainingSlots = 1 << 11,
+        IsInTopLayer = 1 << 12,
+        // SVGElement bits
+        HasPendingResources = 1 << 13,
+        // 2 Free bits
     };
 
     EventTargetData& ensureEventTargetData()
@@ -185,14 +216,14 @@ protected:
     virtual void eventListenersDidChange() { }
 
     bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & enumToUnderlyingType(flag); }
-    void setEventTargetFlag(EventTargetFlag, bool);
+    void setEventTargetFlag(EventTargetFlag, bool = true);
+    void clearEventTargetFlag(EventTargetFlag flag) { setEventTargetFlag(flag, false); }
 
 private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;
 
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
-    void invalidateEventListenerRegions();
 };
 
 inline bool EventTarget::hasEventListeners() const
@@ -222,12 +253,9 @@ void EventTarget::visitJSEventListeners(Visitor& visitor)
 
 inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
 {
-    uint16_t bitfield = weakPtrFactory().bitfield();
-    if (value)
-        bitfield |= enumToUnderlyingType(flag);
-    else
-        bitfield &= ~enumToUnderlyingType(flag);
-    weakPtrFactory().setBitfield(bitfield);
+    auto flags = OptionSet<EventTargetFlag>::fromRaw(weakPtrFactory().bitfield());
+    flags.set(flag, value);
+    weakPtrFactory().setBitfield(flags.toRaw());
 }
 
 } // namespace WebCore

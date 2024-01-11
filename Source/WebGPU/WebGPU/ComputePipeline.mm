@@ -81,8 +81,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
-    auto entryPoint = fromAPI(descriptor.compute.entryPoint);
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPoint.length() ? entryPoint : shaderModule.defaultComputeEntryPoint(), label);
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint(), label);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
         return returnInvalidComputePipeline(*this, isAsync);
 
@@ -93,7 +92,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return returnInvalidComputePipeline(*this, isAsync);
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-    auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation);
+    auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation, shaderModule);
     auto function = createFunction(library, entryPointInformation, constantValues, label);
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);

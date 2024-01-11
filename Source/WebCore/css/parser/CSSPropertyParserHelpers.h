@@ -307,7 +307,6 @@ RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeAlt(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContain(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&);

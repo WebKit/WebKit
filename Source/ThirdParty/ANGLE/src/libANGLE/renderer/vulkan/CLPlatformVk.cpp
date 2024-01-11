@@ -6,10 +6,10 @@
 // CLPlatformVk.cpp: Implements the class methods for CLPlatformVk.
 
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
-
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 
 #include "libANGLE/CLPlatform.h"
+#include "libANGLE/cl_utils.h"
 
 #include "anglebase/no_destructor.h"
 #include "common/angle_version_info.h"
@@ -65,27 +65,27 @@ CLDeviceImpl::CreateDatas CLPlatformVk::createDevices() const
     return createDatas;
 }
 
-CLContextImpl::Ptr CLPlatformVk::createContext(cl::Context &context,
-                                               const cl::DevicePtrs &devices,
-                                               bool userSync,
-                                               cl_int &errorCode)
+angle::Result CLPlatformVk::createContext(cl::Context &context,
+                                          const cl::DevicePtrs &devices,
+                                          bool userSync,
+                                          CLContextImpl::Ptr *contextOut)
 {
-    CLContextImpl::Ptr contextImpl;
-    return contextImpl;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-CLContextImpl::Ptr CLPlatformVk::createContextFromType(cl::Context &context,
-                                                       cl::DeviceType deviceType,
-                                                       bool userSync,
-                                                       cl_int &errorCode)
+angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
+                                                  cl::DeviceType deviceType,
+                                                  bool userSync,
+                                                  CLContextImpl::Ptr *contextOut)
 {
-    CLContextImpl::Ptr contextImpl;
-    return contextImpl;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLPlatformVk::unloadCompiler()
+angle::Result CLPlatformVk::unloadCompiler()
 {
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 void CLPlatformVk::Initialize(CreateFuncs &createFuncs)

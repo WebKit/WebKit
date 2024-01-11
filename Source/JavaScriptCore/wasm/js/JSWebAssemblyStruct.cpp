@@ -105,7 +105,7 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     }
 }
 
-void JSWebAssemblyStruct::set(uint32_t fieldIndex, EncodedJSValue argument)
+void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
 {
     using Wasm::TypeKind;
 
@@ -140,7 +140,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, EncodedJSValue argument)
     case TypeKind::Funcref:
     case TypeKind::Ref:
     case TypeKind::RefNull: {
-        bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->set(vm(), this, JSValue::decode(argument));
+        bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->set(vm(), this, JSValue::decode(static_cast<EncodedJSValue>(argument)));
         return;
     }
     case TypeKind::V128:

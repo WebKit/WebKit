@@ -30,13 +30,12 @@ class SVGElement;
 class LegacyRenderSVGHiddenContainer : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGHiddenContainer);
 public:
-    LegacyRenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&);
+    LegacyRenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
 protected:
     void layout() override;
 
 private:
-    bool isLegacyRenderSVGHiddenContainer() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;

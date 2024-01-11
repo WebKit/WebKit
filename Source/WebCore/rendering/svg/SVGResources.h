@@ -45,16 +45,18 @@ public:
     SVGResources();
 
     static std::unique_ptr<SVGResources> buildCachedResources(const RenderElement&, const RenderStyle&);
-    void layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot*);
+    void layoutDifferentRootIfNeeded(const RenderElement& resourcesClient);
+
+    bool markerReverseStart() const;
 
     // Ordinary resources
     LegacyRenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper.get() : nullptr; }
+    LegacyRenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker.get() : nullptr; }
+    LegacyRenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter.get() : nullptr; }
+
     LegacyRenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart.get() : nullptr; }
     LegacyRenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid.get() : nullptr; }
     LegacyRenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd.get() : nullptr; }
-    bool markerReverseStart() const;
-    LegacyRenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker.get() : nullptr; }
-    LegacyRenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter.get() : nullptr; }
 
     // Paint servers
     LegacyRenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill.get() : nullptr; }

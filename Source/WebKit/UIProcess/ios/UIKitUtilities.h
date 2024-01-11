@@ -49,6 +49,7 @@
 @interface UIGestureRecognizer (WebKitInternal)
 @property (nonatomic, readonly) BOOL _wk_isTextInteractionLoupeGesture;
 @property (nonatomic, readonly) BOOL _wk_isTextInteractionTapGesture;
+@property (nonatomic, readonly) BOOL _wk_hasRecognizedOrEnded;
 @end
 
 @interface UIView (WebKitInternal)

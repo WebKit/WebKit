@@ -10,7 +10,7 @@
           {"url-path": "/webkit-test-resources/", "local-dir":"../../../resources/"},
           {"url-path": "/WebKit/", "local-dir":"../../../http/wpt/"}],
  "check_subdomains": false,
- "log_level":"debug",
+ "logging": { "level": "debug" },
  "bind_address": true,
  "ssl": {"type": "openssl",
          "encrypt_after_connect": false,

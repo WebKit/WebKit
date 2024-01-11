@@ -35,6 +35,7 @@
 #include "Constraints.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
+#include <numbers>
 #include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
@@ -318,6 +319,99 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "return result;\n");
         }
         m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
+    if (m_callGraph.ast().usesAtomicCompareExchange()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T old_value;\n");
+            m_stringBuilder.append(m_indent, "bool exchanged;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed) }; \\\n");
+            m_stringBuilder.append(m_indent, "})\n");
+        }
+    }
+
+    if (m_callGraph.ast().usesDot()) {
+        m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n");
+        m_stringBuilder.append(m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "auto result = lhs[0] * rhs[0] + lhs[1] * rhs[1];\n");
+            m_stringBuilder.append(m_indent, "if constexpr (N > 2) result += lhs[2] * rhs[2];\n");
+            m_stringBuilder.append(m_indent, "if constexpr (N > 3) result += lhs[3] * rhs[3];\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
+    if (m_callGraph.ast().usesDot4I8Packed()) {
+        m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_char4>(lhs);");
+            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_char4>(rhs);");
+            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
+    if (m_callGraph.ast().usesDot4U8Packed()) {
+        m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "auto vec1 = as_type<packed_uchar4>(lhs);");
+            m_stringBuilder.append(m_indent, "auto vec2 = as_type<packed_uchar4>(rhs);");
+            m_stringBuilder.append(m_indent, "return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3];");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
+    if (m_callGraph.ast().usesFirstLeadingBit()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __wgslFirstLeadingBit(T e)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "if constexpr (is_signed_v<T>)\n");
+            m_stringBuilder.append(m_indent, "    return select(T(31 - select(clz(e), clz(~e), e < T(0))), T(-1), e == T(0) || e == T(-1));\n");
+            m_stringBuilder.append(m_indent, "else\n");
+            m_stringBuilder.append(m_indent, "    return select(T(31 - clz(e)), T(-1), e == T(0));\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
+    if (m_callGraph.ast().usesFirstTrailingBit()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __wgslFirstTrailingBit(T e)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "return select(ctz(e), T(-1), e == T(0));\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
+    }
+
+    if (m_callGraph.ast().usesSign()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "T __wgslSign(T e)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e < 0), T(0), e == 0);\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n");
     }
 
     if (m_callGraph.ast().usesPackedStructs()) {
@@ -1554,6 +1648,22 @@ static void emitDistance(FunctionDefinitionWriter* writer, AST::CallExpression& 
     visitArguments(writer, call);
 }
 
+static void emitLength(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto* argumentType = call.arguments()[0].inferredType();
+    if (!holds_alternative<Types::Vector>(*argumentType))
+        writer->stringBuilder().append("abs");
+    else
+        writer->stringBuilder().append("length");
+    visitArguments(writer, call);
+}
+
+static void emitDegrees(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(" * ", String::number(180 / std::numbers::pi), ")");
+}
 
 static void emitDynamicOffset(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
@@ -1579,6 +1689,80 @@ static void emitBitcast(FunctionDefinitionWriter* writer, AST::CallExpression& c
     writer->stringBuilder().append(")");
 }
 
+static void emitPack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(half2(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitUnpack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("float2(as_type<half2>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(char4(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xI8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(char4(clamp(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(", -128, 127)))");
+}
+
+static void emitUnpack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("int4(as_type<char4>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(uchar4(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xU8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(uchar4(min(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(", 255)))");
+}
+
+static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    auto& argument = call.arguments()[0];
+    String suffix = ""_s;
+    if (auto* vectorType = std::get_if<Types::Vector>(argument.inferredType()))
+        suffix = String::number(vectorType->size);
+    writer->stringBuilder().append("float", suffix, "(half", suffix, "(");
+    writer->visit(argument);
+    writer->stringBuilder().append("))");
+}
+
+static void emitRadians(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(" * ", String::number(std::numbers::pi / 180), ")");
+}
+
+static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("uint4(as_type<uchar4>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     if (is<AST::ElaboratedTypeExpression>(call.target())) {
@@ -1592,10 +1776,8 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
-        if (isStruct) {
-            visit(type);
-            m_stringBuilder.append(" ");
-        }
+        visit(type);
+        m_stringBuilder.append("(");
         const Type* arrayElementType = nullptr;
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
@@ -1612,7 +1794,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
                 m_stringBuilder.append(",\n");
             }
         }
-        m_stringBuilder.append(m_indent, "}");
+        m_stringBuilder.append(m_indent, "})");
         return;
     }
 
@@ -1630,7 +1812,16 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "atomicStore", emitAtomicStore },
             { "atomicSub", emitAtomicSub },
             { "atomicXor", emitAtomicXor },
+            { "degrees", emitDegrees },
             { "distance", emitDistance },
+            { "length", emitLength },
+            { "pack2x16float", emitPack2x16Float },
+            { "pack4xI8", emitPack4xI8 },
+            { "pack4xI8Clamp", emitPack4xI8Clamp },
+            { "pack4xU8", emitPack4xU8 },
+            { "pack4xU8Clamp", emitPack4xU8Clamp },
+            { "quantizeToF16", emitQuantizeToF16 },
+            { "radians", emitRadians },
             { "storageBarrier", emitStorageBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureGather", emitTextureGather },
@@ -1647,6 +1838,9 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSampleGrad", emitTextureSampleGrad },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
+            { "unpack2x16float", emitUnpack2x16Float },
+            { "unpack4xI8", emitUnpack4xI8 },
+            { "unpack4xU8", emitUnpack4xU8 },
             { "workgroupBarrier", emitWorkgroupBarrier },
             { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
@@ -1658,9 +1852,13 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
+            { "atomicCompareExchangeWeak", "__wgslAtomicCompareExchangeWeak"_s },
             { "countLeadingZeros", "clz"_s },
             { "countOneBits", "popcount"_s },
             { "countTrailingZeros", "ctz"_s },
+            { "dot", "__wgslDot"_s },
+            { "dot4I8Packed", "__wgslDot4I8Packed"_s },
+            { "dot4U8Packed", "__wgslDot4U8Packed"_s },
             { "dpdx", "dfdx"_s },
             { "dpdxCoarse", "dfdx"_s },
             { "dpdxFine", "dfdx"_s },
@@ -1669,13 +1867,24 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdyFine", "dfdy"_s },
             { "extractBits", "extract_bits"_s },
             { "faceForward", "faceforward"_s },
+            { "firstLeadingBit", "__wgslFirstLeadingBit"_s },
+            { "firstTrailingBit", "__wgslFirstTrailingBit"_s },
             { "frexp", "__wgslFrexp"_s },
             { "fwidthCoarse", "fwidth"_s },
             { "fwidthFine", "fwidth"_s },
             { "insertBits", "insert_bits"_s },
             { "inverseSqrt", "rsqrt"_s },
             { "modf", "__wgslModf"_s },
+            { "pack2x16snorm", "pack_float_to_snorm2x16"_s },
+            { "pack2x16unorm", "pack_float_to_unorm2x16"_s },
+            { "pack4x8snorm", "pack_float_to_snorm4x8"_s },
+            { "pack4x8unorm", "pack_float_to_unorm4x8"_s },
             { "reverseBits", "reverse_bits"_s },
+            { "sign", "__wgslSign"_s },
+            { "unpack2x16snorm", "unpack_snorm2x16_to_float"_s },
+            { "unpack2x16unorm", "unpack_unorm2x16_to_float"_s },
+            { "unpack4x8snorm", "unpack_snorm4x8_to_float"_s },
+            { "unpack4x8unorm", "unpack_unorm4x8_to_float"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {

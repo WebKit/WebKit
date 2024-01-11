@@ -115,7 +115,6 @@ private:
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, uint64_t, CompletionHandler<void()>&&);
     void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
-    void sourceBufferPrivateDidParseSample(double sampleDuration);
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) override;

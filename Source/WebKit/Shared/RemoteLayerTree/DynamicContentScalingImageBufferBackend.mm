@@ -91,7 +91,8 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
 
 std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
 {
-    ASSERT(m_context);
+    if (!m_context)
+        return std::nullopt;
 
     RetainPtr<NSDictionary> options;
     RetainPtr<NSMutableArray> ports;

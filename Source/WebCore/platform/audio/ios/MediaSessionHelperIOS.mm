@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
+#import "PlatformMediaSessionManager.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
@@ -266,6 +267,11 @@ MediaSessionHelperIOS::MediaSessionHelperIOS()
 
 void MediaSessionHelperIOS::providePresentingApplicationPID(int pid, ShouldOverride shouldOverride)
 {
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled())
+        return;
+#endif
+
 #if HAVE(CELESTIAL)
     if (m_presentedApplicationPID && (*m_presentedApplicationPID == pid || shouldOverride == ShouldOverride::No))
         return;

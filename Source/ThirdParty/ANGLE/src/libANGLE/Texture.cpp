@@ -2500,22 +2500,6 @@ GLenum Texture::getImplementationColorReadType(const Context *context) const
     return mTexture->getColorReadType(context);
 }
 
-bool Texture::isCompressedFormatEmulated(const Context *context,
-                                         TextureTarget target,
-                                         GLint level) const
-{
-    if (!getFormat(target, level).info->compressed)
-    {
-        // If it isn't compressed, the remaining logic won't work
-        return false;
-    }
-
-    GLenum implFormat = getImplementationColorReadFormat(context);
-
-    // Check against the list of formats used to emulate compressed textures
-    return IsEmulatedCompressedFormat(implFormat);
-}
-
 angle::Result Texture::getTexImage(const Context *context,
                                    const PixelPackState &packState,
                                    Buffer *packBuffer,

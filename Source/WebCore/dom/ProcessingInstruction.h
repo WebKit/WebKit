@@ -61,7 +61,6 @@ private:
     ProcessingInstruction(Document&, String&& target, String&& data);
 
     String nodeName() const override;
-    NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;

@@ -30,8 +30,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <variant>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmRsaHashedImportParams final : public CryptoAlgorithmParameters {
@@ -55,5 +53,3 @@ public:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaHashedImportParams)
-
-#endif // ENABLE(WEB_CRYPTO)

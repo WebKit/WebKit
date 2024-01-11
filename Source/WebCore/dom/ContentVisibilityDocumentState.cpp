@@ -196,10 +196,9 @@ HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::
     return hadInitialVisibleContentVisibilityDetermination;
 }
 
-// Workaround for lack of support for scroll anchoring. We make sure any content-visibility: auto elements
-// above the one to be scrolled to are already hidden, so the scroll position will not need to be adjusted
-// later.
-// FIXME: remove when scroll anchoring is implemented (https://bugs.webkit.org/show_bug.cgi?id=259269).
+// Make sure any skipped content we want to scroll to is in the viewport, so it can be actually
+// scrolled to (i.e. the skipped content early exit in LocalFrameView::scrollRectToVisible does
+// not apply anymore).
 void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor)
 {
     if (!m_observer)
@@ -216,13 +215,9 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
     };
 
     if (RefPtr scrollAnchorRoot = findSkippedContentRoot(scrollAnchor)) {
-        for (auto& weakTarget : m_observer->observationTargets()) {
-            if (RefPtr target = weakTarget.get()) {
-                ASSERT(target->renderer() && target->renderStyle()->contentVisibility() == ContentVisibility::Auto);
-                updateViewportProximity(*target, ViewportProximity::Far);
-            }
-        }
         updateViewportProximity(*scrollAnchorRoot, ViewportProximity::Near);
+        // Since we may not have determined initial visibility yet, force scheduling the content relevancy update.
+        scrollAnchorRoot->protectedDocument()->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
         scrollAnchorRoot->protectedDocument()->updateRelevancyOfContentVisibilityElements();
     }
 }

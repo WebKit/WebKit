@@ -41,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLMathElement);
 using namespace MathMLNames;
 
 inline MathMLMathElement::MathMLMathElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document, CreateMathMLMathElement)
+    : MathMLRowElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 

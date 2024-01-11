@@ -1043,7 +1043,6 @@ webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
 webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 
 webkit.org/b/156148 fast/text/svg-font-face-with-kerning.html [ Failure ]
-webkit.org/b/156148 svg/W3C-SVG-1.1-SE/types-dom-06-f.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 webkit.org/b/156148 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
@@ -1312,8 +1311,6 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-05-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-06-t.svg [ Failure Pass ]
@@ -1670,7 +1667,8 @@ webkit.org/b/257624 http/tests/frame-throttling/raf-throttle-in-cross-origin-sub
 webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout Crash ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections.html [ Pass Timeout ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Pass Timeout ]
-webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
 webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Crash Failure Pass ]
 webkit.org/b/257624 imported/blink/compositing/background-color/background-color-drawn-over-child.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ Crash ImageOnlyFailure Pass ]
@@ -1983,6 +1981,7 @@ webkit.org/b/100238 fast/history/window-open.html [ Failure ]
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 
@@ -2135,12 +2134,12 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 
-webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
-
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
+
+webkit.org/b/266900 imported/w3c/web-platform-tests/css/css-color/xyz-d50-004.html [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow ]
@@ -2242,8 +2241,6 @@ webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
-
-webkit.org/b/190000 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
 
 webkit.org/b/190704 compositing/debug-borders-dynamic.html [ ImageOnlyFailure ]
 
@@ -2664,7 +2661,8 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/backface-
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/size-change-under-backface-visibility-hidden.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/filter-effects/dynamic-filter-changes-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/motion/change-offset-path.html [ ImageOnlyFailure Pass ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Crash Failure Pass Timeout ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Crash Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure Pass ]

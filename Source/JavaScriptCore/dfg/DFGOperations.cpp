@@ -290,9 +290,8 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
-    if (targetCanPerformFastPut) {
+    if (auto* targetObject = jsDynamicCast<JSFinalObject*>(target); targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible()) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
         if (!source->staticPropertiesReified()) {
@@ -311,7 +310,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
         // Do not clear since Vector::clear shrinks the backing store.
-        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, targetObject, source, properties, values);
         RETURN_IF_EXCEPTION(scope, void());
         if (objectAssignFastSucceeded)
             return;
@@ -328,15 +327,13 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
-
     JSValue sourceValue = JSValue::decode(encodedSource);
     if (sourceValue.isUndefinedOrNull())
         return;
     JSObject* source = sourceValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (targetCanPerformFastPut) {
+    if (auto* targetObject = jsDynamicCast<JSFinalObject*>(target); targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible()) {
         if (!source->staticPropertiesReified()) {
             source->reifyAllStaticProperties(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
@@ -344,7 +341,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
 
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, targetObject, source, properties, values);
         RETURN_IF_EXCEPTION(scope, void());
         if (objectAssignFastSucceeded)
             return;
@@ -3378,6 +3375,37 @@ JSC_DEFINE_JIT_OPERATION(operationIsNaN, UCPUStrictInt32, (JSGlobalObject* globa
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue argument = JSValue::decode(value);
     return toUCPUStrictInt32(std::isnan(argument.toNumber(globalObject)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationToIntegerOrInfinityDouble, EncodedJSValue, (double d))
+{
+    return JSValue::encode(jsNumber(trunc(std::isnan(d) ? 0.0 : d + 0.0)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationToIntegerOrInfinityUntyped, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSValue value = JSValue::decode(encodedValue);
+    return JSValue::encode(jsNumber(value.toIntegerOrInfinity(globalObject)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationToLengthDouble, EncodedJSValue, (double argument))
+{
+    double d = trunc(std::isnan(argument) ? 0.0 : argument + 0.0);
+    if (d <= 0)
+        return JSValue::encode(jsNumber(0));
+    return JSValue::encode(jsNumber(std::min(d, maxSafeInteger())));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationToLengthUntyped, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSValue value = JSValue::decode(encodedValue);
+    return JSValue::encode(jsNumber(value.toLength(globalObject)));
 }
 
 static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)

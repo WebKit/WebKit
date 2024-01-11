@@ -104,7 +104,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     decoder->setEncoding(sourceEncoding.isEmpty() ? PAL::UTF8Encoding() : PAL::TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
     result->setDecoder(WTFMove(decoder));
 
-    result->setContent(documentSource);
+    result->setMarkupUnsafe(documentSource, { ParserContentPolicy::AllowDeclarativeShadowRoots });
 
     return result.releaseNonNull();
 }

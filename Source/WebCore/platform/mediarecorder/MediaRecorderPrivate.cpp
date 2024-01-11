@@ -61,11 +61,11 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
 
 void MediaRecorderPrivate::checkTrackState(const MediaStreamTrackPrivate& track)
 {
-    if (&track.source() == m_audioSource.get()) {
+    if (track.hasSource(m_audioSource.get())) {
         m_shouldMuteAudio = track.muted() || !track.enabled();
         return;
     }
-    if (&track.source() == m_videoSource.get())
+    if (track.hasSource(m_videoSource.get()))
         m_shouldMuteVideo = track.muted() || !track.enabled();
 }
 

@@ -62,10 +62,8 @@ MathMLScriptsElement::ScriptType RenderMathMLScripts::scriptType() const
 
 RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator() const
 {
-    auto base = firstChildBox();
-    if (!is<RenderMathMLBlock>(base))
-        return nullptr;
-    return downcast<RenderMathMLBlock>(base)->unembellishedOperator();
+    auto* base = dynamicDowncast<RenderMathMLBlock>(firstChildBox());
+    return base ? base->unembellishedOperator() : nullptr;
 }
 
 std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
@@ -165,8 +163,8 @@ LayoutUnit RenderMathMLScripts::spaceAfterScript()
 
 LayoutUnit RenderMathMLScripts::italicCorrection(const ReferenceChildren& reference)
 {
-    if (is<RenderMathMLBlock>(*reference.base)) {
-        if (auto* renderOperator = downcast<RenderMathMLBlock>(*reference.base).unembellishedOperator())
+    if (auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(*reference.base)) {
+        if (auto* renderOperator = mathMLBlock->unembellishedOperator())
             return renderOperator->italicCorrection();
     }
     return 0;

@@ -101,14 +101,14 @@ JS_EXPORT void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group) JS
 @result The value of the enablement, true if the sampling profiler gets enabled, otherwise false.
 @discussion Remote inspection is true by default.
 */
-JS_EXPORT bool JSContextGroupEnableSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT bool JSContextGroupEnableSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(14.2), ios(17.2));
 
 /*!
 @function
 @abstract Disables sampling profiler.
 @param group The JavaScript context group to stop sampling.
 */
-JS_EXPORT void JSContextGroupDisableSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT void JSContextGroupDisableSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(14.2), ios(17.2));
 
 /*!
 @function
@@ -117,7 +117,7 @@ JS_EXPORT void JSContextGroupDisableSamplingProfiler(JSContextGroupRef group) JS
 @result The sampling profiler output in JSON form. NULL if sampling profiler is not enabled ever before.
 @discussion Calling this function clears the sampling data accumulated so far.
 */
-JS_EXPORT JSStringRef JSContextGroupTakeSamplesFromSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSStringRef JSContextGroupTakeSamplesFromSamplingProfiler(JSContextGroupRef group) JSC_API_AVAILABLE(macos(14.2), ios(17.2));
 
 /*!
 @function

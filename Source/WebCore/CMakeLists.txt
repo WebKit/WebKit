@@ -529,6 +529,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCTrackEvent.idl
     Modules/mediastream/RTCTransformEvent.idl
     Modules/mediastream/RedEyeReduction.idl
+    Modules/mediastream/VideoTrackGenerator.idl
 
     Modules/model-element/HTMLModelElement.idl
     Modules/model-element/HTMLModelElementCamera.idl
@@ -1864,6 +1865,10 @@ set(WebCore_CSS_VALUE_KEYWORDS
     ${WEBCORE_DIR}/css/CSSValueKeywords.in
 )
 
+set(WebCore_CSS_PSEUDO_SELECTORS
+    ${WEBCORE_DIR}/css/CSSPseudoSelectors.json
+)
+
 set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/counterStyles.css
     ${WEBCORE_DIR}/css/fullscreen.css
@@ -2226,6 +2231,7 @@ if (USE_LIBWEBRTC)
     )
 endif ()
 
+# FIXME: This needs a more scalable solution. See webkit.org/b/267080 for some related discussion.
 if (HAVE_OS_DARK_MODE_SUPPORT)
     set(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} HAVE_OS_DARK_MODE_SUPPORT")
 endif ()
@@ -2544,23 +2550,48 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp)
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/parser/CSSParser.cpp CSSValueKeywords.h)
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
 
-# Generate CSS Selector pseudo type name to value maps.
+# Generate code and maps for CSS pseudo class & element selectors.
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/SelectorPseudoClassAndCompatibilityElementMap.in
-    DEPENDS ${WEBCORE_DIR}/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorEnums.h ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorInlines.h ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.cpp ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.h
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/process-css-pseudo-selectors.py
+    DEPENDS ${WebCore_CSS_PSEUDO_SELECTORS}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoClassAndCompatibilityElementMap.py ${WEBCORE_DIR}/css/SelectorPseudoClassAndCompatibilityElementMap.in "${GPERF_EXECUTABLE}" "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+    COMMAND ${PERL_EXECUTABLE} -ne "print" ${WebCore_CSS_PSEUDO_SELECTORS} > ${WebCore_DERIVED_SOURCES_DIR}/CSSPseudoSelectors.json
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/process-css-pseudo-selectors.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --gperf-executable "${GPERF_EXECUTABLE}"
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp)
-add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/SelectorPseudoElementTypeMap.in
-    DEPENDS ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py
-    WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py ${WEBCORE_DIR}/css/SelectorPseudoElementTypeMap.in "${GPERF_EXECUTABLE}" "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
-    VERBATIM)
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSSelector.cpp CSSSelectorEnums.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSSelector.cpp CSSSelectorInlines.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/parser/CSSSelectorParser.cpp CSSSelectorInlines.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/dom/mac/ImageControlsMac.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/BaseDateAndTimeInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/ColorInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/FileInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLMeterElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/RangeInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/SearchInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/TextFieldInputType.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/ValidationMessage.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DateTimeEditElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DateTimeFieldElements.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DetailsMarkerControl.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/MediaControlTextTrackContainerElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/ProgressShadowElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SliderThumbElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SpinButtonElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SwitchThumbElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SwitchTrackElement.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/TextControlInnerElements.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/TextTrackCue.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/VTTCue.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/VTTRegion.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/page/CaptionUserPreferencesMediaAF.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/rendering/RenderTheme.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/RuleData.cpp UserAgentParts.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/StyleResolver.cpp UserAgentParts.h)
 
 # Generate user agent styles
 add_custom_command(
@@ -2737,14 +2768,12 @@ list(APPEND WebCore_SOURCES
     ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltins.cpp
     ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.cpp)
 
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/parser/HTMLTreeBuilder.cpp MathMLNames.cpp)
-
 
 GENERATE_DOM_NAMES(HTML ${WEBCORE_DIR}/html/HTMLAttributeNames.in ${WEBCORE_DIR}/html/HTMLTagNames.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/HTMLNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTMLElementFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp)
 
 
-GENERATE_EVENT_FACTORY(${WEBCORE_DIR}/dom/EventNames.in Event)
+GENERATE_EVENT_FACTORY(${WEBCORE_DIR}/dom/EventInterfaces.in Event)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventInterfaces.h)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventFactory.cpp)
 
@@ -2754,11 +2783,17 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventTargetInterfaces
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventTargetFactory.cpp)
 
 
+GENERATE_EVENT_NAMES(${WEBCORE_DIR}/dom/EventNames.json)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventNames.h)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventNames.cpp)
+
+
 GENERATE_FONT_NAMES(${WEBCORE_DIR}/css/WebKitFontFamilyNames.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.cpp)
 
 
 GENERATE_DOM_NAMES(MathML ${WEBCORE_DIR}/mathml/mathattrs.in ${WEBCORE_DIR}/mathml/mathtags.in)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/parser/HTMLTreeBuilder.cpp MathMLNames.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.cpp)
 if (ENABLE_MATHML)
     list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp)

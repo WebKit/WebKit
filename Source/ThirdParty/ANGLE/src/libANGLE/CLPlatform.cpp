@@ -9,6 +9,7 @@
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLDevice.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
 
@@ -86,9 +87,9 @@ void Platform::Initialize(const cl_icd_dispatch &dispatch,
     }
 }
 
-cl_int Platform::GetPlatformIDs(cl_uint numEntries,
-                                cl_platform_id *platforms,
-                                cl_uint *numPlatforms)
+angle::Result Platform::GetPlatformIDs(cl_uint numEntries,
+                                       cl_platform_id *platforms,
+                                       cl_uint *numPlatforms)
 {
     const PlatformPtrs &availPlatforms = GetPlatforms();
     if (numPlatforms != nullptr)
@@ -104,13 +105,13 @@ cl_int Platform::GetPlatformIDs(cl_uint numEntries,
             platforms[entry++] = (*platformIt++).get();
         }
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Platform::getInfo(PlatformInfo name,
-                         size_t valueSize,
-                         void *value,
-                         size_t *valueSizeRet) const
+angle::Result Platform::getInfo(PlatformInfo name,
+                                size_t valueSize,
+                                void *value,
+                                size_t *valueSizeRet) const
 {
     const void *copyValue = nullptr;
     size_t copySize       = 0u;
@@ -156,7 +157,7 @@ cl_int Platform::getInfo(PlatformInfo name,
             break;
         default:
             ASSERT(false);
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -165,7 +166,7 @@ cl_int Platform::getInfo(PlatformInfo name,
         // as specified in the OpenCL Platform Queries table, and param_value is not a NULL value.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -176,13 +177,13 @@ cl_int Platform::getInfo(PlatformInfo name,
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Platform::getDeviceIDs(DeviceType deviceType,
-                              cl_uint numEntries,
-                              cl_device_id *devices,
-                              cl_uint *numDevices) const
+angle::Result Platform::getDeviceIDs(DeviceType deviceType,
+                                     cl_uint numEntries,
+                                     cl_device_id *devices,
+                                     cl_uint *numDevices) const
 {
     cl_uint found = 0u;
     for (const DevicePtr &device : mDevices)
@@ -204,18 +205,17 @@ cl_int Platform::getDeviceIDs(DeviceType deviceType,
     // CL_DEVICE_NOT_FOUND if no OpenCL devices that matched device_type were found.
     if (found == 0u)
     {
-        return CL_DEVICE_NOT_FOUND;
+        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
     }
 
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 cl_context Platform::CreateContext(const cl_context_properties *properties,
                                    cl_uint numDevices,
                                    const cl_device_id *devices,
                                    ContextErrorCB notify,
-                                   void *userData,
-                                   cl_int &errorCode)
+                                   void *userData)
 {
     Platform *platform           = nullptr;
     bool userSync                = false;
@@ -227,25 +227,24 @@ cl_context Platform::CreateContext(const cl_context_properties *properties,
     {
         devs.emplace_back(&(*devices++)->cast<Device>());
     }
-    return Object::Create<Context>(errorCode, *platform, std::move(propArray), std::move(devs),
-                                   notify, userData, userSync);
+    return Object::Create<Context>(*platform, std::move(propArray), std::move(devs), notify,
+                                   userData, userSync);
 }
 
 cl_context Platform::CreateContextFromType(const cl_context_properties *properties,
                                            DeviceType deviceType,
                                            ContextErrorCB notify,
-                                           void *userData,
-                                           cl_int &errorCode)
+                                           void *userData)
 {
     Platform *platform           = nullptr;
     bool userSync                = false;
     Context::PropArray propArray = ParseContextProperties(properties, platform, userSync);
     ASSERT(platform != nullptr);
-    return Object::Create<Context>(errorCode, *platform, std::move(propArray), deviceType, notify,
-                                   userData, userSync);
+    return Object::Create<Context>(*platform, std::move(propArray), deviceType, notify, userData,
+                                   userSync);
 }
 
-cl_int Platform::unloadCompiler()
+angle::Result Platform::unloadCompiler()
 {
     return mImpl->unloadCompiler();
 }

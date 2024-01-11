@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmHKDF.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
@@ -43,6 +41,4 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
     return deriveHDKFBits(digestAlgorithm, key.key().data(), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), parameters.infoVector().data(), parameters.infoVector().size(), length);
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

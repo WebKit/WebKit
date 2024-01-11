@@ -235,6 +235,7 @@ public:
         m_autoRepeat = webEvent.isAutoRepeat();
         m_isKeypad = webEvent.isKeypad();
         m_isSystemKey = webEvent.isSystemKey();
+        m_authorizationToken = webEvent.authorizationToken();
     }
 };
 

@@ -32,7 +32,7 @@ class SVGElement;
 class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
 public:
-    RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&);
+    RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
 protected:
     void layout() override;

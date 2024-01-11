@@ -119,9 +119,7 @@ public:
     WEBCORE_EXPORT void setBackdropFiltersRect(const FloatRoundedRect&) override;
     WEBCORE_EXPORT void setIsBackdropRoot(bool) override;
 
-#if ENABLE(CSS_COMPOSITING)
     WEBCORE_EXPORT void setBlendMode(BlendMode) override;
-#endif
 
     WEBCORE_EXPORT void setNeedsDisplay() override;
     WEBCORE_EXPORT void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
@@ -480,9 +478,7 @@ private:
     void updateBackdropFiltersRect();
     void updateBackdropRoot();
 
-#if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
-#endif
 
     void updateVideoGravity();
     void updateShape();

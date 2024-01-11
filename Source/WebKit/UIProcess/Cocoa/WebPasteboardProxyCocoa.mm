@@ -219,7 +219,7 @@ void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection
     });
 }
 
-void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, std::optional<PageIdentifier> pageID, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, std::optional<PageIdentifier> pageID, CompletionHandler<void(WebCore::PasteboardBuffer&&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
@@ -230,7 +230,8 @@ void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection,
     MESSAGE_CHECK_COMPLETION(dataOwner, completionHandler({ }));
 
     PlatformPasteboard::performAsDataOwner(*dataOwner, [&] {
-        completionHandler(PlatformPasteboard(pasteboardName).bufferForType(pasteboardType));
+        auto pasteboardBuffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
+        completionHandler(WTFMove(pasteboardBuffer));
     });
 }
 

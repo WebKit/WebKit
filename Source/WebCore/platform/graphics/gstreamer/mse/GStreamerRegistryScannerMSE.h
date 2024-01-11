@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+void teardownGStreamerRegistryScannerMSE();
+
 class GStreamerRegistryScannerMSE : public GStreamerRegistryScanner {
 public:
     static GStreamerRegistryScannerMSE& singleton();

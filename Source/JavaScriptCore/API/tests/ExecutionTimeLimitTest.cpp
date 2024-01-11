@@ -184,7 +184,7 @@ int testExecutionTimeLimit()
         timeLimit = 100_ms + tierAdjustment;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, nullptr);
         {
-#if OS(LINUX) && (CPU(MIPS) || CPU(ARM_THUMB2))
+#if OS(LINUX) && CPU(ARM_THUMB2)
             Seconds timeAfterWatchdogShouldHaveFired = 500_ms + tierAdjustment;
 #else
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;

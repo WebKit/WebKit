@@ -5,7 +5,7 @@ EXPECTED (video.textTracks.length == '1') OK
 RUN(video.textTracks[0].mode = 'showing')
 RUN(video.currentTime = 1)
 EVENT(seeked)
-EXPECTED (window.internals.shadowRoot(video).querySelector('div[pseudo=-webkit-media-text-track-region]') != 'null') OK
+EXPECTED (window.internals.shadowRoot(video).querySelector('div[useragentpart=-webkit-media-text-track-region]') != 'null') OK
 EXPECTED (region.offsetLeft == 0 == 'true') OK
 EXPECTED (region.offsetTop == 0 == 'true') OK
 END OF TEST

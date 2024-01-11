@@ -2,6 +2,7 @@
 PASS Default animation value
 PASS Property animation value '1s'
 PASS Property animation value 'cubic-bezier(0, -2, 1, 3)'
+PASS Property animation value 'ease-in-out'
 PASS Property animation value '1s -3s'
 PASS Property animation value '4'
 PASS Property animation value 'reverse'
@@ -11,4 +12,6 @@ PASS Property animation value 'none'
 PASS Property animation value 'anim'
 PASS Property animation value 'anim paused both reverse 4 1s -3s cubic-bezier(0, -2, 1, 3)'
 PASS Property animation value 'anim paused both reverse, 4 1s -3s cubic-bezier(0, -2, 1, 3)'
+PASS Property animation value 'none, none'
+PASS Animation with a delay but no duration
 

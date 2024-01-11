@@ -232,6 +232,9 @@ class ProgramPipelineState;
 class ProgramExecutable;
 using SharedProgramExecutable = std::shared_ptr<ProgramExecutable>;
 
+using ProgramPipelineUniformBlockIndexMap =
+    angle::FastMap<uint32_t, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;
+
 class ProgramExecutable final : public angle::Subject
 {
   public:
@@ -623,7 +626,10 @@ class ProgramExecutable final : public angle::Subject
                       std::vector<UnusedUniform> *unusedUniforms);
 
     void copyInputsFromProgram(const ProgramExecutable &executable);
-    void copyShaderBuffersFromProgram(const ProgramExecutable &executable, ShaderType shaderType);
+    void copyUniformBuffersFromProgram(const ProgramExecutable &executable,
+                                       ShaderType shaderType,
+                                       ProgramPipelineUniformBlockIndexMap *ppoUniformBlockMap);
+    void copyStorageBuffersFromProgram(const ProgramExecutable &executable, ShaderType shaderType);
     void clearSamplerBindings();
     void copySamplerBindingsFromProgram(const ProgramExecutable &executable);
     void copyImageBindingsFromProgram(const ProgramExecutable &executable);

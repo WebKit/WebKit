@@ -835,7 +835,6 @@ perf/mouse-event.html [ Skip ]
 platform/ios/ios/fast/coordinates/mouse-event-zoomed.html [ Skip ]
 platform/ios/ios/fast/coordinates/mouse-event.html [ Skip ]
 scrollbars/scrollbar-miss-mousemove-disabled.html [ Skip ]
-svg/animations/animate-css-xml-attributeType.html [ Skip ]
 svg/custom/anchor-on-use.svg [ Skip ]
 svg/custom/foreignObject-crash-on-hover.xml [ Skip ]
 svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Skip ]
@@ -867,6 +866,7 @@ imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.ht
 
 # No test_driver.click() support for iOS testing
 webkit.org/b/264285 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ Skip ]
+webkit.org/b/266665 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html [ Skip ]
 
 # Overscroll-behavior on iOS needs SkyEcho19E179/StarE21E168a: https://bugs.webkit.org/show_bug.cgi?id=235852
 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Skip ]
@@ -1054,6 +1054,7 @@ fast/frames/focus-controller-crash-change-event.html
 fast/html/details-keyboard-show-hide.html [ Skip ]
 fast/html/details-no-summary-keyboard-show-hide.html [ Skip ]
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/clear-active-state-in-shadow.html [ Skip ]
 fast/shadow-dom/focus-across-details-element.html [ Skip ]
@@ -1393,6 +1394,7 @@ webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Skip ] # Ti
 webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrollbar-drag-thumb-rtl.html [ Failure ]
 
 webkit.org/b/237150 fast/events/autoscroll-in-iframe-body.html [ Pass Failure ]
 
@@ -1439,7 +1441,6 @@ webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.h
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # SVG tests that fail:
-svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
 svg/as-object/svg-embedded-in-html-in-iframe.html [ Failure ]
 svg/batik/filters/feTile.svg [ Failure ]
 svg/batik/filters/filterRegions.svg [ Failure ]
@@ -1767,6 +1768,8 @@ fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
 fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html [ Failure ]
 fast/ruby/ruby-inline-style-not-updated.html [ Failure ]
 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+fast/ruby/floating-ruby-text.html [ Failure ]
+fast/ruby/positioned-ruby-text.html [ Failure ]
 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 fast/spatial-navigation/snav-1st-stop.html [ Failure ]
 fast/spatial-navigation/snav-clipped-overflowed-content.html [ Failure ]
@@ -2192,6 +2195,7 @@ accessibility/display-contents/dynamically-added-children.html [ Pass ]
 accessibility/display-contents/element-roles.html [ Pass ]
 accessibility/display-contents/object-ordering.html [ Pass ]
 accessibility/display-contents/table.html [ Pass ]
+accessibility/display-flex-shadow-dom-accname.html [ Pass ]
 accessibility/dynamically-ignored-canvas.html [ Pass ]
 accessibility/editable-webpage-focused-ui-element.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
@@ -2206,6 +2210,7 @@ accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Pass ]
 accessibility/menu-list-crash2.html [ Pass ]
 accessibility/multiple-attribute-change-crash.html [ Pass ]
+accessibility/nested-custom-element-accname.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/checkbox-radio-element-rect.html [ Pass ]
@@ -2218,6 +2223,7 @@ accessibility/page-reload-deadlock.html [ Pass ]
 accessibility/placeholder.html [ Pass ]
 accessibility/progress-indeterminate-value.html [ Pass ]
 accessibility/slider-with-lost-renderer.html [ Pass ]
+accessibility/slot-default-contents-accname.html [ Pass ]
 accessibility/spinbutton-increment-decrement.html [ Pass ]
 accessibility/display-contents/text-under-element.html [ Pass ]
 accessibility/text-aria-role-disabled.html [ Pass ]
@@ -2518,8 +2524,6 @@ fast/images/pdf-as-image-dest-rect-change.html [ Pass ]
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
 
 webkit.org/b/161143 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-samedoc.html [ Pass Failure ]
-
-webkit.org/b/161395 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
 # rdar://problem/26478053
 http/tests/dom/document-contentType.html [ Failure ]
@@ -3284,10 +3288,6 @@ webkit.org/b/261703 fast/forms/datalist/datalist-show-picker.html [ Skip ]
 
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
-
-# <rdar://problem/57029120> Reenable crypto/workers/subtle/rsa-postMessage-worker.html and crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html for iOS
-crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]
-crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Skip ]
 
 # <rdar://problem/63448168> [ macOS iOS  Debug ] media/video-source-moved.html is a super flkay timeout
 media/video-source-moved.html [ Pass Timeout ]
@@ -4573,6 +4573,7 @@ webkit.org/b/257904 http/tests/site-isolation/double-iframe.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/selection-focus.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe-render-output.html [ Failure Timeout Pass ]
+webkit.org/b/257904 http/tests/site-isolation/iframe-process-termination.html [ Skip ]
 
 # This test can't be enabled on iOS until EventSenderProxyIOS::keyDown() is implemented.
 http/tests/site-isolation/key-events.html [ Skip ]
@@ -4673,3 +4674,16 @@ webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 # webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
+
+# webkit.org/b/266660 [GARDENING] NEW-TEST(270986@main):[ iOS17 ] 2X imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen are constant ImageOnlyFailures
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+
+# webkit.org/b/266661 RE-IMPORT(271918@main) 3X imported/w3c/web-platform-tests/css/selectors (layout-tests) are constant text failures
+imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure ]
+imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Failure ]
+imported/w3c/web-platform-tests/css/selectors/valid-invalid-form-fieldset.html [ Failure ]
+
+webkit.org/b/266669 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Pass Failure ]
+
+webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]

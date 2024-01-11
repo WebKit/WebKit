@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: COMPILER(APPLE_CLANG) is needed until <rdar://120571425> is fixed.
+#if USE(APPLE_INTERNAL_SDK) && COMPILER(APPLE_CLANG)
 
 #import <Block_private.h>
 

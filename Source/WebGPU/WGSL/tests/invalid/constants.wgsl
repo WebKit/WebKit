@@ -38,7 +38,14 @@ fn testOutOfBounds()
     }
 }
 
+fn testInvalidExplicitU32Conversion()
+{
+    // CHECK-L: value 37359285590000 cannot be represented as 'u32'
+    let x = u32(37359285590000);
+}
+
 fn main()
 {
     testOutOfBounds();
+    testInvalidExplicitU32Conversion();
 }

@@ -218,12 +218,6 @@ PASS -moz-text-align-last: _dashed_attribute v. CSS.supports
 PASS -moz-text-size-adjust: _camel_cased_attribute v. CSS.supports
 PASS -moz-text-size-adjust: _webkit_cased_attribute must only exist for -webkit-
 PASS -moz-text-size-adjust: _dashed_attribute v. CSS.supports
-PASS -moz-transform: _camel_cased_attribute v. CSS.supports
-PASS -moz-transform: _webkit_cased_attribute must only exist for -webkit-
-PASS -moz-transform: _dashed_attribute v. CSS.supports
-PASS -moz-transform-origin: _camel_cased_attribute v. CSS.supports
-PASS -moz-transform-origin: _webkit_cased_attribute must only exist for -webkit-
-PASS -moz-transform-origin: _dashed_attribute v. CSS.supports
 PASS -moz-transform-style: _camel_cased_attribute v. CSS.supports
 PASS -moz-transform-style: _webkit_cased_attribute must only exist for -webkit-
 PASS -moz-transform-style: _dashed_attribute v. CSS.supports

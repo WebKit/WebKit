@@ -711,6 +711,7 @@ void Options::notifyOptionsChanged()
     Options::useBBQJIT() = false;
 #endif
     Options::useDataICInFTL() = false; // Currently, it is not completed. Disable forcefully.
+    Options::forceUnlinkedDFG() = false; // Currently, IC is rapidly changing. We disable this until we get the final form of Data IC.
 
     if (!Options::allowDoubleShape())
         Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
@@ -1024,7 +1025,7 @@ bool Options::setOptions(const char* optionsStr)
             break;
 
         char* optionStart = p;
-        p = strstr(p, "=");
+        p = strchr(p, '=');
         if (!p) {
             dataLogF("'=' not found in option string: %p\n", optionStart);
             WTF::fastFree(optionsStrCopy);

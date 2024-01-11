@@ -65,13 +65,6 @@ PASS resultArray[1].item is cssRuleList.item(1)
 PASS resultArray[2].i is '2'
 PASS resultArray[2].item is cssRuleList.item(2)
 
-[object CSSValueList]
-PASS resultArray.length is 10
-PASS resultArray[0].i is '0'
-PASS resultArray[0].item is cssValueList.item(0)
-PASS resultArray[1].i is '1'
-PASS resultArray[1].item is cssValueList.item(1)
-
 [object MediaList]
 PASS resultArray.length is 9
 PASS resultArray[0].i is '0'

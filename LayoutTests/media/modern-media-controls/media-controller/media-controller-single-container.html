@@ -16,7 +16,7 @@ shouldBeEqualToString("shadowRoot.lastElementChild.className", "media-controls-c
 
 shouldBe("shadowRoot.lastElementChild.childElementCount", "2");
 shouldBeEqualToString("shadowRoot.lastElementChild.firstElementChild.localName", "div");
-shouldBeEqualToString("shadowRoot.lastElementChild.firstElementChild.getAttribute('pseudo')", "-webkit-media-text-track-container");
+shouldBeEqualToString("shadowRoot.lastElementChild.firstElementChild.getAttribute('useragentpart')", "-webkit-media-text-track-container");
 shouldBeEqualToString("shadowRoot.lastElementChild.lastElementChild.localName", "div");
 shouldBeTrue("shadowRoot.lastElementChild.lastElementChild.classList.contains('media-controls')");
 

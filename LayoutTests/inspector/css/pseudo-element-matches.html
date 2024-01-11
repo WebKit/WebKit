@@ -49,7 +49,7 @@ function test() {
                         shadowRoot.getSubtree(2, function() {
                             for (var i = 0; i < shadowRoot.children.length; ++i) {
                                 var shadowNode = shadowRoot.children[i];
-                                if (shadowNode.getAttribute("pseudo") === "placeholder") {
+                                if (shadowNode.getAttribute("useragentpart") === "placeholder") {
                                     nodeStyles = WI.cssManager.stylesForNode(shadowNode);
                                     if (nodeStyles.needsRefresh)
                                         nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);

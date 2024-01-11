@@ -46,9 +46,7 @@ namespace WebCore {
 
 Crypto::Crypto(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
-#if ENABLE(WEB_CRYPTO)
     , m_subtle(SubtleCrypto::create(context))
-#endif
 {
 }
 
@@ -74,13 +72,9 @@ String Crypto::randomUUID() const
     return createVersion4UUIDString();
 }
 
-#if ENABLE(WEB_CRYPTO)
-
 SubtleCrypto& Crypto::subtle()
 {
     return m_subtle;
 }
 
-#endif
-
-}
+} // namespace WebCore

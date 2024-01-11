@@ -36,6 +36,8 @@ public:
 
     const GstStructure* stats();
 
+    void configureForInputCaps(const GRefPtr<GstCaps>&) final;
+
 protected:
     RealtimeIncomingVideoSourceGStreamer(AtomString&&);
 
@@ -47,8 +49,16 @@ private:
     // RealtimeIncomingSourceGStreamer API
     void dispatchSample(GRefPtr<GstSample>&&) final;
 
+    void ensureSizeAndFramerate(const GRefPtr<GstCaps>&);
+
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     GUniquePtr<GstStructure> m_stats;
+
+    bool m_isDecoding { false };
+    FloatSize m_videoSize;
+    uint64_t m_decodedVideoFrames { 0 };
+    GRefPtr<GstElement> m_queue;
+    GRefPtr<GstElement> m_fakeVideoSink;
 };
 
 } // namespace WebCore

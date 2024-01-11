@@ -22,7 +22,6 @@
         log('  ' + property);
         var value = document.defaultView.getComputedStyle(object, null).getPropertyValue(property);
         log('    getPropertyValue:    ' + value + (value == 'none' ? ' <- FAIL' : ''));
-        log('    getPropertyCSSValue: ' + document.defaultView.getComputedStyle(object, null).getPropertyCSSValue(property));
     }
 
     function test(id, value)

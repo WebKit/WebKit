@@ -228,12 +228,11 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     // - has an associated animation effect whose target element is a descendant of doc, and
-    auto* effect = animation.effect();
-    if (!is<KeyframeEffect>(effect))
+    auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation.effect());
+    if (!keyframeEffect)
         return false;
 
-    auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
-    auto target = keyframeEffect.targetStyleable();
+    auto target = keyframeEffect->targetStyleable();
     if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
@@ -252,7 +251,7 @@ IGNORE_GCC_WARNINGS_END
     };
 
     HashSet<AnimatableCSSProperty> propertiesToMatch;
-    for (auto property : keyframeEffect.animatedProperties())
+    for (auto property : keyframeEffect->animatedProperties())
         propertiesToMatch.add(resolvedProperty(property));
 
     auto protectedAnimations = [&]() -> Vector<RefPtr<WebAnimation>> {

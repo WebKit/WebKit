@@ -36,8 +36,6 @@
 
 namespace WebKit {
 
-class RemoteImageBufferSetProxy;
-
 class DrawingAreaWC final
     : public DrawingArea
     , public GraphicsLayerWC::Observer {
@@ -90,7 +88,6 @@ private:
 
     WebCore::GraphicsLayerClient m_rootLayerClient;
     std::unique_ptr<RemoteWCLayerTreeHostProxy> m_remoteWCLayerTreeHostProxy;
-    RefPtr<RemoteImageBufferSetProxy> m_flusher;
     WCLayerFactory m_layerFactory;
     DoublyLinkedList<GraphicsLayerWC> m_liveGraphicsLayers;
     WebCore::Timer m_updateRenderingTimer;

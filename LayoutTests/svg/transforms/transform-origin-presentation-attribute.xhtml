@@ -15,8 +15,7 @@
 
       function checkTransformOrigin(eltID, expectedValue) {
           var rect = document.getElementById(eltID);
-          var cssValue = window.getComputedStyle(rect, null).getPropertyCSSValue("-webkit-transform-origin");
-          var actualValue =  (cssValue) ? cssValue.cssText : "<no value>";
+          var actualValue = getComputedStyle(rect).webkitTransformOrigin;
           resultString += (actualValue == expectedValue) ? "PASS " : "FAIL ";
           resultString += eltID + " transformOrigin, expected \"" + expectedValue + "\" actual \"" + actualValue + "\"\n";
       }

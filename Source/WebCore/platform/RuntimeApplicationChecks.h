@@ -114,6 +114,7 @@ WEBCORE_EXPORT bool isEvernote();
 WEBCORE_EXPORT bool isFIFACompanion();
 WEBCORE_EXPORT bool isFeedly();
 WEBCORE_EXPORT bool isFirefox();
+WEBCORE_EXPORT bool isHimalaya();
 WEBCORE_EXPORT bool isHoYoLAB();
 WEBCORE_EXPORT bool isIMDb();
 WEBCORE_EXPORT bool isGmail();

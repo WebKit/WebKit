@@ -42,8 +42,7 @@ if (window.testRunner)
 
 function test()
 {
-    var totalHeight = document.defaultView.getComputedStyle(document.getElementById("test"), null).getPropertyCSSValue("height");
-    totalHeight = totalHeight.getFloatValue(CSSPrimitiveValue.CSS_PX);
+    var totalHeight = parseFloat(getComputedStyle(document.getElementById("test")).height);
     if (totalHeight > 150 && totalHeight < 300)
         document.getElementById("result").innerHTML = "PASS";
     else

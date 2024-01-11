@@ -13,6 +13,9 @@ description("Test generating an AES key with malformed-paramters.");
 
 var extractable = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+
 // Malformed AlgorithmIdentifiers
 shouldReject('crypto.subtle.generateKey("aes-cbc", extractable, ["encrypt", "decrypt"])');
 shouldReject('crypto.subtle.generateKey({name: "aes-cbc"}, extractable, ["encrypt", "decrypt"])');

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSS-namespace-object-class-string.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSConditionRule-conditionText.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSContainerRule.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSCounterStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSFontFaceRule.html
@@ -36,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disabled-regular-sheet-insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-duplicate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-cssRules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-on-regular-sheet.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-modify-after-removal.html

@@ -67,8 +67,8 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return { };
-        auto imageRect = FloatRect { { }, snapshotImage->size() };
-        context->drawNativeImage(*snapshotImage, snapshotImage->size(), imageRect, imageRect);
+        FloatRect imageRect { { }, snapshotImage->size() };
+        context->drawNativeImage(*snapshotImage, imageRect, imageRect);
         return bitmap;
     }
 
@@ -92,7 +92,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         if (!context)
             return { };
 
-        context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
+        context->drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
         return bitmap;
     }
 #endif // ENABLE(VIDEO)

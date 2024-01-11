@@ -17,7 +17,7 @@ media.addEventListener("loadedmetadata", () => {
 
     media.addEventListener("timeupdate", () => {
         bounds = media.getBoundingClientRect();
-        textTrackContainer = internals.shadowRoot(media).querySelector("div[pseudo=-webkit-media-text-track-container]");
+        textTrackContainer = internals.shadowRoot(media).querySelector("div[useragentpart=-webkit-media-text-track-container]");
         shouldBe("textTrackContainer.getBoundingClientRect().height", "bounds.height");
         finishJSTest();
     });

@@ -54,8 +54,8 @@ public:
     }
     virtual bool selected() const { return m_selected; }
 
-    enum Kind { Alternative, Captions, Main, Sign, Subtitles, Commentary, None };
-    virtual Kind kind() const { return None; }
+    enum class Kind : uint8_t { Alternative, Captions, Main, Sign, Subtitles, Commentary, None };
+    virtual Kind kind() const { return Kind::None; }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "VideoTrackPrivate"; }
@@ -101,22 +101,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoTrackPrivate)
 static bool isType(const WebCore::TrackPrivateBase& track) { return track.type() == WebCore::TrackPrivateBase::Type::Video; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::VideoTrackPrivate::Kind> {
-    using values = EnumValues<
-        WebCore::VideoTrackPrivate::Kind,
-        WebCore::VideoTrackPrivate::Kind::Alternative,
-        WebCore::VideoTrackPrivate::Kind::Captions,
-        WebCore::VideoTrackPrivate::Kind::Main,
-        WebCore::VideoTrackPrivate::Kind::Sign,
-        WebCore::VideoTrackPrivate::Kind::Subtitles,
-        WebCore::VideoTrackPrivate::Kind::Commentary,
-        WebCore::VideoTrackPrivate::Kind::None
-    >;
-};
-
-} // namespace WTF
 
 #endif

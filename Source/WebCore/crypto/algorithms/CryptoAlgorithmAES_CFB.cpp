@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_CFB.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
@@ -194,6 +192,4 @@ ExceptionOr<size_t> CryptoAlgorithmAES_CFB::getKeyLength(const CryptoAlgorithmPa
     return CryptoKeyAES::getKeyLength(parameters);
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

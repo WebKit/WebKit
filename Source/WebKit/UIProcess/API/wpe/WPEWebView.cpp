@@ -927,7 +927,7 @@ void View::setCursor(const WebCore::Cursor& cursor)
     }, surface.leakRef()));
 
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
-    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, hotspot.x(), hotspot.y());
+    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, stride, hotspot.x(), hotspot.y());
 #else
     UNUSED_PARAM(cursor);
 #endif

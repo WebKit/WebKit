@@ -27,7 +27,6 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -86,7 +85,7 @@ enum class PlatformCALayerLayerType : uint8_t {
         LayerTypeHost,
 };
 
-class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main>, public CanMakeCheckedPtr {
+class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
     friend class PlatformCALayerCocoa;
 public:
     static CFTimeInterval currentTimeToMediaTime(MonotonicTime);
@@ -244,9 +243,7 @@ public:
     virtual void setFilters(const FilterOperations&) = 0;
     virtual void copyFiltersFrom(const PlatformCALayer&) = 0;
 
-#if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(BlendMode) = 0;
-#endif
 
     virtual void setName(const String&) = 0;
 

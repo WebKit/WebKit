@@ -89,7 +89,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
-    , m_timeOfBufferingMonitor(MonotonicTime::fromRawSeconds(0))
     , m_buffered(TimeRanges::create())
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_private->sourceBufferLogger())
@@ -229,7 +228,6 @@ ExceptionOr<void> SourceBuffer::setAppendWindowEnd(double newValue)
 
 ExceptionOr<void> SourceBuffer::appendBuffer(const BufferSource& data)
 {
-    monitorBufferingRate();
     return appendBufferInternal(static_cast<const unsigned char*>(data.data()), data.length());
 }
 
@@ -592,7 +590,6 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
     scheduleEvent(eventNames().updateendEvent);
 
     m_source->monitorSourceBuffers();
-    monitorBufferingRate();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
     ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
@@ -1123,11 +1120,6 @@ void SourceBuffer::textTrackLanguageChanged(TextTrack& track)
         m_textTracks->scheduleChangeEvent();
 }
 
-void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
-{
-    m_bufferedSinceLastMonitor += frameDuration;
-}
-
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
     if (isRemoved())
@@ -1150,51 +1142,28 @@ void SourceBuffer::sourceBufferPrivateDidDropSample()
         m_source->mediaElement()->incrementDroppedFrameCount();
 }
 
-void SourceBuffer::monitorBufferingRate()
-{
-    // We avoid the first update of m_averageBufferRate on purpose, but in exchange we get a more accurate m_timeOfBufferingMonitor initial time.
-    if (!m_timeOfBufferingMonitor) {
-        m_timeOfBufferingMonitor = MonotonicTime::now();
-        return;
-    }
-
-    MonotonicTime now = MonotonicTime::now();
-    Seconds interval = now - m_timeOfBufferingMonitor;
-    double rateSinceLastMonitor = m_bufferedSinceLastMonitor / interval.seconds();
-
-    m_timeOfBufferingMonitor = now;
-    m_bufferedSinceLastMonitor = 0;
-
-    m_averageBufferRate += (interval.seconds() * ExponentialMovingAverageCoefficient) * (rateSinceLastMonitor - m_averageBufferRate);
-
-    DEBUG_LOG(LOGIDENTIFIER, m_averageBufferRate);
-}
-
 bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
 {
     if (isRemoved())
         return false;
 
-    monitorBufferingRate();
-
-    // Assuming no fluctuations in the buffering rate, loading 1 second per second or greater
-    // means indefinite playback. This could be improved by taking jitter into account.
-    if (m_averageBufferRate > 1)
-        return true;
-
-    // Add up all the time yet to be buffered.
-    MediaTime currentTime = m_source->currentTime();
     MediaTime duration = m_source->duration();
+    if (!duration.isValid())
+        return false;
 
-    PlatformTimeRanges unbufferedRanges = ranges;
-    unbufferedRanges.invert();
-    unbufferedRanges.intersectWith(PlatformTimeRanges(currentTime, std::max(currentTime, duration)));
-    MediaTime unbufferedTime = unbufferedRanges.totalDuration();
-    if (!unbufferedTime.isValid())
+    MediaTime currentTime = m_source->currentTime();
+    if (duration <= currentTime)
         return true;
 
-    MediaTime timeRemaining = duration - currentTime;
-    return unbufferedTime.toDouble() / m_averageBufferRate < timeRemaining.toDouble();
+    // If we have data up to the mediasource's duration or 3s ahead, we can
+    // assume that we can play without interruption.
+    MediaTime bufferedEnd = ranges.maximumBufferedTime();
+    // Same tolerance as contiguousFrameTolerance in SourceBufferPrivate::processMediaSample(),
+    // to account for small errors.
+    const MediaTime tolerance = MediaTime(1, 1000);
+    MediaTime timeAhead = std::min(duration, currentTime + MediaTime(3, 1)) - tolerance;
+
+    return bufferedEnd >= timeAhead;
 }
 
 void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)

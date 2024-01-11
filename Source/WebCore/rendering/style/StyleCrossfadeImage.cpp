@@ -58,7 +58,8 @@ StyleCrossfadeImage::~StyleCrossfadeImage()
 
 bool StyleCrossfadeImage::operator==(const StyleImage& other) const
 {
-    return is<StyleCrossfadeImage>(other) && equals(downcast<StyleCrossfadeImage>(other));
+    auto* otherCrossfadeImage = dynamicDowncast<StyleCrossfadeImage>(other);
+    return otherCrossfadeImage && equals(*otherCrossfadeImage);
 }
 
 bool StyleCrossfadeImage::equals(const StyleCrossfadeImage& other) const

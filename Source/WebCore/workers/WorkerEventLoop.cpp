@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerEventLoop.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Microtasks.h"
 #include "WorkerOrWorkletGlobalScope.h"
 

@@ -96,8 +96,9 @@ void PopupMenuMac::populate()
         NSWritingDirection writingDirection = style.textDirection() == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
         [paragraphStyle setBaseWritingDirection:writingDirection];
         if (style.hasTextDirectionOverride()) {
-            RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
-            RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+            auto writingDirectionValue = static_cast<NSInteger>(writingDirection) + static_cast<NSInteger>(NSWritingDirectionOverride);
+            RetainPtr<NSNumber> writingDirectionNumber = adoptNS([[NSNumber alloc] initWithInteger:writingDirectionValue]);
+            RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
             [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
         }
         [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
@@ -199,16 +200,16 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 
     NSControlSize controlSize;
     switch (m_client->menuStyle().menuSize()) {
-    case PopupMenuStyle::PopupMenuSizeNormal:
+    case PopupMenuStyle::Size::Normal:
         controlSize = NSControlSizeRegular;
         break;
-    case PopupMenuStyle::PopupMenuSizeSmall:
+    case PopupMenuStyle::Size::Small:
         controlSize = NSControlSizeSmall;
         break;
-    case PopupMenuStyle::PopupMenuSizeMini:
+    case PopupMenuStyle::Size::Mini:
         controlSize = NSControlSizeMini;
         break;
-    case PopupMenuStyle::PopupMenuSizeLarge:
+    case PopupMenuStyle::Size::Large:
         controlSize = NSControlSizeLarge;
         break;
     }

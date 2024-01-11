@@ -172,4 +172,7 @@ PASS var object = window['test']; isEqualObjC(object, object); is true
 PASS var object = window['toolbar']; isEqualObjC(object, object); is true
 PASS var object = window['top']; isEqualObjC(object, object); is true
 PASS var object = window['window']; isEqualObjC(object, object); is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

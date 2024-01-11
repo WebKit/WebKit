@@ -1,455 +1,112 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("Test the parsing of the filter property.");
-
-function jsWrapperClass(node)
-{
-    if (!node)
-        return "[null]";
-    var string = Object.prototype.toString.apply(node);
-    return string.substr(8, string.length - 9);
-}
-
-function shouldBeType(expression, className)
-{
-    shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
-}
-
+description("Test the parsing of the -webkit-filter property.");
 // These have to be global for the test helpers to see them.
-var stylesheet, cssRule, declaration, filterRule, subRule;
+var stylesheet, cssRule, declaration;
 var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);
 stylesheet = styleElement.sheet;
-
-function testFilterRule(description, rule, expectedLength, expectedValue, expectedTexts)
+function testFilterRule(description, rule, expectedValue)
 {
+    if (expectedValue === undefined)
+        expectedValue = rule;
     debug("");
-    debug(`${description} : ${rule}`);
-
-    stylesheet.insertRule(`body { filter: ${rule}; }`, 0);
+    debug(description + " : " + rule);
+    stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
-
     shouldBe("cssRule.type", "1");
-
     declaration = cssRule.style;
     shouldBe("declaration.length", "1");
-    shouldBeEqualToString("declaration.getPropertyValue('filter')", expectedValue);
-
-    filterRule = declaration.getPropertyCSSValue("filter");
-    shouldBeType("filterRule", "CSSValueList");
-
-    shouldBe("filterRule.length", `${expectedLength}`);
-
-    if (filterRule) {
-        for (var i = 0; i < expectedLength; i++) {
-            subRule = filterRule[i];
-            shouldBeEqualToString("subRule.cssText", expectedTexts[i]);
-        }
-    }
-    
-    stylesheet.deleteRule(0);
+    shouldBeEqualToString("declaration.getPropertyValue('-webkit-filter')", expectedValue);
 }
-
-function testInvalidFilterRule(description, rule)
-{
-    debug("");
-    debug(`${description} : ${rule}`);
-
-    stylesheet.insertRule(`body { filter: ${rule}; }`, 0);
-    cssRule = stylesheet.cssRules.item(0);
-
-    shouldBe("cssRule.type", "1");
-
-    declaration = cssRule.style;
-    shouldBe("declaration.length", "0");
-    shouldBe("declaration.getPropertyValue('filter')", "''");
-
-    stylesheet.deleteRule(0);
-}
-
-testFilterRule("Basic reference",
-               "url('#a')", 1, 'url("#a")',
-               ['url("#a")']);
-
-testFilterRule("Bare unquoted reference converting to quoted form",
-               "url(#a)", 1, 'url("#a")',
-               ['url("#a")']);
-
-testFilterRule("Multiple references",
-               "url('#a') url('#b')", 2, 'url("#a") url("#b")',
-               ['url("#a")', 'url("#b")']);
-
-testFilterRule("Reference as 2nd value",
-               "grayscale(1) url('#a')", 2, 'grayscale(1) url("#a")',
-               ["grayscale(1)", 'url("#a")']);
-
-testFilterRule("Integer value",
-               "grayscale(1)", 1, "grayscale(1)",
-               ["grayscale(1)"]);
-
-testFilterRule("Percentage value",
-               "grayscale(50%)", 1, "grayscale(50%)",
-               ["grayscale(50%)"]);
-
-testFilterRule("Float value converts to integer",
-               "grayscale(1.0)", 1, "grayscale(1)",
-               ["grayscale(1)"]);
-
-testFilterRule("Values over 1 are clamped",
-               "grayscale(1.5)", 1, "grayscale(1)",
-               ["grayscale(1)"]);
-
-testFilterRule("Percentages over 100 are clamped",
-               "grayscale(320%)", 1, "grayscale(100%)",
-               ["grayscale(100%)"]);
-
-testFilterRule("Zero value",
-               "grayscale(0)", 1, "grayscale(0)",
-               ["grayscale(0)"]);
-
-testFilterRule("No values",
-               "grayscale()", 1, "grayscale()",
-               ["grayscale()"]);
-
-testFilterRule("Multiple values",
-               "grayscale(0.5) grayscale(0.25)", 2, "grayscale(0.5) grayscale(0.25)",
-               ["grayscale(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Integer value",
-               "sepia(1)", 1, "sepia(1)",
-               ["sepia(1)"]);
-
-testFilterRule("Percentage value",
-               "sepia(50%)", 1, "sepia(50%)",
-               ["sepia(50%)"]);
-
-testFilterRule("Float value converts to integer",
-               "sepia(1.0)", 1, "sepia(1)",
-               ["sepia(1)"]);
-
-testFilterRule("Values over 1 are clamped",
-               "sepia(8)", 1, "sepia(1)",
-               ["sepia(1)"]);
-
-testFilterRule("Percentages over 100 are clamped",
-               "sepia(101%)", 1, "sepia(100%)",
-               ["sepia(100%)"]);
-
-testInvalidFilterRule("Negative value", "sepia(-0.5)");
-
-testFilterRule("Zero value",
-               "sepia(0)", 1, "sepia(0)",
-               ["sepia(0)"]);
-
-testFilterRule("No values",
-               "sepia()", 1, "sepia()",
-               ["sepia()"]);
-
-testInvalidFilterRule("Negative value", "grayscale(-0.2)");
-
-testFilterRule("Multiple values",
-               "sepia(0.5) sepia(0.25)", 2, "sepia(0.5) sepia(0.25)",
-               ["sepia(0.5)", "sepia(0.25)"]);
-
-testFilterRule("Rule combinations",
-               "sepia(0.5) grayscale(0.25)", 2, "sepia(0.5) grayscale(0.25)",
-               ["sepia(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Integer value",
-               "saturate(1)", 1, "saturate(1)",
-               ["saturate(1)"]);
-
-testFilterRule("Percentage value",
-               "saturate(50%)", 1, "saturate(50%)",
-               ["saturate(50%)"]);
-
-testFilterRule("Percentage value > 1",
-               "saturate(250%)", 1, "saturate(250%)",
-               ["saturate(250%)"]);
-
-testFilterRule("Float value converts to integer",
-               "saturate(1.0)", 1, "saturate(1)",
-               ["saturate(1)"]);
-
-testFilterRule("Input value > 1",
-               "saturate(5.5)", 1, "saturate(5.5)",
-               ["saturate(5.5)"]);
-
-testInvalidFilterRule("Negative value", "saturate(-0.5)");
-
-testFilterRule("Zero value",
-               "saturate(0)", 1, "saturate(0)",
-               ["saturate(0)"]);
-
-testFilterRule("No values",
-               "saturate()", 1, "saturate()",
-               ["saturate()"]);
-
-testFilterRule("Multiple values",
-               "saturate(0.5) saturate(0.25)", 2, "saturate(0.5) saturate(0.25)",
-               ["saturate(0.5)", "saturate(0.25)"]);
-
-testFilterRule("Rule combinations",
-               "saturate(0.5) grayscale(0.25)", 2, "saturate(0.5) grayscale(0.25)",
-               ["saturate(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Degrees value as integer",
-               "hue-rotate(10deg)", 1, "hue-rotate(10deg)",
-               ["hue-rotate(10deg)"]);
-
-testFilterRule("Degrees float value converts to integer",
-               "hue-rotate(10.0deg)", 1, "hue-rotate(10deg)",
-               ["hue-rotate(10deg)"]);
-
-testFilterRule("Radians value",
-               "hue-rotate(10rad)", 1, "hue-rotate(10rad)",
-               ["hue-rotate(10rad)"]);
-
-testFilterRule("Gradians value",
-               "hue-rotate(10grad)", 1, "hue-rotate(10grad)",
-               ["hue-rotate(10grad)"]);
-
-testFilterRule("Turns value",
-               "hue-rotate(0.5turn)", 1, "hue-rotate(0.5turn)",
-               ["hue-rotate(0.5turn)"]);
-
-testFilterRule("Negative value",
-              "hue-rotate(-370.2deg)", 1, "hue-rotate(-370.2deg)",
-              ["hue-rotate(-370.2deg)"]);
-
-testFilterRule("Zero value",
-               "hue-rotate(0)", 1, "hue-rotate(0deg)",
-               ["hue-rotate(0deg)"]);
-
-testFilterRule("No values",
-               "hue-rotate()", 1, "hue-rotate()",
-               ["hue-rotate()"]);
-
-testFilterRule("Rule combinations",
-               "hue-rotate(10deg) grayscale(0.25)", 2, "hue-rotate(10deg) grayscale(0.25)",
-               ["hue-rotate(10deg)", "grayscale(0.25)"]);
-
-testFilterRule("Integer value",
-               "invert(1)", 1, "invert(1)",
-               ["invert(1)"]);
-
-testFilterRule("Percentage value",
-               "invert(50%)", 1, "invert(50%)",
-               ["invert(50%)"]);
-
-testFilterRule("Float value converts to integer",
-               "invert(1.0)", 1, "invert(1)",
-               ["invert(1)"]);
-
-testFilterRule("Values over 1 are clamped",
-               "invert(1.01)", 1, "invert(1)",
-               ["invert(1)"]);
-
-testFilterRule("Percentages over 100 are clamped",
-               "invert(500000%)", 1, "invert(100%)",
-               ["invert(100%)"]);
-
-testFilterRule("Zero value",
-               "invert(0)", 1, "invert(0)",
-               ["invert(0)"]);
-
-testInvalidFilterRule("Negative value", "invert(-0.5)");
-
-testFilterRule("No values",
-               "invert()", 1, "invert()",
-               ["invert()"]);
-
-testFilterRule("Multiple values",
-               "invert(0.5) invert(0.25)", 2, "invert(0.5) invert(0.25)",
-               ["invert(0.5)", "invert(0.25)"]);
-
-testFilterRule("Rule combinations",
-               "invert(0.5) grayscale(0.25)", 2, "invert(0.5) grayscale(0.25)",
-               ["invert(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Integer value",
-               "opacity(1)", 1, "opacity(1)",
-               ["opacity(1)"]);
-
-testFilterRule("Percentage value",
-               "opacity(50%)", 1, "opacity(50%)",
-               ["opacity(50%)"]);
-
-testFilterRule("Float value converts to integer",
-               "opacity(1.0)", 1, "opacity(1)",
-               ["opacity(1)"]);
-
-testFilterRule("Values over 1 are clamped",
-               "opacity(2134687326)", 1, "opacity(1)",
-               ["opacity(1)"]);
-
-testFilterRule("Percentages over 100 are clamped",
-               "opacity(500%)", 1, "opacity(100%)",
-               ["opacity(100%)"]);
-
-testInvalidFilterRule("Negative value", "opacity(-0.5)");
-
-testFilterRule("Zero value",
-               "opacity(0)", 1, "opacity(0)",
-               ["opacity(0)"]);
-
-testFilterRule("No values",
-               "opacity()", 1, "opacity()",
-               ["opacity()"]);
-
-testFilterRule("Multiple values",
-               "opacity(0.5) opacity(0.25)", 2, "opacity(0.5) opacity(0.25)",
-               ["opacity(0.5)", "opacity(0.25)"]);
-
-testFilterRule("Rule combinations",
-               "opacity(0.5) grayscale(0.25)", 2, "opacity(0.5) grayscale(0.25)",
-               ["opacity(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Integer value",
-              "brightness(1)", 1, "brightness(1)",
-              ["brightness(1)"]);
-
-testFilterRule("Percentage value",
-              "brightness(50%)", 1, "brightness(50%)",
-              ["brightness(50%)"]);
-
-testFilterRule("Float value converts to integer",
-              "brightness(1.0)", 1, "brightness(1)",
-              ["brightness(1)"]);
-
-testFilterRule("Zero value",
-              "brightness(0)", 1, "brightness(0)",
-              ["brightness(0)"]);
-
-testInvalidFilterRule("Negative value", "brightness(-2)");
-
-testFilterRule("No values",
-              "brightness()", 1, "brightness()",
-              ["brightness()"]);
-
-testFilterRule("Multiple values",
-              "brightness(0.5) brightness(0.25)", 2, "brightness(0.5) brightness(0.25)",
-              ["brightness(0.5)", "brightness(0.25)"]);
-
-testFilterRule("Rule combinations",
-              "brightness(0.5) grayscale(0.25)", 2, "brightness(0.5) grayscale(0.25)",
-              ["brightness(0.5)", "grayscale(0.25)"]);
-
-testInvalidFilterRule("Value less than -100%", "brightness(-1.1)");
-testInvalidFilterRule("Negative value", "brightness(-0.6)");
-
-testFilterRule("Parameter more than 100%",
-              "brightness(101%)", 1, "brightness(101%)",
-              ["brightness(101%)"]);
-
-testFilterRule("Rule combinations",
-              "grayscale(0.25) brightness(0.5)", 2, "grayscale(0.25) brightness(0.5)",
-              ["grayscale(0.25)", "brightness(0.5)"]);
-
-testFilterRule("Integer value",
-              "contrast(1)", 1, "contrast(1)",
-              ["contrast(1)"]);
-
-testFilterRule("Percentage value",
-              "contrast(50%)", 1, "contrast(50%)",
-              ["contrast(50%)"]);
-
-testFilterRule("Percentage value > 1",
-              "contrast(250%)", 1, "contrast(250%)",
-              ["contrast(250%)"]);
-
-testFilterRule("Float value converts to integer",
-              "contrast(1.0)", 1, "contrast(1)",
-              ["contrast(1)"]);
-
-testFilterRule("Zero value",
-              "contrast(0)", 1, "contrast(0)",
-              ["contrast(0)"]);
-
-testInvalidFilterRule("Negative value", "contrast(-0.2)");
-
-testFilterRule("No values",
-              "contrast()", 1, "contrast()",
-              ["contrast()"]);
-
-testFilterRule("Value greater than one",
-              "contrast(2)", 1, "contrast(2)",
-              ["contrast(2)"]);
-
-testInvalidFilterRule("Negative value", "contrast(-0.8)");
-
-testFilterRule("Multiple values",
-              "contrast(0.5) contrast(0.25)", 2, "contrast(0.5) contrast(0.25)",
-              ["contrast(0.5)", "contrast(0.25)"]);
-
-testFilterRule("Rule combinations",
-              "contrast(0.5) grayscale(0.25)", 2, "contrast(0.5) grayscale(0.25)",
-              ["contrast(0.5)", "grayscale(0.25)"]);
-
-testFilterRule("Rule combinations",
-              "grayscale(0.25) contrast(0.5)", 2, "grayscale(0.25) contrast(0.5)",
-              ["grayscale(0.25)", "contrast(0.5)"]);
-
-testFilterRule("One zero to px",
-               "blur(0)", 1, "blur(0px)",
-               ["blur(0px)"]);
-
-testFilterRule("One length",
-               "blur(10px)", 1, "blur(10px)",
-               ["blur(10px)"]);
-
-testFilterRule("No values",
-               "blur()", 1, "blur()",
-               ["blur()"]);
-
-testInvalidFilterRule("Negative value", "blur(-2px)");
-
-testFilterRule("Color then three values",
-              "drop-shadow(red 1px 2px 3px)", 1, "drop-shadow(red 1px 2px 3px)",
-              ["drop-shadow(red 1px 2px 3px)"]);
-
-testFilterRule("Three values then color",
-              "drop-shadow(1px 2px 3px red)", 1, "drop-shadow(red 1px 2px 3px)",
-              ["drop-shadow(red 1px 2px 3px)"]);
-
+testFilterRule("Basic reference", 'url("#a")', 'url("#a")');
+testFilterRule("Bare unquoted reference converting to quoted form", "url(#a)", 'url("#a")');
+testFilterRule("Multiple references", "url('#a') url('#b')", 'url("#a") url("#b")');
+testFilterRule("Reference as 2nd value", 'grayscale(1) url("#a")', 'grayscale(1) url("#a")');
+testFilterRule("Integer value", "grayscale(1)");
+testFilterRule("Percentage value", "grayscale(50%)");
+testFilterRule("Float value converts to integer", "grayscale(1.0)", "grayscale(1)");
+testFilterRule("Zero value", "grayscale(0)");
+testFilterRule("No values", "grayscale()");
+testFilterRule("Multiple values", "grayscale(0.5) grayscale(0.25)");
+testFilterRule("Integer value", "sepia(1)");
+testFilterRule("Percentage value", "sepia(50%)");
+testFilterRule("Float value converts to integer", "sepia(1.0)", "sepia(1)");
+testFilterRule("Zero value", "sepia(0)");
+testFilterRule("No values", "sepia()");
+testFilterRule("Multiple values", "sepia(0.5) sepia(0.25)");
+testFilterRule("Rule combinations", "sepia(0.5) grayscale(0.25)");
+testFilterRule("Integer value", "saturate(1)");
+testFilterRule("Percentage value", "saturate(50%)");
+testFilterRule("Percentage value > 1", "saturate(250%)");
+testFilterRule("Float value converts to integer", "saturate(1.0)", "saturate(1)");
+testFilterRule("Input value > 1", "saturate(5.5)");
+testFilterRule("Zero value", "saturate(0)");
+testFilterRule("No values", "saturate()");
+testFilterRule("Multiple values", "saturate(0.5) saturate(0.25)");
+testFilterRule("Rule combinations", "saturate(0.5) grayscale(0.25)");
+testFilterRule("Degrees value as integer", "hue-rotate(10deg)");
+testFilterRule("Degrees float value converts to integer", "hue-rotate(10.0deg)", "hue-rotate(10deg)");
+testFilterRule("Radians value", "hue-rotate(10rad)");
+testFilterRule("Gradians value", "hue-rotate(10grad)");
+testFilterRule("Turns value", "hue-rotate(0.5turn)");
+testFilterRule("Zero value", "hue-rotate(0)", "hue-rotate(0deg)");
+testFilterRule("No values", "hue-rotate()");
+testFilterRule("Rule combinations", "hue-rotate(10deg) grayscale(0.25)");
+testFilterRule("Integer value", "invert(1)")
+testFilterRule("Percentage value", "invert(50%)");
+testFilterRule("Float value converts to integer", "invert(1.0)", "invert(1)");
+testFilterRule("Zero value", "invert(0)");
+testFilterRule("No values", "invert()");
+testFilterRule("Multiple values", "invert(0.5) invert(0.25)");
+testFilterRule("Rule combinations", "invert(0.5) grayscale(0.25)");
+testFilterRule("Integer value", "opacity(1)");
+testFilterRule("Percentage value", "opacity(50%)");
+testFilterRule("Float value converts to integer", "opacity(1.0)", "opacity(1)");
+testFilterRule("Zero value", "opacity(0)");
+testFilterRule("No values", "opacity()");
+testFilterRule("Multiple values", "opacity(0.5) opacity(0.25)");
+testFilterRule("Rule combinations", "opacity(0.5) grayscale(0.25)");
+testFilterRule("Integer value", "brightness(1)");
+testFilterRule("Percentage value", "brightness(50%)");
+testFilterRule("Float value converts to integer", "brightness(1.0)", "brightness(1)");
+testFilterRule("Zero value", "brightness(0)");
+testFilterRule("No values", "brightness()");
+testFilterRule("Multiple values", "brightness(0.5) brightness(0.25)");
+testFilterRule("Rule combinations", "brightness(0.5) grayscale(0.25)");
+testFilterRule("Parameter more than 100%", "brightness(101%)");
+testFilterRule("Rule combinations", "grayscale(0.25) brightness(0.5)");
+testFilterRule("Integer value", "contrast(1)");
+testFilterRule("Percentage value", "contrast(50%)");
+testFilterRule("Percentage value > 1", "contrast(250%)");
+testFilterRule("Float value converts to integer", "contrast(1.0)", "contrast(1)");
+testFilterRule("Zero value", "contrast(0)");
+testFilterRule("No values", "contrast()");
+testFilterRule("Value greater than one", "contrast(2)");
+testFilterRule("Multiple values", "contrast(0.5) contrast(0.25)");
+testFilterRule("Rule combinations", "contrast(0.5) grayscale(0.25)");
+testFilterRule("Rule combinations", "grayscale(0.25) contrast(0.5)");
+testFilterRule("One zero to px", "blur(0)", "blur(0px)");
+testFilterRule("One length", "blur(10px)");
+testFilterRule("No values", "blur()");
+testFilterRule("Color then three values", "drop-shadow(red 1px 2px 3px)");
+testFilterRule("Three values then color", "drop-shadow(1px 2px 3px red)", "drop-shadow(red 1px 2px 3px)");
 testFilterRule("Color then three values with zero length",
-              "drop-shadow(#abc 0 0 0)", 1, "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)",
-              ["drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"]);
-
+              "drop-shadow(#abc 0 0 0)", "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)");
 testFilterRule("Three values with zero length",
-              "drop-shadow(0 0 0)", 1, "drop-shadow(0px 0px 0px)",
-              ["drop-shadow(0px 0px 0px)"]);
-
-testFilterRule("Two values no color",
-              "drop-shadow(1px 2px)", 1, "drop-shadow(1px 2px)",
-              ["drop-shadow(1px 2px)"]);
-
+              "drop-shadow(0 0 0)", "drop-shadow(0px 0px 0px)");
+testFilterRule("Two values no color", "drop-shadow(1px 2px)");
 testFilterRule("Multiple operations",
-               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)", 8,
-               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)",
-               [
-                   "grayscale(0.5)",
-                   "sepia(0.25)",
-                   "saturate(0.75)",
-                   "hue-rotate(35deg)",
-                   "invert(0.2)",
-                   "opacity(0.9)",
-                   "blur(5px)",
-                   "drop-shadow(green 1px 2px 3px)"
-               ]);
-
+               "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)");
 successfullyParsed = true;
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

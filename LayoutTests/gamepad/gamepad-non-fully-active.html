@@ -1,0 +1,41 @@
+<head>
+    <script>
+        testRunner?.dumpAsText();
+        testRunner?.waitUntilDone();
+
+        function log(msg) {
+            document.getElementById("logger").innerHTML += msg + "<br>";
+        }
+
+        async function runTest(iframe) {
+            const { contentWindow } = iframe;
+            for (let i = 0; i < 3; i++) {
+                testRunner?.setMockGamepadDetails(i, `g${i}`, "", 2, 2, false);
+                const { gamepad } = await new Promise((resolve) => {
+                    contentWindow.addEventListener(
+                        "gamepadconnected",
+                        resolve,
+                        {
+                            once: true,
+                        }
+                    );
+                    testRunner?.connectMockGamepad(i);
+                });
+            }
+            log(`Connected 3 gamepads.`);
+
+            const iframeNav = contentWindow.navigator;
+
+            log(`Gamepads fully active: ${iframeNav.getGamepads().length}`);
+
+            iframe.remove();
+            log(`Gamepads not fully active: ${iframeNav.getGamepads().length}`);
+
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body>
+    <div id="logger"></div>
+    <iframe srcdoc="test" onload="runTest(this);"></iframe>
+</body>

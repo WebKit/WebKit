@@ -2093,10 +2093,10 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #endif
 }
 
-void CodeBlock::linkIncomingCall(CallFrame* callerFrame, CallLinkInfoBase* incoming)
+void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming, bool skipFirstFrame)
 {
-    if (callerFrame)
-        noticeIncomingCall(callerFrame);
+    if (caller)
+        noticeIncomingCall(caller, callerFrame, skipFirstFrame);
     m_incomingCalls.push(incoming);
 }
 
@@ -2284,6 +2284,12 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
     auto* inlineCallFrame = codeOrigin.inlineCallFrame();
     if (!inlineCallFrame)
         return globalObject();
+    // It is possible that the global object and/or other data relating to this origin
+    // was collected by GC, but we are still asking for this (ex: in a patchpoint generate() function).
+    // Plan::cancel should have cleared this in that case.
+    // Let's make sure we can continue to execute safely, even though we don't have a global object to give.
+    if (!inlineCallFrame->baselineCodeBlock)
+        return nullptr;
     return inlineCallFrame->baselineCodeBlock->globalObject();
 }
 
@@ -2327,12 +2333,13 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
+void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool skipFirstFrame)
 {
     RELEASE_ASSERT(!m_isJettisoned);
+    UNUSED_PARAM(callerFrame);
+    UNUSED_PARAM(skipFirstFrame);
 
-    auto* owner = callerFrame->codeOwnerCell();
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner);
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(caller);
     
     dataLogLnIf(Options::verboseCallLink(), "Noticing call link from ", pointerDump(callerCodeBlock), " to ", *this);
     
@@ -2387,18 +2394,20 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
     }
 
     // Recursive calls won't be inlined.
-    VM& vm = this->vm();
-    RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-    StackVisitor::visit(vm.topCallFrame, vm, functor);
+    if (callerFrame) {
+        VM& vm = this->vm();
+        RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
+        StackVisitor::visit(vm.topCallFrame, vm, functor, skipFirstFrame);
 
-    if (functor.didRecurse()) {
-        dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
-        m_shouldAlwaysBeInlined = false;
-        return;
+        if (functor.didRecurse()) {
+            dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
+            m_shouldAlwaysBeInlined = false;
+            return;
+        }
     }
     
     if (callerCodeBlock->capabilityLevelState() == DFG::CapabilityLevelNotSet) {
-        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()), " to ", *this, ": caller's DFG capability level is not set.\n");
+        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame ? callerFrame->codeOrigin() : CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
         CRASH();
     }
     

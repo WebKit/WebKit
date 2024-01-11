@@ -119,7 +119,11 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
     if (!addResult.isNewEntry)
         return Exception { ExceptionCode::NotSupportedError, "A processor was already registered with this name"_s };
 
-    thread().messagingProxy().postTaskToAudioWorklet([name = WTFMove(name).isolatedCopy(), parameterDescriptors = crossThreadCopy(WTFMove(parameterDescriptors))](AudioWorklet& worklet) mutable {
+    auto* messagingProxy = thread().messagingProxy();
+    if (!messagingProxy)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    messagingProxy->postTaskToAudioWorklet([name = WTFMove(name).isolatedCopy(), parameterDescriptors = crossThreadCopy(WTFMove(parameterDescriptors))](AudioWorklet& worklet) mutable {
         ASSERT(isMainThread());
         if (RefPtr audioContext = worklet.audioContext())
             audioContext->addAudioParamDescriptors(name, WTFMove(parameterDescriptors));

@@ -3602,6 +3602,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ToIntegerOrInfinity: {
+        compileToIntegerOrInfinity(node);
+        break;
+    }
+
+    case ToLength: {
+        compileToLength(node);
+        break;
+    }
+
     case CheckTypeInfoFlags: {
         compileCheckTypeInfoFlags(node);
         break;

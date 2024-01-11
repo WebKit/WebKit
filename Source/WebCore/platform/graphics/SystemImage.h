@@ -64,22 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SystemImageType> {
-    using values = EnumValues<
-        WebCore::SystemImageType
-#if ENABLE(APPLE_PAY)
-        , WebCore::SystemImageType::ApplePayLogo
-#endif
-#if USE(SYSTEM_PREVIEW)
-        , WebCore::SystemImageType::ARKitBadge
-#endif
-#if USE(APPKIT)
-        , WebCore::SystemImageType::AppKitControl
-#endif
-    >;
-};
-
-} // namespace WTF

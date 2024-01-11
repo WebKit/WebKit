@@ -36,9 +36,7 @@ inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter
 inline bool RenderLayer::preserves3D() const { return renderer().style().preserves3D(); }
 inline int RenderLayer::zIndex() const { return renderer().style().usedZIndex(); }
 
-#if ENABLE(CSS_COMPOSITING)
 inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode(); } // FIXME: Why ask the renderer this given we have m_blendMode?
-#endif
 
 inline bool RenderLayer::canUseOffsetFromAncestor() const
 {

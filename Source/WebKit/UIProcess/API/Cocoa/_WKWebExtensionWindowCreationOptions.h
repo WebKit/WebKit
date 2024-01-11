@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion This class holds the various options that influence the behavior and initial state of a newly created window.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a new window.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(14.2), ios(17.2))
 @interface _WKWebExtensionWindowCreationOptions : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;

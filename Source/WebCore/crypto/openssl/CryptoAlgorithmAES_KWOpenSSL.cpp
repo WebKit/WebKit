@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_KW.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyAES.h"
 #include "OpenSSLUtilities.h"
 
@@ -82,5 +80,3 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const Cryp
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

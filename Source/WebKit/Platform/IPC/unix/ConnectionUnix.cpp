@@ -213,7 +213,7 @@ bool Connection::processMessage()
     if (!decoder)
         return false;
 
-    processIncomingMessage(WTFMove(decoder));
+    processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
 
     if (m_readBuffer.size() > messageLength) {
         memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBuffer.size() - messageLength);

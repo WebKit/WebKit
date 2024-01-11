@@ -29,10 +29,10 @@
 #include "NetworkProcessSupplement.h"
 #include <pal/SessionID.h>
 #include <stdint.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakRef.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
@@ -94,7 +94,7 @@ private:
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
 
-    CheckedRef<NetworkProcess> m_process;
+    WeakRef<NetworkProcess> m_process;
 };
 
 #if PLATFORM(COCOA)

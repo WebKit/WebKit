@@ -237,6 +237,24 @@ class Checkout(object):
         if not track and self.is_updated(branch, remote=remote):
             return False
 
+        # Make an attempt to push commits one-at-a-time to ensure we get CI jobs for each commit
+        # Only push commits one-at-a-time if we are a) on main or b) have less than 50 individual commits.
+        # This prevents branch-management from spinning up thousands of CI jobs or causing commits.webkit.org to hang.
+        sentinel = run(
+            [self.repository.executable(), 'rev-list', '--count', '{}/{}..{}'.format(remote, dest_branch or branch, branch)],
+            cwd=self.repository.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        )
+        num_commits = 1 if sentinel.returncode else int(sentinel.stdout.rstrip())
+        while num_commits > 1 and (num_commits < 50 or branch == self.repository.default_branch):
+            num_commits -= 1
+            if run(
+                [self.repository.executable(), 'push', remote, '{}~{}:{}'.format(branch, num_commits, dest_branch or branch)],
+                cwd=self.repository.root_path,
+            ).returncode:
+                break
+
         return not run(
             [self.repository.executable(), 'push', remote, '{}:{}'.format(branch, dest_branch or branch)],
             cwd=self.repository.root_path,

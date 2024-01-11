@@ -465,8 +465,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Node shadowRoot(Element host);
 
     DOMString shadowRootType(Node root);
-    DOMString shadowPseudoId(Element element);
-    undefined setShadowPseudoId(Element element, [AtomString] DOMString id);
+    DOMString userAgentPart(Element element);
+    undefined setUserAgentPart(Element element, [AtomString] DOMString part);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 
@@ -1015,6 +1015,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     boolean hasTransientActivation();
 
+    boolean hasHistoryActionActivation();
+
     GCObservation? observeGC(any observed);
 
     undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
@@ -1122,6 +1124,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     Promise<undefined> terminateServiceWorker(ServiceWorker worker);
     Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
+    undefined terminateWebContentProcess();
 
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
     [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
@@ -1291,6 +1294,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined acceptTypedArrays(Int32Array target);
 
     boolean consumeTransientActivation();
+
+    boolean consumeHistoryActionUserActivation();
 
     SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
 

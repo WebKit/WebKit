@@ -2248,6 +2248,40 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return range ? range.platformData().bridgingAutorelease() : nil;
     }
 
+    // Used by LayoutTests only, not by AT clients.
+    if (UNLIKELY([attributeName isEqualToString:@"AXControllers"]))
+        return makeNSArray(backingObject->controllers());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXControllerFor"]))
+        return makeNSArray(backingObject->controlledObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXDescribedBy"]))
+        return makeNSArray(backingObject->describedByObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXDescriptionFor"]))
+        return makeNSArray(backingObject->descriptionForObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXDetailsFor"]))
+        return makeNSArray(backingObject->detailsForObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXErrorMessageFor"]))
+        return makeNSArray(backingObject->errorMessageForObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXFlowFrom"]))
+        return makeNSArray(backingObject->flowFromObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXFlowTo"]))
+        return makeNSArray(backingObject->flowToObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXLabelledBy"]))
+        return makeNSArray(backingObject->labelledByObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXLabelFor"]))
+        return makeNSArray(backingObject->labelForObjects());
+
+    if (UNLIKELY([attributeName isEqualToString:@"AXOwners"]))
+        return makeNSArray(backingObject->owners());
+
     return nil;
 }
 

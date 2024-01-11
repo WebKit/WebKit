@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FileSystemDirectoryHandle.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"

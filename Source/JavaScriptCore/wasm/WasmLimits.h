@@ -59,6 +59,9 @@ constexpr size_t maxFunctionReturns = 1000;
 constexpr size_t maxTableEntries = 10000000;
 constexpr unsigned maxTables = 1000000;
 
+// Limit of GC arrays in bytes. This is not included in the limits in the
+// JS API spec, but we set a limit to avoid complicated boundary conditions.
+constexpr size_t maxArraySizeInBytes = 1 << 30;
 
 } } // namespace JSC::Wasm
 

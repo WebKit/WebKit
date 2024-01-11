@@ -90,7 +90,7 @@ public:
     virtual void updateSelectedChild() { }
 
 protected:
-    MathMLElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLElement);
+    MathMLElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     bool childShouldCreateRenderer(const Node&) const override;

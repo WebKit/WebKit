@@ -1,76 +1,76 @@
 
-FAIL CSS Transitions: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible] assert_equals: expected "visible " but got "hidden "
+PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible]
+PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0) should be [visible]
+PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible]
+PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden]
 PASS CSS Transitions: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden]
-FAIL CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible] assert_equals: expected "visible " but got "hidden "
-FAIL CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible] assert_equals: expected "visible " but got "hidden "
+PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible]
+PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0) should be [visible]
+PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible]
+PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden]
 PASS CSS Transitions with transition: all: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden]
 PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible]
 PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (0) should be [visible]
 PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible]
 PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible]
-FAIL CSS Animations: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden]
 PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (-1) should be [visible]
 PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (0) should be [visible]
 PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (0.1) should be [visible]
 PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (0.9) should be [visible]
-FAIL Web Animations: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Transitions: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Transitions: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (1) should be [hidden]
+PASS Web Animations: property <content-visibility> from [visible] to [hidden] at (1.5) should be [hidden]
+PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden]
+PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden]
 PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (0.1) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (0.9) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (1) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [hidden] to [visible] at (1.5) should be [visible]
-FAIL CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden]
+PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (0.1) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (0.9) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (1) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [visible] at (1.5) should be [visible]
-FAIL CSS Animations: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden]
 PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (0.1) should be [visible]
 PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (0.9) should be [visible]
 PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (1) should be [visible]
 PASS CSS Animations: property <content-visibility> from [hidden] to [visible] at (1.5) should be [visible]
-FAIL Web Animations: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (-1) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (0) should be [hidden]
 PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (0.1) should be [visible]
 PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (0.9) should be [visible]
 PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (1) should be [visible]
 PASS Web Animations: property <content-visibility> from [hidden] to [visible] at (1.5) should be [visible]
-PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (-0.3) should be [visible]
-PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (0) should be [visible]
-PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (0.3) should be [visible]
+FAIL CSS Transitions: property <content-visibility> from [auto] to [visible] at (-0.3) should be [visible] assert_equals: expected "visible " but got "auto "
+FAIL CSS Transitions: property <content-visibility> from [auto] to [visible] at (0) should be [visible] assert_equals: expected "visible " but got "auto "
+FAIL CSS Transitions: property <content-visibility> from [auto] to [visible] at (0.3) should be [visible] assert_equals: expected "visible " but got "auto "
 PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (0.5) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (0.6) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (1) should be [visible]
 PASS CSS Transitions: property <content-visibility> from [auto] to [visible] at (1.5) should be [visible]
-PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (-0.3) should be [visible]
-PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0) should be [visible]
-PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0.3) should be [visible]
+FAIL CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (-0.3) should be [visible] assert_equals: expected "visible " but got "auto "
+FAIL CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0) should be [visible] assert_equals: expected "visible " but got "auto "
+FAIL CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0.3) should be [visible] assert_equals: expected "visible " but got "auto "
 PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0.5) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (0.6) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (1) should be [visible]
 PASS CSS Transitions with transition: all: property <content-visibility> from [auto] to [visible] at (1.5) should be [visible]
-FAIL CSS Animations: property <content-visibility> from [auto] to [visible] at (-0.3) should be [auto] assert_equals: expected "auto " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [auto] to [visible] at (0) should be [auto] assert_equals: expected "auto " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [auto] to [visible] at (0.3) should be [auto] assert_equals: expected "auto " but got "visible "
+PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (-0.3) should be [auto]
+PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (0) should be [auto]
+PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (0.3) should be [auto]
 PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (0.5) should be [visible]
 PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (0.6) should be [visible]
 PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (1) should be [visible]
 PASS CSS Animations: property <content-visibility> from [auto] to [visible] at (1.5) should be [visible]
-FAIL Web Animations: property <content-visibility> from [auto] to [visible] at (-0.3) should be [auto] assert_equals: expected "auto " but got "visible "
-FAIL Web Animations: property <content-visibility> from [auto] to [visible] at (0) should be [auto] assert_equals: expected "auto " but got "visible "
-FAIL Web Animations: property <content-visibility> from [auto] to [visible] at (0.3) should be [auto] assert_equals: expected "auto " but got "visible "
+PASS Web Animations: property <content-visibility> from [auto] to [visible] at (-0.3) should be [auto]
+PASS Web Animations: property <content-visibility> from [auto] to [visible] at (0) should be [auto]
+PASS Web Animations: property <content-visibility> from [auto] to [visible] at (0.3) should be [auto]
 PASS Web Animations: property <content-visibility> from [auto] to [visible] at (0.5) should be [visible]
 PASS Web Animations: property <content-visibility> from [auto] to [visible] at (0.6) should be [visible]
 PASS Web Animations: property <content-visibility> from [auto] to [visible] at (1) should be [visible]
@@ -105,14 +105,14 @@ PASS CSS Transitions with transition: all: property <content-visibility> from [h
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [hidden] at (0.5) should be [hidden]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [hidden] at (1) should be [hidden]
 PASS CSS Transitions with transition: all: property <content-visibility> from [hidden] to [hidden] at (1.5) should be [hidden]
-FAIL CSS Animations: property <content-visibility> from [hidden] to [hidden] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [hidden] to [hidden] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [hidden] to [hidden] at (0.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [hidden] to [hidden] at (1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL CSS Animations: property <content-visibility> from [hidden] to [hidden] at (1.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [hidden] at (-1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [hidden] at (0) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [hidden] at (0.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [hidden] at (1) should be [hidden] assert_equals: expected "hidden " but got "visible "
-FAIL Web Animations: property <content-visibility> from [hidden] to [hidden] at (1.5) should be [hidden] assert_equals: expected "hidden " but got "visible "
+PASS CSS Animations: property <content-visibility> from [hidden] to [hidden] at (-1) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [hidden] to [hidden] at (0) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [hidden] to [hidden] at (0.5) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [hidden] to [hidden] at (1) should be [hidden]
+PASS CSS Animations: property <content-visibility> from [hidden] to [hidden] at (1.5) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [hidden] at (-1) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [hidden] at (0) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [hidden] at (0.5) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [hidden] at (1) should be [hidden]
+PASS Web Animations: property <content-visibility> from [hidden] to [hidden] at (1.5) should be [hidden]
 

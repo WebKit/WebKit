@@ -30,6 +30,7 @@
 #include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
 #include "Path.h"
+#include "RuntimeApplicationChecks.h"
 #include "TextSpacing.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
@@ -134,13 +135,13 @@ public:
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
-    float widthOfTextRange(const TextRun&, unsigned from, unsigned to, WeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
-    WEBCORE_EXPORT float width(const TextRun&, WeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthOfTextRange(const TextRun&, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
+    WEBCORE_EXPORT float width(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     WEBCORE_EXPORT float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
     WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
-    static float width(TextLayout&, unsigned from, unsigned len, WeakHashSet<const Font>* fallbackFonts = nullptr);
+    static float width(TextLayout&, unsigned from, unsigned len, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr);
     float widthOfSpaceString() const
     {
         return width(TextRun { String { &space, 1 } });
@@ -179,6 +180,7 @@ public:
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
     const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
+    float zeroWidth() const;
     float tabWidth(const Font&, const TabSize&, float, Font::SyntheticBoldInclusion) const;
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
@@ -229,7 +231,7 @@ private:
     GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, WeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float floatWidthForSimpleText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
@@ -240,7 +242,7 @@ private:
     static bool canExpandAroundIdeographsInComplexText();
 
     GlyphBuffer layoutComplexText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    float floatWidthForComplexText(const TextRun&, WeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float floatWidthForComplexText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
@@ -265,16 +267,27 @@ public:
     static CodePath s_codePath;
 
     FontSelector* fontSelector() const;
+    static bool isInvisibleReplacementObjectCharacter(char32_t character)
+    {
+        if (character != objectReplacementCharacter)
+            return false;
+#if PLATFORM(COCOA)
+        // We make an exception for Books because some already available books when converted to EPUBS might contain object replacement character that should not be visible to the user.
+        return CocoaApplication::isIBooks();
+#else
+        return false;
+#endif
+    }
     static bool treatAsSpace(char32_t c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
     static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(char32_t character)
     {
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        return isControlCharacter(character) || isDefaultIgnorableCodePoint(character);
+        return isControlCharacter(character) || isDefaultIgnorableCodePoint(character) || isInvisibleReplacementObjectCharacter(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
     static bool treatAsZeroWidthSpace(char32_t c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
-    static bool treatAsZeroWidthSpaceInComplexScript(char32_t c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
+    static bool treatAsZeroWidthSpaceInComplexScript(char32_t c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace || isInvisibleReplacementObjectCharacter(c); }
     static bool canReceiveTextEmphasis(char32_t);
 
     static inline UChar normalizeSpaces(UChar character)

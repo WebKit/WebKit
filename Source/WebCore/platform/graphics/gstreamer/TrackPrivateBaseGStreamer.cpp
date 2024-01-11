@@ -183,8 +183,10 @@ void TrackPrivateBaseGStreamer::disconnect()
         m_bestUpstreamPad.clear();
     }
 
-    if (m_pad)
+    if (m_pad) {
+        g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         m_pad.clear();
+    }
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()

@@ -97,8 +97,8 @@ namespace JSC { namespace LLInt {
     LLINT_BEGIN_NO_SET_PC();                    \
     LLINT_SET_PC_FOR_STUBS()
 
-inline JSValue getNonConstantOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->uncheckedR(operand).jsValue(); }
-inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->r(operand).jsValue(); }
+static inline JSValue getNonConstantOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->uncheckedR(operand).jsValue(); }
+static inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->r(operand).jsValue(); }
 
 #define LLINT_RETURN_TWO(first, second) do {       \
         return encodeResult(first, second);        \
@@ -358,7 +358,7 @@ static FunctionAllowlist& ensureGlobalJITAllowlist()
     return baselineAllowlist;
 }
 
-inline bool shouldJIT(CodeBlock* codeBlock)
+static inline bool shouldJIT(CodeBlock* codeBlock)
 {
     if (!Options::bytecodeRangeToJITCompile().isInRange(codeBlock->instructionsSize())
         || !ensureGlobalJITAllowlist().contains(codeBlock))
@@ -368,7 +368,7 @@ inline bool shouldJIT(CodeBlock* codeBlock)
 }
 
 // Returns true if we should try to OSR.
-inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
+static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
 {
     DeferGCForAWhile deferGC(vm); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(Options::useJIT());
@@ -595,7 +595,9 @@ extern "C" UGPRPair llint_link_call(CallFrame* calleeFrame, JSCell* globalObject
 
 extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
 {
+    VM& vm = globalObject->vm();
     JSCell* calleeAsFunctionCellIgnored;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     return virtualForWithFunction(jsCast<JSGlobalObject*>(globalObject), calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 
@@ -1928,7 +1930,7 @@ static UGPRPair handleHostCall(CallFrame* calleeFrame, JSValue callee, CodeSpeci
     LLINT_CALL_THROW(globalObject, createNotAConstructorError(globalObject, callee));
 }
 
-inline UGPRPair setUpCall(CallFrame* calleeFrame, CodeSpecializationKind kind, JSValue calleeAsValue)
+static inline UGPRPair setUpCall(CallFrame* calleeFrame, CodeSpecializationKind kind, JSValue calleeAsValue)
 {
     CallFrame* callFrame = calleeFrame->callerFrame();
     CodeBlock* callerCodeBlock = callFrame->codeBlock();
@@ -2056,7 +2058,7 @@ enum class SetArgumentsWith {
 };
 
 template<typename Op, SetArgumentsWith set>
-inline UGPRPair varargsSetup(CallFrame* callFrame, const JSInstruction* pc, CodeSpecializationKind)
+static inline UGPRPair varargsSetup(CallFrame* callFrame, const JSInstruction* pc, CodeSpecializationKind)
 {
     LLINT_BEGIN_NO_SET_PC();
 
@@ -2106,7 +2108,7 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
     return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
 }
 
-inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
+static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
 {
     LLINT_BEGIN_NO_SET_PC();
     auto bytecode = pc->as<OpCallDirectEval>();
@@ -2350,14 +2352,14 @@ static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, Thro
 #endif
 }
 
-ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
+static ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
 {
     int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
     int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
     return alignedFrameSize - frameSize;
 }
 
-ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
+static ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
 {
     if (static_cast<unsigned>(argumentCountIncludingThis) >= codeBlock->numParameters())
         return 0;
@@ -2461,7 +2463,7 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
         valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
 }
 
-inline UGPRPair dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, JSInstructionStream::Ref pc)
+static inline UGPRPair dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, JSInstructionStream::Ref pc)
 {
     if (scope.exception())
         return encodeResult(returnToThrow(scope.vm()), nullptr);

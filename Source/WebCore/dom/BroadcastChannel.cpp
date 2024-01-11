@@ -118,7 +118,11 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
         return;
     }
 
-    downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
+    auto* workerLoaderProxy = downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy();
+    if (!workerLoaderProxy)
+        return;
+
+    workerLoaderProxy->postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
         task(downcast<Document>(context).protectedPage().get());
     });
 }

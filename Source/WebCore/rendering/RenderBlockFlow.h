@@ -54,8 +54,8 @@ enum LineCount {
 class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderBlockFlow);
 public:
-    RenderBlockFlow(Type, Element&, RenderStyle&&, OptionSet<RenderElementType> = { });
-    RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    RenderBlockFlow(Type, Element&, RenderStyle&&, OptionSet<BlockFlowFlag> = { });
+    RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<BlockFlowFlag> = { });
     virtual ~RenderBlockFlow();
         
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
@@ -439,8 +439,6 @@ protected:
     std::optional<LayoutUnit> lastLineBaseline() const override;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
-    bool isMultiColumnBlockFlow() const override { return multiColumnFlow(); }
-    
     void setComputedColumnCountAndWidth(int, LayoutUnit);
 
     LayoutUnit computedColumnWidth() const;

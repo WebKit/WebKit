@@ -27,8 +27,6 @@
 
 #include <wtf/RefPtr.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoKey;
@@ -39,5 +37,3 @@ struct CryptoKeyPair {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

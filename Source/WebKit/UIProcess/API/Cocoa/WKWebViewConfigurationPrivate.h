@@ -126,7 +126,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setContextMenuQRCodeDetectionEnabled:) BOOL _contextMenuQRCodeDetectionEnabled WK_API_AVAILABLE(macos(14.0));
 @property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, readwrite, setter=_setCPULimit:) double _cpuLimit WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, readwrite, setter=_setPageGroup:) WKPageGroupRef _pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.13.4, WK_MAC_TBA));
+@property (nonatomic, readwrite, setter=_setPageGroup:) WKPageGroupRef _pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.13.4, 14.2));
 #endif
 
 @property (nonatomic, setter=_setRequiresUserActionForAudioPlayback:) BOOL _requiresUserActionForAudioPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", macos(10.12, 10.12), ios(10.0, 10.0));

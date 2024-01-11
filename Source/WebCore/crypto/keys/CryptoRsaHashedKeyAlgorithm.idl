@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=WEB_CRYPTO,
     JSGenerateToJSObject
 ] dictionary CryptoRsaHashedKeyAlgorithm : CryptoRsaKeyAlgorithm {
     // The hash algorithm that is used with this key

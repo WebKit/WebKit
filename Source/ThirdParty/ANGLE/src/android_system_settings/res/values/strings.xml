@@ -27,14 +27,14 @@
     <string name="angle_general_title">General</string>
 
     <!-- This is the label for a toggle button.
-    When the toggle is enabled, we will use ANGLE for all PKGs, regardless of any other settings.
+    When the toggle is enabled, we will show a toast indicating that ANGLE is in use.
     This is also used as a Quick Settings tile label. -->
-    <string name="use_angle_for_all_apps">Use ANGLE for all apps</string>
+    <string name="show_angle_in_use_toast_title">Show toast</string>
 
     <!-- This is the label for a toggle button.
-    When the toggle is enabled, we will show a dialog box indicating that ANGLE is in use.
+    When the toggle is enabled, we will show a toast indicating that ANGLE is in use.
     This is also used as a Quick Settings tile label. -->
-    <string name="show_angle_in_use_dialog_box">Show dialog box when ANGLE is loaded</string>
+    <string name="show_angle_in_use_toast_summary">Show toast when ANGLE is loaded</string>
 
     <!-- ListPreference title listing installed packages [CHAR_LIMIT=50]-->
     <string name="select_opengl_driver_title">Select OpenGL Driver</string>

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -45,7 +45,7 @@ private:
     uint64_t messageDestinationID() final;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
-    CheckedRef<WebPageProxy> m_page;
+    WeakRef<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

@@ -36,7 +36,7 @@ struct ColorTargetState {
     TextureFormat format { TextureFormat::R8unorm };
 
     std::optional<BlendState> blend;
-    ColorWriteFlags writeMask { ColorWrite::All };
+    ColorWriteFlags writeMask { ColorWriteFlags_All };
 };
 
 } // namespace WebCore::WebGPU

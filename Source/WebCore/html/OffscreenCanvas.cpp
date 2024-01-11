@@ -57,6 +57,11 @@
 #include "WebGL2RenderingContext.h"
 #endif // ENABLE(WEBGL)
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+#include "LocalDomWindow.h"
+#include "Navigator.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
@@ -243,16 +248,26 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
         return { { std::nullopt } };
     }
     if (contextType == RenderingContextType::Webgpu) {
+#if HAVE(WEBGPU_IMPLEMENTATION)
         if (!m_context) {
             auto scope = DECLARE_THROW_SCOPE(state.vm());
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-            if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(this->scriptExecutionContext())) {
-                if (auto* gpu = globalScope->navigator().gpu())
+            auto* scriptExecutionContext = this->scriptExecutionContext();
+            if (scriptExecutionContext->isWorkerGlobalScope()) {
+                auto& globalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
+                if (auto* gpu = globalScope.navigator().gpu())
                     m_context = GPUCanvasContext::create(*this, *gpu);
+            } else if (scriptExecutionContext->isDocument()) {
+                auto& document = downcast<Document>(*scriptExecutionContext);
+                if (auto* domWindow = document.domWindow()) {
+                    if (auto* gpu = domWindow->navigator().gpu())
+                        m_context = GPUCanvasContext::create(*this, *gpu);
+                }
             }
         }
         if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get()))
             return { { WTFMove(context) } };
+#endif
         return { { std::nullopt } };
     }
 #if ENABLE(WEBGL)

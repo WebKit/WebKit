@@ -53,14 +53,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeFieldElement);
 DateTimeFieldElement::FieldOwner::~FieldOwner() = default;
 
 DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& fieldOwner)
-    : HTMLDivElement(divTag, document, CreateDateTimeFieldElement)
+    : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_fieldOwner(fieldOwner)
 {
-}
-
-void DateTimeFieldElement::initialize(const AtomString& pseudo)
-{
-    setPseudo(pseudo);
 }
 
 std::optional<Style::ResolvedStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
@@ -199,7 +194,7 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
     if (!firstChild())
         appendChild(Text::create(document(), String { emptyString() }));
 
-    Ref textNode = downcast<Text>(*firstChild());
+    Ref textNode = checkedDowncast<Text>(*firstChild());
     String newVisibleValue = visibleValue();
     if (textNode->wholeText() != newVisibleValue)
         textNode->replaceWholeText(newVisibleValue);

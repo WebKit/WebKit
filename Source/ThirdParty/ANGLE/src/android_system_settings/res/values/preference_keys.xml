@@ -17,7 +17,6 @@
 
 <resources>
     <string name="pref_key_angle_flags_category">angle_flags_category</string>
-    <string name="pref_key_all_angle">all_pkgs_use_angle</string>
     <string name="pref_key_angle_in_use_dialog">angle_in_use_dialog_box</string>
     <string name="pref_key_select_opengl_driver_category">select_opengl_driver_category</string>
     <string name="pref_key_installed_pkgs">installed_pkgs</string>

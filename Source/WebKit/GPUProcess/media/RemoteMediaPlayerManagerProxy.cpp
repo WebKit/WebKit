@@ -188,7 +188,7 @@ std::optional<ShareableBitmap::Handle> RemoteMediaPlayerManagerProxy::bitmapImag
     if (!context)
         return { };
 
-    context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
+    context->drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
 
     return bitmap->createHandle();
 }

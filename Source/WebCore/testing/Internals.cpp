@@ -1423,14 +1423,14 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
     }
 }
 
-const AtomString& Internals::shadowPseudoId(Element& element)
+const AtomString& Internals::userAgentPart(Element& element)
 {
-    return element.shadowPseudoId();
+    return element.userAgentPart();
 }
 
-void Internals::setShadowPseudoId(Element& element, const AtomString& id)
+void Internals::setUserAgentPart(Element& element, const AtomString& part)
 {
-    return element.setPseudo(id);
+    return element.setUserAgentPart(part);
 }
 
 ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
@@ -5493,6 +5493,24 @@ double Internals::lastHandledUserGestureTimestamp()
     return document->lastHandledUserGestureTimestamp().secondsSinceEpoch().value();
 }
 
+bool Internals::hasHistoryActionActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->hasHistoryActionActivation();
+    }
+    return false;
+}
+
+bool Internals::consumeHistoryActionUserActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->consumeHistoryActionUserActivation();
+    }
+    return false;
+}
+
 RefPtr<GCObservation> Internals::observeGC(JSC::JSValue value)
 {
     if (!value.isObject())
@@ -6164,6 +6182,11 @@ void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseD
     return ServiceWorkerProvider::singleton().serviceWorkerConnection().whenServiceWorkerIsTerminatedForTesting(worker.identifier(), [promise = WTFMove(promise)]() mutable {
         promise.resolve();
     });
+}
+
+void Internals::terminateWebContentProcess()
+{
+    exit(0);
 }
 
 #if ENABLE(APPLE_PAY)

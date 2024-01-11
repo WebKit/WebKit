@@ -122,7 +122,7 @@ public:
     void documentDetached(Document&);
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
-    bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
+    bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
     void didChangeRendererForDOMNode(Node&);
     void didAddEventListener(EventTarget&);
     void willRemoveEventListener(EventTarget&);
@@ -153,7 +153,7 @@ private:
     typedef HashMap<Inspector::Protocol::CSS::StyleSheetId, RefPtr<InspectorStyleSheet>> IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>> CSSStyleSheetToInspectorStyleSheet;
     typedef HashMap<RefPtr<Document>, Vector<RefPtr<InspectorStyleSheet>>> DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
-    typedef HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> PseudoClassHashSet;
+    typedef HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> PseudoClassHashSet;
 
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
     Element* elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);

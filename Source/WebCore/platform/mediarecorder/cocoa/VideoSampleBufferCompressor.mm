@@ -32,6 +32,7 @@
 #import <CoreMedia/CoreMedia.h>
 #import <Foundation/Foundation.h>
 #import <VideoToolbox/VTCompressionSession.h>
+#import <wtf/EnumTraits.h>
 #import <wtf/SoftLinking.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -171,7 +172,7 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
 
     error = VTSessionSetProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ProfileLevel, vtProfileLevel());
     if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for profile %d", error, m_profile);
+        RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for profile %hhu", error, enumToUnderlyingType(m_profile));
         if (m_profile != Profile::Baseline) {
             error = VTSessionSetProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ProfileLevel, PAL::kVTProfileLevel_H264_Baseline_AutoLevel);
             RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ProfileLevel failed with %d for default profile", error);

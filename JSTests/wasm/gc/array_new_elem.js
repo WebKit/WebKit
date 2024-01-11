@@ -462,7 +462,7 @@ function testAllElementSegmentKinds() {
          (i32.add (local.get $i) (i32.const 3)))
 
       (table $t 10 funcref)
-      (elem $e (offset (i32.const 4)) $f $g $f $g)
+      (elem $e funcref (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
 
       (func (export "test") (param $i i32) (result funcref)
          (i32.const 0)
@@ -504,7 +504,7 @@ function testAllElementSegmentKinds() {
       (func $g (param $i i32) (result i32)
          (i32.add (local.get $i) (i32.const 3)))
       (table $t 10 funcref)
-      (elem $e (table $t) (offset (i32.const 4)) func $f $g $f $g)
+      (elem $e funcref (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
       (func (export "test") (param $i i32) (result funcref)
          (i32.const 0)
          (i32.const 2)
@@ -525,7 +525,7 @@ function testAllElementSegmentKinds() {
       (func $g (param $i i32) (result i32)
          (i32.add (local.get $i) (i32.const 3)))
       (table $t 10 funcref)
-      (elem declare func $f $g $f $g)
+      (elem funcref (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
       (func (export "test") (param $i i32) (result funcref)
          (i32.const 0)
          (i32.const 2)
@@ -546,7 +546,7 @@ function testAllElementSegmentKinds() {
       (func $g (param $i i32) (result i32)
          (i32.add (local.get $i) (i32.const 3)))
       (table $t 10 funcref)
-      (elem (offset (i32.const 2)) $f $g $f $g)
+      (elem funcref (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
       (func (export "test") (param $i i32) (result funcref)
          (i32.const 0)
          (i32.const 2)
@@ -623,12 +623,14 @@ function testAllElementSegmentKinds() {
          (local.get $i)
          (array.get $a)
          (call_ref $fty)))
-`);
+    `);
 
-    var retVal = m.exports.test(0);
-    assert.eq(retVal, 44);
-    retVal = m.exports.test(1);
-    assert.eq(retVal, 45);
+    // Active element segments are dropped after init so can't be used for array.new_elem
+    assert.throws(
+      () => { m.exports.test(0) },
+      WebAssembly.RuntimeError,
+      "Offset + array length would exceed the length of an element segment (evaluating 'm.exports.test(0)')"
+    )
 
     m = instantiate(`
     (module
@@ -640,7 +642,7 @@ function testAllElementSegmentKinds() {
          (i32.add (local.get $i) (i32.const 3)))
       (table $t 10 funcref)
       (table $t1 1 funcref)
-      (elem $e (table $t) (offset (i32.const 4)) funcref (ref.func $f) (ref.func $g))
+      (elem $e funcref (ref.func $f) (ref.func $g))
       (func (export "test") (param $i i32) (result i32)
          (i32.const 0)
          (i32.const 0)

@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, setter=_setIncludesSelectionHighlighting:) BOOL _includesSelectionHighlighting WK_API_AVAILABLE(macos(13.3));
 #endif
 
-@property (nonatomic, setter=_setUsesTransparentBackground:) BOOL _usesTransparentBackground WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setUsesTransparentBackground:) BOOL _usesTransparentBackground WK_API_AVAILABLE(macos(14.2), ios(17.2));
 
 @end
 

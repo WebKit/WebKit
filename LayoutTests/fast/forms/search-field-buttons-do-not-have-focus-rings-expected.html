@@ -34,14 +34,14 @@
         const search = document.querySelector("input[type=search]");
 
         const coverCancel = document.querySelector("#cover-cancel");
-        const cancelButtonBounds = internals.shadowRoot(search).querySelector("div[pseudo='-webkit-search-cancel-button']").getBoundingClientRect();
+        const cancelButtonBounds = internals.shadowRoot(search).querySelector("div[useragentpart='-webkit-search-cancel-button']").getBoundingClientRect();
         coverCancel.style.left = `${Math.round(cancelButtonBounds.left) - 1}px`;
         coverCancel.style.top = `${Math.round(cancelButtonBounds.top) - 1}px`;
         coverCancel.style.width = `${Math.round(cancelButtonBounds.width) + 2}px`;
         coverCancel.style.height = `${Math.round(cancelButtonBounds.height) + 2}px`;
 
         const coverResults = document.querySelector("#cover-results");
-        const resultsButtonBounds = internals.shadowRoot(search).querySelector("div[pseudo='-webkit-search-results-button']").getBoundingClientRect();
+        const resultsButtonBounds = internals.shadowRoot(search).querySelector("div[useragentpart='-webkit-search-results-button']").getBoundingClientRect();
         coverResults.style.left = `${Math.round(resultsButtonBounds.left) - 1}px`;
         coverResults.style.top = `${Math.round(resultsButtonBounds.top) - 1}px`;
         coverResults.style.width = `${Math.round(resultsButtonBounds.width) + 2}px`;

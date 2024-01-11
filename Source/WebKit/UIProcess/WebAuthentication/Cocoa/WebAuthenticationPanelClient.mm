@@ -76,6 +76,8 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
         return _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched;
     if (status == WebAuthenticationStatus::LANoCredential)
         return _WKWebAuthenticationPanelUpdateLANoCredential;
+    if (status == WebAuthenticationStatus::KeyStoreFull)
+        return _WKWebAuthenticationPanelUpdateKeyStoreFull;
     ASSERT_NOT_REACHED();
     return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
 }

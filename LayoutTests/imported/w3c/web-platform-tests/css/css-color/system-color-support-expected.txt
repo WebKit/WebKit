@@ -1,0 +1,21 @@
+
+PASS System color Canvas works
+PASS System color CanvasText works
+PASS System color LinkText works
+PASS System color VisitedText works
+PASS System color ActiveText works
+PASS System color ButtonFace works
+PASS System color ButtonText works
+PASS System color ButtonBorder works
+PASS System color Field works
+PASS System color FieldText works
+PASS System color Highlight works
+PASS System color HighlightText works
+PASS System color SelectedItem works
+PASS System color SelectedItemText works
+PASS System color Mark works
+PASS System color MarkText works
+PASS System color GrayText works
+PASS System color AccentColor works
+PASS System color AccentColorText works
+
