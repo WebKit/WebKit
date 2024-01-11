@@ -1505,7 +1505,7 @@ bool CachedResourceLoader::shouldDeferImageLoad(const URL& url) const
 void CachedResourceLoader::reloadImagesIfNotDeferred()
 {
     for (auto& resource : m_documentResources.values()) {
-        CachedResourceHandle image =  dynamicDowncast<CachedImage>(*resource);
+        CachedResourceHandle image = dynamicDowncast<CachedImage>(*resource);
         if (image && resource->stillNeedsLoad() && clientDefersImage(resource->url()) == ImageLoading::Immediate)
             image->load(*this);
     }
