@@ -154,6 +154,11 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         return false;
     }
 
+    if (targetStructure->didTransition()) {
+        dataLogLnIf(verbose, "target did some transition, indicating non pure empty structure");
+        return false;
+    }
+
     // If the sourceStructure is frozen, we retrieve the last one before freezing.
     if (sourceStructure->transitionKind() == TransitionKind::Freeze) {
         dataLogLnIf(verbose, "source was frozen. Let's look into the previous structure");
@@ -171,6 +176,11 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
 
     if (!checkStrucure(sourceStructure))
         return false;
+
+    if (!sourceStructure->didTransition()) {
+        dataLogLnIf(verbose, "source didn't do some transition, indicating pure empty structure, not trying to use the fast path since we would like to see target as transitioned before at final form");
+        return false;
+    }
 
     if (targetStructure->inlineCapacity() != sourceStructure->inlineCapacity()) {
         dataLogLnIf(verbose, "source and target has different inline capacity");
