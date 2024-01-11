@@ -821,18 +821,10 @@ void webkit_dom_element_scroll_into_view_if_needed(WebKitDOMElement* self, gbool
 
 void webkit_dom_element_scroll_by_lines(WebKitDOMElement* self, glong lines)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
-    WebCore::Element* item = WebKit::core(self);
-    item->scrollByLines(lines);
 }
 
 void webkit_dom_element_scroll_by_pages(WebKitDOMElement* self, glong pages)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
-    WebCore::Element* item = WebKit::core(self);
-    item->scrollByPages(pages);
 }
 
 WebKitDOMHTMLCollection* webkit_dom_element_get_elements_by_class_name_as_html_collection(WebKitDOMElement* self, const gchar* name)

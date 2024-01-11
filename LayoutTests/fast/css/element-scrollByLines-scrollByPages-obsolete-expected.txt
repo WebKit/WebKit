@@ -1,4 +1,0 @@
-
-PASS Element.scrollByLines
-PASS Element.scrollByPages
-

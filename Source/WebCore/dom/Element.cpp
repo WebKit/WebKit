@@ -1263,32 +1263,6 @@ void Element::scrollTo(double x, double y)
     scrollTo(ScrollToOptions(x, y));
 }
 
-void Element::scrollByUnits(int units, ScrollGranularity granularity)
-{
-    protectedDocument()->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
-
-    CheckedPtr renderer = this->renderer();
-    if (!renderer)
-        return;
-
-    if (!renderer->hasNonVisibleOverflow())
-        return;
-
-    auto direction = units < 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
-    auto* stopElement = this;
-    downcast<RenderBox>(*renderer).scroll(direction, granularity, std::abs(units), &stopElement);
-}
-
-void Element::scrollByLines(int lines)
-{
-    scrollByUnits(lines, ScrollGranularity::Line);
-}
-
-void Element::scrollByPages(int pages)
-{
-    scrollByUnits(pages, ScrollGranularity::Page);
-}
-
 static double localZoomForRenderer(const RenderElement& renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each

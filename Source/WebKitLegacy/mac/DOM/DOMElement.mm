@@ -400,18 +400,6 @@ DOMElement *kit(WebCore::Element* value)
     unwrap(*self).scrollIntoViewIfNeeded(centerIfNeeded);
 }
 
-- (void)scrollByLines:(int)lines
-{
-    WebCore::JSMainThreadNullState state;
-    unwrap(*self).scrollByLines(lines);
-}
-
-- (void)scrollByPages:(int)pages
-{
-    WebCore::JSMainThreadNullState state;
-    unwrap(*self).scrollByPages(pages);
-}
-
 - (DOMNodeList *)getElementsByClassName:(NSString *)name
 {
     WebCore::JSMainThreadNullState state;
@@ -508,6 +496,14 @@ DOMElement *kit(WebCore::Element* value)
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName
 {
     return [self hasAttributeNS:namespaceURI localName:localName];
+}
+
+- (void)scrollByLines:(int)lines
+{
+}
+
+- (void)scrollByPages:(int)pages
+{
 }
 
 @end

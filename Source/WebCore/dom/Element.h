@@ -213,10 +213,6 @@ public:
     virtual void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt);
     void scrollTo(double x, double y);
 
-    // These are only used by WebKitLegacy DOM API.
-    WEBCORE_EXPORT void scrollByLines(int lines);
-    WEBCORE_EXPORT void scrollByPages(int pages);
-
     WEBCORE_EXPORT int offsetLeftForBindings();
     WEBCORE_EXPORT int offsetLeft();
     WEBCORE_EXPORT int offsetTopForBindings();
@@ -830,8 +826,6 @@ private:
     void updateIdForDocument(HTMLDocument&, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
 
     ExceptionOr<Node*> insertAdjacent(const String& where, Ref<Node>&& newChild);
-
-    void scrollByUnits(int units, ScrollGranularity);
 
     bool childTypeAllowed(NodeType) const final;
 
