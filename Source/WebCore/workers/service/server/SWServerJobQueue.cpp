@@ -197,13 +197,13 @@ void SWServerJobQueue::scriptContextStarted(const ServiceWorkerJobDataIdentifier
 void SWServerJobQueue::install(SWServerRegistration& registration, ServiceWorkerIdentifier installingWorker)
 {
     // The Install algorithm should never be invoked with a null worker.
-    auto* worker = m_server.workerByID(installingWorker);
+    RefPtr worker = m_server.workerByID(installingWorker);
     RELEASE_ASSERT(worker);
 
     ASSERT(registration.preInstallationWorker() == worker);
     registration.setPreInstallationWorker(nullptr);
 
-    registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker);
+    registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker.get());
     registration.updateWorkerState(*worker, ServiceWorkerState::Installing);
 
     // Invoke Resolve Job Promise with job and registration.

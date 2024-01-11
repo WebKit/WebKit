@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-HashMap<ServiceWorkerIdentifier, SWServerWorker*>& SWServerWorker::allWorkers()
+HashMap<ServiceWorkerIdentifier, WeakPtr<SWServerWorker>>& SWServerWorker::allWorkers()
 {
-    static NeverDestroyed<HashMap<ServiceWorkerIdentifier, SWServerWorker*>> workers;
+    static NeverDestroyed<HashMap<ServiceWorkerIdentifier, WeakPtr<SWServerWorker>>> workers;
     return workers;
 }
 
-SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentifier identifier)
+RefPtr<SWServerWorker> SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentifier identifier)
 {
-    return allWorkers().get(identifier);
+    return allWorkers().get(identifier).get();
 }
 
 // FIXME: Use r-value references for script and contentSecurityPolicy

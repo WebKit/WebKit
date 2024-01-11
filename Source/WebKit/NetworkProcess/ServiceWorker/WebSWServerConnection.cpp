@@ -270,7 +270,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
             return;
         }
 
-        auto* worker = server().workerByID(task->serviceWorkerIdentifier());
+        RefPtr worker = server().workerByID(task->serviceWorkerIdentifier());
         if (!worker || worker->hasTimedOutAnyFetchTasks()) {
             task->cannotHandle();
             return;
@@ -307,13 +307,13 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
-    auto* destinationWorker = server().workerByID(destinationIdentifier);
+    RefPtr destinationWorker = server().workerByID(destinationIdentifier);
     if (!destinationWorker)
         return;
 
     std::optional<ServiceWorkerOrClientData> sourceData;
     WTF::switchOn(sourceIdentifier, [&](ServiceWorkerIdentifier identifier) {
-        if (auto* sourceWorker = server().workerByID(identifier))
+        if (RefPtr sourceWorker = server().workerByID(identifier))
             sourceData = ServiceWorkerOrClientData { sourceWorker->data() };
     }, [&](ScriptExecutionContextIdentifier identifier) {
         if (auto clientData = destinationWorker->findClientByIdentifier(identifier))
@@ -359,7 +359,7 @@ URL WebSWServerConnection::clientURLFromIdentifier(ServiceWorkerOrClientIdentifi
 
         return clientData->url;
     }, [&](ServiceWorkerIdentifier serviceWorkerIdentifier) -> URL {
-        auto* worker = server().workerByID(serviceWorkerIdentifier);
+        RefPtr worker = server().workerByID(serviceWorkerIdentifier);
         if (!worker)
             return { };
         return worker->data().scriptURL;
@@ -625,7 +625,7 @@ void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection
 
 void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
 {
-    auto* worker = server().workerByID(serviceWorkerIdentifier);
+    RefPtr worker = server().workerByID(serviceWorkerIdentifier);
     if (!worker)
         return callback();
     worker->terminate(WTFMove(callback));
@@ -633,7 +633,7 @@ void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier se
 
 void WebSWServerConnection::whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
-    auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(identifier);
     if (!worker || worker->isNotRunning())
         return completionHandler();
     worker->whenTerminated(WTFMove(completionHandler));
@@ -656,7 +656,7 @@ template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::S
 
 void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    auto* worker = server().workerByID(serviceWorkerIdentifier);
+    RefPtr worker = server().workerByID(serviceWorkerIdentifier);
     if (!worker)
         return;
 

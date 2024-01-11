@@ -56,7 +56,7 @@ struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
 enum class WorkerType : bool;
 
-class SWServerWorker : public RefCounted<SWServerWorker> {
+class SWServerWorker : public RefCounted<SWServerWorker>,  public CanMakeWeakPtr<SWServerWorker> {
 public:
     template <typename... Args> static Ref<SWServerWorker> create(Args&&... args)
     {
@@ -113,8 +113,8 @@ public:
     WEBCORE_EXPORT void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
 
-    WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
-    static HashMap<ServiceWorkerIdentifier, SWServerWorker*>& allWorkers();
+    WEBCORE_EXPORT static RefPtr<SWServerWorker> existingWorkerForIdentifier(ServiceWorkerIdentifier);
+    static HashMap<ServiceWorkerIdentifier, WeakPtr<SWServerWorker>>& allWorkers();
 
     const ServiceWorkerData& data() const { return m_data; }
     ServiceWorkerContextData contextData() const;

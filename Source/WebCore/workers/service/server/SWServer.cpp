@@ -97,9 +97,9 @@ SWServer::~SWServer()
     allServers().remove(this);
 }
 
-SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
+RefPtr<SWServerWorker> SWServer::workerByID(ServiceWorkerIdentifier identifier) const
 {
-    auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(identifier);
     ASSERT(!worker || worker->server() == this);
     return worker;
 }
@@ -1675,7 +1675,7 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
             return;
         }
 
-        auto* worker = workerByID(serviceWorkerIdentifier);
+        RefPtr worker = workerByID(serviceWorkerIdentifier);
         if (!worker) {
             callback(makeUnexpected(ShouldSkipEvent::No));
             return;
@@ -1696,7 +1696,7 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
 
 void SWServer::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin, const Function<void(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, const ServiceWorkerData&, const String&)>& callbackIfClientIsReady)
 {
-    auto* sourceServiceWorker = workerByID(sourceIdentifier);
+    RefPtr sourceServiceWorker = workerByID(sourceIdentifier);
     if (!sourceServiceWorker)
         return;
 

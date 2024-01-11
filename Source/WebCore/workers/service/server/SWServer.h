@@ -184,7 +184,7 @@ public:
     void fireInstallEvent(SWServerWorker&);
     void runServiceWorkerAndFireActivateEvent(SWServerWorker&);
 
-    WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
+    WEBCORE_EXPORT RefPtr<SWServerWorker> workerByID(ServiceWorkerIdentifier) const;
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ScriptExecutionContextIdentifier&) const;
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> topLevelServiceWorkerClientFromPageIdentifier(const ClientOrigin&, PageIdentifier) const;
     String serviceWorkerClientUserAgent(const ClientOrigin&) const;
