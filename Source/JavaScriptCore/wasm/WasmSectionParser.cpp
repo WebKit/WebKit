@@ -45,6 +45,7 @@ namespace JSC { namespace Wasm {
 auto SectionParser::parseType() -> PartialResult
 {
     uint32_t count;
+    uint32_t recursionGroupCount = 0;
 
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big ", count, " maximum ", maxTypes);
@@ -85,6 +86,8 @@ auto SectionParser::parseType() -> PartialResult
                 return fail(i, "th type failed to parse because rec types are not enabled");
 
             WASM_FAIL_IF_HELPER_FAILS(parseRecursionGroup(i, signature));
+            ++recursionGroupCount;
+            WASM_PARSER_FAIL_IF(recursionGroupCount > maxNumberOfRecursionGroups, "number of recursion groups exceeded the limit of ", maxNumberOfRecursionGroups);
             break;
         }
         case TypeKind::Sub:
@@ -119,14 +122,18 @@ auto SectionParser::parseType() -> PartialResult
                     RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
                     TypeInformation::registerCanonicalRTTForType(projection->index());
                     m_info->rtts.unsafeAppendWithoutCapacityCheck(TypeInformation::getCanonicalRTT(projection->index()));
-                    if (signature->is<Subtype>())
+                    if (signature->is<Subtype>()) {
+                        WASM_PARSER_FAIL_IF(m_info->rtts.last()->displaySize() > maxSubtypeDepth, "subtype depth for Type section's ", i, "th signature exceeded the limits of ", maxSubtypeDepth);
                         WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(projection->unroll(), group));
+                    }
                     m_info->typeSignatures.unsafeAppendWithoutCapacityCheck(projection.releaseNonNull());
                 } else {
                     TypeInformation::registerCanonicalRTTForType(signature->index());
                     m_info->rtts.unsafeAppendWithoutCapacityCheck(TypeInformation::getCanonicalRTT(signature->index()));
-                    if (signature->is<Subtype>())
+                    if (signature->is<Subtype>()) {
+                        WASM_PARSER_FAIL_IF(m_info->rtts.last()->displaySize() > maxSubtypeDepth, "subtype depth for Type section's ", i, "th signature exceeded the limits of ", maxSubtypeDepth);
                         WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signature->unroll(), { }));
+                    }
                     m_info->typeSignatures.unsafeAppendWithoutCapacityCheck(signature.releaseNonNull());
                 }
             }
@@ -1018,7 +1025,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
             if (def.is<Subtype>())
                 WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(def, recursionGroup));
         }
-    } else {
+    } else if (typeCount) {
         if (!firstSignature->hasRecursiveReference()) {
             TypeInformation::registerCanonicalRTTForType(firstSignature->index());
             m_info->rtts.unsafeAppendWithoutCapacityCheck(TypeInformation::getCanonicalRTT(firstSignature->index()));

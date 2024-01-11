@@ -39,6 +39,13 @@ function testRecDeclaration() {
     "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type"
   );
 
+  // Test a zero-length recursion group.
+  assert.throws(
+    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x01\x4e\x80\x80\x80\x80\0xC0")),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 14: parsing ended before the end of Type section (evaluating 'new WebAssembly.Module(buffer)"
+  );
+
   /*
    *  Test invalid index in a recursion group with more than one type.
    *
