@@ -282,8 +282,8 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching()) {
         if (CachedResource* existing = memoryCache.resourceForRequest(request.resourceRequest(), page.sessionID())) {
-            if (is<CachedCSSStyleSheet>(*existing))
-                return downcast<CachedCSSStyleSheet>(existing);
+            if (auto* cssStyleSheet = dynamicDowncast<CachedCSSStyleSheet>(*existing))
+                return cssStyleSheet;
             memoryCache.remove(*existing);
         }
     }
@@ -953,9 +953,8 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type, L
 
 static inline bool isSVGImageCachedResource(const CachedResource* resource)
 {
-    if (!resource || !is<CachedImage>(*resource))
-        return false;
-    return downcast<CachedImage>(*resource).hasSVGImage();
+    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
+    return cachedImage && cachedImage->hasSVGImage();
 }
 
 static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
@@ -1169,10 +1168,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 if (auto metricsFromResource = resource->takeNetworkLoadMetrics(); metricsFromResource && documentLoader && metricsFromResource->redirectStart >= documentLoader->timing().timeOrigin())
                     metrics = WTFMove(metricsFromResource);
                 auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorType(), loadTiming, resource->response(), metrics ? *metrics : NetworkLoadMetrics::emptyMetrics(), *request.origin());
-                if (initiatorContext == InitiatorContext::Worker) {
-                    ASSERT(is<CachedRawResource>(resource.get()));
+                if (initiatorContext == InitiatorContext::Worker)
                     downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));
-                } else {
+                else {
                     ASSERT(initiatorContext == InitiatorContext::Document);
                     m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorType(), &frame);
                     m_resourceTimingInfo.addResourceTiming(*resource.get(), *document(), WTFMove(resourceTiming));
@@ -1507,8 +1505,9 @@ bool CachedResourceLoader::shouldDeferImageLoad(const URL& url) const
 void CachedResourceLoader::reloadImagesIfNotDeferred()
 {
     for (auto& resource : m_documentResources.values()) {
-        if (is<CachedImage>(*resource) && resource->stillNeedsLoad() && clientDefersImage(resource->url()) == ImageLoading::Immediate)
-            downcast<CachedImage>(*resource).load(*this);
+        CachedResourceHandle image =  dynamicDowncast<CachedImage>(*resource);
+        if (image && resource->stillNeedsLoad() && clientDefersImage(resource->url()) == ImageLoading::Immediate)
+            image->load(*this);
     }
 }
 
@@ -1715,18 +1714,18 @@ Vector<CachedResource*> CachedResourceLoader::visibleResourcesToPrioritize()
     Vector<CachedResource*> toPrioritize;
 
     for (auto& resource : m_documentResources.values()) {
-        if (!is<CachedImage>(resource.get()))
+        auto* cachedImage = dynamicDowncast<CachedImage>(*resource);
+        if (!cachedImage)
             continue;
-        auto& cachedImage = downcast<CachedImage>(*resource);
-        if (!cachedImage.isLoading())
+        if (!cachedImage->isLoading())
             continue;
-        if (!cachedImage.url().protocolIsInHTTPFamily())
+        if (!cachedImage->url().protocolIsInHTTPFamily())
             continue;
-        if (!cachedImage.loader())
+        if (!cachedImage->loader())
             continue;
-        if (!cachedImage.isVisibleInViewport(*document()))
+        if (!cachedImage->isVisibleInViewport(*document()))
             continue;
-        toPrioritize.append(&cachedImage);
+        toPrioritize.append(cachedImage);
     }
 
     return toPrioritize;

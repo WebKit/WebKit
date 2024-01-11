@@ -546,10 +546,11 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
     Vector<String> identifiers;
     for (auto& node : nodes) {
-        if (!is<HTMLAttachmentElement>(node))
+        auto* attachment = dynamicDowncast<HTMLAttachmentElement>(node.get());
+        if (!attachment)
             continue;
 
-        auto uniqueIdentifier = downcast<HTMLAttachmentElement>(node.get()).uniqueIdentifier();
+        auto uniqueIdentifier = attachment->uniqueIdentifier();
         if (uniqueIdentifier.isEmpty())
             continue;
 
@@ -586,17 +587,16 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
     HashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
     Ref documentStyleSheets = document->styleSheets();
     for (unsigned index = 0; index < documentStyleSheets->length(); ++index) {
-        RefPtr styleSheet = documentStyleSheets->item(index);
-        if (!is<CSSStyleSheet>(styleSheet))
+        RefPtr cssStyleSheet = dynamicDowncast<CSSStyleSheet>(documentStyleSheets->item(index));
+        if (!cssStyleSheet)
             continue;
 
-        auto& cssStyleSheet = downcast<CSSStyleSheet>(*styleSheet);
-        if (uniqueCSSStyleSheets.contains(&cssStyleSheet))
+        if (uniqueCSSStyleSheets.contains(cssStyleSheet.get()))
             continue;
 
         HashSet<RefPtr<CSSStyleSheet>> cssStyleSheets;
-        cssStyleSheets.add(&cssStyleSheet);
-        cssStyleSheet.getChildStyleSheets(cssStyleSheets);
+        cssStyleSheets.add(cssStyleSheet.get());
+        cssStyleSheet->getChildStyleSheets(cssStyleSheets);
         for (auto& currentCSSStyleSheet : cssStyleSheets) {
             bool isExternalStyleSheet = !currentCSSStyleSheet->href().isEmpty() || currentCSSStyleSheet->ownerRule();
             if (!isExternalStyleSheet)

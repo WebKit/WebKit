@@ -924,7 +924,6 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     // Worker's Performance object.
     if (options().initiatorContext == InitiatorContext::Worker) {
         ASSERT(m_origin);
-        ASSERT(is<CachedRawResource>(*resource));
         downcast<CachedRawResource>(*resource).finishedTimingForWorkerLoad(WTFMove(resourceTiming));
         return;
     }

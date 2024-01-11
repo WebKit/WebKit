@@ -121,8 +121,8 @@ void CachedImage::setBodyDataFrom(const CachedResource& resource)
     if (m_imageObserver)
         m_imageObserver->cachedImages().add(*this);
 
-    if (m_image && is<SVGImage>(*m_image))
-        m_svgImageCache = makeUnique<SVGImageCache>(&downcast<SVGImage>(*m_image));
+    if (auto* svgImage = dynamicDowncast<SVGImage>(m_image.get()))
+        m_svgImageCache = makeUnique<SVGImageCache>(svgImage);
 }
 
 void CachedImage::didAddClient(CachedResourceClient& client)
@@ -183,9 +183,12 @@ void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)
     
 void CachedImage::removeAllClientsWaitingForAsyncDecoding()
 {
-    if (m_clientsWaitingForAsyncDecoding.isEmptyIgnoringNullReferences() || !hasImage() || !is<BitmapImage>(image()))
+    if (m_clientsWaitingForAsyncDecoding.isEmptyIgnoringNullReferences() || !hasImage())
         return;
-    downcast<BitmapImage>(image())->stopAsyncDecodingQueue();
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image());
+    if (!bitmapImage)
+        return;
+    bitmapImage->stopAsyncDecodingQueue();
     for (auto& client : m_clientsWaitingForAsyncDecoding)
         client.imageChanged(this);
     m_clientsWaitingForAsyncDecoding.clear();
@@ -391,8 +394,8 @@ inline void CachedImage::createImage()
     m_image = Image::create(*m_imageObserver);
 
     if (m_image) {
-        if (is<SVGImage>(*m_image))
-            m_svgImageCache = makeUnique<SVGImageCache>(&downcast<SVGImage>(*m_image));
+        if (auto* svgImage = dynamicDowncast<SVGImage>(*m_image))
+            m_svgImageCache = makeUnique<SVGImageCache>(svgImage);
 
         // Send queued container size requests.
         if (m_image->usesContainerSize()) {

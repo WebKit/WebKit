@@ -220,7 +220,10 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     if (completedURL.protocolIsJavaScript())
         return false;
 
-    bool hasFallbackContent = is<HTMLObjectElement>(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
+    bool hasFallbackContent = [&] {
+        auto* objectElement = dynamicDowncast<HTMLObjectElement>(ownerElement);
+        return objectElement && objectElement->hasFallbackContent();
+    }();
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
@@ -325,10 +328,12 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // FIXME: Can we remove this entirely? m_isComplete normally gets set to false when a load is committed.
     frame->loader().started();
    
-    auto* renderer = ownerElement.renderer();
-    auto* view = frame->view();
-    if (is<RenderWidget>(renderer) && view)
-        downcast<RenderWidget>(*renderer).setWidget(view);
+    {
+        CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(ownerElement.renderer());
+        RefPtr view = frame->view();
+        if (renderWidget && view)
+            renderWidget->setWidget(WTFMove(view));
+    }
 
     m_frame.loader().checkCallImplicitClose();
 
@@ -378,7 +383,8 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
         return false;
 
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
-    bool loadManually = is<PluginDocument>(document) && !m_containsPlugins && downcast<PluginDocument>(document).shouldLoadPluginManually();
+    auto* pluginDocument = dynamicDowncast<PluginDocument>(document);
+    bool loadManually = pluginDocument && !m_containsPlugins && pluginDocument->shouldLoadPluginManually();
 
     if (document.ownerElement() && document.settings().useImageDocumentForSubframePDF())
         loadManually = false;

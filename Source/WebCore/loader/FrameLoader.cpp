@@ -1116,7 +1116,8 @@ String FrameLoader::outgoingReferrer() const
     }
     if (!frame)
         return emptyString();
-    return is<LocalFrame>(*frame) ? downcast<LocalFrame>(*frame).loader().m_outgoingReferrer : emptyString();
+    auto* localFrame = dynamicDowncast<LocalFrame>(*frame);
+    return localFrame ? localFrame->loader().m_outgoingReferrer : emptyString();
 }
 
 String FrameLoader::outgoingOrigin() const
@@ -1251,10 +1252,10 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     started();
 
     if (RefPtr ownerElement = m_frame->ownerElement()) {
-        CheckedPtr ownerRenderer = ownerElement->renderer();
+        CheckedPtr ownerRenderer = dynamicDowncast<RenderWidget>(ownerElement->renderer());
         RefPtr view = m_frame->view();
-        if (is<RenderWidget>(ownerRenderer.get()) && view)
-            downcast<RenderWidget>(*ownerRenderer).setWidget(WTFMove(view));
+        if (ownerRenderer && view)
+            ownerRenderer->setWidget(WTFMove(view));
     }
 
     // We need to scroll to the fragment whether or not a hash change occurred, since

@@ -112,11 +112,11 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
 
 RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& context, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer, String&& taskMode)
 {
-    Document* document = nullptr;
-    if (is<WorkletGlobalScope>(context))
-        document = downcast<WorkletGlobalScope>(context).responsibleDocument();
-    else if (is<Document>(context))
-        document = &downcast<Document>(context);
+    RefPtr document = [&] {
+        if (auto* globalScope = dynamicDowncast<WorkletGlobalScope>(context))
+            return globalScope->responsibleDocument();
+        return dynamicDowncast<Document>(context);
+    }();
 
     if (auto* documentLoader = document ? document->loader() : nullptr)
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
@@ -130,8 +130,8 @@ RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& contex
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
     auto resourceURL = request.url();
-    if (is<WorkerGlobalScope>(context))
-        WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(context), WTFMove(request), client, options);
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
+        WorkerThreadableLoader::loadResourceSynchronously(*globalScope, WTFMove(request), client, options);
     else
         DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(context), WTFMove(request), client, options);
     context.didLoadResourceSynchronously(resourceURL);
