@@ -1044,11 +1044,13 @@ media/video-seek-to-current-time.html [ Failure ]
 
 webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
-webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Timeout ]
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
-webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
-webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
+#webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Timeout Failure ]
 
@@ -1881,7 +1883,8 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/video-srcObject-fit-fill.html [ Pass Timeout ]
-webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
 webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ Failure ]
@@ -2000,16 +2003,20 @@ webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-address.html [ Failure ]
 
 # Pending investigation.
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ] # Timeout.
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
@@ -3756,6 +3763,24 @@ webkit.org/b/266636 fast/multicol/last-set-crash.html [ Skip ]
 webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
 webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
+
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-addTransceiver.html [ Pass Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-localDescription.html [ Pass Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/MediaRecorder-multiple-start-stop.html [ Pass Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/MediaRecorder-video-bitrate.html [ Pass Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html [ Crash Pass Timeout Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/pause-recording-timeSlice.html [ Pass Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/pause-recording.html [ Pass Failure Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/video-rotation.html [ Failure Crash ]
+webkit.org/b/267411 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure Crash ]
+webkit.org/b/267411 imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html [ Pass Crash ]
+webkit.org/b/267411 media/now-playing-status-for-video-conference-web-page.html [ Pass Crash ]
 
 # End: Common failures between GTK and WPE.
 

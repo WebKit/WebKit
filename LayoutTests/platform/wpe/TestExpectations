@@ -999,7 +999,8 @@ webkit.org/b/257624 fast/scrolling/scrolling-inside-scrolled-overflowarea.html [
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Failure Pass ]
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-element.html [ Failure Pass ]
 webkit.org/b/257624 http/tests/workers/service/postmessage-after-terminate.https.html [ Crash Pass ]
-webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Failure Pass ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Failure Pass ]
 webkit.org/b/257624 imported/blink/compositing/squashing/attempting-to-squash-into-compositing-container.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ ImageOnlyFailure Pass ]

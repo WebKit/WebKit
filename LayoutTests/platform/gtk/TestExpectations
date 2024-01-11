@@ -1451,6 +1451,7 @@ webkit.org/b/252878 fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/252878 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/svg/parsing-fill-opacity.html [ Crash Pass Timeout ]
 webkit.org/b/252878 html5lib/webkit-resumer.html [ Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
 webkit.org/b/252878 http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html [ Crash Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/webrtc/webrtc-blocked-unknown.html [ Failure ]
@@ -1669,7 +1670,7 @@ webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections.html [ 
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Pass Timeout ]
 # Uncomment when webkit.org/b/266280 is fixed
 #webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
-webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Crash Failure Pass ]
+#webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Crash Failure Pass ]
 webkit.org/b/257624 imported/blink/compositing/background-color/background-color-drawn-over-child.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html [ Failure Pass ]
