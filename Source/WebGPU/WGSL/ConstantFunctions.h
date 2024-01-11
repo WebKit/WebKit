@@ -737,9 +737,22 @@ CONSTANT_FUNCTION(BitwiseShiftRight)
 // Constructors
 
 CONSTANT_CONSTRUCTOR(Bool, bool)
-CONSTANT_CONSTRUCTOR(I32, int32_t)
 CONSTANT_CONSTRUCTOR(F32, float)
 CONSTANT_CONSTRUCTOR(F16, half)
+
+CONSTANT_FUNCTION(I32)
+{
+    if (arguments.size()) {
+        if (auto* abstractInt = std::get_if<int64_t>(&arguments[0])) {
+            auto result = convertInteger<int32_t>(*abstractInt);
+            if (result)
+                return { *result };
+            return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'"));
+        }
+    }
+
+    return { constantConstructor<int32_t>(resultType, arguments) };
+}
 
 CONSTANT_FUNCTION(U32)
 {
