@@ -273,6 +273,9 @@ inline unsigned RenderTableCell::rowIndex() const
 
 inline bool RenderTableCell::isBaselineAligned() const
 {
+    if (auto alignContent = style().alignContent(); !alignContent.isNormal())
+        return alignContent.position() == ContentPosition::Baseline;
+
     VerticalAlign va = style().verticalAlign();
     return va == VerticalAlign::Baseline || va == VerticalAlign::TextBottom || va == VerticalAlign::TextTop || va == VerticalAlign::Super || va == VerticalAlign::Sub || va == VerticalAlign::Length;
 }

@@ -6219,9 +6219,15 @@ static void update_level_info(VP9_COMP *cpi, size_t *size, int arf_src_index) {
   }
 
   // update compression_ratio
+#ifdef WEBRTC_WEBKIT_BUILD
+  level_spec->compression_ratio = (double)level_stats->total_uncompressed_size *
+                                  (double)cm->bit_depth /
+                                  (double)level_stats->total_compressed_size / 8.0;
+#else
   level_spec->compression_ratio = (double)level_stats->total_uncompressed_size *
                                   cm->bit_depth /
                                   level_stats->total_compressed_size / 8.0;
+#endif
 
   // update max_col_tiles
   if (level_spec->max_col_tiles < (1 << cm->log2_tile_cols)) {

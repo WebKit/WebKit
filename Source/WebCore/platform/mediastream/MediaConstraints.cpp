@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -477,6 +478,20 @@ void IntConstraint::logAsInt() const
     WTFLogAlways("IntConstraint %d, min %d, max %d, exact %d, ideal %d", static_cast<int>(constraintType()), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
+StringConstraint StringConstraint::isolatedCopy() const
+{
+    return StringConstraint({ name().isolatedCopy(), constraintType(), dataType() }, crossThreadCopy(m_exact), crossThreadCopy(m_ideal));
+}
+
+MediaTrackConstraintSetMap MediaTrackConstraintSetMap::isolatedCopy() const
+{
+    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch };
+}
+
+MediaConstraints MediaConstraints::isolatedCopy() const
+{
+    return { crossThreadCopy(mandatoryConstraints), crossThreadCopy(advancedConstraints), isValid };
+}
 
 }
 

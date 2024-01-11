@@ -162,6 +162,11 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 #endif
         // Determine where the filename should be placed
         LayoutUnit contentLogicalLeft = logicalPaintOffset.x() + logicalLeftOffsetForContent();
+        if (style().isLeftToRightDirection())
+            contentLogicalLeft += textIndentOffset();
+        else
+            contentLogicalLeft -= textIndentOffset();
+
         HTMLInputElement* button = uploadButton();
         if (!button)
             return;

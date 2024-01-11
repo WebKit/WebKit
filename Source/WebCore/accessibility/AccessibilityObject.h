@@ -30,6 +30,7 @@
 #pragma once
 
 #include "AXCoreObject.h"
+#include "AXTextRun.h"
 #include "CharacterRange.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
@@ -59,10 +60,11 @@ class ScrollableArea;
 
 bool nodeHasPresentationRole(Node*);
 
-class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject>, public CanMakeCheckedPtr {
+class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
 public:
     virtual ~AccessibilityObject();
 
+    AXID treeID() const final;
     ProcessID processID() const override;
     String dbg() const final;
 
@@ -93,6 +95,7 @@ public:
     bool isInDescriptionListDetail() const override;
     bool isInDescriptionListTerm() const override;
     bool isInCell() const override;
+    bool isInRow() const;
 
     bool isDetached() const override;
 
@@ -166,6 +169,7 @@ public:
     // Table row support.
     bool isTableRow() const override { return false; }
     unsigned rowIndex() const override { return 0; }
+    bool ignoredByRowAncestor() const;
 
     // ARIA tree/grid row support.
     bool isARIATreeGridRow() const override { return false; }
@@ -380,6 +384,9 @@ public:
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
     unsigned textLength() const final;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    virtual AXTextRuns textRuns() { return { }; }
+#endif
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.

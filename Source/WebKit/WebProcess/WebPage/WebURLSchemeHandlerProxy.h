@@ -43,7 +43,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy>, public CanMakeCheckedPtr {
+class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy>, public CanMakeWeakPtr<WebURLSchemeHandlerProxy> {
 public:
     static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     {

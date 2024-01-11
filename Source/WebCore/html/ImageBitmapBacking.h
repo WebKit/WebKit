@@ -42,7 +42,6 @@ public:
 
     ImageBuffer* buffer() const;
     RefPtr<ImageBuffer> takeImageBuffer();
-    RefPtr<ImageBuffer> takeImageBufferForDifferentThread();
 
     unsigned width() const;
     unsigned height() const;

@@ -58,7 +58,6 @@ public:
     bool isSyncMessage() const { return messageIsSync(messageName()); }
 
     void setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply);
-    ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
 
     bool isFullySynchronousModeForTesting() const;
     void setFullySynchronousModeForTesting();

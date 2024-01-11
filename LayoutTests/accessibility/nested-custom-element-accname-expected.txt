@@ -1,0 +1,11 @@
+This test ensures that we compute the correct accessible name for nested custom elements.
+
+	AXTitle: test
+	AXDescription:
+	AXHelp:
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

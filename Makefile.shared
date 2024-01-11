@@ -93,6 +93,16 @@ CONFIG_OPTIONS += --no-asan
 endif
 endif
 
+ifneq ($(CC),)
+ifneq ($(CC),cc)  # Default value without -R flag
+XCODE_OPTIONS += CC=$(CC)
+endif
+endif
+
+ifneq ($(CPLUSPLUS),)
+XCODE_OPTIONS += CPLUSPLUS=$(CPLUSPLUS)
+endif
+
 ifeq ($(LIBFUZZER),YES)
 CONFIG_OPTIONS += --libfuzzer
 else

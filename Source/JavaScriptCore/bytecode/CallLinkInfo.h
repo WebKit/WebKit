@@ -54,6 +54,7 @@ struct CallFrameShuffleData;
 struct UnlinkedCallLinkInfo;
 struct BaselineUnlinkedCallLinkInfo;
 
+
 using CompileTimeCallLinkInfo = std::variant<OptimizingCallLinkInfo*, BaselineUnlinkedCallLinkInfo*, DFG::UnlinkedCallLinkInfo*>;
 
 class CallLinkInfo : public CallLinkInfoBase {
@@ -228,7 +229,7 @@ public:
     ExecutableBase* executable();
     
 #if ENABLE(JIT)
-    void setStub(Ref<PolymorphicCallStubRoutine>&&);
+    void setStub(JSCell* owner, Ref<PolymorphicCallStubRoutine>&&);
 #endif
     void clearStub();
 
@@ -335,6 +336,11 @@ public:
 #if ENABLE(JIT)
     GPRReg calleeGPR() const;
     GPRReg callLinkInfoGPR() const;
+
+    static ptrdiff_t offsetOfStub()
+    {
+        return OBJECT_OFFSETOF(CallLinkInfo, m_stub);
+    }
 #endif
 
     uint32_t slowPathCount()
@@ -402,7 +408,7 @@ protected:
         { }
 
         struct DataIC {
-            CodeBlock* m_codeBlock; // This is weekly held. And cleared whenever m_monomorphicCallDestination is changed.
+            CodeBlock* m_codeBlock; // This is weakly held. And cleared whenever m_monomorphicCallDestination is changed.
             CodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
         } dataIC;
 

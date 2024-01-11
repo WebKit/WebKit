@@ -13,7 +13,7 @@ This is a link.
 
       (interaction regions [
         (interaction (-4,-4) width=36.45 height=27)
-        (borderRadius 8.00)])
+        (cornerRadius 8.00)])
       )
     )
   )

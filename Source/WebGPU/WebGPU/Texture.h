@@ -31,6 +31,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUTextureImpl {
 };
@@ -83,6 +84,11 @@ public:
     static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
     static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
     static bool isCompressedFormat(WGPUTextureFormat);
+    static bool isRenderableFormat(WGPUTextureFormat, const Device&);
+    static bool isColorRenderableFormat(WGPUTextureFormat, const Device&);
+    static bool isDepthStencilRenderableFormat(WGPUTextureFormat, const Device&);
+    static uint32_t renderTargetPixelByteCost(WGPUTextureFormat);
+    static uint32_t renderTargetPixelByteAlignment(WGPUTextureFormat);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
@@ -104,6 +110,11 @@ public:
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice);
     bool isDestroyed() const;
     static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
+    static bool supportsMultisampling(WGPUTextureFormat, const Device&);
+    static bool supportsResolve(WGPUTextureFormat, const Device&);
+    static bool supportsBlending(WGPUTextureFormat, const Device&);
+    void recreateIfNeeded();
+    void makeCanvasBacking();
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -130,7 +141,9 @@ private:
     using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
+    Vector<WeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
+    bool m_canvasBacking { false };
 };
 
 } // namespace WebGPU

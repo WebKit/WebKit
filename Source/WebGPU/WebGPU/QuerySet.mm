@@ -64,7 +64,6 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::create(buffer, count, type, *this);
     }
     case WGPUQueryType_Force32:
-        ASSERT_NOT_REACHED("unexpected queryType");
         return QuerySet::createInvalid(*this);
     }
 }

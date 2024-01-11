@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CryptoAlgorithmX25519.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmX25519Params.h"
 #include "CryptoKeyOKP.h"
@@ -227,5 +225,3 @@ void CryptoAlgorithmX25519::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

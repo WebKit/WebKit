@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmRsaPssParams
 ] dictionary RsaPssParams : CryptoAlgorithmParameters {
     // The desired length of the random salt

@@ -15,6 +15,9 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    accessibility/playstation/AXObjectCachePlaystation.cpp
+    accessibility/playstation/AccessibilityObjectPlaystation.cpp
+
     editing/libwpe/EditorLibWPE.cpp
 
     page/playstation/ResourceUsageOverlayPlayStation.cpp

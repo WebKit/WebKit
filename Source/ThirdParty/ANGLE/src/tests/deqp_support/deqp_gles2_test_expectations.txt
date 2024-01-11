@@ -291,8 +291,6 @@
 7451 MAC METAL INTEL : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
 7838 MAC METAL INTEL : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
 
-6297 MAC METAL : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
-
 // New failures on MacBook Pro 2019 macOS 13.2.1
 8091 MAC METAL AMD : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_fragment = FAIL
 8091 MAC METAL AMD : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_vertex = FAIL

@@ -48,6 +48,7 @@ public:
 
     WebGPU::InternalError* backing() { return m_backing.get(); }
     const WebGPU::InternalError* backing() const { return m_backing.get(); }
+    String stack() const { return "_"_s; }
 
 private:
     GPUInternalError(String&& message)

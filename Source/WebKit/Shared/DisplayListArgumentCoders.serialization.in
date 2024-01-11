@@ -146,7 +146,6 @@ headers: <WebCore/DisplayListItems.h>
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawNativeImage {
     WebCore::RenderingResourceIdentifier imageIdentifier();
-    WebCore::FloatSize imageSize();
     WebCore::FloatRect destinationRect();
     WebCore::FloatRect source();
     WebCore::ImagePaintingOptions options();
@@ -227,6 +226,12 @@ headers: <WebCore/DisplayListItems.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithGradient {
     WebCore::FloatRect rect();
     Ref<WebCore::Gradient> gradient();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithGradientAndSpaceTransform {
+    WebCore::FloatRect rect();
+    Ref<WebCore::Gradient> gradient();
+    WebCore::AffineTransform gradientSpaceTransform();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillCompositedRect {

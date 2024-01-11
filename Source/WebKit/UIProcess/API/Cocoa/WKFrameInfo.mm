@@ -114,4 +114,9 @@
     return _frameInfo->isFocused();
 }
 
+- (BOOL)_errorOccurred
+{
+    return _frameInfo->errorOccurred();
+}
+
 @end

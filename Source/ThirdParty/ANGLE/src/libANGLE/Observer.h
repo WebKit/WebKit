@@ -72,6 +72,8 @@ enum class SubjectMessage
     SamplerUniformsUpdated,
     // Other types of uniform change.
     ProgramUniformUpdated,
+    // Indicates a program's uniform block binding has changed
+    ProgramUniformBlockBindingUpdated,
 
     // Indicates a Storage of back-end in gl::Texture has been released.
     StorageReleased,

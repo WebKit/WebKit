@@ -49,8 +49,10 @@ void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
 
 void HighlightRegistry::clear()
 {
-    m_map.clear();
     m_highlightNames.clear();
+    auto map = std::exchange(m_map, { });
+    for (auto& highlight : map.values())
+        highlight->clearFromSetLike();
 }
 
 bool HighlightRegistry::remove(const AtomString& key)

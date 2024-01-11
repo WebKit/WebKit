@@ -50,9 +50,18 @@ namespace Wasm {
     macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s) \
     macro(OutOfBoundsArrayGet, "Out of bounds array.get"_s) \
     macro(OutOfBoundsArraySet, "Out of bounds array.set"_s) \
+    macro(OutOfBoundsArrayFill, "Out of bounds array.fill"_s) \
+    macro(OutOfBoundsArrayCopy, "Out of bounds array.copy"_s) \
+    macro(OutOfBoundsArrayInitElem, "Out of bounds array.init_elem"_s) \
+    macro(OutOfBoundsArrayInitData, "Out of bounds array.init_data"_s) \
+    macro(BadArrayNew, "Failed to allocate new array"_s) \
     macro(NullArrayGet, "array.get to a null reference"_s) \
     macro(NullArraySet, "array.set to a null reference"_s) \
     macro(NullArrayLen, "array.len to a null reference"_s) \
+    macro(NullArrayFill, "array.fill to a null reference"_s) \
+    macro(NullArrayCopy, "array.copy to a null reference"_s) \
+    macro(NullArrayInitElem, "array.init_elem to a null reference"_s) \
+    macro(NullArrayInitData, "array.init_data to a null reference"_s) \
     macro(NullStructGet, "struct.get to a null reference"_s) \
     macro(NullStructSet, "struct.set to a null reference"_s) \
     macro(TypeErrorInvalidV128Use, "an exported wasm function cannot contain a v128 parameter or return value"_s) \
@@ -103,9 +112,18 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::StackOverflow:
     case ExceptionType::OutOfBoundsArrayGet:
     case ExceptionType::OutOfBoundsArraySet:
+    case ExceptionType::OutOfBoundsArrayFill:
+    case ExceptionType::OutOfBoundsArrayCopy:
+    case ExceptionType::OutOfBoundsArrayInitElem:
+    case ExceptionType::OutOfBoundsArrayInitData:
+    case ExceptionType::BadArrayNew:
     case ExceptionType::NullArrayGet:
     case ExceptionType::NullArraySet:
     case ExceptionType::NullArrayLen:
+    case ExceptionType::NullArrayFill:
+    case ExceptionType::NullArrayCopy:
+    case ExceptionType::NullArrayInitElem:
+    case ExceptionType::NullArrayInitData:
     case ExceptionType::NullStructGet:
     case ExceptionType::NullStructSet:
     case ExceptionType::NullRefAsNonNull:

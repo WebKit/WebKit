@@ -880,7 +880,6 @@ void GraphicsLayerCA::setBackdropFiltersRect(const FloatRoundedRect& backdropFil
     noteLayerPropertyChanged(BackdropFiltersRectChanged);
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
 {
     if (GraphicsLayer::blendMode() == blendMode)
@@ -889,7 +888,6 @@ void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
     GraphicsLayer::setBlendMode(blendMode);
     noteLayerPropertyChanged(BlendModeChanged);
 }
-#endif
 
 bool GraphicsLayerCA::backingStoreAttached() const
 {
@@ -2067,10 +2065,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & BackdropFiltersRectChanged)
         updateBackdropFiltersRect();
 
-#if ENABLE(CSS_COMPOSITING)
     if (m_uncommittedChanges & BlendModeChanged)
         updateBlendMode();
-#endif
 
     if (m_uncommittedChanges & VideoGravityChanged)
         updateVideoGravity();
@@ -2564,7 +2560,6 @@ void GraphicsLayerCA::updateBackdropRoot()
     m_layer->setIsBackdropRoot(isBackdropRoot());
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::updateBlendMode()
 {
     primaryLayer()->setBlendMode(m_blendMode);
@@ -2577,7 +2572,6 @@ void GraphicsLayerCA::updateBlendMode()
         }
     }
 }
-#endif
 
 void GraphicsLayerCA::updateVideoGravity()
 {

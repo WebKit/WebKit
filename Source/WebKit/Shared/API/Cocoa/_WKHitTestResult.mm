@@ -65,6 +65,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return URLFromString(_hitTestResult->absoluteLinkURL());
 }
 
+- (NSString *)linkLocalDataMIMEType
+{
+    return _hitTestResult->linkLocalDataMIMEType();
+}
+
 - (NSURL *)absoluteMediaURL
 {
     return URLFromString(_hitTestResult->absoluteMediaURL());
@@ -83,6 +88,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (NSString *)lookupText
 {
     return _hitTestResult->lookupText();
+}
+
+- (NSString *)linkSuggestedFilename
+{
+    return _hitTestResult->linkSuggestedFilename();
 }
 
 - (NSString *)imageMIMEType
@@ -133,7 +143,7 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (WKFrameInfo *)frameInfo
 {
     if (auto frameInfo = _hitTestResult->frameInfo())
-        return wrapper(API::FrameInfo::create(WTFMove(*frameInfo), &_hitTestResult->page())).autorelease();
+        return wrapper(API::FrameInfo::create(WTFMove(*frameInfo), _hitTestResult->page())).autorelease();
     return nil;
 }
 

@@ -1731,3 +1731,34 @@ TEST(URLSchemeHandler, ModulePreload)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
 }
+
+static void runRedirectToHandledSchemeTest(unsigned redirectionCode)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/redirect.html"_s, { redirectionCode, {{ "Location"_s, "testing://destination.html"_s }}, "redirecting..."_s } }
+    });
+
+    __block bool schemeHandledCalled = false;
+    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        schemeHandledCalled = true;
+    }];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"testing"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request("/redirect.html"_s)];
+
+    TestWebKitAPI::Util::run(&schemeHandledCalled);
+}
+
+TEST(URLSchemeHandler, Redirect301FromHTTPToHandledScheme)
+{
+    runRedirectToHandledSchemeTest(301);
+}
+
+TEST(URLSchemeHandler, Redirect302FromHTTPToHandledScheme)
+{
+    runRedirectToHandledSchemeTest(302);
+}

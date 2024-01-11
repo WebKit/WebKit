@@ -1,4 +1,4 @@
-//@ runDefault("--validateGraphAtEachPhase=1", "--validateFTLOSRExitLiveness=1", "--useConcurrentJIT=0", "--jitPolicyScale=0", "--maximumFunctionForCallInlineCandidateBytecodeCost=300")
+//@ runDefault("--validateGraphAtEachPhase=1", "--validateFTLOSRExitLiveness=1", "--useConcurrentJIT=0", "--jitPolicyScale=0", "--maximumFunctionForCallInlineCandidateBytecodeCostForDFG=300", "--maximumFunctionForCallInlineCandidateBytecodeCostForFTL=300")
 
 function foo(a0, a1) {
     if (a0) {

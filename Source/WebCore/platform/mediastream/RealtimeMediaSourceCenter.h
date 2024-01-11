@@ -96,7 +96,7 @@ public:
     WEBCORE_EXPORT void setDisplayCaptureFactory(DisplayCaptureFactory&);
     WEBCORE_EXPORT void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
-    WEBCORE_EXPORT String hashStringWithSalt(const String& id, const String& hashSalt);
+    WEBCORE_EXPORT static String hashStringWithSalt(const String& id, const String& hashSalt);
 
     WEBCORE_EXPORT void addDevicesChangedObserver(Observer&);
     WEBCORE_EXPORT void removeDevicesChangedObserver(Observer&);

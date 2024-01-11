@@ -1919,6 +1919,15 @@ op :array_len,
         arrayref: VirtualRegister,
     }
 
+op :array_fill,
+    args: {
+        arrayref: VirtualRegister,
+        offset: VirtualRegister,
+        value: VirtualRegister,
+        size: VirtualRegister,
+        typeIndex: unsigned,
+    }
+
 op :struct_new,
     args: {
         dst: VirtualRegister,

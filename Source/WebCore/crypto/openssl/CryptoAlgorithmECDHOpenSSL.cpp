@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmECDH.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyEC.h"
 #include "OpenSSLUtilities.h"
 
@@ -61,5 +59,3 @@ std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const Cry
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

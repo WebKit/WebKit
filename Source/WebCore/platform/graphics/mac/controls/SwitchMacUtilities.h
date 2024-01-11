@@ -29,10 +29,15 @@
 namespace WebCore::SwitchMacUtilities {
 
 static IntSize cellSize(NSControlSize);
+static FloatSize visualCellSize(NSControlSize, const ControlStyle&);
 static IntOutsets cellOutsets(NSControlSize);
+static IntOutsets visualCellOutsets(NSControlSize, bool);
 static FloatRect rectForBounds(const FloatRect&);
 static NSString *coreUISizeForControlSize(const NSControlSize);
 static float easeInOut(float);
+static FloatRect rectWithTransposedSize(const FloatRect&, bool);
+static FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
+static void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
 
 } // namespace WebCore::SwitchMacUtilities
 

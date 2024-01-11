@@ -46,12 +46,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::create(Document& document, String&& data)
 {
-    return adoptRef(*new Text(document, WTFMove(data), CreateText));
+    return adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { }));
 }
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    return adoptRef(*new Text(document, WTFMove(data), CreateEditingText));
+    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsSpecialInternalNode }));
+    ASSERT(node->isEditingText());
+    return node;
 }
 
 Text::~Text() = default;
@@ -152,11 +154,6 @@ void Text::replaceWholeText(const String& newText)
 String Text::nodeName() const
 {
     return "#text"_s;
-}
-
-Node::NodeType Text::nodeType() const
-{
-    return TEXT_NODE;
 }
 
 Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)

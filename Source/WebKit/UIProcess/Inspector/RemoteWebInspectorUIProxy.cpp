@@ -127,7 +127,7 @@ void RemoteWebInspectorUIProxy::frontendDidClose()
 {
     Ref<RemoteWebInspectorUIProxy> protect(*this);
 
-    if (CheckedPtr client = m_client)
+    if (CheckedPtr client = m_client.get())
         client->closeFromFrontend();
 
     closeFrontendPageAndWindow();
@@ -207,7 +207,7 @@ void RemoteWebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enab
 
 void RemoteWebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
-    if (CheckedPtr client = m_client)
+    if (CheckedPtr client = m_client.get())
         client->sendMessageToBackend(message);
 }
 

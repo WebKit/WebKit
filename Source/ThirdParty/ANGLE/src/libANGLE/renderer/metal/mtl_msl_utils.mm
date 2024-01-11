@@ -20,6 +20,7 @@ namespace
 constexpr char kXfbBindingsMarker[]     = "@@XFB-Bindings@@";
 constexpr char kXfbOutMarker[]          = "ANGLE_@@XFB-OUT@@";
 constexpr char kUserDefinedNamePrefix[] = "_u";  // Defined in GLSLANG/ShaderLang.h
+constexpr char kAttribBindingsMarker[]  = "@@Attrib-Bindings@@\n";
 
 template <size_t N>
 constexpr size_t ConstStrLen(const char (&)[N])
@@ -156,6 +157,76 @@ void GetAssignedSamplerBindings(const sh::TranslatorMetalReflection *reflection,
             }
         }
     }
+}
+
+std::string UpdateAliasedShaderAttributes(std::string shaderSourceIn,
+                                          const gl::ProgramExecutable &executable)
+{
+    // Cache max number of components for each attribute location
+    std::array<uint8_t, gl::MAX_VERTEX_ATTRIBS> maxComponents{};
+    for (auto &attribute : executable.getProgramInputs())
+    {
+        const int location       = attribute.getLocation();
+        const int registers      = gl::VariableRegisterCount(attribute.getType());
+        const uint8_t components = gl::VariableColumnCount(attribute.getType());
+        for (int i = 0; i < registers; ++i)
+        {
+            ASSERT(location + i < static_cast<int>(maxComponents.size()));
+            maxComponents[location + i] = std::max(maxComponents[location + i], components);
+        }
+    }
+
+    // Define aliased names pointing to real attributes with swizzles as needed
+    std::ostringstream stream;
+    for (auto &attribute : executable.getProgramInputs())
+    {
+        const int location       = attribute.getLocation();
+        const int registers      = gl::VariableRegisterCount(attribute.getType());
+        const uint8_t components = gl::VariableColumnCount(attribute.getType());
+        for (int i = 0; i < registers; i++)
+        {
+            stream << "#define ANGLE_ALIASED_" << attribute.name;
+            if (registers > 1)
+            {
+                stream << "_" << i;
+            }
+            stream << " ANGLE_modified.ANGLE_ATTRIBUTE_" << (location + i);
+            if (components != maxComponents[location + i])
+            {
+                ASSERT(components < maxComponents[location + i]);
+                switch (components)
+                {
+                    case 1:
+                        stream << ".x";
+                        break;
+                    case 2:
+                        stream << ".xy";
+                        break;
+                    case 3:
+                        stream << ".xyz";
+                        break;
+                }
+            }
+            stream << "\n";
+        }
+    }
+
+    // Declare actual MSL attributes
+    for (size_t i : executable.getActiveAttribLocationsMask())
+    {
+        stream << "  float";
+        if (maxComponents[i] > 1)
+        {
+            stream << static_cast<int>(maxComponents[i]);
+        }
+        stream << " ANGLE_ATTRIBUTE_" << i << "[[attribute(" << i << ")]];\n";
+    }
+
+    std::string outputSource = shaderSourceIn;
+    size_t markerFound       = outputSource.find(kAttribBindingsMarker);
+    ASSERT(markerFound != std::string::npos);
+    outputSource.replace(markerFound, strlen(kAttribBindingsMarker), stream.str());
+    return outputSource;
 }
 
 std::string updateShaderAttributes(std::string shaderSourceIn,
@@ -361,16 +432,12 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
             for (int row = 0; row < info.rowCount; ++row)
             {
                 result << "        ";
-                result << "ANGLE_"
-                       << "xfbBuffer" << bufferIndex << "["
-                       << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbBufferOffsets["
-                       << bufferIndex
+                result << "ANGLE_" << "xfbBuffer" << bufferIndex << "[" << "ANGLE_"
+                       << std::string(sh::kUniformsVar) << ".ANGLE_xfbBufferOffsets[" << bufferIndex
                        << "] + (gl_VertexID + (ANGLE_instanceIdMod - ANGLE_baseInstance) * "
                        << "ANGLE_" << std::string(sh::kUniformsVar)
-                       << ".ANGLE_xfbVerticesPerInstance) * " << stride << " + " << offset << "] = "
-                       << "as_type<float>"
-                       << "("
-                       << "ANGLE_vertexOut.";
+                       << ".ANGLE_xfbVerticesPerInstance) * " << stride << " + " << offset
+                       << "] = " << "as_type<float>" << "(" << "ANGLE_vertexOut.";
                 if (!varying.isBuiltIn())
                 {
                     result << kUserDefinedNamePrefix;
@@ -500,7 +567,10 @@ angle::Result MTLGetMSL(Context *context,
         std::string source;
         if (type == gl::ShaderType::Vertex)
         {
-            source = updateShaderAttributes(shaderSources[type], executable);
+            source =
+                shadersState[gl::ShaderType::Vertex]->translatorMetalReflection.hasAttributeAliasing
+                    ? UpdateAliasedShaderAttributes(shaderSources[type], executable)
+                    : updateShaderAttributes(shaderSources[type], executable);
             // Write transform feedback output code.
             if (!source.empty())
             {

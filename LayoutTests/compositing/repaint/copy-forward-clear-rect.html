@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        #first {
+            width: 500px;
+            height: 500px;
+            transform: translate3d(0, 0, 0);
+            background: rgba(222, 0, 0, 0.4);
+        }
+        #inner {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            background: rgba(0, 40, 40, 0.5);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+        async function doTest()
+        {
+            await UIHelper.renderingUpdate();
+
+            inner.style.left = "50px";
+            inner.style.top = "50px";
+            
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="first"><div id="inner"></div></div>
+</body>
+</html>

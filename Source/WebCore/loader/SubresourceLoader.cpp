@@ -731,15 +731,19 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
 
     if (m_state != Initialized)
         return;
+
+    Ref protectedThis { *this };
+
     ASSERT(!reachedTerminalState());
     CachedResourceHandle resource = m_resource.get();
+    if (!resource)
+        return;
+
     ASSERT(!resource->resourceToRevalidate());
     // FIXME (129394): We should cancel the load when a decode error occurs instead of continuing the load to completion.
     ASSERT(!resource->errorOccurred() || resource->status() == CachedResource::DecodeError || !resource->isLoading());
     LOG(ResourceLoading, "Received '%s'.", resource->url().string().latin1().data());
     logResourceLoaded(m_frame.get(), resource->type());
-
-    Ref<SubresourceLoader> protectedThis(*this);
 
     m_loadTiming.markEndTime();
 

@@ -1,4 +1,4 @@
-//@ requireOptions("--maximumFunctionForCallInlineCandidateBytecodeCost=1000")
+//@ requireOptions("--maximumFunctionForCallInlineCandidateBytecodeCostForDFG=1000", "--maximumFunctionForCallInlineCandidateBytecodeCostForFTL=1000")
 
 function bar() {
   foo();

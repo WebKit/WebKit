@@ -1,0 +1,4 @@
+
+PASS custom events with the name 'end' should only call the event listener for the event 'end' and no attribute handlers or IDL listeners
+FAIL custom events with the name 'endEvent' should call 'onend' attribute handlers and IDL property listeners, and 'endEvent' listeners assert_equals: expected 1 but got 0
+

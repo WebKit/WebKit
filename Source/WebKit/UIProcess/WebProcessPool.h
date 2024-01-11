@@ -151,8 +151,6 @@ class WebProcessPool final
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
     , public ExtensionCapabilityGranter::Client
-#else
-    , public CanMakeCheckedPtr
 #endif
 {
 public:

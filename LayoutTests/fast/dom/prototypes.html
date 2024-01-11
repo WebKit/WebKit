@@ -34,18 +34,6 @@ function test()
     shouldBe("Object.prototype.isPrototypeOf(window.DOMException)", true);
     shouldBe("Object.prototype.isPrototypeOf(window.Option)", true);
 
-    div = document.createElement('div');
-    div.style.color = "rgb(0, 0, 0)";
-    cssValue = div.style.getPropertyCSSValue('color'); // actually a CSSPrimitiveValue
-    shouldBe("Object.prototype.isPrototypeOf(cssValue)", true);
-    
-    rgbColor = div.style.getPropertyCSSValue('color').getRGBColorValue();
-    shouldBe("Object.prototype.isPrototypeOf(rgbColor)", true);
-
-    div.style.clip = "rect(0, 0, 0, 0)";
-    rect = div.style.getPropertyCSSValue('clip').getRectValue();
-    shouldBe("Object.prototype.isPrototypeOf(rect)", true);
-
     styleElement = document.createElement('style');
     styleElement.appendChild(document.createTextNode("* {}"));
     headElement = document.getElementsByTagName('head')[0];

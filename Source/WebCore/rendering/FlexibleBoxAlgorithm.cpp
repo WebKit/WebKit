@@ -70,9 +70,9 @@ void FlexLayoutAlgorithm::removeMarginEndFromFlexSizes(FlexItem& flexItem, Layou
 {
     LayoutUnit margin;
     if (m_flexbox.isHorizontalFlow())
-        margin = flexItem.box.marginEnd(&m_flexbox.style());
+        margin = flexItem.box->marginEnd(&m_flexbox.style());
     else
-        margin = flexItem.box.marginAfter(&m_flexbox.style());
+        margin = flexItem.box->marginAfter(&m_flexbox.style());
     sumFlexBaseSize -= margin;
     sumHypotheticalMainSize -= margin;
 } 
@@ -89,14 +89,14 @@ bool FlexLayoutAlgorithm::computeNextFlexLine(size_t& nextIndex, Vector<FlexItem
         m_flexbox.trimMainAxisMarginStart(m_allItems[nextIndex]);
     for (; nextIndex < m_allItems.size(); ++nextIndex) {
         const auto& flexItem = m_allItems[nextIndex];
-        ASSERT(!flexItem.box.isOutOfFlowPositioned());
+        ASSERT(!flexItem.box->isOutOfFlowPositioned());
         if (isMultiline() && (sumHypotheticalMainSize + flexItem.hypotheticalMainAxisMarginBoxSize() > m_lineBreakLength && !canFitItemWithTrimmedMarginEnd(flexItem, sumHypotheticalMainSize)) && !lineItems.isEmpty())
             break;
         lineItems.append(flexItem);
         sumFlexBaseSize += flexItem.flexBaseMarginBoxSize() + m_gapBetweenItems;
-        totalFlexGrow += flexItem.box.style().flexGrow();
-        totalFlexShrink += flexItem.box.style().flexShrink();
-        totalWeightedFlexShrink += flexItem.box.style().flexShrink() * flexItem.flexBaseContentSize;
+        totalFlexGrow += flexItem.box->style().flexGrow();
+        totalFlexShrink += flexItem.box->style().flexShrink();
+        totalWeightedFlexShrink += flexItem.box->style().flexShrink() * flexItem.flexBaseContentSize;
         sumHypotheticalMainSize += flexItem.hypotheticalMainAxisMarginBoxSize() + m_gapBetweenItems;
     }
 

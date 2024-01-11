@@ -68,6 +68,11 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
     if (webPreferences.alternateWebMPlayerEnabled())
         alternateWebMPlayerEnabled = true;
 #endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (webPreferences.mediaCapabilityGrantsEnabled())
+        mediaCapabilityGrantsEnabled = true;
+#endif
 }
 
 } // namespace WebKit

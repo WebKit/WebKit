@@ -9429,6 +9429,7 @@
 		44E751A72AC73EA700828AC4 /* scoped_key_value_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scoped_key_value_config.h; sourceTree = "<group>"; };
 		44E751AB2AC73F8800828AC4 /* field_trial.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = field_trial.cc; sourceTree = "<group>"; };
 		44E751B32AC73F8800828AC4 /* field_trial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = field_trial.h; sourceTree = "<group>"; };
+		44F99B2E2B2E9DCA00BE6517 /* BaseTarget-libaom.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "BaseTarget-libaom.xcconfig"; sourceTree = "<group>"; };
 		44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_replay_fuzzer.xcconfig; sourceTree = "<group>"; };
 		44FD16732AEA1F36003636CB /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		44FD16752AEA3562003636CB /* null_transport.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = null_transport.cc; sourceTree = "<group>"; };
@@ -19826,6 +19827,7 @@
 				449187232AB3800D007266F2 /* Base-libvpx.xcconfig */,
 				44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
+				44F99B2E2B2E9DCA00BE6517 /* BaseTarget-libaom.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
 				448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */,

@@ -40,6 +40,7 @@ enum class PlatformMediaError : uint8_t {
     MemoryError,
     Cancelled,
     LogicError,
+    DecoderCreationError,
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;

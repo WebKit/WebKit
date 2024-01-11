@@ -291,8 +291,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
     }
 }
 
-template<typename T>
-bool Instance::copyDataSegment(uint32_t segmentIndex, uint32_t offset, uint32_t lengthInBytes, FixedVector<T>& values)
+bool Instance::copyDataSegment(uint32_t segmentIndex, uint32_t offset, uint32_t lengthInBytes, uint8_t* values)
 {
     // Fail if the data segment index is out of bounds
     RELEASE_ASSERT(segmentIndex < module().moduleInformation().dataSegmentsCount());
@@ -312,32 +311,26 @@ bool Instance::copyDataSegment(uint32_t segmentIndex, uint32_t offset, uint32_t 
     const uint8_t* segmentData = &segment->byte(offset);
 
     // Copy the data from the segment into the out param vector
-    memcpy(reinterpret_cast<uint8_t*>(values.data()), segmentData, lengthInBytes);
+    memcpy(values, segmentData, lengthInBytes);
 
     return true;
 }
 
-template bool Instance::copyDataSegment<uint8_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint8_t>&);
-template bool Instance::copyDataSegment<uint16_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint16_t>&);
-template bool Instance::copyDataSegment<uint32_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint32_t>&);
-template bool Instance::copyDataSegment<uint64_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint64_t>&);
-
-
-void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, uint32_t length, FixedVector<uint64_t>& values)
+void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, uint32_t length, uint64_t* values)
 {
     // Caller should have already checked that the (offset + length) calculation doesn't overflow int32,
     // and that the (offset + length) doesn't overflow the element segment
     ASSERT(!sumOverflows<uint32_t>(srcOffset, length));
     ASSERT((srcOffset + length) <= segment.length());
 
-    for (uint32_t srcIndex = srcOffset; srcIndex < length; ++srcIndex) {
-        const auto dstIndex = srcIndex - srcOffset;
+    for (uint32_t i = 0; i < length; i++) {
+        uint32_t srcIndex = srcOffset + i;
         const auto initType = segment.initTypes[srcIndex];
         const auto initialBitsOrIndex = segment.initialBitsOrIndices[srcIndex];
 
         // Represent the null function as the null JS value
         if (initType == Element::InitializationType::FromRefNull) {
-            values[dstIndex] = static_cast<uint64_t>(JSValue::encode(jsNull()));
+            values[i] = static_cast<uint64_t>(JSValue::encode(jsNull()));
             continue;
         }
 
@@ -349,12 +342,12 @@ void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, ui
             // and create them here dynamically instead.
             JSValue value = getFunctionWrapper(functionIndex);
             ASSERT(value.isCallable());
-            values[dstIndex] = static_cast<uint64_t>(JSValue::encode(value));
+            values[i] = static_cast<uint64_t>(JSValue::encode(value));
             continue;
         }
 
         if (initType == Element::InitializationType::FromGlobal) {
-            values[dstIndex] = loadI64Global(initialBitsOrIndex);
+            values[i] = loadI64Global(initialBitsOrIndex);
             continue;
         }
 
@@ -364,7 +357,7 @@ void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, ui
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
         // Currently this should never fail, as the parse phase already validated it.
         RELEASE_ASSERT(success);
-        values[dstIndex] = result;
+        values[i] = result;
     }
 }
 

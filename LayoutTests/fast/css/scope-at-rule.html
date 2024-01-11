@@ -70,6 +70,27 @@ div {
   }
 }
 
+#green-15 {
+  @scope (#b) {
+    & {
+      color: green;
+    }
+  }
+}
+
+#green-16 {
+  @scope (#b) {
+    color: green;
+  }
+}
+
+@scope (.root) to (.limit) {
+  :scope.outer .green-17 {
+      color: green;
+    }
+  }
+}
+
 </style>
 
 <div class="a">
@@ -136,5 +157,50 @@ div {
 <div id="a">
   <div id="b">
     <span class="green-12">should be green</div>
+  </div>
+</div>
+
+<div>
+  <div>
+    <style>
+    @scope {
+      .green-13 { color: green; }
+    }
+    </style>
+    <span class="green-13">should be green</div>
+  </div>
+  <span class="green-13">should not be green</div>
+</div>
+
+<div>
+  <div>
+    <style>
+    @import "scope-at-rule-green-14.css"
+    </style>
+    <span class="green-14">should be green</div>
+  </div>
+  <span class="green-14">should not be green</div>
+</div>
+
+<div id="green-15">
+  <div id="b">
+    should be green
+  </div>
+  should not be green
+</div>
+
+<div id="green-16">
+  <div id="b">
+   should be green
+  </div>
+  should not be green
+</div>
+
+<div class="root outer">
+  <span class="green-17">should be green</span>
+  <div class="limit">
+    <div class="root inner">
+      <span class="green-17">should not be green</span>
+    </div>
   </div>
 </div>

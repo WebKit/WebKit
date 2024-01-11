@@ -53,7 +53,7 @@ public:
 
     static InlineLayoutUnit trailingWhitespaceWidth(const InlineTextBox&, const FontCascade&, size_t startPosition, size_t endPosition);
 
-    using FallbackFontList = WeakHashSet<const Font>;
+    using FallbackFontList = SingleThreadWeakHashSet<const Font>;
     enum class IncludeHyphen : bool { No, Yes };
     static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
 

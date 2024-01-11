@@ -7,3 +7,5 @@
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Timeout Failure ]
+
+fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]

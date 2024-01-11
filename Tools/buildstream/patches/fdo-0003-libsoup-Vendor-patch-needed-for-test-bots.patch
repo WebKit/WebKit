@@ -1,0 +1,85 @@
+From 0699264013211ad778a1284ce7490d9acfb1c757 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 21 Dec 2023 10:19:01 +0000
+Subject: [PATCH] libsoup: Vendor patch needed for test bots
+
+I suppose that will ship in libsoup 3.4.5.
+---
+ elements/components/libsoup.bst               |  2 +
+ ...ef-of-the-item-when-calling-soup_mes.patch | 54 +++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch
+
+diff --git a/elements/components/libsoup.bst b/elements/components/libsoup.bst
+index d0351e4..c3ecd15 100644
+--- a/elements/components/libsoup.bst
++++ b/elements/components/libsoup.bst
+@@ -38,3 +38,5 @@ sources:
+   url: gnome:libsoup.git
+   track: 3.[02468].*
+   ref: 3.4.4-0-gd6133a8e116953dac824b835d4f788e21a3e6565
++- kind: patch
++  path: patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch
+diff --git a/patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch b/patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch
+new file mode 100644
+index 0000000..57a7ae4
+--- /dev/null
++++ b/patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch
+@@ -0,0 +1,54 @@
++From 2a592b114092b0105f9f27af17225a3b35c288f8 Mon Sep 17 00:00:00 2001
++From: Carlos Garcia Campos <cgarcia@igalia.com>
++Date: Thu, 21 Dec 2023 09:25:07 +0100
++Subject: [PATCH] session: take a ref of the item when calling
++ soup_message_io_run_until_read_async
++
++And release it in the callback. In case of cancellation the item can be
++finished by explicitly calling soup_session_process_queue_item()
++which can release the last reference before
++async_send_request_return_result() is called.
++---
++ libsoup/soup-session.c | 5 ++++-
++ 1 file changed, 4 insertions(+), 1 deletion(-)
++
++diff --git a/libsoup/soup-session.c b/libsoup/soup-session.c
++index 631bec01..18b9c0a0 100644
++--- a/libsoup/soup-session.c
+++++ b/libsoup/soup-session.c
++@@ -2801,6 +2801,7 @@ run_until_read_done (SoupMessage          *msg,
++ 	if (error && (!item->io_started || item->state == SOUP_MESSAGE_RESTARTING)) {
++ 		/* Message was restarted, we'll try again. */
++ 		g_error_free (error);
+++                soup_message_queue_item_unref (item);
++ 		return;
++ 	}
++ 
++@@ -2809,6 +2810,7 @@ run_until_read_done (SoupMessage          *msg,
++ 
++ 	if (stream) {
++ 		send_async_maybe_complete (item, stream);
+++                soup_message_queue_item_unref (item);
++ 	        return;
++ 	}
++ 
++@@ -2820,6 +2822,7 @@ run_until_read_done (SoupMessage          *msg,
++ 		soup_session_process_queue_item (item->session, item, FALSE);
++ 	}
++ 	async_send_request_return_result (item, NULL, error);
+++        soup_message_queue_item_unref (item);
++ }
++ 
++ static void
++@@ -2831,7 +2834,7 @@ async_send_request_running (SoupSession *session, SoupMessageQueueItem *item)
++ 						      item->io_priority,
++ 						      item->cancellable,
++ 						      (GAsyncReadyCallback)run_until_read_done,
++-						      item);
+++						      soup_message_queue_item_ref (item));
++ 		return;
++ 	}
++ 
++-- 
++2.43.0
++
+-- 
+2.43.0
+

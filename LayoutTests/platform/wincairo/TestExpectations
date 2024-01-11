@@ -8,6 +8,7 @@
 
 # No Accessibility support yet for WK2
 accessibility [ Skip ]
+http/tests/accessibility [ Skip ]
 
 # ACCELERATED_OVERFLOW_SCROLLING is disabled
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
@@ -391,9 +392,11 @@ fast/canvas/offscreen-border.html [ Skip ]
 fast/canvas/offscreen-clipped.html [ Skip ]
 fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
+fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
+webgl/webgl-worker.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -466,6 +469,8 @@ css3/unicode-bidi-isolate-aharon.html [ ImageOnlyFailure ]
 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 fast/css/counters/counter-list-item.html [ ImageOnlyFailure ]
 fast/css/unexpected-word-wrapping-with-non-empty-spans.html [ ImageOnlyFailure ]
+fast/css-generated-content/013.html [ ImageOnlyFailure ]
+fast/css-generated-content/016.html [ ImageOnlyFailure ]
 fast/css-generated-content/close-quote-negative-depth.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/content-property-change.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/nested-quote-more-than-pairs.html [ ImageOnlyFailure Pass ]
@@ -482,6 +487,8 @@ ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure
 imported/blink/fast/css/case-sensitive-003.xhtml [ ImageOnlyFailure ]
 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure Pass ]
 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
+fast/flexbox/line-clamp-with-float.html [ ImageOnlyFailure ]
+fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
 
 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
@@ -1089,8 +1096,6 @@ css-typedom [ Skip ]
 # Dark mode not supported on Windows
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
-
-webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
 ################################################################################
 ##############################   End CSS Issues   ##############################
@@ -1767,6 +1772,7 @@ imported/w3c/web-platform-tests/mathml [ Skip ]
 imported/w3c/web-platform-tests/media [ Skip ]
 imported/w3c/web-platform-tests/media-capabilities [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-insertable-streams [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 imported/w3c/web-platform-tests/mediasession [ Skip ]
 imported/w3c/web-platform-tests/mimesniff [ Skip ]
@@ -2620,6 +2626,7 @@ fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
 fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
 
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 
 fast/css/caret-color-with-inherited-color-property.html [ Skip ] # ImageOnlyFailure
 fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailure
@@ -2715,8 +2722,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-v
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 
 webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ] # Crash
-
-[ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ] # Crash
+webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Skip ] # Crash
 
 webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-print.tentative.html [ Skip ] # Crash
 webkit.org/b/266205 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-default-quirks-mode.html [ Skip ] # Crash
@@ -2741,3 +2747,8 @@ webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure 
 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
+
+fonts/font-cache-memory-pressure-crash.html [ Failure ]
+
+# SFrameTransform isn't supported yet
+streams/writable-stream-create-within-multiple-workers-crash.html [ Skip ]

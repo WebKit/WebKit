@@ -20,6 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+header: "LayerTreeContext.h"
+
+enum class WebKit::LayerHostingMode : uint8_t {
+    InProcess,
+#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
+    OutOfProcess
+#endif
+}
+
 class WebKit::LayerTreeContext {
     uint64_t contextID;
 }

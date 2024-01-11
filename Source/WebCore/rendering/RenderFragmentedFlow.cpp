@@ -56,14 +56,13 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, RenderStyle&& style)
-    : RenderBlockFlow(type, document, WTFMove(style))
+    : RenderBlockFlow(type, document, WTFMove(style), BlockFlowFlag::IsFragmentedFlow)
     , m_currentFragmentMaintainer(nullptr)
     , m_fragmentsInvalidated(false)
     , m_fragmentsHaveUniformLogicalWidth(true)
     , m_fragmentsHaveUniformLogicalHeight(true)
     , m_pageLogicalSizeChanged(false)
 {
-    setIsRenderFragmentedFlow(true);
     ASSERT(isRenderFragmentedFlow());
 }
 
@@ -724,7 +723,7 @@ bool RenderFragmentedFlow::checkLinesConsistency(const RenderBlockFlow& removedB
         RenderFragmentContainer& fragment = *linePair.value;
         if (&line->blockFlow() == &removedBlock)
             return false;
-        if (line->blockFlow().fragmentedFlowState() == NotInsideFragmentedFlow)
+        if (line->blockFlow().fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
             return false;
         if (!m_fragmentList.contains(fragment))
             return false;

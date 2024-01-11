@@ -23,6 +23,6 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ProgrammableStage {
     WebKit::WebGPUIdentifier module
-    String entryPoint
+    std::optional<String> entryPoint
     Vector<KeyValuePair<String, double>> constants
 }

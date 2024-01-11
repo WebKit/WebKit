@@ -504,56 +504,6 @@ std::optional<RetainPtr<CFDictionaryRef>> ArgumentCoder<RetainPtr<CFDictionaryRe
     return WTFMove(dictionary);
 }
 
-template<typename Encoder>
-void ArgumentCoder<CFURLRef>::encode(Encoder& encoder, CFURLRef url)
-{
-    CFURLRef baseURL = CFURLGetBaseURL(url);
-    encoder << static_cast<bool>(baseURL);
-    if (baseURL)
-        encoder << baseURL;
-
-    encoder << IPC::DataReference(bytesAsVector(url));
-}
-
-template void ArgumentCoder<CFURLRef>::encode<Encoder>(Encoder&, CFURLRef);
-template void ArgumentCoder<CFURLRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFURLRef);
-
-std::optional<RetainPtr<CFURLRef>> ArgumentCoder<RetainPtr<CFURLRef>>::decode(Decoder& decoder)
-{
-    RetainPtr<CFURLRef> baseURL;
-    std::optional<bool> hasBaseURL;
-    decoder >> hasBaseURL;
-    if (!hasBaseURL)
-        return std::nullopt;
-    if (*hasBaseURL) {
-        std::optional<RetainPtr<CFURLRef>> decodedBaseURL;
-        decoder >> decodedBaseURL;
-        if (!decodedBaseURL)
-            return std::nullopt;
-        baseURL = WTFMove(*decodedBaseURL);
-    }
-
-    std::optional<IPC::DataReference> urlBytes;
-    decoder >> urlBytes;
-    if (!urlBytes)
-        return std::nullopt;
-
-#if USE(FOUNDATION)
-    // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
-    // instead of Objective-C++.
-    if (urlBytes->empty()) {
-        // CFURL can't hold an empty URL, unlike NSURL.
-        // FIXME: This discards base URL, which seems incorrect.
-        return {{ (__bridge CFURLRef)[NSURL URLWithString:@""] }};
-    }
-#endif
-
-    auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes->data()), urlBytes->size(), kCFStringEncodingUTF8, baseURL.get(), true));
-    if (!result)
-        return std::nullopt;
-    return WTFMove(result);
-}
-
 namespace {
 using CGColorSpaceSerialization = std::variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
 }

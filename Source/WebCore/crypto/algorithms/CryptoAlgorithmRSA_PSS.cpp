@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmRSA_PSS.h"
 
-#if ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)
+#if HAVE(RSA_PSS)
 
 #include "CryptoAlgorithmRsaHashedImportParams.h"
 #include "CryptoAlgorithmRsaHashedKeyGenParams.h"
@@ -244,4 +244,4 @@ void CryptoAlgorithmRSA_PSS::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
 
 }
 
-#endif // ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)
+#endif // HAVE(RSA_PSS)

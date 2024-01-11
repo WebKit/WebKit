@@ -8,6 +8,7 @@
 #include "libANGLE/CLDevice.h"
 
 #include "libANGLE/CLPlatform.h"
+#include "libANGLE/cl_utils.h"
 
 #include "common/string_utils.h"
 
@@ -16,7 +17,10 @@
 namespace cl
 {
 
-cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Device::getInfo(DeviceInfo name,
+                              size_t valueSize,
+                              void *value,
+                              size_t *valueSizeRet) const
 {
     static_assert(std::is_same<cl_uint, cl_bool>::value &&
                       std::is_same<cl_uint, cl_device_mem_cache_type>::value &&
@@ -40,7 +44,6 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
 
     const void *copyValue = nullptr;
     size_t copySize       = 0u;
-    cl_int result         = CL_SUCCESS;
 
     // The info names are sorted within their type group in the order they appear in the OpenCL
     // specification, so it is easier to compare them side-by-side when looking for changes.
@@ -98,7 +101,7 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
         case DeviceInfo::WorkGroupCollectiveFunctionsSupport:
         case DeviceInfo::GenericAddressSpaceSupport:
         case DeviceInfo::PipeSupport:
-            result    = mImpl->getInfoUInt(name, &valUInt);
+            ANGLE_TRY(mImpl->getInfoUInt(name, &valUInt));
             copyValue = &valUInt;
             copySize  = sizeof(valUInt);
             break;
@@ -118,7 +121,7 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
         case DeviceInfo::AtomicFenceCapabilities:
         case DeviceInfo::DeviceEnqueueCapabilities:
         case DeviceInfo::HalfFpConfig:
-            result    = mImpl->getInfoULong(name, &valULong);
+            ANGLE_TRY(mImpl->getInfoULong(name, &valULong));
             copyValue = &valULong;
             copySize  = sizeof(valULong);
             break;
@@ -131,7 +134,7 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
         case DeviceInfo::ProfilingTimerResolution:
         case DeviceInfo::PrintfBufferSize:
         case DeviceInfo::PreferredWorkGroupSizeMultiple:
-            result    = mImpl->getInfoSizeT(name, &valSizeT);
+            ANGLE_TRY(mImpl->getInfoSizeT(name, &valSizeT));
             copyValue = &valSizeT;
             copySize  = sizeof(valSizeT);
             break;
@@ -143,13 +146,9 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
         case DeviceInfo::Profile:
         case DeviceInfo::OpenCL_C_Version:
         case DeviceInfo::LatestConformanceVersionPassed:
-            result = mImpl->getInfoStringLength(name, &copySize);
-            if (result != CL_SUCCESS)
-            {
-                return result;
-            }
+            ANGLE_TRY(mImpl->getInfoStringLength(name, &copySize));
             valString.resize(copySize, '\0');
-            result    = mImpl->getInfoString(name, copySize, valString.data());
+            ANGLE_TRY(mImpl->getInfoString(name, copySize, valString.data()));
             copyValue = valString.data();
             break;
 
@@ -299,20 +298,16 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
 
         default:
             ASSERT(false);
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
-    if (result != CL_SUCCESS)
-    {
-        return result;
-    }
     if (value != nullptr)
     {
         // CL_INVALID_VALUE if size in bytes specified by param_value_size is < size of return
         // type as specified in the Device Queries table and param_value is not a NULL value
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -323,44 +318,40 @@ cl_int Device::getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *v
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Device::createSubDevices(const cl_device_partition_property *properties,
-                                cl_uint numDevices,
-                                cl_device_id *subDevices,
-                                cl_uint *numDevicesRet)
+angle::Result Device::createSubDevices(const cl_device_partition_property *properties,
+                                       cl_uint numDevices,
+                                       cl_device_id *subDevices,
+                                       cl_uint *numDevicesRet)
 {
     if (subDevices == nullptr)
     {
         numDevices = 0u;
     }
     rx::CLDeviceImpl::CreateFuncs subDeviceCreateFuncs;
-    const cl_int errorCode =
-        mImpl->createSubDevices(properties, numDevices, subDeviceCreateFuncs, numDevicesRet);
-    if (errorCode == CL_SUCCESS)
+    ANGLE_TRY(mImpl->createSubDevices(properties, numDevices, subDeviceCreateFuncs, numDevicesRet));
+    cl::DeviceType type = mInfo.type;
+    type.clear(CL_DEVICE_TYPE_DEFAULT);
+    DevicePtrs devices;
+    devices.reserve(subDeviceCreateFuncs.size());
+    while (!subDeviceCreateFuncs.empty())
     {
-        cl::DeviceType type = mInfo.type;
-        type.clear(CL_DEVICE_TYPE_DEFAULT);
-        DevicePtrs devices;
-        devices.reserve(subDeviceCreateFuncs.size());
-        while (!subDeviceCreateFuncs.empty())
+        devices.emplace_back(new Device(mPlatform, this, type, subDeviceCreateFuncs.front()));
+        // Release initialization reference, lifetime controlled by RefPointer.
+        devices.back()->release();
+        if (!devices.back()->mInfo.isValid())
         {
-            devices.emplace_back(new Device(mPlatform, this, type, subDeviceCreateFuncs.front()));
-            // Release initialization reference, lifetime controlled by RefPointer.
-            devices.back()->release();
-            if (!devices.back()->mInfo.isValid())
-            {
-                return CL_INVALID_VALUE;
-            }
-            subDeviceCreateFuncs.pop_front();
+            return angle::Result::Stop;
         }
-        for (DevicePtr &subDevice : devices)
-        {
-            *subDevices++ = subDevice.release();
-        }
+        subDeviceCreateFuncs.pop_front();
     }
-    return errorCode;
+    for (DevicePtr &subDevice : devices)
+    {
+        *subDevices++ = subDevice.release();
+    }
+    return angle::Result::Continue;
 }
 
 Device::~Device() = default;

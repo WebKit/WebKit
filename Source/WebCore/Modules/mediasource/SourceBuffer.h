@@ -165,7 +165,6 @@ private:
     Ref<MediaPromise> sourceBufferPrivateBufferedChanged(const Vector<PlatformTimeRanges>&, uint64_t) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
-    void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
 
@@ -201,8 +200,6 @@ private:
     bool validateInitializationSegment(const InitializationSegment&);
 
     uint64_t maximumBufferSize() const;
-
-    void monitorBufferingRate();
 
     void reportExtraMemoryAllocated(uint64_t extraMemory);
 
@@ -244,9 +241,6 @@ private:
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
 
-    MonotonicTime m_timeOfBufferingMonitor;
-    double m_bufferedSinceLastMonitor { 0 };
-    double m_averageBufferRate { 0 };
     bool m_bufferedDirty { true };
 
     // Can only grow.

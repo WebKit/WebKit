@@ -52,7 +52,7 @@ NameNodeList::~NameNodeList()
 
 bool NameNodeList::elementMatches(Element& element) const
 {
-    return element.getNameAttribute() == m_name;
+    return element.isHTMLElement() && element.getNameAttribute() == m_name;
 }
 
 } // namespace WebCore

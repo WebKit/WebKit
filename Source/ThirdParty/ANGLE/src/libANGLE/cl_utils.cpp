@@ -183,4 +183,6 @@ bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensio
     return true;
 }
 
+thread_local cl_int gClErrorTls;
+
 }  // namespace cl

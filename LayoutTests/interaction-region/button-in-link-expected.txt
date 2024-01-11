@@ -12,10 +12,9 @@ Some text but also a button
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (20,20) width=442 height=67)
-        (borderRadius 0.00),
+        (interaction (20,20) width=442 height=67),
         (interaction (270,41) width=171 height=23)
-        (borderRadius 6.00)])
+        (cornerRadius 6.00)])
       )
     )
   )

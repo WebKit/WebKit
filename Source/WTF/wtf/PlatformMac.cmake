@@ -32,12 +32,14 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     spi/cocoa/CFXPCBridgeSPI.h
     spi/cocoa/CrashReporterClientSPI.h
+    spi/cocoa/IOSurfaceSPI.h
     spi/cocoa/MachVMSPI.h
     spi/cocoa/NSLocaleSPI.h
     spi/cocoa/NSObjCRuntimeSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
+    spi/darwin/AbortWithReasonSPI.h
     spi/darwin/CodeSignSPI.h
     spi/darwin/DataVaultSPI.h
     spi/darwin/OSVariantSPI.h
@@ -97,6 +99,8 @@ list(APPEND WTF_SOURCES
     text/cf/StringViewCF.cpp
 
     text/cocoa/ASCIILiteralCocoa.mm
+    text/cocoa/ContextualizedCFString.mm
+    text/cocoa/ContextualizedNSString.mm
     text/cocoa/StringCocoa.mm
     text/cocoa/StringImplCocoa.mm
     text/cocoa/StringViewCocoa.mm

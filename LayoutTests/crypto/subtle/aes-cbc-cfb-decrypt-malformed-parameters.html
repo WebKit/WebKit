@@ -17,6 +17,9 @@ var extractable = false;
 var cipherText = hexStringToUint8Array("2ffa4618784dfd414b22c40c6330d022");
 var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+  
 crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["decrypt"]).then(function(result) {
     key = result;
     // Wrong iv length

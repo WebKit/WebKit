@@ -1,4 +1,4 @@
-//@ requireOptions("--maximumFunctionForCallInlineCandidateBytecodeCost=500")
+//@ requireOptions("--maximumFunctionForCallInlineCandidateBytecodeCostForDFG=500", "--maximumFunctionForCallInlineCandidateBytecodeCostForFTL=500")
 
 function foo() {
   let x = ''

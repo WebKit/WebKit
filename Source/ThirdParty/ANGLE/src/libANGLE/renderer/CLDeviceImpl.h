@@ -28,7 +28,7 @@ class CLDeviceImpl : angle::NonCopyable
         explicit Info(cl::DeviceType deviceType);
         ~Info();
 
-        Info(const Info &) = delete;
+        Info(const Info &)            = delete;
         Info &operator=(const Info &) = delete;
 
         Info(Info &&);
@@ -68,16 +68,16 @@ class CLDeviceImpl : angle::NonCopyable
 
     virtual Info createInfo(cl::DeviceType type) const = 0;
 
-    virtual cl_int getInfoUInt(cl::DeviceInfo name, cl_uint *value) const             = 0;
-    virtual cl_int getInfoULong(cl::DeviceInfo name, cl_ulong *value) const           = 0;
-    virtual cl_int getInfoSizeT(cl::DeviceInfo name, size_t *value) const             = 0;
-    virtual cl_int getInfoStringLength(cl::DeviceInfo name, size_t *value) const      = 0;
-    virtual cl_int getInfoString(cl::DeviceInfo name, size_t size, char *value) const = 0;
+    virtual angle::Result getInfoUInt(cl::DeviceInfo name, cl_uint *value) const             = 0;
+    virtual angle::Result getInfoULong(cl::DeviceInfo name, cl_ulong *value) const           = 0;
+    virtual angle::Result getInfoSizeT(cl::DeviceInfo name, size_t *value) const             = 0;
+    virtual angle::Result getInfoStringLength(cl::DeviceInfo name, size_t *value) const      = 0;
+    virtual angle::Result getInfoString(cl::DeviceInfo name, size_t size, char *value) const = 0;
 
-    virtual cl_int createSubDevices(const cl_device_partition_property *properties,
-                                    cl_uint numDevices,
-                                    CreateFuncs &createFuncs,
-                                    cl_uint *numDevicesRet) = 0;
+    virtual angle::Result createSubDevices(const cl_device_partition_property *properties,
+                                           cl_uint numDevices,
+                                           CreateFuncs &createFuncs,
+                                           cl_uint *numDevicesRet) = 0;
 
   protected:
     const cl::Device &mDevice;

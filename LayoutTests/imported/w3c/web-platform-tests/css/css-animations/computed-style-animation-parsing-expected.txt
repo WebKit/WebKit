@@ -1,6 +1,8 @@
 
 PASS Test animation name being empty.
 PASS Test a non-conflicting animation name.
+PASS Test an animation name that is the same as a possible animation timing-function.
+PASS Test an animation name that is the same as a possible animation iteration-count.
 PASS Test an animation name that is the same as a possible animation fill-mode.
 PASS Test an animation name that is the same as a possible animation direction.
 PASS Test an animation name that is the same as a possible running state.

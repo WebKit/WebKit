@@ -1699,7 +1699,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (_viewLayoutSizeOverride || _minimumUnobscuredSizeOverride || _maximumUnobscuredSizeOverride)
+    if (_overriddenLayoutParameters)
         return;
 #endif
 

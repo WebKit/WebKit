@@ -20,7 +20,7 @@ function parseGlyphOrientationHelper(property, angleValue, expectedValue)
     if (expectedValue == "auto") {
         shouldBe("computedStyle.getPropertyValue('" + property + "')", '"auto"');
     } else {
-        shouldBe("computedStyle.getPropertyCSSValue('" + property + "').getFloatValue(CSSPrimitiveValue.CSS_DEG)", "" + expectedValue);
+        shouldBe("parseFloat(computedStyle.getPropertyValue('" + property + "'))", "" + expectedValue);
     }
 
     debug("");

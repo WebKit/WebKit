@@ -464,15 +464,6 @@ void VertexArray::setVertexBindingDivisor(const Context *context,
 
     binding.setDivisor(divisor);
     setDirtyBindingBit(bindingIndex, DIRTY_BINDING_DIVISOR);
-
-    // Trigger updates in all bound attributes.
-    if (context->isBufferAccessValidationEnabled())
-    {
-        for (size_t attribIndex : binding.getBoundAttributesMask())
-        {
-            mState.mVertexAttributes[attribIndex].updateCachedElementLimit(binding);
-        }
-    }
 }
 
 ANGLE_INLINE bool VertexArray::setVertexAttribFormatImpl(VertexAttribute *attrib,

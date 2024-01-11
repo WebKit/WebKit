@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "GCSegmentedArray.h"
+#include "JSCell.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {

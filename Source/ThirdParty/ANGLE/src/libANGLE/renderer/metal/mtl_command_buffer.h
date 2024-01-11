@@ -81,6 +81,9 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     // Checks whether the last command buffer that uses the given resource has been committed or not
     bool resourceHasPendingWorks(const Resource *resource) const;
 
+    bool isSerialCompleted(uint64_t serial) const;
+    bool waitUntilSerialCompleted(uint64_t serial, uint64_t timeoutNs) const;
+
     CommandQueue &operator=(id<MTLCommandQueue> metalQueue)
     {
         set(metalQueue);
@@ -136,6 +139,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     uint64_t mActiveTimeElapsedId = 0;
 
     mutable std::mutex mLock;
+    mutable std::condition_variable mCompletedBufferSerialCv;
 
     void addCommandBufferToTimeElapsedEntry(std::lock_guard<std::mutex> &lg, uint64_t id);
     void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
@@ -166,20 +170,25 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setReadDependency(const ResourceRef &resource);
     void setReadDependency(Resource *resourcePtr);
 
-    void queueEventSignal(const mtl::SharedEventRef &event, uint64_t value);
-    void serverWaitEvent(const mtl::SharedEventRef &event, uint64_t value);
+#if ANGLE_MTL_EVENT_AVAILABLE
+    void queueEventSignal(id<MTLEvent> event, uint64_t value);
+    void serverWaitEvent(id<MTLEvent> event, uint64_t value);
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void insertDebugSign(const std::string &marker);
     void pushDebugGroup(const std::string &marker);
     void popDebugGroup();
 
     CommandQueue &cmdQueue() { return mCmdQueue; }
+    const CommandQueue &cmdQueue() const { return mCmdQueue; }
 
     // Private use only
     void setActiveCommandEncoder(CommandEncoder *encoder);
     void invalidateActiveCommandEncoder(CommandEncoder *encoder);
 
     bool needsFlushForDrawCallLimits() const;
+
+    uint64_t getQueueSerial() const;
 
   private:
     void set(id<MTLCommandBuffer> metalBuffer);
@@ -190,8 +199,10 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void forceEndingCurrentEncoder();
 
     void setPendingEvents();
-    void setEventImpl(const mtl::SharedEventRef &event, uint64_t value);
-    void waitEventImpl(const mtl::SharedEventRef &event, uint64_t value);
+#if ANGLE_MTL_EVENT_AVAILABLE
+    void setEventImpl(id<MTLEvent> event, uint64_t value);
+    void waitEventImpl(id<MTLEvent> event, uint64_t value);
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void pushDebugGroupImpl(const std::string &marker);
     void popDebugGroupImpl();
@@ -210,7 +221,16 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     mutable std::mutex mLock;
 
     std::vector<std::string> mPendingDebugSigns;
-    std::vector<std::pair<mtl::SharedEventRef, uint64_t>> mPendingSignalEvents;
+
+#if ANGLE_MTL_EVENT_AVAILABLE
+    struct PendingEvent
+    {
+        AutoObjCPtr<id<MTLEvent>> event;
+        uint64_t signalValue = 0;
+    };
+    std::vector<PendingEvent> mPendingSignalEvents;
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
+
     std::vector<std::string> mDebugGroups;
 
     angle::HashSet<id> mResourceList;

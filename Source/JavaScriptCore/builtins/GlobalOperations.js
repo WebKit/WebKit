@@ -27,38 +27,6 @@
 // @internal
 
 @linkTimeConstant
-function toIntegerOrInfinity(target)
-{
-    "use strict";
-
-    var numberValue = +target;
-
-    // isNaN(numberValue) or 0
-    if (numberValue !== numberValue || !numberValue)
-        return 0;
-    return @trunc(numberValue);
-}
-
-@linkTimeConstant
-function toLength(target)
-{
-    "use strict";
-
-    var length = @toIntegerOrInfinity(target);
-    // originally Math.min(Math.max(length, 0), maxSafeInteger));
-    return +(length > 0 ? (length < @MAX_SAFE_INTEGER ? length : @MAX_SAFE_INTEGER) : 0);
-}
-
-@linkTimeConstant
-@getter
-@overriddenName="get [Symbol.species]"
-function speciesGetter()
-{
-    "use strict";
-    return this;
-}
-
-@linkTimeConstant
 function speciesConstructor(obj, defaultConstructor)
 {
     "use strict";

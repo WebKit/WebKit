@@ -73,7 +73,7 @@ void WebRemoteFrameClient::postMessageToRemote(WebCore::FrameIdentifier source, 
 void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
 {
     // FIXME: FrameLoadRequest and NavigationAction can probably be refactored to share more. <rdar://116202911>
-    WebCore::NavigationAction action(request.requester(), request.resourceRequest(), request.initiatedByMainFrame());
+    WebCore::NavigationAction action(request.requester(), request.resourceRequest(), request.initiatedByMainFrame(), request.isRequestFromClientOrUserInput());
     // FIXME: action.request and request are probably duplicate information. <rdar://116203126>
     // FIXME: PolicyCheckIdentifier should probably be pushed to another layer. <rdar://116203008>
     // FIXME: Get more parameters correct and add tests for each one. <rdar://116203354>

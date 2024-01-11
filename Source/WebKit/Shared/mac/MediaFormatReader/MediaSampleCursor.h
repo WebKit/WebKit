@@ -147,11 +147,11 @@ constexpr MediaSampleCursor::WrapperClass MediaSampleCursor::wrapperClass()
         .getSyncInfo = [](MTPluginSampleCursorRef sampleCursor, MTPluginSampleCursorSyncInfo* syncInfo) -> OSStatus {
             return unwrap(sampleCursor)->getSyncInfo(syncInfo);
         },
-        .copyFormatDescription = [](MTPluginSampleCursorRef sampleCursor, CMFormatDescriptionRef* formatDescription) {
-            return unwrap(sampleCursor)->copyFormatDescription(formatDescription);
-        },
         .copySampleLocation = [](MTPluginSampleCursorRef sampleCursor, MTPluginSampleCursorStorageRange* storageRange, MTPluginByteSourceRef* byteSource) {
             return unwrap(sampleCursor)->copySampleLocation(storageRange, byteSource);
+        },
+        .copyFormatDescription = [](MTPluginSampleCursorRef sampleCursor, CMFormatDescriptionRef* formatDescription) {
+            return unwrap(sampleCursor)->copyFormatDescription(formatDescription);
         },
 #if HAVE(MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON)
         .getPlayableHorizon = [](MTPluginSampleCursorRef sampleCursor, CMTime* playableHorizon) {

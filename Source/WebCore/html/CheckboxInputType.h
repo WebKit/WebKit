@@ -86,7 +86,7 @@ private:
 
     // FIXME: Consider moving all switch-related state (and methods?) to their own object so
     // CheckboxInputType can stay somewhat small.
-    std::optional<int> m_switchPointerTrackingXPositionStart { std::nullopt };
+    std::optional<int> m_switchPointerTrackingLogicalLeftPositionStart { std::nullopt };
     bool m_hasSwitchVisuallyOnChanged { false };
     bool m_isSwitchVisuallyOn { false };
     Seconds m_switchAnimationVisuallyOnStartTime { 0_s };

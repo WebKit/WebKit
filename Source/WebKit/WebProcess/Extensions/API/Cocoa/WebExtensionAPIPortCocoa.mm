@@ -44,8 +44,7 @@
 
 namespace WebKit {
 
-using CheckedPortSet = HashSet<CheckedPtr<WebExtensionAPIPort>>;
-using PortChannelPortMap = HashMap<WebExtensionPortChannelIdentifier, CheckedPortSet>;
+using PortChannelPortMap = HashMap<WebExtensionPortChannelIdentifier, HashSet<WeakRef<WebExtensionAPIPort>>>;
 
 static PortChannelPortMap& webExtensionPorts()
 {
@@ -62,7 +61,7 @@ WebExtensionAPIPort::PortSet WebExtensionAPIPort::get(WebExtensionPortChannelIde
         return result;
 
     for (auto& port : entry->value)
-        result.add(*port);
+        result.add(port.get());
 
     return result;
 }
@@ -70,10 +69,10 @@ WebExtensionAPIPort::PortSet WebExtensionAPIPort::get(WebExtensionPortChannelIde
 void WebExtensionAPIPort::add()
 {
     auto addResult = webExtensionPorts().ensure(channelIdentifier(), [&] {
-        return CheckedPortSet { };
+        return HashSet<WeakRef<WebExtensionAPIPort>> { };
     });
 
-    addResult.iterator->value.add(this);
+    addResult.iterator->value.add(*this);
 
     RELEASE_LOG_DEBUG(Extensions, "Added port for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), (NSString *)toDebugString(contentWorldType()));
 }
@@ -86,7 +85,7 @@ void WebExtensionAPIPort::remove()
     if (entry == webExtensionPorts().end())
         return;
 
-    entry->value.remove(this);
+    entry->value.remove(*this);
 
     if (!entry->value.isEmpty())
         return;

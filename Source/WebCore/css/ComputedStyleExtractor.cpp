@@ -28,6 +28,7 @@
 #include "BasicShapeFunctions.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSCounterValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
@@ -1534,7 +1535,7 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
 {
     switch (timingFunction.type()) {
     case TimingFunction::Type::CubicBezierFunction: {
-        auto& function = downcast<CubicBezierTimingFunction>(timingFunction);
+        auto& function = uncheckedDowncast<CubicBezierTimingFunction>(timingFunction);
         if (function.timingFunctionPreset() != CubicBezierTimingFunction::TimingFunctionPreset::Custom) {
             CSSValueID valueId = CSSValueInvalid;
             switch (function.timingFunctionPreset()) {
@@ -1558,15 +1559,15 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
         return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
     }
     case TimingFunction::Type::StepsFunction: {
-        auto& function = downcast<StepsTimingFunction>(timingFunction);
+        auto& function = uncheckedDowncast<StepsTimingFunction>(timingFunction);
         return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepPosition());
     }
     case TimingFunction::Type::SpringFunction: {
-        auto& function = downcast<SpringTimingFunction>(timingFunction);
+        auto& function = uncheckedDowncast<SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
     case TimingFunction::Type::LinearFunction: {
-        auto& function = downcast<LinearTimingFunction>(timingFunction);
+        auto& function = uncheckedDowncast<LinearTimingFunction>(timingFunction);
         if (function.points().isEmpty())
             return CSSPrimitiveValue::create(CSSValueLinear);
         return CSSLinearTimingFunctionValue::create(function.points());
@@ -1575,17 +1576,11 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-enum IsShorthand : bool { No, Yes };
-static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation, IsShorthand isShorthand = IsShorthand::No)
+static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
 {
     if (property == CSSPropertyTransitionBehavior) {
-        if (animation) {
-            if (animation->isAllowsDiscreteTransitionsFilled())
-                return;
-            if (isShorthand == IsShorthand::Yes && animation->allowsDiscreteTransitions() == Animation::initialAllowsDiscreteTransitions())
-                return;
-        }
-        list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
+        if (!animation || !animation->isAllowsDiscreteTransitionsFilled())
+            list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
     } else if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
         if (!animation || !animation->isDurationFilled())
             list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
@@ -1639,21 +1634,143 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const AnimationList* animationList)
+static Ref<CSSValue> singleAnimationValue(const Animation& animation)
 {
-    CSSValueListBuilder parentList;
-    auto addAnimation = [&](Ref<Animation> animation) {
-        CSSValueListBuilder childList;
-        for (auto longhand : shorthandForProperty(property))
-            addValueForAnimationPropertyToList(childList, longhand, animation.ptr(), IsShorthand::Yes);
-        parentList.append(CSSValueList::createSpaceSeparated(WTFMove(childList)));
+    static NeverDestroyed<Ref<TimingFunction>> initialTimingFunction(Animation::initialTimingFunction());
+
+    static NeverDestroyed<String> alternate { "alternate"_s };
+    static NeverDestroyed<String> alternateReverse { "alternate-reverse"_s };
+    static NeverDestroyed<String> backwards { "backwards"_s };
+    static NeverDestroyed<String> both { "both"_s };
+    static NeverDestroyed<String> ease { "ease"_s };
+    static NeverDestroyed<String> easeIn { "ease-in"_s };
+    static NeverDestroyed<String> easeInOut { "ease-in-out"_s };
+    static NeverDestroyed<String> easeOut { "ease-out"_s };
+    static NeverDestroyed<String> forwards { "forwards"_s };
+    static NeverDestroyed<String> infinite { "infinite"_s };
+    static NeverDestroyed<String> linear { "linear"_s };
+    static NeverDestroyed<String> normal { "normal"_s };
+    static NeverDestroyed<String> paused { "paused"_s };
+    static NeverDestroyed<String> reverse { "reverse"_s };
+    static NeverDestroyed<String> running { "running"_s };
+    static NeverDestroyed<String> stepEnd { "step-end"_s };
+    static NeverDestroyed<String> stepStart { "step-start"_s };
+
+    // If we have an animation-delay but no animation-duration set, we must serialze
+    // the animation-duration because they're both <time> values and animation-delay
+    // comes first.
+    auto showsDelay = animation.delay() != Animation::initialDelay();
+    auto showsDuration = showsDelay || animation.duration() != Animation::initialDuration();
+
+    auto showsTimingFunction = [&]() {
+        auto* timingFunction = animation.timingFunction();
+        if (timingFunction && *timingFunction != initialTimingFunction.get())
+            return true;
+        auto& name = animation.name().name;
+        return name == ease || name == easeIn || name == easeInOut || name == easeOut || name == linear || name == stepEnd || name == stepStart;
     };
-    if (animationList && !animationList->isEmpty()) {
-        for (auto& animation : *animationList)
-            addAnimation(animation);
-    } else
-        addAnimation(Animation::create());
-    return CSSValueList::createCommaSeparated(WTFMove(parentList));
+
+    auto showsIterationCount = [&]() {
+        if (animation.iterationCount() != Animation::initialIterationCount())
+            return true;
+        return animation.name().name == infinite;
+    };
+
+    auto showsDirection = [&]() {
+        if (animation.direction() != Animation::initialDirection())
+            return true;
+        auto& name = animation.name().name;
+        return name == normal || name == reverse || name == alternate || name == alternateReverse;
+    };
+
+    auto showsFillMode = [&]() {
+        if (animation.fillMode() != Animation::initialFillMode())
+            return true;
+        auto& name = animation.name().name;
+        return name == forwards || name == backwards || name == both;
+    };
+
+    auto showsPlaysState = [&]() {
+        if (animation.playState() != Animation::initialPlayState())
+            return true;
+        auto& name = animation.name().name;
+        return name == running || name == paused;
+    };
+
+    CSSValueListBuilder list;
+    if (showsDuration)
+        list.append(valueForAnimationDuration(animation.duration()));
+    if (showsTimingFunction())
+        list.append(valueForAnimationTimingFunction(*animation.timingFunction()));
+    if (showsDelay)
+        list.append(valueForAnimationDelay(animation.delay()));
+    if (showsIterationCount())
+        list.append(valueForAnimationIterationCount(animation.iterationCount()));
+    if (showsDirection())
+        list.append(valueForAnimationDirection(animation.direction()));
+    if (showsFillMode())
+        list.append(valueForAnimationFillMode(animation.fillMode()));
+    if (showsPlaysState())
+        list.append(valueForAnimationPlayState(animation.playState()));
+    if (animation.name() != Animation::initialName())
+        list.append(valueForScopedName(animation.name()));
+    if (animation.timeline() != Animation::initialTimeline())
+        list.append(valueForAnimationTimeline(animation.timeline()));
+    if (animation.compositeOperation() != Animation::initialCompositeOperation())
+        list.append(valueForAnimationComposition(animation.compositeOperation()));
+    if (list.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> animationShorthandValue(const AnimationList* animations)
+{
+    if (!animations || animations->isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& animation : *animations)
+        list.append(singleAnimationValue(animation));
+    ASSERT(!list.isEmpty());
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> singleTransitionValue(const Animation& transition)
+{
+    static NeverDestroyed<Ref<TimingFunction>> initialTimingFunction(Animation::initialTimingFunction());
+
+    // If we have a transition-delay but no transition-duration set, we must serialze
+    // the transition-duration because they're both <time> values and transition-delay
+    // comes first.
+    auto showsDelay = transition.delay() != Animation::initialDelay();
+    auto showsDuration = showsDelay || transition.duration() != Animation::initialDuration();
+
+    CSSValueListBuilder list;
+    if (transition.property() != Animation::initialProperty())
+        list.append(createTransitionPropertyValue(transition));
+    if (showsDuration)
+        list.append(valueForAnimationDuration(transition.duration()));
+    if (auto* timingFunction = transition.timingFunction(); *timingFunction != initialTimingFunction.get())
+        list.append(valueForAnimationTimingFunction(*timingFunction));
+    if (showsDelay)
+        list.append(valueForAnimationDelay(transition.delay()));
+    if (transition.allowsDiscreteTransitions() != Animation::initialAllowsDiscreteTransitions())
+        list.append(valueForTransitionBehavior(transition.allowsDiscreteTransitions()));
+    if (list.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAll);
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> transitionShorthandValue(const AnimationList* transitions)
+{
+    if (!transitions || transitions->isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAll);
+
+    CSSValueListBuilder list;
+    for (auto& transition : *transitions)
+        list.append(singleTransitionValue(transition));
+    ASSERT(!list.isEmpty());
+    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 static Ref<CSSValue> createLineBoxContainValue(OptionSet<LineBoxContain> lineBoxContain)
@@ -1731,10 +1848,10 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     switch (operation->type()) {
     case PathOperation::Reference:
-        return CSSPrimitiveValue::createURI(downcast<ReferencePathOperation>(*operation).url());
+        return CSSPrimitiveValue::createURI(uncheckedDowncast<ReferencePathOperation>(*operation).url());
 
     case PathOperation::Shape: {
-        auto& shapeOperation = downcast<ShapePathOperation>(*operation);
+        auto& shapeOperation = uncheckedDowncast<ShapePathOperation>(*operation);
         if (shapeOperation.referenceBox() == CSSBoxType::BoxMissing)
             return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
         return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion),
@@ -1742,10 +1859,10 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     }
 
     case PathOperation::Box:
-        return createConvertingToCSSValueID(downcast<BoxPathOperation>(*operation).referenceBox());
+        return createConvertingToCSSValueID(uncheckedDowncast<BoxPathOperation>(*operation).referenceBox());
 
     case PathOperation::Ray: {
-        auto& ray = downcast<RayPathOperation>(*operation);
+        auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
         RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
         return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
@@ -2097,24 +2214,28 @@ static Ref<CSSValue> fillSizeToCSSValue(CSSPropertyID propertyID, const FillSize
         zoomAdjustedPixelValueForLength(fillSize.size.height, style));
 }
 
-static Ref<CSSValue> altTextToCSSValue(const RenderStyle& style)
-{
-    return CSSPrimitiveValue::create(style.contentAltText());
-}
-
-static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
+static Ref<CSSValue> contentToCSSValue(const RenderStyle& style)
 {
     CSSValueListBuilder list;
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
-        if (auto* counterContentData = dynamicDowncast<CounterContentData>(*contentData))
-            list.append(CSSPrimitiveValue::createCounterName(counterContentData->counter().identifier()));
-        else if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData))
+        if (auto* counterContentData = dynamicDowncast<CounterContentData>(*contentData)) {
+            RefPtr counterStyle = CSSPrimitiveValue::createCustomIdent(counterContentData->counter().listStyleType().identifier);
+            list.append(CSSCounterValue::create(counterContentData->counter().identifier(), counterContentData->counter().separator(), WTFMove(counterStyle)));
+        } else if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData))
             list.append(imageContentData->image().computedStyleValue(style));
+        else if (auto* quoteContentData = dynamicDowncast<QuoteContentData>(*contentData))
+            list.append(createConvertingToCSSValueID(quoteContentData->quote()));
         else if (auto* textContentData = dynamicDowncast<TextContentData>(*contentData))
             list.append(CSSPrimitiveValue::create(textContentData->text()));
+        else {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
     }
     if (list.isEmpty())
         list.append(CSSPrimitiveValue::create(style.hasEffectiveContentNone() ? CSSValueNone : CSSValueNormal));
+    else if (auto& altText = style.contentAltText(); !altText.isNull())
+        return CSSValuePair::createSlashSeparated(CSSValueList::createSpaceSeparated(WTFMove(list)), CSSPrimitiveValue::create(altText));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -3991,7 +4112,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueContentBox);
         return CSSPrimitiveValue::create(CSSValueBorderBox);
     case CSSPropertyAnimation:
-        return animationShorthandValue(propertyID, style.animations());
+        return animationShorthandValue(style.animations());
     case CSSPropertyAnimationComposition:
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDirection:
@@ -4212,7 +4333,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTransitionProperty:
         return valueListForAnimationOrTransitionProperty(propertyID, style.transitions());
     case CSSPropertyTransition:
-        return animationShorthandValue(propertyID, style.transitions());
+        return transitionShorthandValue(style.transitions());
     case CSSPropertyPointerEvents:
         return createConvertingToCSSValueID(style.pointerEvents());
     case CSSPropertyWebkitLineGrid:
@@ -4243,8 +4364,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.textOrientation());
     case CSSPropertyWebkitLineBoxContain:
         return createLineBoxContainValue(style.lineBoxContain());
-    case CSSPropertyAlt:
-        return altTextToCSSValue(style);
     case CSSPropertyContent:
         return contentToCSSValue(style);
     case CSSPropertyCounterIncrement:
@@ -4270,12 +4389,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForFilter(style, style.backdropFilter());
     case CSSPropertyMathStyle:
         return createConvertingToCSSValueID(style.mathStyle());
-#if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
         return createConvertingToCSSValueID(style.blendMode());
     case CSSPropertyIsolation:
         return createConvertingToCSSValueID(style.isolation());
-#endif
     case CSSPropertyBackgroundBlendMode: {
         auto& layers = style.backgroundLayers();
         if (!layers.next())

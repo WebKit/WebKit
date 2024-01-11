@@ -32,6 +32,9 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkitGStreamerCaptureDeviceManagerDebugCategory);
 #define GST_CAT_DEFAULT webkitGStreamerCaptureDeviceManagerDebugCategory
 
+static bool audioCaptureSingletonInitialized = false;
+static bool videoCaptureSingletonInitialized = false;
+
 static gint sortDevices(gconstpointer a, gconstpointer b)
 {
     GstDevice* adev = GST_DEVICE(a), *bdev = GST_DEVICE(b);
@@ -55,22 +58,28 @@ static gint sortDevices(gconstpointer a, gconstpointer b)
 GStreamerAudioCaptureDeviceManager& GStreamerAudioCaptureDeviceManager::singleton()
 {
     static NeverDestroyed<GStreamerAudioCaptureDeviceManager> manager;
+    audioCaptureSingletonInitialized = true;
     return manager;
 }
 
 GStreamerVideoCaptureDeviceManager& GStreamerVideoCaptureDeviceManager::singleton()
 {
     static NeverDestroyed<GStreamerVideoCaptureDeviceManager> manager;
+    videoCaptureSingletonInitialized = true;
     return manager;
 }
 
 void teardownGStreamerCaptureDeviceManagers()
 {
-    auto& audioManager = GStreamerAudioCaptureDeviceManager::singleton();
-    audioManager.teardown();
+    if (audioCaptureSingletonInitialized) {
+        auto& audioManager = GStreamerAudioCaptureDeviceManager::singleton();
+        audioManager.teardown();
+    }
 
-    auto& videoManager = GStreamerVideoCaptureDeviceManager::singleton();
-    videoManager.teardown();
+    if (videoCaptureSingletonInitialized) {
+        auto& videoManager = GStreamerVideoCaptureDeviceManager::singleton();
+        videoManager.teardown();
+    }
 }
 
 GStreamerCaptureDeviceManager::GStreamerCaptureDeviceManager()
@@ -96,6 +105,9 @@ void GStreamerCaptureDeviceManager::teardown()
     GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Tearing down");
     m_isTearingDown = true;
     stopMonitor();
+    for (auto& capturer : m_capturers)
+        capturer->stopDevice(true);
+    m_capturers.clear();
     RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
     m_devices.clear();
     m_gstreamerDevices.clear();
@@ -127,11 +139,13 @@ void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistent
 
 void GStreamerCaptureDeviceManager::registerCapturer(const RefPtr<GStreamerCapturer>& capturer)
 {
+    GST_DEBUG("Registering capturer for device %s", capturer->devicePersistentId().ascii().data());
     m_capturers.append(capturer);
 }
 
 void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& capturer)
 {
+    GST_DEBUG("Un-registering capturer for device %s", capturer.devicePersistentId().ascii().data());
     m_capturers.removeAllMatching([&](auto& item) -> bool {
         return item.get() == &capturer;
     });
@@ -140,14 +154,13 @@ void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& 
 void GStreamerCaptureDeviceManager::stopCapturing(const String& persistentId)
 {
     GST_DEBUG("Stopping capturer for device with persistent ID: %s", persistentId.ascii().data());
-    m_capturers.removeAllMatching([&persistentId](auto& capturer) -> bool {
+    for (auto& capturer : m_capturers) {
         GST_DEBUG("Checking capturer with device persistent ID: %s", capturer->devicePersistentId().ascii().data());
         if (capturer->devicePersistentId() != persistentId)
-            return false;
-
-        capturer->stopDevice();
-        return true;
-    });
+            continue;
+        capturer->stopDevice(false);
+        break;
+    }
 }
 
 std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
@@ -232,6 +245,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
     if (m_isTearingDown)
         return;
 
+    bool monitorBus = false;
     if (!m_deviceMonitor) {
         m_deviceMonitor = adoptGRef(gst_device_monitor_new());
 
@@ -260,6 +274,8 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             m_deviceMonitor = nullptr;
             return;
         }
+
+        monitorBus = true;
     }
 
     GList* devices = g_list_sort(gst_device_monitor_get_devices(m_deviceMonitor.get()), sortDevices);
@@ -267,6 +283,9 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
         addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
         devices = g_list_delete_link(devices, devices);
     }
+
+    if (!monitorBus)
+        return;
 
     auto bus = adoptGRef(gst_device_monitor_get_bus(m_deviceMonitor.get()));
 

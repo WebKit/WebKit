@@ -65,15 +65,15 @@ function computedStyleFor(id, pseudo, property)
 
 shouldBe("computedStyleFor('outline', null, 'outline-offset')", "'5px'");
 
-shouldBeEqualToString("computedStyleFor('content', 'before', 'content')", '"text"');
-shouldBeEqualToString("computedStyleFor('content', 'after', 'content')", `"test " url(\"data:image/gif;base64,R0lGODlhAQABAJAAAP8AAAAAACwAAAAAAQABAAACAgQBADs=\")`);
+shouldBeEqualToString("computedStyleFor('content', ':before', 'content')", '"text"');
+shouldBeEqualToString("computedStyleFor('content', ':after', 'content')", `"test " url(\"data:image/gif;base64,R0lGODlhAQABAJAAAP8AAAAAACwAAAAAAQABAAACAgQBADs=\")`);
 shouldBeEqualToString("computedStyleFor('counter', null, 'counter-reset')", "section 0");
 var str = computedStyleFor('subcounter', null, 'counter-reset');
 shouldBe("str.indexOf('subsection 0') != -1", "true");
 shouldBe("str.indexOf('anothercounter 5') != -1", "true");
-shouldBeEqualToString("computedStyleFor('counter1', 'before', 'counter-increment')", "section 1");
-shouldBeEqualToString("computedStyleFor('subcounter2', 'before', 'counter-increment')", "subsection 1");
-shouldBeEqualToString("computedStyleFor('subcounter2', 'before', 'content')", `counter(section) "." counter(subsection) ". "`);
+shouldBeEqualToString("computedStyleFor('counter1', ':before', 'counter-increment')", "section 1");
+shouldBeEqualToString("computedStyleFor('subcounter2', ':before', 'counter-increment')", "subsection 1");
+shouldBeEqualToString("computedStyleFor('subcounter2', ':before', 'content')", `counter(section) "." counter(subsection) ". "`);
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </html>

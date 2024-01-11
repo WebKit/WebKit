@@ -123,6 +123,7 @@ public:
     Vector<WTF::URL> takeRedirectChain() { return WTFMove(m_redirectChain); }
 
     bool wasUserInitiated() const { return !!m_lastNavigationAction.userGestureTokenIdentifier; }
+    bool isRequestFromClientOrUserInput() const { return m_lastNavigationAction.isRequestFromClientOrUserInput; }
 
     bool shouldPerformDownload() const { return !m_lastNavigationAction.downloadAttribute.isNull(); }
 

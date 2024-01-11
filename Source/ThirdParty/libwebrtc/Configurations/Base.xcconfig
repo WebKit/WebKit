@@ -104,7 +104,7 @@ STRIP_INSTALLED_PRODUCT = NO;
 OTHER_CFLAGS = $(inherited) -fvisibility=default;
 OTHER_LDFLAGS = $(inherited) -fvisibility=default;
 
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited) ABSL_ALLOCATOR_NOTHROW;
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited) ABSL_ALLOCATOR_NOTHROW WEBRTC_WEBKIT_BUILD;
 
 EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/Source/webrtc/examples" "$(PROJECT_DIR)/Source/third_party/boringssl/src/util";
 

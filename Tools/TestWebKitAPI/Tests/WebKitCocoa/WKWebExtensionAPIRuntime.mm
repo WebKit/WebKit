@@ -394,7 +394,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
         [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
 
         @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
-        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the content script')",
 
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
@@ -416,7 +416,65 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScript)
         @"(async () => {",
         @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
 
-        @"  browser.test.assertEq(response.content, 'Received', 'Should get the response from the background script')",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  setTimeout(() => sendResponse({ content: 'Received' }), 1000)",
+
+        @"  return true",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
 
         @"  browser.test.notifyPass()",
         @"})()"
@@ -450,7 +508,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithPromiseReply)
         [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
 
         @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
-        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the content script')",
 
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
@@ -472,7 +530,65 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithPromiseReply)
         @"(async () => {",
         @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
 
-        @"  browser.test.assertEq(response.content, 'Received', 'Should get the response from the background script')",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithAsyncPromiseReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *urlString = urlRequest.URL.absoluteString;
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const expectedURL = '%@'", urlString],
+        [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
+
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the content script')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.tab, 'object', 'sender.tab should be an object')",
+        @"  browser.test.assertEq(sender.tab.url, expectedURL, 'sender.tab.url should be the expected URL')",
+
+        @"  browser.test.assertEq(sender.url, expectedURL, 'sender.url should be the expected URL')",
+        @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
+
+        @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  return new Promise((resolve) => {",
+        @"    setTimeout(() => resolve({ content: 'Received' }), 1000)",
+        @"  })",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ content: 'Hello' })",
+
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the background script')",
 
         @"  browser.test.notifyPass()",
         @"})()"
@@ -506,7 +622,7 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
         [NSString stringWithFormat:@"const expectedOrigin = '%@'", [urlString substringToIndex:urlString.length - 1]],
 
         @"browser.runtime.onMessage.addListener((message, sender) => {",
-        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message from the content script')",
+        @"  browser.test.assertEq(message?.content, 'Hello', 'Should receive the correct message from the content script')",
 
         @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
 
@@ -517,6 +633,8 @@ TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWithNoReply)
         @"  browser.test.assertEq(sender.origin, expectedOrigin, 'sender.origin should be the expected origin')",
 
         @"  browser.test.assertEq(sender.frameId, 0, 'sender.frameId should be 0')",
+
+        @"  return false",
         @"})",
 
         @"browser.test.yield('Load Tab')"

@@ -192,6 +192,8 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
     if (gst_structure_get_uint64(structure, "bytes-received", &bytesReceived))
         stats.bytesReceived = bytesReceived;
 
+    stats.decoderImplementation = "GStreamer"_s;
+
     if (!additionalStats)
         return;
 
@@ -222,7 +224,6 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
 
 static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
 {
-    fillRTCRTPStreamStats(stats, structure);
     fillSentRTPStreamStats(stats, structure);
 
     unsigned firCount;

@@ -21,9 +21,12 @@
 #include "WebKitProtocolHandler.h"
 
 #include "BuildRevision.h"
+#include "DisplayVBlankMonitor.h"
 #include "WebKitError.h"
+#include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitVersion.h"
 #include "WebKitWebView.h"
+#include "WebProcessPool.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
@@ -286,6 +289,10 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     auto displayObject = JSON::Object::create();
     startTable("Display Information"_s);
 
+    auto& page = webkitURISchemeRequestGetWebPage(request);
+    auto displayID = page.displayID();
+    addTableRow(displayObject, "Identifier"_s, String::number(displayID.value_or(0)));
+
 #if PLATFORM(GTK)
     StringBuilder typeStringBuilder;
 #if PLATFORM(WAYLAND)
@@ -309,6 +316,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
     addTableRow(displayObject, "DPI"_s, String::number(screenDPI()));
+
+    if (displayID) {
+        if (auto* displayLink = page.process().processPool().displayLinks().existingDisplayLinkForDisplay(*displayID)) {
+            auto& vblankMonitor = displayLink->vblankMonitor();
+            addTableRow(displayObject, "VBlank type"_s, vblankMonitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s);
+            addTableRow(displayObject, "VBlank refresh rate"_s, makeString(vblankMonitor.refreshRate(), "Hz"));
+        }
+    }
+
 #if USE(LIBDRM)
     if (strcmp(policy, "never")) {
         auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();

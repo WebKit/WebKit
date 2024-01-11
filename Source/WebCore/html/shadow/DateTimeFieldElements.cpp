@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "ScriptDisallowedScope.h"
+#include "UserAgentParts.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,9 +49,8 @@ DateTimeDayFieldElement::DateTimeDayFieldElement(Document& document, FieldOwner&
 Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeDayFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> dayPseudoId("-webkit-datetime-edit-day-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(dayPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditDayField());
     element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldDayText() });
     element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
@@ -77,9 +77,8 @@ DateTimeHourFieldElement::DateTimeHourFieldElement(Document& document, FieldOwne
 Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& document, FieldOwner& fieldOwner, int minimum, int maximum)
 {
     auto element = adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
-    static MainThreadNeverDestroyed<const AtomString> hourPseudoId("-webkit-datetime-edit-hour-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(hourPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditHourField());
     return element;
 }
 
@@ -143,9 +142,8 @@ DateTimeMeridiemFieldElement::DateTimeMeridiemFieldElement(Document& document, F
 Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
 {
     auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
-    static MainThreadNeverDestroyed<const AtomString> meridiemPseudoId("-webkit-datetime-edit-meridiem-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(meridiemPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMeridiemField());
     return element;
 }
 
@@ -170,9 +168,8 @@ DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document& docum
 Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> millisecondPseudoId("-webkit-datetime-edit-millisecond-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(millisecondPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMillisecondField());
     return element;
 }
 
@@ -197,9 +194,8 @@ DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document& document, Field
 Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> minutePseudoId("-webkit-datetime-edit-minute-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(minutePseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMinuteField());
     return element;
 }
 
@@ -224,9 +220,8 @@ DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document& document, FieldOw
 Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeMonthFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(monthPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMonthField());
     element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
     element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
@@ -254,9 +249,8 @@ DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document& document, Field
 Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> secondPseudoId("-webkit-datetime-edit-second-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(secondPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditSecondField());
     return element;
 }
 
@@ -281,9 +275,8 @@ DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document& d
 Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document& document, FieldOwner& fieldOwner, const Vector<String>& labels)
 {
     auto element = adoptRef(*new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
-    static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(monthPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMonthField());
     element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
     element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
@@ -310,9 +303,8 @@ DateTimeYearFieldElement::DateTimeYearFieldElement(Document& document, FieldOwne
 Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& document, FieldOwner& fieldOwner)
 {
     auto element = adoptRef(*new DateTimeYearFieldElement(document, fieldOwner));
-    static MainThreadNeverDestroyed<const AtomString> yearPseudoId("-webkit-datetime-edit-year-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->initialize(yearPseudoId);
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditYearField());
     element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldYearText() });
     element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;

@@ -184,7 +184,10 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
     , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_encoder(WTFMove(encoderElement))
 {
-    GRefPtr<GstElement> harnessedElement = gst_bin_new(nullptr);
+    static Atomic<uint64_t> counter = 0;
+    auto binName = makeString("audio-encoder-"_s, GST_OBJECT_NAME(m_encoder.get()), '-', counter.exchangeAdd(1));
+
+    GRefPtr<GstElement> harnessedElement = gst_bin_new(binName.ascii().data());
     auto audioconvert = gst_element_factory_make("audioconvert", nullptr);
     auto audioresample = gst_element_factory_make("audioresample", nullptr);
     m_inputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
@@ -285,10 +288,6 @@ GStreamerInternalAudioEncoder::~GStreamerInternalAudioEncoder()
 
 String GStreamerInternalAudioEncoder::initialize(const String& codecName, const AudioEncoder::Config& config)
 {
-    static Atomic<uint64_t> counter = 0;
-    auto binName = makeString("audio-encoder-"_s, codecName, '-', counter.exchangeAdd(1));
-    gst_object_set_name(GST_OBJECT_CAST(m_harness->element()), binName.ascii().data());
-
     GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
     if (codecName.startsWith("mp4a"_s)) {
         const char* streamFormat = config.isAacADTS.value_or(false) ? "adts" : "raw";

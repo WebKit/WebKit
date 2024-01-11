@@ -197,9 +197,9 @@ void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRe
     append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
-void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    append(DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options));
+    append(DrawNativeImage(imageIdentifier, destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -275,6 +275,11 @@ void RecorderImpl::recordFillRectWithColor(const FloatRect& rect, const Color& c
 void RecorderImpl::recordFillRectWithGradient(const FloatRect& rect, Gradient& gradient)
 {
     append(FillRectWithGradient(rect, gradient));
+}
+
+void RecorderImpl::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform));
 }
 
 void RecorderImpl::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)

@@ -29,8 +29,6 @@
 #include "RsaOtherPrimesInfo.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 struct JsonWebKey {
@@ -59,5 +57,3 @@ struct JsonWebKey {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

@@ -7,7 +7,6 @@ PASS align-content
 PASS align-items
 PASS align-self
 PASS alignment-baseline
-PASS alt
 PASS animation-composition
 PASS animation-delay
 PASS animation-direction

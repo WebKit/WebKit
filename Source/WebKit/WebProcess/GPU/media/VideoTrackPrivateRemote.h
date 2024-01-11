@@ -62,7 +62,7 @@ private:
     void setSelected(bool) final;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    VideoTrackKind m_kind { None };
+    VideoTrackKind m_kind { VideoTrackKind::None };
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };

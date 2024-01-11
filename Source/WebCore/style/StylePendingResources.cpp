@@ -79,8 +79,8 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
         loadPendingImage(document, backgroundLayer->image(), element);
 
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
-        if (is<ImageContentData>(*contentData)) {
-            auto& styleImage = downcast<ImageContentData>(*contentData).image();
+        if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData)) {
+            auto& styleImage = imageContentData->image();
             loadPendingImage(document, &styleImage, element);
         }
     }

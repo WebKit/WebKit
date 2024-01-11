@@ -1,0 +1,20 @@
+<style>
+div {
+  font-family: Ahem;
+  font-size: 20px;
+  color: transparent;
+  width: 60px;
+  margin-top: 10px;
+}
+span {
+  outline: 1px solid green;
+}
+</style>
+<div><span>XXX<br>X</span></div>
+<div style="direction: rtl"><span>XXX<br>X</span></div>
+<div style="writing-mode: vertical-lr"><span>XXX<br>X</span></div>
+<div style="writing-mode: vertical-rl"><span>XXX<br>X</span></div>
+<div style="writing-mode: vertical-rl; direction: rtl"><span>XXX<br>X</span></div>
+<div style="writing-mode: vertical-lr; direction: rtl"><span>XXX<br>X</span></div>
+<div style="padding-left: 10px; writing-mode: vertical-lr; direction: rtl"><span>XXX<br>X</span></div>
+<div style="border-left: 10px solid transparent; writing-mode: vertical-lr; direction: rtl"><span>XXX<br>X</span></div>

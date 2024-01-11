@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-EventContext::~EventContext() = default;
-
 void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
     event.setTarget(m_target.copyRef());

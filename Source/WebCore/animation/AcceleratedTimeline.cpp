@@ -62,11 +62,11 @@ void AcceleratedTimeline::updateEffectStacks()
         auto pseudoId = static_cast<PseudoId>(hashedStyleable.second);
         Styleable target { *element, pseudoId };
 
-        auto* renderer = target.renderer();
-        if (!renderer || !renderer->isComposited() || !is<RenderLayerModelObject>(renderer))
+        auto* renderer = dynamicDowncast<RenderLayerModelObject>(target.renderer());
+        if (!renderer || !renderer->isComposited())
             continue;
 
-        auto* renderLayer = downcast<RenderLayerModelObject>(*renderer).layer();
+        auto* renderLayer = renderer->layer();
         ASSERT(renderLayer && renderLayer->backing());
         renderLayer->backing()->updateAcceleratedEffectsAndBaseValues();
     }

@@ -535,6 +535,15 @@ FillSource::FillSource(const GraphicsContextState& state)
         color = state.fillBrush().color();
 }
 
+FillSource::FillSource(const GraphicsContextState& state, Gradient& useGradient, const AffineTransform& gradientSpaceTransform)
+    : globalAlpha(state.alpha())
+    , fillRule(state.fillRule())
+{
+    gradient.base = useGradient.createPattern(1, gradientSpaceTransform);
+    if (state.alpha() != 1)
+        gradient.alphaAdjusted = useGradient.createPattern(state.alpha(), gradientSpaceTransform);
+}
+
 StrokeSource::StrokeSource(const GraphicsContextState& state)
     : globalAlpha(state.alpha())
 {

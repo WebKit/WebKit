@@ -62,7 +62,8 @@ StyleCachedImage::~StyleCachedImage() = default;
 
 bool StyleCachedImage::operator==(const StyleImage& other) const
 {
-    return is<StyleCachedImage>(other) && equals(downcast<StyleCachedImage>(other));
+    auto* otherCachedImage = dynamicDowncast<StyleCachedImage>(other);
+    return otherCachedImage && equals(*otherCachedImage);
 }
 
 bool StyleCachedImage::equals(const StyleCachedImage& other) const

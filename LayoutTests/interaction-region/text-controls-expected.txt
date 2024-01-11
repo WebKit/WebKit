@@ -13,9 +13,9 @@
 
       (interaction regions [
         (interaction (9,9) width=211 height=204)
-        (borderRadius 5.00),
+        (cornerRadius 5.00),
         (interaction (226,178) width=330 height=55)
-        (borderRadius 5.00)])
+        (cornerRadius 5.00)])
       )
     )
   )

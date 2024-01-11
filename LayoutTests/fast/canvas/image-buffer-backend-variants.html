@@ -58,10 +58,9 @@ for (var subcase of subcases) {
     } 
     shouldBe("imageData.data", "red");
     if (typeof context.getEffectiveRenderingModeForTesting !== "undefined") {
-        if (subcase.renderingMode)
-            shouldBe("context.getEffectiveRenderingModeForTesting()", `'${"" + subcase.renderingMode}'`);
-        else
-            debug(`Effective renderingMode: ${context.getEffectiveRenderingModeForTesting()}`);
+        // Currently we do not require that the rendering mode request is adhered to.
+        // This is because Accelerated has run-time limitations, global IOSurface count limits.
+        debug(`Effective renderingMode: ${context.getEffectiveRenderingModeForTesting()}`);
     }
 }
 </script>

@@ -157,7 +157,10 @@ TEST(_WKActivatedElementInfo, InfoForRotatedImage)
         Vector<unsigned> pixels(height * width);
 
         RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-        RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(pixels.data(), width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little));
+IGNORE_WARNINGS_BEGIN("deprecated-enum-enum-conversion")
+        CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little;
+IGNORE_WARNINGS_END
+        RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(pixels.data(), width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), bitmapInfo));
 
         CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), image);
         return pixels;

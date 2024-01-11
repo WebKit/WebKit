@@ -36,8 +36,6 @@ public:
     void layout() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
-    bool isLegacyRenderSVGResourceContainer() const final { return true; }
-
     static float computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
@@ -96,10 +94,7 @@ Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
     // Using the LegacyRenderSVGResource type here avoids ambiguous casts for types that
     // descend from both RenderObject and LegacyRenderSVGResourceContainer.
     LegacyRenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
-    if (is<Renderer>(container))
-        return downcast<Renderer>(container);
-
-    return nullptr;
+    return dynamicDowncast<Renderer>(container);
 }
 
 } // namespace WebCore

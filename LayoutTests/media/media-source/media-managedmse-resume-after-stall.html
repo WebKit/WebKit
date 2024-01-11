@@ -35,19 +35,26 @@
         run('sourceBuffer.appendBuffer(loader.initSegment())');
         await waitFor(sourceBuffer, 'update');
 
+        // Buffer a minimum of 3s to reach canPlayThrough and therefore autoplay.
         run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
         await waitFor(sourceBuffer, 'update');
         run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
         await waitFor(sourceBuffer, 'update');
-
-        await sleepFor(2000);
-        sourceBuffer.timestampOffset = -0.5;
-
         run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
         await waitFor(sourceBuffer, 'update');
+
+        await sleepFor(3000);
+        sourceBuffer.timestampOffset = -0.5;
+
+        // Again, buffer a minimum of 3s, see reasons above.
         run('sourceBuffer.appendBuffer(loader.mediaSegment(3))');
         await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(4))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(5))');
+        await waitFor(sourceBuffer, 'update');
 
+        // Marching beyond 3s (range buffered before the stall) is enough to prove that playback has continued.
         await testExpectedEventually("video.currentTime", 3.5, ">=");
 
         endTest();

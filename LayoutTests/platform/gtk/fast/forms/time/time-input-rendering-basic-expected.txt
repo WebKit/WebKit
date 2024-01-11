@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {INPUT} at (0,0) size 80x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-      RenderText {#text} at (80,11) size 4x17
-        text run at (80,11) width 4: " "
-      RenderBlock {INPUT} at (84,0) size 80x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderText {#text} at (81,5) size 4x17
+        text run at (81,5) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (11,11) size 74x22
-  RenderBlock {DIV} at (3,3) size 74x22
-    RenderBlock {DIV} at (1,1) size 72x20
+layer at (8,8) size 81x28 clip at (10,10) size 77x24
+  RenderFlexibleBox {INPUT} at (0,0) size 81x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+layer at (11,11) size 75x22
+  RenderBlock {DIV} at (3,3) size 75x22
+    RenderBlock {DIV} at (1,1) size 73x20
       RenderBlock {DIV} at (0,0) size 20x20
         RenderText {#text} at (1,1) size 18x17
           text run at (1,1) width 18: "09"
@@ -20,27 +20,29 @@ layer at (11,11) size 74x22
       RenderBlock {DIV} at (24,0) size 20x20
         RenderText {#text} at (1,1) size 18x17
           text run at (1,1) width 18: "41"
-      RenderInline {DIV} at (0,0) size 4x17
-        RenderText {#text} at (43,1) size 4x17
-          text run at (43,1) width 4: " "
-      RenderBlock {DIV} at (46,0) size 26x20
+      RenderInline {DIV} at (0,0) size 3x17
+        RenderText {#text} at (44,1) size 3x17
+          text run at (44,1) width 3: "\x{202F}"
+      RenderBlock {DIV} at (47,0) size 26x20
         RenderText {#text} at (1,1) size 24x17
           text run at (1,1) width 24: "AM"
-layer at (95,11) size 74x22
-  RenderBlock {DIV} at (3,3) size 74x22
-    RenderBlock {DIV} at (1,1) size 72x20
-      RenderBlock {DIV} at (52,0) size 20x20
+layer at (93,8) size 81x28 clip at (95,10) size 77x24
+  RenderFlexibleBox {INPUT} at (85,0) size 81x28 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+layer at (96,11) size 75x22
+  RenderBlock {DIV} at (3,3) size 75x22
+    RenderBlock {DIV} at (1,1) size 73x20
+      RenderBlock {DIV} at (53,0) size 20x20
         RenderText {#text} at (1,1) size 18x17
           text run at (1,1) width 18: "09"
       RenderInline {DIV} at (0,0) size 4x17
-        RenderText {#text} at (48,1) size 4x17
-          text run at (48,1) width 4 RTL: ":"
-      RenderBlock {DIV} at (28,0) size 20x20
+        RenderText {#text} at (49,1) size 4x17
+          text run at (49,1) width 4 RTL: ":"
+      RenderBlock {DIV} at (29,0) size 20x20
         RenderText {#text} at (1,1) size 18x17
           text run at (1,1) width 18: "41"
-      RenderInline {DIV} at (0,0) size 4x17
-        RenderText {#text} at (25,1) size 4x17
-          text run at (25,1) width 4 RTL: " "
+      RenderInline {DIV} at (0,0) size 3x17
+        RenderText {#text} at (26,1) size 3x17
+          text run at (26,1) width 3 RTL: "\x{202F}"
       RenderBlock {DIV} at (0,0) size 26x20
         RenderText {#text} at (1,1) size 24x17
           text run at (1,1) width 24: "AM"

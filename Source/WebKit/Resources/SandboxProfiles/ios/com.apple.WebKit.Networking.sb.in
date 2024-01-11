@@ -844,6 +844,7 @@
         SYS_psynch_mutexwait
         SYS_psynch_rw_rdlock
         SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
         SYS_pwrite_nocancel
         SYS_read
         SYS_read_nocancel

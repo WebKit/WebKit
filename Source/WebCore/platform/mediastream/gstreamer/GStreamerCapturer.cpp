@@ -32,6 +32,7 @@
 #include <mutex>
 #include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/PrintStream.h>
 
 GST_DEBUG_CATEGORY(webkit_capturer_debug);
 #define GST_CAT_DEFAULT webkit_capturer_debug
@@ -67,15 +68,31 @@ GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>
 
 GStreamerCapturer::~GStreamerCapturer()
 {
-    auto* sink = this->sink();
-    if (sink)
-        g_signal_handlers_disconnect_by_data(sink, this);
+    tearDown();
+}
 
-    if (!m_pipeline)
+void GStreamerCapturer::tearDown(bool disconnectSignals)
+{
+    GST_DEBUG("Disposing capture pipeline %" GST_PTR_FORMAT " (disconnecting signals: %s)", m_pipeline.get(), boolForPrinting(disconnectSignals));
+    if (disconnectSignals && m_sink)
+        g_signal_handlers_disconnect_by_data(m_sink.get(), this);
+
+    if (m_pipeline) {
+        if (disconnectSignals) {
+            unregisterPipeline(m_pipeline);
+            disconnectSimpleBusMessageCallback(pipeline());
+        }
+        gst_element_set_state(pipeline(), GST_STATE_NULL);
+    }
+
+    if (!disconnectSignals)
         return;
 
-    disconnectSimpleBusMessageCallback(pipeline());
-    gst_element_set_state(pipeline(), GST_STATE_NULL);
+    m_sink = nullptr;
+    m_valve = nullptr;
+    m_src = nullptr;
+    m_capsfilter = nullptr;
+    m_pipeline = nullptr;
 }
 
 GStreamerCapturer::Observer::~Observer()
@@ -150,25 +167,28 @@ GstElement* GStreamerCapturer::createSource()
     return m_src.get();
 }
 
-GstCaps* GStreamerCapturer::caps()
+GRefPtr<GstCaps> GStreamerCapturer::caps()
 {
     if (m_sourceFactory) {
         GRefPtr<GstElement> element = makeElement(m_sourceFactory);
         auto pad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
 
-        return gst_pad_query_caps(pad.get(), nullptr);
+        return adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
     }
 
     ASSERT(m_device);
-    return gst_device_get_caps(m_device->device());
+    return adoptGRef(gst_device_get_caps(m_device->device()));
 }
 
 void GStreamerCapturer::setupPipeline()
 {
-    if (m_pipeline)
+    if (m_pipeline) {
+        unregisterPipeline(m_pipeline);
         disconnectSimpleBusMessageCallback(pipeline());
+    }
 
     m_pipeline = makeElement("pipeline");
+    registerActivePipeline(m_pipeline);
 
     GRefPtr<GstElement> source = createSource();
     GRefPtr<GstElement> converter = createConverter();
@@ -199,6 +219,9 @@ GstElement* GStreamerCapturer::makeElement(const char* factoryName)
 
 void GStreamerCapturer::start()
 {
+    if (!m_pipeline)
+        setupPipeline();
+
     ASSERT(m_pipeline);
     GST_INFO_OBJECT(pipeline(), "Starting");
     gst_element_set_state(pipeline(), GST_STATE_PLAYING);
@@ -206,9 +229,8 @@ void GStreamerCapturer::start()
 
 void GStreamerCapturer::stop()
 {
-    ASSERT(m_pipeline);
     GST_INFO_OBJECT(pipeline(), "Stopping");
-    gst_element_set_state(pipeline(), GST_STATE_NULL);
+    tearDown(false);
 }
 
 bool GStreamerCapturer::isInterrupted() const
@@ -223,11 +245,16 @@ void GStreamerCapturer::setInterrupted(bool isInterrupted)
     g_object_set(m_valve.get(), "drop", isInterrupted, nullptr);
 }
 
-void GStreamerCapturer::stopDevice()
+void GStreamerCapturer::stopDevice(bool disconnectSignals)
 {
     forEachObserver([](auto& observer) {
         observer.captureEnded();
     });
+    if (disconnectSignals) {
+        m_device.reset();
+        m_caps = nullptr;
+    }
+    tearDown(disconnectSignals);
 }
 
 #undef GST_CAT_DEFAULT

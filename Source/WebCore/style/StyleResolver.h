@@ -29,10 +29,10 @@
 #include "RuleSet.h"
 #include "StyleScopeRuleSets.h"
 #include <memory>
-#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringHash.h>
 
@@ -81,7 +81,7 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
-class Resolver : public RefCounted<Resolver>, public CanMakeCheckedPtr {
+class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
     WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
     // Style resolvers are shared between shadow trees with identical styles. That's why we don't simply provide a Style::Scope.

@@ -35,8 +35,8 @@ class SwitchTrackElement final : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(SwitchTrackElement);
 public:
     static Ref<SwitchTrackElement> create(Document&);
+
 private:
-    static constexpr auto CreateSwitchTrackElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     explicit SwitchTrackElement(Document&);
 };
 

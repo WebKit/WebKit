@@ -45,7 +45,7 @@ def do_delayed_imports(logger, test_paths):
 
 
 def serve_path(test_paths):
-    return test_paths["/"]["tests_path"]
+    return test_paths["/"].tests_path
 
 
 def webtranport_h3_server_is_running(host, port, timeout):
@@ -93,7 +93,8 @@ class TestEnvironment:
     websockets servers"""
     def __init__(self, test_paths, testharness_timeout_multipler,
                  pause_after_test, debug_test, debug_info, options, ssl_config, env_extras,
-                 enable_webtransport=False, mojojs_path=None, inject_script=None):
+                 enable_webtransport=False, mojojs_path=None, inject_script=None,
+                 suppress_handler_traceback=None):
 
         self.test_paths = test_paths
         self.server = None
@@ -117,6 +118,7 @@ class TestEnvironment:
         self.enable_webtransport = enable_webtransport
         self.mojojs_path = mojojs_path
         self.inject_script = inject_script
+        self.suppress_handler_traceback = suppress_handler_traceback
 
     def __enter__(self):
         server_log_handler = self.server_logging_ctx.__enter__()
@@ -213,6 +215,9 @@ class TestEnvironment:
         config.doc_root = serve_path(self.test_paths)
         config.inject_script = self.inject_script
 
+        if self.suppress_handler_traceback is not None:
+            config.logging["suppress_handler_traceback"] = self.suppress_handler_traceback
+
         return config
 
     def get_routes(self):
@@ -223,7 +228,7 @@ class TestEnvironment:
 
         for path, format_args, content_type, route in [
                 ("testharness_runner.html", {}, "text/html", "/testharness_runner.html"),
-                ("print_reftest_runner.html", {}, "text/html", "/print_reftest_runner.html"),
+                ("print_pdf_runner.html", {}, "text/html", "/print_pdf_runner.html"),
                 (os.path.join(here, "..", "..", "third_party", "pdf_js", "pdf.js"), None,
                  "text/javascript", "/_pdf_js/pdf.js"),
                 (os.path.join(here, "..", "..", "third_party", "pdf_js", "pdf.worker.js"), None,
@@ -242,18 +247,12 @@ class TestEnvironment:
             route_builder.add_static(path, format_args, content_type, route,
                                      headers=headers)
 
-        data = b""
-        with open(os.path.join(repo_root, "resources", "testdriver.js"), "rb") as fp:
-            data += fp.read()
-        with open(os.path.join(here, "testdriver-extra.js"), "rb") as fp:
-            data += fp.read()
-        route_builder.add_handler("GET", "/resources/testdriver.js",
-                                  StringHandler(data, "text/javascript"))
+        route_builder.add_handler("GET", "/resources/testdriver.js", TestdriverLoader())
 
-        for url_base, paths in self.test_paths.items():
+        for url_base, test_root in self.test_paths.items():
             if url_base == "/":
                 continue
-            route_builder.add_mount_point(url_base, paths["tests_path"])
+            route_builder.add_mount_point(url_base, test_root.tests_path)
 
         if "/" not in self.test_paths:
             del route_builder.mountpoint_routes["/"]
@@ -265,7 +264,7 @@ class TestEnvironment:
 
     def ensure_started(self):
         # Pause for a while to ensure that the server has a chance to start
-        total_sleep_secs = 30
+        total_sleep_secs = 60
         each_sleep_secs = 0.5
         end_time = time.time() + total_sleep_secs
         while time.time() < end_time:
@@ -275,8 +274,13 @@ class TestEnvironment:
             if not pending:
                 return
             time.sleep(each_sleep_secs)
-        raise OSError("Servers failed to start: %s" %
-                      ", ".join("%s:%s" % item for item in failed))
+        if failed:
+            failures = ", ".join(f"{scheme}:{port}" for scheme, port in failed)
+            msg = f"Servers failed to start: {failures}"
+        else:
+            pending = ", ".join(f"{scheme}:{port}" for scheme, port in pending)
+            msg = f"Timed out wait for servers to start: {pending}"
+        raise OSError(msg)
 
     def test_servers(self):
         failed = []
@@ -299,21 +303,50 @@ class TestEnvironment:
                     try:
                         s.connect((host, port))
                     except OSError:
-                        pending.append((host, port))
+                        pending.append((scheme, port))
                     finally:
                         s.close()
 
         return failed, pending
 
 
-def wait_for_service(logger, host, port, timeout=60):
+class TestdriverLoader:
+    """A special static handler for serving `/resources/testdriver.js`.
+
+    This handler lazily reads `testdriver{,-extra}.js` so that wptrunner doesn't
+    need to pass the entire file contents to child `wptserve` processes, which
+    can slow `wptserve` startup by several seconds (crbug.com/1479850).
+    """
+    def __init__(self):
+        self._handler = None
+
+    def __call__(self, request, response):
+        if not self._handler:
+            data = b""
+            with open(os.path.join(repo_root, "resources", "testdriver.js"), "rb") as fp:
+                data += fp.read()
+            with open(os.path.join(here, "testdriver-extra.js"), "rb") as fp:
+                data += fp.read()
+            self._handler = StringHandler(data, "text/javascript")
+        return self._handler(request, response)
+
+
+def wait_for_service(logger, host, port, timeout=60, server_process=None):
     """Waits until network service given as a tuple of (host, port) becomes
-    available or the `timeout` duration is reached, at which point
-    ``socket.error`` is raised."""
+    available, `timeout` duration is reached, or the `server_process` exits at
+    which point ``socket.error`` is raised."""
     addr = (host, port)
     logger.debug(f"Trying to connect to {host}:{port}")
     end = time.time() + timeout
     while end > time.time():
+        if server_process is not None and server_process.poll() is not None:
+            returncode = server_process.poll()
+            logger.debug(
+                f"Server process {server_process.pid} exited with "
+                f"{returncode}, giving up trying to connect"
+            )
+            break
+
         so = socket.socket()
         try:
             so.connect(addr)

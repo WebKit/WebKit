@@ -40,14 +40,9 @@ class Traverser : public TIntermTraverser
         TIntermTyped *declarator = sequence.front()->getAsTyped();
         const TType &type        = declarator->getType();
 
-        if (type.isStructSpecifier())
+        if (type.isStructSpecifier() && type.getStruct()->symbolType() == SymbolType::Empty)
         {
-            const TStructure *structure = type.getStruct();
-
-            if (structure->symbolType() == SymbolType::Empty)
-            {
-                doReplacement(decl, declarator, structure);
-            }
+            doReplacement(decl, declarator, type);
         }
 
         return false;
@@ -62,10 +57,9 @@ class Traverser : public TIntermTraverser
     }
 
   private:
-    void doReplacement(TIntermDeclaration *decl,
-                       TIntermTyped *declarator,
-                       const TStructure *oldStructure)
+    void doReplacement(TIntermDeclaration *decl, TIntermTyped *declarator, const TType &oldType)
     {
+        const TStructure *oldStructure = oldType.getStruct();
         // struct <structName> { ... };
         TStructure *structure = new TStructure(mSymbolTable, kEmptyImmutableString,
                                                &oldStructure->fields(), SymbolType::AngleInternal);
@@ -88,6 +82,7 @@ class Traverser : public TIntermTraverser
             TIntermDeclaration *namedDecl = new TIntermDeclaration;
             TType *uniformType            = new TType(structure, false);
             uniformType->setQualifier(EvqUniform);
+            uniformType->makeArrays(oldType.getArraySizes());
 
             TVariable *newVar        = new TVariable(mSymbolTable, asSymbol->getName(), uniformType,
                                                      asSymbol->variable().symbolType());

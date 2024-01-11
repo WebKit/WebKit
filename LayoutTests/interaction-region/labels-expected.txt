@@ -15,12 +15,11 @@ Disabled input
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (guard (273,13) width=36 height=36)
-        (borderRadius 0.00),
+        (guard (273,13) width=36 height=36),
         (interaction (283,23) width=16 height=16)
-        (borderRadius 5.00),
+        (cornerRadius 5.00),
         (interaction (30,52) width=260 height=42)
-        (borderRadius 16.00)])
+        (cornerRadius 16.00)])
       )
     )
   )

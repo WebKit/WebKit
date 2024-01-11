@@ -34,4 +34,5 @@ struct WebKit::FrameInfoData {
     std::optional<WebCore::FrameIdentifier> parentFrameID
     WTF::ProcessID processID
     bool isFocused
+    bool errorOccurred
 }

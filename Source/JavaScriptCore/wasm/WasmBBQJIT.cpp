@@ -801,7 +801,7 @@ public:
             : m_enclosedHeight(0)
         { }
 
-        ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight)
+        ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs = { })
             : m_signature(signature)
             , m_blockType(blockType)
             , m_enclosedHeight(enclosedHeight)
@@ -840,8 +840,8 @@ public:
             if (!isAnyCatch(*this)) {
                 auto gprSetCopy = generator.m_validGPRs;
                 auto fprSetCopy = generator.m_validFPRs;
-                // We intentionally exclude GPRInfo::nonPreservedNonArgumentGPR1 from argument locations. See explanation in addIf and emitIndirectCall.
-                gprSetCopy.remove(GPRInfo::nonPreservedNonArgumentGPR1);
+                liveScratchGPRs.forEach([&] (auto r) { gprSetCopy.remove(r); });
+
                 for (unsigned i = 0; i < signature->argumentCount(); ++i)
                     m_argumentLocations.append(allocateArgumentOrResult(generator, signature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
             }
@@ -850,6 +850,17 @@ public:
             auto fprSetCopy = generator.m_validFPRs;
             for (unsigned i = 0; i < signature->returnCount(); ++i)
                 m_resultLocations.append(allocateArgumentOrResult(generator, signature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
+        }
+
+        // Re-use the argument layout of another block (eg. else will re-use the argument/result locations from if)
+        enum BranchCallingConventionReuseTag { UseBlockCallingConventionOfOtherBranch };
+        ControlData(BranchCallingConventionReuseTag, BlockType blockType, ControlData& otherBranch)
+            : m_signature(otherBranch.m_signature)
+            , m_blockType(blockType)
+            , m_argumentLocations(otherBranch.m_argumentLocations)
+            , m_resultLocations(otherBranch.m_resultLocations)
+            , m_enclosedHeight(otherBranch.m_enclosedHeight)
+        {
         }
 
         template<typename Stack>
@@ -3732,6 +3743,9 @@ public:
         result = topValue(TypeKind::Arrayref);
         emitCCall(operationWasmArrayNew, arguments, result);
 
+        Location resultLocation = loadIfNecessary(result);
+        emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
+
         LOG_INSTRUCTION("ArrayNew", typeIndex, size, initValue, RESULT(result));
         return { };
     }
@@ -3749,6 +3763,9 @@ public:
         };
         result = topValue(TypeKind::Arrayref);
         emitCCall(&operationWasmArrayNew, arguments, result);
+
+        Location resultLocation = loadIfNecessary(result);
+        emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
 
         LOG_INSTRUCTION("ArrayNewDefault", typeIndex, size, RESULT(result));
         return { };
@@ -3787,18 +3804,130 @@ public:
 
     void emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value index, Value value)
     {
-        value = marshallToI64(value);
+        StorageType elementType = getArrayElementType(typeIndex);
 
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            Value::fromI32(typeIndex),
-            arrayref,
-            index,
-            value,
-        };
-        // FIXME: Emit this inline.
-        // https://bugs.webkit.org/show_bug.cgi?id=245405
-        emitCCall(operationWasmArraySet, arguments);
+        Location arrayLocation;
+        if (arrayref.isPinned())
+            arrayLocation = locationOf(arrayref);
+        else
+            arrayLocation = loadIfNecessary(arrayref);
+        m_jit.loadPtr(MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfPayload()), wasmScratchGPR);
+
+        Location valueLocation;
+        if (value.isConst() && value.isFloat()) {
+            ScratchScope<0, 1> scratches(*this);
+            valueLocation = Location::fromFPR(scratches.fpr(0));
+            // Materialize the constant to ensure constant blinding.
+            emitMoveConst(value, valueLocation);
+        } else if (value.isConst()) {
+            ScratchScope<1, 0> scratches(*this);
+            valueLocation = Location::fromGPR(scratches.gpr(0));
+            // Materialize the constant to ensure constant blinding.
+            emitMoveConst(value, valueLocation);
+        } else
+            valueLocation = loadIfNecessary(value);
+        ASSERT(valueLocation.isRegister());
+
+        if (index.isConst()) {
+            ScratchScope<1, 0> scratches(*this);
+            auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType) + elementType.elementSize() * index.asI32());
+
+            Location valueLocation;
+            if (value.isConst() && value.isFloat()) {
+                ScratchScope<0, 1> scratches(*this);
+                valueLocation = Location::fromFPR(scratches.fpr(0));
+                // Materialize the constant to ensure constant blinding.
+                emitMoveConst(value, valueLocation);
+            } else if (value.isConst()) {
+                ScratchScope<1, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+                // Materialize the constant to ensure constant blinding.
+                emitMoveConst(value, valueLocation);
+            } else
+                valueLocation = loadIfNecessary(value);
+            ASSERT(valueLocation.isRegister());
+
+            if (elementType.is<PackedType>()) {
+                switch (elementType.as<Wasm::PackedType>()) {
+                case Wasm::PackedType::I8:
+                    m_jit.store8(valueLocation.asGPR(), fieldAddress);
+                    break;
+                case Wasm::PackedType::I16:
+                    m_jit.store16(valueLocation.asGPR(), fieldAddress);
+                    break;
+                }
+            } else {
+                ASSERT(elementType.is<Type>());
+                switch (value.type()) {
+                case TypeKind::I32:
+                    m_jit.store32(valueLocation.asGPR(), fieldAddress);
+                    break;
+                case TypeKind::I64:
+                    m_jit.store64(valueLocation.asGPR(), fieldAddress);
+                    break;
+                case TypeKind::F32:
+                    m_jit.storeFloat(valueLocation.asFPR(), fieldAddress);
+                    break;
+                case TypeKind::F64:
+                    m_jit.storeDouble(valueLocation.asFPR(), fieldAddress);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+        } else {
+            Location indexLocation = loadIfNecessary(index);
+            auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(elementType.elementSize()) - 1);
+            auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType));
+            auto fieldBaseIndex = fieldAddress.indexedBy(indexLocation.asGPR(), scale);
+
+            Location valueLocation;
+            if (value.isConst() && value.isFloat()) {
+                ScratchScope<0, 1> scratches(*this);
+                valueLocation = Location::fromFPR(scratches.fpr(0));
+                emitMoveConst(value, valueLocation);
+            } else if (value.isConst()) {
+                ScratchScope<1, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+                emitMoveConst(value, valueLocation);
+            } else
+                valueLocation = loadIfNecessary(value);
+            ASSERT(valueLocation.isRegister());
+
+            if (elementType.is<PackedType>()) {
+                switch (elementType.as<Wasm::PackedType>()) {
+                case Wasm::PackedType::I8:
+                    m_jit.store8(valueLocation.asGPR(), fieldBaseIndex);
+                    break;
+                case Wasm::PackedType::I16:
+                    m_jit.store16(valueLocation.asGPR(), fieldBaseIndex);
+                    break;
+                }
+            } else {
+                ASSERT(elementType.is<Type>());
+                switch (value.type()) {
+                case TypeKind::I32:
+                    m_jit.store32(valueLocation.asGPR(), fieldBaseIndex);
+                    break;
+                case TypeKind::I64:
+                    m_jit.store64(valueLocation.asGPR(), fieldBaseIndex);
+                    break;
+                case TypeKind::F32:
+                    m_jit.storeFloat(valueLocation.asFPR(), fieldBaseIndex);
+                    break;
+                case TypeKind::F64:
+                    m_jit.storeDouble(valueLocation.asFPR(), fieldBaseIndex);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+        }
+
+        consume(index);
+        consume(value);
     }
 
     PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
@@ -3815,7 +3944,7 @@ public:
         emitCCall(operationWasmArrayNewEmpty, arguments, allocationResult);
 
         Location allocationResultLocation = allocate(allocationResult);
-        emitThrowOnNullReference(ExceptionType::NullArraySet, allocationResultLocation);
+        emitThrowOnNullReference(ExceptionType::BadArrayNew, allocationResultLocation);
 
         for (uint32_t i = 0; i < args.size(); ++i) {
             // Emit the array set code -- note that this omits the bounds check, since
@@ -3823,11 +3952,17 @@ public:
             allocationResultLocation = loadIfNecessary(allocationResult);
             Value pinnedResult = Value::pinned(TypeKind::I64, allocationResultLocation);
             emitArraySetUnchecked(typeIndex, pinnedResult, Value::fromI32(i), args[i]);
+            consume(pinnedResult);
         }
 
         result = topValue(TypeKind::Arrayref);
         Location resultLocation = allocate(result);
         emitMove(allocationResult, resultLocation);
+
+        // It's sufficient to check if the first arg is a reftype as they all are or none are.
+        if (args.size() > 0 && (args[0].type() == TypeKind::Ref || args[0].type() == TypeKind::RefNull))
+            emitWriteBarrier(resultLocation.asGPR());
+
         // If args.isEmpty() then allocationResult.asTemp() == result.asTemp() so we will consume our result.
         if (args.size())
             consume(allocationResult);
@@ -3851,59 +3986,118 @@ public:
         Location arrayLocation = loadIfNecessary(arrayref);
         emitThrowOnNullReference(ExceptionType::NullArrayGet, arrayLocation);
 
+        Location indexLocation;
         if (index.isConst()) {
             m_jit.load32(MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfSize()), wasmScratchGPR);
             throwExceptionIf(ExceptionType::OutOfBoundsArrayGet,
                 m_jit.branch32(MacroAssembler::BelowOrEqual, wasmScratchGPR, TrustedImm32(index.asI32())));
         } else {
-            Location indexLocation = loadIfNecessary(index);
+            indexLocation = loadIfNecessary(index);
             throwExceptionIf(ExceptionType::OutOfBoundsArrayGet,
                 m_jit.branch32(MacroAssembler::AboveOrEqual, indexLocation.asGPR(), MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfSize())));
         }
 
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            Value::fromI32(typeIndex),
-            arrayref,
-            index,
-        };
+        m_jit.loadPtr(MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfPayload()), wasmScratchGPR);
 
-        Value getResult = topValue(TypeKind::I64);
-        emitCCall(operationWasmArrayGet, arguments, getResult);
-        Location getResultLocation = loadIfNecessary(getResult);
+        consume(arrayref);
+        result = topValue(resultType.kind);
+        Location resultLocation = allocate(result);
 
-        if (isFloatingPointType(resultType.kind)) {
-            consume(getResult);
-            result = topValue(resultType.kind);
-            Location resultLocation = allocate(result);
-            m_jit.move64ToDouble(getResultLocation.asGPR(), resultLocation.asFPR());
-        } else
-            result = getResult;
+        if (index.isConst()) {
+            auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType) + elementType.elementSize() * index.asI32());
 
-        switch (arrayGetKind) {
-        case ExtGCOpType::ArrayGet:
-            LOG_INSTRUCTION("ArrayGet", typeIndex, arrayref, index, RESULT(result));
-            break;
-        case ExtGCOpType::ArrayGetU:
-            ASSERT(resultType.kind == TypeKind::I32);
+            if (elementType.is<PackedType>()) {
+                switch (elementType.as<Wasm::PackedType>()) {
+                case Wasm::PackedType::I8:
+                    m_jit.load8(fieldAddress, resultLocation.asGPR());
+                    break;
+                case Wasm::PackedType::I16:
+                    m_jit.load16(fieldAddress, resultLocation.asGPR());
+                    break;
+                }
+            } else {
+                ASSERT(elementType.is<Type>());
+                switch (result.type()) {
+                case TypeKind::I32: {
+                    m_jit.load32(fieldAddress, resultLocation.asGPR());
+                    break;
+                }
+                case TypeKind::I64:
+                    m_jit.load64(fieldAddress, resultLocation.asGPR());
+                    break;
+                case TypeKind::F32:
+                    m_jit.loadFloat(fieldAddress, resultLocation.asFPR());
+                    break;
+                case TypeKind::F64:
+                    m_jit.loadDouble(fieldAddress, resultLocation.asFPR());
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+        } else {
+            auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(elementType.elementSize()) - 1);
+            auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType));
+            auto fieldBaseIndex = fieldAddress.indexedBy(indexLocation.asGPR(), scale);
 
-            LOG_INSTRUCTION("ArrayGetU", typeIndex, arrayref, index, RESULT(result));
-            break;
-        case ExtGCOpType::ArrayGetS: {
-            ASSERT(resultType.kind == TypeKind::I32);
-            size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
-            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
-            Location resultLocation = allocate(result);
-
-            m_jit.lshift32(TrustedImm32(bitShift), resultLocation.asGPR());
-            m_jit.rshift32(TrustedImm32(bitShift), resultLocation.asGPR());
-            LOG_INSTRUCTION("ArrayGetS", typeIndex, arrayref, index, RESULT(result));
-            break;
+            if (elementType.is<PackedType>()) {
+                switch (elementType.as<Wasm::PackedType>()) {
+                case Wasm::PackedType::I8:
+                    m_jit.load8(fieldBaseIndex, resultLocation.asGPR());
+                    break;
+                case Wasm::PackedType::I16:
+                    m_jit.load16(fieldBaseIndex, resultLocation.asGPR());
+                    break;
+                }
+            } else {
+                ASSERT(elementType.is<Type>());
+                switch (result.type()) {
+                case TypeKind::I32:
+                    m_jit.load32(fieldBaseIndex, resultLocation.asGPR());
+                    break;
+                case TypeKind::I64:
+                    m_jit.load64(fieldBaseIndex, resultLocation.asGPR());
+                    break;
+                case TypeKind::F32:
+                    m_jit.loadFloat(fieldBaseIndex, resultLocation.asFPR());
+                    break;
+                case TypeKind::F64:
+                    m_jit.loadDouble(fieldBaseIndex, resultLocation.asFPR());
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
         }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return { };
+
+        consume(index);
+
+        if (result.type() == TypeKind::I32) {
+            switch (arrayGetKind) {
+            case ExtGCOpType::ArrayGet:
+                break;
+            case ExtGCOpType::ArrayGetU:
+                LOG_INSTRUCTION("ArrayGetU", typeIndex, arrayref, index, RESULT(result));
+                return { };
+            case ExtGCOpType::ArrayGetS: {
+                ASSERT(resultType.kind == TypeKind::I32);
+                uint8_t bitShift = (sizeof(uint32_t) - elementType.elementSize()) * 8;
+
+                m_jit.lshift32(TrustedImm32(bitShift), resultLocation.asGPR());
+                m_jit.rshift32(TrustedImm32(bitShift), resultLocation.asGPR());
+                LOG_INSTRUCTION("ArrayGetS", typeIndex, arrayref, index, RESULT(result));
+                return { };
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                return { };
+            }
         }
+
+        LOG_INSTRUCTION("ArrayGet", typeIndex, arrayref, index, RESULT(result));
+
         return { };
     }
 
@@ -3930,6 +4124,10 @@ public:
 
         emitArraySetUnchecked(typeIndex, arrayref, index, value);
 
+        if (value.type() == TypeKind::Ref || value.type() == TypeKind::RefNull)
+            emitWriteBarrier(arrayLocation.asGPR());
+        consume(arrayref);
+
         LOG_INSTRUCTION("ArraySet", typeIndex, arrayref, index, value);
         return { };
     }
@@ -3953,6 +4151,133 @@ public:
         m_jit.load32(MacroAssembler::Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfSize()), resultLocation.asGPR());
 
         LOG_INSTRUCTION("ArrayLen", arrayref, RESULT(result));
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size)
+    {
+        if (arrayref.isConst()) {
+            ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayFill);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
+
+        value = marshallToI64(value);
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(typeIndex),
+            arrayref,
+            offset,
+            value,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcTypeIndex, ExpressionType src, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst() || src.isConst()) {
+            ASSERT_IMPLIES(dst.isConst(), dst.asI64() == JSValue::encode(jsNull()));
+            ASSERT_IMPLIES(src.isConst(), src.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayCopy);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(dst));
+        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(src));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            src,
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayCopy, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayCopy", dstTypeIndex, dst, dstOffset, srcTypeIndex, src, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayCopy, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst()) {
+            ASSERT(dst.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayInitElem);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayInitElem, loadIfNecessary(dst));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            Value::fromI32(srcElementIndex),
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayInitElem, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayInitElem", dstTypeIndex, dst, dstOffset, srcElementIndex, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayInitElem, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst()) {
+            ASSERT(dst.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayInitData);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayInitData, loadIfNecessary(dst));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            Value::fromI32(srcDataIndex),
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayInitData, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayInitData", dstTypeIndex, dst, dstOffset, srcDataIndex, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayInitData, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
         return { };
     }
 
@@ -4138,8 +4463,7 @@ public:
                     LOG_INSTRUCTION("StructGetU", structValue, fieldIndex, RESULT(result));
                     return { };
                 case ExtGCOpType::StructGetS: {
-                    size_t elementSize = structType.field(fieldIndex).type.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
-                    uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+                    uint8_t bitShift = (sizeof(uint32_t) - structType.field(fieldIndex).type.elementSize()) * 8;
                     m_jit.lshift32(TrustedImm32(bitShift), resultLocation.asGPR());
                     m_jit.rshift32(TrustedImm32(bitShift), resultLocation.asGPR());
                     LOG_INSTRUCTION("StructGetS", structValue, fieldIndex, RESULT(result));
@@ -7087,7 +7411,10 @@ public:
             emitMove(condition, conditionLocation);
         consume(condition);
 
-        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
+        RegisterSet liveScratchGPRs;
+        liveScratchGPRs.add(conditionLocation.asGPR(), IgnoreVectors);
+
+        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs);
 
         // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
         currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
@@ -7100,14 +7427,14 @@ public:
         if (condition.isConst() && !condition.asI32())
             result.setIfBranch(m_jit.jump()); // Emit direct branch if we know the condition is false.
         else if (!condition.isConst()) // Otherwise, we only emit a branch at all if we don't know the condition statically.
-            result.setIfBranch(m_jit.branchTest32(ResultCondition::Zero, GPRInfo::nonPreservedNonArgumentGPR1));
+            result.setIfBranch(m_jit.branchTest32(ResultCondition::Zero, conditionLocation.asGPR()));
         return { };
     }
 
     PartialResult WARN_UNUSED_RETURN addElse(ControlData& data, Stack& expressionStack)
     {
         data.flushAndSingleExit(*this, data, expressionStack, false, true);
-        ControlData dataElse(*this, BlockType::Block, data.signature(), data.enclosedHeight());
+        ControlData dataElse(ControlData::UseBlockCallingConventionOfOtherBranch, BlockType::Block, data);
         data.linkJumps(&m_jit);
         dataElse.addBranch(m_jit.jump());
         data.linkIfBranch(&m_jit); // Link specifically the conditional branch of the preceding If
@@ -7134,7 +7461,7 @@ public:
         // state entering the else block.
         data.flushAtBlockBoundary(*this, 0, m_parser->expressionStack(), true);
 
-        ControlData dataElse(*this, BlockType::Block, data.signature(), data.enclosedHeight());
+        ControlData dataElse(ControlData::UseBlockCallingConventionOfOtherBranch, BlockType::Block, data);
         data.linkJumps(&m_jit);
         dataElse.addBranch(m_jit.jump()); // Still needed even when the parent was unreachable to avoid running code within the else block.
         data.linkIfBranch(&m_jit); // Link specifically the conditional branch of the preceding If
@@ -8041,8 +8368,7 @@ public:
         prepareForExceptions();
         saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo); // Keep in mind that this clobbers wasmScratchGPR and wasmScratchFPR.
 
-        // Why can we still call calleeCode after saveValuesAcrossCallAndPassArguments? This is because we ensured that calleeCode is GPRInfo::nonPreservedNonArgumentGPR1,
-        // and any argument locations will not include GPRInfo::nonPreservedNonArgumentGPR1.
+        // Why can we still call calleeCode after saveValuesAcrossCallAndPassArguments? CalleeCode is a scratch and not any argument GPR.
         m_jit.call(calleeCode, WasmEntryPtrTag);
         returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
@@ -9777,6 +10103,21 @@ private:
     void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
     {
         ASSERT(srcVector.size() == dstVector.size());
+
+#if ASSERT_ENABLED
+        for (size_t i = 0; i < dstVector.size(); ++i) {
+            for (size_t j = i + 1; j < dstVector.size(); ++j)
+                ASSERT(dstVector[i] != dstVector[j]);
+        }
+
+        // This algorithm assumes at most one cycle: https://xavierleroy.org/publi/parallel-move.pdf
+        for (size_t i = 0; i < srcVector.size(); ++i) {
+            for (size_t j = i + 1; j < srcVector.size(); ++j) {
+                ASSERT(srcVector[i].isConst() || srcVector[j].isConst()
+                    || locationOf(srcVector[i]) != locationOf(srcVector[j]));
+            }
+        }
+#endif
 
         if (srcVector.size() == 1) {
             emitMove(srcVector[0], dstVector[0]);

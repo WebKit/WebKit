@@ -446,6 +446,8 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
 {
     if (placedFloats && !placedFloats->isEmpty())
         return false;
+    if (inlineContentCache.inlineItems().isEmpty())
+        return false;
     if (!inlineContentCache.inlineItems().isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;
 

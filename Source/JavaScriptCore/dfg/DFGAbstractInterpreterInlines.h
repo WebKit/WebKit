@@ -414,7 +414,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node->variableAccessData();
-        AbstractValue value = m_state.operand(variableAccessData->operand());
+        AbstractValue& value = m_state.operand(variableAccessData->operand());
         // The value in the local should already be checked.
         DFG_ASSERT(m_graph, node, value.isType(typeFilterFor(variableAccessData->flushFormat())));
         if (value.value())
@@ -425,7 +425,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetStack: {
         StackAccessData* data = node->stackAccessData();
-        AbstractValue value = m_state.operand(data->operand);
+        AbstractValue& value = m_state.operand(data->operand);
         // The value in the local should already be checked.
         DFG_ASSERT(m_graph, node, value.isType(typeFilterFor(data->format)));
         if (value.value())
@@ -1604,7 +1604,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsConstructor:
     case IsCellWithType:
     case IsTypedArrayView: {
-        AbstractValue child = forNode(node->child1());
+        AbstractValue& child = forNode(node->child1());
         if (child.value()) {
             bool constantWasSet = true;
             switch (node->op()) {
@@ -1928,7 +1928,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case GlobalIsNaN: {
-        AbstractValue child = forNode(node->child1());
+        AbstractValue& child = forNode(node->child1());
         if (JSValue value = child.value(); value && value.isNumber()) {
             if (node->child1().useKind() != DoubleRepUse)
                 didFoldClobberWorld();
@@ -1942,7 +1942,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case NumberIsNaN: {
-        AbstractValue child = forNode(node->child1());
+        AbstractValue& child = forNode(node->child1());
         if (JSValue value = child.value()) {
             setConstant(node, jsBoolean(value.isNumber() && std::isnan(value.asNumber())));
             break;
@@ -4275,7 +4275,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case GetWebAssemblyInstanceExports: {
 #if ENABLE(WEBASSEMBLY)
-        AbstractValue base = forNode(node->child1());
+        AbstractValue& base = forNode(node->child1());
         if (base.m_value) {
             if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(base.m_value)) {
                 if (auto* moduleRecord = instance->moduleRecord()) {
@@ -4315,7 +4315,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetGetterSetterByOffset: {
         StorageAccessData& data = node->storageAccessData();
-        AbstractValue base = forNode(node->child2());
+        AbstractValue& base = forNode(node->child2());
         JSValue result = m_graph.tryGetConstantProperty(base, data.offset);
         if (result && jsDynamicCast<GetterSetter*>(result)) {
             setConstant(node, *m_graph.freeze(result));
@@ -4340,7 +4340,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // because of the effect on compile times, but this node is FTL-only.
         m_state.setShouldTryConstantFolding(true);
         
-        AbstractValue base = forNode(node->child1());
+        AbstractValue& base = forNode(node->child1());
         RegisteredStructureSet baseSet;
         AbstractValue result;
         for (const MultiGetByOffsetCase& getCase : node->multiGetByOffsetData().cases) {
@@ -4386,8 +4386,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // because of the effect on compile times, but this node is FTL-only.
         m_state.setShouldTryConstantFolding(true);
         
-        AbstractValue base = forNode(node->child1());
-        AbstractValue originalValue = forNode(node->child2());
+        AbstractValue& base = forNode(node->child1());
+        AbstractValue& originalValue = forNode(node->child2());
         AbstractValue resultingValue;
         
         if (node->multiPutByOffsetData().writesStructures())
@@ -4400,7 +4400,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (thisSet.isEmpty())
                 continue;
 
-            AbstractValue thisValue = originalValue;
+            AbstractValue& thisValue = originalValue;
             resultingValue.merge(thisValue);
             
             if (variant.kind() == PutByVariant::Transition) {
@@ -4438,7 +4438,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // because of the effect on compile times, but this node is FTL-only.
         m_state.setShouldTryConstantFolding(true);
 
-        AbstractValue base = forNode(node->child1());
+        AbstractValue& base = forNode(node->child1());
 
         if (node->multiDeleteByOffsetData().writesStructures())
             didFoldClobberStructures();
@@ -4794,7 +4794,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case MatchStructure: {
-        AbstractValue base = forNode(node->child1());
+        AbstractValue& base = forNode(node->child1());
         RegisteredStructureSet baseSet;
         
         BooleanLattice result = BooleanLattice::Bottom;
@@ -4999,7 +4999,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ParseInt: {
-        AbstractValue value = forNode(node->child1());
+        AbstractValue& value = forNode(node->child1());
         if (value.m_type && !(value.m_type & ~SpecInt32Only)) {
             JSValue radix;
             if (!node->child2())
@@ -5020,6 +5020,44 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1().useKind() == UntypedUse)
             clobberWorld();
         setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case ToIntegerOrInfinity: {
+        AbstractValue& child = forNode(node->child1());
+        if (JSValue value = child.value(); value && value.isNumber()) {
+            if (node->child1().useKind() == UntypedUse)
+                didFoldClobberWorld();
+            double d = value.asNumber();
+            setConstant(node, jsNumber(trunc(std::isnan(d) ? 0.0 : d + 0.0)));
+            break;
+        }
+        if (node->child1().useKind() == UntypedUse)
+            clobberWorld();
+        setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case ToLength: {
+        AbstractValue& child = forNode(node->child1());
+        if (JSValue value = child.value(); value && value.isNumber()) {
+            if (node->child1().useKind() == UntypedUse)
+                didFoldClobberWorld();
+            double d = value.asNumber();
+            d = trunc(std::isnan(d) ? 0.0 : d + 0.0);
+            if (d <= 0)
+                d = 0.0;
+            else
+                d = std::min(d, maxSafeInteger());
+            setConstant(node, jsNumber(d));
+            break;
+        }
+        if (node->child1().useKind() == UntypedUse)
+            clobberWorld();
+        if (node->child1().useKind() == Int32Use)
+            setNonCellTypeForNode(node, SpecInt32Only);
+        else
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
         break;
     }
 

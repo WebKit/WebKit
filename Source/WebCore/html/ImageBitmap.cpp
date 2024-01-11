@@ -125,14 +125,12 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
     return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace, resolutionScale);
 }
 
-Vector<std::optional<ImageBitmapBacking>> ImageBitmap::detachBitmaps(Vector<RefPtr<ImageBitmap>>&& bitmaps)
+std::optional<ImageBitmapBacking> ImageBitmap::detach()
 {
-    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) {
-        std::optional<ImageBitmapBacking> backing = bitmap->takeImageBitmapBacking();
-        if (backing)
-            backing->disconnect();
-        return backing;
-    });
+    std::optional<ImageBitmapBacking> backing = takeImageBitmapBacking();
+    if (backing)
+        backing->disconnect();
+    return backing;
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, int sx, int sy, int sw, int sh, ImageBitmap::Promise&& promise)

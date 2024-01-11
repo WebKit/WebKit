@@ -60,9 +60,9 @@ public:
 
     void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands);
-    void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
-    void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, const void* data, size_t);
-    void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
+    void writeBuffer(const Buffer&, uint64_t bufferOffset, void* data, size_t);
+    void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, void* data, size_t);
+    void writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
     void setLabel(String&&);
 
     void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
@@ -70,11 +70,10 @@ public:
     bool isValid() const { return m_commandQueue; }
     void makeInvalid() { m_commandQueue = nil; }
 
-    id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
-
     const Device& device() const { return m_device; }
     void waitUntilIdle();
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
+    id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
 
 private:
     Queue(id<MTLCommandQueue>, Device&);
@@ -105,7 +104,8 @@ private:
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
-    NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers;
+    NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers { nil };
+    NSMutableOrderedSet<id<MTLCommandBuffer>> *m_createdNotCommittedBuffers { nil };
 };
 
 } // namespace WebGPU

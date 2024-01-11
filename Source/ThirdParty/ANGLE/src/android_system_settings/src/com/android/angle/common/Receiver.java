@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -37,15 +38,17 @@ import java.io.InputStream;
 
 public class Receiver extends BroadcastReceiver
 {
-
-    private static final String TAG              = "AngleReceiver";
-    private static final String ANGLE_RULES_FILE = "a4a_rules.json";
+    private static final String TAG = "AngleBroadcastReceiver";
+    private static final boolean DEBUG = false;
 
     @Override
     public void onReceive(Context context, Intent intent)
     {
-        String action = intent.getAction();
-        Log.v(TAG, "Received intent: '" + action + "'");
+        final String action = intent.getAction();
+        if (DEBUG)
+        {
+            Log.d(TAG, "Received intent: " + action);
+        }
 
         if (action.equals(context.getString(R.string.intent_angle_for_android_toast_message)))
         {
@@ -53,118 +56,12 @@ public class Receiver extends BroadcastReceiver
             results.putString(context.getString(R.string.intent_key_a4a_toast_message),
                     context.getString(R.string.angle_in_use_toast_message));
         }
-        else
+        else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED))
         {
-            String jsonStr      = loadRules(context);
-            String packageNames = parsePackageNames(jsonStr);
-
-            // Update the ANGLE allowlist
-            if (packageNames != null)
-            {
-                GlobalSettings.updateAngleAllowlist(context, packageNames);
-            }
-
+            // TODO(b/314409902): Set settings global variables
+            AngleRuleHelper angleRuleHelper = new AngleRuleHelper(context);
             updateDeveloperOptionsWatcher(context);
         }
-    }
-
-    /*
-     * Open the rules file and pull all the JSON into a string
-     */
-    private String loadRules(Context context)
-    {
-        String jsonStr = null;
-
-        try
-        {
-            InputStream rulesStream = context.getAssets().open(ANGLE_RULES_FILE);
-            int size                = rulesStream.available();
-            byte[] buffer           = new byte[size];
-            rulesStream.read(buffer);
-            rulesStream.close();
-            jsonStr = new String(buffer, "UTF-8");
-        }
-        catch (IOException ioe)
-        {
-            Log.e(TAG, "Failed to open " + ANGLE_RULES_FILE + ": ", ioe);
-        }
-
-        return jsonStr;
-    }
-
-    /*
-     * Extract all app package names from the json file and return them comma separated
-     */
-    private String parsePackageNames(String rulesJSON)
-    {
-        StringBuilder packageNames = new StringBuilder();
-
-        try
-        {
-            JSONObject jsonObj = new JSONObject(rulesJSON);
-            JSONArray rules    = jsonObj.getJSONArray("Rules");
-            if (rules == null)
-            {
-                Log.e(TAG, "No Rules in " + ANGLE_RULES_FILE);
-                return null;
-            }
-            for (int i = 0; i < rules.length(); i++)
-            {
-                JSONObject rule = rules.getJSONObject(i);
-                JSONArray apps  = rule.optJSONArray("Applications");
-                if (apps == null)
-                {
-                    Log.v(TAG, "Skipping Rules entry with no Applications");
-                    continue;
-                }
-                for (int j = 0; j < apps.length(); j++)
-                {
-                    JSONObject app = apps.optJSONObject(j);
-                    String appName = app.optString("AppName");
-                    if ((appName == null) || appName.isEmpty())
-                    {
-                        Log.e(TAG, "Invalid AppName: '" + appName + "'");
-                    }
-                    if (!packageNames.toString().isEmpty())
-                    {
-                        packageNames.append(",");
-                    }
-                    packageNames.append(appName);
-                }
-            }
-            Log.v(TAG, "Parsed the following package names from " + ANGLE_RULES_FILE + ": "
-                               + packageNames);
-        }
-        catch (JSONException je)
-        {
-            Log.e(TAG, "Error when parsing angle JSON: ", je);
-            return null;
-        }
-
-        return packageNames.toString();
-    }
-
-    static void updateAllUseAngle(Context context)
-    {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String allUseAngleKey   = context.getString(R.string.pref_key_all_angle);
-        boolean allUseAngle     = prefs.getBoolean(allUseAngleKey, false);
-
-        GlobalSettings.updateAllUseAngle(context, allUseAngle);
-
-        Log.v(TAG, "All PKGs use ANGLE set to: " + allUseAngle);
-    }
-
-    static void updateShowAngleInUseDialogBox(Context context)
-    {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String showAngleInUseDialogBoxKey =
-                context.getString(R.string.pref_key_angle_in_use_dialog);
-        boolean showAngleInUseDialogBox = prefs.getBoolean(showAngleInUseDialogBoxKey, false);
-
-        GlobalSettings.updateShowAngleInUseDialog(context, showAngleInUseDialogBox);
-
-        Log.v(TAG, "Show 'ANGLE In Use' dialog box set to: " + showAngleInUseDialogBox);
     }
 
     /**
@@ -172,15 +69,15 @@ public class Receiver extends BroadcastReceiver
      */
     private static void updateDeveloperOptionsWatcher(Context context)
     {
-        Uri settingUri = Settings.Global.getUriFor(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED);
+        final Uri settingUri = Settings.Global.getUriFor(Settings.Global.DEVELOPMENT_SETTINGS_ENABLED);
 
-        ContentObserver developerOptionsObserver = new ContentObserver(new Handler()) {
+        final ContentObserver developerOptionsObserver = new ContentObserver(new Handler()) {
             @Override
             public void onChange(boolean selfChange)
             {
                 super.onChange(selfChange);
 
-                boolean developerOptionsEnabled =
+                final boolean developerOptionsEnabled =
                         (1
                                 == Settings.Global.getInt(context.getContentResolver(),
                                         Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0));
@@ -195,7 +92,7 @@ public class Receiver extends BroadcastReceiver
                             PreferenceManager.getDefaultSharedPreferences(context).edit();
                     editor.clear();
                     editor.apply();
-                    GlobalSettings.clearAllGlobalSettings(context);
+                    GlobalSettings.clearGlobalSettings(context);
                 }
             }
         };

@@ -35,6 +35,9 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <cstdint>
 #include <optional>
+#include <wtf/HashSet.h>
+#include <wtf/Range.h>
+#include <wtf/RangeSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -77,10 +80,17 @@ private:
     WebGPU::Buffer::MappedRange m_mappedRange;
     JSC::ArrayBuffer* m_arrayBuffer { nullptr };
     size_t m_bufferSize { 0 };
+    size_t m_mappedRangeOffset { 0 };
+    size_t m_mappedRangeSize { 0 };
     const GPUBufferUsageFlags m_usage { 0 };
     GPUBufferMapState m_mapState { GPUBufferMapState::Unmapped };
     std::optional<MapAsyncPromise> m_pendingMapPromise;
     GPUDevice& m_device;
+    using MappedRanges = WTF::RangeSet<WTF::Range<size_t>>;
+    MappedRanges m_mappedRanges;
+    HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> m_mappedPoints;
+    bool m_destroyed { false };
+    bool m_mappedAtCreation { false };
 };
 
 }

@@ -110,8 +110,6 @@ enum class CSSUnitType : uint8_t {
     CSS_IC,
     CSS_RIC,
 
-    CSS_COUNTER_NAME,
-
     CSS_CALC,
     CSS_CALC_PERCENTAGE_WITH_NUMBER,
     CSS_CALC_PERCENTAGE_WITH_LENGTH,

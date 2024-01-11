@@ -74,7 +74,7 @@ class Response:
         cls_name = self.__class__.__name__
         if self.error:
             return f"<{cls_name} status={self.status} error={repr(self.error)}>"
-        return f"<{cls_name: }tatus={self.status} body={json.dumps(self.body)}>"
+        return f"<{cls_name}: status={self.status} body={json.dumps(self.body)}>"
 
     def __str__(self):
         return json.dumps(self.body, indent=2)
@@ -92,7 +92,7 @@ class Response:
             headers = ResponseHeaders(http_response.getheaders())
         except ValueError:
             raise ValueError("Failed to decode response body as JSON:\n" +
-                http_response.read())
+                             http_response.read())
 
         return cls(http_response.status, body, headers)
 
@@ -102,9 +102,9 @@ class HTTPWireProtocol:
     Transports messages (commands and responses) over the WebDriver
     wire protocol.
 
-    Complex objects, such as ``webdriver.Element``, ``webdriver.Frame``,
-    and ``webdriver.Window`` are by default not marshaled to enable
-    use of `session.transport.send` in WPT tests::
+    Complex objects, such as ``webdriver.ShadowRoot``, ``webdriver.WebElement``,
+    ``webdriver.WebFrame``, and ``webdriver.WebWindow`` are by default not
+    marshaled to enable use of `session.transport.send` in WPT tests::
 
         session = webdriver.Session("127.0.0.1", 4444)
         response = transport.send("GET", "element/active", None)
@@ -180,17 +180,17 @@ class HTTPWireProtocol:
         """
         Send a command to the remote.
 
-        The request `body` must be JSON serialisable unless a
+        The request `body` must be JSON serializable unless a
         custom `encoder` has been provided.  This means complex
-        objects such as ``webdriver.Element``, ``webdriver.Frame``,
-        and `webdriver.Window`` are not automatically made
-        into JSON.  This behaviour is, however, provided by
+        objects such as ``webdriver.ShadowRoot``, ``webdriver.WebElement``,
+        ``webdriver.WebFrame``, and `webdriver.Window`` are not automatically
+        made into JSON.  This behavior is, however, provided by
         ``webdriver.protocol.Encoder``, should you want it.
 
         Similarly, the response body is returned au natural
         as plain JSON unless a `decoder` that converts web
         element references to ``webdriver.Element`` is provided.
-        Use ``webdriver.protocol.Decoder`` to achieve this behaviour.
+        Use ``webdriver.protocol.Decoder`` to achieve this behavior.
 
         The client will attempt to use persistent HTTP connections.
 
@@ -211,7 +211,7 @@ class HTTPWireProtocol:
             describing the HTTP response received from the remote end.
 
         :raises ValueError: If `body` or the response body are not
-            JSON serialisable.
+            JSON serializable.
         """
         if body is None and method == "POST":
             body = {}
@@ -222,7 +222,7 @@ class HTTPWireProtocol:
                 payload = json.dumps(body, cls=encoder, **codec_kwargs)
             except ValueError:
                 raise ValueError("Failed to encode request body as JSON:\n"
-                    "%s" % json.dumps(body, indent=2))
+                                 "%s" % json.dumps(body, indent=2))
 
         # When the timeout triggers, the TestRunnerManager thread will reuse
         # this connection to check if the WebDriver its alive and we may end

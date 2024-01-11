@@ -94,6 +94,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
     static uint32_t nPipeline = 0;
     auto pipelineName = makeString("webkit-webrtc-pipeline-", nPipeline);
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
+    registerActivePipeline(m_pipeline);
 
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         handleMessage(message);
@@ -131,11 +132,16 @@ bool GStreamerMediaEndpoint::initializePipeline()
         if (GST_PAD_DIRECTION(pad) != GST_PAD_SRC)
             return;
 
-        callOnMainThreadAndWait([protectedThis = Ref(*endPoint), pad] {
+        if (endPoint->isStopped())
+            return;
+
+        auto mediaStreamId = endPoint->addRemoteStream(pad);
+
+        callOnMainThread([protectedThis = Ref(*endPoint), pad = GRefPtr<GstPad>(pad), mediaStreamId = WTFMove(mediaStreamId)] {
             if (protectedThis->isStopped())
                 return;
 
-            protectedThis->addRemoteStream(pad);
+            protectedThis->startRemoteStream(pad.get(), mediaStreamId);
         });
     }), this);
     g_signal_connect_swapped(m_webrtcBin.get(), "pad-removed", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstPad* pad) {
@@ -186,6 +192,7 @@ void GStreamerMediaEndpoint::teardownPipeline()
 {
     ASSERT(m_pipeline);
     GST_DEBUG_OBJECT(m_pipeline.get(), "Tearing down.");
+    unregisterPipeline(m_pipeline);
 #if !RELEASE_LOG_DISABLED
     stopLoggingStats();
 #endif
@@ -873,7 +880,7 @@ String GStreamerMediaEndpoint::trackIdFromSDPMedia(const GstSDPMedia& media)
     return String::fromUTF8(components[1].utf8());
 }
 
-void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
+String GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
 {
     m_pendingIncomingStreams++;
 
@@ -907,7 +914,7 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     const auto* media = gst_sdp_message_get_media(description->sdp, mLineIndex);
     if (UNLIKELY(!media)) {
         GST_WARNING_OBJECT(m_pipeline.get(), "SDP media for transceiver %u not found, skipping incoming track setup", mLineIndex);
-        return;
+        return emptyString();
     }
 
     if (mediaStreamId.isEmpty()) {
@@ -938,10 +945,15 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     GstElement* bin = nullptr;
     auto& track = transceiver->receiver().track();
     auto& source = track.privateTrack().source();
-    if (source.isIncomingAudioSource())
-        bin = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source).bin();
-    else if (source.isIncomingVideoSource())
-        bin = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source).bin();
+    if (source.isIncomingAudioSource()) {
+        auto& audioSource = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source);
+        audioSource.configureForInputCaps(caps);
+        bin = audioSource.bin();
+    } else if (source.isIncomingVideoSource()) {
+        auto& videoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
+        videoSource.configureForInputCaps(caps);
+        bin = videoSource.bin();
+    }
     ASSERT(bin);
 
     gst_bin_add(GST_BIN_CAST(m_pipeline.get()), bin);
@@ -949,12 +961,16 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     gst_pad_link(pad, sinkPad.get());
     gst_element_sync_state_with_parent(bin);
 
-    track.setEnabled(true);
-    source.setMuted(false);
-
     auto& mediaStream = mediaStreamFromRTCStream(mediaStreamId);
     mediaStream.addTrackFromPlatform(track);
     m_peerConnectionBackend.addPendingTrackEvent({ Ref(transceiver->receiver()), Ref(transceiver->receiver().track()), { }, Ref(*transceiver) });
+    return mediaStreamId;
+}
+
+void GStreamerMediaEndpoint::startRemoteStream(GstPad* pad, const String& mediaStreamId)
+{
+    GUniqueOutPtr<GstWebRTCSessionDescription> description;
+    g_object_get(m_webrtcBin.get(), "remote-description", &description.outPtr(), nullptr);
 
     unsigned totalAudioVideoMedias = 0;
     unsigned totalMedias = gst_sdp_message_medias_len(description->sdp);
@@ -966,6 +982,8 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
         totalAudioVideoMedias++;
     }
 
+    auto& mediaStream = mediaStreamFromRTCStream(mediaStreamId);
+
     if (m_pendingIncomingStreams == totalAudioVideoMedias) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming streams gathered, now firing track events");
         m_pendingIncomingStreams = 0;
@@ -973,7 +991,7 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     }
 
 #ifndef GST_DISABLE_GST_DEBUG
-    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".incoming-", mediaType, '-', GST_OBJECT_NAME(pad));
+    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".incoming-"_s, GST_OBJECT_NAME(pad));
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
 }

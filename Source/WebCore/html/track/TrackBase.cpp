@@ -26,8 +26,8 @@
 #include "config.h"
 #include "TrackBase.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Logging.h"
-#include "ScriptExecutionContext.h"
 #include "TrackListBase.h"
 #include <wtf/Language.h>
 #include <wtf/text/StringBuilder.h>

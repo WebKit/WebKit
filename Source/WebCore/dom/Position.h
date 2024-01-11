@@ -208,7 +208,6 @@ private:
     WEBCORE_EXPORT int offsetForPositionAfterAnchor() const;
     
     Position previousCharacterPosition(Affinity) const;
-    Position nextCharacterPosition(Affinity) const;
 
     static AnchorType anchorTypeForLegacyEditingPosition(Node* anchorNode, unsigned offset);
 

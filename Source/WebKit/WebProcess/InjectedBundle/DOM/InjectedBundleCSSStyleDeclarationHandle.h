@@ -28,9 +28,9 @@
 
 #include "APIObject.h"
 #include <JavaScriptCore/JSBase.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class CSSStyleDeclaration;
@@ -38,7 +38,7 @@ class CSSStyleDeclaration;
 
 namespace WebKit {
 
-class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle>, public CanMakeCheckedPtr {
+class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle>, public CanMakeWeakPtr<InjectedBundleCSSStyleDeclarationHandle> {
 public:
     static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);

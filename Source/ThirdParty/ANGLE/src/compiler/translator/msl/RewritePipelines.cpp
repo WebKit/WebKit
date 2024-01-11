@@ -142,10 +142,12 @@ class GeneratePipelineStruct : private TIntermRebuild
         const bool isUBO     = mPipeline.type == Pipeline::Type::UniformBuffer;
         const bool isUniform = mPipeline.type == Pipeline::Type::UniformBuffer ||
                                mPipeline.type == Pipeline::Type::UserUniforms;
+        const bool useAttributeAliasing =
+            mPipeline.type == Pipeline::Type::VertexIn && mCompiler.supportsAttributeAliasing();
         const bool modified = TryCreateModifiedStruct(
             mCompiler, mSymbolEnv, mIdGen, mPipeline.externalStructModifyConfig(), pipelineStruct,
             mPipeline.getStructTypeName(Pipeline::Variant::Modified), modifiedMachineries, isUBO,
-            !isUniform);
+            !isUniform, useAttributeAliasing);
 
         if (modified)
         {

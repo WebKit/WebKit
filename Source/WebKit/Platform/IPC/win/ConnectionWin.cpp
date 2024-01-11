@@ -146,7 +146,7 @@ void Connection::readEventHandler()
             ASSERT(decoder);
             if (!decoder)
                 return;
-            processIncomingMessage(WTFMove(decoder));
+            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
         }
 
         // Find out the size of the next message in the pipe (if there is one) so that we can read

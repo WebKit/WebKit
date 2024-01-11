@@ -45,6 +45,8 @@ public:
 
     ~InbandTextTrackPrivateAVFObjC() = default;
 
+    TrackID id() const override;
+
     InbandTextTrackPrivate::Kind kind() const override;
     bool isClosedCaptions() const override;
     bool isSDH() const override;

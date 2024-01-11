@@ -45,4 +45,5 @@ struct _WebKitVideoEncoderClass {
 GType webkit_video_encoder_get_type(void);
 
 bool videoEncoderSupportsFormat(WebKitVideoEncoder*, const GRefPtr<GstCaps>&);
-bool videoEncoderSetFormat(WebKitVideoEncoder*, GRefPtr<GstCaps>&&);
+bool videoEncoderSetFormat(WebKitVideoEncoder*, GRefPtr<GstCaps>&&, const String& = emptyString());
+void teardownVideoEncoderSingleton();

@@ -57,9 +57,9 @@ enum class ImmediateActionState {
 
 @interface WKImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
 @private
-    CheckedPtr<WebKit::WebPageProxy> _page;
+    WeakPtr<WebKit::WebPageProxy> _page;
     NSView *_view;
-    CheckedPtr<WebKit::WebViewImpl> _viewImpl;
+    WeakPtr<WebKit::WebViewImpl> _viewImpl;
 
     WebKit::ImmediateActionState _state;
     WebKit::WebHitTestResultData _hitTestResultData;

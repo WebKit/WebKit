@@ -25,12 +25,15 @@ class Device final : public _cl_device_id, public Object
   public:
     // Front end entry functions, only called from OpenCL entry points
 
-    cl_int getInfo(DeviceInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const;
+    angle::Result getInfo(DeviceInfo name,
+                          size_t valueSize,
+                          void *value,
+                          size_t *valueSizeRet) const;
 
-    cl_int createSubDevices(const cl_device_partition_property *properties,
-                            cl_uint numDevices,
-                            cl_device_id *subDevices,
-                            cl_uint *numDevicesRet);
+    angle::Result createSubDevices(const cl_device_partition_property *properties,
+                                   cl_uint numDevices,
+                                   cl_device_id *subDevices,
+                                   cl_uint *numDevicesRet);
 
   public:
     ~Device() override;

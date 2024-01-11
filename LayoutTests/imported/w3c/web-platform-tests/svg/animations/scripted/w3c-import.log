@@ -16,6 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/SVGAnimationElement-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/SVGAnimationElement-getStartTime.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/animateMotion-animated-line-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/animateMotion-animated-line.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/animatetransform-type-missing-value-default.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/clear-mapped-animation-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/clear-mapped-animation.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/end-element-on-inactive-element.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/onhover-syncbases.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/scripted/paced-value-animation-overwrites-keyTimes.html

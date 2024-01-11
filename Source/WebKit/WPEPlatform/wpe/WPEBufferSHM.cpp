@@ -37,6 +37,7 @@
 struct _WPEBufferSHMPrivate {
     WPEPixelFormat format;
     GRefPtr<GBytes> data;
+    unsigned stride;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEBufferSHM, wpe_buffer_shm, WPE_TYPE_BUFFER, WPEBuffer)
 
@@ -45,6 +46,7 @@ enum {
 
     PROP_FORMAT,
     PROP_DATA,
+    PROP_STRIDE,
 
     N_PROPERTIES
 };
@@ -62,6 +64,9 @@ static void wpeBufferSHMSetProperty(GObject* object, guint propId, const GValue*
     case PROP_DATA:
         buffer->priv->data = static_cast<GBytes*>(g_value_get_boxed(value));
         break;
+    case PROP_STRIDE:
+        buffer->priv->stride = g_value_get_uint(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -77,6 +82,9 @@ static void wpeBufferSHMGetProperty(GObject* object, guint propId, GValue* value
         break;
     case PROP_DATA:
         g_value_set_boxed(value, wpe_buffer_shm_get_data(buffer));
+        break;
+    case PROP_STRIDE:
+        g_value_set_uint(value, wpe_buffer_shm_get_stride(buffer));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -122,6 +130,18 @@ static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
             G_TYPE_BYTES,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
+    /**
+     * WPEBufferSHM:stride:
+     *
+     * The buffer stride
+     */
+    sObjProperties[PROP_STRIDE] =
+        g_param_spec_uint(
+            "stride",
+            nullptr, nullptr,
+            0, G_MAXUINT, 0,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 }
 
@@ -132,12 +152,13 @@ static void wpe_buffer_shm_class_init(WPEBufferSHMClass* bufferSHMClass)
  * @height: the buffer height
  * @format: the buffer format
  * @data: the buffer data
+ * @stride: the buffer stride
  *
  * Crerate a new #WPEBufferSHM for the given parameters.
  *
  * Returns: (transfer full): a #WPEBufferSHM
  */
-WPEBufferSHM* wpe_buffer_shm_new(WPEDisplay* display, int width, int height, WPEPixelFormat format, GBytes* data)
+WPEBufferSHM* wpe_buffer_shm_new(WPEDisplay* display, int width, int height, WPEPixelFormat format, GBytes* data, guint stride)
 {
     g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
     g_return_val_if_fail(data, nullptr);
@@ -148,6 +169,7 @@ WPEBufferSHM* wpe_buffer_shm_new(WPEDisplay* display, int width, int height, WPE
         "height", height,
         "format", format,
         "data", data,
+        "stride", stride,
         nullptr));
 }
 
@@ -157,7 +179,7 @@ WPEBufferSHM* wpe_buffer_shm_new(WPEDisplay* display, int width, int height, WPE
  *
  * Get the @buffer pixel format
  *
- * Return: a #WPEPixelFormat
+ * Returns: a #WPEPixelFormat
  */
 WPEPixelFormat wpe_buffer_shm_get_format(WPEBufferSHM* buffer)
 {
@@ -172,11 +194,26 @@ WPEPixelFormat wpe_buffer_shm_get_format(WPEBufferSHM* buffer)
  *
  * Get the @buffer data
  *
- * Return: (transfer none): a #GBytes
+ * Returns: (transfer none): a #GBytes
  */
 GBytes* wpe_buffer_shm_get_data(WPEBufferSHM* buffer)
 {
     g_return_val_if_fail(WPE_IS_BUFFER_SHM(buffer), nullptr);
 
     return buffer->priv->data.get();
+}
+
+/**
+ * wpe_buffer_shm_get_stride:
+ * @buffer: a #WPEBufferSHM
+ *
+ * Get the @buffer stride
+ *
+ * Returns: the buffer stride
+ */
+guint wpe_buffer_shm_get_stride(WPEBufferSHM* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER_SHM(buffer), 0);
+
+    return buffer->priv->stride;
 }

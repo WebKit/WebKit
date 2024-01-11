@@ -618,8 +618,6 @@ inline void RenderStyle::containIntrinsicHeightAddAuto()
         setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
 }
 
-#if ENABLE(CSS_COMPOSITING)
-
 inline void RenderStyle::setBlendMode(BlendMode mode)
 {
     SET_NESTED(m_nonInheritedData, rareData, effectiveBlendMode, static_cast<unsigned>(mode));
@@ -627,8 +625,6 @@ inline void RenderStyle::setBlendMode(BlendMode mode)
 }
 
 inline void RenderStyle::setIsolation(Isolation isolation) { SET_NESTED(m_nonInheritedData, rareData, isolation, static_cast<unsigned>(isolation)); }
-
-#endif
 
 #undef SET
 #undef SET_BORDER_COLOR

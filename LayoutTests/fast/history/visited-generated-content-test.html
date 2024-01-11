@@ -47,7 +47,6 @@
           var sPropertyName = oStyleDeclaration.item(i);
           var dxPropertyAttributes = {
               'value': oStyleDeclaration.getPropertyValue(sPropertyName),
-//              'CSS value': oStyleDeclaration.getPropertyCSSValue(sPropertyName),
               'priority': oStyleDeclaration.getPropertyPriority(sPropertyName)
           };
           dxStyleProperties[sPropertyName] = dxPropertyAttributes;

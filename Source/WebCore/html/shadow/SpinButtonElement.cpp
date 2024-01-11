@@ -38,7 +38,7 @@
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollbarTheme.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentParts.h"
 #include "WheelEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpinButtonElement);
 using namespace HTMLNames;
 
 inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
-    : HTMLDivElement(divTag, document, CreateSpinButtonElement)
+    : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_spinButtonOwner(spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
@@ -63,7 +63,7 @@ Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonO
 {
     auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(ShadowPseudoIds::webkitInnerSpinButton());
+    element->setUserAgentPart(UserAgentParts::webkitInnerSpinButton());
     return element;
 }
 

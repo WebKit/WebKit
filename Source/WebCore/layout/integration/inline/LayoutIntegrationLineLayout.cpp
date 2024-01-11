@@ -64,6 +64,54 @@ namespace LayoutIntegration {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
+static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const Layout::BoxGeometry& logicalGeometry, LayoutUnit containerLogicalWidth, WritingMode writingMode, bool isLeftToRightDirection)
+{
+    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+
+    auto borderBoxLogicalRect = Layout::BoxGeometry::borderBoxRect(logicalGeometry);
+    auto horizontalMargin = Layout::BoxGeometry::HorizontalMargin { logicalGeometry.marginStart(), logicalGeometry.marginEnd() };
+    auto verticalMargin = Layout::BoxGeometry::VerticalMargin { logicalGeometry.marginBefore(), logicalGeometry.marginAfter() };
+
+    auto flipMarginsIfApplicable = [&] {
+        if (isHorizontalWritingMode && isLeftToRightDirection && !isFlippedBlocksWritingMode)
+            return;
+
+        if (!isHorizontalWritingMode) {
+            auto logicalHorizontalMargin = horizontalMargin;
+            horizontalMargin = !isFlippedBlocksWritingMode ? Layout::BoxGeometry::HorizontalMargin { verticalMargin.after, verticalMargin.before } : Layout::BoxGeometry::HorizontalMargin { verticalMargin.before, verticalMargin.after };
+            verticalMargin = { logicalHorizontalMargin.start, logicalHorizontalMargin.end };
+        }
+        if (!isLeftToRightDirection) {
+            if (isHorizontalWritingMode)
+                horizontalMargin = { horizontalMargin.end, horizontalMargin.start };
+            else
+                verticalMargin = { verticalMargin.after, verticalMargin.before };
+        }
+    };
+    flipMarginsIfApplicable();
+
+    auto borderBoxVisualTopLeft = LayoutPoint { };
+    auto borderBoxLeft = isLeftToRightDirection ? borderBoxLogicalRect.left() : containerLogicalWidth - (borderBoxLogicalRect.left() + borderBoxLogicalRect.width());
+    if (isHorizontalWritingMode)
+        borderBoxVisualTopLeft = { borderBoxLeft, borderBoxLogicalRect.top() };
+    else {
+        auto marginBoxVisualLeft = borderBoxLogicalRect.top() - logicalGeometry.marginBefore();
+        auto marginBoxVisualTop = borderBoxLeft - logicalGeometry.marginStart();
+        if (isLeftToRightDirection)
+            borderBoxVisualTopLeft = { marginBoxVisualLeft + horizontalMargin.start, marginBoxVisualTop + verticalMargin.before };
+        else
+            borderBoxVisualTopLeft = { marginBoxVisualLeft + horizontalMargin.start, marginBoxVisualTop + verticalMargin.after };
+    }
+
+    auto borderBoxVisualRect = LayoutRect { borderBoxVisualTopLeft, isHorizontalWritingMode ? borderBoxLogicalRect.size() : borderBoxLogicalRect.size().transposedSize() };
+    auto marginBoxVisualRect = borderBoxVisualRect;
+
+    marginBoxVisualRect.move(-horizontalMargin.start, -verticalMargin.before);
+    marginBoxVisualRect.expand(horizontalMargin.start + horizontalMargin.end, verticalMargin.before + verticalMargin.after);
+    return { marginBoxVisualRect, borderBoxVisualRect };
+}
+
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().layoutState())
@@ -202,8 +250,7 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
     if (m_lineDamage)
         m_inlineContentCache.resetMinimumMaximumContentSizes();
     // FIXME: This is where we need to switch between minimum and maximum box geometries.
-    auto minimumContentSize = inlineFormattingContext.minimumContentSize(m_lineDamage.get());
-    auto maximumContentSize = inlineFormattingContext.maximumContentSize();
+    auto [minimumContentSize, maximumContentSize] = inlineFormattingContext.minimumMaximumContentSize(m_lineDamage.get());
     return { minimumContentSize, maximumContentSize };
 }
 
@@ -363,10 +410,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (auto* layer = renderer.layer())
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
-        auto& visualGeometry = layoutState().geometryForBox(layoutBox);
-        auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
-
-        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft() + adjustmentOffset);
+        renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
         auto relayoutRubyAnnotationIfNeeded = [&] {
             if (!layoutBox.isRubyAnnotationBox())
                 return;
@@ -375,12 +419,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
             if (!needsResizing)
                 return;
-            auto visualMarginBoxRect = Layout::BoxGeometry::marginBoxRect(visualGeometry);
-            if (visualMarginBoxRect.size() == renderer.size())
+            auto visualMarginBoxSize = Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).size();
+            auto logicalMarginBoxSize = isHorizontalWritingMode ? visualMarginBoxSize : visualMarginBoxSize.transposedSize();
+            if (logicalMarginBoxSize == renderer.size())
                 return;
-            renderer.setSize(visualMarginBoxRect.size());
-            auto logicalMarginBoxWidth = renderer.isHorizontalWritingMode() ? visualMarginBoxRect.width() : visualMarginBoxRect.height();
-            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxWidth, LengthType::Fixed });
+            renderer.setSize(logicalMarginBoxSize);
+            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxSize.width(), LengthType::Fixed });
             renderer.setNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
             renderer.clearOverridingLogicalWidthLength();
@@ -398,7 +442,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
-    // FIXME: Loop through the floating state?
     for (auto& renderObject : m_boxTree.renderers()) {
         auto& layoutBox = *renderObject->layoutBox();
         if (!layoutBox.isFloatingPositioned() && !layoutBox.isOutOfFlowPositioned())
@@ -406,31 +449,25 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (layoutBox.isLineBreakBox())
             continue;
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-        // FIXME: Figure out if this should all be visual geometry at this point.
         auto& logicalGeometry = layoutState().geometryForBox(layoutBox);
 
         if (layoutBox.isFloatingPositioned()) {
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
-
-            ASSERT(m_inlineContentConstraints);
-            auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(writingMode, isLeftToRightPlacedFloatsInlineDirection, rootBorderBoxWidth);
-            auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
-            auto visualBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(visualGeometry) };
+            auto containerLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+            auto [marginBoxVisualRect, borderBoxVisualRect] = toMarginAndBorderBoxVisualRect(logicalGeometry, containerLogicalWidth, writingMode, isLeftToRightPlacedFloatsInlineDirection);
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
             if (paginationOffset) {
-                visualMarginBoxRect.move(*paginationOffset);
-                visualBorderBoxRect.move(*paginationOffset);
+                marginBoxVisualRect.move(*paginationOffset);
+                borderBoxVisualRect.move(*paginationOffset);
             }
 
-            floatingObject.setFrameRect(visualMarginBoxRect);
-            floatingObject.setMarginOffset({ visualGeometry.marginStart(), visualGeometry.marginBefore() });
+            floatingObject.setFrameRect(marginBoxVisualRect);
+            floatingObject.setMarginOffset({ borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
             floatingObject.setIsPlaced(true);
 
             auto oldRect = renderer.frameRect();
-            renderer.setLocation(visualBorderBoxRect.location());
+            renderer.setLocation(borderBoxVisualRect.location());
 
             if (renderer.checkForRepaintDuringLayout()) {
                 auto hasMoved = oldRect.location() != renderer.location();
@@ -452,19 +489,19 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (layoutBox.isOutOfFlowPositioned()) {
             ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
-            auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
+            auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft();
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
-            auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
+            auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
             auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
-                blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
+                blockFlow.setStaticInlinePositionForChild(renderer, borderBoxLogicalTopLeft.y(), borderBoxLogicalTopLeft.x());
                 if (hasStaticInlinePositioning)
                     renderer.move(delta.width(), delta.height());
             }
 
-            layer.setStaticBlockPosition(logicalBorderBoxRect.y());
-            layer.setStaticInlinePosition(logicalBorderBoxRect.x());
+            layer.setStaticBlockPosition(borderBoxLogicalTopLeft.y());
+            layer.setStaticInlinePosition(borderBoxLogicalTopLeft.x());
 
             if (!delta.isZero() && hasStaticInlinePositioning)
                 renderer.setChildNeedsLayout(MarkOnlyThis);
@@ -819,7 +856,8 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent->hasContent())
         return { };
 
-    return Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(m_boxTree.layoutBoxForRenderer(renderInline)));
+    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(m_boxTree.layoutBoxForRenderer(renderInline))) };
+    return WebCore::isHorizontalWritingMode(flow().style().writingMode()) ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
 }
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const

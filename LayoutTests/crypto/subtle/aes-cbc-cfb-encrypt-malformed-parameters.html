@@ -17,6 +17,9 @@ var extractable = false;
 var plainText = asciiToUint8Array("Hello, World!");
 var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt"]).then(function(result) {
     key = result;
     // Malformed AlgorithmIdentifiers

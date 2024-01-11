@@ -1,0 +1,23 @@
+<style>
+    body {
+        container-type: size;
+    }
+
+    div {
+        padding-block-start: 1px;
+    }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.execCommand('SelectAll');
+  };
+  onbeforeunload = () => {
+    d.hidden = true;
+    d.remove();
+  };
+</script>
+<div id="d"></div>
+<input>
+This test passes if it doesn't crash.

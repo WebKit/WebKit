@@ -48,7 +48,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector
         m_effect.preserveAspectRatio().transformRect(imageRect, srcRect);
         imageRect.scale(filter.filterScale());
         imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
-        context.drawNativeImage(*nativeImage, srcRect.size(), imageRect, srcRect);
+        context.drawNativeImage(*nativeImage, imageRect, srcRect);
         return true;
     }
 

@@ -38,12 +38,13 @@ namespace WebCore {
 
 class GraphicsContext;
 class MediaSample;
+class MediaStreamTrackPrivateSourceObserver;
 class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
 
 class MediaStreamTrackPrivate final
     : public RefCounted<MediaStreamTrackPrivate>
-    , public RealtimeMediaSource::Observer
+    , public CanMakeWeakPtr<MediaStreamTrackPrivate>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
@@ -62,13 +63,13 @@ public:
         virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
     };
 
-    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
-    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
     WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
 
     const String& id() const { return m_id; }
-    const String& label() const;
+    const String& label() const { return m_label; }
 
     bool isActive() const { return enabled() && !ended() && !muted(); }
 
@@ -78,29 +79,31 @@ public:
     HintValue contentHint() const { return m_contentHint; }
     void setContentHint(HintValue);
     
-    void startProducingData() { m_source->start(); }
-    void stopProducingData() { m_source->stop(); }
-    bool isProducingData() { return m_source->isProducingData(); }
+    void startProducingData();
+    void stopProducingData();
+    bool isProducingData() const { return m_isProducingData; }
 
-    bool muted() const;
-    void setMuted(bool muted) { m_source->setMuted(muted); }
-    bool interrupted() const;
+    bool muted() const { return m_isMuted; }
+    void setMuted(bool);
+    bool interrupted() const { return m_isInterrupted; }
+    bool captureDidFail() const { return m_captureDidFail; }
 
-    void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
+    void setIsInBackground(bool);
 
-    bool isCaptureTrack() const;
+    bool isCaptureTrack() const { return m_isCaptureTrack; }
 
     bool enabled() const { return m_isEnabled; }
     void setEnabled(bool);
 
     Ref<MediaStreamTrackPrivate> clone();
 
-    RealtimeMediaSource& source() { return m_source.get(); }
-    const RealtimeMediaSource& source() const { return m_source.get(); }
-    RealtimeMediaSource::Type type() const { return m_source->type(); }
-    CaptureDevice::DeviceType deviceType() const { return m_source->deviceType(); }
-    bool isVideo() const { return m_source->isVideo(); }
-    bool isAudio() const { return m_source->isAudio(); }
+    WEBCORE_EXPORT RealtimeMediaSource& source();
+    bool hasSource(const RealtimeMediaSource*) const;
+
+    RealtimeMediaSource::Type type() const { return m_type; }
+    CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
+    bool isVideo() const { return m_type == RealtimeMediaSource::Type::Video; }
+    bool isAudio() const { return m_type == RealtimeMediaSource::Type::Audio; }
 
     void endTrack();
 
@@ -108,8 +111,8 @@ public:
     void removeObserver(Observer&);
     bool hasObserver(Observer& observer) const { return m_observers.contains(observer); }
 
-    WEBCORE_EXPORT const RealtimeMediaSourceSettings& settings() const;
-    const RealtimeMediaSourceCapabilities& capabilities() const;
+    const RealtimeMediaSourceSettings& settings() const { return m_settings; }
+    const RealtimeMediaSourceCapabilities& capabilities() const { return m_capabilities; }
 
     Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&&);
     Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> getPhotoCapabilities();
@@ -131,18 +134,20 @@ public:
     const void* logIdentifier() const final { return m_logIdentifier; }
 #endif
 
-private:
-    MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
+    friend class MediaStreamTrackPrivateSourceObserver;
 
-    // RealtimeMediaSource::Observer
-    void sourceStarted() final;
-    void sourceStopped() final;
-    void sourceMutedChanged() final;
-    void sourceSettingsChanged() final;
-    void sourceConfigurationChanged() final;
-    bool preventSourceFromEnding() final;
-    void audioUnitWillStart() final;
-    void hasStartedProducingData() final;
+private:
+    MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);
+
+    void initialize();
+
+    void sourceStarted();
+    void hasStartedProducingData();
+
+    void sourceStopped(bool captureDidFail);
+    void sourceMutedChanged(bool interrupted, bool muted);
+    void sourceSettingsChanged(RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&);
+    void sourceConfigurationChanged(String&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&);
 
     void updateReadyState();
 
@@ -153,18 +158,35 @@ private:
     WTFLogChannel& logChannel() const final;
 #endif
 
+#if ASSERT_ENABLED
+    bool isOnCreationThread();
+#endif
+
     WeakHashSet<Observer> m_observers;
-    Ref<RealtimeMediaSource> m_source;
+    Ref<MediaStreamTrackPrivateSourceObserver> m_sourceObserver;
 
     String m_id;
+    String m_label;
+    RealtimeMediaSource::Type m_type;
+    CaptureDevice::DeviceType m_deviceType;
     ReadyState m_readyState { ReadyState::None };
+    bool m_isCaptureTrack { false };
     bool m_isEnabled { true };
     bool m_isEnded { false };
+    bool m_captureDidFail { false };
     bool m_hasStartedProducingData { false };
     HintValue m_contentHint { HintValue::Empty };
     Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;
+#endif
+    bool m_isProducingData { false };
+    bool m_isMuted { false };
+    bool m_isInterrupted { false };
+    RealtimeMediaSourceSettings m_settings;
+    RealtimeMediaSourceCapabilities m_capabilities;
+#if ASSERT_ENABLED
+    uint32_t m_creationThreadId { 0 };
 #endif
 };
 

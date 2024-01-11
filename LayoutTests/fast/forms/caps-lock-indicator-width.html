@@ -33,7 +33,7 @@ async function runTest(name, input, expectedWidth)
     await UIHelper.activateElement(input);
     await UIHelper.renderingUpdate();
 
-    capsLockIndicator = shadowRoot.querySelector("[pseudo='-webkit-caps-lock-indicator']");
+    capsLockIndicator = shadowRoot.querySelector("[useragentpart='-webkit-caps-lock-indicator']");
     capsLockIndicatorWidth = capsLockIndicator.getBoundingClientRect().width;
 
     shouldBeEqualToNumber("capsLockIndicatorWidth", expectedWidth);

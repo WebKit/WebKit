@@ -161,4 +161,4 @@ bool FECompositeSoftwareArithmeticApplier::apply(const Filter&, const FilterImag
 
 } // namespace WebCore
 
-#endif // HAVE(ARM_NEON_INTRINSICS)
+#endif // !HAVE(ARM_NEON_INTRINSICS)

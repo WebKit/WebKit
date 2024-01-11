@@ -49,7 +49,7 @@ class NetworkConnectionToWebProcess;
 class WebSharedWorker;
 class WebSharedWorkerServer;
 
-class WebSharedWorkerServerToContextConnection final : public IPC::MessageSender, public IPC::MessageReceiver, public CanMakeCheckedPtr {
+class WebSharedWorkerServerToContextConnection final : public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::RegistrableDomain&, WebSharedWorkerServer&);

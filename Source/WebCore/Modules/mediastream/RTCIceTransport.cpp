@@ -78,8 +78,8 @@ void RTCIceTransport::onStateChanged(RTCIceTransportState state)
             return;
 
         m_transportState = state;
-        if (m_connection)
-            m_connection->processIceTransportStateChange(*this);
+        if (auto connection = this->connection())
+            connection->processIceTransportStateChange(*this);
     });
 }
 

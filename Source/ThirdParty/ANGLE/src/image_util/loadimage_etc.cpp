@@ -83,6 +83,8 @@ struct ETC2Block
     }
 
     // Transcodes  block to BC4
+    // For simplicity, R11 alpha use the same formula as Alpha8 to decode,
+    // the result R8 may have some precision issue like multiplier == 0 case.
     void transcodeAsBC4(uint8_t *dest, size_t x, size_t y, size_t w, size_t h, bool isSigned) const
     {
         static constexpr int kIndexMap[] = {1, 7, 6, 5, 4, 3, 2, 0};
@@ -2143,7 +2145,7 @@ void LoadETC2SRGBA8ToBC3(const ImageLoadContext &context,
                          size_t outputDepthPitch)
 {
     LoadETC2RGBA8ToBC3(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
-                       outputRowPitch, outputDepthPitch, false, true);
+                       outputRowPitch, outputDepthPitch, false, false);
 }
 
 void LoadEACR11ToBC4(const ImageLoadContext &context,

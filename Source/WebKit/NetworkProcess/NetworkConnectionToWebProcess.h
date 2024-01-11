@@ -124,8 +124,6 @@ class NetworkConnectionToWebProcess
 #endif
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     , public WebCore::CookieChangeObserver
-#else
-    , public CanMakeCheckedPtr
 #endif
     , public IPC::Connection::Client {
 public:

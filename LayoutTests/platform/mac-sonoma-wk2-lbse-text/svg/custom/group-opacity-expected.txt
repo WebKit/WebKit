@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 560x100
+  RenderSVGTransformableContainer {g} at (0,0) size 560x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#008000] [opacity=0.50] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.50]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (115,0) size 100x100
+  RenderSVGTransformableContainer {g} at (115,0) size 100x100 [opacity=0.50]
+layer at (115,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=115.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (230,0) size 100x100
+  RenderSVGRect {rect} at (230,0) size 100x100 [opacity=0.50] [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=230.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (345,0) size 100x100
+  RenderSVGRect {rect} at (345,0) size 100x100 [stroke={[type=SOLID] [color=#00000000] [opacity=0.50] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=345.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (460,0) size 100x100
+  RenderSVGRect {rect} at (460,0) size 100x100 [opacity=0.50] [stroke={[type=SOLID] [color=#00000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [x=460.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 570x110
+  RenderSVGTransformableContainer {g} at (0,0) size 570x110
+layer at (0,0) size 110x110
+  RenderSVGImage {image} at (0,0) size 110x110
+layer at (115,0) size 110x110
+  RenderSVGImage {image} at (115,0) size 110x110
+layer at (230,0) size 110x110
+  RenderSVGImage {image} at (230,0) size 110x110
+layer at (345,0) size 110x110
+  RenderSVGImage {image} at (345,0) size 110x110
+layer at (460,0) size 110x110
+  RenderSVGImage {image} at (460,0) size 110x110

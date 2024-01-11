@@ -209,7 +209,7 @@ module ExecutorSelfTests
                     index = @runlist[testIndex].index
                     # Because of infra issues, a test might have multiple results.
                     testResult.results.each { |result|
-                        line = "./#{STATUS_FILE_PREFIX}#{index} #{$runUniqueId} 0 #{result}"
+                        line = "#{index} #{$runUniqueId} 0 #{result}"
                         processStatusLine(statusMap, line)
                     }
                 }

@@ -43,10 +43,8 @@
 
 namespace WebCore {
 
-static Path pathFromCircleElement(const SVGElement& element)
+static Path pathFromCircleElement(const SVGCircleElement& element)
 {
-    ASSERT(is<SVGCircleElement>(element));
-
     RenderElement* renderer = element.renderer();
     if (!renderer)
         return { };
@@ -63,7 +61,7 @@ static Path pathFromCircleElement(const SVGElement& element)
     return path;
 }
 
-static Path pathFromEllipseElement(const SVGElement& element)
+static Path pathFromEllipseElement(const SVGEllipseElement& element)
 {
     RenderElement* renderer = element.renderer();
     if (!renderer)
@@ -86,25 +84,23 @@ static Path pathFromEllipseElement(const SVGElement& element)
     return path;
 }
 
-static Path pathFromLineElement(const SVGElement& element)
+static Path pathFromLineElement(const SVGLineElement& element)
 {
     Path path;
-    const auto& line = downcast<SVGLineElement>(element);
-
     SVGLengthContext lengthContext(&element);
-    path.moveTo(FloatPoint(line.x1().value(lengthContext), line.y1().value(lengthContext)));
-    path.addLineTo(FloatPoint(line.x2().value(lengthContext), line.y2().value(lengthContext)));
+    path.moveTo(FloatPoint(element.x1().value(lengthContext), element.y1().value(lengthContext)));
+    path.addLineTo(FloatPoint(element.x2().value(lengthContext), element.y2().value(lengthContext)));
     return path;
 }
 
-static Path pathFromPathElement(const SVGElement& element)
+static Path pathFromPathElement(const SVGPathElement& element)
 {
-    return downcast<SVGPathElement>(element).path();
+    return element.path();
 }
 
-static Path pathFromPolygonElement(const SVGElement& element)
+static Path pathFromPolygonElement(const SVGPolygonElement& element)
 {
-    auto& points = downcast<SVGPolygonElement>(element).points().items();
+    auto& points = element.points().items();
     if (points.isEmpty())
         return { };
 
@@ -119,9 +115,9 @@ static Path pathFromPolygonElement(const SVGElement& element)
     return path;
 }
 
-static Path pathFromPolylineElement(const SVGElement& element)
+static Path pathFromPolylineElement(const SVGPolylineElement& element)
 {
-    auto& points = downcast<SVGPolylineElement>(element).points().items();
+    auto& points = element.points().items();
     if (points.isEmpty())
         return { };
 
@@ -134,7 +130,7 @@ static Path pathFromPolylineElement(const SVGElement& element)
     return path;
 }
 
-static Path pathFromRectElement(const SVGElement& element)
+static Path pathFromRectElement(const SVGRectElement& element)
 {
     RenderElement* renderer = element.renderer();
     if (!renderer)
@@ -184,17 +180,15 @@ static Path pathFromRectElement(const SVGElement& element)
     return path;
 }
 
-static Path pathFromUseElement(const SVGElement& element)
+static Path pathFromUseElement(const SVGUseElement& element)
 {
-    const auto& useElement = downcast<SVGUseElement>(element);
-
-    RefPtr clipChildElement = useElement.clipChild();
+    RefPtr clipChildElement = element.clipChild();
     if (!clipChildElement)
         return { };
 
     SVGLengthContext lengthContext(&element);
-    auto x = useElement.x().value(lengthContext);
-    auto y = useElement.y().value(lengthContext);
+    auto x = element.x().value(lengthContext);
+    auto y = element.y().value(lengthContext);
 
     auto path = pathFromGraphicsElement(*clipChildElement.get());
     if (x || y)
@@ -207,21 +201,21 @@ Path pathFromGraphicsElement(const SVGElement& element)
 {
     switch (element.tagQName().nodeName()) {
     case ElementNames::SVG::circle:
-        return pathFromCircleElement(element);
+        return pathFromCircleElement(uncheckedDowncast<SVGCircleElement>(element));
     case ElementNames::SVG::ellipse:
-        return pathFromEllipseElement(element);
+        return pathFromEllipseElement(uncheckedDowncast<SVGEllipseElement>(element));
     case ElementNames::SVG::line:
-        return pathFromLineElement(element);
+        return pathFromLineElement(uncheckedDowncast<SVGLineElement>(element));
     case ElementNames::SVG::path:
-        return pathFromPathElement(element);
+        return pathFromPathElement(uncheckedDowncast<SVGPathElement>(element));
     case ElementNames::SVG::polygon:
-        return pathFromPolygonElement(element);
+        return pathFromPolygonElement(uncheckedDowncast<SVGPolygonElement>(element));
     case ElementNames::SVG::polyline:
-        return pathFromPolylineElement(element);
+        return pathFromPolylineElement(uncheckedDowncast<SVGPolylineElement>(element));
     case ElementNames::SVG::rect:
-        return pathFromRectElement(element);
+        return pathFromRectElement(uncheckedDowncast<SVGRectElement>(element));
     case ElementNames::SVG::use:
-        return pathFromUseElement(element);
+        return pathFromUseElement(uncheckedDowncast<SVGUseElement>(element));
     default:
         break;
     }

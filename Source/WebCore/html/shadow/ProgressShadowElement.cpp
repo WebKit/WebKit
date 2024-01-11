@@ -35,7 +35,7 @@
 #include "HTMLProgressElement.h"
 #include "RenderProgress.h"
 #include "RenderStyleInlines.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentParts.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ ProgressShadowElement::ProgressShadowElement(Document& document)
 
 HTMLProgressElement* ProgressShadowElement::progressElement() const
 {
-    return downcast<HTMLProgressElement>(shadowHost());
+    return checkedDowncast<HTMLProgressElement>(shadowHost());
 }
 
 bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)
@@ -94,21 +94,21 @@ void ProgressValueElement::setInlineSizePercentage(double size)
 Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
     Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
-    result->setPseudo(ShadowPseudoIds::webkitProgressInnerElement());
+    result->setUserAgentPart(UserAgentParts::webkitProgressInnerElement());
     return result;
 }
 
 Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
     Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
-    result->setPseudo(ShadowPseudoIds::webkitProgressBar());
+    result->setUserAgentPart(UserAgentParts::webkitProgressBar());
     return result;
 }
 
 Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {
     Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
-    result->setPseudo(ShadowPseudoIds::webkitProgressValue());
+    result->setUserAgentPart(UserAgentParts::webkitProgressValue());
     return result;
 }
 

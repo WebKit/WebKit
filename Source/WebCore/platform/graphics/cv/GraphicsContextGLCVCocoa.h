@@ -72,6 +72,7 @@ private:
 
     struct TextureContent {
         intptr_t surface { 0 };
+        uint32_t surfaceID { 0 };
         uint32_t surfaceSeed { 0 };
         GCGLint level { 0 };
         GCGLenum internalFormat { 0 };

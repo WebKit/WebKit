@@ -90,7 +90,6 @@ WEBCORE_EXPORT VisiblePosition startOfDocument(const Node*);
 WEBCORE_EXPORT VisiblePosition endOfDocument(const Node*);
 WEBCORE_EXPORT VisiblePosition startOfDocument(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition endOfDocument(const VisiblePosition&);
-bool inSameDocument(const VisiblePosition&, const VisiblePosition&);
 WEBCORE_EXPORT bool isStartOfDocument(const VisiblePosition&);
 WEBCORE_EXPORT bool isEndOfDocument(const VisiblePosition&);
 

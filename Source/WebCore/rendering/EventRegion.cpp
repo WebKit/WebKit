@@ -29,6 +29,7 @@
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"
+#include "PathUtilities.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderStyleInlines.h"
@@ -135,34 +136,15 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
 
         m_interactionRects.add(rectForTracking);
 
-        auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
-        if (regionIterator != m_discoveredRegionsByElement.end()) {
-            auto discoveredRegion = regionIterator->value;
-            
-            // Note: elements with multiple rects still get the `enclosingIntRect` treatment.
-            // Will be fixed in rdar://119259119.
-            Region tempRegion;
-            tempRegion.unite(rectForTracking);
-            tempRegion.subtract(discoveredRegion);
-            if (tempRegion.isEmpty())
-                return;
-            
-            discoveredRegion.unite(tempRegion);
-            m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
-
-            for (auto rect : tempRegion.rects()) {
-                m_interactionRegions.append({
-                    InteractionRegion::Type::Interaction,
-                    interactionRegion->elementIdentifier,
-                    rect,
-                    interactionRegion->borderRadius,
-                    interactionRegion->maskedCorners
-                });
-            }
+        auto discoveredIterator = m_discoveredRectsByElement.find(interactionRegion->elementIdentifier);
+        if (discoveredIterator != m_discoveredRectsByElement.end()) {
+            discoveredIterator->value.append(interactionRegion->rectInLayerCoordinates);
             return;
         }
 
-        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, rectForTracking);
+        Vector<FloatRect, 1> discoveredRects;
+        discoveredRects.append(interactionRegion->rectInLayerCoordinates);
+        m_discoveredRectsByElement.add(interactionRegion->elementIdentifier, discoveredRects);
     
         auto guardRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
         if (guardRect) {
@@ -184,17 +166,21 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
             continue;
 
         auto ancestorElementIdentifier = ancestor.element()->identifier();
-        auto regionIterator = m_discoveredRegionsByElement.find(ancestorElementIdentifier);
+        auto discoveredIterator = m_discoveredRectsByElement.find(ancestorElementIdentifier);
 
         // The ancestor has no known InteractionRegion, we can skip it.
-        if (regionIterator == m_discoveredRegionsByElement.end()) {
+        if (discoveredIterator == m_discoveredRectsByElement.end()) {
             // If it has a border / background, stop the search.
             if (ancestor.hasVisibleBoxDecorations())
                 return false;
             continue;
         }
 
-        auto ancestorBounds = regionIterator->value.bounds();
+        // The ancestor has multiple known rects (e.g. multi-line links), we can skip it.
+        if (discoveredIterator->value.size() > 1)
+            continue;
+
+        auto& ancestorBounds = discoveredIterator->value.first();
 
         // The ancestor's InteractionRegion does not contain ours, we don't consolidate and stop the search.
         if (!ancestorBounds.contains(bounds))
@@ -244,97 +230,62 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
     return false;
 }
 
-// FIXME: (rdar://119259119) switch to `PathUtilities::pathsWithShrinkWrappedRects`
 void EventRegionContext::shrinkWrapInteractionRegions()
 {
     for (auto& region : m_interactionRegions) {
         if (region.type != InteractionRegion::Type::Interaction)
             continue;
 
-        auto regionIterator = m_discoveredRegionsByElement.find(region.elementIdentifier);
-        if (regionIterator == m_discoveredRegionsByElement.end())
+        auto discoveredIterator = m_discoveredRectsByElement.find(region.elementIdentifier);
+        if (discoveredIterator == m_discoveredRectsByElement.end())
             continue;
 
-        auto discoveredRegion = regionIterator->value;
-        auto enclosingRect = enclosingIntRect(region.rectInLayerCoordinates);
-        if (enclosingRect == discoveredRegion.bounds())
+        auto discoveredRects = discoveredIterator->value;
+        if (discoveredRects.size() == 1)
             continue;
 
-        auto maskedCorners = region.maskedCorners;
-        // Create a mask with all corners so we can selectively disable them.
-        if (maskedCorners.isEmpty()) {
-            maskedCorners.add(InteractionRegion::CornerMask::MinXMinYCorner);
-            maskedCorners.add(InteractionRegion::CornerMask::MaxXMinYCorner);
-            maskedCorners.add(InteractionRegion::CornerMask::MinXMaxYCorner);
-            maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
-        }
+        FloatRect layerBounds;
+        for (const auto& rect : discoveredRects)
+            layerBounds.unite(rect);
 
-        auto horizontallyInflatedRect = enclosingRect;
-        horizontallyInflatedRect.inflateX(1);
-        horizontallyInflatedRect.inflateY(-1);
-        auto verticallyInflatedRect = enclosingRect;
-        verticallyInflatedRect.inflateY(1);
-        verticallyInflatedRect.inflateX(-1);
-
-        bool changedMaskedCorners = false;
-
-        if (discoveredRegion.contains(horizontallyInflatedRect.minXMinYCorner()) || discoveredRegion.contains(verticallyInflatedRect.minXMinYCorner())) {
-            maskedCorners.remove(InteractionRegion::CornerMask::MinXMinYCorner);
-            changedMaskedCorners = true;
-        }
-        if (discoveredRegion.contains(horizontallyInflatedRect.maxXMinYCorner()) || discoveredRegion.contains(verticallyInflatedRect.maxXMinYCorner())) {
-            maskedCorners.remove(InteractionRegion::CornerMask::MaxXMinYCorner);
-            changedMaskedCorners = true;
-        }
-        if (discoveredRegion.contains(horizontallyInflatedRect.minXMaxYCorner()) || discoveredRegion.contains(verticallyInflatedRect.minXMaxYCorner())) {
-            maskedCorners.remove(InteractionRegion::CornerMask::MinXMaxYCorner);
-            changedMaskedCorners = true;
-        }
-        if (discoveredRegion.contains(horizontallyInflatedRect.maxXMaxYCorner()) || discoveredRegion.contains(verticallyInflatedRect.maxXMaxYCorner())) {
-            maskedCorners.remove(InteractionRegion::CornerMask::MaxXMaxYCorner);
-            changedMaskedCorners = true;
-        }
-
-        if (maskedCorners.isEmpty())
-            region.borderRadius = 0;
-        else if (changedMaskedCorners)
-            region.maskedCorners = maskedCorners;
+        Path path = PathUtilities::pathWithShrinkWrappedRects(discoveredRects, region.cornerRadius);
+        region.rectInLayerCoordinates = layerBounds;
+        path.translate(-toFloatSize(layerBounds.location()));
+        region.clipPath = path;
+        region.cornerRadius = 0;
     }
 }
 
 void EventRegionContext::removeSuperfluousInteractionRegions()
 {
     m_interactionRegions.removeAllMatching([&] (auto& region) {
-        if (region.type == InteractionRegion::Type::Guard) {
-            for (auto& entry : m_discoveredRegionsByElement) {
-                // This is the element being guarded.
-                if (entry.key == region.elementIdentifier)
-                    continue;
+        if (region.type != InteractionRegion::Type::Guard)
+            return m_containersToRemove.contains(region.elementIdentifier);
 
-                auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
-                auto interactionRegion = entry.value;
+        auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
+        for (const auto& interactionRect : m_interactionRects) {
+            auto intersection = interactionRect;
+            intersection.intersect(guardRect);
 
-                auto intersection = interactionRegion;
-                intersection.intersect(guardRect);
-                if (intersection.isEmpty())
-                    continue;
+            if (intersection.isEmpty())
+                continue;
 
-                // This is an interactive container of the guarded region.
-                if (intersection.contains(guardRect))
-                    continue;
+            // This is an interactive container of the guarded region.
+            if (intersection.contains(guardRect))
+                continue;
 
-                auto originalBounds = interactionRegion.bounds();
-                auto intersectionBounds = intersection.bounds();
-                bool tooMuchOverlap = originalBounds.width() / 2 < intersectionBounds.width()
-                    || originalBounds.height() / 2 < intersectionBounds.height();
+            // This is probably the element being guarded.
+            if (intersection.contains(interactionRect) && guardRect.center() == interactionRect.center())
+                continue;
 
-                if (tooMuchOverlap)
-                    return true;
-            }
-            return false;
+            bool tooMuchOverlap = interactionRect.width() / 2 < intersection.width()
+                || interactionRect.height() / 2 < intersection.height();
+
+            if (tooMuchOverlap)
+                return true;
         }
 
-        return m_containersToRemove.contains(region.elementIdentifier);
+        return false;
     });
 }
 

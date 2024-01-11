@@ -44,6 +44,8 @@
 #define CHECK_STRINGVIEW_LIFETIME 1
 #endif
 
+OBJC_CLASS NSString;
+
 namespace WTF {
 
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.

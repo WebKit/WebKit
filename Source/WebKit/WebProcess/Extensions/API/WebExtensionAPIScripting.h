@@ -68,7 +68,7 @@ private:
 
     void parseCSSInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
     void parseTargetInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
-    void parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
+    void parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
     static void parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&);
 
 #endif

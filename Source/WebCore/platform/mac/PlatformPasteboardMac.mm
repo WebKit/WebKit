@@ -33,6 +33,8 @@
 #import "LegacyNSPasteboardTypes.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
+#import <pal/spi/cocoa/FoundationSPI.h>
+#import <pal/spi/mac/NSPasteboardSPI.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/URL.h>
@@ -86,12 +88,45 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     types = makeVector<String>([m_pasteboard types]);
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType) const
+PasteboardBuffer PlatformPasteboard::bufferForType(const String& pasteboardType) const
 {
-    NSData *data = [m_pasteboard dataForType:pasteboardType];
+    NSData *data = nil;
+    String bufferType = pasteboardType;
+
+    if (pasteboardType == String(legacyTIFFPasteboardType())) {
+        data = [m_pasteboard _dataWithoutConversionForType:pasteboardType securityScoped:NO];
+        if (!data) {
+            static NeverDestroyed<RetainPtr<NSArray>> sourceTypes;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                auto originalSourceTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+                if (originalSourceTypes) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+                    sourceTypes.get() = [(__bridge NSArray *)originalSourceTypes.get() arrayByExcludingObjectsInArray:@[(__bridge NSString *)kUTTypePDF]];
+ALLOW_DEPRECATED_DECLARATIONS_END
+                } else
+                    sourceTypes.get() = nil;
+            });
+
+            for (NSString *sourceType in sourceTypes.get().get()) {
+                data = [m_pasteboard _dataWithoutConversionForType:sourceType securityScoped:NO];
+                if (data) {
+                    bufferType = sourceType;
+                    break;
+                }
+            }
+        }
+    } else
+        data = [m_pasteboard dataForType:pasteboardType];
+
+    PasteboardBuffer pasteboardBuffer;
+    pasteboardBuffer.type = bufferType;
+
     if (!data)
-        return nullptr;
-    return SharedBuffer::create(adoptNS([data copy]).get());
+        return pasteboardBuffer;
+
+    pasteboardBuffer.data = SharedBuffer::create(adoptNS([data copy]).get());
+    return pasteboardBuffer;
 }
 
 int PlatformPasteboard::numberOfFiles() const
@@ -469,7 +504,7 @@ static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformTy
 RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
     if (!index)
-        return bufferForType(type);
+        return bufferForType(type).data;
 
     NSPasteboardItem *item = itemAtIndex(*index);
     if (!item)

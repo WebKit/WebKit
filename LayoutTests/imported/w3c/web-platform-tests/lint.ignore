@@ -20,6 +20,7 @@ TRAILING WHITESPACE: html/syntax/xmldecl/support/no-version-or-space-or-trailing
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.adts
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.pdf
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.jpg
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.jxl
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.png
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.gif
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.wav
@@ -48,6 +49,7 @@ TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.bmp
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.sxg
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.wbn
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.avif
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.annexb
 
 ## .gitignore
 W3C-TEST.ORG: .gitignore
@@ -88,7 +90,7 @@ CR AT EOL: html/syntax/charset/after-head-after-1kb-crlf.html
 CR AT EOL: html/syntax/charset/after-head-in-1kb-crlf.html
 
 # Intentional use of tabs
-INDENT TABS: html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html
+INDENT TABS: html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.whitespace.html
 INDENT TABS: webvtt/parsing/file-parsing/tests/support/header-tab.vtt
 INDENT TABS: webvtt/parsing/file-parsing/tests/support/whitespace-chars.vtt
 
@@ -116,8 +118,6 @@ CONSOLE: service-workers/service-worker/navigation-redirect.https.html
 CONSOLE: service-workers/service-worker/resources/clients-get-other-origin.html
 CONSOLE: webrtc/tools/*
 CONSOLE: webaudio/resources/audit.js:41
-CONSOLE: resource-timing/resources/resource-loaders.js
-CONSOLE: resource-timing/resources/entry-invariants.js
 
 # use of console in a public library - annotation-model ensures
 # it is not actually used
@@ -158,11 +158,14 @@ SET TIMEOUT: css/selectors/invalidation/dir-pseudo-class-in-has.html
 SET TIMEOUT: css/selectors/invalidation/lang-pseudo-class-in-has-document-element.html
 SET TIMEOUT: css/selectors/invalidation/lang-pseudo-class-in-has-xhtml.xhtml
 SET TIMEOUT: css/selectors/invalidation/lang-pseudo-class-in-has.html
+SET TIMEOUT: custom-elements/scoped-registry/scoped-registry-define-upgrade-criteria.tentative.html
 SET TIMEOUT: encrypted-media/polyfill/chrome-polyfill.js
 SET TIMEOUT: encrypted-media/polyfill/clearkey-polyfill.js
 SET TIMEOUT: encrypted-media/scripts/playback-temporary-events.js
 SET TIMEOUT: fetch/metadata/resources/helper.sub.js
 SET TIMEOUT: fetch/metadata/resources/message-opener.html
+SET TIMEOUT: fenced-frame/resources/history-length-fenced-navigations-replace-do-not-contribute-to-joint-inner.html
+SET TIMEOUT: fenced-frame/resources/utils.js
 SET TIMEOUT: focus/support/iframe-focus-with-different-site-intermediate-frame-outer.sub.html
 SET TIMEOUT: focus/support/iframe-focus-with-different-site-intermediate-frame-middle.sub.html
 SET TIMEOUT: focus/support/iframe-contentwindow-focus-with-different-site-intermediate-frame-outer.sub.html
@@ -187,6 +190,7 @@ SET TIMEOUT: html/semantics/embedded-content/the-iframe-element/*
 SET TIMEOUT: html/semantics/embedded-content/the-img-element/*
 SET TIMEOUT: html/semantics/embedded-content/the-object-element/object-param-url.html
 SET TIMEOUT: html/semantics/embedded-content/the-object-element/object-param-url-ref.html
+SET TIMEOUT: html/semantics/forms/textfieldselection/select-event.html
 SET TIMEOUT: html/semantics/scripting-1/the-script-element/*
 SET TIMEOUT: html/webappapis/dynamic-markup-insertion/opening-the-input-stream/0*
 SET TIMEOUT: html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/history-frame.html
@@ -209,20 +213,56 @@ SET TIMEOUT: navigation-timing/*
 SET TIMEOUT: old-tests/submission/Microsoft/history/history_000.htm
 SET TIMEOUT: paint-timing/resources/subframe-painting.html
 SET TIMEOUT: performance-timeline/resources/navigation-id-detached-frame-page.html
+SET TIMEOUT: png/apng/acTL-plays-one.html
+SET TIMEOUT: png/apng/acTL-plays-two.html
+SET TIMEOUT: png/apng/fdAT-split-basic.html
+SET TIMEOUT: png/apng/fdAT-split-zero-length.html
+SET TIMEOUT: png/apng/fcTL-acTL-ordering.html
+SET TIMEOUT: png/apng/fcTL-blend-over-repeatedly.html
+SET TIMEOUT: png/apng/fcTL-blend-over-solid.html
+SET TIMEOUT: png/apng/fcTL-blend-source-nearly-transparent.html
+SET TIMEOUT: png/apng/fcTL-blend-source-solid.html
+SET TIMEOUT: png/apng/fcTL-blend-source-transparent.html
+SET TIMEOUT: png/apng/fcTL-dispose-background-final.html
+SET TIMEOUT: png/apng/fcTL-dispose-background.html
+SET TIMEOUT: png/apng/fcTL-dispose-before-region-background.html
+SET TIMEOUT: png/apng/fcTL-dispose-in-region-background.html
+SET TIMEOUT: png/apng/fcTL-dispose-in-region-none.html
+SET TIMEOUT: png/apng/fcTL-dispose-in-region-previous.html
+SET TIMEOUT: png/apng/fcTL-dispose-none.html
+SET TIMEOUT: png/apng/fcTL-dispose-previous-final.html
+SET TIMEOUT: png/apng/fcTL-dispose-previous-first.html
+SET TIMEOUT: png/apng/fcTL-dispose-previous.html
+SET TIMEOUT: png/apng/fdAT-16bit.html
+SET TIMEOUT: png/apng/fdAT-1bit-PLTE-tRNS.html
+SET TIMEOUT: png/apng/fdAT-1bit-PLTE.html
+SET TIMEOUT: png/apng/fdAT-2bit-PLTE-tRNS.html
+SET TIMEOUT: png/apng/fdAT-8bit-gray-alpha.html
+SET TIMEOUT: png/apng/fdAT-8bit-gray.html
+SET TIMEOUT: png/apng/first-frame-IDAT.html
+SET TIMEOUT: png/apng/first-frame-not-IDAT.html
+SET TIMEOUT: png/apng/tester-check.html
 SET TIMEOUT: portals/resources/portals-adopt-predecessor-portal.html
 SET TIMEOUT: preload/single-download-preload.html
 SET TIMEOUT: preload/resources/slow-exec.js
+SET TIMEOUT: print/crashtests/reload-crash.html
 SET TIMEOUT: resize-observer/resources/iframe.html
 SET TIMEOUT: resource-timing/resources/nested-contexts.js
 SET TIMEOUT: reporting/resources/first-csp-report.https.sub.html
 SET TIMEOUT: reporting/resources/second-csp-report.https.sub.html
+SET TIMEOUT: scheduler/tentative/yield/yield-inherit-across-promises.any.js
+SET TIMEOUT: scheduler/tentative/yield/yield-priority-timers.any.js
 SET TIMEOUT: secure-contexts/basic-popup-and-iframe-tests.https.js
 SET TIMEOUT: service-workers/cache-storage/cache-abort.https.any.js
 SET TIMEOUT: service-workers/service-worker/activation.https.html
 SET TIMEOUT: service-workers/service-worker/fetch-frame-resource.https.html
 SET TIMEOUT: service-workers/service-worker/fetch-request-redirect.https.html
 SET TIMEOUT: service-workers/service-worker/fetch-waits-for-activate.https.html
+SET TIMEOUT: service-workers/service-worker/postMessage-client-worker.js
 SET TIMEOUT: service-workers/service-worker/update-recovery.https.html
+SET TIMEOUT: service-workers/service-worker/resources/controlled-frame-postMessage.html
+SET TIMEOUT: service-workers/service-worker/resources/controlled-worker-late-postMessage.js
+SET TIMEOUT: service-workers/service-worker/resources/controlled-worker-postMessage.js
 SET TIMEOUT: service-workers/service-worker/resources/extendable-event-async-waituntil.js
 SET TIMEOUT: service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js
 SET TIMEOUT: service-workers/service-worker/resources/fetch-event-test-worker.js
@@ -233,8 +273,8 @@ SET TIMEOUT: service-workers/service-worker/resources/resource-timing-worker.js
 SET TIMEOUT: shadow-dom/Document-prototype-currentScript.html
 SET TIMEOUT: shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 SET TIMEOUT: shadow-dom/slotchange-event.html
-SET TIMEOUT: trusted-types/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.tentative.html
-SET TIMEOUT: trusted-types/DOMWindowTimers-setTimeout-setInterval.tentative.html
+SET TIMEOUT: trusted-types/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.html
+SET TIMEOUT: trusted-types/DOMWindowTimers-setTimeout-setInterval.html
 SET TIMEOUT: pending-beacon/resources/pending_beacon-helper.js
 SET TIMEOUT: user-timing/*
 SET TIMEOUT: web-animations/crashtests/reparent-animating-element-002.html
@@ -244,11 +284,17 @@ SET TIMEOUT: webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/me
 SET TIMEOUT: webauthn/*timeout.https.html
 SET TIMEOUT: webdriver/*
 SET TIMEOUT: webmessaging/*
+SET TIMEOUT: webrtc-encoded-transform/script-metadata-transform-worker.js
+SET TIMEOUT: webrtc-encoded-transform/script-transform-generateKeyFrame.js
+SET TIMEOUT: webrtc-encoded-transform/script-transform-sendKeyFrameRequest.js
 SET TIMEOUT: webstorage/eventTestHarness.js
 SET TIMEOUT: webvtt/*
 SET TIMEOUT: workers/*
 SET TIMEOUT: xhr/resources/init.htm
 SET TIMEOUT: xhr/resources/xmlhttprequest-timeout.js
+SET TIMEOUT: fenced-frame/resolve-to-config-promise.https.html
+SET TIMEOUT: credential-management/support/fedcm-iframe.html
+SET TIMEOUT: credential-management/support/fedcm/disconnect-iframe.html
 
 # generate_tests implementation and sample usage
 GENERATE_TESTS: resources/test/tests/functional/generate-callback.html
@@ -295,13 +341,11 @@ GENERATE_TESTS: dom/ranges/Range-selectNode.html
 GENERATE_TESTS: dom/ranges/Range-set.html
 GENERATE_TESTS: dom/traversal/TreeWalker.html
 GENERATE_TESTS: domparsing/createContextualFragment.html
-GENERATE_TESTS: domxpath/001.html
-GENERATE_TESTS: domxpath/002.html
 GENERATE_TESTS: mediacapture-image/MediaStreamTrack-applyConstraints-reject.https.html
 GENERATE_TESTS: mediacapture-image/MediaStreamTrack-getCapabilities.https.html
 GENERATE_TESTS: mediacapture-image/MediaStreamTrack-getConstraints.https.html
 GENERATE_TESTS: mediacapture-image/MediaStreamTrack-getSettings.https.html
-GENERATE_TESTS: mediacapture-image/setOptions-reject.html
+GENERATE_TESTS: mediacapture-image/takePhoto-reject.html
 GENERATE_TESTS: html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html
 GENERATE_TESTS: html/syntax/parsing/Document.getElementsByTagName-foreign-01.html
 GENERATE_TESTS: html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html
@@ -315,6 +359,7 @@ GENERATE_TESTS: mediacapture-fromelement/creation.html
 GENERATE_TESTS: mediacapture-fromelement/ended.html
 GENERATE_TESTS: html/canvas/offscreen/manual/filter/offscreencanvas.filter.html
 GENERATE_TESTS: pointerevents/pointerevent_constructor.html
+GENERATE_TESTS: pointerevents/pointerevent_constructor.https.html
 GENERATE_TESTS: pointerevents/extension/pointerevent_constructor.html
 GENERATE_TESTS: selection/collapse.js
 GENERATE_TESTS: shadow-dom/leaktests/html-collection.html
@@ -358,13 +403,12 @@ SET TIMEOUT: speculation-rules/prerender/resources/media-autoplay-attribute.html
 SET TIMEOUT: speculation-rules/prerender/resources/media-play.html
 SET TIMEOUT: html/browsers/browsing-the-web/back-forward-cache/timers.html
 SET TIMEOUT: dom/abort/crashtests/timeout-close.html
+SET TIMEOUT: storage-access-api/storage-access-beyond-cookies.locks.tentative.sub.https.window.js
 
 # setTimeout use in reftests
 SET TIMEOUT: acid/acid3/test.html
 
 # Third party code
-*: css/tools/apiclient/*
-*: css/tools/w3ctestlib/*
 *: resources/webidl2/*
 *: tools/*
 *: */third_party/*
@@ -375,9 +419,6 @@ SET TIMEOUT: acid/acid3/test.html
 *: css/css-writing-modes/tools/generators/.gitignore
 *: resources/.gitignore
 *: webaudio/.gitignore
-
-# Build system virtualenv
-*: css/tools/_virtualenv/*
 
 ## Third party data files
 TRAILING WHITESPACE: resources/chromium/*
@@ -390,36 +431,6 @@ OPEN-NO-MODE: css/*
 PRINT STATEMENT: css/*
 CONTENT-VISUAL: css/*
 CONTENT-MANUAL: css/*
-
-## Support files not in /support/ or similar
-SUPPORT-WRONG-DIR: css/README.md
-SUPPORT-WRONG-DIR: css/*/reftest.list
-SUPPORT-WRONG-DIR: css/*/README
-SUPPORT-WRONG-DIR: css/*/README.md
-SUPPORT-WRONG-DIR: css/*-README
-SUPPORT-WRONG-DIR: css/*/LICENSE
-SUPPORT-WRONG-DIR: css/*/LICENSE-*
-SUPPORT-WRONG-DIR: css/*/Makefile
-
-# The selectors-3 testsuite has a weird build system
-SUPPORT-WRONG-DIR: css/selectors/*
-
-# Things we should fix
-SUPPORT-WRONG-DIR: css/css-animations/animationevent-interface.js
-SUPPORT-WRONG-DIR: css/css-backgrounds/justfortest.html
-SUPPORT-WRONG-DIR: css/css-backgrounds/background-attachment-local/aqua-yellow-32x32.png
-SUPPORT-WRONG-DIR: css/css-backgrounds/background-clip/list.txt
-SUPPORT-WRONG-DIR: css/css-backgrounds/background-origin/list.txt
-SUPPORT-WRONG-DIR: css/css-color/htaccess
-SUPPORT-WRONG-DIR: css/css-fonts/font-variant-debug.html
-SUPPORT-WRONG-DIR: css/css-masking/clip-path/svg-clipPath.svg
-SUPPORT-WRONG-DIR: css/css-multicol/multicol-red.png
-SUPPORT-WRONG-DIR: css/CSS2/section-index.xht
-SUPPORT-WRONG-DIR: css/CSS2/other-formats/xml/background-18.css
-SUPPORT-WRONG-DIR: css/CSS2/other-formats/xml/background-19-alt.xml
-SUPPORT-WRONG-DIR: css/CSS2/other-formats/xml/background-19.css
-SUPPORT-WRONG-DIR: css/WOFF2/testcaseindex.xht
-
 
 ## Whitespace rules that we can't enforce yet
 INDENT TABS: css/compositing/*
@@ -450,7 +461,9 @@ INDENT TABS: css/WOFF2/*
 CONSOLE: css/css-shapes/shape-outside/supported-shapes/support/test-utils.js
 CONSOLE: css/css-values/viewport-units-css2-001.html
 CONSOLE: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001*.html
-CONSOLE: css/css-writing-modes/tools/generators/gulpfile.js
+CONSOLE: css/css-writing-modes/tools/generators/template.html
+CONSOLE: bluetooth/characteristic/readValue/characteristic-is-removed.https.window.js
+CONSOLE: bluetooth/resources/bluetooth-test.js
 
 TRAILING WHITESPACE: css/css-fonts/support/fonts/gsubtest-lookup3.ufo/features.fea
 
@@ -490,6 +503,7 @@ SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001v.html
 SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001w.html
 SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001x.html
 SET TIMEOUT: css/css-writing-modes/support/text-orientation.js
+SET TIMEOUT: css/css-writing-modes/tools/generators/template.html
 SET TIMEOUT: css/CSS2/backgrounds/background-root-101.xht
 SET TIMEOUT: css/CSS2/backgrounds/background-root-102.xht
 SET TIMEOUT: css/CSS2/backgrounds/background-root-103.xht
@@ -505,166 +519,13 @@ SET TIMEOUT: css/CSS2/selectors/dom-hover-002.xht
 SET TIMEOUT: css/CSS2/tables/tables-102.xht
 SET TIMEOUT: css/mediaqueries/min-width-tables-001.html
 SET TIMEOUT: css/css-text/crashtests/rendering-rtl-bidi-override-crash.html
+SET TIMEOUT: css/css-backgrounds/color-mix-currentcolor-border-repaint-parent.html
+SET TIMEOUT: svg/painting/color-mix-currentcolor-fill-stroke-repaint.html
+SET TIMEOUT: svg/painting/currentcolor-fill-stroke-repaint.html
 SET TIMEOUT: resource-timing/resources/run-async-tasks-promise.js
-
-## Build system stuff
-CSS-COLLIDING-SUPPORT-NAME: css/*/README
-CSS-COLLIDING-SUPPORT-NAME: css/*/LOCK
-
-# These are all the current "merge mismatch" errors the build system produces
-CSS-COLLIDING-SUPPORT-NAME: css/css-flexbox/support/200x200-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-grid/grid-items/support/200x200-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-sizing/aspect-ratio/support/200x200-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-backgrounds/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-multicol/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-transitions/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/backgrounds/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-backgrounds/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-fonts/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-multicol/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-page/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-transitions/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/backgrounds/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-flexbox/support/solidblue.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-writing-modes/support/swatch-fuchsia.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/swatch-fuchsia.png
-
-# More duplicated copies of the above
-CSS-COLLIDING-SUPPORT-NAME: css/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/floats-clear/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/media/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/cssom-view/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/syntax/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/fonts/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/cascade/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-transforms/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/cssom/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-style-attr/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/borders/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/zindex/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/text/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-values/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/margin-padding-clear/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-text/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/box-display/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/colors/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/lists/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/filter-effects/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/selectors/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/values/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/tables/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/bidi-text/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-images/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/generated-content/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-flexbox/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-fonts/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-transforms/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/cssom-view/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/fonts/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/selectors/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/margin-padding-clear/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/syntax/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/zindex/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/colors/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/cascade/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/bidi-text/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-style-attr/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/lists/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-flexbox/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/filter-effects/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/borders/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-text/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/text/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/box-display/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/media/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-values/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-page/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/cssom/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/floats-clear/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/generated-content/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-images/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/tables/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/values/support/pattern-grg-rgr-grg.png
-
-# Duplicate filename not picked up by the build system
-# https:css///github.com/w3c/csswg-test/issues/1236
-CSS-COLLIDING-REF-NAME: css/css-masking/clip-path-svg-content/reference/clip-path-square-001-ref.svg
-CSS-COLLIDING-REF-NAME: css/css-masking/clip-path/reference/clip-path-square-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-masking/clip-path-svg-content/reference/clip-path-square-002-ref.svg
-CSS-COLLIDING-REF-NAME: css/css-masking/clip-path/reference/clip-path-square-002-ref.html
-
-# Duplicate filename where there's no actual merging
-# (i.e., we're being more aggressive than the build system at forbidding it)
-CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-lowercase-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/css-text/text-transform/reference/text-transform-lowercase-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-capitalize-003-ref.xht
-CSS-COLLIDING-REF-NAME: css/css-text/text-transform/reference/text-transform-capitalize-003-ref.html
-CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-capitalize-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/css-text/text-transform/reference/text-transform-capitalize-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-pseudo/first-letter-001-ref.html
-CSS-COLLIDING-REF-NAME: css/CSS2/selectors/first-letter-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-uppercase-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/css-text/text-transform/reference/text-transform-uppercase-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/visufx/overflow-applies-to-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/ui/overflow-applies-to-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/visuren/inline-formatting-context-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/CSS2/linebox/inline-formatting-context-001-ref.xht
-CSS-COLLIDING-REF-NAME: css/css-flexbox/reference/percentage-size-subitems-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-grid/grid-items/percentage-size-subitems-001-ref.html
-CSS-COLLIDING-SUPPORT-NAME: css/css-backgrounds/support/red.png
-CSS-COLLIDING-SUPPORT-NAME: css/compositing/mix-blend-mode/support/red.png
-CSS-COLLIDING-SUPPORT-NAME: css/compositing/background-blending/support/red.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/replaced-min-max-3.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-sizing/support/replaced-min-max-3.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-backgrounds/background-size/support/50x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-backgrounds/support/50x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-grid/grid-items/support/50x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/50x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/animated.gif
-CSS-COLLIDING-SUPPORT-NAME: css/css-grid/alignment/support/50x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-grid/alignment/support/25x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-grid/grid-items/support/25x50-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/backgrounds/support/animated.gif
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/shape-outside/shape-image/support/animated.gif
-CSS-COLLIDING-SUPPORT-NAME: css/css-display/support/util.js
-CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/replaced-min-max-1.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-sizing/support/replaced-min-max-1.png
-CSS-COLLIDING-REF-NAME: css/css-multicol/baseline-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-grid/subgrid/baseline-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-backgrounds/simple-bg-color-ref.html
-CSS-COLLIDING-REF-NAME: css/css-backgrounds/hidpi/simple-bg-color-ref.html
-
-CSS-COLLIDING-TEST-NAME: css/css-contain/content-visibility/inheritance.html
-CSS-COLLIDING-TEST-NAME: css/css-contain/inheritance.html
-CSS-COLLIDING-TEST-NAME: css/css-grid/grid-items/replaced-element-001.html
-CSS-COLLIDING-TEST-NAME: css/css-grid/grid-items/replaced-element-002.html
-CSS-COLLIDING-TEST-NAME: css/css-grid/grid-items/replaced-element-007.html
-CSS-COLLIDING-TEST-NAME: css/css-grid/grid-items/replaced-element-010.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-computed.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-invalid.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/parsing/contain-intrinsic-size-valid.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/replaced-element-001.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/replaced-element-002.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/replaced-element-007.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/aspect-ratio/replaced-element-010.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/contain-intrinsic-size/parsing/contain-intrinsic-size-computed.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/contain-intrinsic-size/parsing/contain-intrinsic-size-invalid.html
-CSS-COLLIDING-TEST-NAME: css/css-sizing/contain-intrinsic-size/parsing/contain-intrinsic-size-valid.html
 
 # CSS tests that used to be at the top level and weren't subject to lints
 MISSING-LINK: css/css-fonts/matching/fixed-stretch-style-over-weight.html
-SUPPORT-WRONG-DIR: css/css-fonts/matching/font-matching.css
 MISSING-LINK: css/css-fonts/matching/stretch-distance-over-weight-distance.html
 MISSING-LINK: css/css-fonts/matching/style-ranges-over-weight-direction.html
 MISSING-LINK: css/css-fonts/variations/font-parse-numeric-stretch-style-weight.html
@@ -690,10 +551,8 @@ MISSING-LINK: css/css-scroll-anchoring/position-change-heuristic.html
 MISSING-LINK: css/css-scroll-anchoring/start-edge-in-block-layout-direction.html
 MISSING-LINK: css/css-scroll-anchoring/subtree-exclusion.html
 MISSING-LINK: css/css-scroll-anchoring/wrapped-text.html
-SUPPORT-WRONG-DIR: css/css-easing/testcommon.js
 MISSING-LINK: css/css-typed-om/CSSMatrixComponent-DOMMatrix-mutable.html
 MISSING-LINK: css/css-typed-om/declared-styleMap-accepts-inherit.html
-SUPPORT-WRONG-DIR: css/cssom/stylesheet-same-origin.css
 MISSING-LINK: css/cssom-view/DOMRectList.html
 MISSING-LINK: css/cssom-view/elementFromPoint-002.html
 MISSING-LINK: css/cssom-view/elementFromPoint-003.html
@@ -708,7 +567,6 @@ MISSING-LINK: css/cssom-view/elementsFromPoint-table.html
 MISSING-LINK: css/cssom-view/elementsFromPoint.html
 MISSING-LINK: css/cssom-view/historical.html
 MISSING-LINK: css/cssom-view/HTMLBody-ScrollArea_quirksmode.html
-SUPPORT-WRONG-DIR: css/cssom-view/iframe.html
 MISSING-LINK: css/cssom-view/mouseEvent.html
 MISSING-LINK: css/cssom-view/negativeMargins.html
 MISSING-LINK: css/cssom-view/offsetTopLeftInScrollableParent.html
@@ -756,6 +614,7 @@ MISSING DEPENDENCY: resources/chromium/webusb-test.js
 MISSING DEPENDENCY: resources/chromium/fake-serial.js
 MISSING DEPENDENCY: resources/chromium/fake-hid.js
 MISSING DEPENDENCY: resources/chromium/generic_sensor_mocks.js
+MISSING DEPENDENCY: resources/chromium/mock-battery-monitor.js
 MISSING DEPENDENCY: resources/chromium/mock-barcodedetection.js
 MISSING DEPENDENCY: resources/chromium/mock-direct-sockets.js
 MISSING DEPENDENCY: resources/chromium/mock-facedetection.js
@@ -773,14 +632,22 @@ AHEM SYSTEM FONT: acid/acid3/test.html
 AHEM SYSTEM FONT: resource-timing/font-timestamps.html
 AHEM SYSTEM FONT: resource-timing/initiator-type/style.html
 AHEM SYSTEM FONT: resource-timing/resources/iframe-reload-TAO.sub.html
-AHEM SYSTEM FONT: html/canvas/element/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.ahem.html
+AHEM SYSTEM FONT: html/canvas/element/text/2d.text.measure.fontBoundingBox.ahem.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-override-descriptors.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-size-adjust-descriptor.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-size-adjust-descriptor-ref.html
 AHEM SYSTEM FONT: css/css-fonts/ascent-descent-override.html
 AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-012.html
 AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-012-ref.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-013.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-013-ref.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-014.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-014-ref.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-metrics-override.html
+AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-metrics-override-ref.html
 AHEM SYSTEM FONT: css/css-fonts/line-gap-override.html
+AHEM SYSTEM FONT: css/css-fonts/parsing/font-size-adjust-computed.html
+AHEM SYSTEM FONT: css/css-fonts/size-adjust-unicode-range-system-fallback.html
 AHEM SYSTEM FONT: html/dom/render-blocking/remove-attr-unblocks-rendering.optional.html
 AHEM SYSTEM FONT: html/dom/render-blocking/remove-element-unblocks-rendering.optional.html
 
@@ -791,7 +658,6 @@ AHEM SYSTEM FONT: infrastructure/assumptions/ahem.html
 
 # Existing crashtests using testharness
 TESTHARNESS-IN-OTHER-TYPE: accessibility/crashtests/computed-node-checked.html
-TESTHARNESS-IN-OTHER-TYPE: html/canvas/element/manual/wide-gamut-canvas/imagedata-no-color-settings-crash.html
 TESTHARNESS-IN-OTHER-TYPE: css/CSS2/floats-clear/adjoining-float-new-fc-crash.html
 TESTHARNESS-IN-OTHER-TYPE: css/CSS2/floats/floats-saturated-position-crash.html
 TESTHARNESS-IN-OTHER-TYPE: css/CSS2/linebox/video-needs-layout-crash.html
@@ -816,6 +682,7 @@ TESTHARNESS-IN-OTHER-TYPE: css/css-text/white-space/pre-with-whitespace-crash.ht
 TESTHARNESS-IN-OTHER-TYPE: css/css-writing-modes/bidi-inline-fragment-crash.html
 TESTHARNESS-IN-OTHER-TYPE: dom/svg-insert-crash.html
 TESTHARNESS-IN-OTHER-TYPE: editing/run/first-letter-crossing-engine-boundary-crash.html
+TESTHARNESS-IN-OTHER-TYPE: html/canvas/element/manual/wide-gamut-canvas/imagedata-no-color-settings-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/semantics/embedded-content/the-object-element/block-object-with-ruby-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/semantics/forms/the-input-element/time-datalist-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/semantics/forms/the-input-element/type-change-file-to-text-crash.html
@@ -833,8 +700,9 @@ TESTHARNESS-IN-OTHER-TYPE: svg/svg-in-svg/svg-in-svg-circular-filter-reference-c
 # Adding the testharnessreport.js script causes the test to never complete.
 MISSING-TESTHARNESSREPORT: accessibility/crashtests/computed-node-checked.html
 
-PRINT STATEMENT: webdriver/tests/print/printcmd.py
-PRINT STATEMENT: webdriver/tests/print/user_prompts.py
+PRINT STATEMENT: webdriver/tests/bidi/browsing_context/print/*
+PRINT STATEMENT: webdriver/tests/classic/print/*
+PRINT STATEMENT: webdriver/tests/support/fixtures_bidi.py
 
 DUPLICATE-BASENAME-PATH: acid/acid3/empty.html
 DUPLICATE-BASENAME-PATH: acid/acid3/empty.xml
@@ -846,8 +714,9 @@ DUPLICATE-BASENAME-PATH: svg/struct/reftests/reference/green-100x100.svg
 
 SET TIMEOUT: mediacapture-insertable-streams/MediaStreamTrackProcessor-video.https.html
 
-CSS-COLLIDING-REF-NAME: css/css-backgrounds/reference/background-image-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-break/background-image-001-ref.html
+# This is a subresource which cannot use step_timeout without becoming a test
+# itself. See https://github.com/web-platform-tests/wpt/issues/16933
+SET TIMEOUT: scroll-to-text-fragment/iframe-target.html
 
 # Ported crashtests from Mozilla
 SET TIMEOUT: editing/crashtests/backcolor-in-nested-editing-host-td-from-DOMAttrModified.html
@@ -863,3 +732,17 @@ SET TIMEOUT: editing/crashtests/outdent-across-svg-boundary.html
 SET TIMEOUT: editing/crashtests/textarea-will-be-blurred-by-focus-event-listener.html
 SET TIMEOUT: mathml/crashtests/mozilla/*
 PARSE-FAILED: mathml/crashtests/mozilla/289180-1.xml
+
+# Invalid HTML syntax /> on non-void elements
+HTML INVALID SYNTAX: acid/*
+HTML INVALID SYNTAX: conformance-checkers/*
+HTML INVALID SYNTAX: css/css-scoping/shadow-cascade-order-001.html
+HTML INVALID SYNTAX: dom/nodes/Document-createElement-namespace.html
+HTML INVALID SYNTAX: dom/nodes/Node-lookupNamespaceURI.html
+HTML INVALID SYNTAX: dom/nodes/Node-normalize.html
+HTML INVALID SYNTAX: domparsing/DOMParser-parseFromString-xml-doctype.html
+HTML INVALID SYNTAX: domparsing/DOMParser-parseFromString-xml-parsererror.html
+HTML INVALID SYNTAX: domparsing/XMLSerializer-serializeToString.html
+HTML INVALID SYNTAX: html/canvas/element/manual/unclosed-canvas-4.htm
+HTML INVALID SYNTAX: quirks/percentage-height-calculation.html
+HTML INVALID SYNTAX: trusted-types/TrustedTypePolicyFactory-getAttributeType-namespace.html

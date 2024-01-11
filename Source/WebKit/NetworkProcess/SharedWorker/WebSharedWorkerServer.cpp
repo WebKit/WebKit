@@ -171,7 +171,7 @@ void WebSharedWorkerServer::addContextConnection(WebSharedWorkerServerToContextC
 
     ASSERT(!m_contextConnections.contains(contextConnection.registrableDomain()));
 
-    m_contextConnections.add(contextConnection.registrableDomain(), &contextConnection);
+    m_contextConnections.add(contextConnection.registrableDomain(), contextConnection);
 
     contextConnectionCreated(contextConnection);
 }

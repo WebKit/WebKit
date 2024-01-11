@@ -838,12 +838,10 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
         || first.breakInside != second.breakInside)
         return true;
 
-#if ENABLE(CSS_COMPOSITING)
     if (first.isolation != second.isolation) {
         // Ideally this would trigger a cheaper layout that just updates layer z-order trees (webkit.org/b/190088).
         return true;
     }
-#endif
 
     if (first.hasBackdropFilters() != second.hasBackdropFilters())
         return true;
@@ -941,7 +939,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 
 bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
-    if (m_svgStyle->changeRequiresLayout(other.m_svgStyle))
+    if (m_svgStyle.ptr() != other.m_svgStyle.ptr() && m_svgStyle->changeRequiresLayout(other.m_svgStyle))
         return true;
 
     if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
@@ -1133,10 +1131,8 @@ static bool miscDataChangeRequiresLayerRepaint(const StyleMiscNonInheritedData& 
 
 static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& first, const StyleRareNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
 {
-#if ENABLE(CSS_COMPOSITING)
     if (first.effectiveBlendMode != second.effectiveBlendMode)
         return true;
-#endif
 
     if (first.backdropFilter != second.backdropFilter) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
@@ -1279,8 +1275,10 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 {
     bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
 
-    if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
-        return true;
+    if (currentColorDiffers || m_svgStyle.ptr() != other.m_svgStyle.ptr()) {
+        if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
+            return true;
+    }
 
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
@@ -1328,20 +1326,31 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 
 bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
-    if (m_inheritedData->color != other.m_inheritedData->color
-        || m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
-        || m_nonInheritedFlags.textDecorationLine != other.m_nonInheritedFlags.textDecorationLine
-        || m_nonInheritedData->rareData->textDecorationStyle != other.m_nonInheritedData->rareData->textDecorationStyle
-        || m_nonInheritedData->rareData->textDecorationColor != other.m_nonInheritedData->rareData->textDecorationColor
-        || m_nonInheritedData->rareData->textDecorationThickness != other.m_nonInheritedData->rareData->textDecorationThickness
-        || m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk
-        || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
-        || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
-        || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
-        || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
-        || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
-        || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor)
+    // FIXME: Does this code need to consider currentColorDiffers? webkit.org/b/266833
+    if (m_inheritedData->color != other.m_inheritedData->color)
         return true;
+
+    if (m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
+        || m_nonInheritedFlags.textDecorationLine != other.m_nonInheritedFlags.textDecorationLine)
+        return true;
+
+    if (m_nonInheritedData->rareData.ptr() != other.m_nonInheritedData->rareData.ptr()) {
+        if (m_nonInheritedData->rareData->textDecorationStyle != other.m_nonInheritedData->rareData->textDecorationStyle
+            || m_nonInheritedData->rareData->textDecorationColor != other.m_nonInheritedData->rareData->textDecorationColor
+            || m_nonInheritedData->rareData->textDecorationThickness != other.m_nonInheritedData->rareData->textDecorationThickness)
+            return true;
+    }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr()) {
+        if (m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk
+            || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
+            || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
+            || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
+            || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
+            || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
+            || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor)
+            return true;
+    }
 
     return false;
 }
@@ -1611,9 +1620,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBackgroundClip);
             changingProperties.m_properties.set(CSSPropertyBackgroundOrigin);
             changingProperties.m_properties.set(CSSPropertyBackgroundRepeat);
-#if ENABLE(CSS_COMPOSITING)
             changingProperties.m_properties.set(CSSPropertyBackgroundBlendMode);
-#endif
         }
         if (first.color != second.color)
             changingProperties.m_properties.set(CSSPropertyBackgroundColor);
@@ -1892,12 +1899,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationStyle);
         if (first.textGroupAlign != second.textGroupAlign)
             changingProperties.m_properties.set(CSSPropertyTextGroupAlign);
-#if ENABLE(CSS_COMPOSITING)
         if (first.effectiveBlendMode != second.effectiveBlendMode)
             changingProperties.m_properties.set(CSSPropertyMixBlendMode);
         if (first.isolation != second.isolation)
             changingProperties.m_properties.set(CSSPropertyIsolation);
-#endif
         if (first.breakAfter != second.breakAfter)
             changingProperties.m_properties.set(CSSPropertyBreakAfter);
         if (first.breakBefore != second.breakBefore)
@@ -1912,6 +1917,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClip);
         if (first.viewTransitionName != second.viewTransitionName)
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
+        if (first.contentVisibility != second.contentVisibility)
+            changingProperties.m_properties.set(CSSPropertyContentVisibility);
 
         // Non animated styles are followings.
         // customProperties
@@ -1936,7 +1943,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // overscrollBehaviorY
         // applePayButtonStyle
         // applePayButtonType
-        // contentVisibility
         // inputSecurity
         // containerType
         // transformStyleForcedToFlat
@@ -2236,15 +2242,9 @@ void RenderStyle::setContent(RefPtr<StyleImage>&& image, bool add)
 void RenderStyle::setContent(const String& string, bool add)
 {
     auto& data = m_nonInheritedData.access().miscData.access();
-    if (add && data.content) {
-        auto& last = lastContent(*data.content);
-        if (!is<TextContentData>(last))
-            last.setNext(makeUnique<TextContentData>(string));
-        else {
-            auto& textContent = downcast<TextContentData>(last);
-            textContent.setText(textContent.text() + string);
-        }
-    } else {
+    if (add && data.content)
+        lastContent(*data.content).setNext(makeUnique<TextContentData>(string));
+    else {
         data.content = makeUnique<TextContentData>(string);
         auto& altText = data.altText;
         if (!altText.isNull())
@@ -3062,10 +3062,8 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<
     if (paintBehavior.contains(PaintBehavior::DontShowVisitedLinks))
         return unvisitedColor;
 
-#if ENABLE(CSS_COMPOSITING)
     if (isInSubtreeWithBlendMode())
         return unvisitedColor;
-#endif
 
     Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
 

@@ -57,7 +57,7 @@ public:
 
     // Sets the Grid Container's writing-mode so that we can avoid the dependecy of the LayoutGrid class for
     // determining whether a grid item is orthogonal or not.
-    void setBlockFlow(WritingMode blockFlow) { m_blockFlow = blockFlow; };
+    void setWritingMode(WritingMode writingMode) { m_writingMode = writingMode; };
 
     // Clearing the Baseline Alignment context and their internal classes and data structures.
     void clear(GridAxis);
@@ -70,14 +70,14 @@ private:
     LayoutUnit ascentForChild(const RenderBox&, GridAxis, ItemPosition) const;
     LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis, ExtraMarginsFromSubgrids) const;
     bool isDescentBaselineForChild(const RenderBox&, GridAxis) const;
-    bool isHorizontalBaselineAxis(GridAxis) const;
+    bool isVerticalAlignmentContext(GridAxis) const;
     bool isOrthogonalChildForBaseline(const RenderBox&) const;
-    bool isParallelToBaselineAxisForChild(const RenderBox&, GridAxis) const;
+    bool isParallelToAlignmentAxisForChild(const RenderBox&, GridAxis) const;
 
     typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
     // Grid Container's WritingMode, used to determine grid item's orthogonality.
-    WritingMode m_blockFlow;
+    WritingMode m_writingMode;
     BaselineAlignmentStateMap m_rowAxisBaselineAlignmentStates;
     BaselineAlignmentStateMap m_colAxisBaselineAlignmentStates;
 };

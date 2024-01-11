@@ -1,0 +1,106 @@
+layer at (0,0) size 933x1037 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 933x1037 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80 scrollWidth 540 scrollHeight 600
+  RenderSVGRoot {svg} at (0,0) size 933.11x1036.80
+layer at (0,0) size 934x1037 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGViewportContainer at (0,0) size 933.11x1036.80
+layer at (0,-17.42) size 271x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,-17.42) size 271x97.42
+layer at (179,35.58) size 92x18
+  RenderSVGText {text} at (179,53) size 92x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 93x19
+      chunk 1 (middle anchor) text run 1 at (179.00,50.00) startOffset 0 endOffset 12 width 92.00: "Mask Regions"
+layer at (0,0) size 100x81
+  RenderSVGHiddenContainer {defs} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (5,0) size 90x80
+  RenderSVGResourceMasker {mask} at (5,0) size 90x80
+layer at (5,0) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+layer at (5,40) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+layer at (55,0) size 40x40
+  RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+layer at (55,40) size 40x40
+  RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+layer at (5,0) size 90x80
+  RenderSVGResourceMasker {mask} at (5,0) size 90x80
+layer at (5,0) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+layer at (5,40) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+layer at (55,0) size 40x40
+  RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+layer at (55,40) size 40x40
+  RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+layer at (5,0) size 90x80
+  RenderSVGResourceMasker {mask} at (5,0) size 90x80
+layer at (5,0) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+layer at (5,40) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+layer at (55,0) size 40x40
+  RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+layer at (55,40) size 40x40
+  RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+layer at (0.05,0) size 1x1
+  RenderSVGResourceMasker {mask} at (0.05,0) size 0.91x0.81
+layer at (0.05,0) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.41x0.41 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.25] [cy=0.20] [r=0.20]
+layer at (0.05,0.39) size 1x1
+  RenderSVGEllipse {circle} at (0,0.39) size 0.41x0.42 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.25] [cy=0.60] [r=0.20]
+layer at (0.55,0) size 1x1
+  RenderSVGEllipse {circle} at (0.50,0) size 0.41x0.41 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.75] [cy=0.20] [r=0.20]
+layer at (0.55,0.39) size 1x1
+  RenderSVGEllipse {circle} at (0.50,0.39) size 0.41x0.42 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.75] [cy=0.60] [r=0.20]
+layer at (0,-17.42) size 100x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x97.42
+layer at (0,0) size 100x81
+  RenderSVGTransformableContainer {use} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (24.67,-17.42) size 50x18 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGText {text} at (24,0) size 52x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x19
+      chunk 1 (middle anchor) text run 1 at (24.67,-3.00) startOffset 0 endOffset 6 width 50.66: "Masked"
+layer at (0,-17.42) size 100x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x97.42
+layer at (0,0) size 100x81
+  RenderSVGTransformableContainer {use} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (26.22,-17.42) size 48x18 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGText {text} at (26,0) size 48x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 48x19
+      chunk 1 (middle anchor) text run 1 at (26.22,-3.00) startOffset 0 endOffset 6 width 47.55: "Mask 1"
+layer at (0,-17.42) size 100x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x97.42
+layer at (0,0) size 100x81
+  RenderSVGTransformableContainer {use} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (26.22,-17.42) size 48x18 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGText {text} at (26,0) size 48x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 48x19
+      chunk 1 (middle anchor) text run 1 at (26.22,-3.00) startOffset 0 endOffset 6 width 47.55: "Mask 2"
+layer at (0,-17.42) size 100x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x97.42
+layer at (0,0) size 100x81
+  RenderSVGTransformableContainer {use} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (26.22,-17.42) size 48x18 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGText {text} at (26,0) size 48x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 48x19
+      chunk 1 (middle anchor) text run 1 at (26.22,-3.00) startOffset 0 endOffset 6 width 47.55: "Mask 3"
+layer at (0,-17.42) size 100x98 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x97.42
+layer at (0,0) size 100x81
+  RenderSVGTransformableContainer {use} at (0,17.42) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+layer at (26.22,-17.42) size 48x18 backgroundClip at (0,0) size 933.11x1036.80 clip at (0,0) size 933.11x1036.80
+  RenderSVGText {text} at (26,0) size 48x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 48x19
+      chunk 1 (middle anchor) text run 1 at (26.22,-3.00) startOffset 0 endOffset 6 width 47.55: "Mask 4"

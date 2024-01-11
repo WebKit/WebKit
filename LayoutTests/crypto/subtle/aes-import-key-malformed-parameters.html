@@ -16,6 +16,9 @@ var k192 = "A72FD48989ED7E92A3B3A080F74FA80B";
 var k256 = "YWJjZGVmZ2gxMjM0NTY3OGFiY2RlZmdoMTIzNDU2Nzg";
 var extractable = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+
 // Raw: wrong length
 shouldReject('crypto.subtle.importKey("raw", asciiToUint8Array("jnOw97"), "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
 // Jwk: Wrong kty

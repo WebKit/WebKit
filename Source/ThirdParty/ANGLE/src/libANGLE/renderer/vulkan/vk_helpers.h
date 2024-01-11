@@ -728,7 +728,7 @@ using PipelineBarrierArray = angle::PackedEnumMap<PipelineStage, PipelineBarrier
 enum class MemoryCoherency : uint8_t
 {
     CachedNonCoherent,
-    CachedCoherent,
+    CachedPreferCoherent,
     UnCachedCoherent,
 
     InvalidEnum = 3,
@@ -737,12 +737,7 @@ enum class MemoryCoherency : uint8_t
 ANGLE_INLINE bool IsCached(MemoryCoherency coherency)
 {
     return coherency == MemoryCoherency::CachedNonCoherent ||
-           coherency == MemoryCoherency::CachedCoherent;
-}
-ANGLE_INLINE bool IsCoherent(MemoryCoherency coherency)
-{
-    return coherency == MemoryCoherency::UnCachedCoherent ||
-           coherency == MemoryCoherency::CachedCoherent;
+           coherency == MemoryCoherency::CachedPreferCoherent;
 }
 
 enum class MemoryHostVisibility

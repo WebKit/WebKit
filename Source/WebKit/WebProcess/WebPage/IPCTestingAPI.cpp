@@ -568,9 +568,9 @@ static JSValueRef sendSyncMessageWithJSArguments(IPC::Connection& connection, JS
     }
 
     auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -593,9 +593,9 @@ static JSValueRef waitForMessageWithJSArguments(IPC::Connection& connection, JSC
 
     auto [destinationID, messageName, timeout] = *info;
     auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
-    if (decoderOrError.decoder) {
+    if (decoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto jsResult = jsValueForArguments(globalObject, messageName, *decoderOrError.decoder);
+        auto jsResult = jsValueForArguments(globalObject, messageName, decoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1107,9 +1107,9 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
         return JSValueMakeUndefined(context);
 
     auto replyDecoderOrError = connection->sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1952,8 +1952,8 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
 }
 
 #if ENABLE(GPU_PROCESS)
-template <typename ObjectIdentifierType>
-std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
+template <typename T>
+std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
 {
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
@@ -1961,20 +1961,20 @@ std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromPro
     auto number = convertToUint64(jsPropertyValue);
     if (!number)
         return std::nullopt;
-    return ObjectIdentifier<ObjectIdentifierType>(*number);
+    return std::optional<T> { *number };
 }
 
 static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
 {
-    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifierType>(globalObject, jsObject, "identifier"_s, scope);
+    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifier>(globalObject, jsObject, "identifier"_s, scope);
     if (!identifier)
         return false;
 
-    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifierType>(globalObject, jsObject, "pageProxyID"_s, scope);
+    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifier>(globalObject, jsObject, "pageProxyID"_s, scope);
     if (!pageProxyID)
         return false;
 
-    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifierType>(globalObject, jsObject, "pageID"_s, scope);
+    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifier>(globalObject, jsObject, "pageID"_s, scope);
     if (!pageID)
         return false;
 

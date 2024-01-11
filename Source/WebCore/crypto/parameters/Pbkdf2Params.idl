@@ -26,7 +26,6 @@
 typedef (object or DOMString) HashAlgorithmIdentifier;
 
 [
-    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmPbkdf2Params,
 ] dictionary Pbkdf2Params : CryptoAlgorithmParameters {
     required BufferSource salt;

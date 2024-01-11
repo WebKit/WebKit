@@ -26,7 +26,6 @@
 #pragma once
 
 #include "SpeechRecognitionPermissionRequest.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
@@ -56,7 +55,7 @@ private:
     void requestSpeechRecognitionServiceAccess();
     void requestUserPermission(WebCore::SpeechRecognitionRequest& request);
 
-    CheckedRef<WebPageProxy> m_page;
+    WeakRef<WebPageProxy> m_page;
     Deque<Ref<SpeechRecognitionPermissionRequest>> m_requests;
     CheckResult m_microphoneCheck { CheckResult::Unknown };
     CheckResult m_speechRecognitionServiceCheck { CheckResult::Unknown };

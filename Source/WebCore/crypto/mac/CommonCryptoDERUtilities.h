@@ -27,8 +27,6 @@
 
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 // FIXME: <rdar://problem/31618371>
 // The following constants and functions are for customized DER implementations.
 // They are not intended to be used outside Crypto codes, and should be removed
@@ -52,5 +50,3 @@ void addEncodedASN1Length(Vector<uint8_t>&, size_t);
 size_t bytesNeededForEncodedLength(size_t);
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

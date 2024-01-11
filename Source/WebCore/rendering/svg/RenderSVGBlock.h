@@ -45,7 +45,6 @@ protected:
 
 private:
     void element() const = delete;
-    bool isRenderSVGBlock() const final { return true; }
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;

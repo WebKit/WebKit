@@ -13,11 +13,10 @@ not a button
 
       (interaction regions [
         (interaction (0,0) width=100 height=100)
-        (borderRadius 10.00),
-        (interaction (0,100) width=108 height=108)
-        (borderRadius 0.00),
+        (cornerRadius 10.00),
+        (interaction (0,100) width=108 height=108),
         (interaction (0,358) width=100 height=100)
-        (borderRadius 10.00)])
+        (cornerRadius 10.00)])
       )
     )
   )

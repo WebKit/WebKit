@@ -118,7 +118,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
 
     switch (basicShape.type()) {
     case BasicShape::Type::Circle: {
-        auto& circle = downcast<BasicShapeCircle>(basicShape);
+        auto& circle = uncheckedDowncast<BasicShapeCircle>(basicShape);
         RefPtr radius = basicShapeRadiusToCSSValue(style, circle.radius());
 
         if (circle.positionWasOmitted())
@@ -129,7 +129,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             valueForCenterCoordinate(style, circle.centerY(), BoxOrient::Vertical));
     }
     case BasicShape::Type::Ellipse: {
-        auto& ellipse = downcast<BasicShapeEllipse>(basicShape);
+        auto& ellipse = uncheckedDowncast<BasicShapeEllipse>(basicShape);
         RefPtr radiusX = basicShapeRadiusToCSSValue(style, ellipse.radiusX());
         RefPtr radiusY = basicShapeRadiusToCSSValue(style, ellipse.radiusY());
 
@@ -142,33 +142,33 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             valueForCenterCoordinate(style, ellipse.centerY(), BoxOrient::Vertical));
     }
     case BasicShape::Type::Polygon: {
-        auto& polygon = downcast<BasicShapePolygon>(basicShape);
+        auto& polygon = uncheckedDowncast<BasicShapePolygon>(basicShape);
         CSSValueListBuilder values;
         for (auto& value : polygon.values())
             values.append(CSSPrimitiveValue::create(value, style));
         return CSSPolygonValue::create(WTFMove(values), polygon.windRule());
     }
     case BasicShape::Type::Path: {
-        auto& pathShape = downcast<BasicShapePath>(basicShape);
+        auto& pathShape = uncheckedDowncast<BasicShapePath>(basicShape);
         ASSERT(pathShape.pathData());
         return CSSPathValue::create(copySVGPathByteStream(*pathShape.pathData(), conversion), pathShape.windRule());
     }
     case BasicShape::Type::Inset: {
-        auto& inset = downcast<BasicShapeInset>(basicShape);
+        auto& inset = uncheckedDowncast<BasicShapeInset>(basicShape);
         return CSSInsetShapeValue::create(createValue(inset.top()), createValue(inset.right()),
             createValue(inset.bottom()), createValue(inset.left()),
             createPair(inset.topLeftRadius()), createPair(inset.topRightRadius()),
             createPair(inset.bottomRightRadius()), createPair(inset.bottomLeftRadius()));
     }
     case BasicShape::Type::Xywh: {
-        auto& xywh = downcast<BasicShapeXywh>(basicShape);
+        auto& xywh = uncheckedDowncast<BasicShapeXywh>(basicShape);
         return CSSInsetShapeValue::create(createValue(xywh.insetY()), createReflectedSumValue(xywh.insetX(), xywh.width()),
             createReflectedSumValue(xywh.insetY(), xywh.height()), createValue(xywh.insetX()),
             createPair(xywh.topLeftRadius()), createPair(xywh.topRightRadius()),
             createPair(xywh.bottomRightRadius()), createPair(xywh.bottomLeftRadius()));
     }
     case BasicShape::Type::Rect: {
-        auto& rect = downcast<BasicShapeRect>(basicShape);
+        auto& rect = uncheckedDowncast<BasicShapeRect>(basicShape);
         return CSSInsetShapeValue::create(createValue(rect.top()), createReflectedValue(rect.right()),
             createReflectedValue(rect.bottom()), createValue(rect.left()),
             createPair(rect.topLeftRadius()), createPair(rect.topRightRadius()),

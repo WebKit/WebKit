@@ -14,7 +14,7 @@
           var divComputedStyle = window.getComputedStyle(divElement);
 
           test(function() {
-                   assert_true(divComputedStyle.getPropertyCSSValue('background-color').getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) == 255,
+            assert_true(divComputedStyle.backgroundColor == "rgb(255, 0, 0)",
                                "Div should have rgb(255, 0, 0) background color.")
                },
                "Testing that background color is red. Media query \"all and (color)\" " + id);
@@ -23,7 +23,7 @@
           styleElement.setAttribute("media", "(monochrome) and (color)");
 
           test(function() {
-                   assert_true(divComputedStyle.getPropertyCSSValue('background-color').getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) == 0,
+            assert_true(divComputedStyle.backgroundColor == "rgba(0, 0, 0, 0)",
                                "New media query doesn't match, div should not have background color.")
                },
                "Testing that updated media query doesn't match and background color is not red. Media query \"(monochrome) and (color)\" " + id);

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerWithRemoteRenderingBackingStore.h"
 
+#import "PlatformCALayerRemote.h"
 #import "RemoteImageBufferSetProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"

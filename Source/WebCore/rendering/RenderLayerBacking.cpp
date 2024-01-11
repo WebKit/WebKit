@@ -41,7 +41,6 @@
 #include "GraphicsLayer.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLIFrameElement.h"
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
@@ -65,7 +64,6 @@
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
-#include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerInlines.h"
@@ -556,9 +554,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateFilters(style);
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
 #if ENABLE(VIDEO)
     updateVideoGravity(style);
 #endif
@@ -800,7 +796,6 @@ bool RenderLayerBacking::updateBackdropRoot()
     return true;
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 {
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
@@ -810,7 +805,6 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
     } else
         m_graphicsLayer->setBlendMode(style.blendMode());
 }
-#endif
 
 #if ENABLE(VIDEO)
 void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
@@ -981,6 +975,9 @@ void RenderLayerBacking::updateAfterWidgetResize()
         innerCompositor->frameViewDidChangeSize();
         innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
     }
+
+    if (auto* contentsLayer = layerForContents())
+        contentsLayer->setPosition(flooredIntPoint(contentsBox().location()));
 }
 
 void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint)
@@ -1023,9 +1020,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
 
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
     updateContentsScalingFilters(style);
 
 #if ENABLE(VIDEO)
@@ -1389,9 +1384,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateFilters(style);
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
     updateContentsScalingFilters(style);
 
 #if ENABLE(VIDEO)
@@ -3747,7 +3740,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
             
             auto rect = region.rectInLayerCoordinates;
             Path path;
-            path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
+            path.addRoundedRect(rect, { region.cornerRadius, region.cornerRadius });
             context.strokePath(path);
         }
     }

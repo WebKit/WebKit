@@ -64,9 +64,9 @@ public:
     void setInstanceUpdatesBlocked(bool);
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
-    bool hasPendingResources() const { return hasNodeFlag(NodeFlag::HasPendingResources); }
-    void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
-    void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
+    bool hasPendingResources() const { return hasEventTargetFlag(EventTargetFlag::HasPendingResources); }
+    void setHasPendingResources() { setEventTargetFlag(EventTargetFlag::HasPendingResources, true); }
+    void clearHasPendingResources() { setEventTargetFlag(EventTargetFlag::HasPendingResources, false); }
     virtual void buildPendingResource() { }
 
     virtual bool isSVGGraphicsElement() const { return false; }
@@ -168,7 +168,7 @@ public:
     bool hasAssociatedSVGLayoutBox() const;
 
 protected:
-    SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, ConstructionType = CreateSVGElement);
+    SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;

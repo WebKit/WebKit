@@ -186,5 +186,5 @@ Node:
 
 Object (doesn't have [Symbol.iterator]):
 PASS: Should produce an exception.
-TypeError: undefined is not a function (near '...item of iterable...')
+TypeError: undefined is not a function
 

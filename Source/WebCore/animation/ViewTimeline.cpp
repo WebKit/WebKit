@@ -30,6 +30,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSUnits.h"
+#include "CSSValuePool.h"
 #include "CSSViewValue.h"
 #include "Element.h"
 
@@ -57,7 +58,6 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const CSSViewValue& cssViewVa
         if (value->valueID() == CSSValueAuto)
             return Length();
 
-        ASSERT(value->isPrimitiveValue());
         auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         if (primitiveValue.isPercentage())
             return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);

@@ -21,7 +21,6 @@
 
 #include "CryptoAlgorithm.h"
 
-#if ENABLE(WEB_CRYPTO)
 namespace WebCore {
 
 class CryptoKeyOKP;
@@ -45,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

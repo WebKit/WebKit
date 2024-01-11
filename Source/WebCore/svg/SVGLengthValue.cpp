@@ -259,8 +259,8 @@ SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& va
 
 Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const Element* element) const
 {
-    if (is<SVGElement>(element)) {
-        SVGLengthContext context { downcast<SVGElement>(element) };
+    if (auto* svgElement = dynamicDowncast<SVGElement>(element)) {
+        SVGLengthContext context { svgElement };
         auto computedValue = context.convertValueToUserUnits(valueInSpecifiedUnits(), lengthType(), lengthMode());
         if (!computedValue.hasException())
             return CSSPrimitiveValue::create(computedValue.releaseReturnValue(), CSSUnitType::CSS_PX);

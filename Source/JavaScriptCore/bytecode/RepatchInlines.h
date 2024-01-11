@@ -60,6 +60,7 @@ inline UGPRPair handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFr
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
 
+        calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
         ASSERT(callData.type == CallData::Type::None);
         throwException(globalObject, scope, createNotAFunctionError(globalObject, callee));
         return encodeResult(
@@ -86,6 +87,7 @@ inline UGPRPair handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFr
         return encodeResult(LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), reinterpret_cast<void*>(KeepTheFrame));
     }
 
+    calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
     ASSERT(constructData.type == CallData::Type::None);
     throwException(globalObject, scope, createNotAConstructorError(globalObject, callee));
     return encodeResult(
@@ -173,12 +175,10 @@ ALWAYS_INLINE UGPRPair linkFor(CallFrame* calleeFrame, JSGlobalObject* globalObj
 
 ALWAYS_INLINE UGPRPair virtualForWithFunction(JSGlobalObject* globalObject, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
 {
-    CallFrame* callFrame = calleeFrame->callerFrame();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
-    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);

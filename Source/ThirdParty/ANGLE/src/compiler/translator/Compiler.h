@@ -231,6 +231,11 @@ class TCompiler : public TShHandleBase
 
     bool usesDerivatives() const { return mUsesDerivatives; }
 
+    bool supportsAttributeAliasing() const
+    {
+        return mShaderVersion == 100 && !IsWebGLBasedSpec(mShaderSpec);
+    }
+
   protected:
     // Add emulated functions to the built-in function emulator.
     virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,

@@ -214,7 +214,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("'", keyword, "' must be followed by a ' ':\n", line, "\n"));
 
     const char* delimiterStart = &line[keywordLength + 1];
-    const char* delimiterEnd = strstr(delimiterStart, "{");
+    const char* delimiterEnd = strchr(delimiterStart, '{');
     if (!delimiterEnd)
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Missing { after '", keyword, "' clause start delimiter:\n", line, "\n"));
     

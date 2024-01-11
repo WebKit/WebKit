@@ -1,1 +1,22 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :resolve_attachment:
+PASS :resolve_attachment:colorAttachmentSamples=1
+PASS :resolve_attachment:resolveTargetSamples=4
+PASS :resolve_attachment:resolveTargetUsage=1
+PASS :resolve_attachment:resolveTargetViewBaseMipLevel=1;resolveTargetHeight=4;resolveTargetWidth=4
+PASS :resolve_attachment:resolveTargetViewBaseMipLevel=1;resolveTargetViewMipCount=2;resolveTargetHeight=4;resolveTargetWidth=4
+PASS :resolve_attachment:resolveTargetInvalid=true
+PASS :resolve_attachment:resolveTargetViewMipCount=2
+PASS :resolve_attachment:resolveTargetViewBaseArrayLayer=1
+PASS :resolve_attachment:resolveTargetViewBaseArrayLayer=1;resolveTargetViewArrayLayerCount=2
+PASS :resolve_attachment:resolveTargetViewArrayLayerCount=2
+PASS :resolve_attachment:otherAttachmentFormat="bgra8unorm"
+PASS :resolve_attachment:colorAttachmentFormat="bgra8unorm"
+PASS :resolve_attachment:colorAttachmentFormat="rgba8unorm-srgb"
+PASS :resolve_attachment:resolveTargetFormat="bgra8unorm"
+PASS :resolve_attachment:resolveTargetFormat="rgba8unorm-srgb"
+PASS :resolve_attachment:colorAttachmentHeight=4
+PASS :resolve_attachment:colorAttachmentWidth=4
+PASS :resolve_attachment:resolveTargetHeight=4
+PASS :resolve_attachment:resolveTargetWidth=4
+

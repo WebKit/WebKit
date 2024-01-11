@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (100,0) size 150x150
+  RenderSVGRect {rect} at (100,0) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=150.00] [height=150.00]
+layer at (100,150) size 150x150
+  RenderSVGRect {rect} at (100,150) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=150.00] [width=150.00] [height=150.00]
+layer at (100,300) size 150x150
+  RenderSVGRect {rect} at (100,300) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=300.00] [width=150.00] [height=150.00]
+layer at (100,450) size 150x150
+  RenderSVGRect {rect} at (100,450) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=450.00] [width=150.00] [height=150.00]
+layer at (450,0) size 150x150
+  RenderSVGRect {rect} at (450,0) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=450.00] [y=0.00] [width=150.00] [height=150.00]
+layer at (450,150) size 150x150
+  RenderSVGRect {rect} at (450,150) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=450.00] [y=150.00] [width=150.00] [height=150.00]
+layer at (450,300) size 150x150
+  RenderSVGRect {rect} at (450,300) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=450.00] [y=300.00] [width=150.00] [height=150.00]
+layer at (450,450) size 150x150
+  RenderSVGRect {rect} at (450,450) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=450.00] [y=450.00] [width=150.00] [height=150.00]

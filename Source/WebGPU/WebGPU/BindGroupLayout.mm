@@ -350,8 +350,32 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             .bufferSizeArgumentBufferIndices = WTFMove(bufferSizeArgumentBufferIndices),
             .vertexDynamicOffset = WTFMove(dynamicOffsets[0]),
             .fragmentDynamicOffset = WTFMove(dynamicOffsets[1]),
-            .computeDynamicOffset = WTFMove(dynamicOffsets[2])
+            .computeDynamicOffset = WTFMove(dynamicOffsets[2]),
+            .dynamicOffsetsIndex = std::numeric_limits<uint32_t>::max()
         });
+    }
+
+    auto hasDynamicOffsets = ^(size_t* sizeOfDynamicOffsets, size_t stageCount) {
+        for (size_t i = 0; i < stageCount; ++i) {
+            if (sizeOfDynamicOffsets[i])
+                return true;
+        }
+
+        return false;
+    };
+
+    if (hasDynamicOffsets(sizeOfDynamicOffsets, stageCount)) {
+        std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupLayoutEntry& a, const WGPUBindGroupLayoutEntry& b) {
+            return a.binding < b.binding;
+        });
+        uint32_t nextDynamicOffsetIndex = 0;
+        for (auto& entry : descriptorEntries) {
+            if (entry.buffer.hasDynamicOffset) {
+                auto it = bindGroupLayoutEntries.find(entry.binding);
+                ASSERT(it != bindGroupLayoutEntries.end());
+                it->value.dynamicOffsetsIndex = nextDynamicOffsetIndex++;
+            }
+        }
     }
 
     auto label = fromAPI(descriptor.label);
@@ -416,6 +440,12 @@ BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgume
     , m_dynamicUniformBuffers(dynamicUniformBuffers)
     , m_dynamicStorageBuffers(dynamicStorageBuffers)
 {
+    m_sortedEntries.reserveCapacity(m_bindGroupLayoutEntries.size());
+    for (auto& kvp : m_bindGroupLayoutEntries)
+        m_sortedEntries.append(&kvp.value);
+    std::sort(m_sortedEntries.begin(), m_sortedEntries.end(), [](const Entry* a, const Entry* b) {
+        return a->binding < b->binding;
+    });
 }
 
 BindGroupLayout::BindGroupLayout(const Device& device)
@@ -527,6 +557,11 @@ uint32_t BindGroupLayout::dynamicUniformBuffers() const
 uint32_t BindGroupLayout::dynamicStorageBuffers() const
 {
     return m_dynamicStorageBuffers;
+}
+
+const Vector<const BindGroupLayout::Entry*> BindGroupLayout::sortedEntries() const
+{
+    return m_sortedEntries;
 }
 
 } // namespace WebGPU

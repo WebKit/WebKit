@@ -62,7 +62,7 @@ HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
             addSupportedTypes(types);
             m_hasPopulatedSupportedTypesCacheFromGPUProcess = true;
         } else
-            RELEASE_LOG_ERROR(Media, "RemoteMediaPlayerMIMETypeCache::supportedTypes: Sync IPC to the GPUProcess failed with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error));
+            RELEASE_LOG_ERROR(Media, "RemoteMediaPlayerMIMETypeCache::supportedTypes: Sync IPC to the GPUProcess failed with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()));
     }
     return m_supportedTypesCache;
 }

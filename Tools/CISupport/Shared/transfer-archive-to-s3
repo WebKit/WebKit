@@ -2,27 +2,35 @@
 import argparse
 import boto3
 import os
+import socket
 import sys
 
-S3_DEFAULT_BUCKET = 'archives.webkit.org'
-S3_EWS_BUCKET = 'ews-archives.webkit.org'
-S3_MINIFIED_BUCKET = 'minified-archives.webkit.org'
-S3_REGION_PREFIX = 'https://s3-us-west-2.amazonaws.com'
+custom_suffix = ''
+hostname = socket.gethostname().strip()
+if 'dev' in hostname:
+    custom_suffix = '-dev'
+if 'uat' in hostname:
+    custom_suffix = '-uat'
+
+S3_DEFAULT_BUCKET = f'archives{custom_suffix}.webkit.org'
+S3_EWS_BUCKET = f'ews-archives{custom_suffix}.webkit.org'
+S3_MINIFIED_BUCKET = f'minified-archives{custom_suffix}.webkit.org'
+S3_REGION_PREFIX = f'https://s3-us-west-2.amazonaws.com'
 
 def uploadToS3(archive_path, bucket, identifier, revision):
-    print('Transferring {} to S3...'.format(archive_path))
+    print(f'Transferring {archive_path} to S3...')
     key = '/'.join([identifier, revision + '.zip'])
-    print('\tS3 Bucket: {}\n\tS3 Key: {}'.format(bucket, key))
+    print(f'\tS3 Bucket: {bucket}\n\tS3 Key: {key}')
     s3 = boto3.client('s3')
     s3.upload_file(archive_path, bucket, key)
-    print('\tS3 URL: {}/{}/{}'.format(S3_REGION_PREFIX, bucket, key))
+    print(f'\tS3 URL: {S3_REGION_PREFIX}/{bucket}/{key}')
 
 def archiveExists(archive):
     if archive:
         if os.path.exists(archive):
             return True
         else:
-            print('WARNING: Archive does not exist: {}'.format(archive))
+            print(f'WARNING: Archive does not exist: {archive}')
             return False
 
 def main():

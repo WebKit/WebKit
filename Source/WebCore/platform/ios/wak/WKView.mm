@@ -229,7 +229,7 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
             widthOrHeight = newSuperFrameWidthOrHeight - (origSuperFrameWidthOrHeight - widthOrHeight);
             if (widthOrHeight < 0.0f)
                 widthOrHeight = 0.0f;
-                break;
+            break;
         case NSViewWidthSizable | NSViewMaxXMargin:
             origWidthMinusMinMargin = origSuperFrameWidthOrHeight - xOrY;
             if (widthOrHeight) {
@@ -244,7 +244,7 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
                 widthOrHeight = ((newSuperFrameWidthOrHeight - xOrY)) * prop;
             if (widthOrHeight < 0.0f)
                 widthOrHeight = 0.0f;
-                break;
+            break;
         case NSViewMinXMargin:
             xOrY = newSuperFrameWidthOrHeight - (origSuperFrameWidthOrHeight - xOrY);
             if (xOrY < 0.0f)
@@ -268,7 +268,7 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
                 xOrY = ((newSuperFrameWidthOrHeight - widthOrHeight)) * prop;
             if (xOrY < 0.0f)
                 xOrY = 0.0f;
-                break;
+            break;
         case NSViewMinXMargin | NSViewWidthSizable:
             tmp = xOrY + widthOrHeight;
             if (tmp)
@@ -279,9 +279,9 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
             widthOrHeight  = newSuperFrameWidthOrHeight - (xOrY + (origSuperFrameWidthOrHeight - tmp));
             if (xOrY < 0.0f)
                 xOrY = 0.0f;
-                if (widthOrHeight < 0.0f)
-                    widthOrHeight = 0.0f;
-                    break;
+            if (widthOrHeight < 0.0f)
+                widthOrHeight = 0.0f;
+            break;
         case NSViewMinXMargin | NSViewWidthSizable | NSViewMaxXMargin:
             if (origSuperFrameWidthOrHeight)
                 prop = xOrY / origSuperFrameWidthOrHeight;

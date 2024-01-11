@@ -457,7 +457,13 @@ bool IOSApplication::isDOFUSTouch()
     return isDOFUSTouch;
 }
 
-#endif
+bool IOSApplication::isHimalaya()
+{
+    static bool isHimalayaApp = applicationBundleIsEqualTo("com.gemd.iting"_s);
+    return isHimalayaApp;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebCore
 

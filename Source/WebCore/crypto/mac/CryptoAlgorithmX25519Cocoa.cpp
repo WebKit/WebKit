@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CryptoAlgorithmX25519.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyOKP.h"
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
@@ -39,5 +37,3 @@ std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const C
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

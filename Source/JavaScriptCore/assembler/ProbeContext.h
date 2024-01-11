@@ -137,8 +137,6 @@ inline void*& CPUState::pc()
     return *reinterpret_cast<void**>(&spr(ARM64Registers::pc));
 #elif CPU(ARM_THUMB2)
     return *reinterpret_cast<void**>(&gpr(ARMRegisters::pc));
-#elif CPU(MIPS)
-    return *reinterpret_cast<void**>(&spr(MIPSRegisters::pc));
 #elif CPU(RISCV64)
     return *reinterpret_cast<void**>(&spr(RISCV64Registers::pc));
 #else
@@ -154,8 +152,6 @@ inline void*& CPUState::fp()
     return *reinterpret_cast<void**>(&gpr(ARM64Registers::fp));
 #elif CPU(ARM_THUMB2)
     return *reinterpret_cast<void**>(&gpr(ARMRegisters::fp));
-#elif CPU(MIPS)
-    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::fp));
 #elif CPU(RISCV64)
     return *reinterpret_cast<void**>(&gpr(RISCV64Registers::fp));
 #else
@@ -171,8 +167,6 @@ inline void*& CPUState::sp()
     return *reinterpret_cast<void**>(&gpr(ARM64Registers::sp));
 #elif CPU(ARM_THUMB2)
     return *reinterpret_cast<void**>(&gpr(ARMRegisters::sp));
-#elif CPU(MIPS)
-    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::sp));
 #elif CPU(RISCV64)
     return *reinterpret_cast<void**>(&gpr(RISCV64Registers::sp));
 #else

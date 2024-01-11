@@ -56,26 +56,54 @@ typedef struct wl_buffer *(EGLAPIENTRYP PFNEGLCREATEWAYLANDBUFFERFROMIMAGEWL)(EG
 struct DMABufFeedback {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    DMABufFeedback(unsigned size, int fd)
-    {
-        formatTable.size = size;
-        formatTable.data = static_cast<FormatTable::Data*>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0));
-    }
-
-    ~DMABufFeedback()
-    {
-        if (formatTable.data && formatTable.data != MAP_FAILED)
-            munmap(formatTable.data, formatTable.size);
-    }
-
     struct FormatTable {
-        unsigned size { 0 };
         struct Data {
             uint32_t format { 0 };
             uint32_t padding { 0 };
             uint64_t modifier { 0 };
-        } *data { nullptr };
+        };
+
+        FormatTable(const FormatTable&) = delete;
+        FormatTable& operator=(const FormatTable&) = delete;
+        FormatTable(FormatTable&& other)
+            : size(other.size)
+            , data(other.data)
+        {
+            other.size = 0;
+            other.data = nullptr;
+        }
+
+        FormatTable(unsigned size, Data* data)
+            : size(size)
+            , data(data)
+        {
+        }
+
+        ~FormatTable()
+        {
+            if (data)
+                munmap(data, size);
+        }
+
+        unsigned size { 0 };
+        Data* data { nullptr };
     };
+
+    static std::unique_ptr<DMABufFeedback> create(unsigned size, int fd)
+    {
+        auto* data = static_cast<FormatTable::Data*>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0));
+        if (data == MAP_FAILED)
+            return nullptr;
+
+        return makeUnique<DMABufFeedback>(FormatTable(size, data));
+    }
+
+    explicit DMABufFeedback(FormatTable&& table)
+        : formatTable(WTFMove(table))
+    {
+    }
+
+    ~DMABufFeedback() = default;
 
     struct Tranche {
         uint32_t flags { 0 };
@@ -84,8 +112,6 @@ struct DMABufFeedback {
 
     std::pair<uint32_t, uint64_t> format(uint16_t index)
     {
-        if (!formatTable.data || formatTable.data == MAP_FAILED)
-            return { 0, 0 };
         return { formatTable.data[index].format, formatTable.data[index].modifier };
     }
 
@@ -240,32 +266,37 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, int32_t fd, uint32_t size)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
-        priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>(size, fd);
+        priv->pendingDMABufFeedback = DMABufFeedback::create(size, fd);
         close(fd);
     },
     // main_device
-    [](void*, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array*)
+    [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array*)
     {
+        auto* priv = WPE_VIEW_WAYLAND(data)->priv;
+        // Compositor might not re-send the format table. In that case, try to reuse the previous one.
+        if (!priv->pendingDMABufFeedback && priv->committedDMABufFeedback)
+            priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>(WTFMove(priv->committedDMABufFeedback->formatTable));
+
         // FIXME: handle main device.
     },
     // tranche_done
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
+        if (!priv->pendingDMABufFeedback)
+            return;
+
         priv->pendingDMABufFeedback->tranches.append(WTFMove(priv->pendingDMABufFeedback->pendingTranche));
     },
     // tranche_target_device
     [](void*, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array*)
     {
-        // FIXME: handle target device.
     },
     // tranche_formats
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* indices)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
-        if (!priv->pendingDMABufFeedback->formatTable.data && priv->committedDMABufFeedback)
-            priv->pendingDMABufFeedback->formatTable = WTFMove(priv->committedDMABufFeedback->formatTable);
-        if (!priv->pendingDMABufFeedback->formatTable.data || priv->pendingDMABufFeedback->formatTable.data == MAP_FAILED)
+        if (!priv->pendingDMABufFeedback)
             return;
 
         const char* end = static_cast<const char*>(indices->data) + indices->size;
@@ -276,7 +307,8 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, uint32_t flags)
     {
         auto* priv = WPE_VIEW_WAYLAND(data)->priv;
-        priv->pendingDMABufFeedback->pendingTranche.flags |= flags;
+        if (priv->pendingDMABufFeedback)
+            priv->pendingDMABufFeedback->pendingTranche.flags |= flags;
     }
 };
 
@@ -355,7 +387,7 @@ static struct wl_buffer* createWaylandBufferFromEGLImage(WPEBuffer* buffer, GErr
 
 static struct wl_buffer* createWaylandBufferFromDMABuf(WPEBuffer* buffer, GError** error)
 {
-    if (auto* wlBuffer = static_cast<struct wl_buffer*>(g_object_get_data(G_OBJECT(buffer), "wpe-wayland-buffer")))
+    if (auto* wlBuffer = static_cast<struct wl_buffer*>(wpe_buffer_get_user_data(buffer)))
         return wlBuffer;
 
     struct wl_buffer* wlBuffer = nullptr;
@@ -382,7 +414,7 @@ static struct wl_buffer* createWaylandBufferFromDMABuf(WPEBuffer* buffer, GError
             return nullptr;
     }
 
-    g_object_set_data_full(G_OBJECT(buffer), "wpe-wayland-buffer", wlBuffer, reinterpret_cast<GDestroyNotify>(wl_buffer_destroy));
+    wpe_buffer_set_user_data(buffer, wlBuffer, reinterpret_cast<GDestroyNotify>(wl_buffer_destroy));
     return wlBuffer;
 }
 
@@ -399,7 +431,7 @@ static void sharedMemoryBufferDestroy(SharedMemoryBuffer* buffer)
     delete buffer;
 }
 
-static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, GBytes* bytes, int width, int height)
+static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, GBytes* bytes, int width, int height, unsigned stride)
 {
     auto size = g_bytes_get_size(bytes);
     auto wlPool = WPE::WaylandSHMPool::create(wpe_display_wayland_get_wl_shm(display), size);
@@ -414,13 +446,13 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, 
 
     auto* sharedMemoryBuffer = new SharedMemoryBuffer();
     sharedMemoryBuffer->wlPool = WTFMove(wlPool);
-    sharedMemoryBuffer->wlBuffer = sharedMemoryBuffer->wlPool->createBuffer(offset, width, height, size / height);
+    sharedMemoryBuffer->wlBuffer = sharedMemoryBuffer->wlPool->createBuffer(offset, width, height, stride);
     return sharedMemoryBuffer;
 }
 
 static struct wl_buffer* createWaylandBufferSHM(WPEBuffer* buffer, GError** error)
 {
-    if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(g_object_get_data(G_OBJECT(buffer), "wpe-wayland-buffer"))) {
+    if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(wpe_buffer_get_user_data(buffer))) {
         GBytes* bytes = wpe_buffer_shm_get_data(WPE_BUFFER_SHM(buffer));
         memcpy(reinterpret_cast<char*>(sharedMemoryBuffer->wlPool->data()), g_bytes_get_data(bytes, nullptr), sharedMemoryBuffer->wlPool->size());
         return sharedMemoryBuffer->wlBuffer;
@@ -433,14 +465,14 @@ static struct wl_buffer* createWaylandBufferSHM(WPEBuffer* buffer, GError** erro
     }
 
     auto* display = WPE_DISPLAY_WAYLAND(wpe_buffer_get_display(buffer));
-    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, wpe_buffer_shm_get_data(bufferSHM), wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer));
+    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, wpe_buffer_shm_get_data(bufferSHM),
+        wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer), wpe_buffer_shm_get_stride(bufferSHM));
     if (!sharedMemoryBuffer) {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to create shared memory");
         return nullptr;
     }
 
-    g_object_set_data_full(G_OBJECT(buffer), "wpe-wayland-buffer", sharedMemoryBuffer, reinterpret_cast<GDestroyNotify>(sharedMemoryBufferDestroy));
-
+    wpe_buffer_set_user_data(buffer, sharedMemoryBuffer, reinterpret_cast<GDestroyNotify>(sharedMemoryBufferDestroy));
     return sharedMemoryBuffer->wlBuffer;
 }
 
@@ -545,14 +577,14 @@ static const struct wl_buffer_listener cursorBufferListener = {
     }
 };
 
-static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint hotspotX, guint hotspotY)
+static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
 {
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
     auto* cursor = wpeDisplayWaylandGetCursor(display);
     if (!cursor)
         return;
 
-    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, bytes, width, height);
+    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, bytes, width, height, stride);
     if (!sharedMemoryBuffer)
         return;
 

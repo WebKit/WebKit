@@ -1077,8 +1077,6 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 #endif // ENABLE(FULLSCREEN_API)
 
-#if ENABLE(WEB_CRYPTO)
-
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {
     SEL selector = @selector(webCryptoMasterKeyForWebView:);
@@ -1110,8 +1108,6 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
         return false;
     return unwrapSerializedCryptoKey(WTFMove(*masterKey), wrappedKey, key);
 }
-
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 

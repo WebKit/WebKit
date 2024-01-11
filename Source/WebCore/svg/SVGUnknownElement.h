@@ -45,7 +45,7 @@ public:
 
 private:
     SVGUnknownElement(const QualifiedName& tagName, Document& document)
-        : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), CreateSVGElement | NodeFlag::IsUnknownElement)
+        : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::IsUnknownElement)
     {
     }
 

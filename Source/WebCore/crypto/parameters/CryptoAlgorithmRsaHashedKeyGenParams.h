@@ -30,8 +30,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <variant>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmRsaHashedKeyGenParams final : public CryptoAlgorithmRsaKeyGenParams {
@@ -46,5 +44,3 @@ public:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaHashedKeyGenParams)
-
-#endif // ENABLE(WEB_CRYPTO)

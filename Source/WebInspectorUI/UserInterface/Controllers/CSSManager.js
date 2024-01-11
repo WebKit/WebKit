@@ -203,21 +203,21 @@ WI.CSSManager = class CSSManager extends WI.Object
             case 5: // PseudoId.After
                 return WI.unlocalizedString("::after");
             case 6: // PseudoId.Selection
-                return WI.unlocalizedString("::selection");
+                return WI.unlocalizedString("::-webkit-selection");
             case 7: // PseudoId.Scrollbar
-                return WI.unlocalizedString("::scrollbar");
+                return WI.unlocalizedString("::-webkit-scrollbar");
             case 8: // PseudoId.ScrollbarThumb
-                return WI.unlocalizedString("::scrollbar-thumb");
+                return WI.unlocalizedString("::-webkit-scrollbar-thumb");
             case 9: // PseudoId.ScrollbarButton
-                return WI.unlocalizedString("::scrollbar-button");
+                return WI.unlocalizedString("::-webkit-scrollbar-button");
             case 10: // PseudoId.ScrollbarTrack
-                return WI.unlocalizedString("::scrollbar-track");
+                return WI.unlocalizedString("::-webkit-scrollbar-track");
             case 11: // PseudoId.ScrollbarTrackPiece
-                return WI.unlocalizedString("::scrollbar-track-piece");
+                return WI.unlocalizedString("::-webkit-scrollbar-track-piece");
             case 12: // PseudoId.ScrollbarCorner
-                return WI.unlocalizedString("::scrollbar-corner");
+                return WI.unlocalizedString("::-webkit-scrollbar-corner");
             case 13: // PseudoId.Resizer
-                return WI.unlocalizedString("::resizer");
+                return WI.unlocalizedString("::-webkit-resizer");
 
             default:
                 console.error("Unknown pseudo id", pseudoId);
@@ -244,22 +244,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::selection");
         case CSSManager.PseudoSelectorNames.Backdrop:
             return WI.unlocalizedString("::backdrop");
-        case CSSManager.PseudoSelectorNames.Scrollbar:
-            return WI.unlocalizedString("::scrollbar");
-        case CSSManager.PseudoSelectorNames.ScrollbarThumb:
-            return WI.unlocalizedString("::scrollbar-thumb");
-        case CSSManager.PseudoSelectorNames.ScrollbarButton:
-            return WI.unlocalizedString("::scrollbar-button");
-        case CSSManager.PseudoSelectorNames.ScrollbarTrack:
-            return WI.unlocalizedString("::scrollbar-track");
-        case CSSManager.PseudoSelectorNames.ScrollbarTrackPiece:
-            return WI.unlocalizedString("::scrollbar-track-piece");
-        case CSSManager.PseudoSelectorNames.ScrollbarCorner:
-            return WI.unlocalizedString("::scrollbar-corner");
         case CSSManager.PseudoSelectorNames.SpellingError:
             return WI.unlocalizedString("::spelling-error");
-        case CSSManager.PseudoSelectorNames.Resizer:
-            return WI.unlocalizedString("::resizer");
         case CSSManager.PseudoSelectorNames.ViewTransition:
             return WI.unlocalizedString("::view-transition");
         case CSSManager.PseudoSelectorNames.ViewTransitionGroup:
@@ -270,6 +256,28 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::view-transition-new");
         case CSSManager.PseudoSelectorNames.ViewTransitionOld:
             return WI.unlocalizedString("::view-transition-old");
+        // COMPATIBILITY (iOS 17.0): PseudoId unprefixed aliases for prefixed protocol names.
+        case CSSManager.PseudoSelectorNames.WebKitResizer:
+        case "resizer":
+            return WI.unlocalizedString("::-webkit-resizer");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbar:
+        case "scrollbar":
+            return WI.unlocalizedString("::-webkit-scrollbar");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbarThumb:
+        case "scrollbar-thumb":
+            return WI.unlocalizedString("::-webkit-scrollbar-thumb");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbarButton:
+        case "scrollbar-button":
+            return WI.unlocalizedString("::-webkit-scrollbar-button");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbarTrack:
+        case "scrollbar-track":
+            return WI.unlocalizedString("::-webkit-scrollbar-track");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbarTrackPiece:
+        case "scrollbar-track-piece":
+            return WI.unlocalizedString("::-webkit-scrollbar-track-piece");
+        case CSSManager.PseudoSelectorNames.WebKitScrollbarCorner:
+        case "scrollbar-corner":
+            return WI.unlocalizedString("::-webkit-scrollbar-corner");
 
         default:
             console.error("Unknown pseudo id", pseudoId);
@@ -887,13 +895,6 @@ WI.CSSManager.PseudoSelectorNames = {
     Highlight: "highlight",
     GrammarError: "grammar-error",
     Marker: "marker",
-    Resizer: "resizer",
-    Scrollbar: "scrollbar",
-    ScrollbarButton: "scrollbar-button",
-    ScrollbarCorner: "scrollbar-corner",
-    ScrollbarThumb: "scrollbar-thumb",
-    ScrollbarTrack: "scrollbar-track",
-    ScrollbarTrackPiece: "scrollbar-track-piece",
     Selection: "selection",
     SpellingError: "spelling-error",
     ViewTransition: "view-transition",
@@ -901,6 +902,13 @@ WI.CSSManager.PseudoSelectorNames = {
     ViewTransitionImagePair: "view-transition-image-pair",
     ViewTransitionNew: "view-transition-new",
     ViewTransitionOld: "view-transition-old",
+    WebKitResizer: "-webkit-resizer",
+    WebKitScrollbar: "-webkit-scrollbar",
+    WebKitScrollbarButton: "-webkit-scrollbar-button",
+    WebKitScrollbarCorner: "-webkit-scrollbar-corner",
+    WebKitScrollbarThumb: "-webkit-scrollbar-thumb",
+    WebKitScrollbarTrack: "-webkit-scrollbar-track",
+    WebKitScrollbarTrackPiece: "-webkit-scrollbar-track-piece",
 };
 
 WI.CSSManager.LayoutContextTypeChangedMode = {

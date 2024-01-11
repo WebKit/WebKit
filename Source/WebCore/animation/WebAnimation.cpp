@@ -215,8 +215,10 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
 
     auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
-    std::optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : std::nullopt;
-    std::optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : std::nullopt;
+    auto* oldKeyframeEffect = dynamicDowncast<KeyframeEffect>(oldEffect.get());
+    std::optional<const Styleable> previousTarget = oldKeyframeEffect ? oldKeyframeEffect->targetStyleable() : std::nullopt;
+    auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get());
+    std::optional<const Styleable> newTarget = keyframeEffect ? keyframeEffect->targetStyleable() : std::nullopt;
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
@@ -263,7 +265,8 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     Ref protectedThis { *this };
     setTimelineInternal(WTFMove(timeline));
 
-    setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
+    auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get());
+    setSuspended(documentTimeline && documentTimeline->animationsAreSuspended());
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
@@ -1398,8 +1401,8 @@ void WebAnimation::setSuspended(bool isSuspended)
 
 void WebAnimation::acceleratedStateDidChange()
 {
-    if (is<DocumentTimeline>(m_timeline))
-        downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
+    if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline))
+        documentTimeline->animationAcceleratedRunningStateDidChange(*this);
 }
 
 WebAnimation& WebAnimation::readyPromiseResolve()
@@ -1442,8 +1445,10 @@ bool WebAnimation::virtualHasPendingActivity() const
 void WebAnimation::updateRelevance()
 {
     auto wasRelevant = std::exchange(m_isRelevant, computeRelevance());
-    if (wasRelevant != m_isRelevant && is<KeyframeEffect>(m_effect))
-        downcast<KeyframeEffect>(*m_effect).animationRelevancyDidChange();
+    if (wasRelevant != m_isRelevant) {
+        if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect))
+            keyframeEffect->animationRelevancyDidChange();
+    }
 }
 
 bool WebAnimation::computeRelevance()
@@ -1490,7 +1495,8 @@ bool WebAnimation::isReplaceable() const
 
     // The existence of the animation is not prescribed by markup. That is, it is not a CSS animation with an owning element,
     // nor a CSS transition with an owning element.
-    if (isDeclarativeAnimation() && downcast<DeclarativeAnimation>(this)->owningElement())
+    auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(*this);
+    if (declarativeAnimation && declarativeAnimation->owningElement())
         return false;
 
     // The animation's play state is finished.
@@ -1514,7 +1520,8 @@ bool WebAnimation::isReplaceable() const
         return false;
 
     // The target effect has an associated target element.
-    if (!is<KeyframeEffect>(m_effect) || !downcast<KeyframeEffect>(m_effect.get())->target())
+    auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get());
+    if (!keyframeEffect || !keyframeEffect->target())
         return false;
 
     return true;
@@ -1539,20 +1546,18 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     // 1. Let targets be the set of all effect targets for animation effects associated with animation.
     RefPtr effect = dynamicDowncast<KeyframeEffect>(m_effect.get());
-    RefPtr target = effect ? effect->target() : nullptr;
 
     // 2. For each target in targets:
     //
     // 2.1 If target is not an element capable of having a style attribute (for example, it is a pseudo-element or is an element in a
     // document format for which style attributes are not defined) throw a "NoModificationAllowedError" DOMException and abort these steps.
-    if (!is<StyledElement>(target) || effect->targetsPseudoElement())
+    RefPtr styledElement = dynamicDowncast<StyledElement>(effect ? effect->target() : nullptr);
+    if (!styledElement || effect->targetsPseudoElement())
         return Exception { ExceptionCode::NoModificationAllowedError };
 
-    auto& styledElement = downcast<StyledElement>(*target);
-
     // 2.2 If, after applying any pending style changes, target is not being rendered, throw an "InvalidStateError" DOMException and abort these steps.
-    styledElement.document().updateStyleIfNeeded();
-    auto* renderer = styledElement.renderer();
+    styledElement->document().updateStyleIfNeeded();
+    auto* renderer = styledElement->renderer();
     if (!renderer)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -1569,17 +1574,17 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return RenderStyle::clone(renderer->style());
     }();
 
-    auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
+    auto computedStyleExtractor = ComputedStyleExtractor(styledElement.get());
 
     auto inlineStyle = [&]() {
-        if (auto existinInlineStyle = styledElement.inlineStyle())
+        if (auto existinInlineStyle = styledElement->inlineStyle())
             return existinInlineStyle->mutableCopy();
-        auto styleDeclaration = styledElement.document().createCSSStyleDeclaration();
-        styleDeclaration->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
+        auto styleDeclaration = styledElement->document().createCSSStyleDeclaration();
+        styleDeclaration->setCssText(styledElement->getAttribute(HTMLNames::styleAttr));
         return styleDeclaration->copyProperties();
     }();
 
-    auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
+    auto& keyframeStack = styledElement->ensureKeyframeEffectStack(PseudoId::None);
 
     auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
@@ -1607,12 +1612,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
-                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false, { styledElement.document() });
+                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false, { styledElement->document() });
                 return false;
             },
             [&] (const AtomString& customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    return inlineStyle->setCustomProperty(customProperty, cssValue->cssText(), false, { styledElement.document() });
+                    return inlineStyle->setCustomProperty(customProperty, cssValue->cssText(), false, { styledElement->document() });
                 return false;
             }
         );
@@ -1634,7 +1639,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         didMutate = commitProperty(property) || didMutate;
 
     if (didMutate)
-        styledElement.setAttribute(HTMLNames::styleAttr, inlineStyle->asTextAtom());
+        styledElement->setAttribute(HTMLNames::styleAttr, inlineStyle->asTextAtom());
 
     return { };
 }

@@ -1024,7 +1024,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     using GraphicsDirtyBitHandler = angle::Result (
         ContextVk::*)(DirtyBits::Iterator *dirtyBitsIterator, DirtyBits dirtyBitMask);
-    using ComputeDirtyBitHandler = angle::Result (ContextVk::*)();
+    using ComputeDirtyBitHandler =
+        angle::Result (ContextVk::*)(DirtyBits::Iterator *dirtyBitsIterator);
 
     // The GpuEventQuery struct holds together a timestamp query and enough data to create a
     // trace event based on that. Use traceGpuEvent to insert such queries.  They will be readback
@@ -1245,16 +1246,16 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         DirtyBits dirtyBitMask);
 
     // Handlers for compute pipeline dirty bits.
-    angle::Result handleDirtyComputeMemoryBarrier();
-    angle::Result handleDirtyComputeEventLog();
-    angle::Result handleDirtyComputePipelineDesc();
-    angle::Result handleDirtyComputePipelineBinding();
-    angle::Result handleDirtyComputeTextures();
-    angle::Result handleDirtyComputeDriverUniforms();
-    angle::Result handleDirtyComputeShaderResources();
-    angle::Result handleDirtyComputeUniformBuffers();
-    angle::Result handleDirtyComputeDescriptorSets();
-    angle::Result handleDirtyComputeUniforms();
+    angle::Result handleDirtyComputeMemoryBarrier(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeEventLog(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputePipelineDesc(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputePipelineBinding(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeTextures(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeDriverUniforms(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeShaderResources(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeUniformBuffers(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeDescriptorSets(DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyComputeUniforms(DirtyBits::Iterator *dirtyBitsIterator);
 
     // Common parts of the common dirty bit handlers.
     angle::Result handleDirtyUniformsImpl(vk::CommandBufferHelperCommon *commandBufferHelper);
@@ -1267,7 +1268,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                           PipelineType pipelineType);
     template <typename CommandBufferHelperT>
     angle::Result handleDirtyShaderResourcesImpl(CommandBufferHelperT *commandBufferHelper,
-                                                 PipelineType pipelineType);
+                                                 PipelineType pipelineType,
+                                                 DirtyBits::Iterator *dirtyBitsIterator);
     template <typename CommandBufferHelperT>
     angle::Result handleDirtyUniformBuffersImpl(CommandBufferHelperT *commandBufferHelper);
     template <typename CommandBufferHelperT>

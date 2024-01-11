@@ -176,13 +176,15 @@ PlatformVideoColorSpace VideoTrackPrivateWebM::colorSpace() const
 
 void VideoTrackPrivateWebM::updateConfiguration()
 {
+IGNORE_WARNINGS_BEGIN("c99-designator")
     PlatformVideoTrackConfiguration configuration {
         { .codec = codec() },
         .width = width(),
         .height = height(),
-        .framerate = framerate(),
         .colorSpace = colorSpace(),
+        .framerate = framerate(),
     };
+IGNORE_WARNINGS_END
     setConfiguration(WTFMove(configuration));
 }
 

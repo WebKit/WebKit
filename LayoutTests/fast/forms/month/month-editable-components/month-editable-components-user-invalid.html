@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+
+input {
+    border: 1px solid black;
+}
+
+input:user-invalid {
+    border: 1px red solid;
+}
+
+</style>
+</head>
+<body>
+
+<input id="input" type="month" min="2020-11">
+
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    input.focus();
+    UIHelper.keyDown("1");
+    UIHelper.keyDown("0");
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown("2");
+    UIHelper.keyDown("0");
+    UIHelper.keyDown("2");
+    UIHelper.keyDown("0");
+    input.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

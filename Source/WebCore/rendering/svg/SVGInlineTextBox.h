@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,12 +24,14 @@
 
 #include "LegacyInlineTextBox.h"
 #include "LegacyRenderSVGResource.h"
+#include "RenderSVGResourcePaintServer.h"
 #include "SVGTextFragment.h"
 
 namespace WebCore {
 
 class LegacyRenderSVGResource;
 class RenderSVGInlineText;
+class SVGPaintServerHandling;
 class SVGRootInlineBox;
 
 class SVGInlineTextBox final : public LegacyInlineTextBox {
@@ -62,8 +65,8 @@ public:
     int offsetForPositionInFragment(const SVGTextFragment&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle&) const;
     
-    OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_paintingResourceMode); }
-    void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_paintingResourceMode = mode.toRaw(); }
+    OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_legacyPaintingResourceMode); }
+    void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_legacyPaintingResourceMode = mode.toRaw(); }
 
     inline SVGInlineTextBox* nextTextBox() const;
     
@@ -72,11 +75,13 @@ private:
 
     TextRun constructTextRun(const RenderStyle&, const SVGTextFragment&) const;
 
-    bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
-    void releasePaintingResource(GraphicsContext*&, const Path*);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
+    void releasePaintingResource(SVGPaintServerHandling&);
+#endif
 
-    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, const RenderStyle&);
-    void restoreGraphicsContextAfterTextPainting(GraphicsContext*&);
+    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
+    void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
 
     void paintDecoration(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&);
     void paintDecorationWithStyle(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
@@ -87,9 +92,13 @@ private:
 
 private:
     float m_logicalHeight { 0 };
-    unsigned m_paintingResourceMode : 4; // RenderSVGResourceMode
+    unsigned m_legacyPaintingResourceMode : 4; // RenderSVGResourceMode
     unsigned m_startsNewTextChunk : 1;
-    LegacyRenderSVGResource* m_paintingResource { nullptr };
+    LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    SVGPaintServerOrColor m_paintServerOrColor { };
+#endif
+
     Vector<SVGTextFragment> m_textFragments;
 };
 

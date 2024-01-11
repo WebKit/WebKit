@@ -69,8 +69,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, ConstructionType constructionType)
-    : StyledElement(tagName, document, constructionType)
+SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
+    : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)
     , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
     , m_propertyRegistry(WTFMove(propertyRegistry))
 {
@@ -303,10 +303,7 @@ RefPtr<SVGUseElement> SVGElement::correspondingUseElement() const
         return nullptr;
     if (root->mode() != ShadowRootMode::UserAgent)
         return nullptr;
-    auto* host = root->host();
-    if (!is<SVGUseElement>(host))
-        return nullptr;
-    return &downcast<SVGUseElement>(*host);
+    return dynamicDowncast<SVGUseElement>(root->host());
 }
 
 void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
@@ -455,16 +452,19 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::g:
     case SVG::image:
     case SVG::line:
+    case SVG::linearGradient:
     case SVG::mask:
     case SVG::path:
     case SVG::polygon:
     case SVG::polyline:
+    case SVG::radialGradient:
     case SVG::rect:
+    case SVG::stop:
     case SVG::svg:
     case SVG::switch_:
     case SVG::symbol:
-    case SVG::textPath:
     case SVG::text:
+    case SVG::textPath:
     case SVG::tref:
     case SVG::tspan:
     case SVG::use:
@@ -478,19 +478,19 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (!child.isSVGElement())
+    auto* svgChild = dynamicDowncast<SVGElement>(child);
+    if (!svgChild)
         return false;
-    auto& svgChild = downcast<SVGElement>(child);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // If the layer based SVG engine is enabled, all renderers that do not support the
     // RenderLayer aware layout / painting / hit-testing mode ('LBSE-mode') have to be skipped.
     // FIXME: [LBSE] Upstream support for all elements, and remove 'isSVGLayerAwareElement' check afterwards.
-    if (document().settings().layerBasedSVGEngineEnabled() && !isSVGLayerAwareElement(svgChild))
+    if (document().settings().layerBasedSVGEngineEnabled() && !isSVGLayerAwareElement(*svgChild))
         return false;
 #endif
 
-    switch (svgChild.elementName()) {
+    switch (svgChild->elementName()) {
     case ElementNames::SVG::altGlyph:
     case ElementNames::SVG::textPath:
     case ElementNames::SVG::tref:
@@ -499,7 +499,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     default:
         break;
     }
-    return svgChild.isValid();
+    return svgChild->isValid();
 }
 
 void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -1020,8 +1020,8 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == HTMLNames::idAttr) {
         auto renderer = this->renderer();
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
-        if (is<LegacyRenderSVGResourceContainer>(renderer))
-            downcast<LegacyRenderSVGResourceContainer>(*renderer).idChanged();
+        if (CheckedPtr container = dynamicDowncast<LegacyRenderSVGResourceContainer>(renderer))
+            container->idChanged();
         if (isConnected())
             buildPendingResourcesIfNeeded();
         invalidateInstances();

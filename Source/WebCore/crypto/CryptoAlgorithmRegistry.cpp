@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmRegistry.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithm.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -98,5 +96,3 @@ void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgori
 
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

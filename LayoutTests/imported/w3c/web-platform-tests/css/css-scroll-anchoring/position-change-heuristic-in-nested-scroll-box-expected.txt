@@ -1,4 +1,4 @@
 
-FAIL Position changes in document scroller. assert_equals: expected 225 but got 200
-FAIL Position changes in scrollable <div>. assert_equals: expected 225 but got 200
+PASS Position changes in document scroller.
+PASS Position changes in scrollable <div>.
 

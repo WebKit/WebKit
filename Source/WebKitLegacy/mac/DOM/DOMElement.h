@@ -89,8 +89,6 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 - (void)blur WEBKIT_AVAILABLE_MAC(10_6);
 - (void)scrollIntoView:(BOOL)alignWithTop WEBKIT_AVAILABLE_MAC(10_5);
 - (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded WEBKIT_AVAILABLE_MAC(10_5);
-- (void)scrollByLines:(int)lines WEBKIT_AVAILABLE_MAC(10_5);
-- (void)scrollByPages:(int)pages WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMNodeList *)getElementsByClassName:(NSString *)name WEBKIT_AVAILABLE_MAC(10_6);
 #if !TARGET_OS_IPHONE
 - (void)webkitRequestFullScreen:(unsigned short)flags WEBKIT_AVAILABLE_MAC(10_6);
@@ -107,4 +105,6 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName WEBKIT_DEPRECATED_MAC(10_4, 10_5);
 - (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName WEBKIT_DEPRECATED_MAC(10_4, 10_5);
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName WEBKIT_DEPRECATED_MAC(10_4, 10_5);
+- (void)scrollByLines:(int)lines WEBKIT_DEPRECATED_MAC(10_5, 10_14);
+- (void)scrollByPages:(int)pages WEBKIT_DEPRECATED_MAC(10_5, 10_14);
 @end

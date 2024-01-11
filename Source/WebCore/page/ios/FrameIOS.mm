@@ -30,6 +30,7 @@
 #import "CommonVM.h"
 #import "ComposedTreeIterator.h"
 #import "Document.h"
+#import "DocumentInlines.h"
 #import "DocumentMarkerController.h"
 #import "Editor.h"
 #import "EditorClient.h"

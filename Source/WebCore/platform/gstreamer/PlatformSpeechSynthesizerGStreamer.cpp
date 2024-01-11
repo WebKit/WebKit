@@ -70,6 +70,7 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
 
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("speech-synthesizer-", pipelineId.exchangeAdd(1)).ascii().data());
+    registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         this->handleMessage(message);
     });
@@ -122,6 +123,7 @@ GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthes
 
 GstSpeechSynthesisWrapper::~GstSpeechSynthesisWrapper()
 {
+    unregisterPipeline(m_pipeline);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }

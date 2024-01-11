@@ -1565,7 +1565,7 @@
       ],
       "github" : "charliewolfe",
       "name" : "Charlie Wolfe",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -1991,6 +1991,18 @@
    },
    {
       "emails" : [
+         "d_parkinson@apple.com"
+      ],
+      "expertise" : "Security",
+      "github" : "darryl-apple",
+      "name" : "Darryl Parkinson",
+      "nicks" : [
+         "darryl-apple",
+         "darryl.p"
+      ]
+   },
+   {
+      "emails" : [
          "dbarton@mathscribe.com"
       ],
       "expertise" : "MathML",
@@ -2376,9 +2388,9 @@
    },
    {
       "emails" : [
+         "dm_mazzoni@apple.com",
          "dmazzoni@google.com",
-         "dmazzoni@chromium.org",
-         "dm_mazzoni@apple.com"
+         "dmazzoni@chromium.org"
       ],
       "github" : "minorninth",
       "name" : "Dominic Mazzoni",
@@ -5733,6 +5745,14 @@
       "expertise" : "WebKit on macOS",
       "github" : "MoeBazziGIT",
       "name" : "Moe Bazzi"
+   },
+   {
+      "emails" : [
+         "mohsinq@apple.com"
+      ],
+      "github" : "mogey",
+      "name" : "Mohsin Qureshi",
+      "status" : "committer"
    },
    {
       "emails" : [

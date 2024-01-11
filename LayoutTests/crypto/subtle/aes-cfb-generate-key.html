@@ -13,6 +13,9 @@ description("Test generating an AES key with length 128 using AES-CFB algorithm.
 
 jsTestIsAsync = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 debug("Generating a key...");
 crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, true, ["encrypt", "decrypt", "unwrapKey", "wrapKey"]).then(function(result) {
     key = result;

@@ -662,8 +662,6 @@ static constexpr size_t prologueSizeInBytesDataIC = 8;
 static constexpr size_t prologueSizeInBytesDataIC = 4;
 #elif CPU(ARM_THUMB2)
 static constexpr size_t prologueSizeInBytesDataIC = 6;
-#elif CPU(MIPS)
-static constexpr size_t prologueSizeInBytesDataIC = 16;
 #elif CPU(RISCV64)
 static constexpr size_t prologueSizeInBytesDataIC = 12;
 #else
@@ -693,10 +691,6 @@ void InlineCacheCompiler::emitDataICPrologue(CCallHelpers& jit)
 #elif CPU(ARM_THUMB2)
     static_assert(maxFrameExtentForSlowPathCall);
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-#elif CPU(MIPS)
-    static_assert(maxFrameExtentForSlowPathCall);
-    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
     jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 #elif CPU(RISCV64)
     static_assert(!maxFrameExtentForSlowPathCall);
@@ -3408,6 +3402,13 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(StructureStubInfo& stubInfo, JS
         TypeInfo info = structure->typeInfo();
         return info.isObject() && !info.overridesGetPrototype();
     }
+    case SpeciesGetterIntrinsic: {
+#if USE(JSVALUE32_64)
+        return false;
+#else
+        return !structure->classInfoForCells()->isSubClassOf(JSScope::info());
+#endif
+    }
     case WebAssemblyInstanceExportsIntrinsic:
         return structure->typeInfo().type() == WebAssemblyInstanceType;
     default:
@@ -3541,6 +3542,12 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
             jit.loadValue(CCallHelpers::Address(baseGPR, offsetRelativeToBase(knownPolyProtoOffset)), valueRegs);
         else
             jit.moveValue(accessCase.structure()->storedPrototype(), valueRegs);
+        succeed();
+        return;
+    }
+
+    case SpeciesGetterIntrinsic: {
+        jit.moveValueRegs(stubInfo.baseRegs(), valueRegs);
         succeed();
         return;
     }

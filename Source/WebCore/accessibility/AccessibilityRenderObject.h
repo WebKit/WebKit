@@ -100,7 +100,7 @@ public:
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String selectedText() const override;
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    Vector<AXTextRun> textRuns() final;
+    AXTextRuns textRuns() final;
 #endif
 
     bool isWidget() const override;

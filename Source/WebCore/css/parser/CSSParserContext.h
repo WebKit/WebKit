@@ -101,6 +101,10 @@ struct CSSParserContext {
     bool grammarAndSpellingPseudoElementsEnabled : 1 { false };
     bool customStateSetEnabled : 1 { false };
     bool thumbAndTrackPseudoElementsEnabled : 1 { false };
+#if ENABLE(SERVICE_CONTROLS)
+    bool imageControlsEnabled : 1 { false };
+#endif
+    bool lightDarkEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

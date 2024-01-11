@@ -7,9 +7,11 @@ sources:
 - kind: patch
   path: patches/fdo-0001-gtk3-Include-changes-from-downstream-WebKit-SDK.patch
 - kind: patch
+  path: patches/fdo-0003-libsoup-Vendor-patch-needed-for-test-bots.patch
+- kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.22.7.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.22.8.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch

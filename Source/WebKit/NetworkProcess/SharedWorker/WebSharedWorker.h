@@ -45,7 +45,7 @@ namespace WebKit {
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
-class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker>, public CanMakeCheckedPtr {
+class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);

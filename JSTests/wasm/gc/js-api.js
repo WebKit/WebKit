@@ -595,6 +595,45 @@ function testImport() {
       "Argument value did not match reference type"
     );
   }
+
+  // Test direct global imports.
+  {
+    function doImport(type, val) {
+      instantiate(`
+        (module
+          (type (struct))
+          (type (array i32))
+          (global (import "m" "g") (ref ${type}))
+        )
+      `,
+      { m: { g: val } });
+    }
+    function castError(type, val) {
+      assert.throws(
+        () => { doImport(type, val); },
+        WebAssembly.LinkError,
+        "Argument value did not match the reference type"
+      );
+    }
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (type (array i32))
+        (func (export "makeS") (result anyref) (struct.new 0))
+        (func (export "makeA") (result anyref) (array.new_default 1 (i32.const 10)))
+      )
+    `);
+    doImport("any", "foo");
+    doImport("i31", 2 ** 30 - 1);
+    doImport("i31", -(2 ** 30));
+    castError("i31", 2.3);
+    doImport("any", "foo");
+    doImport("struct", m.exports.makeS());
+    doImport("array", m.exports.makeA());
+    doImport("0", m.exports.makeS());
+    doImport("1", m.exports.makeA());
+    castError("0", m.exports.makeA());
+  }
 }
 
 testArray();

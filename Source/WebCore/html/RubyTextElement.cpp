@@ -55,9 +55,11 @@ Ref<RubyTextElement> RubyTextElement::create(Document& document)
 
 RenderPtr<RenderElement> RubyTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    // RenderRubyText requires its parent to be RenderRubyRun.
-    if (isRuby(insertionPosition.parent()) && style.display() == DisplayType::Block)
-        return createRenderer<RenderRubyText>(*this, WTFMove(style));
+    if (!document().settings().cssBasedRubyEnabled()) {
+        // RenderRubyText requires its parent to be RenderRubyRun.
+        if (isRuby(insertionPosition.parent()) && style.display() == DisplayType::Block)
+            return createRenderer<RenderRubyText>(*this, WTFMove(style));
+    }
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 

@@ -42,6 +42,8 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback
             self->m_callback(self->m_lowPowerModeEnabled);
         }
     }), this);
+#else
+    UNUSED_PARAM(callback);
 #endif
 }
 

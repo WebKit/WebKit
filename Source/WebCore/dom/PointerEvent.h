@@ -27,6 +27,7 @@
 
 #include "EventNames.h"
 #include "MouseEvent.h"
+#include "Node.h"
 #include "PointerEventTypeNames.h"
 #include "PointerID.h"
 #include <wtf/text/WTFString.h>

@@ -166,7 +166,7 @@ void HTMLMaybeFormAssociatedCustomElement::finishParsingChildren()
 
 void HTMLMaybeFormAssociatedCustomElement::setInterfaceIsFormAssociated()
 {
-    setNodeFlag(NodeFlag::HasFormAssociatedCustomElementInterface);
+    setEventTargetFlag(EventTargetFlag::HasFormAssociatedCustomElementInterface, true);
     ensureFormAssociatedCustomElement();
 }
 

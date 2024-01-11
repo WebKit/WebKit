@@ -16,7 +16,7 @@ function test()
 
     let shadow = internals.shadowRoot(document.getElementById("test"));
 
-    window.testElement = shadow.querySelector("[pseudo='-webkit-slider-runnable-track']");
+    window.testElement = shadow.querySelector("[useragentpart='-webkit-slider-runnable-track']");
     shouldNotBe("getComputedStyle(testElement).backgroundColor", "'rgb(255, 0, 0)'");
 
     debug("");

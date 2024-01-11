@@ -47,12 +47,14 @@ protected:
     StyleRuleGroup& groupRule() { return m_groupRule; }
     void reattach(StyleRuleBase&) override;
     void appendCSSTextForItems(StringBuilder&) const;
+    void appendCSSTextWithReplacementURLsForItems(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&) override;
 
-    // https://drafts.csswg.org/cssom/#serialize-a-css-rule
-    void cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const;
-
 private:
+    void appendCSSTextForItemsInternal(StringBuilder&, StringBuilder&) const;
+    void cssTextForRules(StringBuilder&) const;
+    void cssTextForRulesWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+
     Ref<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;

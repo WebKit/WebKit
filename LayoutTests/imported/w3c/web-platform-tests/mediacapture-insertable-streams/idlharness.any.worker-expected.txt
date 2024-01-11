@@ -1,0 +1,25 @@
+
+PASS idl_test setup
+PASS idl_test validation
+FAIL MediaStreamTrackProcessor interface: existence and properties of interface object assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface object length assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface object name assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+FAIL MediaStreamTrackProcessor interface: attribute readable assert_own_property: self does not have own property "MediaStreamTrackProcessor" expected property "MediaStreamTrackProcessor" missing
+PASS VideoTrackGenerator interface: existence and properties of interface object
+PASS VideoTrackGenerator interface object length
+PASS VideoTrackGenerator interface object name
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object's "constructor" property
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object's @@unscopables property
+FAIL VideoTrackGenerator interface: attribute writable assert_true: The prototype object must have a property "writable" expected true got false
+PASS VideoTrackGenerator interface: attribute muted
+FAIL VideoTrackGenerator interface: attribute track assert_true: The prototype object must have a property "track" expected true got false
+PASS VideoTrackGenerator must be primary interface of new VideoTrackGenerator()
+PASS Stringification of new VideoTrackGenerator()
+FAIL VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "writable" with the proper type assert_inherits: property "writable" not found in prototype chain
+PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "muted" with the proper type
+FAIL VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "track" with the proper type assert_inherits: property "track" not found in prototype chain
+

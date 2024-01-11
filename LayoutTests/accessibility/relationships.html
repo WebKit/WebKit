@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<!-- N.B. The variety of whitespace chars separating the ids is deliberate -->
+<div tabindex="0" id="test" role="group"
+    aria-flowto="flowto1	flowto2"
+    aria-owns="owned1 	 	 owned2"
+    aria-controls="controlled1
+                  controlled2"
+    aria-details="details"
+    aria-labelledby="label1 label2"
+    aria-describedby="description1 description2"
+    aria-invalid="true"
+    aria-errormessage="error">
+</div>
+<div id="owned1" role="button">owned 1</div>
+<div id="owned2" role="radio">owned 2</div>
+<div id="controlled1" role="group" aria-label="controlled 1"></div>
+<div id="controlled2" role="group" aria-label="controlled 2"></div>
+<p id="label1">label 1</p>
+<div id="label2">label 2</div>
+<p id="description1">description 1</p>
+<div id="description2">description 2</div>
+<div tabindex="0" id="flowto1" role="group" aria-label="next group (1 of 2)" aria-describedby="description1"></div>
+<div tabindex="0" id="flowto2" role="group" aria-label="next group (2 of 2)" aria-describedby="description2"></div>
+<div id="details">Detailed descriptive information.</div>
+<div id="error">Information about the error.</div>
+</div>
+
+<script>
+let output = "This verifies the exposure of aria-properties via accessible relations.\n\n";
+
+if (window.accessibilityController) {
+    let axElement = accessibilityController.accessibleElementById("test");
+
+    var owned = axElement.ariaOwnsElementAtIndex(0);
+    var owner = owned.ownerElementAtIndex(0);
+    output += expect("owned.domIdentifier", "'owned1'");
+    output += expect("owner.domIdentifier", "'test'");
+
+    owned = axElement.ariaOwnsElementAtIndex(1);
+    owner = owned.ownerElementAtIndex(0);
+    output += expect("owned.domIdentifier", "'owned2'");
+    output += expect("owner.domIdentifier", "'test'");
+
+    var controlled = axElement.ariaControlsElementAtIndex(0);
+    var controller = controlled.controllerElementAtIndex(0);
+    output += expect("controlled.domIdentifier", "'controlled1'");
+    output += expect("controller.domIdentifier", "'test'");
+
+    controlled = axElement.ariaControlsElementAtIndex(1);
+    controller = controlled.controllerElementAtIndex(0);
+    output += expect("controlled.domIdentifier", "'controlled2'");
+    output += expect("controller.domIdentifier", "'test'");
+
+    var labelledBy = axElement.ariaLabelledByElementAtIndex(0);
+    var label = labelledBy.labelForElementAtIndex(0);
+    output += expect("labelledBy.domIdentifier", "'label1'");
+    output += expect("label.domIdentifier", "'test'");
+
+    labelledBy = axElement.ariaLabelledByElementAtIndex(1);
+    label = labelledBy.labelForElementAtIndex(0);
+    output += expect("labelledBy.domIdentifier", "'label2'");
+    output += expect("label.domIdentifier", "'test'");
+
+    var description = axElement.ariaDescribedByElementAtIndex(0);
+    var descriptionFor = description.descriptionForElementAtIndex(0);
+    var alsoDescriptionFor = description.descriptionForElementAtIndex(1);
+    output += expect("description.domIdentifier", "'description1'");
+    output += expect("descriptionFor.domIdentifier", "'test'");
+    output += expect("alsoDescriptionFor.domIdentifier", "'flowto1'");
+
+    description = axElement.ariaDescribedByElementAtIndex(1);
+    descriptionFor = description.descriptionForElementAtIndex(0);
+    alsoDescriptionFor = description.descriptionForElementAtIndex(1);
+    output += expect("description.domIdentifier", "'description2'");
+    output += expect("descriptionFor.domIdentifier", "'test'");
+    output += expect("alsoDescriptionFor.domIdentifier", "'flowto2'");
+
+    var flowTo = axElement.ariaFlowToElementAtIndex(0);
+    var flowFrom = flowTo.flowFromElementAtIndex(0);
+    output += expect("flowTo.domIdentifier", "'flowto1'");
+    output += expect("flowFrom.domIdentifier", "'test'");
+
+    flowTo = axElement.ariaFlowToElementAtIndex(1);
+    flowFrom = flowTo.flowFromElementAtIndex(0);
+    output += expect("flowTo.domIdentifier", "'flowto2'");
+    output += expect("flowFrom.domIdentifier", "'test'");
+
+    var details = axElement.ariaDetailsElementAtIndex(0);
+    var detailsFor = details.detailsForElementAtIndex(0);
+    output += expect("details.domIdentifier", "'details'");
+    output += expect("detailsFor.domIdentifier", "'test'");
+
+    var error = axElement.ariaErrorMessageElementAtIndex(0);
+    var errorFor = error.errorMessageForElementAtIndex(0);
+    output += expect("error.domIdentifier", "'error'");
+    output += expect("errorFor.domIdentifier", "'test'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

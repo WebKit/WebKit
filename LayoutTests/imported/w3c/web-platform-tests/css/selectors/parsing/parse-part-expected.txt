@@ -10,10 +10,10 @@ PASS "::part(foo):hover" should be a valid selector
 PASS "::part(foo):focus-within" should be a valid selector
 PASS "::part(foo)::before" should be a valid selector
 PASS "::part(foo)::after" should be a valid selector
-FAIL "::part(foo)::placeholder" should be a valid selector '::part(foo)::placeholder' is not a valid selector.
+PASS "::part(foo)::placeholder" should be a valid selector
 PASS "::part(foo)::first-line" should be a valid selector
 PASS "::part(foo)::first-letter" should be a valid selector
-FAIL "::part(foo)::file-selector-button" should be a valid selector '::part(foo)::file-selector-button' is not a valid selector.
+PASS "::part(foo)::file-selector-button" should be a valid selector
 PASS "::part(foo):is(:focus)" should be a valid selector
 PASS ":lang(en)::part(foo)" should be a valid selector
 PASS ":dir(ltr)::part(foo)" should be a valid selector

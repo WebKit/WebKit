@@ -28,8 +28,6 @@
 #include "config.h"
 #include "CryptoAlgorithmPBKDF2.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
 #include "GCryptUtilities.h"
@@ -66,5 +64,3 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(const Cry
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

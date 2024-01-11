@@ -29,7 +29,8 @@
 #include "config.h"
 #include "FELighting.h"
 
-#include "FELightingSoftwareApplier.h"
+#include "FELightingNeonParallelApplier.h"
+#include "FELightingSoftwareParallelApplier.h"
 #include "Filter.h"
 
 namespace WebCore {
@@ -103,7 +104,11 @@ FloatRect FELighting::calculateImageRect(const Filter& filter, std::span<const F
 
 std::unique_ptr<FilterEffectApplier> FELighting::createSoftwareApplier() const
 {
-    return FilterEffectApplier::create<FELightingSoftwareApplier>(*this);
+#if (CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE))
+    return FilterEffectApplier::create<FELightingNeonParallelApplier>(*this);
+#else
+    return FilterEffectApplier::create<FELightingSoftwareParallelApplier>(*this);
+#endif
 }
 
 } // namespace WebCore

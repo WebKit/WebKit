@@ -55,7 +55,7 @@ static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameSet);
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
-    : RenderBox(Type::FrameSet, frameSet, WTFMove(style), { })
+    : RenderBox(Type::FrameSet, frameSet, WTFMove(style))
     , m_isResizing(false)
 {
     ASSERT(isRenderFrameSet());

@@ -316,7 +316,6 @@ bool CGPDFDocumentIsTaggedPDF(CGPDFDocumentRef);
 CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
 void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
 bool CGContextGetAllowsFontSubpixelPositioning(CGContextRef);
-bool CGContextDrawsWithCorrectShadowOffsets(CGContextRef);
 CGPatternRef CGPatternCreateWithImage2(CGImageRef, CGAffineTransform, CGPatternTiling);
 
 CGContextDelegateRef CGContextDelegateCreate(void* info);

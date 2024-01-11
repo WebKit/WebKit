@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,7 @@ template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAp
 // Shared by the other extendBuffer functions.
 template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppendingSlowCase(unsigned requiredLength)
 {
-    ASSERT(!hasOverflowed());
-    if (!requiredLength)
+    if (!requiredLength || hasOverflowed())
         return nullptr;
     reallocateBuffer(expandedCapacity(capacity(), requiredLength));
     if (UNLIKELY(hasOverflowed()))

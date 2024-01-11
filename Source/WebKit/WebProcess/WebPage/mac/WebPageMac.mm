@@ -96,7 +96,6 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
-#import <WebCore/ThemeMac.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -621,7 +620,7 @@ void WebPage::setBottomOverhangImage(WebImage* image)
 
 void WebPage::setUseFormSemanticContext(bool useFormSemanticContext)
 {
-    ThemeMac::setUseFormSemanticContext(useFormSemanticContext);
+    RenderTheme::singleton().setUseFormSemanticContext(useFormSemanticContext);
 }
 
 void WebPage::semanticContextDidChange(bool useFormSemanticContext)

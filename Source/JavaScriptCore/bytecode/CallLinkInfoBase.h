@@ -25,11 +25,28 @@
 
 #pragma once
 
+#include "JSCPtrTag.h"
+#include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
 
+class CodeBlock;
+class JSCell;
 class VM;
+
+class CallSlot {
+public:
+    JSCell* m_calleeOrExecutable { nullptr };
+    uint32_t m_count { 0 };
+    CodePtr<JSEntryPtrTag> m_target;
+    CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_target is changed.
+
+    static ptrdiff_t offsetOfCalleeOrExecutable() { return OBJECT_OFFSETOF(CallSlot, m_calleeOrExecutable); }
+    static ptrdiff_t offsetOfCount() { return OBJECT_OFFSETOF(CallSlot, m_count); }
+    static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(CallSlot, m_target); }
+    static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(CallSlot, m_codeBlock); }
+};
 
 class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:

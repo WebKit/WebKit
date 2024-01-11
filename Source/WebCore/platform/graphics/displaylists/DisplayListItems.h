@@ -591,9 +591,8 @@ class DrawNativeImage {
 public:
     static constexpr char name[] = "draw-native-image";
 
-    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
         : m_imageIdentifier(imageIdentifier)
-        , m_imageSize(imageSize)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
         , m_options(options)
@@ -601,7 +600,6 @@ public:
     }
 
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
-    FloatSize imageSize() const { return m_imageSize; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
     const FloatRect& source() const { return m_srcRect; }
     ImagePaintingOptions options() const { return m_options; }
@@ -614,7 +612,6 @@ public:
 
 private:
     RenderingResourceIdentifier m_imageIdentifier;
-    FloatSize m_imageSize;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -950,7 +947,27 @@ public:
 
 private:
     FloatRect m_rect;
-    mutable Ref<Gradient> m_gradient; // FIXME: Make this not mutable
+    Ref<Gradient> m_gradient;
+};
+
+class FillRectWithGradientAndSpaceTransform {
+public:
+    static constexpr char name[] = "fill-rect-with-gradient-and-space-transform";
+
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&);
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&);
+
+    const FloatRect& rect() const { return m_rect; }
+    const Ref<Gradient>& gradient() const { return m_gradient; }
+    const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransform; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    FloatRect m_rect;
+    Ref<Gradient> m_gradient;
+    AffineTransform m_gradientSpaceTransform;
 };
 
 class FillCompositedRect {

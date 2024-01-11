@@ -65,7 +65,6 @@ my (
     $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
-    $cssCompositingSupport,
     $cssDeviceAdaptationSupport,
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
@@ -105,7 +104,6 @@ my (
     $macGestureEventsSupport,
     $mathmlSupport,
     $mediaCaptureSupport,
-    $mediaControlsScriptSupport,
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
@@ -159,7 +157,6 @@ my (
     $webAudioSupport,
     $webAuthNSupport,
     $webCodecsSupport,
-    $webCryptoSupport,
     $webRTCSupport,
     $webdriverKeyboardInteractionsSupport,
     $webdriverMouseInteractionsSupport,
@@ -214,9 +211,6 @@ my @features = (
 
     { option => "context-menus", desc => "Toggle Context Menu support",
       define => "ENABLE_CONTEXT_MENUS", value => \$contextMenusSupport },
-
-    { option => "css-compositing", desc => "Toggle CSS Compositing support",
-      define => "ENABLE_CSS_COMPOSITING", value => \$cssCompositingSupport },
 
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
@@ -319,9 +313,6 @@ my @features = (
 
     { option => "media-capture", desc => "Toggle Media Capture support",
       define => "ENABLE_MEDIA_CAPTURE", value => \$mediaCaptureSupport },
-
-    { option => "media-controls-script", desc => "Toggle definition of media controls in Javascript",
-      define => "ENABLE_MEDIA_CONTROLS_SCRIPT", value => \$mediaControlsScriptSupport },
 
     { option => "media-source", desc => "Toggle Media Source support",
       define => "ENABLE_MEDIA_SOURCE", value => \$mediaSourceSupport },
@@ -475,9 +466,6 @@ my @features = (
 
     { option => "web-authn", desc => "Toggle Web AuthN support",
       define => "ENABLE_WEB_AUTHN", value => \$webAuthNSupport },
-
-    { option => "web-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
-      define => "ENABLE_WEB_CRYPTO", value => \$webCryptoSupport },
 
     { option => "web-codecs", desc => "Toggle WebCodecs support",
       define => "ENABLE_WEB_CODECS", value => \$webCodecsSupport },

@@ -1,0 +1,16 @@
+Tests that tables with a single row of all headers are not exposed as data tables.
+
+PASS: !accessibilityController.accessibleElementById('table1') === true
+
+Adding another row to #table1...
+
+#table1 is not ignored.
+PASS: table.role === 'AXRole: AXTable'
+PASS: table.columnCount === 2
+PASS: table.rowCount === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cell 1	Cell 2
+Cell 3	Cell 4

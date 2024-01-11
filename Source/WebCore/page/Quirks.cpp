@@ -955,7 +955,7 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
 }
 
 // smoothscroll JS library rdar://52712513
-bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType)
+bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const EventTypeInfo& eventType)
 {
     auto eventTargetIsRoot = [](const EventTarget& eventTarget) {
         if (is<LocalDOMWindow>(eventTarget))
@@ -972,7 +972,7 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
         return downcast<Document>(eventTarget.scriptExecutionContext());
     };
 
-    if (eventNames().isTouchScrollBlockingEventType(eventType)) {
+    if (eventType.isInCategory(EventCategory::TouchScrollBlocking)) {
         if (eventTargetIsRoot(eventTarget)) {
             if (auto* document = documentFromEventTarget(eventTarget))
                 return document->settings().passiveTouchListenersAsDefaultOnDocument();
@@ -980,7 +980,7 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
         return false;
     }
 
-    if (eventNames().isWheelEventType(eventType)) {
+    if (eventType.isInCategory(EventCategory::Wheel)) {
         if (eventTargetIsRoot(eventTarget)) {
             if (auto* document = documentFromEventTarget(eventTarget))
                 return document->settings().passiveWheelListenersAsDefaultOnDocument();

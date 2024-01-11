@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoUtilitiesCocoa.h"
 
-#if ENABLE(WEB_CRYPTO) || ENABLE(WEB_RTC)
-
 #include "CryptoAlgorithmAES_CTR.h"
 #include <CommonCrypto/CommonCrypto.h>
 
@@ -176,5 +174,3 @@ Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, const uint8
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

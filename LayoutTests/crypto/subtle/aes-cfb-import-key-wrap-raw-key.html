@@ -21,6 +21,9 @@ var aesCfbParams = {
 }
 var expectWrappedKey = "8707ee311f6e8ed157885a7fc25f0ee7";
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["wrapKey"]).then(function(result) {
     wrappingKey = result;
     return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt"]);

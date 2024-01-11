@@ -54,17 +54,17 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-using DOMNodeHandleCache = WeakHashMap<Node, CheckedPtr<InjectedBundleNodeHandle>, WeakPtrImplWithEventTargetData>;
+using DOMNodeHandleCache = WeakHashMap<Node, WeakRef<InjectedBundleNodeHandle>, WeakPtrImplWithEventTargetData>;
 
 static DOMNodeHandleCache& domNodeHandleCache()
 {
@@ -93,7 +93,7 @@ Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node& node)
 
     auto nodeHandle = InjectedBundleNodeHandle::create(node);
     if (nodeHandle->coreNode())
-        domNodeHandleCache().add(*nodeHandle->coreNode(), nodeHandle.ptr());
+        domNodeHandleCache().add(*nodeHandle->coreNode(), nodeHandle.get());
     return nodeHandle;
 }
 

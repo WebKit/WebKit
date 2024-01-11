@@ -52,6 +52,11 @@ public:
 
     void loadDeferredFrame();
 
+#if ENABLE(FULLSCREEN_API)
+    bool hasIFrameFullscreenFlag() const { return m_IFrameFullscreenFlag; }
+    void setIFrameFullscreenFlag(bool value) { m_IFrameFullscreenFlag = value; }
+#endif
+
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
@@ -70,6 +75,9 @@ private:
 
     std::unique_ptr<DOMTokenList> m_sandbox;
     mutable std::optional<FeaturePolicy> m_featurePolicy;
+#if ENABLE(FULLSCREEN_API)
+    bool m_IFrameFullscreenFlag { false };
+#endif
     std::unique_ptr<LazyLoadFrameObserver> m_lazyLoadFrameObserver;
 };
 

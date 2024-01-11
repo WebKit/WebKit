@@ -31,7 +31,6 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
     SourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers, uint64_t extraMemory) -> ()
     SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
-    SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()
     SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 }

@@ -70,7 +70,7 @@ inline void traverseRuleFeatures(Element& element, TraverseFunction&& function)
 
     auto mayAffectShadowTree = [&] {
         if (element.shadowRoot() && element.shadowRoot()->isUserAgentShadowRoot()) {
-            if (ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return style.hasShadowPseudoElementRules(); }))
+            if (ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return style.hasUserAgentPartRules(); }))
                 return true;
 #if ENABLE(VIDEO)
             if (element.isMediaElement() && ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.cuePseudoRules().isEmpty(); }))

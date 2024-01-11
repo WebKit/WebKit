@@ -67,6 +67,10 @@ struct GPUProcessPreferences {
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     std::optional<bool> useSCContentSharingPicker;
 #endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    std::optional<bool> mediaCapabilityGrantsEnabled;
+#endif
 };
 
 } // namespace WebKit

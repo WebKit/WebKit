@@ -456,6 +456,10 @@ bool doesGC(Graph& graph, Node* node)
 #endif // not ASSERT_ENABLED
         return true;
 
+    case ToIntegerOrInfinity:
+    case ToLength:
+        return node->child1().useKind() == UntypedUse;
+
     case GlobalIsNaN:
         return node->child1().useKind() != DoubleRepUse;
 

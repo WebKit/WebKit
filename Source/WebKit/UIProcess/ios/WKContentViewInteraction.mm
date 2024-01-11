@@ -323,11 +323,11 @@ static NSArray<NSString *> *supportedPlainTextPasteboardTypes()
     return supportedTypes.get().get();
 }
 
-static NSArray<NSString *> *supportedRichTextPasteboardTypes()
+static NSArray<NSString *> *supportedRichTextPasteboardTypesForPasteConfiguration()
 {
     static NeverDestroyed supportedTypes = [] {
         auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObject:WebCore::WebArchivePboardType];
+        [types addObject:UTTypeWebArchive.identifier];
         [types addObjectsFromArray:UIPasteboardTypeListImage];
         [types addObjectsFromArray:supportedPlainTextPasteboardTypes()];
         return types;
@@ -335,13 +335,24 @@ static NSArray<NSString *> *supportedRichTextPasteboardTypes()
     return supportedTypes.get().get();
 }
 
-#if HAVE(UI_PASTE_CONFIGURATION)
-
-static NSArray<NSString *> *supportedRichTextPasteboardTypesWithAttachments()
+static NSArray<NSString *> *supportedRichTextPasteboardTypes()
 {
     static NeverDestroyed supportedTypes = [] {
         auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObjectsFromArray:supportedRichTextPasteboardTypes()];
+        [types addObject:WebCore::WebArchivePboardType];
+        [types addObjectsFromArray:supportedRichTextPasteboardTypesForPasteConfiguration()];
+        return types;
+    }();
+    return supportedTypes.get().get();
+}
+
+#if HAVE(UI_PASTE_CONFIGURATION)
+
+static NSArray<NSString *> *supportedRichTextPasteboardTypesWithAttachmentsForPasteConfiguration()
+{
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObjectsFromArray:supportedRichTextPasteboardTypesForPasteConfiguration()];
         [types addObjectsFromArray:WebCore::Pasteboard::supportedFileUploadPasteboardTypes()];
         return types;
     }();
@@ -1377,8 +1388,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UI_PASTE_CONFIGURATION)
     self.pasteConfiguration = adoptNS([[UIPasteConfiguration alloc] initWithAcceptableTypeIdentifiers:[&] {
         if (_page->preferences().attachmentElementEnabled())
-            return WebKit::supportedRichTextPasteboardTypesWithAttachments();
-        return WebKit::supportedRichTextPasteboardTypes();
+            return WebKit::supportedRichTextPasteboardTypesWithAttachmentsForPasteConfiguration();
+        return WebKit::supportedRichTextPasteboardTypesForPasteConfiguration();
     }()]).get();
 #endif
 
@@ -1468,6 +1479,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _isHandlingActiveKeyEvent = NO;
     _isHandlingActivePressesEvent = NO;
     _isDeferringKeyEventsToInputMethod = NO;
+    _usingMouseDragForSelection = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -2698,13 +2710,14 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
-    if ([_webView _isEditable] && !self._disableAutomaticKeyboardUI)
-        return YES;
-
+    BOOL webViewIsEditable = [_webView _isEditable];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!webViewIsEditable && self.shouldUseAsyncInteractions)
         return [super _requiresKeyboardWhenFirstResponder];
 #endif
+
+    if (webViewIsEditable && !self._disableAutomaticKeyboardUI)
+        return YES;
 
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
@@ -3244,20 +3257,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (scrollView.dragging || scrollView.decelerating)
             return YES;
 
-        if (UIPanGestureRecognizer *panGesture = scrollView.panGestureRecognizer) {
-            switch (panGesture.state) {
-            case UIGestureRecognizerStateBegan:
-            case UIGestureRecognizerStateChanged:
-            case UIGestureRecognizerStateEnded:
-                return YES;
-            case UIGestureRecognizerStatePossible:
-            case UIGestureRecognizerStateCancelled:
-            case UIGestureRecognizerStateFailed:
-                return NO;
-            }
-        }
-        ASSERT_NOT_REACHED();
-        return NO;
+        auto *panGesture = scrollView.panGestureRecognizer;
+        ASSERT(panGesture);
+        return [panGesture _wk_hasRecognizedOrEnded];
     }];
 }
 
@@ -3485,18 +3487,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (_suppressNonEditableSingleTapTextInteractionCount > 0)
                 return NO;
 
-            switch (self.textInteractionLoupeGestureRecognizer.state) {
-            case UIGestureRecognizerStateBegan:
-            case UIGestureRecognizerStateChanged:
-            case UIGestureRecognizerStateEnded: {
+            if (self.textInteractionLoupeGestureRecognizer._wk_hasRecognizedOrEnded) {
                 // Avoid handling one-finger taps while the web process is processing certain selection changes.
                 // This works around a scenario where UIKeyboardImpl blocks the main thread while handling a one-
                 // finger tap, which subsequently prevents the UI process from handling any incoming IPC messages.
                 return NO;
             }
-            default:
-                return _page->editorState().selectionIsRange;
-            }
+            return _page->editorState().selectionIsRange;
         }
     }
 
@@ -3840,6 +3837,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
+    [self _internalClearSelection];
+}
+
+- (void)_internalClearSelection
+{
     [self _elementDidBlur];
     _page->clearSelection();
 }
@@ -5444,6 +5446,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    _usingMouseDragForSelection = [_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded;
+#endif
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
@@ -5464,35 +5469,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    logTextInteraction(__PRETTY_FUNCTION__, self.textInteractionLoupeGestureRecognizer, point);
-
-    _autocorrectionContextNeedsUpdate = YES;
-
-    auto hasRecognizedOrEnded = [](UIGestureRecognizer *gestureRecognizer) {
-        switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan:
-        case UIGestureRecognizerStateChanged:
-        case UIGestureRecognizerStateEnded:
-            return true;
-        case UIGestureRecognizerStatePossible:
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateFailed:
-            return false;
-        }
-        ASSERT_NOT_REACHED();
-        return false;
-    };
-
-    auto triggeredByFloatingCursor = !hasRecognizedOrEnded(self.textInteractionLoupeGestureRecognizer)
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        && !hasRecognizedOrEnded([_mouseInteraction mouseTouchGestureRecognizer])
-#endif
-        && !hasRecognizedOrEnded(self.textInteractionTapGestureRecognizer);
-
-    auto respectSelectionAnchor = triggeredByFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
-        selectionHandler(endIsMoving);
-    });
+    [self updateSelectionWithExtentPoint:point withBoundary:UITextGranularityCharacter completionHandler:completionHandler];
 }
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
@@ -5500,9 +5477,24 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     logTextInteraction(__PRETTY_FUNCTION__, self.textInteractionLoupeGestureRecognizer, point);
 
     _autocorrectionContextNeedsUpdate = YES;
+
+    if (granularity == UITextGranularityCharacter && !_usingMouseDragForSelection) {
+        auto triggeredByFloatingCursor = !self.textInteractionLoupeGestureRecognizer._wk_hasRecognizedOrEnded
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+            && ![_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded
+#endif
+            && !self.textInteractionTapGestureRecognizer._wk_hasRecognizedOrEnded;
+
+        auto respectSelectionAnchor = triggeredByFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
+        _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
+            selectionHandler(static_cast<BOOL>(endIsMoving));
+        });
+        return;
+    }
+
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
-        completionHandler(endIsMoving);
+        completionHandler(static_cast<BOOL>(endIsMoving));
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
     });
 }
@@ -5950,9 +5942,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 {
     [self _updateInternalStateBeforeSelectionChange];
 
-#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
     if (self.shouldUseAsyncInteractions)
-        [_asyncSystemInputDelegate selectionWillChange:self];
+        [_asyncSystemInputDelegate selectionWillChange:static_cast<id<UIAsyncTextInputClient>>(self)];
     else
 #endif
         [self.inputDelegate selectionWillChange:self];
@@ -5973,9 +5965,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)_internalEndSelectionChange
 {
-#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
     if (self.shouldUseAsyncInteractions)
-        [_asyncSystemInputDelegate selectionDidChange:self];
+        [_asyncSystemInputDelegate selectionDidChange:static_cast<id<UIAsyncTextInputClient>>(self)];
     else
 #endif
         [self.inputDelegate selectionDidChange:self];
@@ -6149,7 +6141,7 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
     if (!self._hasFocusedElement)
         return;
 #endif
-    [self clearSelection];
+    [self _internalClearSelection];
 }
 
 - (BOOL)hasMarkedText
@@ -6841,13 +6833,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
     auto extendedTraits = dynamic_objc_cast<WKExtendedTextInputTraits>(traits);
     auto privateTraits = (id <UITextInputTraits_Private>)traits;
-    if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)]) {
+
+    BOOL isSingleLineDocument = ^{
         switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::ContentEditable:
         case WebKit::InputType::TextArea:
-            extendedTraits.singleLineDocument = NO;
-            privateTraits.isSingleLineDocument = NO;
-            break;
+        case WebKit::InputType::None:
+            return NO;
 #if ENABLE(INPUT_TYPE_COLOR)
         case WebKit::InputType::Color:
 #endif
@@ -6866,13 +6858,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         case WebKit::InputType::Time:
         case WebKit::InputType::URL:
         case WebKit::InputType::Week:
-            extendedTraits.singleLineDocument = YES;
-            privateTraits.isSingleLineDocument = YES;
-            break;
-        case WebKit::InputType::None:
-            break;
+            return YES;
         }
-    }
+    }();
+
+    if ([extendedTraits respondsToSelector:@selector(setSingleLineDocument:)])
+        extendedTraits.singleLineDocument = isSingleLineDocument;
+    else if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)])
+        privateTraits.isSingleLineDocument = isSingleLineDocument;
 
     if (_focusedElementInformation.hasEverBeenPasswordField) {
         if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])
@@ -11278,10 +11271,12 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
         if (auto lastLocation = interaction.lastLocation)
             _lastInteractionLocation = *lastLocation;
-    }
+    } else if (event.type() == WebKit::WebEventType::MouseUp) {
+        _usingMouseDragForSelection = NO;
 
-    if (event.type() == WebKit::WebEventType::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
-        [self.window makeKeyWindow];
+        if (self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+            [self.window makeKeyWindow];
+    }
 
     _page->handleMouseEvent(event);
 }
@@ -12303,14 +12298,28 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             [replacements addObject:[elementAction uiActionForElementInfo:elementInfo]];
         };
 
-        if (foundCopyItem && self.copySubjectResultForImageContextMenu)
-            addAction(_WKElementActionTypeCopyCroppedImage);
+        for (UIMenuElement *child in adjustedChildren.get()) {
+            UIAction *action = dynamic_objc_cast<UIAction>(child);
+            if (!action)
+                continue;
+
+            if ([action.identifier isEqual:elementActionTypeToUIActionIdentifier(_WKElementActionTypeCopyCroppedImage)]) {
+                if (foundCopyItem && self.copySubjectResultForImageContextMenu)
+                    action.attributes &= ~UIMenuElementAttributesDisabled;
+
+                continue;
+            }
+
+            if ([action.identifier isEqual:revealImageIdentifier]) {
+                if (self.hasVisualSearchResultsForImageContextMenu)
+                    action.attributes &= ~UIMenuElementAttributesDisabled;
+
+                continue;
+            }
+        }
 
         if (self.hasSelectableTextForImageContextMenu)
             addAction(_WKElementActionTypeImageExtraction);
-
-        if (self.hasVisualSearchResultsForImageContextMenu)
-            addAction(_WKElementActionTypeRevealImage);
 
         if (UIMenu *subMenu = self.machineReadableCodeSubMenuForImageContextMenu)
             [replacements addObject:subMenu];
@@ -12650,7 +12659,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             };
             break;
         }
-        completion(context.toPlatformContext({ }));
+        completion(context.toPlatformContext({ WebKit::DocumentEditingContextRequest::Options::Text }));
     }];
 }
 

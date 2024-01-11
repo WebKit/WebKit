@@ -234,6 +234,7 @@ page/ios/EventHandlerIOS.mm
 page/ios/FrameIOS.mm
 page/ios/WebEventRegion.mm
 page/mac/ChromeMac.mm
+page/mac/CorrectionIndicator.mm
 page/mac/DragControllerMac.mm
 page/mac/EventHandlerMac.mm
 page/mac/ImageOverlayControllerMac.mm
@@ -447,6 +448,7 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
+platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm
 platform/graphics/cocoa/controls/ControlFactoryCocoa.mm
@@ -697,8 +699,6 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 // The following files aren't unified with others to prevent them from being merged
 // with files that include system headers that include system OpenGL headers.
 
-platform/graphics/angle/ANGLEUtilities.mm @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
-platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp @no-unify
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify
 platform/graphics/cv/GraphicsContextGLCVCocoa.cpp @no-unify

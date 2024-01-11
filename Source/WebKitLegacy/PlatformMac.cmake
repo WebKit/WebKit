@@ -91,7 +91,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebCoreSupport/WebAlternativeTextClient.mm
     mac/WebCoreSupport/WebChromeClient.mm
     mac/WebCoreSupport/WebContextMenuClient.mm
-    mac/WebCoreSupport/WebDeviceOrientationClient.mm
     mac/WebCoreSupport/WebDragClient.mm
     mac/WebCoreSupport/WebEditorClient.mm
     mac/WebCoreSupport/WebFrameNetworkingContext.mm

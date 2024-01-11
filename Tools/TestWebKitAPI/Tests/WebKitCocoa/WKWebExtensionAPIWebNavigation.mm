@@ -264,6 +264,94 @@ TEST(WKWebExtensionAPIWebNavigation, OnErrorOccurredProvisionalLoadEvent)
     [manager run];
 }
 
+template<size_t length>
+String longString(LChar c)
+{
+    Vector<LChar> vector(length, c);
+    return String(vector.data(), length);
+}
+
+TEST(WKWebExtensionAPIWebNavigation, OnErrorOccurredDuringLoadEvent)
+{
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&](auto connection) -> TestWebKitAPI::Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = TestWebKitAPI::HTTPServer::parsePath(request);
+            if (path == "/"_s) {
+                const char* body = "<iframe src='/frame.html'></iframe>";
+                auto reply = makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: text/html\r\n"
+                    "Content-Length: ", strlen(body), "\r\n"
+                    "Connection: close\r\n"
+                    "\r\n", body
+                );
+                co_await connection.awaitableSend(WTFMove(reply));
+                continue;
+            }
+            if (path == "/frame.html"_s) {
+                auto response = makeString(
+                    "HTTP/1.1 200 OK\r\n",
+                    "Content-Length: 1000000\r\n"
+                    "\r\n", longString<500000>(' ')
+                );
+
+                co_await connection.awaitableSend(WTFMove(response));
+                connection.terminate();
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"async function errorListener(details) {",
+        // This should be a subframe
+        @"  browser.test.assertTrue(details.frameId != 0)",
+
+        // The URL of the frame that failed loading should include localhost and frame.
+        @"  browser.test.assertTrue(details.url.includes('localhost'))",
+        @"  browser.test.assertTrue(details.url.includes('frame'))",
+
+        @"  const frame = await browser.webNavigation.getFrame({ tabId: details.tabId, frameId: details.frameId })",
+        @"  browser.test.assertEq(frame.parentFrameId, 0)",
+        @"  browser.test.assertTrue(frame.errorOccurred)",
+
+        // And since the failure happened after the load had been committed, the frame object has the URL set as well.
+        @"  browser.test.assertTrue(frame.url.includes('localhost'))",
+        @"  browser.test.assertTrue(frame.url.includes('frame'))",
+
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webNavigation.onErrorOccurred.addListener(errorListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webNavigationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webNavigation permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebNavigation, GetMainFrame)
 {
     TestWebKitAPI::HTTPServer server({
@@ -396,6 +484,59 @@ TEST(WKWebExtensionAPIWebNavigation, GetAllFrames)
 
         // The passListener firing will consider the test passed.
         @"browser.webNavigation.onCompleted.addListener(completedListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webNavigationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webNavigation permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebNavigation, ErrorOccurred)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { HTTPResponse::TerminateConnection::Yes } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function errorListener(details) {",
+        // A subframe should have been the one to have the error.
+        @"  browser.test.assertFalse(details.frameId == 0)",
+        @"  browser.test.assertEq(details.parentFrameId, 0)",
+
+        // Get more information about the frame to verify the errorOccurred bit was set.
+        @"  browser.webNavigation.getFrame({ tabId: details.tabId, frameId: details.frameId }, function(frame) {",
+        @"    browser.test.assertEq(frame.parentFrameId, 0)",
+        @"    browser.test.assertTrue(frame.errorOccurred)",
+
+        // One thing to note here is that if the provisional load fails, there won't be a URL in the details.
+        @"    browser.test.assertEq(frame.url, '')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"}",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webNavigation.onErrorOccurred.addListener(errorListener)",
 
         // Yield after creating the listener so we can load a tab.
         @"browser.test.yield('Load Tab')"

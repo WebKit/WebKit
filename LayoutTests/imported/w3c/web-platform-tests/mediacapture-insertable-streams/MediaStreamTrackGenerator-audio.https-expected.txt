@@ -1,0 +1,17 @@
+When prompted, use the accept button to give permission to use your audio and video devices.
+
+Description
+
+This test checks that generating audio MediaStreamTracks works as expected.
+
+
+FAIL Tests that creating a Audio MediaStreamTrackGenerator works as expected promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Creating Generator with an invalid kind throws assert_throws_js: function "() => { new MediaStreamTrackGenerator({ kind: "invalid kind" }) }" threw object "ReferenceError: Can't find variable: MediaStreamTrackGenerator" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Creating Generator with a missing kind throws assert_throws_js: function "() => { new MediaStreamTrackGenerator() }" threw object "ReferenceError: Can't find variable: MediaStreamTrackGenerator" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Mismatched data and generator kind throws on write. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+FAIL Tests that audio actually flows to a connected audio element promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: MediaStreamTrackGenerator"
+

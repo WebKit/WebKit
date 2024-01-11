@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CommonCryptoUtilities.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCDigestAlgorithm& algorithm)
@@ -56,5 +54,3 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

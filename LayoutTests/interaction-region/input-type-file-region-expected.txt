@@ -12,10 +12,9 @@
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (guard (1,-8) width=84 height=38)
-        (borderRadius 0.00),
+        (guard (1,-8) width=84 height=38),
         (interaction (1,2) width=84 height=18)
-        (borderRadius 9.00)])
+        (cornerRadius 10.00)])
       )
     )
   )

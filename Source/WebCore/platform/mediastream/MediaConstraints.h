@@ -586,6 +586,8 @@ public:
         });
     }
 
+    StringConstraint isolatedCopy() const;
+
 private:
     friend struct IPC::ArgumentCoder<StringConstraint, void>;
     
@@ -615,6 +617,27 @@ private:
 
 class MediaTrackConstraintSetMap {
 public:
+    MediaTrackConstraintSetMap() = default;
+    MediaTrackConstraintSetMap(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<IntConstraint> sampleRate, std::optional<IntConstraint> sampleSize, std::optional<DoubleConstraint> aspectRatio, std::optional<DoubleConstraint> frameRate, std::optional<DoubleConstraint> volume, std::optional<BooleanConstraint> echoCancellation, std::optional<BooleanConstraint> displaySurface, std::optional<BooleanConstraint> logicalSurface, std::optional<StringConstraint>&& facingMode, std::optional<StringConstraint>&& deviceId, std::optional<StringConstraint>&& groupId, std::optional<StringConstraint>&& whiteBalanceMode, std::optional<DoubleConstraint> zoom, std::optional<BooleanConstraint> torch)
+        : m_width(width)
+        , m_height(height)
+        , m_sampleRate(sampleRate)
+        , m_sampleSize(sampleSize)
+        , m_aspectRatio(aspectRatio)
+        , m_frameRate(frameRate)
+        , m_volume(volume)
+        , m_echoCancellation(echoCancellation)
+        , m_displaySurface(displaySurface)
+        , m_logicalSurface(logicalSurface)
+        , m_facingMode(facingMode)
+        , m_deviceId(WTFMove(deviceId))
+        , m_groupId(WTFMove(groupId))
+        , m_whiteBalanceMode(WTFMove(whiteBalanceMode))
+        , m_zoom(zoom)
+        , m_torch(torch)
+    {
+    }
+
     WEBCORE_EXPORT void forEach(Function<void(const MediaConstraint&)>&&) const;
     void filter(const Function<bool(const MediaConstraint&)>&) const;
     bool isEmpty() const;
@@ -645,6 +668,8 @@ public:
     std::optional<StringConstraint> whiteBalanceMode() const { return m_whiteBalanceMode; }
     std::optional<DoubleConstraint> zoom() const { return m_zoom; }
     std::optional<BooleanConstraint> torch() const { return m_torch; }
+
+    MediaTrackConstraintSetMap isolatedCopy() const;
 
 private:
     friend struct IPC::ArgumentCoder<MediaTrackConstraintSetMap, void>;
@@ -818,8 +843,10 @@ struct MediaConstraints {
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;
     bool isValid { false };
+
+    MediaConstraints isolatedCopy() const;
 };
-    
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_MEDIACONSTRAINT(ConstraintType, predicate) \

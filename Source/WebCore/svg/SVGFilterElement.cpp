@@ -136,10 +136,11 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 {
     using namespace ElementNames;
 
-    if (!child.isSVGElement())
+    auto* childElement = dynamicDowncast<SVGElement>(child);
+    if (!childElement)
         return false;
 
-    switch (downcast<SVGElement>(child).elementName()) {
+    switch (childElement->elementName()) {
     case SVG::feBlend:
     case SVG::feColorMatrix:
     case SVG::feComponentTransfer:

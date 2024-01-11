@@ -60,6 +60,9 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
 
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
+
         @"const notAFunction = null",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
 
@@ -149,6 +152,9 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
         @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ 0 ] }, func: changeBackgroundColor, args: ['pink'] })",
         @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
 
+        @"  results = await browser.scripting.executeScript({target: {tabId: tabId}, func: (bool, number, string, dict, array) => { browser.test.log('supported argument types') }, args: [true, 10, 'string', { }, [ ]]})",
+        @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
+
         @"  await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: changeBackgroundColor, args: ['blue'] })",
         @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: getBackgroundColor })",
         @"  browser.test.assertEq(results[0].result, blueValue)",
@@ -173,6 +179,51 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
     auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const tabId = details.tabId",
+
+        @"  const expectedResult = { 'boolean': true, 'number': 42, 'string': 'Test String', 'object': { 'key': 'value' }, 'array': [1, 2, 3] }",
+
+        @"  function returnJSONTypes() {",
+        @"    return { 'boolean': true, 'number': 42, 'string': 'Test String', 'object': { 'key': 'value' }, 'array': [1, 2, 3] };",
+        @"  }",
+
+        @"  const results = await browser.scripting.executeScript({",
+        @"    target: { tabId: tabId, allFrames: false },",
+        @"    func: returnJSONTypes",
+        @"  });",
+
+        @"  browser.test.assertDeepEq(results?.[0]?.result, expectedResult);",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager loadAndRun];
 

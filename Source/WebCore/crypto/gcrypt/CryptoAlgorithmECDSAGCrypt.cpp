@@ -28,8 +28,6 @@
 #include "config.h"
 #include "CryptoAlgorithmECDSA.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
 #include "GCryptUtilities.h"
@@ -187,5 +185,3 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

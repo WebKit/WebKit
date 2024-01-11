@@ -81,6 +81,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
+#include "RenderTreeBuilderRuby.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
@@ -116,8 +117,8 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<RenderElementType> flags)
-    : RenderObject(type, elementOrDocument, flags)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+    : RenderObject(type, elementOrDocument, flags, typeSpecificFlags)
     , m_firstChild(nullptr)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
@@ -140,13 +141,13 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     ASSERT(RenderObject::isRenderElement());
 }
 
-RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
-RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
@@ -780,7 +781,13 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (is<RenderFragmentedFlow>(elementChild.get()))
             continue;
 
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild->style().display());
+        auto newStyle = [&] {
+            auto display = elementChild->style().display();
+            if (display == DisplayType::RubyBase || display == DisplayType::Ruby)
+                return createAnonymousStyleForRuby(style(), display);
+            return RenderStyle::createAnonymousStyleWithDisplay(style(), display);
+        }();
+
         if (style().specifiesColumns()) {
             if (elementChild->style().specifiesColumns())
                 newStyle.inheritColumnPropertiesFrom(style());
@@ -1019,7 +1026,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     bool shouldCheckIfInAncestorChain = false;
     if (frame().settings().cssScrollAnchoringEnabled() && (style().outOfFlowPositionStyleDidChange(oldStyle) || (shouldCheckIfInAncestorChain = style().scrollAnchoringSuppressionStyleDidChange(oldStyle)))) {
         LOG_WITH_STREAM(ScrollAnchoring, stream << "RenderElement::styleDidChange() found node with style change: " << *this << " from: " << oldStyle->position() <<" to: " << style().position());
-        auto* controller = findScrollAnchoringControllerForRenderer(*this);
+        auto* controller = searchParentChainForScrollAnchoringController(*this);
         if (controller && (!shouldCheckIfInAncestorChain || (shouldCheckIfInAncestorChain && controller->isInScrollAnchoringAncestorChain(*this))))
             controller->notifyChildHadSuppressingStyleChange();
     }
@@ -1660,18 +1667,8 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
     return WTFMove(resolvedStyle->style);
 }
 
-const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) const
+RenderElement* RenderElement::rendererForPseudoStyleAcrossShadowBoundary() const
 {
-    if (isAnonymous())
-        return nullptr;
-
-    if (auto* pseudoStyle = getCachedPseudoStyle(pseudoId)) {
-        // We intentionally return the pseudo style here if it exists before ascending to the
-        // shadow host element. This allows us to apply selection pseudo styles in user agent
-        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
-        return pseudoStyle;
-    }
-
     if (RefPtr root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
             RefPtr currentElement = element()->shadowHost();
@@ -1679,10 +1676,28 @@ const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) cons
             // and its children will render as children of the parent element.
             while (currentElement && currentElement->hasDisplayContents())
                 currentElement = currentElement->parentElement();
-            if (currentElement && currentElement->renderer())
-                return currentElement->renderer()->getCachedPseudoStyle(pseudoId);
+            if (currentElement)
+                return currentElement->renderer();
         }
     }
+
+    return nullptr;
+}
+
+const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) const
+{
+    if (isAnonymous())
+        return nullptr;
+
+    if (auto* pseudoStyle = getCachedPseudoStyle(pseudoId)) {
+        // We intentionally return the pseudo style here if it exists before ascending to the
+        // shadow host element. This allows us to apply pseudo styles in user agent shadow
+        // roots, instead of always deferring to the shadow host's selection pseudo style.
+        return pseudoStyle;
+    }
+
+    if (auto* renderer = rendererForPseudoStyleAcrossShadowBoundary())
+        return renderer->getCachedPseudoStyle(pseudoId);
 
     return nullptr;
 }
@@ -1695,7 +1710,7 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
-    if (auto* pseudoStyle = selectionPseudoStyle()) {
+    if (auto pseudoStyle = selectionPseudoStyle()) {
         Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
@@ -1707,9 +1722,22 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     return theme().inactiveSelectionForegroundColor(styleColorOptions());
 }
 
-const RenderStyle* RenderElement::selectionPseudoStyle() const
+std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 {
-    return textSegmentPseudoStyle(PseudoId::Selection);
+    if (isAnonymous())
+        return nullptr;
+
+    if (auto selectionStyle = getUncachedPseudoStyle({ PseudoId::Selection })) {
+        // We intentionally return the pseudo selection style here if it exists before ascending to
+        // the shadow host element. This allows us to apply selection pseudo styles in user agent
+        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
+        return selectionStyle;
+    }
+
+    if (auto* renderer = rendererForPseudoStyleAcrossShadowBoundary())
+        return renderer->getUncachedPseudoStyle({ PseudoId::Selection });
+
+    return nullptr;
 }
 
 Color RenderElement::selectionForegroundColor() const
@@ -1735,7 +1763,7 @@ Color RenderElement::selectionBackgroundColor() const
         pseudoStyleCandidate = pseudoStyleCandidate->firstNonAnonymousAncestor();
 
     if (pseudoStyleCandidate) {
-        auto* pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
+        auto pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
         if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
             return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
     }
@@ -2031,7 +2059,7 @@ ImageOrientation RenderElement::imageOrientation() const
 
 void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     // Make sure we invalidate the containing block cache for flows when the contianing block context changes
@@ -2063,7 +2091,7 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
 
 void RenderElement::removeFromRenderFragmentedFlow()
 {
-    ASSERT(fragmentedFlowState() != NotInsideFragmentedFlow);
+    ASSERT(fragmentedFlowState() != FragmentedFlowState::NotInsideFlow);
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
     // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.
@@ -2084,7 +2112,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
             continue;
         }
         if (shouldUpdateState)
-            child->setFragmentedFlowState(NotInsideFragmentedFlow);
+            child->setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
     }
 
     // We have to ask for our containing flow thread as it may be above the removed sub-tree.
@@ -2092,7 +2120,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
     while (enclosingFragmentedFlow) {
         enclosingFragmentedFlow->removeFlowChildInfo(*this);
 
-        if (enclosingFragmentedFlow->fragmentedFlowState() == NotInsideFragmentedFlow)
+        if (enclosingFragmentedFlow->fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
             break;
         auto* parent = enclosingFragmentedFlow->parent();
         if (!parent)
@@ -2103,7 +2131,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
         downcast<RenderBlock>(*this).setCachedEnclosingFragmentedFlowNeedsUpdate();
 
     if (shouldUpdateState)
-        setFragmentedFlowState(NotInsideFragmentedFlow);
+        setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
 }
 
 void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)

@@ -51,8 +51,8 @@ struct Styleable {
 
     static const Styleable fromElement(Element& element)
     {
-        if (is<PseudoElement>(element))
-            return Styleable(*downcast<PseudoElement>(element).hostElement(), element.pseudoId());
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
+            return Styleable(*pseudoElement->hostElement(), element.pseudoId());
         return Styleable(element, element.pseudoId());
     }
 

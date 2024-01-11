@@ -57,7 +57,6 @@ public:
     void hostDisabledStateChanged();
 
 private:
-    static constexpr auto CreateSliderThumbElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     explicit SliderThumbElement(Document&);
     bool isSliderThumbElement() const final { return true; }
 
@@ -93,7 +92,6 @@ private:
     void unregisterForTouchEvents();
 #endif
 
-    AtomString m_shadowPseudoId;
     bool m_inDragMode { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -113,7 +111,6 @@ public:
     static Ref<SliderContainerElement> create(Document&);
 
 private:
-    static constexpr auto CreateSliderContainerElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     explicit SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool isSliderContainerElement() const final { return true; }

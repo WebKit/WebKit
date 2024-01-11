@@ -864,21 +864,6 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
     this->setStructure(vm, newStructure);
 }
 
-template<typename Functor>
-bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functor& functor)
-{
-    if (hasNonReifiedStaticProperties())
-        return false;
-
-    Structure* structure = this->structure();
-
-    if (!structure->canPerformFastPropertyEnumerationCommon())
-        return false;
-
-    structure->forEachProperty(vm, functor);
-    return true;
-}
-
 // Function forEachOwnIndexedProperty should only used in the fast path
 // for copying own non-GetterSetter indexed properties.
 template<JSObject::SortMode mode, typename Functor>

@@ -41,7 +41,7 @@ public:
 
 private:
     MathMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : MathMLElement(tagName, document, CreateMathMLElement | NodeFlag::IsUnknownElement)
+        : MathMLElement(tagName, document, TypeFlag::IsUnknownElement)
     {
     }
 

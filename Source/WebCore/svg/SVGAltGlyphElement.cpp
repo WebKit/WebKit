@@ -89,10 +89,8 @@ bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
         return true;
     }
     
-    if (!is<SVGAltGlyphDefElement>(target.element))
-        return false;
-
-    return downcast<SVGAltGlyphDefElement>(*target.element).hasValidGlyphElements(glyphNames);
+    auto* altGlyphDefElement = downcast<SVGAltGlyphDefElement>(target.element.get());
+    return altGlyphDefElement && altGlyphDefElement->hasValidGlyphElements(glyphNames);
 }
 
 }

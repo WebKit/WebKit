@@ -404,8 +404,14 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
     }
-    if (previous.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
+    if (previous.layoutBox().isListMarkerBox()) {
+        auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
+        return !listMarkerBox.isListMarkerInsideList() || !listMarkerBox.isListMarkerOutside();
+    }
+    if (next.layoutBox().isListMarkerBox()) {
+        // FIXME: SHould this ever be the case?
         return true;
+    }
     if (previous.isBox() || next.isBox()) {
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
@@ -545,6 +551,17 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     }
     InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
+}
+
+LineEndingEllipsisPolicy InlineFormattingUtils::lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed)
+{
+    if (numberOfVisibleLinesAllowed && *numberOfVisibleLinesAllowed == numberOfLinesWithInlineContent)
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+
+    // Truncation is in effect when the block container has overflow other than visible.
+    if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
+    return LineEndingEllipsisPolicy::NoEllipsis;
 }
 
 const InlineLayoutState& InlineFormattingUtils::layoutState() const

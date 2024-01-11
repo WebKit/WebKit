@@ -179,7 +179,7 @@ TEST(WTF, DragonBox_perf)
 {
     DragonBoxTest t;
 
-    size_t size = 1e4;
+    constexpr size_t size = 1e4;
     double nums1[size];
     double nums2[size];
     double nums3[size];

@@ -36,7 +36,10 @@ WaylandOutput::WaylandOutput(struct wl_output* output)
 
 WaylandOutput::~WaylandOutput()
 {
-    wl_output_destroy(m_output);
+    if (wl_output_get_version(m_output) >= WL_OUTPUT_RELEASE_SINCE_VERSION)
+        wl_output_release(m_output);
+    else
+        wl_output_destroy(m_output);
 }
 
 const struct wl_output_listener WaylandOutput::s_listener = {

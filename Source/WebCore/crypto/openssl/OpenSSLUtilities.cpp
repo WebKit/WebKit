@@ -26,8 +26,6 @@
 #include "config.h"
 #include "OpenSSLUtilities.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "OpenSSLCryptoUniquePtr.h"
 
 namespace WebCore {
@@ -133,6 +131,3 @@ AESKey::~AESKey()
 }
 
 } // namespace WebCore
-
-
-#endif // ENABLE(WEB_CRYPTO)

@@ -64,5 +64,7 @@ private:
     RenderTreeBuilder& m_builder;
 };
 
+RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, DisplayType);
+
 }
 

@@ -56,13 +56,13 @@
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentParts.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 
@@ -372,7 +372,7 @@ void TextFieldInputType::createShadowSubtree()
         m_capsLockIndicator = HTMLDivElement::create(document);
         m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_capsLockIndicator);
 
-        m_capsLockIndicator->setPseudo(ShadowPseudoIds::webkitCapsLockIndicator());
+        m_capsLockIndicator->setUserAgentPart(UserAgentParts::webkitCapsLockIndicator());
 
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
         m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
@@ -486,7 +486,7 @@ void TextFieldInputType::createDataListDropdownIndicator()
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
     m_container->appendChild(*m_dataListDropdownIndicator);
-    m_dataListDropdownIndicator->setPseudo(ShadowPseudoIds::webkitListButton());
+    m_dataListDropdownIndicator->setUserAgentPart(UserAgentParts::webkitListButton());
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
 }
 
@@ -545,15 +545,15 @@ static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButt
 {
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
-        return ShadowPseudoIds::webkitContactsAutoFillButton();
+        return UserAgentParts::webkitContactsAutoFillButton();
     case AutoFillButtonType::Credentials:
-        return ShadowPseudoIds::webkitCredentialsAutoFillButton();
+        return UserAgentParts::webkitCredentialsAutoFillButton();
     case AutoFillButtonType::StrongPassword:
-        return ShadowPseudoIds::webkitStrongPasswordAutoFillButton();
+        return UserAgentParts::webkitStrongPasswordAutoFillButton();
     case AutoFillButtonType::CreditCard:
-        return ShadowPseudoIds::webkitCreditCardAutoFillButton();
+        return UserAgentParts::webkitCreditCardAutoFillButton();
     case AutoFillButtonType::Loading:
-        return ShadowPseudoIds::webkitLoadingAutoFillButton();
+        return UserAgentParts::internalLoadingAutoFillButton();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
         return emptyAtom();
@@ -564,15 +564,15 @@ static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButt
 
 static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillButtonType autoFillButtonType)
 {
-    if (attribute == ShadowPseudoIds::webkitContactsAutoFillButton() && autoFillButtonType != AutoFillButtonType::Contacts)
+    if (attribute == UserAgentParts::webkitContactsAutoFillButton() && autoFillButtonType != AutoFillButtonType::Contacts)
         return true;
-    if (attribute == ShadowPseudoIds::webkitCredentialsAutoFillButton() && autoFillButtonType != AutoFillButtonType::Credentials)
+    if (attribute == UserAgentParts::webkitCredentialsAutoFillButton() && autoFillButtonType != AutoFillButtonType::Credentials)
         return true;
-    if (attribute == ShadowPseudoIds::webkitStrongPasswordAutoFillButton() && autoFillButtonType != AutoFillButtonType::StrongPassword)
+    if (attribute == UserAgentParts::webkitStrongPasswordAutoFillButton() && autoFillButtonType != AutoFillButtonType::StrongPassword)
         return true;
-    if (attribute == ShadowPseudoIds::webkitCreditCardAutoFillButton() && autoFillButtonType != AutoFillButtonType::CreditCard)
+    if (attribute == UserAgentParts::webkitCreditCardAutoFillButton() && autoFillButtonType != AutoFillButtonType::CreditCard)
         return true;
-    if (attribute == ShadowPseudoIds::webkitLoadingAutoFillButton() && autoFillButtonType != AutoFillButtonType::Loading)
+    if (attribute == UserAgentParts::internalLoadingAutoFillButton() && autoFillButtonType != AutoFillButtonType::Loading)
         return true;
     return false;
 }
@@ -825,7 +825,7 @@ void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelectio
 
     m_container = TextControlInnerContainer::create(element()->document());
     element()->userAgentShadowRoot()->appendChild(*m_container);
-    m_container->setPseudo(ShadowPseudoIds::webkitTextfieldDecorationContainer());
+    m_container->setUserAgentPart(UserAgentParts::webkitTextfieldDecorationContainer());
 
     m_innerBlock = TextControlInnerElement::create(element()->document());
     m_container->appendChild(*m_innerBlock);
@@ -857,7 +857,7 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
     m_autoFillButton = AutoFillButtonElement::create(element()->document(), *this);
     m_container->appendChild(*m_autoFillButton);
 
-    m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
+    m_autoFillButton->setUserAgentPart(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
     m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, HTMLNames::buttonTag->localName());
     m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { autoFillButtonTypeToAccessibilityLabel(autoFillButtonType) });
     m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
@@ -880,10 +880,10 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_autoFillButton)
             createAutoFillButton(autoFillButtonType);
 
-        const AtomString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
+        const AtomString& attribute = m_autoFillButton->userAgentPart();
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, autoFillButtonType);
         if (shouldUpdateAutoFillButtonType) {
-            m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
+            m_autoFillButton->setUserAgentPart(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
             m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { autoFillButtonTypeToAccessibilityLabel(autoFillButtonType) });
             m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
         }

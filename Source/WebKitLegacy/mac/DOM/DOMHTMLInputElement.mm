@@ -61,7 +61,6 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/JSExecState.h>
-#import <WebCore/NameNodeList.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/ThreadCheck.h>

@@ -189,8 +189,9 @@ class BinaryBundler:
                         xkb_bundled = True
                         break
                 if xkb_bundled:
-                    assert os.path.isdir(os.path.join(share_dir, 'xkb'))
-                    script_handle.write('[ -d /usr/share/X11/xkb ] || export XKB_CONFIG_ROOT="${%s}/sys/share/xkb"\n' % self.VAR_MYDIR)
+                    # FIXME: the xkb directory is only copied when --syslibs=bundle-all but not with --syslibs=generate-script and we may be including libxkbcommon.so in that case (jhbuild for example)
+                    if os.path.isdir(os.path.join(share_dir, 'xkb')):
+                        script_handle.write('[ -d /usr/share/X11/xkb ] || export XKB_CONFIG_ROOT="${%s}/sys/share/xkb"\n' % self.VAR_MYDIR)
 
             ld_library_path = '${%s}/lib' % self.VAR_MYDIR
             if os.path.isdir(syslib_dir):

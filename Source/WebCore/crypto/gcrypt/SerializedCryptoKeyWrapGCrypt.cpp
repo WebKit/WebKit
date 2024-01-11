@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SerializedCryptoKeyWrap.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -61,6 +59,4 @@ bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<ui
     return true;
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

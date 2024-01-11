@@ -32,7 +32,7 @@ PASS textUnderlinePosition should be applied to first-letter pseudo elements.
 PASS verticalAlign should be applied to first-letter pseudo elements.
 PASS wordSpacing should be applied to first-letter pseudo elements.
 FAIL position should not be applied to first-letter pseudo elements. assert_equals: expected "static" but got "absolute"
-FAIL transition should not be applied to first-letter pseudo elements. assert_equals: expected "all 0s ease 0s" but got "transform 1s ease 0s"
+FAIL transition should not be applied to first-letter pseudo elements. assert_equals: expected "all" but got "transform 1s"
 PASS transform should not be applied to first-letter pseudo elements.
 FAIL wordBreak should not be applied to first-letter pseudo elements. assert_equals: expected "normal" but got "break-all"
 

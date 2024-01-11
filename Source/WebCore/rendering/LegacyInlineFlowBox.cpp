@@ -474,7 +474,7 @@ bool LegacyInlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFall
             if (child->lineStyle().fontCascade().primaryFont().hasVerticalGlyphs())
                 return true;
             
-            const Vector<WeakPtr<const Font>>* usedFonts = nullptr;
+            const Vector<SingleThreadWeakPtr<const Font>>* usedFonts = nullptr;
             if (is<LegacyInlineTextBox>(*child)) {
                 GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(downcast<LegacyInlineTextBox>(child));
                 usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;

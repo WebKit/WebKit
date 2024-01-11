@@ -23,8 +23,8 @@
                 await waitFor(video, 'seeked');
 
                 window.internals.ensureUserAgentShadowRoot(video);
-                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('span[pseudo=cue]')", null, "!=", 1000);
-                await testExpected("video.offsetHeight >= window.internals.shadowRoot(video).querySelector('span[pseudo=cue]').offsetHeight", true);
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('span[useragentpart=cue]')", null, "!=", 1000);
+                await testExpected("video.offsetHeight >= window.internals.shadowRoot(video).querySelector('span[useragentpart=cue]').offsetHeight", true);
                 endTest();
             }
         </script>

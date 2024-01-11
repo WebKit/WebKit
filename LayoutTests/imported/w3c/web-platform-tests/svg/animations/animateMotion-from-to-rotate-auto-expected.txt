@@ -1,0 +1,3 @@
+
+FAIL <animateMotion> from/to animation with rotate=auto assert_approx_equals: bbox x expected 0 +/- 0.5 but got -200
+
