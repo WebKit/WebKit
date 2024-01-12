@@ -1838,11 +1838,6 @@ imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Crash ]
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
-compositing/backing/inline-block-no-backing.html [ Pass Failure ]
-compositing/backing/whitespace-nodes-no-backing.html [ Pass Failure ]
-compositing/fixed-image-loading.html [ Pass Failure ]
-compositing/tiling/huge-layer-img.html [ Pass Failure ]
-compositing/visibility/visibility-image-layers-dynamic.html [ Pass Failure ]
 editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure Failure ]
 
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
