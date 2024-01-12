@@ -1228,6 +1228,7 @@ webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-non-scroll
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/wheel/wheel-event-after-document-open.html [ Skip ]
 webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout Pass ]
 webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout Pass ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]

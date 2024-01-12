@@ -507,6 +507,7 @@ public:
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+    void removeAllEventListeners() override;
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
