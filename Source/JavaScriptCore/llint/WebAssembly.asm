@@ -1356,6 +1356,16 @@ wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
     end)
 end)
 
+wasmOp(tail_call_ref, WasmTailCallRef, macro(ctx)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_ref,
+    macro(targetInstance)
+        move targetInstance, wasmInstance
+    end,
+    macro()
+        # Nothing to do. See comment on restoring callee saves for tail calls above.
+    end)
+end)
+
 slowWasmOp(call_builtin)
 
 wasmOp(select, WasmSelect, macro(ctx)

@@ -1729,6 +1729,15 @@ op :call_ref,
         numberOfStackArgs: unsigned,
     }
 
+op :tail_call_ref,
+    args: {
+        functionReference: VirtualRegister,
+        typeIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
+    }
+
 op :call_builtin,
     args: {
         builtinIndex: unsigned,

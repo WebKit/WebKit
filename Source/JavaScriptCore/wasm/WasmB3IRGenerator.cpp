@@ -690,7 +690,7 @@ public:
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* jsCalleeAnchor, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
@@ -5029,7 +5029,7 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     return emitIndirectCall(calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
 }
 
-auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
     Value* callee = get(args.takeLast());
     TRACE_VALUE(Wasm::Types::Void, callee, "call_ref: ", originalSignature);
@@ -5062,7 +5062,7 @@ auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<E
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callee,
             safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation())));
 
-    return emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results);
+    return emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results, callType);
 }
 
 void B3IRGenerator::unify(Value* phi, const ExpressionType source)

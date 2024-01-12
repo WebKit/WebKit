@@ -690,6 +690,13 @@ WASM_SLOW_PATH_DECL(call_ref)
     return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
+WASM_SLOW_PATH_DECL(tail_call_ref)
+{
+    auto instruction = pc->as<WasmTailCallRef>();
+    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
+    return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
+}
+
 WASM_SLOW_PATH_DECL(tail_call)
 {
     UNUSED_PARAM(callFrame);

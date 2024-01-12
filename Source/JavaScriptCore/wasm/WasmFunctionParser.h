@@ -2966,6 +2966,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
+    case TailCallRef:
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
+        FALLTHROUGH;
     case CallRef: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
 
@@ -3000,6 +3003,21 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         m_expressionStack.shrink(firstArgumentIndex);
 
         ResultList results;
+        if (m_currentOpcode == TailCallRef) {
+            const auto& callerSignature = *m_signature.as<FunctionSignature>();
+
+            WASM_PARSER_FAIL_IF(calleeSignature.returnCount() != callerSignature.returnCount(), "tail call function index ", typeIndex, " with return count ", calleeSignature.returnCount(), ", but the caller's signature has ", callerSignature.returnCount(), " return values");
+
+            for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(calleeSignature.returnType(i), callerSignature.returnType(i)), "tail call function index ", typeIndex, " return type mismatch: " , "expected ", callerSignature.returnType(i), ", got ", calleeSignature.returnType(i));
+
+            WASM_TRY_ADD_TO_CONTEXT(addCallRef(typeDefinition, args, results, CallType::TailCall));
+
+            m_unreachableBlocks = 1;
+
+            return { };
+        }
+
         WASM_TRY_ADD_TO_CONTEXT(addCallRef(typeDefinition, args, results));
 
         for (unsigned i = 0; i < calleeSignature.returnCount(); ++i) {
@@ -3543,6 +3561,9 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case TailCallRef:
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
+        FALLTHROUGH;
     case CallRef: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
         uint32_t unused;

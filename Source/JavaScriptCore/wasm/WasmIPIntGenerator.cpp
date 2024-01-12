@@ -475,7 +475,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t, const TypeDefinition&, Vector<ExpressionType>&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, Vector<ExpressionType>&, ResultList&, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -1589,7 +1589,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
