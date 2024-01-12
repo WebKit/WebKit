@@ -29,9 +29,9 @@
 #include "EventOptions.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WTF {
@@ -192,7 +192,7 @@ private:
     AtomString m_type;
 
     RefPtr<EventTarget> m_currentTarget;
-    CheckedPtr<const EventPath> m_eventPath;
+    SingleThreadWeakPtr<const EventPath> m_eventPath;
     RefPtr<EventTarget> m_target;
     MonotonicTime m_createTime;
 
