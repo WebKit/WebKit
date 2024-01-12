@@ -161,9 +161,10 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
-    tree->updateRelations(axObjectCache.relations());
+    const auto relations = axObjectCache.relations();
+    tree->updateRelations(relations);
 
-    for (auto& relatedObjectID : axObjectCache.relations().keys()) {
+    for (auto& relatedObjectID : relations.keys()) {
         RefPtr axObject = axObjectCache.objectForID(relatedObjectID);
         if (axObject && axObject->accessibilityIsIgnored())
             tree->addUnconnectedNode(axObject.releaseNonNull());
