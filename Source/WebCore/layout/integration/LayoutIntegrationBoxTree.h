@@ -71,6 +71,8 @@ public:
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     RenderObject& rendererForLayoutBox(const Layout::Box&);
 
+    bool contains(const RenderElement&) const;
+
     size_t boxCount() const { return m_renderers.size(); }
 
     const auto& renderers() const { return m_renderers; }

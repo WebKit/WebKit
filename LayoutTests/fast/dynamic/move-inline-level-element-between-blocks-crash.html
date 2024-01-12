@@ -1,0 +1,19 @@
+<style>
+span {
+  outline-style: auto;
+  position: sticky;
+}
+img {
+  position: sticky;
+  width: 10px;
+  height: 10px;
+}
+</style>PASS if no crash or assert<div id=block></div><span><image id=img><script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  document.body.offsetHeight;  
+  img.align = "left";
+  document.body.offsetHeight;
+  block.style.display = "inline";
+</script>
