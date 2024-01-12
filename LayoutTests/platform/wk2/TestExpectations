@@ -884,5 +884,3 @@ webkit.org/b/262157 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
 
 webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]
-
-webkit.org/b/267355 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
