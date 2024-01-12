@@ -552,7 +552,7 @@ LayoutSize LocalFrameViewLayoutContext::layoutDelta() const
         return layoutState->layoutDelta();
     return { };
 }
-    
+
 void LocalFrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())

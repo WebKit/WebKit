@@ -73,7 +73,6 @@ static bool isNameColorScheme(const AtomString& nameValue)
 }
 #endif
 
-
 bool HTMLMetaElement::mediaAttributeMatches()
 {
     auto& document = this->document();

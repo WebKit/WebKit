@@ -775,6 +775,7 @@ void Page::updateStyleAfterChangeInEnvironment()
             styleResolver->invalidateMatchedDeclarationsCache();
         document.scheduleFullStyleRebuild();
         document.styleScope().didChangeStyleSheetEnvironment();
+        document.updateElementsAffectedByMediaQueries();
         document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
     });
 }

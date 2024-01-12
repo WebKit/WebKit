@@ -294,7 +294,7 @@ public:
 
     WEBCORE_EXPORT void setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy);
 
-    void updateStyleAfterChangeInEnvironment();
+    WEBCORE_EXPORT void updateStyleAfterChangeInEnvironment();
 
     // Utility pages (e.g. SVG image pages) don't have an identifier currently.
     std::optional<PageIdentifier> identifier() const { return m_identifier; }
