@@ -1708,6 +1708,36 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static beginInteractiveObscuredInsetsChange()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.beginInteractiveObscuredInsetsChange()", resolve);
+        });
+    }
+
+    static endInteractiveObscuredInsetsChange()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.endInteractiveObscuredInsetsChange()", resolve);
+        });
+    }
+
+    static setObscuredInsets(top, right, bottom, left)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.setObscuredInsets(${top}, ${right}, ${bottom}, ${left})`, resolve);
+        });
+    }
+
     static rotateDevice(orientationName, animatedResize = false)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

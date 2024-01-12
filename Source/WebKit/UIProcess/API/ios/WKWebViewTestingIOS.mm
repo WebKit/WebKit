@@ -447,6 +447,12 @@ static void dumpUIView(TextStream& ts, UIView *view)
         _page->setDeviceHasAGXCompilerServiceForTesting();
 }
 
+- (void)_resetObscuredInsetsForTesting
+{
+    if (self._haveSetObscuredInsets)
+        [self _resetObscuredInsets];
+}
+
 - (BOOL)_hasResizeAssertion
 {
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)

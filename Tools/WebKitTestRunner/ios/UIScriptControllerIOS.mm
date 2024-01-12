@@ -1324,6 +1324,21 @@ void UIScriptControllerIOS::setSafeAreaInsets(double top, double right, double b
     webView().overrideSafeAreaInsets = insets;
 }
 
+void UIScriptControllerIOS::beginInteractiveObscuredInsetsChange()
+{
+    [webView() _beginInteractiveObscuredInsetsChange];
+}
+
+void UIScriptControllerIOS::setObscuredInsets(double top, double right, double bottom, double left)
+{
+    webView()._obscuredInsets = UIEdgeInsetsMake(top, left, bottom, right);
+}
+
+void UIScriptControllerIOS::endInteractiveObscuredInsetsChange()
+{
+    [webView() _endInteractiveObscuredInsetsChange];
+}
+
 void UIScriptControllerIOS::beginBackSwipe(JSValueRef callback)
 {
     [webView() _beginBackSwipeForTesting];
