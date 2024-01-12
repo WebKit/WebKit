@@ -343,6 +343,7 @@ platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
+platform/graphics/avfoundation/WebAVSampleBufferListener.mm @no-unify
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
 platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm
 platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify

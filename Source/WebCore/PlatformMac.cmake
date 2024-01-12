@@ -243,6 +243,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
     platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
+    platform/graphics/avfoundation/WebAVSampleBufferListener.mm
 
     platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm

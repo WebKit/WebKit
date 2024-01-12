@@ -32,6 +32,7 @@
 #include "SourceBufferParserWebM.h"
 #include "TimeRanges.h"
 #include "VideoFrameMetadata.h"
+#include "WebAVSampleBufferListener.h"
 #include "WebMResourceClient.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/LoggerHelper.h>
@@ -73,11 +74,16 @@ class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
     , public RefCounted<MediaPlayerPrivateWebM>
     , public WebMResourceClientParent
+    , public WebAVSampleBufferListenerClient
     , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();
+
+    // Make WeakPtr { *this } work as `CanMakeWeakPtr` is implemented in both WebMResourceClientParent and WebAVSampleBufferListenerClient
+    using WebMResourceClientParent::weakPtrFactory;
+    using WebMResourceClientParent::WeakValueType;
 
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }
@@ -246,6 +252,10 @@ private:
 
     void checkNewVideoFrameMetadata(CMTime);
 
+    // WebAVSampleBufferListenerParent
+    void layerDidReceiveError(AVSampleBufferDisplayLayer*, NSError*) final;
+    void rendererDidReceiveError(AVSampleBufferAudioRenderer*, NSError*) final;
+
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
@@ -317,6 +327,7 @@ private:
     bool m_delayedIdle { false };
     bool m_errored { false };
     bool m_processingInitializationSegment { false };
+    Ref<WebAVSampleBufferListener> m_listener;
 };
 
 } // namespace WebCore

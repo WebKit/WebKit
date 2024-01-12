@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "AVTrackPrivateAVFObjCImpl.h"
-#include "SourceBufferPrivateAVFObjC.h"
 
 namespace WebCore {
 
