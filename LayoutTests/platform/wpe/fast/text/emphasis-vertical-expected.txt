@@ -74,7 +74,7 @@ layer at (25,0) size 775x600
         RenderInline {SPAN} at (0,0) size 20x72
           RenderText {#text} at (4,237) size 20x72
             text run at (4,237) width 72: "\x{8A18}\x{4E8B}\x{304C}\x{3069}"
-        RenderInline {SPAN} at (0,0) size 51x342
+        RenderInline {SPAN} at (0,0) size 62x342
           RenderText {#text} at (4,309) size 51x342
             text run at (4,309) width 36: "\x{3053}\x{306B}"
             text run at (35,3) width 36: "\x{3042}\x{3063}"

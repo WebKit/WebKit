@@ -1,0 +1,11 @@
+Test that animated gif on layer that is scrolled to view starts animating.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL layerTreeAsText.indexOf('repaint rect') > -1 should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

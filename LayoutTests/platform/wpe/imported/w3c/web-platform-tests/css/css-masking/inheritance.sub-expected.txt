@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS Property clip has initial value auto
 PASS Property clip does not inherit
@@ -8,16 +7,16 @@ PASS Property clip-rule has initial value nonzero
 PASS Property clip-rule inherits
 FAIL Property mask-border-mode has initial value alpha assert_true: mask-border-mode doesn't seem to be supported in the computed style expected true got false
 FAIL Property mask-border-mode does not inherit assert_true: expected true got false
-FAIL Property mask-border-outset has initial value 0 assert_true: mask-border-outset doesn't seem to be supported in the computed style expected true got false
-FAIL Property mask-border-outset does not inherit assert_true: expected true got false
-FAIL Property mask-border-repeat has initial value stretch assert_true: mask-border-repeat doesn't seem to be supported in the computed style expected true got false
-FAIL Property mask-border-repeat does not inherit assert_true: expected true got false
-FAIL Property mask-border-slice has initial value 0 assert_true: mask-border-slice doesn't seem to be supported in the computed style expected true got false
-FAIL Property mask-border-slice does not inherit assert_true: expected true got false
-FAIL Property mask-border-source has initial value none assert_true: mask-border-source doesn't seem to be supported in the computed style expected true got false
-FAIL Property mask-border-source does not inherit assert_true: expected true got false
-FAIL Property mask-border-width has initial value auto assert_true: mask-border-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property mask-border-width does not inherit assert_true: expected true got false
+PASS Property mask-border-outset has initial value 0
+PASS Property mask-border-outset does not inherit
+PASS Property mask-border-repeat has initial value stretch
+PASS Property mask-border-repeat does not inherit
+PASS Property mask-border-slice has initial value 0
+PASS Property mask-border-slice does not inherit
+PASS Property mask-border-source has initial value none
+PASS Property mask-border-source does not inherit
+PASS Property mask-border-width has initial value auto
+PASS Property mask-border-width does not inherit
 PASS Property mask-clip has initial value border-box
 PASS Property mask-clip does not inherit
 PASS Property mask-composite has initial value add

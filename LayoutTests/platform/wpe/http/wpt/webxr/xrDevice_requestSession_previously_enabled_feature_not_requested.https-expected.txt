@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Error: assert_equals: expected (object) null but got (undefined) undefined
+
+Harness Error (FAIL), message = Error: assert_equals: expected (object) null but got (undefined) undefined
+
+TIMEOUT requestSession should not grant previously enabled features if not requested - webgl Test timed out
+NOTRUN requestSession should not grant previously enabled features if not requested - webgl2
+

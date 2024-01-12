@@ -1,6 +1,6 @@
 
 
-FAIL <video> and VideoFrame constructed VideoFrame assert_equals: top left corner expected "Yellow" but got "#ffdd13ff"
+FAIL <video> and VideoFrame constructed VideoFrame Video element has no video frame
 PASS CSSImageValue constructed VideoFrame
 PASS Wait for onload event to get access to image data
 PASS Image element constructed VideoFrame

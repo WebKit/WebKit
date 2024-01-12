@@ -13,13 +13,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,70) size 784x28
         RenderText {#text} at (0,10) size 161x17
           text run at (0,10) width 161: "Ruby is often used in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 117x17
-          RenderRubyRun (anonymous) at (161,10) size 117x18
-            RenderRubyText {RT} at (0,-10) size 117x10
-              RenderText {#text} at (41,0) size 35x10
-                text run at (41,0) width 35: "Nihongo"
-            RenderRubyBase (anonymous) at (0,0) size 117x18
-              RenderText {#text} at (0,0) size 117x17
-                text run at (0,0) width 117: "Japanese language"
+        RenderInline {RUBY} at (0,0) size 117x17
+          RenderInline (generated) at (0,0) size 117x17
+            RenderText {#text} at (161,10) size 117x17
+              text run at (161,10) width 117: "Japanese language"
+          RenderBlock {RT} at (161,0) size 117x10
+            RenderText {#text} at (41,0) size 35x10
+              text run at (41,0) width 35: "Nihongo"
         RenderText {#text} at (278,10) size 4x17
           text run at (278,10) width 4: "."

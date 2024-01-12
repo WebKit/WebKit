@@ -1,0 +1,9 @@
+
+FAIL Appending media segment before the first initialization segment. assert_equals: Event types match. expected "error" but got "updateend"
+PASS Signaling 'decode' error via endOfStream() before initialization segment has been appended.
+PASS Signaling 'network' error via endOfStream() before initialization segment has been appended.
+FAIL Signaling 'decode' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA. assert_equals: expected "ended" but got "closed"
+FAIL Signaling 'network' error via endOfStream() after initialization segment has been appended and the HTMLMediaElement has reached HAVE_METADATA. assert_equals: expected "ended" but got "closed"
+PASS Signaling 'decode' error via segment parser loop algorithm after initialization segment has been appended.
+PASS Signaling 'decode' error via segment parser loop algorithm of append containing init plus corrupted media segment.
+

@@ -14,7 +14,7 @@ layer at (0,0) size 800x582
             text run at (0,39) width 105 RTL: "\x{5DC}\x{5DE}\x{5D4} \x{5E2}\x{5E9}\x{5D9}\x{5EA}\x{5D9} \x{5D6}\x{5D0}\x{5EA}"
             text run at (104,39) width 6: " "
             text run at (109,39) width 21: "gg"
-          RenderInline {SPAN} at (0,0) size 137x50 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (0,0) size 200x89 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (0,71) size 48x17
               text run at (0,71) width 48: "dgnjk "
             RenderImage {IMG} at (48,79) size 6x6 [border: (1px solid #0000FF)]
@@ -36,7 +36,7 @@ layer at (0,0) size 800x582
             text run at (11,7) width 189: "aaa bbb ccc ddd eee fff"
             text run at (25,39) width 21: "gg"
             text run at (45,39) width 110 RTL: "\x{5DC}\x{5DE}\x{5D4} \x{5E2}\x{5E9}\x{5D9}\x{5EA}\x{5D9} \x{5D6}\x{5D0}\x{5EA} "
-          RenderInline {SPAN} at (0,0) size 155x50 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (0,0) size 122x89 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (103,71) size 48x17
               text run at (103,71) width 48: "dgnjk "
             RenderImage {IMG} at (151,79) size 6x6 [border: (1px solid #0000FF)]
