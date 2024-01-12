@@ -399,8 +399,8 @@ void RenderFrameSet::computeEdgeInfo()
     for (size_t r = 0; r < rows; ++r) {
         for (size_t c = 0; c < cols; ++c) {
             FrameEdgeInfo edgeInfo;
-            if (is<RenderFrameSet>(*child))
-                edgeInfo = downcast<RenderFrameSet>(*child).edgeInfo();
+            if (auto* frameSet = dynamicDowncast<RenderFrameSet>(*child))
+                edgeInfo = frameSet->edgeInfo();
             else
                 edgeInfo = downcast<RenderFrame>(*child).edgeInfo();
             fillFromEdgeInfo(edgeInfo, r, c);

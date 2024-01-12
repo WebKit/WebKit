@@ -76,10 +76,10 @@ void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyl
 
 void RenderFragmentedFlow::removeFlowChildInfo(RenderElement& child)
 {
-    if (is<RenderBlockFlow>(child))
-        removeLineFragmentInfo(downcast<RenderBlockFlow>(child));
-    if (is<RenderBox>(child))
-        removeRenderBoxFragmentInfo(downcast<RenderBox>(child));
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(child))
+        removeLineFragmentInfo(*blockFlow);
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
+        removeRenderBoxFragmentInfo(*box);
 }
 
 void RenderFragmentedFlow::removeFragmentFromThread(RenderFragmentContainer& renderFragmentContainer)
@@ -841,8 +841,8 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
         if (!containerBlock)
             return 0;
         LayoutPoint currentBlockLocation = currentBlock->location();
-        if (is<RenderTableCell>(*currentBlock)) {
-            if (auto* section = downcast<RenderTableCell>(*currentBlock).section())
+        if (auto* cell = dynamicDowncast<RenderTableCell>(*currentBlock)) {
+            if (auto* section = cell->section())
                 currentBlockLocation.moveBy(section->location());
         }
 

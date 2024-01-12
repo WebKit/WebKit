@@ -248,7 +248,6 @@ static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox
 
 void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childObject, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
-    ASSERT(childObject.isRenderBox());
     RenderBox& child = downcast<RenderBox>(childObject);
 
     // If the item cross size should use the definite container cross size then set the overriding size now so
@@ -609,8 +608,8 @@ LayoutUnit RenderFlexibleBox::crossAxisExtentForChild(const RenderBox& child) co
 
 LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const RenderBox& child) const
 {
-    if (child.isRenderReplaced())
-        return downcast<RenderReplaced>(child).intrinsicLogicalHeight();
+    if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(child))
+        return renderReplaced->intrinsicLogicalHeight();
     
     if (m_intrinsicContentLogicalHeights.contains(&child))
         return m_intrinsicContentLogicalHeights.get(&child);
@@ -742,8 +741,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(Rende
         // only includes the size of the rows. That's why we need to add the size of the captions here so that the table
         // layout algorithm behaves appropiately.
         LayoutUnit captionsHeight;
-        if (is<RenderTable>(child) && childMainSizeIsDefinite(child, size))
-            captionsHeight = downcast<RenderTable>(child).sumCaptionsLogicalHeight();
+        if (CheckedPtr table = dynamicDowncast<RenderTable>(child); table && childMainSizeIsDefinite(child, size))
+            captionsHeight = table->sumCaptionsLogicalHeight();
         return *height + child.scrollbarLogicalHeight() + captionsHeight;
     }
 
@@ -1704,8 +1703,8 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
 {
     auto childHadLayout = child.everHadLayout();
     child.clearOverridingContentSize();
-    if (is<RenderFlexibleBox>(child))
-        downcast<RenderFlexibleBox>(child).resetHasDefiniteHeight();
+    if (CheckedPtr flexibleBox = dynamicDowncast<RenderFlexibleBox>(child))
+        flexibleBox->resetHasDefiniteHeight();
 
     if (childHadLayout && child.hasTrimmedMargin(std::optional<MarginTrimType> { }))
         child.clearTrimmedMarginsMarkings();
@@ -2145,9 +2144,9 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
 {
     // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. Evaluate whether the
     // skipContainingBlockForPercentHeightCalculation() check below should be moved to the caller in that case.
-    if (!is<RenderBlock>(renderer))
+    CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer);
+    if (!renderBlock)
         return false;
-    auto& renderBlock = downcast<RenderBlock>(renderer);
 
     // FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
     // skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
@@ -2155,21 +2154,21 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     // return false for a child of a <button> with a percentage height.
     if (hasPercentHeightDescendants() && skipContainingBlockForPercentHeightCalculation(renderer, isHorizontalWritingMode() != renderer.isHorizontalWritingMode())) {
         for (auto& descendant : *percentHeightDescendants()) {
-            if (renderBlock.isContainingBlockAncestorFor(descendant))
+            if (renderBlock->isContainingBlockAncestorFor(descendant))
                 return true;
         }
     }
 
-    if (!renderBlock.hasPercentHeightDescendants())
+    if (!renderBlock->hasPercentHeightDescendants())
         return false;
 
-    auto* percentHeightDescendants = renderBlock.percentHeightDescendants();
+    auto* percentHeightDescendants = renderBlock->percentHeightDescendants();
     if (!percentHeightDescendants)
         return false;
 
     for (auto& descendant : *percentHeightDescendants) {
         bool hasOutOfFlowAncestor = false;
-        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != &renderBlock; ancestor = ancestor->containingBlock()) {
+        for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != renderBlock.get(); ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 hasOutOfFlowAncestor = true;
                 break;
@@ -2507,7 +2506,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         bool childNeedsRelayout = desiredLogicalHeight != child.logicalHeight();
-        if (child.isRenderBlock() && downcast<RenderBlock>(child).hasPercentHeightDescendants() && m_relaidOutChildren.contains(child)) {
+        if (auto* block = dynamicDowncast<RenderBlock>(child); block && block->hasPercentHeightDescendants() && m_relaidOutChildren.contains(child)) {
             // Have to force another relayout even though the child is sized
             // correctly, because its descendants are not sized correctly yet. Our
             // previous layout of the child was done without an override height set.

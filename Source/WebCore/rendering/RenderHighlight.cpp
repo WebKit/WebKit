@@ -76,11 +76,11 @@ RenderObject* RenderRangeIterator::next()
 
 void RenderRangeIterator::checkForSpanner()
 {
-    if (!is<RenderMultiColumnSpannerPlaceholder>(m_current))
+    CheckedPtr placeholder = dynamicDowncast<RenderMultiColumnSpannerPlaceholder>(m_current);
+    if (!placeholder)
         return;
-    auto& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*m_current);
-    m_spannerStack.append(&placeholder);
-    m_current = placeholder.spanner();
+    m_spannerStack.append(placeholder.get());
+    m_current = placeholder->spanner();
 }
 
 static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned offset)

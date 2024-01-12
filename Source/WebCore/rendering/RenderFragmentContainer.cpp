@@ -496,14 +496,12 @@ void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox* box, cons
 
 LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxModelObject& box) const
 {
-    if (is<RenderInline>(box)) {
-        const RenderInline& inlineBox = downcast<RenderInline>(box);
-        return inlineBox.linesVisualOverflowBoundingBoxInFragment(this);
-    }
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(box))
+        return inlineBox->linesVisualOverflowBoundingBoxInFragment(this);
 
-    if (is<RenderBox>(box)) {
+    if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(box)) {
         RefPtr<RenderOverflow> overflow;
-        ensureOverflowForBox(&downcast<RenderBox>(box), overflow, true);
+        ensureOverflowForBox(renderBox.get(), overflow, true);
 
         ASSERT(overflow);
         return overflow->visualOverflowRect();
