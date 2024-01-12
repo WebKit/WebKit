@@ -364,28 +364,55 @@ AcceleratedSurfaceDMABuf::SwapChain::SwapChain(uint64_t surfaceID)
 #if USE(GBM)
 void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufRendererBufferFormat>& preferredFormats)
 {
+    // The preferred formats vector is sorted by usage, but all formats for the same usage has the same priority.
+    // We split the preferred formats by usage to find in them separately.
+    Vector<std::pair<unsigned, unsigned>, 3> tranches;
+    std::optional<DMABufRendererBufferFormatUsage> previousUsage;
+    for (unsigned i = 0; i < preferredFormats.size(); ++i) {
+        if (previousUsage) {
+            if (previousUsage.value() != preferredFormats[i].usage) {
+                tranches.last().second = i - 1;
+                tranches.append({ i, 0 });
+                previousUsage = preferredFormats[i].usage;
+            }
+        } else {
+            tranches.append({ i, 0 });
+            previousUsage = preferredFormats[i].usage;
+        }
+    }
+    if (!tranches.isEmpty())
+        tranches.last().second = preferredFormats.size() - 1;
+
+    auto findInRange = [&](uint32_t fourcc, const std::pair<unsigned, unsigned>& range) -> size_t {
+        for (size_t i = range.first; i <= range.second; ++i) {
+            if (fourcc == preferredFormats[i].fourcc)
+                return i;
+        }
+        return notFound;
+    };
+
     Locker locker { m_dmabufFormatLock };
     const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplayForCompositing().dmabufFormats();
-    for (const auto& format : preferredFormats) {
-        auto index = supportedFormats.findIf([format](const auto& item) {
-            return item.fourcc == format.fourcc;
-        });
-        if (index == notFound)
-            continue;
-
-        m_dmabufFormat.usage = format.usage;
-        m_dmabufFormat.fourcc = format.fourcc;
-        if (format.modifiers[0] == DRM_FORMAT_MOD_INVALID)
-            m_dmabufFormat.modifiers = format.modifiers;
-        else {
-            m_dmabufFormat.modifiers = WTF::compactMap(format.modifiers, [&supportedFormats, index](uint64_t modifier) -> std::optional<uint64_t> {
-                if (supportedFormats[index].modifiers.contains(modifier))
-                    return modifier;
-                return std::nullopt;
-            });
+    for (const auto& format : supportedFormats) {
+        for (const auto& tranche : tranches) {
+            auto index = findInRange(format.fourcc, tranche);
+            if (index != notFound) {
+                const auto& dmabufFormat = preferredFormats[index];
+                m_dmabufFormat.usage = dmabufFormat.usage;
+                m_dmabufFormat.fourcc = dmabufFormat.fourcc;
+                if (dmabufFormat.modifiers[0] == DRM_FORMAT_MOD_INVALID)
+                    m_dmabufFormat.modifiers = dmabufFormat.modifiers;
+                else {
+                    m_dmabufFormat.modifiers = WTF::compactMap(dmabufFormat.modifiers, [&format](uint64_t modifier) -> std::optional<uint64_t> {
+                        if (format.modifiers.contains(modifier))
+                            return modifier;
+                        return std::nullopt;
+                    });
+                }
+                m_dmabufFormatChanged = true;
+                return;
+            }
         }
-        m_dmabufFormatChanged = true;
-        break;
     }
 }
 #endif
