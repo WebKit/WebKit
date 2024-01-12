@@ -8056,11 +8056,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         return;
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (self.shouldUseAsyncInteractions) {
         [_asyncSystemInputDelegate invalidateTextEntryContext];
-    else
+        return;
+    }
 #endif
-        [UIKeyboardImpl.activeInstance updateForChangedSelection];
+
+    [UIKeyboardImpl.activeInstance updateForChangedSelection];
 }
 
 - (void)_updateFocusedElementInformation:(const WebKit::FocusedElementInformation&)information

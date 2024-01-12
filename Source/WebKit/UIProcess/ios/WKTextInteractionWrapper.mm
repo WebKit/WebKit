@@ -56,7 +56,10 @@
         [view addInteraction:_asyncTextInteraction.get()];
     } else
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+    {
         _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
+    }
+
     _view = view;
     return self;
 }

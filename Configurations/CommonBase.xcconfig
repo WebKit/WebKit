@@ -55,7 +55,7 @@ OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2a -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS);
 OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 
-WK_COMMON_WARNING_CFLAGS = -Wall -Wconditional-uninitialized -Wextra -Wformat=2 -Wundef;
+WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wreorder-init-list -Wundef;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS);
 
 WK_LIBCPP_ASSERTIONS_CFLAGS = $(WK_LIBCPP_ASSERTIONS_CFLAGS_$(WK_PLATFORM_NAME));
