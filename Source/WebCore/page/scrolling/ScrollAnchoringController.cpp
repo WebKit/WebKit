@@ -369,7 +369,9 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
         }
 #endif
         auto newScrollPosition = m_owningScrollableArea.scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
-        LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for frame: " << frameView() << " for scroller: " << m_owningScrollableArea << " adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);
+        ALWAYS_LOG_WITH_STREAM(stream << "ScrollAnchoringController::updateScrollPosition() is main frame: " << frameView().frame().isMainFrame() << " is main scroller: " << !m_owningScrollableArea.isRenderLayer() << " adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);
+        LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for scroller element: " << ValueOrNull(elementForScrollableArea(m_owningScrollableArea)) << " anchor node: " << *m_anchorElement);
+
         auto options = ScrollPositionChangeOptions::createProgrammatic();
         options.originalScrollDelta = adjustment;
         auto oldScrollType = m_owningScrollableArea.currentScrollType();
