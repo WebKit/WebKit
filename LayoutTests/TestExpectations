@@ -7486,3 +7486,6 @@ http/wpt/opener/iframe-access-top-via-windowproxy.html [ Skip ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
 
 webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
+
+# rdar://120852401
+[ Debug ] ipc/media-player-invalid-test.html [ Skip ]
