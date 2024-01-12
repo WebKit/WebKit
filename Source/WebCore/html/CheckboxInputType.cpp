@@ -334,9 +334,7 @@ void CheckboxInputType::performSwitchAnimation(SwitchAnimationType type)
 {
     ASSERT(isSwitch());
     ASSERT(element());
-    ASSERT(element()->renderer());
-
-    if (!element()->renderer()->style().hasEffectiveAppearance())
+    if (!element()->renderer() || !element()->renderer()->style().hasEffectiveAppearance())
         return;
 
     auto updateInterval = switchAnimationUpdateInterval(element());
