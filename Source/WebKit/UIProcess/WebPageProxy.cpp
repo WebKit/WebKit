@@ -12445,13 +12445,13 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
 void WebPageProxy::addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
-    auto result = m_webViewDidMoveToWindowObservers.add(&observer, observer);
+    auto result = m_webViewDidMoveToWindowObservers.add(observer);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void WebPageProxy::removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
-    auto result = m_webViewDidMoveToWindowObservers.remove(&observer);
+    auto result = m_webViewDidMoveToWindowObservers.remove(observer);
     ASSERT_UNUSED(result, result);
 }
 
@@ -12462,12 +12462,9 @@ WindowKind WebPageProxy::windowKind() const
 
 void WebPageProxy::webViewDidMoveToWindow()
 {
-    auto observersCopy = m_webViewDidMoveToWindowObservers;
-    for (const auto& observer : observersCopy) {
-        if (!observer.value)
-            continue;
-        observer.value->webViewDidMoveToWindow();
-    }
+    m_webViewDidMoveToWindowObservers.forEach([](auto& observer) {
+        observer.webViewDidMoveToWindow();
+    });
 
     auto newWindowKind = pageClient().windowKind();
     if (internals().windowKind != newWindowKind) {

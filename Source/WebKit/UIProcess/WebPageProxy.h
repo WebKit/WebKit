@@ -3323,7 +3323,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 
-    HashMap<WebViewDidMoveToWindowObserver*, WeakPtr<WebViewDidMoveToWindowObserver>> m_webViewDidMoveToWindowObservers;
+    WeakHashSet<WebViewDidMoveToWindowObserver> m_webViewDidMoveToWindowObservers;
 
     mutable RefPtr<Logger> m_logger;
 
