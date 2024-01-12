@@ -106,6 +106,10 @@ public:
     
     virtual void setSafeAreaInsets(double, double, double, double) { notImplemented(); }
 
+    virtual void beginInteractiveObscuredInsetsChange() { notImplemented(); }
+    virtual void endInteractiveObscuredInsetsChange() { notImplemented(); }
+    virtual void setObscuredInsets(double, double, double, double) { notImplemented(); }
+
     // View Parenting and Visibility
 
     virtual void becomeFirstResponder() { notImplemented(); }

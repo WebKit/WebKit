@@ -86,6 +86,7 @@
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
 
+- (void)_resetObscuredInsetsForTesting;
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;
 
