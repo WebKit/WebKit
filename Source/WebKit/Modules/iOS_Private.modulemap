@@ -934,11 +934,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKBundleInspector {
-    header "WKBundleInspector.h"
-    export *
-  }
-
   explicit module WKBundleMac {
     header "WKBundleMac.h"
     export *

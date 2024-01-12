@@ -4907,7 +4907,7 @@ WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
     if (m_isClosed)
         return nullptr;
     if (!m_inspector && behavior == LazyCreationPolicy::CreateIfNeeded)
-        m_inspector = WebInspector::create(this);
+        m_inspector = WebInspector::create(*this);
     return m_inspector.get();
 }
 

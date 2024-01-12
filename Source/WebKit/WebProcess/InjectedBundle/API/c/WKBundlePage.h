@@ -108,7 +108,9 @@ WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLayoutMilestones milestones);
 
-WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageShowInspectorForTest(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageCloseInspectorForTest(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKStringRef script);
 
 WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
 

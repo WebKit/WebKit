@@ -207,7 +207,6 @@ public:
         BundleDOMWindowExtension,
         BundleFrame,
         BundleHitTestResult,
-        BundleInspector,
         BundleNodeHandle,
         BundlePage,
         BundlePageBanner,

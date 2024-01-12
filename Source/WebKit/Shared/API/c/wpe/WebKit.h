@@ -57,7 +57,6 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundleHitTestResult.h>
 #include <WebKit/WKBundleInitialize.h>
-#include <WebKit/WKBundleInspector.h>
 #include <WebKit/WKBundleNavigationAction.h>
 #include <WebKit/WKBundleNodeHandle.h>
 #include <WebKit/WKBundlePage.h>
