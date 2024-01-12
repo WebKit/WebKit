@@ -172,7 +172,6 @@ NetworkProcess/storage/IDBStorageManager.cpp
 NetworkProcess/storage/IDBStorageRegistry.cpp
 NetworkProcess/storage/LocalStorageManager.cpp
 NetworkProcess/storage/MemoryStorageArea.cpp
-NetworkProcess/storage/NetworkQuotaManager.cpp
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginQuotaManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp

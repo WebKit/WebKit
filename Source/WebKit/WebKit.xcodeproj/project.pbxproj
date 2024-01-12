@@ -996,7 +996,6 @@
 		3A18A2EF2AFF004C00DB976C /* _WKArchiveConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A18A2EE2AFF004C00DB976C /* _WKArchiveConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3A18A2F52B02969900DB976C /* _WKArchiveExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A18A2F32B02969800DB976C /* _WKArchiveExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3A7D62D629D38DD300D57DAC /* ServiceWorkerStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */; };
-		3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */; };
 		3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */; };
 		3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */; };
 		3F418EF91887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp */; };
@@ -4831,8 +4830,6 @@
 		3AA50E2C28D37F8700D024E4 /* ProcessAssertionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessAssertionCocoa.mm; sourceTree = "<group>"; };
 		3AA994092B0B15CD00253533 /* WKExtrinsicButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKExtrinsicButton.h; path = ios/WKExtrinsicButton.h; sourceTree = "<group>"; };
 		3AA9940A2B0B15CE00253533 /* WKExtrinsicButton.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKExtrinsicButton.mm; path = ios/WKExtrinsicButton.mm; sourceTree = "<group>"; };
-		3AB0C59129C8162200141B5E /* NetworkQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkQuotaManager.cpp; sourceTree = "<group>"; };
-		3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkQuotaManager.h; sourceTree = "<group>"; };
 		3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSWRegistrationStore.h; sourceTree = "<group>"; };
 		3AC4C04629D35D1B00402716 /* ServiceWorker */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ServiceWorker; sourceTree = "<group>"; };
 		3AC6E5242A1C59AE0059F092 /* RemoteGraphicsContextGLInitializationState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLInitializationState.h; sourceTree = "<group>"; };
@@ -12608,8 +12605,6 @@
 				93E799CB2760497A0074008A /* LocalStorageManager.h */,
 				93E799D8276121080074008A /* MemoryStorageArea.cpp */,
 				93E799D5276121070074008A /* MemoryStorageArea.h */,
-				3AB0C59129C8162200141B5E /* NetworkQuotaManager.cpp */,
-				3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */,
 				93085DC326E1BBBD000EC6A7 /* NetworkStorageManager.cpp */,
 				93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */,
 				93085DC726E1C6EE000EC6A7 /* NetworkStorageManager.messages.in */,
@@ -15649,7 +15644,6 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
 				5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */,
-				3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 				51240EC0220B694C005CFC63 /* NetworkResourceLoadMap.h in Headers */,
