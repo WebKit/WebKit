@@ -27,8 +27,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Exception.h"
+#include "JSWebCodecsVideoFrame.h"
 #include "MediaStreamTrack.h"
 #include "WritableStream.h"
+#include "WritableStreamSink.h"
 
 #include <wtf/IsoMallocInlines.h>
 
@@ -36,7 +39,53 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(VideoTrackGenerator);
 
-VideoTrackGenerator::VideoTrackGenerator(ScriptExecutionContext&)
+ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutionContext& context)
+{
+    auto source = Source::create();
+    auto sink = Sink::create(Ref { source });
+    auto writableOrException = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(context.globalObject()), Ref { sink });
+
+    if (writableOrException.hasException())
+        return writableOrException.releaseException();
+
+    // FIXME: Maybe we should have the writable buffer frames until the source is actually started.
+    callOnMainThread([source] {
+        source->start();
+    });
+
+    auto logger = Logger::create(&context);
+    if (auto sessionID = context.sessionID())
+        logger->setEnabled(&context, sessionID->isAlwaysOnLoggingAllowed());
+
+    auto privateTrack = MediaStreamTrackPrivate::create(WTFMove(logger), WTFMove(source), [identifier = context.identifier()](Function<void()>&& task) {
+        ScriptExecutionContext::postTaskTo(identifier, [task = WTFMove(task)] (auto&) mutable {
+            task();
+        });
+    });
+
+    RealtimeMediaSourceSupportedConstraints supportedConstraints;
+    supportedConstraints.setSupportsWidth(true);
+    supportedConstraints.setSupportsHeight(true);
+
+    RealtimeMediaSourceSettings settings;
+    settings.setSupportedConstraints(supportedConstraints);
+    settings.setWidth(0);
+    settings.setHeight(0);
+
+    RealtimeMediaSourceCapabilities capabilities { supportedConstraints };
+    capabilities.setWidth({ 0, 0 });
+    capabilities.setHeight({ 0, 0 });
+
+    privateTrack->initializeSettings(WTFMove(settings));
+    privateTrack->initializeCapabilities(WTFMove(capabilities));
+
+    return adoptRef(*new VideoTrackGenerator(WTFMove(sink), writableOrException.releaseReturnValue(), MediaStreamTrack::create(context, WTFMove(privateTrack))));
+}
+
+VideoTrackGenerator::VideoTrackGenerator(Ref<Sink>&& sink, Ref<WritableStream>&& writable, Ref<MediaStreamTrack>&& track)
+    : m_sink(WTFMove(sink))
+    , m_writable(WTFMove(writable))
+    , m_track(WTFMove(track))
 {
 }
 
@@ -44,9 +93,107 @@ VideoTrackGenerator::~VideoTrackGenerator()
 {
 }
 
-void VideoTrackGenerator::setMuted(bool muted)
+void VideoTrackGenerator::setMuted(ScriptExecutionContext& context, bool muted)
 {
+    if (muted == m_muted)
+        return;
+
     m_muted = muted;
+    if (m_hasMutedChanged)
+        return;
+
+    m_hasMutedChanged = true;
+    context.postTask([this, protectedThis = Ref { *this }] (auto&) {
+        m_hasMutedChanged = false;
+        m_track->privateTrack().setMuted(m_muted);
+        m_sink->setMuted(m_muted);
+    });
+}
+
+Ref<WritableStream> VideoTrackGenerator::writable()
+{
+    return Ref { m_writable };
+}
+
+Ref<MediaStreamTrack> VideoTrackGenerator::track()
+{
+    return Ref { m_track };
+}
+
+VideoTrackGenerator::Source::Source()
+    : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Camera, emptyString() })
+{
+}
+
+void VideoTrackGenerator::Source::writeVideoFrame(VideoFrame& frame, VideoFrameTimeMetadata metadata)
+{
+    auto frameSize = IntSize(frame.presentationSize());
+    if (frame.rotation() == VideoFrame::Rotation::Left || frame.rotation() == VideoFrame::Rotation::Right)
+        frameSize = frameSize.transposedSize();
+
+    if (m_videoFrameSize != frameSize) {
+        m_videoFrameSize = frameSize;
+        callOnMainThread([this, protectedThis = Ref { *this }, frameSize] {
+            RealtimeMediaSourceSupportedConstraints supportedConstraints;
+            supportedConstraints.setSupportsWidth(true);
+            supportedConstraints.setSupportsHeight(true);
+
+            if (m_maxVideoFrameSize.width() < frameSize.width() || m_maxVideoFrameSize.height() < frameSize.height()) {
+                m_maxVideoFrameSize.clampToMinimumSize(frameSize);
+
+                m_capabilities = RealtimeMediaSourceCapabilities { supportedConstraints };
+                m_capabilities.setWidth({ 0, m_maxVideoFrameSize.width() });
+                m_capabilities.setHeight({ 0, m_maxVideoFrameSize.height() });
+            }
+
+            m_settings.setSupportedConstraints(supportedConstraints);
+            m_settings.setWidth(frameSize.width());
+            m_settings.setHeight(frameSize.height());
+
+            setSize(frameSize);
+        });
+    }
+
+    videoFrameAvailable(frame, metadata);
+}
+
+VideoTrackGenerator::Sink::Sink(Ref<Source>&& source)
+    : m_source(WTFMove(source))
+{
+}
+
+void VideoTrackGenerator::Sink::write(ScriptExecutionContext&, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
+{
+    auto* jsFrameObject = JSC::jsDynamicCast<JSWebCodecsVideoFrame*>(value);
+    RefPtr frameObject = jsFrameObject ? &jsFrameObject->wrapped() : nullptr;
+    if (!frameObject) {
+        promise.reject(Exception { ExceptionCode::TypeError, "Expected a VideoFrame object"_s });
+        return;
+    }
+
+    RefPtr videoFrame = frameObject->internalFrame();
+    if (!videoFrame) {
+        promise.reject(Exception { ExceptionCode::TypeError, "VideoFrame object is not valid"_s });
+        return;
+    }
+
+    if (!m_muted)
+        m_source->writeVideoFrame(*videoFrame, { });
+
+    frameObject->close();
+    promise.resolve();
+}
+
+void VideoTrackGenerator::Sink::close()
+{
+    callOnMainThread([source = m_source] {
+        source->endImmediatly();
+    });
+}
+
+void VideoTrackGenerator::Sink::error(String&&)
+{
+    close();
 }
 
 } // namespace WebCore

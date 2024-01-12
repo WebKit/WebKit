@@ -1,0 +1,7 @@
+
+PASS Frames get closed when written in a VideoTrackGenerator writable
+PASS Writable gets closed when writing a closed VideoFrame
+PASS Writable gets closed when writing something else than a VideoFrame
+PASS Track settings are updated according enqueued video frames
+PASS Track gets muted based on VideoTrackGenerator.muted
+

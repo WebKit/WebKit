@@ -646,7 +646,7 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 
     Function<void()> updateMuted = [this, muted = m_private->muted()] {
         RefPtr context = scriptExecutionContext();
-        if (!context || context ->activeDOMObjectsAreStopped())
+        if (!context || context->activeDOMObjectsAreStopped())
             return;
 
         if (m_muted == muted)
@@ -663,8 +663,8 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     configureTrackRendering();
 
     bool wasInterrupted = m_isInterrupted;
-    m_isInterrupted = m_private->source().interrupted();
-    if (isCaptureTrack() && wasInterrupted != m_isInterrupted && m_private->source().type() == RealtimeMediaSource::Type::Audio && context->settingsValues().muteCameraOnMicrophoneInterruptionEnabled)
+    m_isInterrupted = m_private->interrupted();
+    if (isCaptureTrack() && wasInterrupted != m_isInterrupted && m_private->type() == RealtimeMediaSource::Type::Audio && context->settingsValues().muteCameraOnMicrophoneInterruptionEnabled)
         updateVideoCaptureAccordingMicrophoneInterruption(*downcast<Document>(context), m_isInterrupted);
 }
 
