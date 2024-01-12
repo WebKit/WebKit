@@ -1892,7 +1892,7 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 # Adding transceivers without tracks is broken.
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
 
-# [GStreamer][WebRTC] Missing support for non-trickle ICE handshake
+# Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 
 # Pass Slow Failure with GStreamer 1.23. Skip (too many bugs) with GStreamer 1.22.
@@ -2064,6 +2064,8 @@ webrtc/video-vp8-videorange.html [ Skip ]
 # tests unexpected timeouts.
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-timing.https.html [ Pass ]
 
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented.
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Skip ]

@@ -312,7 +312,7 @@ static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement*
         return { };
 
     GUniqueOutPtr<GstWebRTCSessionDescription> description;
-    g_object_get(webrtcBin, makeString(name, "-description").utf8().data(), &description.outPtr(), nullptr);
+    g_object_get(webrtcBin, makeString(name, "-description"_s).utf8().data(), &description.outPtr(), nullptr);
     if (!description)
         return { };
 
@@ -373,12 +373,72 @@ static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromW
 
 void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* description)
 {
+    RefPtr initialDescription = description;
+    if (!initialDescription) {
+        // Generate offer or answer. Workaround for https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3218.
+        auto promise = gst_promise_new();
+        switch (fetchSignalingState(m_webrtcBin.get())) {
+        case GST_WEBRTC_SIGNALING_STATE_STABLE:
+        case GST_WEBRTC_SIGNALING_STATE_HAVE_LOCAL_OFFER:
+        case GST_WEBRTC_SIGNALING_STATE_HAVE_REMOTE_PRANSWER: {
+            g_signal_emit_by_name(m_webrtcBin.get(), "create-offer", nullptr, promise);
+            auto result = gst_promise_wait(promise);
+            const auto reply = gst_promise_get_reply(promise);
+            if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
+                if (reply) {
+                    GUniqueOutPtr<GError> error;
+                    gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
+                    auto errorMessage = makeString("Unable to set local description, error: %s", error->message);
+                    GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
+                    m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+                    return;
+                }
+                m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
+                return;
+            }
+
+            GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
+            gst_structure_get(reply, "offer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
+            GUniquePtr<char> sdp(gst_sdp_message_as_text(sessionDescription->sdp));
+            initialDescription = RTCSessionDescription::create(RTCSdpType::Offer, makeString(sdp.get()));
+            break;
+        }
+        case GST_WEBRTC_SIGNALING_STATE_HAVE_LOCAL_PRANSWER:
+        case GST_WEBRTC_SIGNALING_STATE_HAVE_REMOTE_OFFER: {
+            g_signal_emit_by_name(m_webrtcBin.get(), "create-answer", nullptr, promise);
+            auto result = gst_promise_wait(promise);
+            const auto reply = gst_promise_get_reply(promise);
+            if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
+                if (reply) {
+                    GUniqueOutPtr<GError> error;
+                    gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
+                    auto errorMessage = makeString("Unable to set local description, error: %s", error->message);
+                    GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
+                    m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+                    return;
+                }
+                m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
+                return;
+            }
+
+            GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
+            gst_structure_get(reply, "answer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
+            GUniquePtr<char> sdp(gst_sdp_message_as_text(sessionDescription->sdp));
+            initialDescription = RTCSessionDescription::create(RTCSdpType::Answer, makeString(sdp.get()));
+            break;
+        }
+        case GST_WEBRTC_SIGNALING_STATE_CLOSED:
+            m_peerConnectionBackend.setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "The PeerConnection is closed."_s });
+            return;
+        };
+    }
+
     auto initialSDP = description ? description->sdp().isolatedCopy() : emptyString();
     auto remoteDescription = m_peerConnectionBackend.connection().remoteDescription();
     String remoteDescriptionSdp = remoteDescription ? remoteDescription->sdp() : emptyString();
     std::optional<RTCSdpType> remoteDescriptionSdpType = remoteDescription ? std::make_optional(remoteDescription->type()) : std::nullopt;
 
-    setDescription(description, DescriptionType::Local, [](const auto&) { }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), remoteDescriptionSdp = WTFMove(remoteDescriptionSdp), remoteDescriptionSdpType = WTFMove(remoteDescriptionSdpType)](const GstSDPMessage& message) {
+    setDescription(initialDescription.get(), DescriptionType::Local, [](const auto&) { }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), remoteDescriptionSdp = WTFMove(remoteDescriptionSdp), remoteDescriptionSdpType = WTFMove(remoteDescriptionSdpType)](const GstSDPMessage& message) {
         if (protectedThis->isStopped())
             return;
 
@@ -562,7 +622,7 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
 #endif
 
     GUniquePtr<GstWebRTCSessionDescription> sessionDescription(gst_webrtc_session_description_new(type, message.release()));
-    auto signalName = makeString("set-", typeString, "-description");
+    auto signalName = makeString("set-"_s, typeString, "-description"_s);
     g_signal_emit_by_name(m_webrtcBin.get(), signalName.ascii().data(), sessionDescription.get(), gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
         auto* data = static_cast<SetDescriptionCallData*>(userData);
         auto promise = adoptGRef(rawPromise);
@@ -667,7 +727,7 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
 
 #ifndef GST_DISABLE_GST_DEBUG
     GUniquePtr<char> padName(gst_pad_get_name(sinkPad.get()));
-    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".outgoing-", padName.get());
+    auto dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), ".outgoing-"_s, padName.get());
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
 #endif
 }
@@ -710,7 +770,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLine
 
     GRefPtr<GstPad> sinkPad;
     if (mLineIndex) {
-        auto padId = makeString("sink_", *mLineIndex);
+        auto padId = makeString("sink_"_s, *mLineIndex);
         sinkPad = adoptGRef(gst_element_get_static_pad(m_webrtcBin.get(), padId.ascii().data()));
         if (!sinkPad)
             sinkPad = requestPad(padId);
@@ -812,7 +872,7 @@ void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions
 {
     const char* type = isInitiator ? "offer" : "answer";
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s", type);
-    auto signalName = makeString("create-", type);
+    auto signalName = makeString("create-"_s, type);
     GUniquePtr<GstStructure> options(rawOptions);
     auto* holder = createGStreamerMediaEndpointHolder();
     holder->endPoint = this;
@@ -1430,16 +1490,14 @@ void GStreamerMediaEndpoint::onIceGatheringChange()
 {
     GstWebRTCICEGatheringState state;
     g_object_get(m_webrtcBin.get(), "ice-gathering-state", &state, nullptr);
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_ICE_GATHERING_STATE, state));
+    GST_DEBUG_OBJECT(m_pipeline.get(), "ICE gathering state changed to %s", desc.get());
+#endif
     callOnMainThread([protectedThis = Ref(*this), this, state] {
         if (isStopped())
             return;
-        auto& connection = m_peerConnectionBackend.connection();
-        if (state == GST_WEBRTC_ICE_GATHERING_STATE_COMPLETE)
-            m_peerConnectionBackend.doneGatheringCandidates();
-        else if (state == GST_WEBRTC_ICE_GATHERING_STATE_GATHERING)
-            connection.updateIceGatheringState(RTCIceGatheringState::Gathering);
-        else if (state == GST_WEBRTC_ICE_GATHERING_STATE_NEW)
-            connection.updateIceGatheringState(RTCIceGatheringState::New);
+        m_peerConnectionBackend.iceGatheringStateChanged(toRTCIceGatheringState(state));
     });
 }
 
@@ -1450,7 +1508,13 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
 
     auto candidateString = makeString(candidate);
     if (candidateString.isEmpty()) {
-        // webrtcbin notifies an empty ICE candidate when gathering is complete.
+        callOnMainThread([protectedThis = Ref(*this), this] {
+            if (isStopped())
+                return;
+            // webrtcbin notifies an empty ICE candidate when gathering is complete.
+            GST_DEBUG_OBJECT(m_pipeline.get(), "Signaling end-of-candidates");
+            m_peerConnectionBackend.doneGatheringCandidates();
+        });
         return;
     }
 
