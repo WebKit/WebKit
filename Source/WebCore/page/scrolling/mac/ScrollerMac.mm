@@ -422,6 +422,8 @@ void ScrollerMac::visibilityChanged(bool isVisible)
 {
     if (m_isVisible == isVisible)
         return;
+        
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollerMac::visibilityChanged: " << isVisible);
     m_isVisible = isVisible;
     m_pair.node().scrollbarVisibilityDidChange(m_orientation, isVisible);
 }

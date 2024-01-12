@@ -239,6 +239,8 @@ void ScrollerPairMac::updateValues()
 
     if (offset != m_lastScrollOffset) {
         if (m_lastScrollOffset) {
+            ALWAYS_LOG_WITH_STREAM(stream << "ScrollerPairMac::updateValues contentAreaScrolledInDirection");
+
             ensureOnMainThreadWithProtectedThis([delta = offset - *m_lastScrollOffset, this] {
                 [m_scrollerImpPair contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
             });
@@ -396,6 +398,36 @@ void ScrollerPairMac::mouseIsInScrollbar(ScrollbarHoverState hoverState)
             horizontalScroller().mouseExitedScrollbar();
     }
     m_scrollbarHoverState = hoverState;
+}
+
+void ScrollerPairMac::shouldHideScrollbars(bool flag)
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollerPairMac::hideScrollbars: " << flag);
+    
+    if (flag == m_shouldHideScrollbars)
+        return;
+    m_shouldHideScrollbars = flag;
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollerPairMac::hideScrollbars: m_scrollbarEnabledState" << m_scrollbarEnabledState.first << ","<< m_scrollbarEnabledState.second << " horizontal enabled: " << horizontalScroller().enabled() << " vertical enabled: " << verticalScroller().enabled());
+
+    if (flag) {
+        m_scrollbarEnabledState = { horizontalScroller().enabled(), verticalScroller().enabled() };
+        ensureOnMainThreadWithProtectedThis([this] {
+            [m_scrollerImpPair lockOverlayScrollerState:NSOverlayScrollerStateHidden];
+        });
+        updateValues();
+    } else {
+        horizontalScroller().setEnabled(m_scrollbarEnabledState.first);
+        verticalScroller().setEnabled(m_scrollbarEnabledState.second);
+
+        updateValues();
+
+        ensureOnMainThreadWithProtectedThis([this] {
+            [m_scrollerImpPair unlockOverlayScrollerState];
+        });
+    }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollerPairMac::hideScrollbars: m_scrollbarEnabledState2" << m_scrollbarEnabledState.first << ","<< m_scrollbarEnabledState.second << " horizontal enabled: " << horizontalScroller().enabled() << " vertical enabled: " << verticalScroller().enabled());
+
 }
 
 } // namespace WebCore

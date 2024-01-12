@@ -114,6 +114,7 @@ struct RequestedScrollData {
     ScrollClamping clamping { ScrollClamping::Clamped };
     ScrollIsAnimated animated { ScrollIsAnimated::No };
     std::optional<std::tuple<ScrollRequestType, std::variant<FloatPoint, FloatSize>, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
+    bool shouldHideScrollbars = false;
 
     void merge(RequestedScrollData&&);
 

@@ -3804,6 +3804,7 @@ header: <WebCore/ScrollingStateNode.h>
     WebCore::ScrollClamping clamping;
     WebCore::ScrollIsAnimated animated;
     std::optional<std::tuple<WebCore::ScrollRequestType, std::variant<WebCore::FloatPoint, WebCore::FloatSize>, WebCore::ScrollType, WebCore::ScrollClamping>> requestedDataBeforeAnimatedScroll;
+    bool shouldHideScrollbars;
 }
 
 [Alias=struct ScrollSnapOffsetsInfo<float,WebCore::FloatRect>, CustomHeader] alias WebCore::FloatScrollSnapOffsetsInfo {

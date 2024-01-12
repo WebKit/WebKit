@@ -353,7 +353,16 @@ struct ScrollPositionChangeOptions {
     ScrollIsAnimated animated = ScrollIsAnimated::No;
     ScrollSnapPointSelectionMethod snapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest;
     std::optional<FloatSize> originalScrollDelta = std::nullopt;
+    bool shouldHideScrollbars = false;
 
+    static ScrollPositionChangeOptions createScrollAnchoringAdjustment()
+    {
+        ScrollPositionChangeOptions options;
+        options.type = ScrollType::Programmatic;
+        options.shouldHideScrollbars = true;
+        return options;
+    }
+    
     static ScrollPositionChangeOptions createProgrammatic()
     {
         return { ScrollType::Programmatic };
