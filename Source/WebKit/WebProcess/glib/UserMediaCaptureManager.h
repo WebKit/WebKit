@@ -49,7 +49,7 @@ public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
 
-    static const char* supplementName() { return "UserMediaCaptureManager"; }
+    static ASCIILiteral supplementName() { return "UserMediaCaptureManager"_s; }
 
 private:
     // IPC::MessageReceiver

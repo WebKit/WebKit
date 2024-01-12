@@ -63,9 +63,9 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
     m_remoteCaptureSampleManager.stopListeningForIPC();
 }
 
-const char* UserMediaCaptureManager::supplementName()
+ASCIILiteral UserMediaCaptureManager::supplementName()
 {
-    return "UserMediaCaptureManager";
+    return "UserMediaCaptureManager"_s;
 }
 
 void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames)

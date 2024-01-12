@@ -106,9 +106,9 @@ DOMCSSRegisterCustomProperty* DOMCSSRegisterCustomProperty::from(DOMCSSNamespace
     return supplement;
 }
 
-const char* DOMCSSRegisterCustomProperty::supplementName()
+ASCIILiteral DOMCSSRegisterCustomProperty::supplementName()
 {
-    return "DOMCSSRegisterCustomProperty";
+    return "DOMCSSRegisterCustomProperty"_s;
 }
 
 }

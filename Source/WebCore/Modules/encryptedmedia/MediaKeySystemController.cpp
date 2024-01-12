@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-const char* MediaKeySystemController::supplementName()
+ASCIILiteral MediaKeySystemController::supplementName()
 {
-    return "MediaKeySystemController";
+    return "MediaKeySystemController"_s;
 }
 
 MediaKeySystemController* MediaKeySystemController::from(Page* page)

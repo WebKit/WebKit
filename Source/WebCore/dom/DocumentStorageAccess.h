@@ -85,7 +85,7 @@ private:
     void requestStorageAccessQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&&);
 
     static DocumentStorageAccess* from(Document&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
     bool hasFrameSpecificStorageAccess() const;
     void setWasExplicitlyDeniedFrameSpecificStorageAccess() { ++m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
     bool isAllowedToRequestStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedStorageAccess; };

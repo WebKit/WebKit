@@ -55,8 +55,7 @@ class WebsiteDataStore;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
-
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 

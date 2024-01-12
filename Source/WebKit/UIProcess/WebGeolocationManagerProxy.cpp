@@ -46,9 +46,9 @@ static inline Ref<WebProcessProxy> connectionToWebProcessProxy(const IPC::Connec
     return static_cast<WebProcessProxy&>(*connection.client());
 }
 
-const char* WebGeolocationManagerProxy::supplementName()
+ASCIILiteral WebGeolocationManagerProxy::supplementName()
 {
-    return "WebGeolocationManagerProxy";
+    return "WebGeolocationManagerProxy"_s;
 }
 
 Ref<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPool* processPool)

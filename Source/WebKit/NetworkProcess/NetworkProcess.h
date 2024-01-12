@@ -60,6 +60,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if USE(RUNNINGBOARD)
 #include "WebSQLiteDatabaseTracker.h"
@@ -537,7 +538,7 @@ private:
     mutable String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
-    typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
+    using NetworkProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<NetworkProcessSupplement>, ASCIILiteralPtrHash>;
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;

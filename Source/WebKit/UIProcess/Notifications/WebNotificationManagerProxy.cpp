@@ -43,9 +43,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-const char* WebNotificationManagerProxy::supplementName()
+ASCIILiteral WebNotificationManagerProxy::supplementName()
 {
-    return "WebNotificationManagerProxy";
+    return "WebNotificationManagerProxy"_s;
 }
 
 Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessPool* processPool)

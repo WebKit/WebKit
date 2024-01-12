@@ -54,6 +54,7 @@
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -699,7 +700,7 @@ private:
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
 
-    typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
+    using WebContextSupplementMap = HashMap<ASCIILiteral, RefPtr<WebContextSupplement>, ASCIILiteralPtrHash>;
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)

@@ -70,9 +70,9 @@ ServiceWorkerRegistrationBackgroundFetchAPI& ServiceWorkerRegistrationBackground
     return *supplement;
 }
 
-const char* ServiceWorkerRegistrationBackgroundFetchAPI::supplementName()
+ASCIILiteral ServiceWorkerRegistrationBackgroundFetchAPI::supplementName()
 {
-    return "ServiceWorkerRegistrationBackgroundFetchAPI";
+    return "ServiceWorkerRegistrationBackgroundFetchAPI"_s;
 }
 
 }

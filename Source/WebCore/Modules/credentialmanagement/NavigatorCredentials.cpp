@@ -39,9 +39,9 @@ NavigatorCredentials::NavigatorCredentials() = default;
 
 NavigatorCredentials::~NavigatorCredentials() = default;
 
-const char* NavigatorCredentials::supplementName()
+ASCIILiteral NavigatorCredentials::supplementName()
 {
-    return "NavigatorCredentials";
+    return "NavigatorCredentials"_s;
 }
 
 CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)

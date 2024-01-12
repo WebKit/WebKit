@@ -43,9 +43,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-const char* WebCookieManager::supplementName()
+ASCIILiteral WebCookieManager::supplementName()
 {
-    return "WebCookieManager";
+    return "WebCookieManager"_s;
 }
 
 WebCookieManager::WebCookieManager(NetworkProcess& process)

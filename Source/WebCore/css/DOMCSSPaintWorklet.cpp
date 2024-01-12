@@ -54,9 +54,9 @@ DOMCSSPaintWorklet* DOMCSSPaintWorklet::from(DOMCSSNamespace& css)
     return supplement;
 }
 
-const char* DOMCSSPaintWorklet::supplementName()
+ASCIILiteral DOMCSSPaintWorklet::supplementName()
 {
-    return "DOMCSSPaintWorklet";
+    return "DOMCSSPaintWorklet"_s;
 }
 
 // FIXME: Get rid of this override and rely on the standard-compliant Worklet::addModule() instead.

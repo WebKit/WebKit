@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-const char* UserMediaController::supplementName()
+ASCIILiteral UserMediaController::supplementName()
 {
-    return "UserMediaController";
+    return "UserMediaController"_s;
 }
 
 UserMediaController::UserMediaController(UserMediaClient* client)

@@ -126,7 +126,7 @@ private:
     explicit InternalSettings(Page*);
 
     Settings& settings() const;
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     class Backup {
     public:

@@ -61,9 +61,9 @@ WorkerNavigatorPermissions& WorkerNavigatorPermissions::from(WorkerNavigator& na
     return *supplement;
 }
 
-const char* WorkerNavigatorPermissions::supplementName()
+ASCIILiteral WorkerNavigatorPermissions::supplementName()
 {
-    return "WorkerNavigatorPermissions";
+    return "WorkerNavigatorPermissions"_s;
 }
 
 } // namespace WebCore

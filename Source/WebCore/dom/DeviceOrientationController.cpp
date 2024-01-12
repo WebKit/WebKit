@@ -82,9 +82,9 @@ RefPtr<Event> DeviceOrientationController::getLastEvent()
 
 #endif // PLATFORM(IOS_FAMILY)
 
-const char* DeviceOrientationController::supplementName()
+ASCIILiteral DeviceOrientationController::supplementName()
 {
-    return "DeviceOrientationController";
+    return "DeviceOrientationController"_s;
 }
 
 DeviceOrientationController* DeviceOrientationController::from(Page* page)

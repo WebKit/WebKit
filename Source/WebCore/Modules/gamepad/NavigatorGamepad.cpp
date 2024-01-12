@@ -50,9 +50,9 @@ NavigatorGamepad::~NavigatorGamepad()
     GamepadManager::singleton().unregisterNavigator(*this);
 }
 
-const char* NavigatorGamepad::supplementName()
+ASCIILiteral NavigatorGamepad::supplementName()
 {
-    return "NavigatorGamepad";
+    return "NavigatorGamepad"_s;
 }
 
 NavigatorGamepad* NavigatorGamepad::from(Navigator& navigator)

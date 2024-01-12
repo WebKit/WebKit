@@ -43,7 +43,7 @@ public:
 
     MediaCapabilities& mediaCapabilities() const;
 private:
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     mutable Ref<MediaCapabilities> m_mediaCapabilities;
 };

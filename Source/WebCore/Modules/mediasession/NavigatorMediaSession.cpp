@@ -64,9 +64,9 @@ NavigatorMediaSession* NavigatorMediaSession::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorMediaSession::supplementName()
+ASCIILiteral NavigatorMediaSession::supplementName()
 {
-    return "NavigatorMediaSession";
+    return "NavigatorMediaSession"_s;
 }
 
 }

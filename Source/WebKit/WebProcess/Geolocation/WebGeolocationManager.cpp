@@ -48,9 +48,9 @@ static RegistrableDomain registrableDomainForPage(WebPage& page)
     return RegistrableDomain { document->url() };
 }
 
-const char* WebGeolocationManager::supplementName()
+ASCIILiteral WebGeolocationManager::supplementName()
 {
-    return "WebGeolocationManager";
+    return "WebGeolocationManager"_s;
 }
 
 WebGeolocationManager::WebGeolocationManager(WebProcess& process)

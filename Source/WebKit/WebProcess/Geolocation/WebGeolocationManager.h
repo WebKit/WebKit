@@ -51,7 +51,7 @@ public:
     explicit WebGeolocationManager(WebProcess&);
     ~WebGeolocationManager();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     void registerWebPage(WebPage&, const String& authorizationToken, bool needsHighAccuracy);
     void unregisterWebPage(WebPage&);

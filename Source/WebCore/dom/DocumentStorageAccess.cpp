@@ -62,9 +62,9 @@ DocumentStorageAccess* DocumentStorageAccess::from(Document& document)
     return supplement;
 }
 
-const char* DocumentStorageAccess::supplementName()
+ASCIILiteral DocumentStorageAccess::supplementName()
 {
-    return "DocumentStorageAccess";
+    return "DocumentStorageAccess"_s;
 }
 
 void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPromise>&& promise)

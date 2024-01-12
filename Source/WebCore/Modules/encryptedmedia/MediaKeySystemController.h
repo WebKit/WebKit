@@ -44,7 +44,7 @@ public:
 
     void logRequestMediaKeySystemDenial(Document&);
 
-    WEBCORE_EXPORT static const char* supplementName();
+    WEBCORE_EXPORT static ASCIILiteral supplementName();
     static MediaKeySystemController* from(Page*);
 
 private:

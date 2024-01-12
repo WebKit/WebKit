@@ -60,7 +60,7 @@ class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC:
 public:
     explicit LegacyCustomProtocolManager(NetworkProcess&);
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     void registerScheme(const String&);
     void unregisterScheme(const String&);

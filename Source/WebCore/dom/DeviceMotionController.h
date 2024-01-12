@@ -53,7 +53,7 @@ public:
     bool hasLastData() override;
     RefPtr<Event> getLastEvent() override;
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
     static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);
 };

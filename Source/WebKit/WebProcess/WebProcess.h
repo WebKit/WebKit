@@ -49,6 +49,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounter.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -687,7 +688,7 @@ private:
 
     HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrame>> m_frameMap;
 
-    typedef HashMap<const char*, std::unique_ptr<WebProcessSupplement>, PtrHash<const char*>> WebProcessSupplementMap;
+    using WebProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<WebProcessSupplement>, ASCIILiteralPtrHash>;
     WebProcessSupplementMap m_supplements;
 
     TextCheckerState m_textCheckerState;

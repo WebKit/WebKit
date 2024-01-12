@@ -55,7 +55,7 @@ class WebGeolocationManagerProxy : public API::ObjectImpl<API::Object::Type::Geo
 #endif
 {
 public:
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     static Ref<WebGeolocationManagerProxy> create(WebProcessPool*);
     ~WebGeolocationManagerProxy();

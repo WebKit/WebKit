@@ -60,7 +60,7 @@ public:
     explicit RemoteCDMFactory(WebProcess&);
     virtual ~RemoteCDMFactory();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     GPUProcessConnection& gpuProcessConnection();
 

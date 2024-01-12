@@ -61,7 +61,7 @@ public:
 
     GeolocationClient& client() { return m_client; }
 
-    WEBCORE_EXPORT static const char* supplementName();
+    WEBCORE_EXPORT static ASCIILiteral supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
     void revokeAuthorizationToken(const String&);

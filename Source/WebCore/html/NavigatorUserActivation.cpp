@@ -60,9 +60,9 @@ NavigatorUserActivation* NavigatorUserActivation::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorUserActivation::supplementName()
+ASCIILiteral NavigatorUserActivation::supplementName()
 {
-    return "NavigatorUserActivation";
+    return "NavigatorUserActivation"_s;
 }
 
 }

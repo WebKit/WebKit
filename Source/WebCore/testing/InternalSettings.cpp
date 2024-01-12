@@ -142,9 +142,9 @@ private:
     RefPtr<InternalSettings> m_internalSettings;
 };
 
-const char* InternalSettings::supplementName()
+ASCIILiteral InternalSettings::supplementName()
 {
-    return "InternalSettings";
+    return "InternalSettings"_s;
 }
 
 InternalSettings* InternalSettings::from(Page* page)
