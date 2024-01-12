@@ -381,6 +381,19 @@ RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
     return *m_boxToRendererMap.get(&box);
 }
 
+bool BoxTree::contains(const RenderElement& rendererToFind) const
+{
+    if (!rendererToFind.layoutBox())
+        return false;
+    if (m_boxToRendererMap.contains(*rendererToFind.layoutBox()))
+        return true;
+    for (auto& renderer : m_renderers) {
+        if (renderer.get() == &rendererToFind)
+            return true;
+    }
+    return false;
+}
+
 const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
 {
     return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);

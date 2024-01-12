@@ -117,6 +117,7 @@ public:
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
 
+    bool contains(const RenderElement&) const;
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
     RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
