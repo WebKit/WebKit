@@ -1,0 +1,12 @@
+
+RUN(video.src = "../content/test-paint-on-captions.mp4")
+EVENT(addtrack)
+RUN(video.textTracks[0].mode = "showing")
+RUN(video.play())
+EXPECTED (video.textTracks[0].cues.length > '3') OK
+RUN(video.pause())
+RUN(cues = Array.from(video.textTracks[0].cues))
+EXPECTED (cues.every(cue => cue.positionAlign === "line-left") == 'true') OK
+EXPECTED (cues.every(cue => cue.position === cues[0].position) == 'true') OK
+END OF TEST
+
