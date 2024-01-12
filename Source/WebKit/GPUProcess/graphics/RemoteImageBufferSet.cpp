@@ -129,7 +129,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         }
     }
 
-    if (!m_frontBuffer || !inputData.supportsPartialRepaint || isSmallLayerBacking(m_frontBuffer->parameters()))
+    if (!m_frontBuffer || !inputData.supportsPartialRepaint)
         m_previouslyPaintedRect = std::nullopt;
 
     if (!m_backBuffer || m_backBuffer->isInUse()) {
