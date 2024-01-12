@@ -1102,9 +1102,13 @@ void Document::childrenChanged(const ChildChange& change)
     styleScope().clearResolver();
 }
 
+static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString&);
+static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName);
+
 static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const QualifiedName& name)
 {
-    if (Document::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::Valid)
+    ASSERT(!isStandardElementName(name.localName())); // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
+    if (validateCustomElementNameWithoutCheckingStandardElementNames(name.localName()) != CustomElementNameValidationStatus::Valid)
         return HTMLUnknownElement::create(name, document);
 
     Ref element = HTMLMaybeFormAssociatedCustomElement::create(name, document);
@@ -1397,24 +1401,93 @@ static inline bool isPotentialCustomElementNameCharacter(char32_t character)
     return std::binary_search(std::begin(ranges), std::end(ranges), character);
 }
 
-CustomElementNameValidationStatus Document::validateCustomElementName(const AtomString& localName)
+enum class CustomElementNameCharacterKind : uint8_t {
+    Invalid,
+    Valid,
+    Hyphen,
+    Upper,
+};
+
+static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCharacterKind(LChar character)
+{
+    using Kind = CustomElementNameCharacterKind;
+    static const Kind table[] = {
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Hyphen,  Kind::Valid,   Kind::Invalid, // -, .
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // 0-7
+        Kind::Valid,   Kind::Valid,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, // 8-9
+        Kind::Invalid, Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // @, A-G
+        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // H-O
+        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // P-W
+        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Valid,   // X-Z, _
+        Kind::Invalid, Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // a-g
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // h-o
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // p-w
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, // x-z
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Valid,   // xB7
+        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xC0-xC7
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xC8-xCF
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, // xD0-xD6
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xD8-xDF
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xE0-xE7
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xE8-xEF
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, // xF0-xF6
+        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xF8-xFF
+    };
+    ASSERT(std::size(table) == 256);
+    return table[character];
+}
+
+static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
 {
     if (!isASCIILower(localName[0]))
         return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;
 
     bool containsHyphen = false;
-    for (auto character : StringView(localName).codePoints()) {
-        if (isASCIIUpper(character))
-            return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
-        if (!isPotentialCustomElementNameCharacter(character))
-            return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
-        if (character == '-')
-            containsHyphen = true;
+    if (LIKELY(localName.is8Bit())) {
+        for (auto character : localName.string().span8()) {
+            switch (customElementNameCharacterKind(character)) {
+            case CustomElementNameCharacterKind::Invalid:
+                return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
+            case CustomElementNameCharacterKind::Valid:
+                break;
+            case CustomElementNameCharacterKind::Hyphen:
+                containsHyphen = true;
+                break;
+            case CustomElementNameCharacterKind::Upper:
+                return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
+            }
+        }
+    } else {
+        for (auto character : StringView(localName).codePoints()) {
+            if (isASCIIUpper(character))
+                return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
+            if (!isPotentialCustomElementNameCharacter(character))
+                return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
+            if (character == '-')
+                containsHyphen = true;
+        }
     }
 
     if (!containsHyphen)
         return CustomElementNameValidationStatus::ContainsNoHyphen;
 
+    return CustomElementNameValidationStatus::Valid;
+}
+
+static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName)
+{
 #if ENABLE(MATHML)
     const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
 #else
@@ -1422,14 +1495,23 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
 #endif
     static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile"_s);
 
-    if (localName == SVGNames::font_faceTag->localName()
+    return localName == SVGNames::font_faceTag->localName()
         || localName == SVGNames::font_face_formatTag->localName()
         || localName == SVGNames::font_face_nameTag->localName()
         || localName == SVGNames::font_face_srcTag->localName()
         || localName == SVGNames::font_face_uriTag->localName()
         || localName == SVGNames::missing_glyphTag->localName()
         || localName == annotationXmlLocalName
-        || localName == colorProfileLocalName)
+        || localName == colorProfileLocalName;
+}
+
+CustomElementNameValidationStatus Document::validateCustomElementName(const AtomString& localName)
+{
+    auto result = validateCustomElementNameWithoutCheckingStandardElementNames(localName);
+    if (result != CustomElementNameValidationStatus::Valid)
+        return result;
+
+    if (isStandardElementName(localName))
         return CustomElementNameValidationStatus::ConflictsWithStandardElementName;
 
     return CustomElementNameValidationStatus::Valid;
