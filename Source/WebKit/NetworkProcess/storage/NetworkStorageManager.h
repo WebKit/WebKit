@@ -266,7 +266,7 @@ private:
     std::optional<uint64_t> m_standardVolumeCapacity;
     std::optional<uint64_t> m_volumeCapacityOverride;
     std::optional<uint64_t> m_totalUsage;
-    uint64_t m_totalQuota;
+    std::optional<uint64_t> m_totalQuota;
     bool m_isEvictionScheduled { false };
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
     IPC::Connection::UniqueID m_parentConnection;
