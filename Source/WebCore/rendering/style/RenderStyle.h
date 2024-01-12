@@ -1724,7 +1724,6 @@ public:
     const AtomString& hyphenString() const;
 
     bool inheritedEqual(const RenderStyle&) const;
-    bool inheritedCustomPropertiesEqual(const RenderStyle&) const;
     bool fastPathInheritedEqual(const RenderStyle&) const;
     bool nonFastPathInheritedEqual(const RenderStyle&) const;
 

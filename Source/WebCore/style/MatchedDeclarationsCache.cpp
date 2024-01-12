@@ -100,15 +100,15 @@ bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const 
     return CSSPrimitiveValue::equalForLengthResolution(style, *renderStyle);
 }
 
-unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult)
+unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, const StyleCustomPropertyData& inheritedCustomProperties)
 {
     if (!matchResult.isCacheable)
         return 0;
 
-    return WTF::computeHash(matchResult);
+    return WTF::computeHash(matchResult, &inheritedCustomProperties);
 }
 
-const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult)
+const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const StyleCustomPropertyData& inheritedCustomProperties)
 {
     if (!hash)
         return nullptr;
@@ -119,6 +119,9 @@ const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned h
 
     auto& entry = it->value;
     if (matchResult != entry.matchResult)
+        return nullptr;
+
+    if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
         return nullptr;
 
     return &entry;
