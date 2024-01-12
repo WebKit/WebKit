@@ -1625,7 +1625,7 @@ public:
     void unobserveForContainIntrinsicSize(Element&);
     void resetObservationSizeForContainIntrinsicSize(Element&);
 
-    Ref<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
+    RefPtr<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
     ViewTransition* activeViewTransition() const;
     void setActiveViewTransition(RefPtr<ViewTransition>&&);
 

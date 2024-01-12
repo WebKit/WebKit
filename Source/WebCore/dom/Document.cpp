@@ -9862,8 +9862,11 @@ void Document::setHasViewTransitionPseudoElementTree(bool value)
     m_hasViewTransitionPseudoElementTree = value;
 }
 
-Ref<ViewTransition> Document::startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+RefPtr<ViewTransition> Document::startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
 {
+    if (!globalObject())
+        return nullptr;
+
     Ref viewTransition = ViewTransition::create(*this, WTFMove(updateCallback));
 
     if (RefPtr activeViewTransition = m_activeViewTransition)
@@ -9871,7 +9874,7 @@ Ref<ViewTransition> Document::startViewTransition(RefPtr<ViewTransitionUpdateCal
 
     setActiveViewTransition(WTFMove(viewTransition));
     scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
-    return *m_activeViewTransition;
+    return m_activeViewTransition;
 }
 
 void Document::performPendingViewTransitions()
