@@ -36,6 +36,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/URLHash.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
 
-class SWServerToContextConnection {
+class SWServerToContextConnection: public CanMakeWeakPtr<SWServerToContextConnection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();

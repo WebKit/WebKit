@@ -1389,7 +1389,7 @@ void SWServer::addContextConnection(SWServerToContextConnection& connection)
 
     ASSERT(!m_contextConnections.contains(connection.registrableDomain()));
 
-    m_contextConnections.add(connection.registrableDomain(), &connection);
+    m_contextConnections.add(connection.registrableDomain(), connection);
 
     contextConnectionCreated(connection);
 }
@@ -1407,6 +1407,11 @@ void SWServer::removeContextConnection(SWServerToContextConnection& connection)
     markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
     if (needsContextConnectionForRegistrableDomain(registrableDomain))
         createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
+}
+
+SWServerToContextConnection* SWServer::contextConnectionForRegistrableDomain(const RegistrableDomain& domain)
+{
+    return m_contextConnections.get(domain);
 }
 
 void SWServer::createContextConnection(const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
@@ -1712,7 +1717,7 @@ void SWServer::setInspectable(ServiceWorkerIsInspectable inspectable)
 
     m_isInspectable = inspectable;
 
-    for (auto* connection : m_contextConnections.values())
+    for (auto& connection : m_contextConnections.values())
         connection->setInspectable(inspectable);
 }
 

@@ -589,7 +589,7 @@ void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registra
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
     ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
-    m_registrations.add(registration.identifier(), &registration);
+    m_registrations.add(registration.identifier(), registration);
 }
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)

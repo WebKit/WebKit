@@ -50,10 +50,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
 #define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
 #define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, m_identifier.toString().utf8().data(), ##__VA_ARGS__)
 
-static HashMap<SharedWorkerObjectIdentifier, SharedWorker*>& allSharedWorkers()
+static HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<SharedWorkerObjectIdentifier, SharedWorker*>> allSharedWorkers;
+    static NeverDestroyed<HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>> allSharedWorkers;
     return allSharedWorkers;
 }
 
@@ -121,7 +121,7 @@ SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<M
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");
-    allSharedWorkers().add(m_identifier, this);
+    allSharedWorkers().add(m_identifier, *this);
 }
 
 SharedWorker::~SharedWorker()

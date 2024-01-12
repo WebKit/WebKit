@@ -58,6 +58,10 @@ class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
+    using WebCore::SWServerToContextConnection::weakPtrFactory;
+    using WebCore::SWServerToContextConnection::WeakValueType;
+    using WebCore::SWServerToContextConnection::WeakPtrImplType;
+
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 

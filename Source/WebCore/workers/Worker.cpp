@@ -59,9 +59,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Worker);
 
 static Lock allWorkersLock;
-static HashMap<ScriptExecutionContextIdentifier, Worker*>& allWorkers() WTF_REQUIRES_LOCK(allWorkersLock)
+static HashMap<ScriptExecutionContextIdentifier, WeakRef<Worker, WeakPtrImplWithEventTargetData>>& allWorkers() WTF_REQUIRES_LOCK(allWorkersLock)
 {
-    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, Worker*>> map;
+    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakRef<Worker, WeakPtrImplWithEventTargetData>>> map;
     return map;
 }
 
@@ -92,7 +92,7 @@ Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, 
     }
 
     Locker locker { allWorkersLock };
-    auto addResult = allWorkers().add(m_clientIdentifier, this);
+    auto addResult = allWorkers().add(m_clientIdentifier, *this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 

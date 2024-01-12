@@ -59,6 +59,10 @@ struct WorkerOptions;
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
+    using AbstractWorker::weakPtrFactory;
+    using AbstractWorker::WeakValueType;
+    using AbstractWorker::WeakPtrImplType;
+
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, WorkerOptions&&);
     virtual ~Worker();
 
