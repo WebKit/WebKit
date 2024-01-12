@@ -1507,7 +1507,9 @@ bool GraphicsContextCG::canUseShadowBlur() const
 
 bool GraphicsContextCG::consumeHasDrawn()
 {
-    return std::exchange(m_hasDrawn, false);
+    bool hasDrawn = m_hasDrawn;
+    m_hasDrawn = false;
+    return hasDrawn;
 }
 
 }
