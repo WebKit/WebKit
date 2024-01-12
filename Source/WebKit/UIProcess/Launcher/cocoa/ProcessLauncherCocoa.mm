@@ -176,7 +176,17 @@ void ProcessLauncher::launchProcess()
                 [process invalidate];
                 return;
             }
-            launcher->m_xpcConnection = [process makeLibXPCConnectionError:nil];
+
+            NSError *error = nil;
+            OSObjectPtr xpcConnection = [process makeLibXPCConnectionError:&error];
+            if (!xpcConnection) {
+                RELEASE_LOG_ERROR(Process, "Failed to make libxpc connection for process %{public}@ with error: %{public}@", process.get(), error);
+                [process invalidate];
+                launcher->didFinishLaunchingProcess(0, { });
+                return;
+            }
+
+            launcher->m_xpcConnection = WTFMove(xpcConnection);
             launcher->m_process = WTFMove(process);
             launcher->finishLaunchingProcess(name.characters());
         });
