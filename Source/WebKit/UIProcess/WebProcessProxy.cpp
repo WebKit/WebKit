@@ -278,7 +278,7 @@ private:
         return dummy.get();
     }
 
-    CheckedRef<WebProcessProxy> m_process;
+    WeakRef<WebProcessProxy> m_process;
 };
 #endif
 
@@ -1625,20 +1625,20 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
 
             case API::Object::Type::PageHandle:
                 ASSERT(static_cast<API::PageHandle&>(object).isAutoconverting());
-                return checkedProcess()->webPage(static_cast<API::PageHandle&>(object).pageProxyID());
+                return protectedProcess()->webPage(static_cast<API::PageHandle&>(object).pageProxyID());
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
-                return checkedProcess()->transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
+                return protectedProcess()->transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
 #endif
             default:
                 return &object;
             }
         }
 
-        CheckedRef<WebProcessProxy> checkedProcess() const { return m_webProcessProxy; }
+        Ref<WebProcessProxy> protectedProcess() const { return m_webProcessProxy.get(); }
 
-        CheckedRef<WebProcessProxy> m_webProcessProxy;
+        WeakRef<WebProcessProxy> m_webProcessProxy;
     };
 
     return UserData::transform(object, Transformer(*this));

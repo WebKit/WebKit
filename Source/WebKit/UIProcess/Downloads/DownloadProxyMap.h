@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DownloadID.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -73,7 +72,7 @@ private:
     void platformCreate();
     void platformDestroy();
 
-    CheckedRef<NetworkProcessProxy> m_process;
+    WeakRef<NetworkProcessProxy> m_process;
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 
     bool m_shouldTakeAssertion { false };

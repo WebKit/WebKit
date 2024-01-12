@@ -116,7 +116,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
 
-        CheckedRef<WebProcessProxy> m_webProcessProxy;
+        WeakRef<WebProcessProxy> m_webProcessProxy;
     };
 
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());

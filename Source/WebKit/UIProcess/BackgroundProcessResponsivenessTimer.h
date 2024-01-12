@@ -26,8 +26,8 @@
 #pragma once
 
 #include "ResponsivenessTimer.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -56,7 +56,7 @@ private:
     void scheduleNextResponsivenessCheck();
     ResponsivenessTimer::Client& client() const;
 
-    CheckedRef<WebProcessProxy> m_webProcessProxy;
+    WeakRef<WebProcessProxy> m_webProcessProxy;
     Seconds m_checkingInterval;
     RunLoop::Timer m_responsivenessCheckTimer;
     RunLoop::Timer m_timeoutTimer;

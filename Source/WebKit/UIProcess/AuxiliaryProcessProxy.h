@@ -61,13 +61,18 @@ class AuxiliaryProcessProxy
     , public ResponsivenessTimer::Client
     , private ProcessLauncher::Client
     , public IPC::Connection::Client
-    , public ProcessThrottlerClient {
+    , public ProcessThrottlerClient
+    , public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
     AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority = false, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
 public:
+    using ResponsivenessTimer::Client::weakPtrFactory;
+    using ResponsivenessTimer::Client::WeakValueType;
+    using ResponsivenessTimer::Client::WeakPtrImplType;
+
     virtual ~AuxiliaryProcessProxy();
 
     static AuxiliaryProcessCreationParameters auxiliaryProcessParameters();
