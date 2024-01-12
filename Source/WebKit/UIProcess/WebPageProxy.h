@@ -1397,10 +1397,9 @@ public:
     void performDictionaryLookupOfCurrentSelection();
 #endif
 
-    class PolicyDecisionSender;
     enum class WillContinueLoadInNewProcess : bool { No, Yes };
-    void receivedPolicyDecision(WebCore::PolicyAction, API::Navigation*, RefPtr<API::WebsitePolicies>&&, std::variant<Ref<API::NavigationResponse>, Ref<API::NavigationAction>>&&, Ref<PolicyDecisionSender>&&, WillContinueLoadInNewProcess, std::optional<SandboxExtensionHandle>);
-    void receivedNavigationPolicyDecision(WebProcessProxy&, WebProcessProxy&, WebCore::PolicyAction, API::Navigation*, Ref<API::NavigationAction>&&, ProcessSwapRequestedByClient, WebFrameProxy&, const FrameInfoData&, WasNavigationIntercepted, Ref<PolicyDecisionSender>&&);
+    void receivedPolicyDecision(WebCore::PolicyAction, API::Navigation*, RefPtr<API::WebsitePolicies>&&, std::variant<Ref<API::NavigationResponse>, Ref<API::NavigationAction>>&&, WillContinueLoadInNewProcess, std::optional<SandboxExtensionHandle>, CompletionHandler<void(PolicyDecision&&)>&&);
+    void receivedNavigationPolicyDecision(WebProcessProxy&, WebProcessProxy&, WebCore::PolicyAction, API::Navigation*, Ref<API::NavigationAction>&&, ProcessSwapRequestedByClient, WebFrameProxy&, const FrameInfoData&, WasNavigationIntercepted, CompletionHandler<void(PolicyDecision&&)>&&);
 
     void backForwardRemovedItem(const WebCore::BackForwardItemIdentifier&);
 
@@ -2393,7 +2392,7 @@ private:
 
     void didDestroyNavigation(uint64_t navigationID);
 
-    void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebFrameProxy&, NavigationActionPolicyParameters&&, Ref<PolicyDecisionSender>&&);
+    void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebFrameProxy&, NavigationActionPolicyParameters&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForNavigationActionAsync(NavigationActionPolicyParameters&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForNavigationActionSync(NavigationActionPolicyParameters&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForNewWindowAction(FrameInfoData&&, NavigationActionData&&, WebCore::ResourceRequest&&, const String& frameName, CompletionHandler<void(PolicyDecision&&)>&&);
