@@ -51,7 +51,12 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     case CryptoAlgorithmIdentifier::Ed25519: {
         int ccerror = 0;
         const struct ccdigest_info* di = ccsha512_di();
+#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
+        if (cced25519_make_key_pair(di, ccrng(&ccerror),  ccPublicKey, ccPrivateKey))
+            return { };
+#else
         cced25519_make_key_pair(di, ccrng(&ccerror),  ccPublicKey, ccPrivateKey);
+#endif
         if (ccerror) {
             RELEASE_LOG_ERROR(Crypto, "Cannot generate Ed25519 key pair, error is %d", ccerror);
             return { };
@@ -60,7 +65,12 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     }
     case CryptoAlgorithmIdentifier::X25519: {
         int ccerror = 0;
+#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
+        if (cccurve25519_make_key_pair(ccrng(&ccerror), ccPublicKey, ccPrivateKey))
+            return { };
+#else
         cccurve25519_make_key_pair(ccrng(&ccerror), ccPublicKey, ccPrivateKey);
+#endif
         if (ccerror) {
             RELEASE_LOG_ERROR(Crypto, "Cannot generate curve 25519 key pair, error is %d", ccerror);
             return { };
@@ -94,7 +104,13 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
     switch (identifier) {
     case CryptoAlgorithmIdentifier::Ed25519: {
         auto* di = ccsha512_di();
+
+#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
+        if (cced25519_make_pub(di, ccPublicKey, privateKey.data()))
+            return false;
+#else
         cced25519_make_pub(di, ccPublicKey, privateKey.data());
+#endif
         break;
     }
     case CryptoAlgorithmIdentifier::X25519:

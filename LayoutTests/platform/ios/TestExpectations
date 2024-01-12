@@ -4599,16 +4599,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ Im
 imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
 
-# webkit.org/b/262663 (REGRESSION(iOS17/Sonoma): 8 WebCryptoAPI tests are constantly crashing.)
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_X25519.https.any.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_X25519.https.any.worker.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_X25519.https.any.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_X25519.https.any.worker.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.worker.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.html [ Crash ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.worker.html  [ Crash ]
-
 webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
