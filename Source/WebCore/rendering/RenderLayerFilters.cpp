@@ -81,18 +81,18 @@ void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& op
     removeReferenceFilterClients();
 
     for (auto& operation : operations.operations()) {
-        if (!is<ReferenceFilterOperation>(*operation))
+        RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation);
+        if (!referenceOperation)
             continue;
 
-        auto& referenceOperation = downcast<ReferenceFilterOperation>(*operation);
-        auto* documentReference = referenceOperation.cachedSVGDocumentReference();
+        auto* documentReference = referenceOperation->cachedSVGDocumentReference();
         if (auto* cachedSVGDocument = documentReference ? documentReference->document() : nullptr) {
             // Reference is external; wait for notifyFinished().
             cachedSVGDocument->addClient(*this);
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            RefPtr filterElement = m_layer.renderer().document().getElementById(referenceOperation.fragment());
+            RefPtr filterElement = m_layer.renderer().document().getElementById(referenceOperation->fragment());
             if (!filterElement)
                 continue;
             CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());

@@ -74,7 +74,8 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 
     size_t count = 0;
     for (size_t i = 0; i < numberOfItems; ++i) {
-        if (is<HTMLOptionElement>(*listItems[i]) && downcast<HTMLOptionElement>(*listItems[i]).selected())
+        auto* option = dynamicDowncast<HTMLOptionElement>(*listItems[i]);
+        if (option && option->selected())
             ++count;
     }
     return count;
@@ -206,16 +207,16 @@ void RenderMenuList::updateOptionsWidth()
     int size = listItems.size();    
 
     for (int i = 0; i < size; ++i) {
-        RefPtr element = listItems[i].get();
-        if (!is<HTMLOptionElement>(*element))
+        RefPtr option = dynamicDowncast<HTMLOptionElement>(listItems[i].get());
+        if (!option)
             continue;
 
-        String text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
+        String text = option->textIndentedToRespectGroupLabel();
         text = applyTextTransform(style(), text, ' ');
         if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
-            if (auto* optionStyle = element->computedStyle())
+            if (auto* optionStyle = option->computedStyle())
                 optionWidth += minimumValueForLength(optionStyle->textIndent(), 0);
             if (!text.isEmpty()) {
                 const FontCascade& font = style().fontCascade();
@@ -262,10 +263,9 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     int i = selectElement().optionToListIndex(optionIndex);
     String text = emptyString();
     if (i >= 0 && i < size) {
-        RefPtr element = listItems[i].get();
-        if (is<HTMLOptionElement>(*element)) {
-            text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-            auto* style = element->computedStyle();
+        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*listItems[i])) {
+            text = option->textIndentedToRespectGroupLabel();
+            auto* style = option->computedStyle();
             m_optionStyle = style ? RenderStyle::clonePtr(*style) : nullptr;
         }
     }
@@ -429,8 +429,8 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
         return;
 
     auto* axObject = axCache->get(this);
-    if (is<AccessibilityMenuList>(axObject))
-        downcast<AccessibilityMenuList>(*axObject).didUpdateActiveOption(optionIndex);
+    if (RefPtr menuList = dynamicDowncast<AccessibilityMenuList>(axObject))
+        menuList->didUpdateActiveOption(optionIndex);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const
@@ -441,10 +441,10 @@ String RenderMenuList::itemText(unsigned listIndex) const
 
     String itemString;
     auto& element = *listItems[listIndex];
-    if (is<HTMLOptGroupElement>(element))
-        itemString = downcast<HTMLOptGroupElement>(element).groupLabelText();
-    else if (is<HTMLOptionElement>(element))
-        itemString = downcast<HTMLOptionElement>(element).textIndentedToRespectGroupLabel();
+    if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(element))
+        itemString = optGroup->groupLabelText();
+    else if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
+        itemString = option->textIndentedToRespectGroupLabel();
 
     return applyTextTransform(style(), itemString, ' ');
 }
@@ -643,8 +643,8 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
     const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return false;
-    HTMLElement* element = listItems[listIndex].get();
-    return is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected();
+    auto* option = dynamicDowncast<HTMLOptionElement>(listItems[listIndex].get());
+    return option && option->selected();
 }
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)

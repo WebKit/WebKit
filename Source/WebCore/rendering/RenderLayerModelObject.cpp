@@ -294,9 +294,9 @@ TransformationMatrix* RenderLayerModelObject::layerTransform() const
 
 void RenderLayerModelObject::updateLayerTransform()
 {
-    if (is<RenderBox>(this) && style().offsetPath() && MotionPath::needsUpdateAfterContainingBlockLayout(*style().offsetPath())) {
+    if (auto* box = dynamicDowncast<RenderBox>(this); box && style().offsetPath() && MotionPath::needsUpdateAfterContainingBlockLayout(*style().offsetPath())) {
         if (auto* containingBlock = this->containingBlock()) {
-            view().frameView().layoutContext().setBoxNeedsTransformUpdateAfterContainerLayout(*downcast<RenderBox>(this), *containingBlock);
+            view().frameView().layoutContext().setBoxNeedsTransformUpdateAfterContainerLayout(*box, *containingBlock);
             return;
         }
     }
@@ -342,10 +342,10 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
     auto adjustedRects = rects;
 
     LayoutSize locationOffset;
-    if (is<RenderSVGModelObject>(this))
-        locationOffset = downcast<RenderSVGModelObject>(*this).locationOffsetEquivalent();
-    else if (is<RenderSVGBlock>(this))
-        locationOffset = downcast<RenderSVGBlock>(*this).locationOffset();
+    if (CheckedPtr modelObject = dynamicDowncast<RenderSVGModelObject>(this))
+        locationOffset = modelObject->locationOffsetEquivalent();
+    else if (CheckedPtr svgBlock = dynamicDowncast<RenderSVGBlock>(this))
+        locationOffset = svgBlock->locationOffset();
 
 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
@@ -468,21 +468,17 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
     if (!document().settings().layerBasedSVGEngineEnabled())
         return nullptr;
 
-    auto* clipPathOperation = style().clipPath();
-    if (!clipPathOperation || !is<ReferencePathOperation>(clipPathOperation))
+    RefPtr referenceClipPathOperation = dynamicDowncast<ReferencePathOperation>(style().clipPath());
+    if (!referenceClipPathOperation)
         return nullptr;
 
-    auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*clipPathOperation);
-
-    if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), referenceClipPathOperation)) {
+    if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), *referenceClipPathOperation)) {
         if (auto* referencedClipperRenderer = dynamicDowncast<RenderSVGResourceClipper>(referencedClipPathElement->renderer()))
             return referencedClipperRenderer;
     }
 
-    if (auto* element = this->element()) {
-        ASSERT(is<SVGElement>(element));
-        document().addPendingSVGResource(referenceClipPathOperation.fragment(), downcast<SVGElement>(*element));
-    }
+    if (auto* element = this->element())
+        document().addPendingSVGResource(referenceClipPathOperation->fragment(), downcast<SVGElement>(*element));
 
     return nullptr;
 }
@@ -504,10 +500,8 @@ RenderSVGResourceMasker* RenderLayerModelObject::svgMaskerResourceFromStyle() co
             return referencedMaskerRenderer;
     }
 
-    if (auto* element = this->element()) {
-        ASSERT(is<SVGElement>(element));
+    if (auto* element = this->element())
         document().addPendingSVGResource(resourceID, downcast<SVGElement>(*element));
-    }
 
     return nullptr;
 }
@@ -528,10 +522,8 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResource
             return referencedPaintServerRenderer;
     }
 
-    if (auto* element = this->element()) {
-        ASSERT(is<SVGElement>(element));
+    if (auto* element = this->element())
         document().addPendingSVGResource(AtomString(svgStyle.fillPaintUri()), downcast<SVGElement>(*element));
-    }
 
     return nullptr;
 }
@@ -552,10 +544,8 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
             return referencedPaintServerRenderer;
     }
 
-    if (auto* element = this->element()) {
-        ASSERT(is<SVGElement>(element));
+    if (auto* element = this->element())
         document().addPendingSVGResource(AtomString(svgStyle.strokePaintUri()), downcast<SVGElement>(*element));
-    }
 
     return nullptr;
 }

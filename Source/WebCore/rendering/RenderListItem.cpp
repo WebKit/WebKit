@@ -113,7 +113,8 @@ bool isHTMLListElement(const Node& node)
 static Element* enclosingList(const RenderListItem& listItem)
 {
     auto& element = listItem.element();
-    auto* parent = is<PseudoElement>(element) ? downcast<PseudoElement>(element).hostElement() : element.parentElement();
+    auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
+    auto* parent = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
     for (auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
             return ancestor;
@@ -136,13 +137,12 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
     };
     advance();
     while (current) {
-        auto* renderer = current->renderer();
-        if (!is<RenderListItem>(renderer)) {
+        auto* item = dynamicDowncast<RenderListItem>(current->renderer());
+        if (!item) {
             advance();
             continue;
         }
-        auto& item = downcast<RenderListItem>(*renderer);
-        auto* otherList = enclosingList(item);
+        auto* otherList = enclosingList(*item);
         if (!otherList) {
             advance();
             continue;
@@ -150,7 +150,7 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
 
         // This item is part of our current list, so it's what we're looking for.
         if (&list == otherList)
-            return &item;
+            return item;
 
         // We found ourself inside another list; skip the rest of its contents.
         current = ElementTraversal::nextIncludingPseudoSkippingChildren(*current, &list);
@@ -177,13 +177,12 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
     };
     advance();
     while (current) {
-        auto* renderer = current->renderer();
-        if (!is<RenderListItem>(renderer)) {
+        auto* item = dynamicDowncast<RenderListItem>(current->renderer());
+        if (!item) {
             advance();
             continue;
         }
-        auto& item = downcast<RenderListItem>(*renderer);
-        auto* otherList = enclosingList(item);
+        auto* otherList = enclosingList(*item);
         if (!otherList) {
             advance();
             continue;
@@ -191,7 +190,7 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
 
         // This item is part of our current list, so we found what we're looking for.
         if (&list == otherList)
-            return &item;
+            return item;
 
         // We found ourself inside another list; skip the rest of its contents by
         // advancing to it. However, since the list itself might be a list item,
@@ -354,10 +353,9 @@ void RenderListItem::updateListMarkerNumbers()
         return;
 
     bool isInReversedOrderedList = false;
-    if (is<HTMLOListElement>(*list)) {
-        auto& orderedList = downcast<HTMLOListElement>(*list);
-        orderedList.itemCountChanged();
-        isInReversedOrderedList = orderedList.isReversed();
+    if (RefPtr orderedList = dynamicDowncast<HTMLOListElement>(*list)) {
+        orderedList->itemCountChanged();
+        isInReversedOrderedList = orderedList->isReversed();
     }
 
     // If an item has been marked for update before, we know that all following items have, too.
@@ -370,8 +368,8 @@ void RenderListItem::updateListMarkerNumbers()
 
 bool RenderListItem::isInReversedOrderedList() const
 {
-    auto* list = enclosingList(*this);
-    return is<HTMLOListElement>(list) && downcast<HTMLOListElement>(*list).isReversed();
+    auto* list = dynamicDowncast<HTMLOListElement>(enclosingList(*this));
+    return list && list->isReversed();
 }
 
 } // namespace WebCore

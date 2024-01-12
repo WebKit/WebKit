@@ -99,9 +99,9 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
         m_paintOffset = ancestor.paintOffset() + offset;
 
     if (renderer.isOutOfFlowPositioned() && !fixed) {
-        if (auto* container = renderer.container()) {
-            if (container->isInFlowPositioned() && is<RenderInline>(*container))
-                m_paintOffset += downcast<RenderInline>(*container).offsetForInFlowPositionedInline(&renderer);
+        if (CheckedPtr container = dynamicDowncast<RenderInline>(renderer.container())) {
+            if (container && container->isInFlowPositioned())
+                m_paintOffset += container->offsetForInFlowPositionedInline(&renderer);
         }
     }
 
@@ -167,12 +167,16 @@ void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutC
     if (ancestor)
         propagateLineGridInfo(*ancestor, renderer);
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode()) && is<RenderMultiColumnFlow>(renderer))
-        computeLineGridPaginationOrigin(downcast<RenderMultiColumnFlow>(renderer));
+    if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode())) {
+        if (CheckedPtr columnFlow = dynamicDowncast<RenderMultiColumnFlow>(renderer))
+            computeLineGridPaginationOrigin(*columnFlow);
+    }
 
     // If we have a new grid to track, then add it to our set.
-    if (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(renderer))
-        establishLineGrid(layoutStateStack, downcast<RenderBlockFlow>(renderer));
+    if (renderer.style().lineGrid() != RenderStyle::initialLineGrid()) {
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+            establishLineGrid(layoutStateStack, *blockFlow);
+    }
 }
 
 LayoutUnit RenderLayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const

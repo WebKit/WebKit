@@ -55,8 +55,8 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
 RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
 {
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }
@@ -64,8 +64,8 @@ RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
 RenderMultiColumnSet* RenderMultiColumnSet::previousSiblingMultiColumnSet() const
 {
     for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto* multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }

@@ -230,16 +230,17 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         if (style.hasTransform() || style.hasClip() || style.hasMask())
             return false;
 
-        if (!is<RenderBox>(renderer))
+        auto* box = dynamicDowncast<RenderBox>(renderer);
+        if (!box)
             return false;
 
         // Only use background layers on the fullscreen element's backdrop.
-        auto* fullscreenElement = renderer.document().fullscreenManager().fullscreenElement();
+        auto* fullscreenElement = box->document().fullscreenManager().fullscreenElement();
         if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->backdropRenderer() != &renderer)
             return false;
 
-        auto rendererRect = downcast<RenderBox>(renderer).frameRect();
-        return rendererRect == renderer.view().frameRect();
+        auto rendererRect = box->frameRect();
+        return rendererRect == box->view().frameRect();
     };
     setRequiresBackgroundLayer(isFullsizeBackdrop(layer.renderer()));
 #endif
@@ -625,16 +626,18 @@ static LayoutRect clippingLayerBox(const RenderLayerModelObject& renderer)
 {
     LayoutRect result = LayoutRect::infiniteRect();
     if (renderer.hasNonVisibleOverflow()) {
-        if (is<RenderBox>(renderer))
-            result = downcast<RenderBox>(renderer).overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer))
+            result = box->overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        else if (is<RenderSVGModelObject>(renderer))
-            result = downcast<RenderSVGModelObject>(renderer).overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+        else if (CheckedPtr modelObject = dynamicDowncast<RenderSVGModelObject>(renderer))
+            result = modelObject->overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
 #endif
     }
 
-    if (renderer.hasClip() && is<RenderBox>(renderer))
-        result.intersect(downcast<RenderBox>(renderer).clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
+    if (renderer.hasClip()) {
+        if (auto* box = dynamicDowncast<RenderBox>(renderer))
+            result.intersect(box->clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
+    }
 
     return result;
 }
@@ -723,7 +726,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 
     auto layerForChildrenTransform = [&]() -> std::tuple<GraphicsLayer*, FloatRect> {
         if (m_scrollContainerLayer) {
-            ASSERT(is<RenderBox>(renderer())); // Scroll container layers are only created for RenderBox derived renderers.
+            // Scroll container layers are only created for RenderBox derived renderers.
             return std::make_tuple(m_scrollContainerLayer.get(), scrollContainerLayerBox(downcast<RenderBox>(renderer())));
         }
         if (auto* layer = clippingLayer())
@@ -767,20 +770,19 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
     if (!m_canCompositeBackdropFilters)
         return;
 
-    if (!is<RenderBox>(renderer()))
+    CheckedPtr renderBox = dynamicDowncast<RenderBox>(this->renderer());
+    if (!renderBox)
         return;
 
-    auto& renderBox = downcast<RenderBox>(this->renderer());
-
     FloatRoundedRect backdropFiltersRect;
-    if (renderBox.style().hasBorderRadius() && !renderBox.hasClip()) {
-        auto roundedBoxRect = renderBox.roundedBorderBoxRect();
+    if (renderBox->style().hasBorderRadius() && !renderBox->hasClip()) {
+        auto roundedBoxRect = renderBox->roundedBorderBoxRect();
         roundedBoxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
     } else {
-        auto boxRect = renderBox.borderBoxRect();
-        if (renderBox.hasClip())
-            boxRect.intersect(renderBox.clipRect(LayoutPoint(), nullptr));
+        auto boxRect = renderBox->borderBoxRect();
+        if (renderBox->hasClip())
+            boxRect.intersect(renderBox->clipRect(LayoutPoint(), nullptr));
         boxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = FloatRoundedRect(snapRectToDevicePixels(boxRect, deviceScaleFactor()));
     }
@@ -968,10 +970,11 @@ void RenderLayerBacking::updateAllowsBackingStoreDetaching(const LayoutRect& abs
 
 void RenderLayerBacking::updateAfterWidgetResize()
 {
-    if (!is<RenderWidget>(renderer()))
+    CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(renderer());
+    if (!renderWidget)
         return;
 
-    if (auto* innerCompositor = RenderLayerCompositor::frameContentsCompositor(downcast<RenderWidget>(renderer()))) {
+    if (auto* innerCompositor = RenderLayerCompositor::frameContentsCompositor(*renderWidget)) {
         innerCompositor->frameViewDidChangeSize();
         innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
     }
@@ -1151,7 +1154,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         attachPluginLayer(downcast<RenderEmbeddedObject>(renderer()));
 
 #if ENABLE(VIDEO)
-    else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
+    else if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderer()); renderVideo && renderVideo->shouldDisplayVideo()) {
         auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
         if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::LayerHostingContextId
 #if ENABLE(GPU_PROCESS)
@@ -1192,7 +1195,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #endif
     // FIXME: Why do we do this twice?
-    if (is<RenderWidget>(renderer()) && compositor.attachWidgetContentLayers(downcast<RenderWidget>(renderer()))) {
+    if (CheckedPtr widget = dynamicDowncast<RenderWidget>(renderer()); widget && compositor.attachWidgetContentLayers(*widget)) {
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         layerConfigChanged = true;
     }
@@ -1340,14 +1343,13 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         parentGraphicsLayerRect = ancestorCompositedBounds;
     }
 
-    if (!is<RenderBox>(compositedAncestor->renderer()))
+    CheckedPtr ancestorRenderBox = dynamicDowncast<RenderBox>(compositedAncestor->renderer());
+    if (!ancestorRenderBox)
         return parentGraphicsLayerRect;
-
-    auto& ancestorRenderBox = downcast<RenderBox>(compositedAncestor->renderer());
 
     if (ancestorBacking->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore position relative to it.
-        LayoutRect clippingBox = clippingLayerBox(ancestorRenderBox);
+        LayoutRect clippingBox = clippingLayerBox(*ancestorRenderBox);
         LayoutSize clippingBoxOffset = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, clippingBox.location(), deviceScaleFactor());
         parentGraphicsLayerRect = snappedGraphicsLayer(clippingBoxOffset, clippingBox.size(), renderer()).m_snappedRect;
     }
@@ -1357,7 +1359,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         ASSERT(scrollableArea);
 
         LayoutRect ancestorCompositedBounds = ancestorBacking->compositedBounds();
-        LayoutRect scrollContainerBox = scrollContainerLayerBox(ancestorRenderBox);
+        LayoutRect scrollContainerBox = scrollContainerLayerBox(*ancestorRenderBox);
         ScrollOffset scrollOffset = scrollableArea->scrollOffset();
         parentGraphicsLayerRect = LayoutRect((scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), scrollContainerBox.size());
     }
@@ -1808,8 +1810,8 @@ void RenderLayerBacking::updateContentsRects()
 {
     m_graphicsLayer->setContentsRect(snapRectToDevicePixelsIfNeeded(contentsBox(), renderer()));
     
-    if (is<RenderReplaced>(renderer())) {
-        FloatRoundedRect contentsClippingRect = downcast<RenderReplaced>(renderer()).roundedContentBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(renderer())) {
+        FloatRoundedRect contentsClippingRect = renderReplaced->roundedContentBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
         contentsClippingRect.move(contentOffsetInCompositingLayer());
         m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
     }
@@ -2920,7 +2922,8 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
 
 static bool isCompositedPlugin(RenderObject& renderer)
 {
-    return is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).requiresAcceleratedCompositing();
+    auto* embeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
+    return embeddedObject && embeddedObject->requiresAcceleratedCompositing();
 }
 
 // A "simple container layer" is a RenderLayer which has no visible content to render.
@@ -3061,8 +3064,8 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
     // FIXME: we could optimize cases where the image, video or canvas is known to fill the border box entirely,
     // and set background color on the layer in that case, instead of allocating backing store and painting.
 #if ENABLE(VIDEO)
-    if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo())
-        return m_owningLayer.hasVisibleBoxDecorationsOrBackground() || (!(downcast<RenderVideo>(renderer()).supportsAcceleratedRendering()) && m_requiresOwnBackingStore);
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderer()); renderVideo && renderVideo->shouldDisplayVideo())
+        return m_owningLayer.hasVisibleBoxDecorationsOrBackground() || (!(renderVideo->supportsAcceleratedRendering()) && m_requiresOwnBackingStore);
 #endif
 
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
@@ -3077,7 +3080,8 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
 // that require painting. Direct compositing saves backing store.
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
-    if (!is<RenderImage>(renderer()) || m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.paintsWithFilters() || renderer().hasClip())
+    CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(renderer());
+    if (!imageRenderer || m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.paintsWithFilters() || renderer().hasClip())
         return false;
 
 #if ENABLE(VIDEO)
@@ -3085,23 +3089,22 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         return false;
 #endif
 
-    auto& imageRenderer = downcast<RenderImage>(renderer());
-    if (auto* cachedImage = imageRenderer.cachedImage()) {
+    if (auto* cachedImage = imageRenderer->cachedImage()) {
         if (!cachedImage->hasImage())
             return false;
 
-        auto* image = cachedImage->imageForRenderer(&imageRenderer);
-        if (!is<BitmapImage>(image))
+        auto* image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+        if (!image)
             return false;
 
-        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::Orientation::None)
+        if (image->orientationForCurrentFrame() != ImageOrientation::Orientation::None)
             return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))
         // GTK and WPE ports don't support rounded rect clipping at TextureMapper level, so they cannot
         // directly composite images that have border-radius propery. Draw them as non directly composited
         // content instead. See https://bugs.webkit.org/show_bug.cgi?id=174157.
-        if (imageRenderer.style().hasBorderRadius())
+        if (imageRenderer->style().hasBorderRadius())
             return false;
 #endif
 
@@ -3132,17 +3135,16 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
     if (contents.location() != LayoutPoint(0, 0))
         return false;
 
-    if (is<RenderImage>(renderer())) {
-        auto& imageRenderer = downcast<RenderImage>(renderer());
-        if (auto* cachedImage = imageRenderer.cachedImage()) {
+    if (CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(renderer())) {
+        if (auto* cachedImage = imageRenderer->cachedImage()) {
             if (!cachedImage->hasImage())
                 return false;
 
-            auto* image = cachedImage->imageForRenderer(&imageRenderer);
-            if (!is<BitmapImage>(image))
+            auto* image = dynamicDowncast<BitmapImage>(cachedImage->imageForRenderer(imageRenderer.get()));
+            if (!image)
                 return false;
 
-            if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::Orientation::None)
+            if (image->orientationForCurrentFrame() != ImageOrientation::Orientation::None)
                 return false;
 
             return contents.size() == image->size();
@@ -3237,22 +3239,21 @@ LayoutSize RenderLayerBacking::contentOffsetInCompositingLayer() const
 
 LayoutRect RenderLayerBacking::contentsBox() const
 {
-    if (!is<RenderBox>(renderer()))
+    CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer());
+    if (!renderBox)
         return LayoutRect();
 
-    auto& renderBox = downcast<RenderBox>(renderer());
     LayoutRect contentsRect;
 #if ENABLE(VIDEO)
-    if (is<RenderVideo>(renderBox))
-        contentsRect = downcast<RenderVideo>(renderBox).videoBox();
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(*renderBox))
+        contentsRect = renderVideo->videoBox();
     else
 #endif
 
-    if (is<RenderReplaced>(renderBox) && !is<RenderWidget>(renderBox)) {
-        RenderReplaced& renderReplaced = downcast<RenderReplaced>(renderBox);
-        contentsRect = renderReplaced.replacedContentRect();
-    } else
-        contentsRect = renderBox.contentBoxRect();
+    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderBox); renderReplaced && !is<RenderWidget>(*renderReplaced))
+        contentsRect = renderReplaced->replacedContentRect();
+    else
+        contentsRect = renderBox->contentBoxRect();
 
     contentsRect.move(contentOffsetInCompositingLayer());
     return contentsRect;
@@ -3277,10 +3278,11 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
 
 FloatRect RenderLayerBacking::backgroundBoxForSimpleContainerPainting() const
 {
-    if (!is<RenderBox>(renderer()))
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer());
+    if (!box)
         return FloatRect();
 
-    LayoutRect backgroundBox = backgroundRectForBox(downcast<RenderBox>(renderer()));
+    LayoutRect backgroundBox = backgroundRectForBox(*box);
     backgroundBox.move(contentOffsetInCompositingLayer());
     return snapRectToDevicePixels(backgroundBox, deviceScaleFactor());
 }

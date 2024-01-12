@@ -163,8 +163,8 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, Layo
     LayoutUnit physicalEnd = logicalBottom;
     if (renderer->view().frameView().hasFlippedBlockRenderers()) {
         RenderBox* block;
-        if (is<RenderBox>(*renderer))
-            block = downcast<RenderBox>(renderer);
+        if (auto* box = dynamicDowncast<RenderBox>(*renderer))
+            block = box;
         else
             block = renderer->containingBlock();
         physicalStart = block->flipForWritingMode(logicalTop);
@@ -342,14 +342,14 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (current->isReplacedOrInlineBlock()) {
             if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
-        } if (is<RenderLineBreak>(*current)) {
-            if (auto wrapper = downcast<RenderLineBreak>(*current).inlineBoxWrapper())
+        } if (auto* lineBreak = dynamicDowncast<RenderLineBreak>(*current)) {
+            if (auto wrapper = lineBreak->inlineBoxWrapper())
                 box = &wrapper->root();
-        } else if (is<RenderText>(*current)) {
-            if (LegacyInlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
+        } else if (auto* textRenderer = dynamicDowncast<RenderText>(*current)) {
+            if (auto* textBox = textRenderer->lastTextBox())
                 box = &textBox->root();
-        } else if (is<RenderInline>(*current)) {
-            LegacyInlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBox();
+        } else if (auto* renderInline = dynamicDowncast<RenderInline>(*current)) {
+            auto* lastSiblingBox = renderInline->lastLineBox();
             if (lastSiblingBox)
                 box = &lastSiblingBox->root();
         }
@@ -381,7 +381,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             // Dedicated linebox for floats may be added as the last rootbox. If this occurs with BRs inside inlines that propagte their lineboxes to
             // the parent flow, we need to invalidate it explicitly.
             // FIXME: We should be able to figure out the actual "changed child" even when we are calling through empty inlines recursively.
-            if (is<RenderInline>(child) && !downcast<RenderInline>(child).firstLineBox()) {
+            if (auto* renderInline = dynamicDowncast<RenderInline>(child); renderInline && !renderInline->firstLineBox()) {
                 auto* lastRootBox = nextBox->blockFlow().lastRootBox();
                 if (lastRootBox->isForTrailingFloats() && !lastRootBox->isDirty())
                     lastRootBox->markDirty();
