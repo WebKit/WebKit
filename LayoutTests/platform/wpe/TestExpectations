@@ -1716,5 +1716,6 @@ webkit.org/b/266711 webrtc/canvas-to-peer-connection.html  [ Failure Timeout Cra
 webkit.org/b/266711 webrtc/release-after-getting-track.html [ Pass Crash ]
 webkit.org/b/266711 fast/mediastream/applyConstraints-deviceId.html [ Pass Crash ]
 webkit.org/b/266711 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass Crash ]
+webkit.org/b/266711 fast/editing/create-link-inline-style-change-crash-001.html [ Pass Crash ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
