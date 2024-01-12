@@ -64,6 +64,7 @@ class WebProcessProxy;
 
 struct FrameInfoData;
 struct FrameTreeCreationParameters;
+struct NavigationActionPolicyParameters;
 
 class RemotePageProxy : public RefCounted<RemotePageProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -97,8 +98,8 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void decidePolicyForResponse(FrameInfoData&&, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&&);
     void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
-    void decidePolicyForNavigationActionAsync(FrameInfoData&&, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, CompletionHandler<void(PolicyDecision&&)>&&);
-    void decidePolicyForNavigationActionSync(FrameInfoData&&, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, CompletionHandler<void(PolicyDecision&&)>&&);
+    void decidePolicyForNavigationActionAsync(NavigationActionPolicyParameters&&, CompletionHandler<void(PolicyDecision&&)>&&);
+    void decidePolicyForNavigationActionSync(NavigationActionPolicyParameters&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void didFailProvisionalLoadForFrame(FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
     void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, uint64_t, URL&&);
     void handleMessage(const String& messageName, const UserData& messageBody);

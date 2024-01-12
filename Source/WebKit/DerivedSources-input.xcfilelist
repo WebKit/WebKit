@@ -284,6 +284,7 @@ $(PROJECT_DIR)/Shared/LocalFrameCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
+$(PROJECT_DIR)/Shared/NavigationActionPolicyParameters.serialization.in
 $(PROJECT_DIR)/Shared/NetworkProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in

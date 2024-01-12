@@ -102,8 +102,8 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionAsync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionSync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
+    DecidePolicyForNavigationActionAsync(struct WebKit::NavigationActionPolicyParameters parameters) -> (struct WebKit::PolicyDecision PolicyDecision)
+    DecidePolicyForNavigationActionSync(struct WebKit::NavigationActionPolicyParameters parameters) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
     DecidePolicyForNewWindowAction(struct WebKit::FrameInfoData frameInfo, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName) -> (struct WebKit::PolicyDecision PolicyDecision)
 
     # Progress messages

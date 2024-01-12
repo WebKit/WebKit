@@ -5739,6 +5739,8 @@
 		5C046A1C290B26CF00FF7820 /* TextTrackPrivateRemoteConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextTrackPrivateRemoteConfiguration.serialization.in; sourceTree = "<group>"; };
 		5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateRelayed.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
+		5C0C2B662B4CB2C0004473B0 /* NavigationActionPolicyParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationActionPolicyParameters.h; sourceTree = "<group>"; };
+		5C0C2B672B4CB347004473B0 /* NavigationActionPolicyParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationActionPolicyParameters.serialization.in; sourceTree = "<group>"; };
 		5C121E8324101F7000486F9B /* FrameTreeNodeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTreeNodeData.h; sourceTree = "<group>"; };
 		5C121E852410276F00486F9B /* APIFrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameTreeNode.h; sourceTree = "<group>"; };
 		5C121E862410290D00486F9B /* _WKFrameTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFrameTreeNode.mm; sourceTree = "<group>"; };
@@ -8680,6 +8682,8 @@
 				4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */,
 				1ADCB869189831B30022EE5A /* NavigationActionData.h */,
 				86D1968129A512590083B077 /* NavigationActionData.serialization.in */,
+				5C0C2B662B4CB2C0004473B0 /* NavigationActionPolicyParameters.h */,
+				5C0C2B672B4CB347004473B0 /* NavigationActionPolicyParameters.serialization.in */,
 				86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */,
 				86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */,
 				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,

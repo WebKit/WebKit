@@ -412,6 +412,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/MediaPlaybackState.serialization.in
     Shared/Model.serialization.in
     Shared/NavigationActionData.serialization.in
+    Shared/NavigationActionPolicyParameters.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/PlatformPopupMenuData.serialization.in
