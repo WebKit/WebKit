@@ -136,12 +136,11 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             parentRenderer = parentRenderer->parent();
 
         // If we have a list we should resize ListMarkers separately.
-        if (is<RenderListMarker>(*parentRenderer->firstChild())) {
-            auto& listMarkerRenderer = downcast<RenderListMarker>(*parentRenderer->firstChild());
-            auto style = cloneRenderStyleWithState(listMarkerRenderer.style());
+        if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(*parentRenderer->firstChild())) {
+            auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
             style.fontCascade().update(&node->document().fontSelector());
-            listMarkerRenderer.setStyle(WTFMove(style));
+            listMarkerRenderer->setStyle(WTFMove(style));
         }
 
         // Resize the line height of the parent.
@@ -170,10 +169,10 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     }
 
     for (auto& node : m_autoSizedNodes) {
-        auto& textRenderer = *node->renderer();
-        if (!is<RenderTextFragment>(textRenderer))
+        auto* textRenderer = dynamicDowncast<RenderTextFragment>(*node->renderer());
+        if (!textRenderer)
             continue;
-        auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
+        auto* block = textRenderer->blockForAccompanyingFirstLetter();
         if (!block)
             continue;
 

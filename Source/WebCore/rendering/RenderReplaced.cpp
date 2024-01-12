@@ -424,8 +424,8 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
         intrinsicSize.scale(style().effectiveZoom());
 
-        if (is<RenderImage>(*this))
-            intrinsicSize.scale(downcast<RenderImage>(*this).imageDevicePixelRatio());
+        if (auto* image = dynamicDowncast<RenderImage>(*this))
+            intrinsicSize.scale(image->imageDevicePixelRatio());
 
         // Update our intrinsic size to match what the content renderer has computed, so that when we
         // constrain the size below, the correct intrinsic size will be obtained for comparison against

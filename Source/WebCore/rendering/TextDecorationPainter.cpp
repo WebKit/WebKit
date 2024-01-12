@@ -349,8 +349,8 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
 
     auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
         if (pseudoId != PseudoId::None && renderer.style().hasPseudoStyle(pseudoId)) {
-            if (is<RenderText>(renderer))
-                return *downcast<RenderText>(renderer).getCachedPseudoStyle(pseudoId);
+            if (auto textRenderer = dynamicDowncast<RenderText>(renderer))
+                return *textRenderer->getCachedPseudoStyle(pseudoId);
             return *downcast<RenderElement>(renderer).getCachedPseudoStyle(pseudoId);
         }
         return firstLineStyle ? renderer.firstLineStyle() : renderer.style();
@@ -365,8 +365,11 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
             return;
 
         current = current->parent();
-        if (current && current->isAnonymousBlock() && downcast<RenderBlock>(*current).continuation())
-            current = downcast<RenderBlock>(*current).continuation();
+        if (current && current->isAnonymousBlock()) {
+            auto& currentBlock = downcast<RenderBlock>(*current);
+            if (auto* continuation = currentBlock.continuation())
+                current = continuation;
+        }
 
         if (remainingDecorations.isEmpty())
             break;

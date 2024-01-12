@@ -506,11 +506,12 @@ void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowInde
     bool flexAllChildren = cell.style().logicalHeight().isFixed() || (!table()->style().logicalHeight().isAuto() && rowHeight != cell.logicalHeight());
     
     for (auto& renderer : childrenOfType<RenderBox>(cell)) {
-        if (renderer.style().logicalHeight().isPercentOrCalculated()
-            && (flexAllChildren || shouldFlexCellChild(cell, renderer))
-            && (!is<RenderTable>(renderer) || downcast<RenderTable>(renderer).hasSections())) {
-            cellChildrenFlex = true;
-            break;
+        if (renderer.style().logicalHeight().isPercentOrCalculated() && (flexAllChildren || shouldFlexCellChild(cell, renderer))) {
+            auto* renderTable = dynamicDowncast<RenderTable>(renderer);
+            if (!renderTable || renderTable->hasSections()) {
+                cellChildrenFlex = true;
+                break;
+            }
         }
     }
 

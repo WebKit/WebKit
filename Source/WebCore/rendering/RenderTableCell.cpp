@@ -111,11 +111,12 @@ void RenderTableCell::willBeRemovedFromTree(IsInternalMove isInternalMove)
 unsigned RenderTableCell::parseColSpanFromDOM() const
 {
     ASSERT(element());
-    if (is<HTMLTableCellElement>(*element()))
-        return std::min<unsigned>(downcast<HTMLTableCellElement>(*element()).colSpan(), maxColumnIndex);
+    if (auto* cell = dynamicDowncast<HTMLTableCellElement>(*element()))
+        return std::min<unsigned>(cell->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
-    if (element()->hasTagName(MathMLNames::mtdTag))
-        return std::min<unsigned>(downcast<MathMLElement>(*element()).colSpan(), maxColumnIndex);
+    auto* mathMLElement = dynamicDowncast<MathMLElement>(*element());
+    if (mathMLElement && mathMLElement->hasTagName(MathMLNames::mtdTag))
+        return std::min<unsigned>(mathMLElement->colSpan(), maxColumnIndex);
 #endif
     return 1;
 }
@@ -123,11 +124,12 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
 unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
     ASSERT(element());
-    if (is<HTMLTableCellElement>(*element()))
-        return std::min<unsigned>(downcast<HTMLTableCellElement>(*element()).rowSpan(), maxRowIndex);
+    if (auto* cell = dynamicDowncast<HTMLTableCellElement>(*element()))
+        return std::min<unsigned>(cell->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
-    if (element()->hasTagName(MathMLNames::mtdTag))
-        return std::min<unsigned>(downcast<MathMLElement>(*element()).rowSpan(), maxRowIndex);
+    auto* mathMLElement = dynamicDowncast<MathMLElement>(*element());
+    if (mathMLElement && mathMLElement->hasTagName(MathMLNames::mtdTag))
+        return std::min<unsigned>(mathMLElement->rowSpan(), maxRowIndex);
 #endif
     return 1;
 }

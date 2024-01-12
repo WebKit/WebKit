@@ -248,10 +248,11 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     LayoutRect paintRect = paintInfo.rect;
 
     OptionSet<PaintBehavior> oldBehavior = PaintBehavior::Normal;
-    if (is<LocalFrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode)) {
-        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
-        oldBehavior = frameView.paintBehavior();
-        frameView.setPaintBehavior(oldBehavior | PaintBehavior::DefaultAsynchronousImageDecode);
+    if (paintInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode) {
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget)) {
+            oldBehavior = frameView->paintBehavior();
+            frameView->setPaintBehavior(oldBehavior | PaintBehavior::DefaultAsynchronousImageDecode);
+        }
     }
 
     IntPoint widgetLocation = m_widget->frameRect().location();
@@ -278,15 +279,14 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
 
-    if (is<LocalFrameView>(*m_widget)) {
-        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
-        bool runOverlapTests = !frameView.useSlowRepaintsIfNotOverlapped();
+    if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget)) {
+        bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped();
         if (paintInfo.overlapTestRequests && runOverlapTests) {
             ASSERT(!paintInfo.overlapTestRequests->contains(this) || (paintInfo.overlapTestRequests->get(this) == m_widget->frameRect()));
             paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
         }
         if (paintInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode)
-            frameView.setPaintBehavior(oldBehavior);
+            frameView->setPaintBehavior(oldBehavior);
     }
 }
 
@@ -314,7 +314,8 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // FIXME: Shouldn't check if the frame view needs layout during event region painting. This is a workaround
     // for the fact that non-composited frames depend on their enclosing compositing layer to perform an event
     // region update on their behalf. See <https://webkit.org/b/210311> for more details.
-    bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && is<LocalFrameView>(m_widget) && !downcast<LocalFrameView>(*m_widget).needsLayout();
+    auto* frameView = dynamicDowncast<LocalFrameView>(m_widget.get());
+    bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && frameView && !frameView->needsLayout();
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
 
@@ -371,14 +372,13 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
 
     // if the frame size got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size.
-    if (is<LocalFrameView>(*m_widget)) {
-        LocalFrameView& frameView = downcast<LocalFrameView>(*m_widget);
+    if (RefPtr frameView = dynamicDowncast<LocalFrameView>(*m_widget)) {
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
-        Ref localFrame = frameView.frame();
-        if ((widgetSizeChanged || frameView.needsLayout())
+        Ref localFrame = frameView->frame();
+        if ((widgetSizeChanged || frameView->needsLayout())
             && localFrame->page()
             && localFrame->document())
-            frameView.layoutContext().layout();
+            frameView->layoutContext().layout();
     }
     return ChildWidgetState::Valid;
 }
@@ -405,17 +405,15 @@ RenderWidget* RenderWidget::find(const Widget& widget)
 bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     auto shouldHitTestChildFrameContent = request.allowsChildFrameContent() || (request.allowsVisibleChildFrameContent() && visibleToHitTesting(request));
-    auto hasRenderView = is<LocalFrameView>(widget()) && downcast<LocalFrameView>(*widget()).renderView();
-    if (shouldHitTestChildFrameContent && hasRenderView) {
-        LocalFrameView& childFrameView = downcast<LocalFrameView>(*widget());
-
+    auto* childFrameView = dynamicDowncast<LocalFrameView>(widget());
+    if (shouldHitTestChildFrameContent && childFrameView && childFrameView->renderView()) {
         LayoutPoint adjustedLocation = accumulatedOffset + location();
-        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView.scrollPosition());
+        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView->scrollPosition());
         HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
         HitTestRequest newHitTestRequest(request.type() | HitTestRequest::Type::ChildFrameHitTest);
         HitTestResult childFrameResult(newHitTestLocation);
 
-        auto* document = childFrameView.frame().document();
+        auto* document = childFrameView->frame().document();
         if (!document)
             return false;
         bool isInsideChildFrame = document->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
@@ -471,9 +469,10 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!is<RenderEmbeddedObject>(this) || !is<LocalFrameView>(widget()))
+    if (!is<RenderEmbeddedObject>(this))
         return nullptr;
-    return downcast<LocalFrameView>(*widget()).embeddedContentBox();
+    auto* frameView = dynamicDowncast<LocalFrameView>(widget());
+    return frameView ? frameView->embeddedContentBox() : nullptr;
 }
 
 } // namespace WebCore

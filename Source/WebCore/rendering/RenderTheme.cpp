@@ -451,7 +451,6 @@ static void updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, c
 
 static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, const RenderObject& renderer)
 {
-    ASSERT(is<HTMLInputElement>(renderer.node()));
     auto& input = downcast<HTMLInputElement>(*renderer.node());
     ASSERT(input.isRangeControl());
 
@@ -617,13 +616,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderObject& renderer) const
 {
     if (auto* meterPart = dynamicDowncast<MeterPart>(part)) {
-        ASSERT(is<RenderMeter>(renderer));
         updateMeterPartForRenderer(*meterPart, downcast<RenderMeter>(renderer));
         return;
     }
 
     if (auto* progressBarPart = dynamicDowncast<ProgressBarPart>(part)) {
-        ASSERT(is<RenderProgress>(renderer));
         updateProgressBarPartForRenderer(*progressBarPart, downcast<RenderProgress>(renderer));
         return;
     }

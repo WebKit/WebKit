@@ -91,9 +91,8 @@ private:
     bool hasLineIfEmpty() const override { return true; }
     bool canBeProgramaticallyScrolled() const override
     {
-        auto* shadowHost = element()->shadowHost();
-        if (is<HTMLInputElement>(shadowHost))
-            return !downcast<HTMLInputElement>(*shadowHost).hasAutoFillStrongPasswordButton();
+        if (auto* shadowHost = dynamicDowncast<HTMLInputElement>(element()->shadowHost()))
+            return !shadowHost->hasAutoFillStrongPasswordButton();
         return true;
     }
 };

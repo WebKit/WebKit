@@ -98,14 +98,14 @@ void RenderRubyBase::cachePriorCharactersIfNeeded(const CachedLineBreakIteratorF
 
 bool RenderRubyBase::isEmptyOrHasInFlowContent() const
 {
-    auto* firstChild = this->firstChild();
-    if (!firstChild || !is<RenderElement>(*firstChild))
+    auto* firstChild = dynamicDowncast<RenderElement>(this->firstChild());
+    if (!firstChild)
         return true;
 
     if (firstChild->isOutOfFlowPositioned())
         return false;
 
-    for (auto& child : childrenOfType<RenderObject>(*downcast<RenderElement>(firstChild))) {
+    for (auto& child : childrenOfType<RenderObject>(*firstChild)) {
         if (!child.isOutOfFlowPositioned())
             return true;
     }
