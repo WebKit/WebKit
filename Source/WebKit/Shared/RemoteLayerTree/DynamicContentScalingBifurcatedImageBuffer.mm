@@ -56,7 +56,7 @@ std::optional<WebCore::DynamicContentScalingDisplayList> DynamicContentScalingBi
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return std::nullopt;
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
-    if (!std::holds_alternative<WebCore::DynamicContentScalingDisplayList>(*handle))
+    if (!handle || !std::holds_alternative<WebCore::DynamicContentScalingDisplayList>(*handle))
         return std::nullopt;
     auto& displayList = std::get<WebCore::DynamicContentScalingDisplayList>(*handle);
 
