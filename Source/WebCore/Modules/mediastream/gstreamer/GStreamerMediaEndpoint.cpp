@@ -1665,6 +1665,28 @@ void GStreamerMediaEndpoint::gatherDecoderImplementationName(Function<void(Strin
     callback({ });
 }
 
+std::optional<bool> GStreamerMediaEndpoint::canTrickleIceCandidates() const
+{
+    if (!m_webrtcBin)
+        return std::nullopt;
+
+    GUniqueOutPtr<GstWebRTCSessionDescription> description;
+    g_object_get(m_webrtcBin.get(), "pending-remote-description", &description.outPtr(), nullptr);
+    if (!description)
+        return std::nullopt;
+
+    for (unsigned i = 0; i < gst_sdp_message_attributes_len(description->sdp); i++) {
+        const auto attribute = gst_sdp_message_get_attribute(description->sdp, i);
+        if (g_strcmp0(attribute->key, "ice-options"))
+            continue;
+
+        auto values = makeString(attribute->value).split(' ');
+        if (values.contains("trickle"_s))
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore
 
 #if !RELEASE_LOG_DISABLED

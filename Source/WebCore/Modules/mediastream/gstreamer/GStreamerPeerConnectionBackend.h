@@ -77,7 +77,7 @@ private:
 
     bool isNegotiationNeeded(uint32_t) const final;
 
-    std::optional<bool> canTrickleIceCandidates() const { return true; };
+    std::optional<bool> canTrickleIceCandidates() const final;
 
     friend class GStreamerMediaEndpoint;
     friend class GStreamerRtpSenderBackend;

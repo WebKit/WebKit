@@ -1939,6 +1939,7 @@ fast/mediastream/getDisplayMedia-max-constraints4.html [ Skip ]
 webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
 webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Skip ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
+webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Skip ]
 
 webrtc/video-av1.html [ Skip ]
 
@@ -2038,7 +2039,6 @@ webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detac
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
-webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
 webkit.org/b/177533 webrtc/video-interruption.html
 webkit.org/b/229346 webkit.org/b/235885 webrtc/multi-audio.html [ Timeout Pass Failure ]
 webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass ]
@@ -2063,6 +2063,7 @@ webrtc/video-vp8-videorange.html [ Skip ]
 # expected. The whole suite takes an hour(!) to run but ("only") reports 14
 # tests unexpected timeouts.
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html [ Pass ]
 
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented.
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Skip ]

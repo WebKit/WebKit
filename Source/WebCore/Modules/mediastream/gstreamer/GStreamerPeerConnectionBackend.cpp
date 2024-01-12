@@ -381,6 +381,11 @@ bool GStreamerPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
     return m_endpoint->isNegotiationNeeded(eventId);
 }
 
+std::optional<bool> GStreamerPeerConnectionBackend::canTrickleIceCandidates() const
+{
+    return m_endpoint->canTrickleIceCandidates();
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
