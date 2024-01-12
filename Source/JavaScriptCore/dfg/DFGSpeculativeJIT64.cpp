@@ -1071,7 +1071,10 @@ void SpeculativeJIT::emitCall(Node* node)
                 CallFrameShuffler(*this, shuffleData).prepareForTailCall();
             } else {
                 emitRestoreCalleeSaves();
-                prepareForTailCallSlow(callLinkInfoGPR);
+                RegisterSet preserved;
+                if (callLinkInfoGPR != InvalidGPRReg)
+                    preserved.add(callLinkInfoGPR, IgnoreVectors);
+                prepareForTailCallSlow(WTFMove(preserved));
             }
         }));
     } else {

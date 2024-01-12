@@ -282,7 +282,14 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
         if constexpr (Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments) {
             auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
                 emitRestoreCalleeSaves();
-                prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR, BaselineJITRegisters::Call::globalObjectGPR);
+                prepareForTailCallSlow(RegisterSet {
+                    BaselineJITRegisters::Call::calleeJSR.payloadGPR(),
+#if USE(JSVALUE32_64)
+                    BaselineJITRegisters::Call::calleeJSR.tagGPR(),
+#endif
+                    BaselineJITRegisters::Call::callLinkInfoGPR,
+                    BaselineJITRegisters::Call::globalObjectGPR
+                });
             }));
             addSlowCase(slowPaths);
             auto doneLocation = label();
