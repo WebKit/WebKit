@@ -1,7 +1,0 @@
-TABLE
-TBODY
-TR
-TD
-
-FAIL Table borders track writing mode changes assert_equals: expected 172 but got 152
-
