@@ -77,21 +77,14 @@ Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Ve
         return;
     }
 
-    if (UNLIKELY(!decode(m_messageFlags)))
-        return;
-
     if (UNLIKELY(!decode(m_messageName)))
-        return;
-
-    if (UNLIKELY(!decode(m_destinationID)))
         return;
 }
 
-Decoder::Decoder(DataReference stream, uint64_t destinationID)
+Decoder::Decoder(DataReference stream)
     : m_buffer { stream }
     , m_bufferPosition { m_buffer.begin() }
     , m_bufferDeallocator { nullptr }
-    , m_destinationID { destinationID }
 {
     if (UNLIKELY(!decode(m_messageName)))
         return;
@@ -104,32 +97,6 @@ Decoder::~Decoder()
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 
-ShouldDispatchWhenWaitingForSyncReply Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
-{
-    if (m_messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
-        return ShouldDispatchWhenWaitingForSyncReply::Yes;
-    if (m_messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply))
-        return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
-    return ShouldDispatchWhenWaitingForSyncReply::No;
-}
-
-bool Decoder::shouldUseFullySynchronousModeForTesting() const
-{
-    return m_messageFlags.contains(MessageFlags::UseFullySynchronousModeForTesting);
-}
-
-bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
-{
-    return m_messageFlags.contains(MessageFlags::MaintainOrderingWithAsyncMessages);
-}
-
-#if ENABLE(IPC_TESTING_API)
-bool Decoder::hasSyncMessageDeserializationFailure() const
-{
-    return m_messageFlags.contains(MessageFlags::SyncMessageDeserializationFailure);
-}
-#endif
-
 #if PLATFORM(MAC)
 void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)
 {
@@ -139,17 +106,13 @@ void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)
 
 std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
 {
-    ASSERT(decoder.isSyncMessage());
-
     auto attachments = std::exchange(decoder.m_attachments, { });
 
     DataReference wrappedMessage;
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    auto wrappedDecoder = Decoder::create(wrappedMessage, WTFMove(attachments));
-    wrappedDecoder->setIsAllowedWhenWaitingForSyncReplyOverride(true);
-    return wrappedDecoder;
+    return Decoder::create(wrappedMessage, WTFMove(attachments));
 }
 
 std::optional<Attachment> Decoder::takeLastAttachment()

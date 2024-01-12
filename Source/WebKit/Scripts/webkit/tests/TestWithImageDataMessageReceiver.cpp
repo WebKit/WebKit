@@ -26,8 +26,8 @@
 #include "TestWithImageData.h"
 
 #include "ArgumentCoders.h" // NOLINT
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithImageDataMessages.h" // NOLINT
 #include "WebCoreArgumentCoders.h" // NOLINT
 #include <WebCore/ImageData.h> // NOLINT
@@ -39,20 +39,20 @@
 
 namespace WebKit {
 
-void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
-        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
-    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
-        return IPC::handleMessageAsync<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, this, &TestWithImageData::receiveImageData);
+    if (message.messageName() == Messages::TestWithImageData::SendImageData::name())
+        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, WTFMove(message), this, &TestWithImageData::sendImageData);
+    if (message.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
+        return IPC::handleMessageAsync<Messages::TestWithImageData::ReceiveImageData>(connection, WTFMove(message), this, &TestWithImageData::receiveImageData);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -61,17 +61,17 @@ void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::ReplyArguments>(globalObject, message);
 }
 
 }

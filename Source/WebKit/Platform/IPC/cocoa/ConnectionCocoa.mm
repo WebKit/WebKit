@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import "MachMessage.h"
 #import "MachUtilities.h"
+#import "Message.h"
 #import "WKCrashReporter.h"
 #import "XPCUtilities.h"
 #import <WebCore/AXObjectCache.h>
@@ -544,7 +545,19 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+    auto messageFlags = decoder->decode<OptionSet<MessageFlags>>();
+    if (!messageFlags)
+        return;
+    auto destinationID = decoder->decode<uint64_t>();
+    if (!destinationID)
+        return;
+
+    Message message {
+        makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+        *destinationID,
+        *messageFlags
+    };
+    processIncomingMessage(WTFMove(message));
 }
 
 IPC::Connection::Identifier Connection::identifier() const

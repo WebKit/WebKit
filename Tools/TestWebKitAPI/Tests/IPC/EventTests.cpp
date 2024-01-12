@@ -82,9 +82,9 @@ TEST_P(EventTestABBA, SerializeAndSignal)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-            decoder.decode<uint64_t>();
-            auto signal = decoder.decode<IPC::Signal>();
+        bClient().setAsyncMessageHandler([&] (IPC::Message& message) -> bool {
+            message.decoder->decode<uint64_t>();
+            auto signal = message.decoder->decode<IPC::Signal>();
             signal->signal();
 
             b()->invalidate();
@@ -107,10 +107,10 @@ TEST_P(EventTestABBA, InterruptOnDestruct)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-            decoder.decode<uint64_t>();
+        bClient().setAsyncMessageHandler([&] (IPC::Message& message) -> bool {
+            message.decoder->decode<uint64_t>();
             {
-                auto signal = decoder.decode<IPC::Signal>();
+                auto signal = message.decoder->decode<IPC::Signal>();
             }
 
             b()->invalidate();

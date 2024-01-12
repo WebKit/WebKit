@@ -28,8 +28,8 @@
 #if USE(AVFOUNDATION)
 #include "ArgumentCodersCF.h" // NOLINT
 #endif
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithCVPixelBufferMessages.h" // NOLINT
 #if USE(AVFOUNDATION)
 #include <WebCore/CVUtilities.h> // NOLINT
@@ -44,22 +44,22 @@
 
 namespace WebKit {
 
-void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+    if (message.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, WTFMove(message), this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
+    if (message.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
+        return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, WTFMove(message), this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -69,17 +69,17 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
 namespace IPC {
 
 #if USE(AVFOUNDATION)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::ReplyArguments>(globalObject, message);
 }
 #endif
 

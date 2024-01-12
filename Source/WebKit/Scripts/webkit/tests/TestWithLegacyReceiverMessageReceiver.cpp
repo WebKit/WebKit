@@ -31,7 +31,6 @@
 #include "ArgumentCodersDarwin.h" // NOLINT
 #endif
 #include "Connection.h" // NOLINT
-#include "Decoder.h" // NOLINT
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h" // NOLINT
 #endif
@@ -39,6 +38,7 @@
 #include "GestureTypes.h" // NOLINT
 #endif
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "Plugin.h" // NOLINT
 #include "TestWithLegacyReceiverMessages.h" // NOLINT
 #include "WebCoreArgumentCoders.h" // NOLINT
@@ -68,87 +68,87 @@
 
 namespace WebKit {
 
-void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(connection, decoder, this, &TestWithLegacyReceiver::loadURL);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(connection, WTFMove(message), this, &TestWithLegacyReceiver::loadURL);
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomething::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomething>(connection, decoder, this, &TestWithLegacyReceiver::loadSomething);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::LoadSomething::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomething>(connection, WTFMove(message), this, &TestWithLegacyReceiver::loadSomething);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TouchEvent::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TouchEvent>(connection, decoder, this, &TestWithLegacyReceiver::touchEvent);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::TouchEvent::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TouchEvent>(connection, WTFMove(message), this, &TestWithLegacyReceiver::touchEvent);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::AddEvent::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::AddEvent>(connection, decoder, this, &TestWithLegacyReceiver::addEvent);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::AddEvent::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::AddEvent>(connection, WTFMove(message), this, &TestWithLegacyReceiver::addEvent);
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadSomethingElse::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomethingElse>(connection, decoder, this, &TestWithLegacyReceiver::loadSomethingElse);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::LoadSomethingElse::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadSomethingElse>(connection, WTFMove(message), this, &TestWithLegacyReceiver::loadSomethingElse);
 #endif
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision>(connection, decoder, this, &TestWithLegacyReceiver::didReceivePolicyDecision);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::Close::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::Close>(connection, decoder, this, &TestWithLegacyReceiver::close);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::PreferencesDidChange::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::PreferencesDidChange>(connection, decoder, this, &TestWithLegacyReceiver::preferencesDidChange);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendDoubleAndFloat::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendDoubleAndFloat>(connection, decoder, this, &TestWithLegacyReceiver::sendDoubleAndFloat);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendInts::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendInts>(connection, decoder, this, &TestWithLegacyReceiver::sendInts);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
-        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::CreatePlugin>(connection, decoder, this, &TestWithLegacyReceiver::createPlugin);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())
-        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(connection, decoder, this, &TestWithLegacyReceiver::runJavaScriptAlert);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name())
-        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::GetPlugins>(connection, decoder, this, &TestWithLegacyReceiver::getPlugins);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestParameterAttributes::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TestParameterAttributes>(connection, decoder, this, &TestWithLegacyReceiver::testParameterAttributes);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TemplateTest::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TemplateTest>(connection, decoder, this, &TestWithLegacyReceiver::templateTest);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::SetVideoLayerID::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SetVideoLayerID>(connection, decoder, this, &TestWithLegacyReceiver::setVideoLayerID);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision>(connection, WTFMove(message), this, &TestWithLegacyReceiver::didReceivePolicyDecision);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::Close::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::Close>(connection, WTFMove(message), this, &TestWithLegacyReceiver::close);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::PreferencesDidChange::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::PreferencesDidChange>(connection, WTFMove(message), this, &TestWithLegacyReceiver::preferencesDidChange);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::SendDoubleAndFloat::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendDoubleAndFloat>(connection, WTFMove(message), this, &TestWithLegacyReceiver::sendDoubleAndFloat);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::SendInts::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendInts>(connection, WTFMove(message), this, &TestWithLegacyReceiver::sendInts);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::CreatePlugin>(connection, WTFMove(message), this, &TestWithLegacyReceiver::createPlugin);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(connection, WTFMove(message), this, &TestWithLegacyReceiver::runJavaScriptAlert);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::GetPlugins>(connection, WTFMove(message), this, &TestWithLegacyReceiver::getPlugins);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::TestParameterAttributes::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TestParameterAttributes>(connection, WTFMove(message), this, &TestWithLegacyReceiver::testParameterAttributes);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::TemplateTest::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::TemplateTest>(connection, WTFMove(message), this, &TestWithLegacyReceiver::templateTest);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::SetVideoLayerID::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::SetVideoLayerID>(connection, WTFMove(message), this, &TestWithLegacyReceiver::setVideoLayerID);
 #if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
-        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(connection, decoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(connection, WTFMove(message), this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(connection, WTFMove(message), this, &TestWithLegacyReceiver::interpretKeyEvent);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DeprecatedOperation>(connection, decoder, this, &TestWithLegacyReceiver::deprecatedOperation);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::DeprecatedOperation>(connection, WTFMove(message), this, &TestWithLegacyReceiver::deprecatedOperation);
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::ExperimentalOperation::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::ExperimentalOperation>(connection, decoder, this, &TestWithLegacyReceiver::experimentalOperation);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::ExperimentalOperation::name())
+        return IPC::handleMessage<Messages::TestWithLegacyReceiver::ExperimentalOperation>(connection, WTFMove(message), this, &TestWithLegacyReceiver::experimentalOperation);
 #endif
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
-bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, WTFMove(message), replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
+    if (message.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, WTFMove(message), replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
     UNUSED_PARAM(replyEncoder);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return false;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(message.messageName()), message.destinationID);
     return false;
 }
 
@@ -158,130 +158,130 @@ bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Co
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadURL>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadURL::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadURL::Arguments>(globalObject, message);
 }
 #if ENABLE(TOUCH_EVENTS)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomething>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomething>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomething::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomething::Arguments>(globalObject, message);
 }
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TouchEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TouchEvent>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TouchEvent::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TouchEvent::Arguments>(globalObject, message);
 }
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_AddEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_AddEvent>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::AddEvent::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::AddEvent::Arguments>(globalObject, message);
 }
 #endif
 #if ENABLE(TOUCH_EVENTS)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomethingElse>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomethingElse>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomethingElse::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomethingElse::Arguments>(globalObject, message);
 }
 #endif
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_Close>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_Close>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::Close::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::Close::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_PreferencesDidChange>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_PreferencesDidChange>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::PreferencesDidChange::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::PreferencesDidChange::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendDoubleAndFloat>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendDoubleAndFloat>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendDoubleAndFloat::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendDoubleAndFloat::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendInts>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendInts>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendInts::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendInts::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_CreatePlugin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_CreatePlugin>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_CreatePlugin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_CreatePlugin>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestParameterAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestParameterAttributes>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestParameterAttributes::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestParameterAttributes::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TemplateTest>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TemplateTest>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TemplateTest::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TemplateTest::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SetVideoLayerID>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SetVideoLayerID>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SetVideoLayerID::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SetVideoLayerID::Arguments>(globalObject, message);
 }
 #if PLATFORM(MAC)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::ReplyArguments>(globalObject, message);
 }
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DeprecatedOperation>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DeprecatedOperation>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DeprecatedOperation::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DeprecatedOperation::Arguments>(globalObject, message);
 }
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_ExperimentalOperation>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_ExperimentalOperation>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::ExperimentalOperation::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::ExperimentalOperation::Arguments>(globalObject, message);
 }
 #endif
 

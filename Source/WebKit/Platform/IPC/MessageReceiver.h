@@ -33,6 +33,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class Encoder;
+struct Message;
 
 class MessageReceiver : public CanMakeWeakPtr<MessageReceiver> {
 public:
@@ -41,17 +42,17 @@ public:
         ASSERT(!m_messageReceiverMapCount);
     }
 
-    virtual void didReceiveMessage(Connection&, Decoder&)
+    virtual void didReceiveMessage(Connection&, Message&)
     {
         ASSERT_NOT_REACHED();
     }
 
-    virtual void didReceiveMessageWithReplyHandler(Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&)
+    virtual void didReceiveMessageWithReplyHandler(Message&, Function<void(UniqueRef<IPC::Encoder>&&)>&&)
     {
         ASSERT_NOT_REACHED();
     }
 
-    virtual bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
+    virtual bool didReceiveSyncMessage(Connection&, Message&, UniqueRef<Encoder>&)
     {
         ASSERT_NOT_REACHED();
         return false;

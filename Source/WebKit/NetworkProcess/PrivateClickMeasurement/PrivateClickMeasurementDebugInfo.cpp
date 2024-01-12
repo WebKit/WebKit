@@ -47,7 +47,7 @@ DebugInfo::Message DebugInfo::Message::isolatedCopy() const &
 
 DebugInfo::Message DebugInfo::Message::isolatedCopy() &&
 {
-    return { messageLevel, WTFMove(message).isolatedCopy() };
+    return { messageLevel, message.isolatedCopy() };
 }
 
 } // namespace WebKit::PCM

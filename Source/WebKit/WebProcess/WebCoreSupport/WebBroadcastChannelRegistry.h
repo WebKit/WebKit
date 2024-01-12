@@ -53,7 +53,7 @@ public:
 
     void networkProcessCrashed();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 private:
     WebBroadcastChannelRegistry() = default;

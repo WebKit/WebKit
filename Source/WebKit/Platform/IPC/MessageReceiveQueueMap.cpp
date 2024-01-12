@@ -25,9 +25,17 @@
 
 #include "config.h"
 #include "MessageReceiveQueueMap.h"
+
+#include "Message.h"
 #include <wtf/text/TextStream.h>
 
 namespace IPC {
+
+bool MessageReceiveQueueMap::isValidMessage(const Message& message)
+{
+    static_assert(sizeof(uint8_t) == sizeof(message.messageReceiverName()));
+    return QueueMap::isValidKey(std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), message.destinationID));
+}
 
 void MessageReceiveQueueMap::addImpl(StoreType&& queue, const ReceiverMatcher& matcher)
 {
@@ -63,7 +71,7 @@ void MessageReceiveQueueMap::remove(const ReceiverMatcher& matcher)
     ASSERT_UNUSED(result, result);
 }
 
-MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
+MessageReceiveQueue* MessageReceiveQueueMap::get(const Message& message) const
 {
     uint8_t receiverName = static_cast<uint8_t>(message.messageReceiverName());
     auto queueExtractor = WTF::makeVisitor(
@@ -77,7 +85,7 @@ MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
             return std::visit(queueExtractor, it->value);
     }
     {
-        auto it = m_queues.find(std::make_pair(receiverName, message.destinationID()));
+        auto it = m_queues.find(std::make_pair(receiverName, message.destinationID));
         if (it != m_queues.end())
             return std::visit(queueExtractor, it->value);
     }

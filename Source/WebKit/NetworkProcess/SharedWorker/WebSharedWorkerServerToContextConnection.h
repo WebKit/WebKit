@@ -70,7 +70,7 @@ public:
 
     const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);

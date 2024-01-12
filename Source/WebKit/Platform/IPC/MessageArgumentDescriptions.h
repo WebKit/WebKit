@@ -40,11 +40,12 @@ class JSValue;
 namespace IPC {
 
 class Decoder;
+struct Message;
 
 #if ENABLE(IPC_TESTING_API)
 
-std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
-std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
+std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Message&);
+std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Message&);
 
 Vector<ASCIILiteral> serializedIdentifiers();
 

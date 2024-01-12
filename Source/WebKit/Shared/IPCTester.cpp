@@ -29,6 +29,7 @@
 #if ENABLE(IPC_TESTING_API)
 #include "Connection.h"
 #include "Decoder.h"
+#include "Message.h"
 #include "IPCConnectionTester.h"
 #include "IPCStreamTester.h"
 #include "IPCTesterMessages.h"
@@ -81,7 +82,12 @@ static int sendTestMessage(IPC::DataReference buffer, void* context)
     BinarySemaphore semaphore;
     auto decoder = IPC::Decoder::create(buffer, [&semaphore] (IPC::DataReference) { semaphore.signal(); }, { }); // NOLINT
     if (decoder) {
-        testedConnection->dispatchIncomingMessageForTesting(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
+        IPC::Message message {
+            makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+            0,
+            { }
+        };
+        testedConnection->dispatchIncomingMessageForTesting(WTFMove(message));
         semaphore.wait();
     }
     return 0;

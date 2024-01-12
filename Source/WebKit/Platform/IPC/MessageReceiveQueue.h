@@ -30,14 +30,14 @@
 namespace IPC {
 
 class Connection;
-class Decoder;
+struct Message;
 
 class MessageReceiveQueue {
 public:
     virtual ~MessageReceiveQueue() = default;
     // Called with Connection incoming message lock held.
     // May be called from multiple threads.
-    virtual void enqueueMessage(Connection&, UniqueRef<Decoder>&&) = 0;
+    virtual void enqueueMessage(Connection&, Message&&) = 0;
 };
 
 } // namespace IPC

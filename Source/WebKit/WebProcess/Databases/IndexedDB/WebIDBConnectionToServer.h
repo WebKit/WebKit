@@ -30,6 +30,10 @@
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/ProcessIdentifier.h>
 
+namespace IPC {
+struct Message;
+}
+
 namespace WebKit {
 
 class WebIDBResult;
@@ -42,7 +46,7 @@ public:
     WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
     WebCore::IDBConnectionIdentifier identifier() const final;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
     void connectionToServerLost();
 
 private:

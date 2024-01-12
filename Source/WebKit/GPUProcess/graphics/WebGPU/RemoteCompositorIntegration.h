@@ -83,7 +83,7 @@ private:
 
     WebCore::WebGPU::CompositorIntegration& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
     void destruct();
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, uint32_t, CompletionHandler<void()>&&);
 

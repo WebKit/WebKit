@@ -120,7 +120,7 @@ void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     for (auto& port : message.transferredPorts)
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), sourceIdentifier });
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, message, sourceIdentifier });
 }
 
 void WebSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, WebCore::ServiceWorkerClientData&& data, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)

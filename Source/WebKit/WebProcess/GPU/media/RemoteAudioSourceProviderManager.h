@@ -49,7 +49,7 @@ public:
     void addProvider(Ref<RemoteAudioSourceProvider>&&);
     void removeProvider(WebCore::MediaPlayerIdentifier);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 private:
     RemoteAudioSourceProviderManager();

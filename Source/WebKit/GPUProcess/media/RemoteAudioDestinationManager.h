@@ -56,12 +56,12 @@ public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);
     ~RemoteAudioDestinationManager();
 
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
 
     bool allowsExitUnderMemoryPressure() const;
 
 private:
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     void createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemoryHandle&&);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier);

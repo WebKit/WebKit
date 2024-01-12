@@ -51,8 +51,8 @@ public:
 
     void invalidate();
 
-    bool dispatchMessage(Connection&, Decoder&);
-    bool dispatchSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&);
+    bool dispatchMessage(Connection&, Message&);
+    bool dispatchSyncMessage(Connection&, Message&, UniqueRef<Encoder>&);
 
 private:
     // Message receivers that don't require a destination ID.

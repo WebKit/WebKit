@@ -121,7 +121,7 @@ private:
     void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) final;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Message handlers
     // FIXME(site-isolation): We really want a Connection parameter to all of these (including

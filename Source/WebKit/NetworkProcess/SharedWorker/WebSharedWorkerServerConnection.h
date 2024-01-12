@@ -62,7 +62,7 @@ public:
     NetworkSession* session();
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void fetchScriptInClient(const WebSharedWorker&, WebCore::SharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&&);
     void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const WebCore::ResourceError&);

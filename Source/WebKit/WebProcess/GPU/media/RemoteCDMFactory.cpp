@@ -94,10 +94,10 @@ void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
     gpuProcessConnection().connection().send(Messages::RemoteCDMFactoryProxy::RemoveInstance(identifier), { });
 }
 
-void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(message.destinationID)))
+        session->didReceiveMessage(connection, message);
 }
 
 }

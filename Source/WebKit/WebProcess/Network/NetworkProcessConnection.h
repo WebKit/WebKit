@@ -68,7 +68,7 @@ public:
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::Connection& connection() { return m_connection.get(); }
 
-    void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Message&);
 
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
@@ -98,8 +98,8 @@ private:
     NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 

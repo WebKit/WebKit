@@ -49,7 +49,7 @@ public:
     WebSocketChannelManager() = default;
 
     void networkProcessCrashed();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     void addChannel(WebSocketChannel&);
     void removeChannel(WebSocketChannel& channel) { m_channels.remove(channel.identifier() ); }

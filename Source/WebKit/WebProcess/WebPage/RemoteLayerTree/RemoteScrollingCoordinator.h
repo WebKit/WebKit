@@ -83,7 +83,7 @@ private:
     void startMonitoringWheelEvents(bool clearLatchingState) final;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
     
     // Respond to UI process changes.
     void scrollPositionChangedForNode(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition, CompletionHandler<void()>&&);

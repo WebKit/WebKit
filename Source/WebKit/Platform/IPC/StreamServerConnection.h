@@ -65,7 +65,7 @@ struct StreamServerConnectionParameters {
 //  * Sends the replies back to the client via the stream or normal Connection fallback.
 //
 // Receiver template contract:
-//   void didReceiveStreamMessage(StreamServerConnection&, Decoder&);
+//   void didReceiveStreamMessage(StreamServerConnection&, Message&);
 //
 // The StreamServerConnection does not trust the StreamClientConnection.
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
@@ -110,17 +110,17 @@ private:
     StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&);
 
     // MessageReceiveQueue
-    void enqueueMessage(Connection&, UniqueRef<Decoder>&&) final;
+    void enqueueMessage(Connection&, Message&&) final;
 
     // Connection::Client
-    void didReceiveMessage(Connection&, Decoder&) final;
-    bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+    void didReceiveMessage(Connection&, Message&) final;
+    bool didReceiveSyncMessage(Connection&, Message&, UniqueRef<Encoder>&) final;
     void didClose(Connection&) final;
     void didReceiveInvalidMessage(Connection&, MessageName) final;
 
-    bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
-    bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);
-    bool dispatchOutOfStreamMessage(Decoder&&);
+    bool processSetStreamDestinationID(Message&, RefPtr<StreamMessageReceiver>& currentReceiver);
+    bool dispatchStreamMessage(Message&, StreamMessageReceiver&);
+    bool dispatchOutOfStreamMessage(Message&);
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
     const Ref<IPC::Connection> m_connection;
@@ -128,7 +128,7 @@ private:
     StreamServerConnectionBuffer m_buffer;
 
     Lock m_outOfStreamMessagesLock;
-    Deque<UniqueRef<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
+    Deque<Message> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
     bool m_isDispatchingStreamMessage { false };
     Lock m_receiversLock;

@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "Logging.h"
+#include "Message.h"
 #include "MessageArgumentDescriptions.h"
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
@@ -220,12 +221,12 @@ struct MethodSignatureValidation<R(MethodArgumentTypes...) const>
 // Main dispatch functions
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+void handleMessage(Connection& connection, Message& message, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -237,12 +238,12 @@ void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* 
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::* function)
+void handleMessageWithoutUsingIPCConnection(Message& message, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -250,12 +251,12 @@ void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::*
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
+bool handleMessageSynchronous(Connection& connection, Message& message, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return false;
 
@@ -278,16 +279,16 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decoder, T* object, MF U::* function)
+void handleMessageSynchronous(StreamServerConnection& connection, Message& message, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     Connection::SyncRequestID syncRequestID;
-    if (UNLIKELY(!decoder.decode(syncRequestID)))
+    if (UNLIKELY(!message.decoder->decode(syncRequestID)))
         return;
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments)) {
 #if ENABLE(IPC_TESTING_API)
         connection.sendDeserializationErrorSyncReply(syncRequestID);
@@ -307,15 +308,15 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+void handleMessageAsync(Connection& connection, Message& message, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return;
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
+    auto replyID = message.decoder->decode<Connection::AsyncReplyID>();
     if (UNLIKELY(!replyID))
         return;
 
@@ -338,12 +339,12 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void(UniqueRef<Encoder>&&)>&& replyHandler, T* object, MF U::* function)
+void handleMessageAsyncWithoutUsingIPCConnection(Message& message, Function<void(UniqueRef<Encoder>&&)>&& replyHandler, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = message.decoder->decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return;
 
@@ -351,7 +352,7 @@ void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     CompletionHandlerType completionHandler {
-        [destinationID = decoder.destinationID(), replyHandler = WTFMove(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
+        [destinationID = message.destinationID, replyHandler = WTFMove(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), destinationID);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             replyHandler(WTFMove(encoder));
@@ -361,12 +362,12 @@ void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsyncWithReplyID(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+void handleMessageAsyncWithReplyID(Connection& connection, Message& message, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, std::tuple<IPC::AsyncReplyID>>);
 
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
+    auto replyID = message.decoder->decode<Connection::AsyncReplyID>();
     if (UNLIKELY(!replyID))
         return;
 

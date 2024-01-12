@@ -133,18 +133,18 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
     completionHandler(result);
 }
 
-void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Message& message)
 {
     ASSERT(RunLoop::isMain());
-    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
-        player->didReceiveMessage(connection, decoder);
+    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(message.destinationID)))
+        player->didReceiveMessage(connection, message);
 }
 
-bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder)
 {
     ASSERT(RunLoop::isMain());
-    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
-        return player->didReceiveSyncMessage(connection, decoder, encoder);
+    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(message.destinationID)))
+        return player->didReceiveSyncMessage(connection, message, encoder);
     return false;
 }
 

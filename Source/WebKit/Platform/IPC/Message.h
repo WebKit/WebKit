@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,35 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC)
-
-#include <WebCore/MDNSRegisterError.h>
-#include <WebCore/ProcessQualified.h>
-#include <WebCore/ScriptExecutionContextIdentifier.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
+#include "MessageFlags.h"
+#include "MessageNames.h"
+#include <wtf/OptionSet.h>
+#include <wtf/UniqueRef.h>
 
 namespace IPC {
-class Connection;
+
 class Decoder;
-}
+struct ReceiverMatcher;
 
-namespace WebKit {
+struct Message {
+    UniqueRef<Decoder> decoder;
+    uint64_t destinationID;
+    OptionSet<MessageFlags> messageFlags;
+    bool isAllowedWhenWaitingForSyncReplyOverride { false };
+    
+    MessageName messageName() const;
+    ReceiverName messageReceiverName() const { return receiverName(messageName()); }
+    bool matches(const ReceiverMatcher& matcher) const;
 
-class WebMDNSRegister : public CanMakeWeakPtr<WebMDNSRegister> {
-public:
-    WebMDNSRegister() = default;
-
-    void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
-
-    void didReceiveMessage(IPC::Connection&, IPC::Message&);
-
-private:
-    void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
-
-    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
+    bool isSyncMessage() const { return messageIsSync(messageName()); }
+    ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
+    bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isAllowedWhenWaitingForSyncReplyOverride; }
+    bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
+#if ENABLE(IPC_TESTING_API)
+    bool hasSyncMessageDeserializationFailure() const;
+#endif
+    bool shouldUseFullySynchronousModeForTesting() const;
+    bool shouldMaintainOrderingWithAsyncMessages() const;
 };
 
-} // namespace WebKit
-
-#endif // ENABLE(WEB_RTC)
+}

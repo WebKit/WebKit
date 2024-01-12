@@ -90,42 +90,42 @@ void RemoteCDMFactoryProxy::supportsKeySystem(const String& keySystem, Completio
     completion(factoryForKeySystem(keySystem));
 }
 
-void RemoteCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
-        proxy->didReceiveMessage(connection, decoder);
+    if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(message.destinationID)))
+        proxy->didReceiveMessage(connection, message);
 }
 
-void RemoteCDMFactoryProxy::didReceiveCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteCDMFactoryProxy::didReceiveCDMInstanceMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
-        instance->didReceiveMessage(connection, decoder);
+    if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(message.destinationID)))
+        instance->didReceiveMessage(connection, message);
 }
 
-void RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(message.destinationID)))
+        session->didReceiveMessage(connection, message);
 }
 
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
-        return proxy->didReceiveSyncMessage(connection, decoder, encoder);
+    if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(message.destinationID)))
+        return proxy->didReceiveSyncMessage(connection, message, encoder);
     return false;
 }
 
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
-        return instance->didReceiveSyncMessage(connection, decoder, encoder);
+    if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(message.destinationID)))
+        return instance->didReceiveSyncMessage(connection, message, encoder);
     return false;
 }
 
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        return session->didReceiveSyncMessage(connection, decoder, encoder);
+    if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(message.destinationID)))
+        return session->didReceiveSyncMessage(connection, message, encoder);
     return false;
 }
 

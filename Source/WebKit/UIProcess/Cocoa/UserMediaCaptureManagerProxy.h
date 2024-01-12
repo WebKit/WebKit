@@ -80,13 +80,13 @@ public:
 
     void setOrientation(WebCore::IntDegrees);
 
-    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
 
     bool hasSourceProxies() const;
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     using CreateSourceCallback = CompletionHandler<void(const WebCore::CaptureSourceError&, const WebCore::RealtimeMediaSourceSettings&, const WebCore::RealtimeMediaSourceCapabilities&)>;
     void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints&, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier, CreateSourceCallback&&);

@@ -70,7 +70,7 @@ private:
     Ref<NetworkProcess> protectedProcess();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void getHostnamesWithCookies(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
 

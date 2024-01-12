@@ -58,7 +58,7 @@ public:
 
     GPUProcessConnection& gpuProcessConnection();
 
-    void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSessionMessage(IPC::Connection&, IPC::Message&);
 
 private:
     void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);

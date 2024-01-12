@@ -34,10 +34,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (auto* layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
-        layer->didReceiveMessage(connection, decoder);
+    if (auto* layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(message.destinationID)).get())
+        layer->didReceiveMessage(connection, message);
 }
 
 RefPtr<WebCore::SampleBufferDisplayLayer> SampleBufferDisplayLayerManager::createLayer(WebCore::SampleBufferDisplayLayer::Client& client)

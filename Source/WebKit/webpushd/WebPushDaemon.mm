@@ -205,7 +205,25 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         xpc_connection_send_message(xpcConnection.get(), reply.get());
     };
 
-    pushConnection->didReceiveMessageWithReplyHandler(*decoder, WTFMove(replyHandler));
+    auto messageFlags = decoder->decode<OptionSet<IPC::MessageFlags>>();
+    if (!messageFlags) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to decode message flags");
+        tryCloseRequestConnection(request);
+        return;
+    }
+    auto destinationID = decoder->decode<uint64_t>();
+    if (!destinationID) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to decode destination identifier");
+        tryCloseRequestConnection(request);
+        return;
+    }
+
+    IPC::Message message {
+        makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+        *destinationID,
+        *messageFlags
+    };
+    pushConnection->didReceiveMessageWithReplyHandler(message, WTFMove(replyHandler));
 }
 
 void WebPushDaemon::connectionAdded(xpc_connection_t connection)

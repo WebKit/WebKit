@@ -201,7 +201,7 @@ protected:
 
 private:
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // Message handlers.
     // FIXME: These should be pure virtual.

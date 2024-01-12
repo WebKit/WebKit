@@ -42,6 +42,7 @@ ALLOW_COMMA_END
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -53,7 +54,7 @@ public:
     explicit NetworkRTCMonitor(NetworkRTCProvider& rtcProvider) : m_rtcProvider(rtcProvider) { }
     ~NetworkRTCMonitor();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
     void stopUpdating();
     bool isStarted() const { return m_isStarted; }
     NetworkRTCProvider& rtcProvider() { return m_rtcProvider; }

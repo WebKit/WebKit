@@ -59,7 +59,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void didChangePosition(const WebCore::RegistrableDomain&, const WebCore::GeolocationPositionData&);
     void didFailToDeterminePosition(const WebCore::RegistrableDomain&, const String& errorMessage);

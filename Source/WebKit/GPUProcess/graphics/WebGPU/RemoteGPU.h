@@ -105,7 +105,7 @@ private:
         return m_streamConnection->send(std::forward<T>(message), m_identifier);
     }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&&);
 

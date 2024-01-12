@@ -59,7 +59,7 @@ public:
     ~RemoteWebInspectorUI();
 
     // Implemented in generated RemoteWebInspectorUIMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // Called by RemoteWebInspectorUI messages
     void initialize(DebuggableInfoData&&, const String& backendCommandsURL);

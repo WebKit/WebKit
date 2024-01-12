@@ -109,7 +109,7 @@ private:
     Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID) final;
     Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
     void takeOwnershipOfMemory(WebKit::SharedMemory::Handle&&);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);

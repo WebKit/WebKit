@@ -45,7 +45,7 @@ private:
     void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void setVisitedLinkTable(SharedMemory::Handle&&);
     void visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>&);

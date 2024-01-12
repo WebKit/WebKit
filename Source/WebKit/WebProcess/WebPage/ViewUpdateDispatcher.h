@@ -49,7 +49,7 @@ public:
 
 private:
     // IPC::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void visibleContentRectUpdate(WebCore::PageIdentifier, const VisibleContentRectUpdateInfo&);
 

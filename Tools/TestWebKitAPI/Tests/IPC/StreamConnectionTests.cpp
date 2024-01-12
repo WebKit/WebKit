@@ -102,13 +102,13 @@ public:
 
     }
 
-    void addMessage(IPC::Decoder& decoder)
+    void addMessage(IPC::Message& message)
     {
         ASSERT(!m_closed);
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
+        if (m_asyncMessageHandler && m_asyncMessageHandler(message))
             return;
         Locker locker { m_lock };
-        m_messages.insert(0, { decoder.messageName(), decoder.destinationID() });
+        m_messages.insert(0, { message.messageName(), message.destinationID });
         m_continueWaitForMessage = true;
     }
 
@@ -118,7 +118,7 @@ public:
     }
 
     // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
+    void setAsyncMessageHandler(Function<bool(IPC::Message&)>&& handler)
     {
         m_asyncMessageHandler = WTFMove(handler);
     }
@@ -128,18 +128,18 @@ protected:
     Vector<MessageInfo> m_messages WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_continueWaitForMessage { false };
     std::atomic<bool> m_closed { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Message&)> m_asyncMessageHandler;
 };
 
 class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin {
 public:
     // IPC::Connection::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
+    void didReceiveMessage(IPC::Connection&, IPC::Message& message) override
     {
-        addMessage(decoder);
+        addMessage(message);
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override
     {
         return false;
     }
@@ -155,9 +155,9 @@ public:
 class MockStreamMessageReceiver : public IPC::StreamMessageReceiver, public WaitForMessageMixin {
 public:
     // IPC::StreamMessageReceiver overrides.
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder& decoder) override
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message& message) override
     {
-        addMessage(decoder);
+        addMessage(message);
     }
 };
 
@@ -260,14 +260,14 @@ public:
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);
         m_mockServerReceiver = adoptRef(new MockStreamMessageReceiver);
-        m_mockServerReceiver->setAsyncMessageHandler([this] (IPC::Decoder& decoder) -> bool {
+        m_mockServerReceiver->setAsyncMessageHandler([this] (IPC::Message& message) -> bool {
             assertIsCurrent(serverQueue());
-            if (decoder.messageName() != MockStreamTestMessageWithAsyncReply1::name())
+            if (message.messageName() != MockStreamTestMessageWithAsyncReply1::name())
                 return false;
             using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
-            auto contents = decoder.decode<uint64_t>();
-            auto asyncReplyID = decoder.decode<AsyncReplyID>();
-            ASSERT(decoder.isValid());
+            auto contents = message.decoder->decode<uint64_t>();
+            auto asyncReplyID = message.decoder->decode<AsyncReplyID>();
+            ASSERT(message.decoder->isValid());
             m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID.value_or(AsyncReplyID { }), contents.value_or(0));
             return true;
         });

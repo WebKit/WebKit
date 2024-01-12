@@ -139,7 +139,7 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySys
     if (!request)
         return;
 
-    request->deny(WTFMove(message));
+    request->deny(message);
 }
 
 } // namespace WebKit

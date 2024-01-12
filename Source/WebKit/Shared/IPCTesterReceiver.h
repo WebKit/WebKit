@@ -42,7 +42,7 @@ public:
     ~IPCTesterReceiver() = default;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 private:
     // Messages
     void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);

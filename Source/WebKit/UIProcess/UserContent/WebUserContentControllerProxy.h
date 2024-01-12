@@ -120,7 +120,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&, CompletionHandler<void(IPC::DataReference&&, const String&)>&&);
 

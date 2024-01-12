@@ -48,7 +48,7 @@ public:
     void clientIsGoingAway(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::ScriptExecutionContextIdentifier) final;
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     explicit RemoteWebLockRegistry(WebProcess&);

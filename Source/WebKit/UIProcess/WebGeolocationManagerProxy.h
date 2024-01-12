@@ -82,7 +82,7 @@ private:
     void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // IPC messages.
     void startUpdating(IPC::Connection&, const WebCore::RegistrableDomain&, WebPageProxyIdentifier, const String& authorizationToken, bool enableHighAccuracy);

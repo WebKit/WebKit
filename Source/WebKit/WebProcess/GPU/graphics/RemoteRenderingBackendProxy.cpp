@@ -455,19 +455,19 @@ void RemoteRenderingBackendProxy::didPaintLayers()
     m_remoteResourceCacheProxy.didPaintLayers();
 }
 
-bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
-        auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
+    if (message.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
+        auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { message.destinationID });
         if (imageBuffer)
-            imageBuffer->didReceiveMessage(connection, decoder);
+            imageBuffer->didReceiveMessage(connection, message);
         // Messages to already removed instances are ok.
         return true;
     }
     return false;
 }
 
-bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&)
 {
     return false;
 }

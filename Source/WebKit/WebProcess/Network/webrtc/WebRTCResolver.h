@@ -34,6 +34,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -45,7 +46,7 @@ class WebRTCResolver {
 public:
     WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 private:
     void setResolvedAddress(const Vector<RTCNetwork::IPAddress>&);

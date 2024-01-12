@@ -65,7 +65,7 @@ public:
     bool contains(const String& key);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
     StorageAreaMapIdentifier identifier() const { return m_identifier; }

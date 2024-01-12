@@ -133,7 +133,7 @@ public:
 
     bool hasVideoPlayingInPictureInPicture() const;
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     void setupRemoteLayerHosting(WebCore::HTMLVideoElement&);
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);

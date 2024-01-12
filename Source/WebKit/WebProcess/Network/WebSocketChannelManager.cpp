@@ -44,11 +44,11 @@ void WebSocketChannelManager::networkProcessCrashed()
         channel->networkProcessCrashed();
 }
 
-void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    auto iterator = m_channels.find(AtomicObjectIdentifier<WebCore::WebSocketIdentifierType>(decoder.destinationID()));
+    auto iterator = m_channels.find(AtomicObjectIdentifier<WebCore::WebSocketIdentifierType>(message.destinationID));
     if (iterator != m_channels.end())
-        iterator->value->didReceiveMessage(connection, decoder);
+        iterator->value->didReceiveMessage(connection, message);
 }
 
 } // namespace WebKit

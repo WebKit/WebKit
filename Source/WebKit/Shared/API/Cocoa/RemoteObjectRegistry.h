@@ -61,7 +61,7 @@ private:
     virtual uint64_t messageDestinationID() = 0;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // Message handlers
     void invokeMethod(const RemoteObjectInvocation&);

@@ -63,7 +63,7 @@ public:
     static void enableFrontendFeatures(WebPage&);
 
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { /* Do nothing, the inspected page process may have crashed and may be getting replaced. */ }

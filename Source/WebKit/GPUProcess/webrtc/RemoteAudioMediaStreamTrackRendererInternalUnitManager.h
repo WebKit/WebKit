@@ -53,7 +53,7 @@ public:
     explicit RemoteAudioMediaStreamTrackRendererInternalUnitManager(GPUConnectionToWebProcess&);
     ~RemoteAudioMediaStreamTrackRendererInternalUnitManager();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
     bool hasUnits() { return !m_units.isEmpty(); }
     class Unit;

@@ -449,20 +449,20 @@ void NetworkProcessProxy::networkProcessDidTerminate(ProcessTerminationReason re
     m_dataTasks.clear();
 }
 
-void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (dispatchMessage(connection, decoder))
+    if (dispatchMessage(connection, message))
         return;
 
-    didReceiveNetworkProcessProxyMessage(connection, decoder);
+    didReceiveNetworkProcessProxyMessage(connection, message);
 }
 
-bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    if (dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (dispatchSyncMessage(connection, message, replyEncoder))
         return true;
 
-    return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
+    return didReceiveSyncNetworkProcessProxyMessage(connection, message, replyEncoder);
 }
 
 void NetworkProcessProxy::didClose(IPC::Connection& connection)

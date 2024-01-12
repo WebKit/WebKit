@@ -35,14 +35,14 @@ StreamClientConnection::DedicatedConnectionClient::DedicatedConnectionClient(Con
 {
 }
 
-void StreamClientConnection::DedicatedConnectionClient::didReceiveMessage(Connection& connection, Decoder& decoder)
+void StreamClientConnection::DedicatedConnectionClient::didReceiveMessage(Connection& connection, Message& message)
 {
-    m_receiver.didReceiveMessage(connection, decoder);
+    m_receiver.didReceiveMessage(connection, message);
 }
 
-bool StreamClientConnection::DedicatedConnectionClient::didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
+bool StreamClientConnection::DedicatedConnectionClient::didReceiveSyncMessage(Connection& connection, Message& message, UniqueRef<Encoder>& replyEncoder)
 {
-    return m_receiver.didReceiveSyncMessage(connection, decoder, replyEncoder);
+    return m_receiver.didReceiveSyncMessage(connection, message, replyEncoder);
 }
 
 void StreamClientConnection::DedicatedConnectionClient::didClose(Connection& connection)

@@ -72,8 +72,8 @@ private:
     RemoteCDMProxy(RemoteCDMFactoryProxy&, std::unique_ptr<WebCore::CDMPrivate>&&, UniqueRef<RemoteCDMConfiguration>&&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     void getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&&, WebCore::CDMPrivate::LocalStorageAccess, CompletionHandler<void(std::optional<WebCore::CDMKeySystemConfiguration>)>&&);

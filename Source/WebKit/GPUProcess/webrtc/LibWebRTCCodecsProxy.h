@@ -81,7 +81,7 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::WorkQueueMessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     void createDecoder(VideoDecoderIdentifier, VideoCodecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&&);
     void releaseDecoder(VideoDecoderIdentifier);

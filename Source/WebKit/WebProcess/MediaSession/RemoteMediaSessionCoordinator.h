@@ -51,7 +51,7 @@ private:
     explicit RemoteMediaSessionCoordinator(WebPage&, const String&);
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // MessageReceivers.
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&);

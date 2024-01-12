@@ -162,7 +162,7 @@ void RemoteLegacyCDMSession::sendMessage(RefPtr<SharedBuffer>&& message, const S
         return;
     }
 
-    m_client->sendMessage(convertToUint8Array(WTFMove(message)).get(), destinationURL);
+    m_client->sendMessage(convertToUint8Array(message).get(), destinationURL);
 }
 
 void RemoteLegacyCDMSession::sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)

@@ -71,7 +71,7 @@ private:
 
     WebCore::WebGPU::ComputePassEncoder& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void setPipeline(WebGPUIdentifier);
     void dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY = 1, WebCore::WebGPU::Size32 workgroupCountZ = 1);

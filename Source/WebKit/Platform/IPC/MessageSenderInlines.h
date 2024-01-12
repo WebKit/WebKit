@@ -73,9 +73,9 @@ template<typename MessageType, typename C> inline bool MessageSender::sendWithAs
     auto encoder = makeUniqueRef<IPC::Encoder>(MessageType::name(), messageSenderDestinationID());
     encoder.get() << std::forward<MessageType>(message).arguments();
 
-    auto asyncHandler = [completionHandler = std::forward<C>(completionHandler)] (Decoder* decoder) mutable {
-        if (decoder && decoder->isValid())
-            Connection::callReply<MessageType>(*decoder, WTFMove(completionHandler));
+    auto asyncHandler = [completionHandler = std::forward<C>(completionHandler)] (Message* message) mutable {
+        if (message && message->decoder->isValid())
+            Connection::callReply<MessageType>(*message, WTFMove(completionHandler));
         else
             Connection::cancelReply<MessageType>(WTFMove(completionHandler));
     };

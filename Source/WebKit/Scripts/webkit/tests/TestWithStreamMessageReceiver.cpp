@@ -29,8 +29,8 @@
 #if PLATFORM(COCOA)
 #include "ArgumentCodersDarwin.h" // NOLINT
 #endif
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h> // NOLINT
@@ -43,33 +43,33 @@
 
 namespace WebKit {
 
-void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
+void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Message&& message)
 {
-    if (decoder.messageName() == Messages::TestWithStream::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.protectedConnection(), decoder, this, &TestWithStream::sendString);
-    if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.protectedConnection(), decoder, this, &TestWithStream::sendStringAsync);
-    if (decoder.messageName() == Messages::TestWithStream::CallWithIdentifier::name())
-        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection.protectedConnection(), decoder, this, &TestWithStream::callWithIdentifier);
+    if (message.messageName() == Messages::TestWithStream::SendString::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.protectedConnection(), WTFMove(message), this, &TestWithStream::sendString);
+    if (message.messageName() == Messages::TestWithStream::SendStringAsync::name())
+        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.protectedConnection(), WTFMove(message), this, &TestWithStream::sendStringAsync);
+    if (message.messageName() == Messages::TestWithStream::CallWithIdentifier::name())
+        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection.protectedConnection(), WTFMove(message), this, &TestWithStream::callWithIdentifier);
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.protectedConnection(), decoder, this, &TestWithStream::sendMachSendRight);
+    if (message.messageName() == Messages::TestWithStream::SendMachSendRight::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.protectedConnection(), WTFMove(message), this, &TestWithStream::sendMachSendRight);
 #endif
-    if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
+    if (message.messageName() == Messages::TestWithStream::SendStringSync::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, WTFMove(message), this, &TestWithStream::sendStringSync);
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
-    if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+    if (message.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, WTFMove(message), this, &TestWithStream::receiveMachSendRight);
+    if (message.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
+        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, WTFMove(message), this, &TestWithStream::sendAndReceiveMachSendRight);
 #endif
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)
     if (connection.protectedConnection()->ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -78,54 +78,54 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendStringAsync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendStringAsync>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringAsync::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringAsync::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringAsync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringAsync>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringAsync::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringAsync::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSync>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSync::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSync::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSync>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSync::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSync::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::ReplyArguments>(globalObject, message);
 }
 #if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendMachSendRight::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendMachSendRight::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::ReplyArguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::ReplyArguments>(globalObject, message);
 }
 #endif
 

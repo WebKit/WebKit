@@ -26,8 +26,8 @@
 #include "TestWithEnabledIf.h"
 
 #include "ArgumentCoders.h" // NOLINT
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithEnabledIfMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
 
@@ -37,20 +37,20 @@
 
 namespace WebKit {
 
-void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledIf::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name() && featureEnabled())
-        return IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, decoder, this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
+    if (message.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name())
+        return IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, WTFMove(message), this, &TestWithEnabledIf::alwaysEnabled);
+    if (message.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name() && featureEnabled())
+        return IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, WTFMove(message), this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -59,13 +59,13 @@ void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithEnabledIf::AlwaysEnabled::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithEnabledIf::AlwaysEnabled::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::Arguments>(globalObject, message);
 }
 
 }

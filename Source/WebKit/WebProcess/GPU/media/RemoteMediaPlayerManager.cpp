@@ -229,10 +229,10 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
     return false;
 }
 
-void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (const auto& player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
-        player->didReceiveMessage(connection, decoder);
+    if (const auto& player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(message.destinationID)))
+        player->didReceiveMessage(connection, message);
 }
 
 void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)

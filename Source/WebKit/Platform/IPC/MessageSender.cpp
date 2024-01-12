@@ -54,7 +54,7 @@ bool MessageSender::performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) c
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool MessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>&&) const
+bool MessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Message*)>&&) const
 {
     // Senders that use sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler) must also override this.
     RELEASE_ASSERT_NOT_REACHED();

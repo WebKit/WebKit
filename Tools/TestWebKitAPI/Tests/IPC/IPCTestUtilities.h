@@ -105,21 +105,21 @@ public:
     }
 
     // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
+    void setAsyncMessageHandler(Function<bool(IPC::Message&)>&& handler)
     {
         m_asyncMessageHandler = WTFMove(handler);
     }
 
     // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
+    void didReceiveMessage(IPC::Connection&, IPC::Message& message) override
     {
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
+        if (m_asyncMessageHandler && m_asyncMessageHandler(message))
             return;
-        m_messages.append({ decoder.messageName(), decoder.destinationID() });
+        m_messages.append({ message.messageName(), message.destinationID });
         m_continueWaitForMessage = true;
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override
     {
         return false;
     }
@@ -139,7 +139,7 @@ private:
     std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Message&)> m_asyncMessageHandler;
 };
 
 enum class ConnectionTestDirection {

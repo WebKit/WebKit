@@ -72,7 +72,7 @@ private:
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

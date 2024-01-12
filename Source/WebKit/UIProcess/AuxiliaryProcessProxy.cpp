@@ -252,8 +252,8 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
-            completionHandler(decoder);
+        asyncReplyHandler->completionHandler = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Message* message) mutable {
+            completionHandler(message);
         };
     }
 
@@ -306,14 +306,14 @@ void AuxiliaryProcessProxy::removeMessageReceiver(IPC::ReceiverName messageRecei
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-bool AuxiliaryProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool AuxiliaryProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    return m_messageReceiverMap.dispatchMessage(connection, decoder);
+    return m_messageReceiverMap.dispatchMessage(connection, message);
 }
 
-bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
+    return m_messageReceiverMap.dispatchSyncMessage(connection, message, replyEncoder);
 }
 
 void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)

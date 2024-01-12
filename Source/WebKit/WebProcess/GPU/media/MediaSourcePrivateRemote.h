@@ -91,7 +91,7 @@ public:
 private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
     void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
     bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection.get(); }
     void bufferedChanged(const WebCore::PlatformTimeRanges&) final;

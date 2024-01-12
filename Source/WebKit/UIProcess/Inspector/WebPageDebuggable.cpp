@@ -81,7 +81,7 @@ void WebPageDebuggable::disconnect(FrontendChannel& channel)
 
 void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    m_page.inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+    m_page.inspectorController().dispatchMessageFromFrontend(message);
 }
 
 void WebPageDebuggable::setIndicating(bool indicating)

@@ -61,7 +61,7 @@ public:
     ~WebInspectorUIExtensionController();
 
     // Implemented in generated WebInspectorUIExtensionControllerMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // WebInspectorUIExtensionController IPC messages.
     void registerExtension(const Inspector::ExtensionID&, const String& extensionBundleIdentifier, const String& displayName, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&&);

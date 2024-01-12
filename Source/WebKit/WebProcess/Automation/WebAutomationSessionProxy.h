@@ -69,7 +69,7 @@ private:
     void ensureObserverForFrame(WebFrame&);
 
     // Implemented in generated WebAutomationSessionProxyMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // Called by WebAutomationSessionProxy messages
     void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, std::optional<double> callbackTimeout, uint64_t callbackID);

@@ -55,7 +55,7 @@ private:
 #endif
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // Messages
     void updateKeyStatuses(KeyStatusVector&&);

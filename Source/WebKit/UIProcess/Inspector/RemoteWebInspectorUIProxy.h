@@ -128,7 +128,7 @@ private:
     RefPtr<WebPageProxy> protectedInspectorPage();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // RemoteWebInspectorUIProxy messages.
     void frontendLoaded();

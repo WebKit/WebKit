@@ -25,8 +25,8 @@
 #include "config.h"
 #include "TestWithStreamServerConnectionHandle.h"
 
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "StreamServerConnection.h" // NOLINT
 #include "TestWithStreamServerConnectionHandleMessages.h" // NOLINT
 
@@ -36,18 +36,18 @@
 
 namespace WebKit {
 
-void TestWithStreamServerConnectionHandle::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithStreamServerConnectionHandle::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::name())
-        return IPC::handleMessage<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection>(connection, decoder, this, &TestWithStreamServerConnectionHandle::sendStreamServerConnection);
+    if (message.messageName() == Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::name())
+        return IPC::handleMessage<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection>(connection, WTFMove(message), this, &TestWithStreamServerConnectionHandle::sendStreamServerConnection);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -56,9 +56,9 @@ void TestWithStreamServerConnectionHandle::didReceiveMessage(IPC::Connection& co
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::Arguments>(globalObject, message);
 }
 
 }

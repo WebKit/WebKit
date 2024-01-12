@@ -69,7 +69,7 @@ private:
 
     WebCore::ShapeDetection::TextDetector& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void detect(WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&&);
 

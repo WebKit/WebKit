@@ -66,7 +66,7 @@ public:
     void setVideoFrameObjectHeapProxy(RefPtr<RemoteVideoFrameObjectHeapProxy>&&);
 
     // IPC::WorkQueueMessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&);
 
 private:
     // Messages

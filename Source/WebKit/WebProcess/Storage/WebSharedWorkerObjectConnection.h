@@ -36,7 +36,7 @@ public:
     static Ref<WebSharedWorkerObjectConnection> create() { return adoptRef(*new WebSharedWorkerObjectConnection); }
     ~WebSharedWorkerObjectConnection();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     WebSharedWorkerObjectConnection();

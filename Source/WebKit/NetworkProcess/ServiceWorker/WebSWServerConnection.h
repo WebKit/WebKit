@@ -78,7 +78,7 @@ public:
 
     IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     NetworkSession* session();
     PAL::SessionID sessionID() const;

@@ -124,7 +124,7 @@ private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;

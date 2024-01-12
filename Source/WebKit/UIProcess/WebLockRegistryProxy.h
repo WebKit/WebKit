@@ -46,7 +46,7 @@ public:
     ~WebLockRegistryProxy();
 
     void processDidExit();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
 private:
     // IPC Message handlers.

@@ -83,7 +83,7 @@ private:
     void dispatch(Function<void()>&&) final;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     void didFailDownload(std::optional<WebCore::ResourceError>&& = { });

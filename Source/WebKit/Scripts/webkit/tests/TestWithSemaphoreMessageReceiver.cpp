@@ -25,9 +25,9 @@
 #include "config.h"
 #include "TestWithSemaphore.h"
 
-#include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
 #include "IPCSemaphore.h" // NOLINT
+#include "Message.h" // NOLINT
 #include "TestWithSemaphoreMessages.h" // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
@@ -36,20 +36,20 @@
 
 namespace WebKit {
 
-void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Message&& message)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, decoder, this, &TestWithSemaphore::sendSemaphore);
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
-        return IPC::handleMessageAsync<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, this, &TestWithSemaphore::receiveSemaphore);
+    if (message.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
+        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, WTFMove(message), this, &TestWithSemaphore::sendSemaphore);
+    if (message.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
+        return IPC::handleMessageAsync<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, WTFMove(message), this, &TestWithSemaphore::receiveSemaphore);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(message);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(message.messageName()), message.destinationID);
 }
 
 } // namespace WebKit
@@ -58,17 +58,17 @@ void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 namespace IPC {
 
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, message);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Message& message)
 {
-    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::ReplyArguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::ReplyArguments>(globalObject, message);
 }
 
 }

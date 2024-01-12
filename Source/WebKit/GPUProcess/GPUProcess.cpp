@@ -105,17 +105,17 @@ GPUProcess::~GPUProcess()
 {
 }
 
-void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
+    if (messageReceiverMap().dispatchMessage(connection, message))
         return;
 
-    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
-        AuxiliaryProcess::didReceiveMessage(connection, decoder);
+    if (message.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, message);
         return;
     }
 
-    didReceiveGPUProcessMessage(connection, decoder);
+    didReceiveGPUProcessMessage(connection, message);
 }
 
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)

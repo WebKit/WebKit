@@ -42,6 +42,7 @@ class Settings;
 namespace IPC {
 class Connection;
 class Decoder;
+struct Message;
 }
 
 namespace WebKit {
@@ -66,7 +67,7 @@ public:
 
     void registerFactory(Vector<WebCore::CDMFactory*>&);
 
-    void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSessionMessage(IPC::Connection&, IPC::Message&);
 
     void addSession(RemoteCDMInstanceSession&);
     void removeSession(RemoteCDMInstanceSessionIdentifier);

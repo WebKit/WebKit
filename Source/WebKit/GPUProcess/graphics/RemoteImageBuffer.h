@@ -59,7 +59,7 @@ private:
     IPC::StreamConnectionWorkQueue& workQueue() const;
 
     // IPC::StreamMessageReceiver
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     // Messages
     void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&&);

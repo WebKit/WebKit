@@ -74,7 +74,7 @@ private:
 
     WebCore::WebGPU::Adapter& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void requestDevice(const WebGPU::DeviceDescriptor&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&&);
     void destruct();

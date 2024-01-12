@@ -92,8 +92,8 @@ public:
     bool isCached(const WebCore::ImageBuffer&) const;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
@@ -179,8 +179,8 @@ private:
     void disconnectGPUProcess();
     void ensureGPUProcessConnection();
 
-    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool dispatchMessage(IPC::Connection&, IPC::Message&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.

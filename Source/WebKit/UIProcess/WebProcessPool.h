@@ -195,8 +195,8 @@ public:
         removeMessageReceiver(messageReceiverName, destinationID.toUInt64());
     }
 
-    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool dispatchMessage(IPC::Connection&, IPC::Message&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     void initializeClient(const WKContextClientBase*);
     void setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&&);
@@ -574,8 +574,8 @@ private:
 
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 

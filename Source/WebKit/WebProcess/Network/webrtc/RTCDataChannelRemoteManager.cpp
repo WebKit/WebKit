@@ -158,7 +158,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
 
 void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier handlerIdentifier, WebCore::RTCErrorDetailType detail, String&& message)
 {
-    postTaskToHandler(handlerIdentifier, [detail, message = WTFMove(message)](auto& handler) mutable {
+    postTaskToHandler(handlerIdentifier, [detail, message = message](auto& handler) mutable {
         handler.didDetectError(WebCore::RTCError::create(detail, WTFMove(message)));
     });
 }

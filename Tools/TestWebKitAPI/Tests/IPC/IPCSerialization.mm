@@ -58,18 +58,35 @@ public:
     ~SerializationTestSender() final { };
 
 private:
-    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Message*)>&&) const final;
 
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 };
 
-bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Message*)>&& completionHandler) const
 {
     auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, { });
-    ASSERT(decoder);
-
-    completionHandler(decoder.get());
+    if (!decoder) {
+        completionHandler(nullptr);
+        return false;
+    }
+    auto messageFlags = decoder->decode<OptionSet<IPC::MessageFlags>>();
+    if (!messageFlags) {
+        completionHandler(nullptr);
+        return false;
+    }
+    auto destinationID = decoder->decode<uint64_t>();
+    if (!destinationID) {
+        completionHandler(nullptr);
+        return false;
+    }
+    IPC::Message message {
+        makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+        *destinationID,
+        *messageFlags
+    };
+    completionHandler(&message);
     return true;
 }
 

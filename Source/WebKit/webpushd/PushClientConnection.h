@@ -87,7 +87,7 @@ public:
     void broadcastDebugMessage(const String&);
     void sendDebugMessage(const String&);
 
-    void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
+    void didReceiveMessageWithReplyHandler(IPC::Message&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
 private:
     PushClientConnection(xpc_connection_t);

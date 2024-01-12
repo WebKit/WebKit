@@ -64,8 +64,8 @@ private:
     RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
 
     // LegacyCDMSessionClient
     void sendMessage(Uint8Array*, String destinationURL) final;

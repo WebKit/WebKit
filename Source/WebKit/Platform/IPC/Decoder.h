@@ -73,7 +73,7 @@ public:
     static std::unique_ptr<Decoder> create(DataReference buffer, Vector<Attachment>&&);
     using BufferDeallocator = Function<void(DataReference)>;
     static std::unique_ptr<Decoder> create(DataReference buffer, BufferDeallocator&&, Vector<Attachment>&&);
-    Decoder(DataReference stream, uint64_t destinationID);
+    Decoder(DataReference stream);
 
     ~Decoder();
 
@@ -83,21 +83,7 @@ public:
     Decoder& operator=(const Decoder&) = delete;
     Decoder& operator=(Decoder&&) = delete;
 
-    ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
-    uint64_t destinationID() const { return m_destinationID; }
-    bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
-
-    bool isSyncMessage() const { return messageIsSync(messageName()); }
-    ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
-    bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
-    bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-#if ENABLE(IPC_TESTING_API)
-    bool hasSyncMessageDeserializationFailure() const;
-#endif
-    bool shouldUseFullySynchronousModeForTesting() const;
-    bool shouldMaintainOrderingWithAsyncMessages() const;
-    void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(ImportanceAssertion&&);
@@ -200,8 +186,6 @@ private:
 
     Vector<Attachment> m_attachments;
 
-    OptionSet<MessageFlags> m_messageFlags;
-    bool m_isAllowedWhenWaitingForSyncReplyOverride { false };
     MessageName m_messageName { MessageName::Invalid };
 
 #if PLATFORM(MAC)
@@ -210,8 +194,6 @@ private:
 #if PLATFORM(COCOA)
     HashSet<ClassStructPtr> m_allowedClasses;
 #endif
-
-    uint64_t m_destinationID;
 };
 
 inline bool alignedBufferIsLargeEnoughToContain(size_t bufferSize, const size_t alignedBufferPosition, size_t bytesNeeded)

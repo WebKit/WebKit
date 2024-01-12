@@ -64,7 +64,7 @@ private:
 #endif
 
     // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

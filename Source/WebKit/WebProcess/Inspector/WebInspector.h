@@ -46,7 +46,7 @@ public:
     void updateDockingAvailability();
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }

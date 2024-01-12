@@ -78,7 +78,7 @@ static constexpr auto processTargetNameNetworking = "Networking"_s;
 
 static std::optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
 static std::optional<uint64_t> messageIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
-static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject*, IPC::MessageName, IPC::Decoder&);
+static JSC::JSObject* jsResultFromReplyMessage(JSC::JSGlobalObject*, IPC::MessageName, IPC::Message&);
 static bool encodeArgument(IPC::Encoder&, JSContextRef, JSValueRef, JSValueRef* exception);
 
 class JSIPCSemaphore : public RefCounted<JSIPCSemaphore> {
@@ -159,8 +159,8 @@ private:
     }
 
     // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
 
@@ -229,8 +229,8 @@ private:
     class MessageReceiver : public IPC::Connection::Client {
     public:
         // IPC::MessageReceiver overrides.
-        void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
-        bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
+        void didReceiveMessage(IPC::Connection&, IPC::Message&) final { ASSERT_NOT_REACHED(); }
+        bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
         void didClose(IPC::Connection&) final { }
         void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
     } m_dummyMessageReceiver;
@@ -344,8 +344,8 @@ public:
 
 private:
     void willSendMessage(const IPC::Encoder&, OptionSet<IPC::SendOption>) override;
-    void didReceiveMessage(const IPC::Decoder&) override;
-    JSC::JSObject* jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Decoder&);
+    void didReceiveMessage(const IPC::Message&) override;
+    JSC::JSObject* jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Message&);
 
     WeakPtr<JSIPC> m_jsIPC;
     Type m_type;
@@ -475,7 +475,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         JSValueProtect(context, resolve);
         JSValueProtect(context, reject);
         IPC::Connection::AsyncReplyHandler handler {
-            [messageName, context, resolve, reject](IPC::Decoder* replyDecoder) {
+            [messageName, context, resolve, reject](IPC::Message* replyMessage) {
                 auto* globalObject = toJS(context);
                 auto& vm = globalObject->vm();
                 JSC::JSLockHolder lock(vm);
@@ -488,10 +488,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                     JSGlobalContextRelease(JSContextGetGlobalContext(context));
                 });
 
-                if (!replyDecoder || !replyDecoder->isValid())
+                if (!replyMessage || !replyMessage->decoder->isValid())
                     return;
 
-                auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
+                auto* jsResult = jsResultFromReplyMessage(globalObject, messageName, *replyMessage);
                 if (auto* exception = scope.exception()) {
                     scope.clearException();
                     JSValueRef arguments[] = { toRef(globalObject, exception) };
@@ -567,10 +567,10 @@ static JSValueRef sendSyncMessageWithJSArguments(IPC::Connection& connection, JS
             return JSValueMakeUndefined(context);
     }
 
-    auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.has_value()) {
+    auto replyMessageOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
+    if (replyMessageOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
+        auto* jsResult = jsResultFromReplyMessage(globalObject, messageName, *replyMessageOrError);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -592,10 +592,10 @@ static JSValueRef waitForMessageWithJSArguments(IPC::Connection& connection, JSC
         return JSValueMakeUndefined(context);
 
     auto [destinationID, messageName, timeout] = *info;
-    auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
-    if (decoderOrError.has_value()) {
+    auto messageOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
+    if (messageOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto jsResult = jsValueForArguments(globalObject, messageName, decoderOrError.value().get());
+        auto jsResult = jsValueForArguments(globalObject, messageName, messageOrError.value());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -772,12 +772,12 @@ void JSIPCConnection::finalize(JSObjectRef object)
     unwrap(object)->deref();
 }
 
-void JSIPCConnection::didReceiveMessage(IPC::Connection&, IPC::Decoder&)
+void JSIPCConnection::didReceiveMessage(IPC::Connection&, IPC::Message&)
 {
     ASSERT_NOT_REACHED();
 }
 
-bool JSIPCConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+bool JSIPCConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&)
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1106,10 +1106,10 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
     if (!prepareToSendOutOfStreamMessage(context, argumentCount, arguments, *jsStreamConnection->m_jsIPC, streamConnection, encoder.get(), destinationID, timeout, exception))
         return JSValueMakeUndefined(context);
 
-    auto replyDecoderOrError = connection->sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.has_value()) {
+    auto replyMessageOrError = connection->sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
+    if (replyMessageOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
+        auto* jsResult = jsResultFromReplyMessage(globalObject, messageName, *replyMessageOrError);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -2339,17 +2339,17 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
 }
 
 
-static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject* globalObject, IPC::MessageName messageName, IPC::Decoder& decoder)
+static JSC::JSObject* jsResultFromReplyMessage(JSC::JSGlobalObject* globalObject, IPC::MessageName messageName, IPC::Message& message)
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (decoder.hasSyncMessageDeserializationFailure()) {
+    if (message.hasSyncMessageDeserializationFailure()) {
         throwException(globalObject, scope, JSC::createTypeError(globalObject, "Failed to successfully deserialize the message"_s));
         return nullptr;
     }
 
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
+    auto arrayBuffer = JSC::ArrayBuffer::create(message.decoder->buffer());
     JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
         jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
@@ -2358,7 +2358,7 @@ static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject* globalObject
         return nullptr;
     }
 
-    auto jsReplyArguments = jsValueForReplyArguments(globalObject, messageName, decoder);
+    auto jsReplyArguments = jsValueForReplyArguments(globalObject, messageName, message);
     if (!jsReplyArguments) {
         throwException(globalObject, scope, JSC::createTypeError(globalObject, "Failed to decode the reply"_s));
         return nullptr;
@@ -2868,7 +2868,7 @@ JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef conte
     UNUSED_PARAM(catchScope);
 }
 
-void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
+void JSMessageListener::didReceiveMessage(const IPC::Message& message)
 {
     if (m_type != Type::Incoming)
         return;
@@ -2878,8 +2878,14 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
-    auto mutableDecoder = IPC::Decoder::create(decoder.buffer(), { });
-    auto* description = jsDescriptionFromDecoder(globalObject, *mutableDecoder);
+    auto mutableDecoder = IPC::Decoder::create(message.decoder->buffer(), { });
+    RELEASE_ASSERT(mutableDecoder);
+    IPC::Message mutableMessage {
+        makeUniqueRefFromNonNullUniquePtr(WTFMove(mutableDecoder)),
+        message.destinationID,
+        message.messageFlags
+    };
+    auto* description = jsDescriptionFromDecoder(globalObject, mutableMessage);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
     JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
@@ -2896,13 +2902,24 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     JSC::JSLockHolder lock(globalObject->vm());
 
     auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, { });
-    auto* description = jsDescriptionFromDecoder(globalObject, *decoder);
+    RELEASE_ASSERT(decoder);
+    auto messageFlags = decoder->decode<OptionSet<IPC::MessageFlags>>();
+    RELEASE_ASSERT(messageFlags);
+    auto destinationID = decoder->decode<uint64_t>();
+    RELEASE_ASSERT(destinationID);
+
+    IPC::Message message {
+        makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+        *destinationID,
+        *messageFlags
+    };
+    auto* description = jsDescriptionFromDecoder(globalObject, message);
 
     JSValueRef arguments[] = { description ? toRef(globalObject, description) : JSValueMakeUndefined(m_context) };
     JSObjectCallAsFunction(m_context, m_callback, m_callback, std::size(arguments), arguments, nullptr);
 }
 
-JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder)
+JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* globalObject, IPC::Message& message)
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -2910,23 +2927,23 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     auto* jsResult = constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::JSValue(static_cast<unsigned>(message.messageName())));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String::fromLatin1(IPC::description(decoder.messageName()))));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String::fromLatin1(IPC::description(message.messageName()))));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(message.destinationID));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (decoder.isSyncMessage()) {
+    if (message.isSyncMessage()) {
         IPC::Connection::SyncRequestID syncRequestID;
-        if (decoder.decode(syncRequestID)) {
+        if (message.decoder->decode(syncRequestID)) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
-    auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer());
+    auto arrayBuffer = JSC::ArrayBuffer::create(message.decoder->buffer());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
         if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"_s), jsArrayBuffer);
@@ -2934,14 +2951,14 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
         }
     }
 
-    auto jsReplyArguments = jsValueForArguments(globalObject, decoder.messageName(), decoder);
+    auto jsReplyArguments = jsValueForArguments(globalObject, message.messageName(), message);
     if (jsReplyArguments) {
         jsResult->putDirect(vm, vm.propertyNames->arguments, jsReplyArguments->isEmpty() ? JSC::jsNull() : *jsReplyArguments);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (IPC::Connection::AsyncReplyID asyncReplyID; decoder.decode(asyncReplyID)) {
+    if (!message.isSyncMessage() && messageReplyArgumentDescriptions(message.messageName())) {
+        if (IPC::Connection::AsyncReplyID asyncReplyID; message.decoder->decode(asyncReplyID)) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }

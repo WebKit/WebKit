@@ -912,43 +912,44 @@ void WebProcess::terminate()
     AuxiliaryProcess::terminate();
 }
 
-bool WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (messageReceiverMap().dispatchSyncMessage(connection, message, replyEncoder))
         return true;
     return false;
 }
 
-void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message& message)
 {
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
+    if (messageReceiverMap().dispatchMessage(connection, message))
         return;
 
-    if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        didReceiveWebProcessMessage(connection, decoder);
-        return;
-    }
-
-    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
-        AuxiliaryProcess::didReceiveMessage(connection, decoder);
+    const auto messageReceiverName = message.messageReceiverName();
+    if (messageReceiverName == Messages::WebProcess::messageReceiverName()) {
+        didReceiveWebProcessMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, message);
+        return;
+    }
+
+    if (messageReceiverName == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
-            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, message);
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
+    if (messageReceiverName == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
         ASSERT(SharedWorkerContextManager::singleton().connection());
         if (auto* contextManagerConnection = SharedWorkerContextManager::singleton().connection())
-            static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
+            static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, message);
         return;
     }
 
-    LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(decoder.messageName()), decoder.destinationID(), static_cast<int>(getCurrentProcessID()));
+    LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(message.messageName()), message.destinationID, static_cast<int>(getCurrentProcessID()));
 }
 
 void WebProcess::didClose(IPC::Connection& connection)

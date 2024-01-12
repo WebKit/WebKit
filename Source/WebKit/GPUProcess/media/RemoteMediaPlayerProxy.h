@@ -131,8 +131,8 @@ public:
     void errorLog(CompletionHandler<void(String)>&&);
 #endif
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 

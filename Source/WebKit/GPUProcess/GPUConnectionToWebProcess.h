@@ -325,11 +325,11 @@ private:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
 
-    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool dispatchMessage(IPC::Connection&, IPC::Message&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     // NowPlayingManager::Client
     void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;

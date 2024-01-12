@@ -67,7 +67,7 @@ public:
     void receiveIncomingUnidirectionalStream();
     void receiveBidirectionalStream();
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;

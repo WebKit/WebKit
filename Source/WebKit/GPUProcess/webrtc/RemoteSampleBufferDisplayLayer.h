@@ -60,7 +60,7 @@ public:
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     CGRect bounds() const;
     void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);

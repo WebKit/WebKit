@@ -129,7 +129,7 @@ RefPtr<WebProcessPool> WebAutomationSession::protectedProcessPool() const
 
 void WebAutomationSession::dispatchMessageFromRemote(String&& message)
 {
-    m_backendDispatcher->dispatch(WTFMove(message));
+    m_backendDispatcher->dispatch(message);
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)

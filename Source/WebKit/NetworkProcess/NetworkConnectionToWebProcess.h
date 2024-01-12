@@ -236,14 +236,14 @@ private:
     WebCore::NetworkStorageSession* storageSession();
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 
     // Message handlers.
-    void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Message&);
+    bool didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     void scheduleResourceLoad(NetworkResourceLoadParameters&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
     void performSynchronousLoad(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);

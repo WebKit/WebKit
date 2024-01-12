@@ -84,7 +84,7 @@ void XPCEndpoint::sendEndpointToConnection(xpc_connection_t connection)
     xpc_dictionary_set_string(message.get(), xpcEndpointMessageNameKey(), xpcEndpointMessageName());
     xpc_dictionary_set_value(message.get(), xpcEndpointNameKey(), m_endpoint.get());
 
-    xpc_connection_send_message(connection, message.get());
+    xpc_connection_send_message(connection, WTFMove(message).get());
 }
 
 OSObjectPtr<xpc_endpoint_t> XPCEndpoint::endpoint() const

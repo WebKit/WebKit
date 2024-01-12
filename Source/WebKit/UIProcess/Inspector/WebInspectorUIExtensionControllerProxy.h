@@ -53,7 +53,7 @@ public:
     virtual ~WebInspectorUIExtensionControllerProxy();
 
     // Implemented in generated WebInspectorUIExtensionControllerProxyMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // API.
     void registerExtension(const Inspector::ExtensionID&, const String& extensionBundleIdentifier, const String& displayName, WTF::CompletionHandler<void(Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError>)>&&);

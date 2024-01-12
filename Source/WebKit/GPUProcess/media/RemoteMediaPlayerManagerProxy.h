@@ -59,10 +59,10 @@ public:
     Logger& logger();
 #endif
 
-    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
-    void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncPlayerMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message) { didReceiveMessage(connection, message); }
+    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Message& message, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, message, encoder); }
+    void didReceivePlayerMessage(IPC::Connection&, IPC::Message&);
+    bool didReceiveSyncPlayerMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(const WebCore::MediaPlayerIdentifier&);
 
@@ -70,8 +70,8 @@ public:
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) final;
 
     void createMediaPlayer(WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
     void deleteMediaPlayer(WebCore::MediaPlayerIdentifier);

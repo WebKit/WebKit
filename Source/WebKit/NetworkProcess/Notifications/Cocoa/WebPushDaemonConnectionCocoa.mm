@@ -65,7 +65,7 @@ bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& 
     return true;
 }
 
-bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Message*)>&& completionHandler) const
 {
     auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
     Daemon::Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
@@ -78,8 +78,20 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
         size_t dataSize { 0 };
         const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebPushD::protocolEncodedMessageKey, &dataSize));
         auto decoder = IPC::Decoder::create({ data, dataSize }, { });
-
-        completionHandler(decoder.get());
+        if (!decoder)
+            return completionHandler(nullptr);
+        auto messageFlags = decoder->decode<OptionSet<IPC::MessageFlags>>();
+        if (!messageFlags)
+            return completionHandler(nullptr);
+        auto destinationID = decoder->decode<uint64_t>();
+        if (!destinationID)
+            return completionHandler(nullptr);
+        IPC::Message message {
+            makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)),
+            *destinationID,
+            *messageFlags
+        };
+        completionHandler(&message);
     });
 
     return true;

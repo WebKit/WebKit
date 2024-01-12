@@ -71,7 +71,7 @@ private:
 
     WebCore::WebGPU::PresentationContext& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();

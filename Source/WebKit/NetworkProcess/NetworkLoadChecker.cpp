@@ -247,7 +247,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
 
 auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message) -> RequestOrRedirectionTripletOrError
 {
-    return ResourceError { String { }, 0, m_url, WTFMove(message), ResourceError::Type::AccessControl };
+    return ResourceError { String { }, 0, m_url, message, ResourceError::Type::AccessControl };
 }
 
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)

@@ -69,9 +69,9 @@ private:
     void startListeningForIPC();
 
     // IPC::WorkQueueMessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
-    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchMessage(IPC::Connection&, IPC::Message&);
 
     using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
     void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerCreationCallback);

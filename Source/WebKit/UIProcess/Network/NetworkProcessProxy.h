@@ -346,17 +346,17 @@ private:
     void terminate() final;
 
     // IPC::Connection::Client
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
-    bool didReceiveSyncNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool didReceiveSyncNetworkProcessProxyMessage(IPC::Connection&, IPC::Message&, UniqueRef<IPC::Encoder>&);
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive() final;
 
     // Message handlers
-    void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Message&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const std::optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, AuthenticationChallengeIdentifier);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
     void didNegotiateModernTLS(WebPageProxyIdentifier, const URL&);

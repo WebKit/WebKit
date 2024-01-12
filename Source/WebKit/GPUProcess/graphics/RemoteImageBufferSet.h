@@ -65,7 +65,7 @@ private:
     IPC::StreamConnectionWorkQueue& workQueue() const;
 
     // IPC::StreamMessageReceiver
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     // Messages
     void updateConfiguration(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat);

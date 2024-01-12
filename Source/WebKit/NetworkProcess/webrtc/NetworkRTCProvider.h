@@ -86,7 +86,7 @@ public:
     }
     ~NetworkRTCProvider();
 
-    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
+    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Message& message) { m_rtcMonitor.didReceiveMessage(connection, message); }
 
     class Socket {
     public:
@@ -145,7 +145,7 @@ private:
     void dispatch(Function<void()>&&) final;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) final;
 
     static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 

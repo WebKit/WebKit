@@ -214,7 +214,7 @@ private:
     void closeFrontendPageAndWindow();
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Message&) override;
 
     // Inspector::FrontendChannel
     void sendMessageToFrontend(const String& message) override;

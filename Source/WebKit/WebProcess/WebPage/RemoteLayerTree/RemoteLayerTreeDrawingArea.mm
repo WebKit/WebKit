@@ -399,7 +399,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
-    commitEncoder.get() << WTFMove(message).arguments();
+    commitEncoder.get() << message.arguments();
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
     for (auto& transaction : transactions)

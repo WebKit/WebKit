@@ -27,6 +27,8 @@
 
 #include "Connection.h"
 #include "MessageReceiveQueue.h"
+
+#include "Message.h"
 #include "WorkQueueMessageReceiver.h"
 
 namespace IPC {
@@ -41,10 +43,10 @@ public:
     }
     ~FunctionDispatcherQueue() final = default;
 
-    void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
+    void enqueueMessage(Connection& connection, Message&& message) final
     {
         m_dispatcher.dispatch([connection = Ref { connection }, message = WTFMove(message), &receiver = m_receiver]() mutable {
-            connection->dispatchMessageReceiverMessage(receiver, WTFMove(message));
+            connection->dispatchMessageReceiverMessage(receiver, message);
         });
     }
 private:
@@ -62,10 +64,10 @@ public:
     }
     ~WorkQueueMessageReceiverQueue() final = default;
 
-    void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
+    void enqueueMessage(Connection& connection, Message&& message) final
     {
         m_queue->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
-            connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));
+            connection->dispatchMessageReceiverMessage(receiver.get(), message);
         });
     }
 private:

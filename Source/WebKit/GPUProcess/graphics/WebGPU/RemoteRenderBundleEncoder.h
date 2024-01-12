@@ -73,7 +73,7 @@ private:
 
     WebCore::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Message&) final;
 
     void setPipeline(WebGPUIdentifier);
 
