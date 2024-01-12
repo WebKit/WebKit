@@ -1,0 +1,33 @@
+
+FAIL Observable constructor assert_implements: The Observable interface is not implemented undefined
+FAIL Subscriber interface is not constructible assert_implements: The Subscriber interface is not implemented undefined
+FAIL subscribe() can be called with no arguments Can't find variable: Observable
+FAIL Subscribe with just a function as the next handler Can't find variable: Observable
+FAIL Observable constructor calls initializer on subscribe Can't find variable: Observable
+FAIL Observable error path called synchronously Can't find variable: Observable
+FAIL Observable should error if initializer throws Can't find variable: Observable
+FAIL Subscription is inactive after complete() Can't find variable: Observable
+FAIL Subscription is inactive after error() Can't find variable: Observable
+FAIL Subscription is inactive when aborted signal is passed in Can't find variable: Observable
+FAIL Subscriber#signal is not the same AbortSignal as the one passed into `subscribe()` Can't find variable: Observable
+FAIL Subscription does not emit values after completion Can't find variable: Observable
+FAIL Subscription does not emit values after error Can't find variable: Observable
+FAIL Completing or nexting a subscriber after an error does nothing Can't find variable: Observable
+FAIL Errors pushed to the subscriber that are not handled by the subscription are reported to the global Can't find variable: Observable
+FAIL Errors thrown in the initializer that are not handled by the subscription are reported to the global Can't find variable: Observable
+FAIL Subscription reports errors that are pushed after subscriber is closed by completion Can't find variable: Observable
+FAIL Errors thrown by initializer function after subscriber is closed by completion are reported Can't find variable: Observable
+FAIL Errors thrown by initializer function after subscriber is closed by error are reported Can't find variable: Observable
+FAIL Errors pushed by initializer function after subscriber is closed by error are reported Can't find variable: Observable
+FAIL Subscriber#complete() cannot re-entrantly invoke itself Can't find variable: Observable
+FAIL Subscriber#error() cannot re-entrantly invoke itself Can't find variable: Observable
+FAIL Unsubscription lifecycle Can't find variable: Observable
+FAIL Aborting a subscription should stop emitting values Can't find variable: Observable
+FAIL Calling subscribe should never throw an error synchronously, initializer throws error Can't find variable: Observable
+FAIL Calling subscribe should never throw an error synchronously, subscriber pushes error Can't find variable: Observable
+FAIL Teardown should be called when subscription is aborted Can't find variable: Observable
+FAIL Teardowns should be called when subscription is closed by completion Can't find variable: Observable
+FAIL Teardowns should be called when subscription is closed by subscriber pushing an error Can't find variable: Observable
+FAIL Teardowns should be called when subscription is closed by subscriber throwing error Can't find variable: Observable
+FAIL Teardowns should be called synchronously during addTeardown() if the subscription is inactive Can't find variable: Observable
+

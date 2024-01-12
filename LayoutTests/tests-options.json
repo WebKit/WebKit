@@ -2321,9 +2321,6 @@
     "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization-2.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-1.html": [
         "slow"
     ],
@@ -2421,9 +2418,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-splitText.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/ranges/Range-selectNode.html": [
