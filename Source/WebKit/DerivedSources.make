@@ -819,6 +819,8 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIPort \
     WebExtensionAPIRuntime \
     WebExtensionAPIScripting \
+    WebExtensionAPIStorage \
+    WebExtensionAPIStorageArea \
     WebExtensionAPITabs \
     WebExtensionAPITest \
     WebExtensionAPIWebNavigation \

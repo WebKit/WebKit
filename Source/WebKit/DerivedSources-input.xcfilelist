@@ -505,6 +505,8 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPort.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIScripting.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorage.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorageArea.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITabs.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITest.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigation.idl

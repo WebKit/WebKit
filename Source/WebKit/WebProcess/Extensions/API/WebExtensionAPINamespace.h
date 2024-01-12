@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
 #include "WebExtensionAPIScripting.h"
+#include "WebExtensionAPIStorage.h"
 #include "WebExtensionAPITabs.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
@@ -73,6 +74,7 @@ public:
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
     WebExtensionAPIScripting& scripting();
+    WebExtensionAPIStorage& storage();
     WebExtensionAPITabs& tabs();
     WebExtensionAPITest& test();
     WebExtensionAPIWindows& windows();
@@ -92,6 +94,7 @@ private:
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
     RefPtr<WebExtensionAPIScripting> m_scripting;
+    RefPtr<WebExtensionAPIStorage> m_storage;
     RefPtr<WebExtensionAPITabs> m_tabs;
     RefPtr<WebExtensionAPITest> m_test;
     RefPtr<WebExtensionAPIWindows> m_windows;

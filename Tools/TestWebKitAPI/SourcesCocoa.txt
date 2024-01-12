@@ -300,6 +300,7 @@ Tests/WebKitCocoa/WKWebExtensionAPIMenus.mm
 Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm
 Tests/WebKitCocoa/WKWebExtensionAPIPermissions.mm
 Tests/WebKitCocoa/WKWebExtensionAPIScripting.mm
+Tests/WebKitCocoa/WKWebExtensionAPIStorage.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
 Tests/WebKitCocoa/WKWebExtensionAPITabs.mm
 Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm

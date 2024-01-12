@@ -29,7 +29,7 @@
 
 #include "JSWebExtensionAPIDeclarativeNetRequest.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionDeclarativeNetRequestConstants.h"
+#include "WebExtensionConstants.h"
 
 namespace WebKit {
 

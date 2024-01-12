@@ -3151,6 +3151,7 @@
 		B55F119F1516834F00915916 /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		B55F11B01517A2C400915916 /* attributedStringCustomFont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = attributedStringCustomFont.html; sourceTree = "<group>"; };
 		B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIPermissions.mm; sourceTree = "<group>"; };
+		B626B7C42B4F4DEE008E8DD1 /* WKWebExtensionAPIStorage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIStorage.mm; sourceTree = "<group>"; };
 		B63EF53E2995797F00A190A3 /* TestWebExtensionsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestWebExtensionsDelegate.h; path = cocoa/TestWebExtensionsDelegate.h; sourceTree = "<group>"; };
 		B63EF5462995797F00A190A3 /* TestWebExtensionsDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWebExtensionsDelegate.mm; path = cocoa/TestWebExtensionsDelegate.mm; sourceTree = "<group>"; };
 		B67543F12ABA3F21005E4184 /* WKWebExtensionAPIScripting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIScripting.mm; sourceTree = "<group>"; };
@@ -4270,6 +4271,7 @@
 				B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */,
 				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
 				B67543F12ABA3F21005E4184 /* WKWebExtensionAPIScripting.mm */,
+				B626B7C42B4F4DEE008E8DD1 /* WKWebExtensionAPIStorage.mm */,
 				1CF7FFA72AA7C302003609F0 /* WKWebExtensionAPITabs.mm */,
 				3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */,
 				1C9A2E182A9FB6F400D1B4A5 /* WKWebExtensionAPIWindows.mm */,

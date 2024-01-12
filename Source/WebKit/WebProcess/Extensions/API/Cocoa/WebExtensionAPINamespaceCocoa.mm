@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,6 +182,16 @@ WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
         m_scripting = WebExtensionAPIScripting::create(forMainWorld(), runtime(), extensionContext());
 
     return *m_scripting;
+}
+
+WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage
+
+    if (!m_storage)
+        m_storage = WebExtensionAPIStorage::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_storage;
 }
 
 WebExtensionAPITabs& WebExtensionAPINamespace::tabs()

@@ -36,7 +36,7 @@
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "Logging.h"
-#import "WebExtensionDeclarativeNetRequestConstants.h"
+#import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionLocalization.h"

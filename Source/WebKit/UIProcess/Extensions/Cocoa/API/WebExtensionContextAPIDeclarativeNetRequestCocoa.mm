@@ -33,7 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
-#import "WebExtensionDeclarativeNetRequestConstants.h"
+#import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
 #import "_WKWebExtensionSQLiteStore.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,34 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "JSWebExtensionAPIStorage.h"
+#include "JSWebExtensionWrappable.h"
+#include "WebExtensionAPIObject.h"
+#include "WebExtensionAPIStorageArea.h"
+
 namespace WebKit {
 
-static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets = 100;
-static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets = 50;
-static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules = 5000;
+class WebExtensionAPIStorageArea;
+
+class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+
+public:
+#if PLATFORM(COCOA)
+    WebExtensionAPIStorageArea& local();
+    WebExtensionAPIStorageArea& session();
+    WebExtensionAPIStorageArea& sync();
+
+    WebExtensionAPIEvent& onChanged();
+
+private:
+    RefPtr<WebExtensionAPIStorageArea> m_local;
+    RefPtr<WebExtensionAPIStorageArea> m_session;
+    RefPtr<WebExtensionAPIStorageArea> m_sync;
+
+    RefPtr<WebExtensionAPIEvent> m_onChanged;
+#endif
+};
 
 } // namespace WebKit
 
