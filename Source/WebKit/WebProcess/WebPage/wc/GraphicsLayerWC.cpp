@@ -636,11 +636,8 @@ TransformationMatrix GraphicsLayerWC::layerTransform(const FloatPoint& position,
     TransformationMatrix transform;
     transform.translate(position.x(), position.y());
 
-    TransformationMatrix currentTransform;
-    if (customTransform)
-        currentTransform = *customTransform;
-    else if (m_transform)
-        currentTransform = *m_transform;
+    const auto& currentTransform = customTransform ? *customTransform
+        : (m_transform ? *m_transform : TransformationMatrix::identity);
 
     transform.multiply(transformByApplyingAnchorPoint(currentTransform));
 
