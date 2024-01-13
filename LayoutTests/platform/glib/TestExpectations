@@ -854,14 +854,6 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.h
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
 webkit.org/b/237502 fast/dom/Range/getClientRects.html [ Failure ]
-webkit.org/b/237502 fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-big-line.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-break.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-edge.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/pagination/div-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/pagination/div-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/pagination/viewport-x-vertical-lr-ltr.html [ ImageOnlyFailure ]
-webkit.org/b/237502 imported/blink/fast/pagination/viewport-x-vertical-lr-rtl.html [ ImageOnlyFailure ]
 
 # Tests that fail on other platforms, but pass on Glib ports. These are probably due to
 # things that work in TextureMapper, but not elsewhere.
@@ -900,8 +892,6 @@ webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassigned-slot.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-unassignable-slot.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-with-negative-index.html [ Failure ]
-
-imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -1839,7 +1829,6 @@ fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/colorspaces-test.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure ]
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
@@ -3222,8 +3211,6 @@ webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Crash ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html?exclude=(file|javascript|mailto) [ Failure ]
-webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
-webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml?exclude=(file|javascript|mailto) [ Failure ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
@@ -3608,8 +3595,6 @@ webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ] #
 
 # Path with marker failures
 fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/marker-003.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/painting/marker-009.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/painting/marker-orient-001.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Failure ]
@@ -3651,7 +3636,6 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 imported/w3c/web-platform-tests/html/canvas/offscreen/layers [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.broken.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.draw.baseline.ideographic.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
@@ -3686,11 +3670,11 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-bl
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-blended-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-blended-with-transform-and-perspective.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-both-parent-and-blended-with-3D-transform.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-basic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg-basic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-sibling-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-with-transform-and-preserve-3D.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
