@@ -276,18 +276,29 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             continue;
         }
 
-        if (initType == Element::InitializationType::FromGlobal) {
-            jsTable->set(dstIndex, JSValue::decode(loadI64Global(initialBitsOrIndex)));
-            continue;
+        JSValue initValue;
+        if (initType == Element::InitializationType::FromGlobal)
+            initValue = JSValue::decode(loadI64Global(initialBitsOrIndex));
+        else {
+            ASSERT(initType == Element::InitializationType::FromExtendedExpression);
+            uint64_t result;
+            bool success = evaluateConstantExpression(initialBitsOrIndex, segment.elementType, result);
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
+            // Currently this should never fail, as the parse phase already validated it.
+            RELEASE_ASSERT(success);
+            initValue = JSValue::decode(result);
         }
 
-        ASSERT(initType == Element::InitializationType::FromExtendedExpression);
-        uint64_t result;
-        bool success = evaluateConstantExpression(initialBitsOrIndex, segment.elementType, result);
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
-        // Currently this should never fail, as the parse phase already validated it.
-        RELEASE_ASSERT(success);
-        jsTable->set(dstIndex, JSValue::decode(result));
+        if (jsTable->table()->isExternrefTable())
+            jsTable->set(dstIndex, initValue);
+        else {
+            // Validation should guarantee that the table is for funcs, and the value is a func as well.
+            ASSERT(jsTable->table()->isFuncrefTable());
+            ASSERT(initValue.getObject());
+            WebAssemblyFunctionBase* func = jsDynamicCast<WebAssemblyFunctionBase*>(initValue.getObject());
+            ASSERT(func);
+            jsTable->set(dstIndex, func);
+        }
     }
 }
 
