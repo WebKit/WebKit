@@ -25,7 +25,6 @@ namespace WebCore {
 enum SimulatedClickMouseEventOptions {
     SendNoEvents,
     SendMouseUpDownEvents,
-    SendMouseOverUpDownEvents
 };
 
 enum SimulatedClickVisualOptions {

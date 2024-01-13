@@ -91,9 +91,6 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
         return false;
 
     auto& eventNames = WebCore::eventNames();
-    if (mouseEventOptions == SendMouseOverUpDownEvents)
-        simulateMouseEvent(eventNames.mouseoverEvent, element, underlyingEvent, creationOptions);
-
     if (mouseEventOptions != SendNoEvents)
         simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions);
     if (mouseEventOptions != SendNoEvents || visualOptions == ShowPressedLook)
