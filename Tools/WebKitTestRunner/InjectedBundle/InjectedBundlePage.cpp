@@ -696,6 +696,8 @@ void InjectedBundlePage::dumpAllFrameScrollPositions(StringBuilder& stringBuilde
 static bool hasDocumentElement(WKBundleFrameRef frame)
 {
     auto context = WKBundleFrameGetJavaScriptContext(frame);
+    if (!context)
+        return false;
     return objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement" });
 }
 
