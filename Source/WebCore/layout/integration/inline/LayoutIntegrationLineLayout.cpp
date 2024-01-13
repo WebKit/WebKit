@@ -1126,7 +1126,7 @@ bool LineLayout::contentNeedsVisualReordering() const
 #if ENABLE(TREE_DEBUGGING)
 void LineLayout::outputLineTree(WTF::TextStream& stream, size_t depth) const
 {
-    showInlineContent(stream, *m_inlineContent, depth);
+    showInlineContent(stream, *m_inlineContent, depth, isDamaged());
 }
 #endif
 

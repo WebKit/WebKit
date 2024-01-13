@@ -392,7 +392,7 @@ Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
 }
 
 #if ENABLE(TREE_DEBUGGING)
-void showInlineContent(TextStream& stream, const InlineContent& inlineContent, size_t depth)
+void showInlineContent(TextStream& stream, const InlineContent& inlineContent, size_t depth, bool isDamaged)
 {
     auto& lines = inlineContent.displayContent().lines;
     auto& boxes = inlineContent.displayContent().boxes;
@@ -400,7 +400,10 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
     for (size_t lineIndex = 0, boxIndex = 0; lineIndex < lines.size() && boxIndex < boxes.size(); ++lineIndex) {
         auto addSpacing = [&](auto& streamToUse) {
             size_t printedCharacters = 0;
-            streamToUse << "---------- --";
+            if (isDamaged)
+                streamToUse << "---------- -+";
+            else
+                streamToUse << "---------- --";
             while (++printedCharacters <= depth * 2)
                 streamToUse << " ";
 
@@ -432,7 +435,11 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 for (auto* ancestor = &box.layoutBox(); ancestor != &rootInlineBox.layoutBox(); ancestor = &ancestor->parent())
                     inlineBoxStream << "  ";
                 auto rect = box.visualRectIgnoringBlockDirection();
-                inlineBoxStream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ") renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                inlineBoxStream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ")";
+                if (isDamaged)
+                    inlineBoxStream << " (renderer may be damaged)";
+                else
+                    inlineBoxStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
                 inlineBoxStream.nextLine();
             } else {
                 addSpacing(runStream);
@@ -451,7 +458,10 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                 runStream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
                 if (box.isText())
                     runStream << " run(" << box.text().start() << ", " << box.text().end() << ")";
-                runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
+                if (isDamaged)
+                    runStream << " (renderer may be damaged)";
+                else
+                    runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
                 runStream.nextLine();
             }
         }

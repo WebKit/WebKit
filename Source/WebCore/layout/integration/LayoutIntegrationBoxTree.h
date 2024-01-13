@@ -92,7 +92,7 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
-void showInlineContent(TextStream&, const InlineContent&, size_t depth);
+void showInlineContent(TextStream&, const InlineContent&, size_t depth, bool isDamaged = false);
 #endif
 }
 }
