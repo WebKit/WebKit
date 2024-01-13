@@ -255,7 +255,6 @@ private:
     AXIsolatedObject* accessibilityHitTest(const IntPoint&) const final;
     AXIsolatedObject* focusedUIElement() const final;
     AccessibilityChildrenVector linkedObjects() const final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
-    AXIsolatedObject* titleUIElement() const final { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
     const String placeholderValue() const final { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const final { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }
@@ -482,8 +481,6 @@ private:
     bool supportsChecked() const final;
     bool isModalNode() const final;
     bool isDescendantOfRole(AccessibilityRole) const final;
-    AXCoreObject* correspondingLabelForControlElement() const final;
-    AXCoreObject* correspondingControlForLabelElement() const final;
     bool inheritsPresentationalRole() const final;
     void setAccessibleName(const AtomString&) final;
 

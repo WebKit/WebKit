@@ -667,11 +667,6 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::TextInputMarkedTextMarkerRange, value);
             break;
         }
-        case AXPropertyName::TitleUIElement: {
-            auto* titleUIElement = axObject.titleUIElement();
-            propertyMap.set(AXPropertyName::TitleUIElement, titleUIElement ? titleUIElement->objectID() : AXID());
-            break;
-        }
         case AXPropertyName::URL:
             propertyMap.set(AXPropertyName::URL, axObject.url().isolatedCopy());
             break;
@@ -701,25 +696,29 @@ void AXIsolatedTree::overrideNodeProperties(AXID axID, AXPropertyMap&& propertyM
     m_pendingPropertyChanges.append({ axID, WTFMove(propertyMap) });
 }
 
-void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObject)
+void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
 {
     ASSERT(isMainThread());
 
-    updateNode(axObject);
-
-    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr)
-        updateNode(*correspondingControl);
+    auto updateLabeledObjects = [this] (const AccessibilityObject& label) {
+        auto labeledObjects = label.labelForObjects();
+        for (auto& labeledObject : labeledObjects) {
+            if (RefPtr axObject = dynamicDowncast<AccessibilityObject>(labeledObject.get()))
+                updateNode(*axObject);
+        }
+    };
+    updateLabeledObjects(axObject);
 
     // When a row gains or loses cells, the column count of the table can change.
     bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
-    for (auto* ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+    for (RefPtr ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (ancestor->isTree()) {
             queueNodeUpdate(*ancestor, { AXPropertyName::ARIATreeRows });
             if (!updateTableAncestorColumns)
                 break;
         }
 
-        if (updateTableAncestorColumns && ancestor->isAccessibilityTableInstance()) {
+        if (updateTableAncestorColumns && is<AccessibilityTable>(*ancestor)) {
             // Only `updateChildren` if the table is unignored, because otherwise `updateChildren` will ascend and update the next highest unignored ancestor, which doesn't accomplish our goal of updating table columns.
             if (ancestor->accessibilityIsIgnored())
                 break;
@@ -727,6 +726,8 @@ void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObj
             updateChildren(*ancestor, ResolveNodeChanges::No);
             break;
         }
+
+        updateLabeledObjects(*ancestor);
     }
 }
 
@@ -861,8 +862,10 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     };
 
     // Also queue updates to the target node itself and any properties that depend on children().
-    if (childrenChanged || unconditionallyUpdate(axAncestor->roleValue()))
-        updateNodeAndDependentProperties(*axAncestor);
+    if (childrenChanged || unconditionallyUpdate(axAncestor->roleValue())) {
+        updateNode(*axAncestor);
+        updateDependentProperties(*axAncestor);
+    }
 
     if (resolveNodeChanges == ResolveNodeChanges::Yes)
         queueRemovalsAndUnresolvedChanges(WTFMove(oldChildrenIDs));
@@ -977,13 +980,6 @@ void AXIsolatedTree::setSelectedTextMarkerRange(AXTextMarkerRange&& range)
     m_selectedTextMarkerRange = range;
 }
 
-void AXIsolatedTree::labelCreated(AccessibilityObject& axObject)
-{
-    ASSERT(axObject.isLabel());
-    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr)
-        queueNodeUpdate(*correspondingControl, NodeUpdateOptions::nodeUpdate());
-}
-
 void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 {
     AXTRACE("AXIsolatedTree::updateLoadingProgress"_s);
@@ -1013,7 +1009,7 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
-    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr) {
+    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.controlForLabelElement() : nullptr) {
         // If a label has been removed from the AX tree, the control associated it may need to change
         // its title UI element. Use callOnMainThread to spin the runloop before re-computing this,
         // as we need to wait for the backing DOM element to actually be destroyed to compute the

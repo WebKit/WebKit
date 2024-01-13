@@ -538,4 +538,16 @@ String AXCoreObject::helpTextAttributeValue() const
 }
 #endif // PLATFORM(COCOA)
 
+AXCoreObject* AXCoreObject::titleUIElement() const
+{
+    auto labels = relatedObjects(AXRelationType::LabeledBy);
+#if PLATFORM(COCOA)
+    // We impose the restriction that if there is more than one label, then we should return none.
+    // FIXME: the behavior should be the same in all platforms.
+    return labels.size() == 1 ? labels.first().get() : nullptr;
+#else
+    return labels.size() ? labels.first().get() : nullptr;
+#endif
+}
+
 } // namespace WebCore

@@ -980,7 +980,7 @@ String AccessibilityRenderObject::applePayButtonDescription() const
 }
 #endif
 
-void AccessibilityRenderObject::titleElementText(Vector<AccessibilityText>& textOrder) const
+void AccessibilityRenderObject::labelText(Vector<AccessibilityText>& textOrder) const
 {
 #if ENABLE(APPLE_PAY)
     if (isApplePayButton()) {
@@ -988,11 +988,10 @@ void AccessibilityRenderObject::titleElementText(Vector<AccessibilityText>& text
         return;
     }
 #endif
-
-    AccessibilityNodeObject::titleElementText(textOrder);
+    AccessibilityNodeObject::labelText(textOrder);
 }
-    
-AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
+
+AXCoreObject* AccessibilityRenderObject::titleUIElement() const
 {
     if (m_renderer && isFieldset())
         return axObjectCache()->getOrCreate(dynamicDowncast<RenderBlock>(m_renderer.get())->findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow));
@@ -1340,7 +1339,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 
     // Find out if this element is inside of a label element.
     // If so, it may be ignored because it's the label for a checkbox or radio button.
-    auto* controlObject = correspondingControlForLabelElement();
+    auto* controlObject = controlForLabelElement();
     if (controlObject && controlObject->isCheckboxOrRadio() && !controlObject->titleUIElement())
         return true;
 
@@ -2030,10 +2029,10 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     result->updateChildrenIfNecessary();
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
     result = result->elementAccessibilityHitTest(point);
-    
+
     if (result && result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
-        auto* controlObject = result->correspondingControlForLabelElement();
+        auto* controlObject = result->controlForLabelElement();
         if (controlObject && !controlObject->titleUIElement())
             return controlObject;
 

@@ -109,6 +109,7 @@ public:
     bool isAccessibilityARIAGridInstance() const override { return false; }
     bool isAccessibilityARIAGridRowInstance() const override { return false; }
     bool isAccessibilityARIAGridCellInstance() const override { return false; }
+    virtual bool isAccessibilityLabelInstance() const { return false; }
     virtual bool isAccessibilityListBoxInstance() const { return false; }
     bool isAXIsolatedObjectInstance() const override { return false; }
 
@@ -125,7 +126,7 @@ public:
     bool isInputImage() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
     bool isControl() const override { return false; }
-    virtual bool isLabel() const { return false; }
+    bool isLabel() const { return isAccessibilityLabelInstance() || labelForObjects().size(); }
 
     bool isList() const override { return false; }
     virtual bool isUnorderedList() const { return false; }
@@ -348,9 +349,7 @@ public:
 
     virtual AccessibilityObject* observableObject() const { return nullptr; }
     AccessibilityChildrenVector linkedObjects() const override { return { }; }
-    AccessibilityObject* titleUIElement() const override { return nullptr; }
-    AccessibilityObject* correspondingLabelForControlElement() const override { return nullptr; }
-    AccessibilityObject* correspondingControlForLabelElement() const override { return nullptr; }
+    virtual AccessibilityObject* controlForLabelElement() const { return nullptr; }
     AccessibilityObject* scrollBar(AccessibilityOrientation) override { return nullptr; }
 
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }

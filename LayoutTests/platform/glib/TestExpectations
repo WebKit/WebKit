@@ -561,7 +561,6 @@ webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Tim
 webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Timeout ]
-webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Timeout ]
 
 webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]

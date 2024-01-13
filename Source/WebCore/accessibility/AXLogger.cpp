@@ -516,8 +516,8 @@ TextStream& operator<<(TextStream& stream, AXRelationType relationType)
     case AXRelationType::HeaderFor:
         stream << "HeaderFor";
         break;
-    case AXRelationType::LabelledBy:
-        stream << "LabelledBy";
+    case AXRelationType::LabeledBy:
+        stream << "LabeledBy";
         break;
     case AXRelationType::LabelFor:
         stream << "LabelFor";
@@ -620,6 +620,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXKeyShortcutsChanged:
         stream << "AXKeyShortcutsChanged";
         break;
+    case AXObjectCache::AXNotification::AXLabelChanged:
+        stream << "AXLabelChanged";
+        break;
     case AXObjectCache::AXNotification::AXLanguageChanged:
         stream << "AXLanguageChanged";
         break;
@@ -706,9 +709,6 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXScrolledToAnchor:
         stream << "AXScrolledToAnchor";
-        break;
-    case AXObjectCache::AXNotification::AXLabelCreated:
-        stream << "AXLabelCreated";
         break;
     case AXObjectCache::AXNotification::AXLiveRegionCreated:
         stream << "AXLiveRegionCreated";

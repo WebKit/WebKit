@@ -33,7 +33,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-    
+
 class AXObjectCache;
 class Element;
 class HTMLLabelElement;
@@ -193,9 +193,9 @@ protected:
 
     String accessKey() const final;
     bool isLabelable() const;
-    AccessibilityObject* correspondingControlForLabelElement() const override;
-    AccessibilityObject* correspondingLabelForControlElement() const override;
-    String textForLabelElements(Vector<Ref<HTMLLabelElement>>&&) const;
+    AccessibilityObject* controlForLabelElement() const final;
+    String textAsLabel() const;
+    String textForLabelElements(Vector<Ref<HTMLElement>>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;
@@ -208,9 +208,7 @@ protected:
     Element* menuItemElementForMenu() const;
     AccessibilityObject* menuButtonForMenu() const;
     AccessibilityObject* captionForFigure() const;
-    virtual void titleElementText(Vector<AccessibilityText>&) const;
-    AccessibilityObject* titleUIElement() const override;
-
+    virtual void labelText(Vector<AccessibilityText>&) const;
 private:
     bool isAccessibilityNodeObject() const final { return true; }
     void accessibilityText(Vector<AccessibilityText>&) const override;
@@ -233,6 +231,13 @@ private:
 
     WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 };
+
+namespace Accessibility {
+
+RefPtr<HTMLElement> controlForLabelElement(const HTMLLabelElement&);
+Vector<Ref<HTMLElement>> labelsForElement(Element*);
+
+} // namespace Accessibility
 
 } // namespace WebCore
 

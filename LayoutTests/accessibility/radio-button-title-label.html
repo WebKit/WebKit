@@ -38,7 +38,7 @@ if (window.accessibilityController) {
         output += expect("radio2.description", "'AXDescription: '");
     } else {
         output += expect("radio2.description", "'AXDescription: LABEL2a'");
-        output += expect("radio2.title", "'AXTitle: '");
+        output += expect("radio2.title", "'AXTitle: LABEL2a'");
     }
     output += expect("!titleUIElement || titleUIElement.title == 'AXTitle: '", "true");
 
@@ -50,7 +50,7 @@ if (window.accessibilityController) {
         output += expect("radio2.description", "'AXDescription: '");
     } else {
         output += expect("radio3.description", "'AXDescription: radio3'");
-        output += expect("radio3.title", "'AXTitle: '");
+        output += expect("radio3.title", "'AXTitle: radio3'");
     }
     output += expect("!titleUIElement || titleUIElement.title == 'AXTitle: '", "true");
 

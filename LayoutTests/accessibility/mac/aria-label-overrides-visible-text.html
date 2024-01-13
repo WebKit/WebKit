@@ -21,7 +21,7 @@
 
         var link2 = accessibilityController.accessibleElementById("link2");
         output += expect("link2.description", "'AXDescription: LINK'");
-        output += expect("link2.title", "'AXTitle: '");
+        output += expect("link2.title", "'AXTitle: LINK'");
 
         debug(output);
         document.getElementById("content").style.visibility = "hidden";

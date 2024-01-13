@@ -1997,6 +1997,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
+        // FIXME: change to return an array instead of a single object.
         auto* object = backingObject->titleUIElement();
         return object ? object->wrapper() : nil;
     }
@@ -2274,7 +2275,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return makeNSArray(backingObject->flowToObjects());
 
     if (UNLIKELY([attributeName isEqualToString:@"AXLabelledBy"]))
-        return makeNSArray(backingObject->labelledByObjects());
+        return makeNSArray(backingObject->labeledByObjects());
 
     if (UNLIKELY([attributeName isEqualToString:@"AXLabelFor"]))
         return makeNSArray(backingObject->labelForObjects());

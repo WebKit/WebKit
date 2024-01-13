@@ -363,7 +363,7 @@ String AccessibilityObject::computedLabel()
     accessibilityText(text);
     if (text.size())
         return text[0].text;
-    return String();
+    return { };
 }
 
 bool AccessibilityObject::isARIATextControl() const
@@ -2496,7 +2496,7 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 
     return false;
 }
-    
+
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
     if (RefPtr element = this->element()) {
@@ -3000,10 +3000,7 @@ String AccessibilityObject::keyShortcuts() const
 
 Element* AccessibilityObject::element() const
 {
-    Node* node = this->node();
-    if (is<Element>(node))
-        return downcast<Element>(node);
-    return nullptr;
+    return dynamicDowncast<Element>(node());
 }
 
 const RenderStyle* AccessibilityObject::style() const

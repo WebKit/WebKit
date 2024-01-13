@@ -3,10 +3,10 @@ This tests that if aria-labelledby is used, then aria-label attributes are not u
 Alpha Beta Delta Eta Epsilon Theta
 usingNone.title: [AXTitle: Alpha]
 usingNone.description: [AXDescription: ]
-usingLabel.title: [AXTitle: ]
+usingLabel.title: [AXTitle: Gamma]
 usingLabel.description: [AXDescription: Gamma]
-usingLabelledby.title: [AXTitle: ]
+usingLabelledby.title: [AXTitle: Epsilon]
 usingLabelledby.description: [AXDescription: Epsilon]
-usingLabeledby.title: [AXTitle: ]
+usingLabeledby.title: [AXTitle: Theta]
 usingLabeledby.description: [AXDescription: Theta]
 

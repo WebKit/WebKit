@@ -364,6 +364,7 @@ public:
         AXImageOverlayChanged,
         AXIsAtomicChanged,
         AXKeyShortcutsChanged,
+        AXLabelChanged,
         AXLanguageChanged,
         AXLayoutComplete,
         AXLevelChanged,
@@ -391,7 +392,6 @@ public:
         AXValueChanged,
         AXVisibilityChanged,
         AXScrolledToAnchor,
-        AXLabelCreated,
         AXLiveRegionCreated,
         AXLiveRegionChanged,
         AXLiveRegionRelevantChanged,
@@ -536,7 +536,7 @@ protected:
 #endif
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
-    void handleLabelForChanged(HTMLLabelElement&, const AtomString& /* oldValue */);
+    void handleLabelChanged(AccessibilityObject*);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
@@ -605,7 +605,6 @@ private:
     void handleRoleDescriptionChanged(Element*);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
-    void handleLabelCreated(HTMLLabelElement*);
     void handleMenuItemSelected(Node*);
     void handleTabPanelSelected(Node*, Node*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
@@ -642,10 +641,15 @@ private:
     void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddSymmetricRelation = AddSymmetricRelation::Yes);
     void removeRelationByID(AXID originID, AXID targetID, AXRelationType);
     void addRelations(Element&, const QualifiedName&);
+    void addLabelForRelation(Element&);
     void removeRelations(Element&, AXRelationType);
+    void removeRelations(AXID);
+    void updateLabelFor(HTMLLabelElement&);
+    void updateLabeledBy(Element*);
     void updateRelationsIfNeeded();
     void updateRelationsForTree(ContainerNode&);
     void relationsNeedUpdate(bool);
+    void dirtyIsolatedTreeRelations();
     HashMap<AXID, AXRelations> relations();
     const HashSet<AXID>& relationTargetIDs();
     bool isDescendantOfRelatedNode(Node&);

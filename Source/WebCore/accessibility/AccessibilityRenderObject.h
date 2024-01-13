@@ -78,7 +78,7 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* observableObject() const override;
-    AccessibilityObject* titleUIElement() const override;
+    AXCoreObject* titleUIElement() const override;
 
     // Should be called on the root accessibility object to kick off a hit test.
     AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
@@ -133,7 +133,7 @@ public:
     IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
     
     String secureFieldValue() const override;
-    void titleElementText(Vector<AccessibilityText>&) const override;
+    void labelText(Vector<AccessibilityText>&) const override;
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);

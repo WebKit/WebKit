@@ -5,7 +5,8 @@
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
-<div>
+
+<div id="content">
     <button id="button-1" aria-labelledby="label1">Button One</button>
     <button id="button-2">Button Two</button>
     <p id="label1">Label for Button One</p>
@@ -23,20 +24,21 @@ if (window.accessibilityController) {
     var label2 = accessibilityController.accessibleElementById("label2");
 
     output += expect("button1.description", "'AXDescription: Label for Button One'");
-    output += expect("button1.title", "'AXTitle: '");
+    output += expect("button1.title", "'AXTitle: Label for Button One'");
     output += expect("button2.description", "'AXDescription: '");
 
     setTimeout(async function() {
         document.getElementById("button-2").setAttribute("aria-labelledby", "label2");
         await waitFor(() => button2.description === "AXDescription: Label for Button Two");
         output += expect("button2.description", "'AXDescription: Label for Button Two'");
-        output += expect("button2.title", "'AXTitle: '");
+        output += expect("button2.title", "'AXTitle: Label for Button Two'");
 
         document.getElementById("label1").innerText += "!";
         await waitFor(() => button1.description === "AXDescription: Label for Button One!");
         output += expect("button1.description", "'AXDescription: Label for Button One!'");
-        output += expect("button1.title", "'AXTitle: '");
+        output += expect("button1.title", "'AXTitle: Label for Button One!'");
 
+        document.getElementById("content").style.visibility = "hidden";
         debug(output);
         finishJSTest();
     }, 0);

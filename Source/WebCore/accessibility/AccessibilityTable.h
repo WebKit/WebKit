@@ -109,7 +109,7 @@ protected:
 
 private:
     virtual bool computeIsTableExposableThroughAccessibility() const;
-    void titleElementText(Vector<AccessibilityText>&) const final;
+    void labelText(Vector<AccessibilityText>&) const final;
     HTMLTableElement* tableElement() const;
 
     void ensureRow(unsigned);

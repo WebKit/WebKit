@@ -239,7 +239,6 @@ enum class AXPropertyName : uint16_t {
 #endif
     Title,
     TitleAttributeValue,
-    TitleUIElement,
     URL,
     ValueAutofillButtonType,
     ValueDescription,
@@ -340,14 +339,13 @@ public:
     }
 
     void generateSubtree(AccessibilityObject&);
-    void labelCreated(AccessibilityObject&);
     void updateNode(AccessibilityObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>&);
     void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); };
     void updateNodeProperties(AXCoreObject&, const AXPropertyNameSet&);
-    void updateNodeAndDependentProperties(AccessibilityObject&);
+    void updateDependentProperties(AccessibilityObject&);
     void updatePropertiesForSelfAndDescendants(AccessibilityObject&, const AXPropertyNameSet&);
     void updateFrame(AXID, IntRect&&);
     void overrideNodeProperties(AXID, AXPropertyMap&&);

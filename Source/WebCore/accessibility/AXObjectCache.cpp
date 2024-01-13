@@ -735,17 +735,15 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
     if ((is<RenderTableCell>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableCell(node))
         return AccessibilityTableCell::create(renderer);
 
-    // progress bar
-    if (is<RenderProgress>(renderer) || is<HTMLProgressElement>(node))
+    // Progress indicator.
+    if (is<RenderProgress>(renderer) || is<RenderMeter>(renderer)
+        || is<HTMLProgressElement>(node) || is<HTMLMeterElement>(node))
         return AccessibilityProgressIndicator::create(renderer);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<RenderAttachment>(renderer))
         return AccessibilityAttachment::create(downcast<RenderAttachment>(renderer));
 #endif
-
-    if (is<RenderMeter>(renderer) || is<HTMLMeterElement>(node))
-        return AccessibilityProgressIndicator::create(renderer);
 
     // input type=range
     if (is<RenderSlider>(renderer))
@@ -1054,12 +1052,14 @@ void AXObjectCache::remove(AXID axID)
     AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(makeString("AXID ", axID.loggingString()));
 
-    if (!axID)
+    if (!axID.isValid())
         return;
 
     auto object = m_objects.take(axID);
     if (!object)
         return;
+
+    removeRelations(axID);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
@@ -1074,9 +1074,11 @@ void AXObjectCache::remove(AXID axID)
 #endif
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
-    
+
 void AXObjectCache::remove(RenderObject* renderer)
 {
+    AXTRACE(makeString("AXObjectCache::remove RenderObject* 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
     if (!renderer)
         return;
     remove(m_renderObjectMapping.take(renderer));
@@ -1084,7 +1086,7 @@ void AXObjectCache::remove(RenderObject* renderer)
 
 void AXObjectCache::remove(Node& node)
 {
-    AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    AXTRACE(makeString("AXObjectCache::remove Node& 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
     removeNodeForUse(node);
     remove(m_nodeObjectMapping.take(&node));
@@ -1161,12 +1163,12 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
     // then notify the AT of changes.
     bool notifiedNonNativeTextControl = false;
-    for (auto* parent = object; parent; parent = parent->parentObject()) {
+    for (RefPtr parent = object; parent; parent = parent->parentObject()) {
         if (parent->supportsLiveRegion())
-            postLiveRegionChangeNotification(parent);
+            postLiveRegionChangeNotification(parent.get());
 
         if (!notifiedNonNativeTextControl && parent->isNonNativeTextControl()) {
-            postNotification(parent, parent->document(), AXValueChanged);
+            postNotification(parent.get(), parent->document(), AXValueChanged);
             notifiedNonNativeTextControl = true;
         }
     }
@@ -1248,6 +1250,9 @@ void AXObjectCache::handleAllDeferredChildrenChanged()
 
 void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 {
+    AXTRACE("AXObjectCache::handleChildrenChanged"_s);
+    AXLOG(object);
+
     // Handle MenuLists and MenuListPopups as special cases.
     if (is<AccessibilityMenuList>(object)) {
         auto& children = object.children(false);
@@ -1276,7 +1281,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
     // Go up the existing ancestors chain and fire the appropriate notifications.
     bool shouldUpdateParent = true;
-    for (auto* parent = &object; parent; parent = parent->parentObjectIfExists()) {
+    for (RefPtr parent = &object; parent; parent = parent->parentObjectIfExists()) {
         if (shouldUpdateParent)
             parent->setNeedsToUpdateChildren();
 
@@ -1285,19 +1290,19 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged notifications.
         // To fix this, we use a timer to make sure we only post one notification for the children changes within a pre-defined time interval.
         if (parent->supportsLiveRegion())
-            postLiveRegionChangeNotification(parent);
+            postLiveRegionChangeNotification(parent.get());
 
         // If this object is an ARIA text control, notify that its value changed.
         if (parent->isNonNativeTextControl()) {
-            postNotification(parent, parent->document(), AXValueChanged);
+            postNotification(parent.get(), parent->document(), AXValueChanged);
 
             // Do not let any ancestor of an editable object update its children.
             shouldUpdateParent = false;
         }
 
-        if (auto objects = parent->labelForObjects(); objects.size()) {
-            for (const auto& axObject : objects)
-                postNotification(dynamicDowncast<AccessibilityObject>(axObject.get()), axObject->document(), AXValueChanged);
+        if (parent->isLabel()) {
+            // A label's descendant was added or removed. Update its LabelFor relationships.
+            handleLabelChanged(parent.get());
         }
     }
 
@@ -1344,15 +1349,6 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
 
     if (AXCoreObject::liveRegionStatusIsEnabled(liveRegionStatus))
         postNotification(getOrCreate(node), &document(), AXLiveRegionCreated);
-}
-
-void AXObjectCache::handleLabelCreated(HTMLLabelElement* element)
-{
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    postNotification(getOrCreate(element), nullptr, AXLabelCreated);
-#else
-    UNUSED_PARAM(element);
-#endif
 }
 
 void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
@@ -2445,9 +2441,10 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     }
     else if (attrName == disabledAttr)
         postNotification(element, AXDisabledStateChanged);
-    else if (attrName == forAttr && is<HTMLLabelElement>(element))
-        handleLabelForChanged(downcast<HTMLLabelElement>(*element), oldValue);
-    else if (attrName == requiredAttr)
+    else if (attrName == forAttr) {
+        if (RefPtr label = dynamicDowncast<HTMLLabelElement>(element))
+            updateLabelFor(*label);
+    } else if (attrName == requiredAttr)
         postNotification(element, AXRequiredStatusChanged);
     else if (attrName == tabindexAttr) {
         if (oldValue.isEmpty() || newValue.isEmpty()) {
@@ -2619,12 +2616,49 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     }
 }
 
-void AXObjectCache::handleLabelForChanged(HTMLLabelElement& label, const AtomString& oldValue)
+void AXObjectCache::handleLabelChanged(AccessibilityObject* object)
 {
-    RefPtr currentControl = label.control();
-    deferTextChangedIfNeeded(currentControl.get());
-    RefPtr oldControl = label.treeScope().getElementById(oldValue);
-    deferTextChangedIfNeeded(oldControl.get());
+    AXTRACE("AXObjectCache::handleLabelChanged"_s);
+
+    if (!object)
+        return;
+
+    if (RefPtr label = dynamicDowncast<HTMLLabelElement>(object->element()))
+        updateLabelFor(*label);
+    else {
+        auto labeledObjects = object->labelForObjects();
+        for (auto& labeledObject : labeledObjects) {
+            updateLabeledBy(RefPtr { labeledObject->element() }.get());
+            postNotification(downcast<AccessibilityObject>(labeledObject.get()), &document(), AXValueChanged);
+        }
+    }
+
+    postNotification(object, &document(), AXLabelChanged);
+}
+
+void AXObjectCache::updateLabelFor(HTMLLabelElement& label)
+{
+    removeRelations(label, AXRelationType::LabelFor);
+    addLabelForRelation(label);
+}
+
+void AXObjectCache::updateLabeledBy(Element* element)
+{
+    if (!element)
+        return;
+
+    removeRelations(*element, AXRelationType::LabeledBy);
+    addRelations(*element, aria_labelledbyAttr);
+    dirtyIsolatedTreeRelations();
+}
+
+void AXObjectCache::dirtyIsolatedTreeRelations()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->relationsNeedUpdate(true);
+    startUpdateTreeSnapshotTimer();
+#endif
 }
 
 void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
@@ -3953,7 +3987,11 @@ void AXObjectCache::performDeferredCacheUpdate()
         if (RefPtr node = weakNode.get()) {
             handleMenuOpened(node.get());
             handleLiveRegionCreated(node.get());
-            handleLabelCreated(dynamicDowncast<HTMLLabelElement>(node.get()));
+
+            if (RefPtr label = dynamicDowncast<HTMLLabelElement>(node.get())) {
+                // A label was added or removed. Update its LabelFor relationships.
+                handleLabelChanged(getOrCreate(label.get()));
+            }
         }
     }
     m_deferredNodeAddedOrRemovedList.clear();
@@ -4069,7 +4107,7 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleScrollbarUpdate(scrollView);
     });
     m_deferredScrollbarUpdateChangeList.clear();
-    
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
@@ -4134,6 +4172,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
     struct UpdatedFields {
         bool children { false };
         bool node { false };
+        bool dependentProperties { false };
     };
     HashMap<AXID, UpdatedFields> updatedObjects;
     auto updateNode = [&] (RefPtr<AccessibilityObject> axObject) {
@@ -4189,9 +4228,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXFocusableStateChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::CanSetFocusAttribute });
-            break;
-        case AXLabelCreated:
-            tree->labelCreated(*notification.first);
             break;
         case AXMaximumValueChanged:
             tree->queueNodeUpdate(*notification.first, { { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange } });
@@ -4291,17 +4327,21 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
+        case AXTextChanged:
         case AXTextSecurityChanged:
         case AXValueChanged:
             updateNode(notification.first);
             break;
-        case AXTextChanged:
+        case AXLabelChanged: {
             updateNode(notification.first);
-            if (RefPtr axParent = notification.first->parentObject(); axParent && axParent->isLabel()) {
-                if (RefPtr correspondingControl = axParent->correspondingControlForLabelElement())
-                    updateNode(correspondingControl.get());
+
+            auto updatedFields = updatedObjects.get(notification.first->objectID());
+            if (!updatedFields.dependentProperties) {
+                updatedObjects.set(notification.first->objectID(), UpdatedFields { updatedFields.children, updatedFields.node, true });
+                tree->updateDependentProperties(*notification.first);
             }
             break;
+        }
         case AXLanguageChanged:
         case AXRowCountChanged:
             updateNode(notification.first);
@@ -4566,10 +4606,10 @@ AXRelationType AXObjectCache::symmetricRelation(AXRelationType relationType)
         return AXRelationType::HeaderFor;
     case AXRelationType::HeaderFor:
         return AXRelationType::Headers;
-    case AXRelationType::LabelledBy:
+    case AXRelationType::LabeledBy:
         return AXRelationType::LabelFor;
     case AXRelationType::LabelFor:
-        return AXRelationType::LabelledBy;
+        return AXRelationType::LabeledBy;
     case AXRelationType::OwnedBy:
         return AXRelationType::OwnerFor;
     case AXRelationType::OwnerFor:
@@ -4595,7 +4635,7 @@ AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attri
     if (attribute == aria_flowtoAttr)
         return AXRelationType::FlowsTo;
     if (attribute == aria_labelledbyAttr || attribute == aria_labeledbyAttr)
-        return AXRelationType::LabelledBy;
+        return AXRelationType::LabeledBy;
     if (attribute == aria_ownsAttr)
         return AXRelationType::OwnerFor;
     if (attribute == headersAttr)
@@ -4607,19 +4647,27 @@ static bool validRelation(void* origin, void* target, AXRelationType relationTyp
 {
     if (!origin || !target || relationType == AXRelationType::None)
         return false;
-    
-    if (origin == target && relationType != AXRelationType::LabelledBy)
-        return false;
-    
-    return true;
+    return origin != target || relationType == AXRelationType::LabeledBy;
 }
 
 void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
 {
+    AXTRACE("AXObjectCache::addRelation"_s);
+    AXLOG(makeString("origin: ", origin->debugDescription(), " target: ", target->debugDescription(), " relationType ", String::number(static_cast<uint>(relationType))));
+
     if (!validRelation(origin, target, relationType)) {
         ASSERT_NOT_REACHED();
         return;
     }
+
+    if (relationType == AXRelationType::LabelFor) {
+        // Add a LabelFor relation if the target doesn't have an ARIA label which should take precedence.
+        if (target->hasAttributeWithoutSynchronization(aria_labelAttr)
+            || target->hasAttributeWithoutSynchronization(aria_labelledbyAttr)
+            || target->hasAttributeWithoutSynchronization(aria_labeledbyAttr))
+            return;
+    }
+
     addRelation(getOrCreate(origin, IsPartOfRelation::Yes), getOrCreate(target, IsPartOfRelation::Yes), relationType);
 }
 
@@ -4713,6 +4761,26 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     }
 }
 
+void AXObjectCache::removeRelations(AXID axID)
+{
+    auto it = m_relations.find(axID);
+    if (it == m_relations.end())
+        return;
+
+    for (auto relationType : it->value.keys()) {
+        auto symmetric = symmetricRelation(static_cast<AXRelationType>(relationType));
+        if (symmetric == AXRelationType::None)
+            continue;
+
+        auto targetIDs = it->value.get(static_cast<uint8_t>(relationType));
+        for (AXID targetID : targetIDs)
+            removeRelationByID(targetID, axID, symmetric);
+    }
+
+    m_relations.remove(it);
+    dirtyIsolatedTreeRelations();
+}
+
 void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType)
 {
     AXTRACE("AXObjectCache::removeRelations"_s);
@@ -4739,6 +4807,10 @@ void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType
 
 void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationType relationType)
 {
+    AXTRACE("AXObjectCache::removeRelationByID"_s);
+    AXLOG(makeString("originID ", originID.loggingString(), " targetID ", targetID.loggingString()));
+    AXLOG(relationType);
+
     auto relationsIterator = m_relations.find(originID);
     if (relationsIterator == m_relations.end())
         return;
@@ -4775,21 +4847,31 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 
         for (const auto& attribute : relationAttributes())
             addRelations(element, attribute);
+
+        // In addition to ARIA specified relations, there may be other relevant relations.
+        // For instance, LabelFor in HTMLLabelElements.
+        addLabelForRelation(element);
     }
 }
 
 void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute)
 {
+    if (attribute == aria_labeledbyAttr && origin.hasAttribute(aria_labelledbyAttr)) {
+        // The attribute name with British spelling should override the one with American spelling.
+        return;
+    }
+
+    auto relationType = attributeToRelationType(attribute);
     if (m_document->settings().ariaReflectionForElementReferencesEnabled()) {
         if (Element::isElementReflectionAttribute(m_document->settings(), attribute)) {
             if (auto reflectedElement = origin.getElementAttribute(attribute)) {
-                addRelation(&origin, reflectedElement.get(), attributeToRelationType(attribute));
+                addRelation(&origin, reflectedElement.get(), relationType);
                 return;
             }
         } else if (Element::isElementsArrayReflectionAttribute(m_document->settings(), attribute)) {
             if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
                 for (auto reflectedElement : reflectedElements.value())
-                    addRelation(&origin, reflectedElement.get(), attributeToRelationType(attribute));
+                    addRelation(&origin, reflectedElement.get(), relationType);
                 return;
             }
         }
@@ -4799,7 +4881,7 @@ void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute
     if (value.isNull()) {
         if (auto* defaultARIA = origin.customElementDefaultARIAIfExists()) {
             for (auto& target : defaultARIA->elementsForAttribute(origin, attribute))
-                addRelation(&origin, target.get(), attributeToRelationType(attribute));
+                addRelation(&origin, target.get(), relationType);
         }
         return;
     }
@@ -4810,7 +4892,24 @@ void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute
         if (!target || target == &origin)
             continue;
 
-        addRelation(&origin, target.get(), attributeToRelationType(attribute));
+        addRelation(&origin, target.get(), relationType);
+    }
+}
+
+void AXObjectCache::addLabelForRelation(Element& origin)
+{
+    // LabelFor relations are established for <label for=...> and for <figcaption> elements.
+    if (RefPtr label = dynamicDowncast<HTMLLabelElement>(origin)) {
+        if (auto control = Accessibility::controlForLabelElement(*label)) {
+            addRelation(&origin, control.get(), AXRelationType::LabelFor);
+            dirtyIsolatedTreeRelations();
+        }
+    } else if (origin.hasTagName(figcaptionTag)) {
+        RefPtr parent = origin.parentNode();
+        if (parent && parent->hasTagName(figureTag)) {
+            addRelation(getOrCreate(&origin), getOrCreate(parent.get()), AXRelationType::LabelFor);
+            dirtyIsolatedTreeRelations();
+        }
     }
 }
 
@@ -4831,24 +4930,14 @@ void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attrib
 
     removeRelations(origin, relationType);
     addRelations(origin, attribute);
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
-        tree->relationsNeedUpdate(true);
-#endif
+    dirtyIsolatedTreeRelations();
 }
 
 void AXObjectCache::relationsNeedUpdate(bool needUpdate)
 {
     m_relationsNeedUpdate = needUpdate;
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_relationsNeedUpdate) {
-        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
-            tree->relationsNeedUpdate(true);
-        startUpdateTreeSnapshotTimer();
-    }
-#endif
+    if (m_relationsNeedUpdate)
+        dirtyIsolatedTreeRelations();
 }
 
 HashMap<AXID, AXRelations> AXObjectCache::relations()

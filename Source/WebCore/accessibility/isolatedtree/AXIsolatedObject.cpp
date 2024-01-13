@@ -145,7 +145,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
     setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
-    setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
@@ -1736,18 +1735,6 @@ bool AXIsolatedObject::isDescendantOfRole(AccessibilityRole) const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-AXCoreObject* AXIsolatedObject::correspondingLabelForControlElement() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-AXCoreObject* AXIsolatedObject::correspondingControlForLabelElement() const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 bool AXIsolatedObject::inheritsPresentationalRole() const

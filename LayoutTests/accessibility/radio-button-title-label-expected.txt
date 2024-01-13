@@ -3,10 +3,10 @@ This test checks that radio buttons expose title ui elements correctly under a v
 PASS: radio1.title === 'AXTitle: LABEL'
 PASS: titleUIElement.isEqual(accessibilityController.accessibleElementById('label1')) === true
 PASS: radio2.description === 'AXDescription: LABEL2a'
-PASS: radio2.title === 'AXTitle: '
+PASS: radio2.title === 'AXTitle: LABEL2a'
 PASS: !titleUIElement || titleUIElement.title == 'AXTitle: ' === true
 PASS: radio3.description === 'AXDescription: radio3'
-PASS: radio3.title === 'AXTitle: '
+PASS: radio3.title === 'AXTitle: radio3'
 PASS: !titleUIElement || titleUIElement.title == 'AXTitle: ' === true
 
 PASS successfullyParsed is true

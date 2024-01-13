@@ -892,7 +892,7 @@ bool AccessibilityTable::computeAccessibilityIsIgnored() const
     return false;
 }
 
-void AccessibilityTable::titleElementText(Vector<AccessibilityText>& textOrder) const
+void AccessibilityTable::labelText(Vector<AccessibilityText>& textOrder) const
 {
     String title = this->title();
     if (!title.isEmpty())

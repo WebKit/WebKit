@@ -1035,10 +1035,7 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
     };
 
     AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
-    if (m_coreObject->isControl()) {
-        if (auto* label = m_coreObject->correspondingLabelForControlElement())
-            ariaLabelledByElements.append(label);
-    } else if (m_coreObject->isFieldset()) {
+    if (m_coreObject->isControl() || m_coreObject->isFieldset()) {
         if (auto* label = m_coreObject->titleUIElement())
             ariaLabelledByElements.append(label);
     } else if (m_coreObject->roleValue() == AccessibilityRole::Legend) {
@@ -1046,17 +1043,14 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
             if (renderFieldset->isFieldset())
                 ariaLabelledByElements.append(m_coreObject->axObjectCache()->getOrCreate(renderFieldset));
         }
-    } else if (!m_coreObject->correspondingControlForLabelElement())
-        ariaLabelledByElements = m_coreObject->labelledByObjects();
+    } else {
+        auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+        if (liveObject && !liveObject->controlForLabelElement())
+            ariaLabelledByElements = m_coreObject->labeledByObjects();
+    }
     addRelation(Atspi::Relation::LabelledBy, ariaLabelledByElements);
 
-    AccessibilityObject::AccessibilityChildrenVector labelForObjects;
-    if (auto* control = m_coreObject->correspondingControlForLabelElement())
-        labelForObjects.append(control);
-    else
-        labelForObjects = m_coreObject->labelForObjects();
-    addRelation(Atspi::Relation::LabelFor, labelForObjects);
-
+    addRelation(Atspi::Relation::LabelFor, m_coreObject->labelForObjects());
     addRelation(Atspi::Relation::FlowsTo, m_coreObject->flowToObjects());
     addRelation(Atspi::Relation::FlowsFrom, m_coreObject->flowFromObjects());
 
