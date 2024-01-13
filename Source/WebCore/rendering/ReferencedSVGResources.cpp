@@ -98,20 +98,18 @@ void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const A
 ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
 {
     SVGElementIdentifierAndTagPairs referencedResources;
-    if (is<ReferencePathOperation>(style.clipPath())) {
-        auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
-        if (!clipPath.fragment().isEmpty())
-            referencedResources.append({ clipPath.fragment(), { SVGNames::clipPathTag } });
+    if (auto* clipPath = dynamicDowncast<ReferencePathOperation>(style.clipPath())) {
+        if (!clipPath->fragment().isEmpty())
+            referencedResources.append({ clipPath->fragment(), { SVGNames::clipPathTag } });
     }
 
     if (style.hasFilter()) {
         const auto& filterOperations = style.filter();
         for (auto& operation : filterOperations.operations()) {
             auto& filterOperation = *operation;
-            if (filterOperation.type() == FilterOperation::Type::Reference) {
-                const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
-                if (!referenceFilterOperation.fragment().isEmpty())
-                    referencedResources.append({ referenceFilterOperation.fragment(), { SVGNames::filterTag } });
+            if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation)) {
+                if (!referenceFilterOperation->fragment().isEmpty())
+                    referencedResources.append({ referenceFilterOperation->fragment(), { SVGNames::filterTag } });
             }
         }
     }
@@ -171,24 +169,24 @@ void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, con
 
 // SVG code uses getRenderSVGResourceById<>, but that works in terms of renderers. We need to find resources
 // before the render tree is fully constructed, so this works on Elements.
-RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const QualifiedName& tagName)
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const SVGQualifiedName& tagName)
 {
-    RefPtr element = treeScope.getElementById(resourceID);
+    RefPtr element = dynamicDowncast<SVGElement>(treeScope.getElementById(resourceID));
     if (!element || !element->hasTagName(tagName))
         return nullptr;
 
-    return downcast<SVGElement>(WTFMove(element));
+    return element;
 }
 
-RefPtr<SVGElement> ReferencedSVGResources::elementForResourceIDs(TreeScope& treeScope, const AtomString& resourceID, const QualifiedNames& tagNames)
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceIDs(TreeScope& treeScope, const AtomString& resourceID, const SVGQualifiedNames& tagNames)
 {
-    RefPtr element = treeScope.getElementById(resourceID);
+    RefPtr element = dynamicDowncast<SVGElement>(treeScope.getElementById(resourceID));
     if (!element)
         return nullptr;
 
     for (const auto& tagName : tagNames) {
         if (element->hasTagName(tagName))
-            return downcast<SVGElement>(WTFMove(element));
+            return element;
     }
 
     return nullptr;
