@@ -234,8 +234,6 @@ public:
 
     String readPlainTextFromPasteboard(Pasteboard&);
 
-    WEBCORE_EXPORT void indent();
-    WEBCORE_EXPORT void outdent();
     void transpose();
 
     bool shouldInsertFragment(DocumentFragment&, const std::optional<SimpleRange>&, EditorInsertAction);

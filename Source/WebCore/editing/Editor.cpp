@@ -1118,16 +1118,6 @@ String Editor::selectionStartCSSPropertyValue(CSSPropertyID propertyID)
     return selectionStyle->style()->getPropertyValue(propertyID);
 }
 
-void Editor::indent()
-{
-    IndentOutdentCommand::create(protectedDocument(), IndentOutdentCommand::Indent)->apply();
-}
-
-void Editor::outdent()
-{
-    IndentOutdentCommand::create(protectedDocument(), IndentOutdentCommand::Outdent)->apply();
-}
-
 static void notifyTextFromControls(Element* startRoot, Element* endRoot)
 {
     RefPtr startingTextControl { enclosingTextFormControl(firstPositionInOrBeforeNode(startRoot)) };
