@@ -1528,7 +1528,7 @@ SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPag
 
 const SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID) const
 {
-    SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
+    RefPtr sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
     return sessionSet ? *sessionSet : m_defaultSessionSet.get();
 }
 
