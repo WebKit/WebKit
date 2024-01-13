@@ -537,6 +537,7 @@ public:
     void show();
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;
+    bool hasCustomUserAgent() const { return m_hasCustomUserAgent; }
     WebCore::KeyboardUIMode keyboardUIMode();
 
     bool hoverSupportedByPrimaryPointingDevice() const;
@@ -1907,6 +1908,7 @@ private:
 #endif
 
     void setUserAgent(const String&);
+    void setHasCustomUserAgent(bool);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
@@ -2180,6 +2182,7 @@ private:
     RefPtr<WebPageGroupProxy> m_pageGroup;
 
     String m_userAgent;
+    bool m_hasCustomUserAgent { false };
 
     DrawingAreaType m_drawingAreaType;
 

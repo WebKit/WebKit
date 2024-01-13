@@ -1454,6 +1454,13 @@ void WebLocalFrameLoaderClient::setTitle(const StringWithDirection& title, const
     webPage->send(Messages::WebPageProxy::DidUpdateHistoryTitle(title.string, url.string(), m_frame->frameID()));
 }
 
+bool WebLocalFrameLoaderClient::hasCustomUserAgent() const
+{
+    if (RefPtr webPage = m_frame->page())
+        return webPage->hasCustomUserAgent();
+    return false;
+}
+
 String WebLocalFrameLoaderClient::userAgent(const URL& url) const
 {
     RefPtr webPage = m_frame->page();

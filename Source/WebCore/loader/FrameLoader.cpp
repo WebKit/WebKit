@@ -3006,7 +3006,7 @@ String FrameLoader::userAgent(const URL& url) const
 
     InspectorInstrumentation::applyUserAgentOverride(protectedFrame(), userAgent);
 
-    if (userAgent.isEmpty())
+    if (userAgent.isEmpty() || m_client->hasCustomUserAgent())
         userAgent = m_client->userAgent(url);
     
     verifyUserAgent(userAgent);

@@ -4547,7 +4547,7 @@ void WebPageProxy::didSuspendAfterProcessSwap()
     ASSERT_NOT_REACHED();
 }
 
-void WebPageProxy::setUserAgent(String&& userAgent)
+void WebPageProxy::setUserAgent(String&& userAgent, IsCustomUserAgent isCustomUserAgent)
 {
     if (m_userAgent == userAgent)
         return;
@@ -4560,6 +4560,7 @@ void WebPageProxy::setUserAgent(String&& userAgent)
     if (!hasRunningProcess())
         return;
     send(Messages::WebPage::SetUserAgent(m_userAgent));
+    send(Messages::WebPage::SetHasCustomUserAgent(isCustomUserAgent == IsCustomUserAgent::Yes));
 }
 
 void WebPageProxy::setApplicationNameForUserAgent(const String& applicationName)
@@ -4586,7 +4587,7 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
         return;
     }
 
-    setUserAgent(String { m_customUserAgent });
+    setUserAgent(String { m_customUserAgent }, IsCustomUserAgent::Yes);
 }
 
 void WebPageProxy::resumeActiveDOMObjectsAndAnimations()

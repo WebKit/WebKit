@@ -4030,6 +4030,11 @@ void WebPage::setUserAgent(const String& userAgent)
         m_page->userAgentChanged();
 }
 
+void WebPage::setHasCustomUserAgent(bool hasCustomUserAgent)
+{
+    m_hasCustomUserAgent = hasCustomUserAgent;
+}
+
 void WebPage::suspendActiveDOMObjectsAndAnimations()
 {
     m_page->suspendActiveDOMObjectsAndAnimations();

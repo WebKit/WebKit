@@ -2346,7 +2346,8 @@ private:
     void resetState(ResetStateReason);
     void resetStateAfterProcessExited(ProcessTerminationReason);
 
-    void setUserAgent(String&&);
+    enum class IsCustomUserAgent : bool { No, Yes };
+    void setUserAgent(String&&, IsCustomUserAgent = IsCustomUserAgent::No);
 
     // IPC::MessageSender
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;

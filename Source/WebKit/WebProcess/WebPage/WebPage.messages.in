@@ -264,6 +264,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PreferencesDidChangeDuringDOMPrintOperation(struct WebKit::WebPreferencesStore store) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 
     SetUserAgent(String userAgent)
+    SetHasCustomUserAgent(bool hasCustomUserAgent)
     SetCustomTextEncodingName(String encodingName)
 
     SuspendActiveDOMObjectsAndAnimations()

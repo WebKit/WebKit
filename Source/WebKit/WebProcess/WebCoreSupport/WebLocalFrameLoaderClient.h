@@ -202,7 +202,8 @@ private:
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) final;
 
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
-    
+
+    bool hasCustomUserAgent() const final;
     String userAgent(const URL&) const final;
 
     String overrideContentSecurityPolicy() const final;

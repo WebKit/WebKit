@@ -258,6 +258,7 @@ public:
     virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
+    virtual bool hasCustomUserAgent() const { return false; }
     virtual String userAgent(const URL&) const = 0;
 
     virtual String overrideContentSecurityPolicy() const { return String(); }
