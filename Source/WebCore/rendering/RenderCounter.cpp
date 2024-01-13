@@ -61,7 +61,8 @@ static CounterMaps& counterMaps()
 
 static Element* ancestorStyleContainmentObject(const Element& element)
 {
-    Element* ancestor = is<PseudoElement>(element) ? downcast<PseudoElement>(element).hostElement() : element.parentElement();
+    auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
+    Element* ancestor = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
     while (ancestor) {
         if (auto* style = ancestor->existingComputedStyle()) {
             if (style->containsStyle())
@@ -118,8 +119,8 @@ static Element* previousSiblingOrParentElement(const Element& element)
             return previous;
     }
 
-    if (is<PseudoElement>(element)) {
-        auto* hostElement = downcast<PseudoElement>(element).hostElement();
+    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element)) {
+        auto* hostElement = pseudoElement->hostElement();
         ASSERT(hostElement);
         if (hostElement->renderer())
             return hostElement;
@@ -163,20 +164,18 @@ static RenderElement* nextInPreOrder(const RenderElement& renderer, const Elemen
 
 static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
 {
-    if (is<RenderListItem>(renderer)) {
-        auto& item = downcast<RenderListItem>(renderer);
+    if (auto* item = dynamicDowncast<RenderListItem>(renderer)) {
         return {
             .resetValue = std::nullopt,
-            .incrementValue = item.isInReversedOrderedList() ? -1 : 1,
+            .incrementValue = item->isInReversedOrderedList() ? -1 : 1,
             .setValue = std::nullopt
         };
     }
     if (auto element = renderer.element()) {
-        if (is<HTMLOListElement>(*element)) {
-            auto& list = downcast<HTMLOListElement>(*element);
+        if (auto* list = dynamicDowncast<HTMLOListElement>(*element)) {
             return {
-                .resetValue = list.start(),
-                .incrementValue = list.isReversed() ? 1 : -1,
+                .resetValue = list->start(),
+                .incrementValue = list->isReversed() ? 1 : -1,
                 .setValue = std::nullopt
             };
         }
@@ -617,14 +616,15 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
 
     auto identifier = AtomString::fromLatin1(counterName);
     for (auto* current = root; current; current = current->nextInPreOrder()) {
-        if (!is<WebCore::RenderElement>(*current))
+        auto* element = dynamicDowncast<WebCore::RenderElement>(*current);
+        if (!element)
             continue;
         fprintf(stderr, "%c", (current == renderer) ? '*' : ' ');
         for (auto* ancestor = current; ancestor && ancestor != root; ancestor = ancestor->parent())
             fprintf(stderr, "    ");
         fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
-            current->nextSibling(), downcast<WebCore::RenderElement>(*current).hasCounterNodeMap() ?
+            current->nextSibling(), element->hasCounterNodeMap() ?
             counterName ? WebCore::counterMaps().find(*downcast<WebCore::RenderElement>(current))->value->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
     }
     fflush(stderr);

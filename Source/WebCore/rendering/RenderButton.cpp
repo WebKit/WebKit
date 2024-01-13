@@ -101,9 +101,8 @@ void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
 void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
-    if (is<HTMLInputElement>(formControlElement())) {
-        HTMLInputElement& input = downcast<HTMLInputElement>(formControlElement());
-        String value = input.valueWithDefault();
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(formControlElement())) {
+        String value = input->valueWithDefault();
         setText(value);
     }
 }

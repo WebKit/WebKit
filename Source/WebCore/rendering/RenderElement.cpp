@@ -317,9 +317,11 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, Optio
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
-    if (diff < StyleDifference::Layout && isRenderLayerModelObject()) {
-        if (hasLayer() != downcast<RenderLayerModelObject>(*this).requiresLayer())
-            diff = StyleDifference::Layout;
+    if (diff < StyleDifference::Layout) {
+        if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(*this)) {
+            if (hasLayer() != modelObject->requiresLayer())
+                diff = StyleDifference::Layout;
+        }
     }
 
     // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
@@ -440,9 +442,9 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
         if (newStyle.outlineSize() < oldStyle.outlineSize())
             return RequiredRepaint::RendererOnly;
 
-        if (is<RenderLayerModelObject>(*this)) {
+        if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(*this)) {
             // If we don't have a layer yet, but we are going to get one because of transform or opacity, then we need to repaint the old position of the object.
-            bool hasLayer = downcast<RenderLayerModelObject>(*this).hasLayer();
+            bool hasLayer = modelObject->hasLayer();
             bool willHaveLayer = newStyle.affectsTransform() || newStyle.hasOpacity() || newStyle.hasFilter() || newStyle.hasBackdropFilter();
             if (!hasLayer && willHaveLayer)
                 return RequiredRepaint::RendererOnly;
@@ -556,8 +558,8 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
 
 void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
 {
-    if (is<RenderText>(child))
-        downcast<RenderText>(child).styleDidChange(StyleDifference::Equal, nullptr);
+    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+        textRenderer->styleDidChange(StyleDifference::Equal, nullptr);
 
     // The following only applies to the legacy SVG engine -- LBSE always creates layers
     // independant of the position in the render tree, see comment in layerCreationAllowedForSubtree().
@@ -633,9 +635,10 @@ static RenderLayer* findNextLayer(const RenderElement& currRenderer, const Rende
     // into our siblings trying to find the next layer whose parent is the desired parent.
     if (!ourLayer || ourLayer == &parentLayer) {
         for (auto* child = siblingToTraverseFrom ? siblingToTraverseFrom->nextSibling() : currRenderer.firstChild(); child; child = child->nextSibling()) {
-            if (!is<RenderElement>(*child))
+            auto* element = dynamicDowncast<RenderElement>(*child);
+            if (!element)
                 continue;
-            if (auto* nextLayer = findNextLayer(downcast<RenderElement>(*child), parentLayer, nullptr, false))
+            if (auto* nextLayer = findNextLayer(*element, parentLayer, nullptr, false))
                 return nextLayer;
         }
     }
@@ -657,11 +660,10 @@ static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& rend
 {
     ASSERT_IMPLIES(isInTopLayerOrBackdrop(renderer.style(), renderer.element()), renderer.hasLayer());
 
-    if (is<RenderLayerModelObject>(renderer) && isInTopLayerOrBackdrop(renderer.style(), renderer.element())) {
-        auto& layerModelObject = downcast<RenderLayerModelObject>(renderer);
-        ASSERT(layerModelObject.hasLayer());
+    if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(renderer); layerModelObject && isInTopLayerOrBackdrop(renderer.style(), renderer.element())) {
+        ASSERT(layerModelObject->hasLayer());
         auto topLayerLayers = RenderLayer::topLayerRenderLayers(renderer.view());
-        auto layerIndex = topLayerLayers.find(layerModelObject.layer());
+        auto layerIndex = topLayerLayers.find(layerModelObject->layer());
         if (layerIndex != notFound && layerIndex < topLayerLayers.size() - 1)
             return topLayerLayers[layerIndex + 1];
 
@@ -1373,11 +1375,11 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         auto insetExtent = [&] {
             // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
             auto borderRightExtent = [&]() -> LayoutUnit {
-                if (!is<RenderBox>(*this))
+                auto* renderBox = dynamicDowncast<RenderBox>(*this);
+                if (!renderBox)
                     return { };
-                auto& renderBox = downcast<RenderBox>(*this);
-                auto borderBoxWidth = renderBox.width();
-                return std::max(renderBox.borderRight(), std::max(valueForLength(style.borderTopRightRadius().width, borderBoxWidth), valueForLength(style.borderBottomRightRadius().width, borderBoxWidth)));
+                auto borderBoxWidth = renderBox->width();
+                return std::max(renderBox->borderRight(), std::max(valueForLength(style.borderTopRightRadius().width, borderBoxWidth), valueForLength(style.borderBottomRightRadius().width, borderBoxWidth)));
             };
             auto outlineRightInsetExtent = [&]() -> LayoutUnit {
                 auto offset = LayoutUnit { outlineStyle.outlineOffset() };
@@ -1415,11 +1417,11 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         auto insetExtent = [&] {
             // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
             auto borderBottomExtent = [&]() -> LayoutUnit {
-                if (!is<RenderBox>(*this))
+                auto* renderBox = dynamicDowncast<RenderBox>(*this);
+                if (!renderBox)
                     return { };
-                auto& renderBox = downcast<RenderBox>(*this);
-                auto borderBoxHeight = renderBox.height();
-                return std::max(renderBox.borderBottom(), std::max(valueForLength(style.borderBottomLeftRadius().height, borderBoxHeight), valueForLength(style.borderBottomRightRadius().height, borderBoxHeight)));
+                auto borderBoxHeight = renderBox->height();
+                return std::max(renderBox->borderBottom(), std::max(valueForLength(style.borderBottomLeftRadius().height, borderBoxHeight), valueForLength(style.borderBottomRightRadius().height, borderBoxHeight)));
             };
             auto outlineBottomInsetExtent = [&]() -> LayoutUnit {
                 auto offset = LayoutUnit { outlineStyle.outlineOffset() };
@@ -1621,8 +1623,8 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
     }
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
-    if (is<RenderBoxModelObject>(*this))
-        downcast<RenderBoxModelObject>(*this).contentChanged(ImageChanged);
+    if (CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(*this))
+        modelObject->contentChanged(ImageChanged);
 
     return true;
 }
@@ -1820,12 +1822,11 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
             // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if (is<RenderText>(*o) || o->isReplacedOrInlineBlock()) {
             point = FloatPoint();
-            if (is<RenderText>(*o)) {
-                auto& textRenderer = downcast<RenderText>(*o);
-                if (auto run = InlineIterator::firstTextBoxFor(textRenderer))
-                    point.move(textRenderer.linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
-            } else if (is<RenderBox>(*o))
-                point.moveBy(downcast<RenderBox>(*o).location());
+            if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*o)) {
+                if (auto run = InlineIterator::firstTextBoxFor(*textRenderer))
+                    point.move(textRenderer->linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
+            } else if (auto* box = dynamicDowncast<RenderBox>(*o))
+                point.moveBy(box->location());
             point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
         }
@@ -1867,8 +1868,8 @@ bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) cons
         ASSERT(o);
         if (is<RenderText>(*o) || o->isReplacedOrInlineBlock()) {
             point = FloatPoint();
-            if (is<RenderText>(*o)) {
-                LayoutRect linesBox = downcast<RenderText>(*o).linesBoundingBox();
+            if (auto* textRenderer = dynamicDowncast<RenderText>(*o)) {
+                LayoutRect linesBox = textRenderer->linesBoundingBox();
                 if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
                 point.moveBy(linesBox.maxXMaxYCorner());
@@ -2010,8 +2011,8 @@ void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 
 void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
 {
-    if (is<RenderMultiColumnSpannerPlaceholder>(*this)) {
-        CheckedPtr spanner = downcast<RenderMultiColumnSpannerPlaceholder>(*this).spanner();
+    if (auto* placeholder = dynamicDowncast<RenderMultiColumnSpannerPlaceholder>(*this)) {
+        CheckedPtr spanner = placeholder->spanner();
         spanner->setHasOutlineAutoAncestor(hasOutlineAuto);
         spanner->updateOutlineAutoAncestor(hasOutlineAuto);
     }
@@ -2023,12 +2024,11 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
         bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On;
         if (childHasOutlineAuto)
             continue;
-        if (!is<RenderElement>(child.get()))
-            continue;
-        downcast<RenderElement>(child.get()).updateOutlineAutoAncestor(hasOutlineAuto);
+        if (auto* element = dynamicDowncast<RenderElement>(child.get()))
+            element->updateOutlineAutoAncestor(hasOutlineAuto);
     }
-    if (is<RenderBoxModelObject>(*this)) {
-        if (CheckedPtr continuation = downcast<RenderBoxModelObject>(*this).continuation())
+    if (auto* modelObject = dynamicDowncast<RenderBoxModelObject>(*this)) {
+        if (CheckedPtr continuation = modelObject->continuation())
             continuation->updateOutlineAutoAncestor(hasOutlineAuto);
     }
 }
@@ -2075,8 +2075,8 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
         return;
 
     // Invalidate the containing block caches.
-    if (is<RenderBlock>(*this))
-        downcast<RenderBlock>(*this).resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(*this))
+        block->resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
     else {
         // Relatively positioned inline boxes can have absolutely positioned block descendants. We need to reset them as well.
         for (CheckedRef descendant : descendantsOfType<RenderBlock>(*this))
@@ -2107,8 +2107,8 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
         shouldUpdateState = false;
 
     for (CheckedRef child : childrenOfType<RenderObject>(*this)) {
-        if (is<RenderElement>(child.get())) {
-            downcast<RenderElement>(child.get()).removeFromRenderFragmentedFlowIncludingDescendants(shouldUpdateState);
+        if (auto* element = dynamicDowncast<RenderElement>(child.get())) {
+            element->removeFromRenderFragmentedFlowIncludingDescendants(shouldUpdateState);
             continue;
         }
         if (shouldUpdateState)
@@ -2127,8 +2127,8 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
             break;
         enclosingFragmentedFlow = parent->enclosingFragmentedFlow();
     }
-    if (is<RenderBlock>(*this))
-        downcast<RenderBlock>(*this).setCachedEnclosingFragmentedFlowNeedsUpdate();
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(*this))
+        block->setCachedEnclosingFragmentedFlowNeedsUpdate();
 
     if (shouldUpdateState)
         setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
@@ -2198,11 +2198,10 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
 {
     const RenderStyle& style = renderer.style();
     if (style.height().isFixed()) {
-        if (is<RenderBlock>(renderer)) {
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
-            if (downcast<RenderBlock>(renderer).effectiveOverflowY() == Overflow::Visible
-                && style.height().value() < downcast<RenderBlock>(renderer).layoutOverflowRect().maxY())
+            if (block->effectiveOverflowY() == Overflow::Visible && style.height().value() < block->layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
         return RenderObject::FixedHeight;
@@ -2231,8 +2230,8 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendant) && !descendant->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            downcast<RenderBlockFlow>(*descendant).adjustComputedFontSizes(size, visibleWidth);
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant); blockFlow && !blockFlow->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            blockFlow->adjustComputedFontSizes(size, visibleWidth);
         newFixedDepth = 0;
     }
 
@@ -2261,8 +2260,8 @@ void RenderElement::resetTextAutosizing()
             depthStack.append(newFixedDepth);
 
         int stackSize = depthStack.size();
-        if (is<RenderBlockFlow>(*descendant) && !descendant->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
-            downcast<RenderBlockFlow>(*descendant).resetComputedFontSize();
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant); blockFlow && !blockFlow->isRenderListItem() && (!stackSize || currentDepth - depthStack[stackSize - 1] > TextAutoSizingFixedHeightDepth))
+            blockFlow->resetComputedFontSize();
         newFixedDepth = 0;
     }
 }
@@ -2367,7 +2366,6 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         // RenderSVGViewportContainer is the only possible anonymous renderer in the SVG tree.
         if (!viewportElement && document().settings().layerBasedSVGEngineEnabled()) {
-            ASSERT(is<RenderSVGViewportContainer>(this));
             ASSERT(isAnonymous());
             viewportElement = &downcast<RenderSVGViewportContainer>(*this).svgSVGElement();
         }

@@ -225,9 +225,12 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); is<RenderInline>(parent); parent = parent->parent()) {
+    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); parent; parent = parent->parent()) {
+        auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent);
+        if (!parentRenderInline)
+            break;
         if (parent->isInFlowPositioned())
-            offset += downcast<RenderInline>(*parent).offsetForInFlowPosition();
+            offset += parentRenderInline->offsetForInFlowPosition();
     }
     return offset;
 }
@@ -547,8 +550,8 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // have already done a similar call to move from the containing block to the scrolling
     // ancestor above, but localToContainerQuad takes care of a lot of complex situations
     // involving inlines, tables, and transformations.
-    if (parent()->isRenderBox())
-        downcast<RenderBox>(parent())->flipForWritingMode(stickyBoxRect);
+    if (CheckedPtr parentBox = dynamicDowncast<RenderBox>(*parent()))
+        parentBox->flipForWritingMode(stickyBoxRect);
     auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
 
     if (enclosingClippingLayer) {

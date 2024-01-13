@@ -813,8 +813,8 @@ private:
 
 inline RenderBox* RenderBox::parentBox() const
 {
-    if (is<RenderBox>(parent()))
-        return downcast<RenderBox>(parent());
+    if (auto* box = dynamicDowncast<RenderBox>(parent()))
+        return box;
 
     ASSERT(!parent());
     return nullptr;
@@ -822,8 +822,8 @@ inline RenderBox* RenderBox::parentBox() const
 
 inline RenderBox* RenderBox::firstChildBox() const
 {
-    if (is<RenderBox>(firstChild()))
-        return downcast<RenderBox>(firstChild());
+    if (auto* box = dynamicDowncast<RenderBox>(firstChild()))
+        return box;
 
     ASSERT(!firstChild());
     return nullptr;
@@ -836,8 +836,8 @@ inline RenderBox* RenderBox::firstInFlowChildBox() const
 
 inline RenderBox* RenderBox::lastChildBox() const
 {
-    if (is<RenderBox>(lastChild()))
-        return downcast<RenderBox>(lastChild());
+    if (auto* box = dynamicDowncast<RenderBox>(lastChild()))
+        return box;
 
     ASSERT(!lastChild());
     return nullptr;
@@ -850,8 +850,8 @@ inline RenderBox* RenderBox::lastInFlowChildBox() const
 
 inline RenderBox* RenderBox::previousSiblingBox() const
 {
-    if (is<RenderBox>(previousSibling()))
-        return downcast<RenderBox>(previousSibling());
+    if (auto* box = dynamicDowncast<RenderBox>(previousSibling()))
+        return box;
 
     ASSERT(!previousSibling());
     return nullptr;
@@ -868,8 +868,8 @@ inline RenderBox* RenderBox::previousInFlowSiblingBox() const
 
 inline RenderBox* RenderBox::nextSiblingBox() const
 {
-    if (is<RenderBox>(nextSibling()))
-        return downcast<RenderBox>(nextSibling());
+    if (auto* box = dynamicDowncast<RenderBox>(nextSibling()))
+        return box;
 
     ASSERT(!nextSibling());
     return nullptr;
