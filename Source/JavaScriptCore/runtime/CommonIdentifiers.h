@@ -363,7 +363,10 @@
     macro(split) \
     macro(toPrimitive) \
     macro(toStringTag) \
-    macro(unscopables)
+    macro(unscopables) \
+    macro(dispose) \
+    macro(asyncDispose)
+
 
 #define JSC_PARSER_PRIVATE_NAMES(macro) \
     macro(generator) \
