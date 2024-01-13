@@ -2758,12 +2758,6 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return AccessibilityRole::Unknown;
 
-    if (ariaRole == "text"_s) {
-        auto* document = this->document();
-        // FIXME: Eventually, let's remove support for this role entirely. This is tracked by https://bugs.webkit.org/show_bug.cgi?id=260685.
-        if (!document || !document->settings().ariaTextRoleEnabled())
-            return AccessibilityRole::Unknown;
-    }
     AccessibilityRole role = ariaRoleToWebCoreRole(ariaRole);
 
     // ARIA states if an item can get focus, it should not be presentational.
