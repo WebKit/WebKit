@@ -1003,11 +1003,18 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
     for (auto& line : m_inlineContent->displayContent().lines)
         line.moveInBlockDirection(blockShift, isHorizontalWritingMode);
 
+    LayoutUnit deltaX = isHorizontalWritingMode ? 0_lu : blockShift;
+    LayoutUnit deltaY = isHorizontalWritingMode ? blockShift : 0_lu;
     for (auto& box : m_inlineContent->displayContent().boxes) {
         if (isHorizontalWritingMode)
             box.moveVertically(blockShift);
         else
             box.moveHorizontally(blockShift);
+
+        if (box.isAtomicInlineLevelBox()) {
+            CheckedRef renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox()));
+            renderer->move(deltaX, deltaY);
+        }
     }
 
     for (auto& object : m_boxTree.renderers()) {
