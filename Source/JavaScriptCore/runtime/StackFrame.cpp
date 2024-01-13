@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,22 +122,18 @@ String StackFrame::functionName(VM& vm) const
     return name.isNull() ? emptyString() : name;
 }
 
-void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
+LineColumn StackFrame::computeLineAndColumn() const
 {
-    if (!m_codeBlock) {
-        line = 0;
-        column = 0;
-        return;
-    }
+    if (!m_codeBlock)
+        return { };
 
-    unsigned divot = 0;
-    unsigned unusedStartOffset = 0;
-    unsigned unusedEndOffset = 0;
-    m_codeBlock->expressionRangeForBytecodeIndex(m_bytecodeIndex, divot, unusedStartOffset, unusedEndOffset, line, column);
+    auto lineColumn = m_codeBlock->lineColumnForBytecodeIndex(m_bytecodeIndex);
 
     ScriptExecutable* executable = m_codeBlock->ownerExecutable();
     if (std::optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))
-        line = overrideLineNumber.value();
+        lineColumn.line = overrideLineNumber.value();
+
+    return lineColumn;
 }
 
 String StackFrame::toString(VM& vm) const
@@ -148,10 +144,8 @@ String StackFrame::toString(VM& vm) const
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
         return makeString(functionName, '@', sourceURL);
 
-    unsigned line;
-    unsigned column;
-    computeLineAndColumn(line, column);
-    return makeString(functionName, '@', sourceURL, ':', line, ':', column);
+    auto lineColumn = computeLineAndColumn();
+    return makeString(functionName, '@', sourceURL, ':', lineColumn.line, ':', lineColumn.column);
 }
 
 } // namespace JSC

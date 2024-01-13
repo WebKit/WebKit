@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -59,7 +59,7 @@ public:
         return instance;
     }
 
-    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, unsigned line, unsigned column, String&& sourceURL, String&& stackString);
+    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, LineColumn, String&& sourceURL, String&& stackString);
     static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
 
     bool hasSourceAppender() const { return !!m_sourceAppender; }
@@ -99,7 +99,7 @@ protected:
     explicit ErrorInstance(VM&, Structure*, ErrorType);
 
     void finishCreation(VM&, JSGlobalObject*, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
-    void finishCreation(VM&, String&& message, unsigned line, unsigned column, String&& sourceURL, String&& stackString);
+    void finishCreation(VM&, String&& message, LineColumn, String&& sourceURL, String&& stackString);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
@@ -111,8 +111,7 @@ protected:
 
     SourceAppender m_sourceAppender { nullptr };
     std::unique_ptr<Vector<StackFrame>> m_stackTrace;
-    unsigned m_line;
-    unsigned m_column;
+    LineColumn m_lineColumn;
     String m_sourceURL;
     String m_stackString;
     RuntimeType m_runtimeTypeForCause { TypeNothing };

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LineColumn.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -49,8 +50,7 @@ struct ExpressionRangeInfo {
     };
 
     struct FatPosition {
-        unsigned line;
-        unsigned column;
+        LineColumn lineColumn;
     };
 
     enum {
@@ -71,30 +71,34 @@ struct ExpressionRangeInfo {
         MaxFatColumnModeColumn = (1 << 22) - 1
     };
 
-    void encodeFatLineMode(unsigned line, unsigned column)
+    void encodeFatLineMode(LineColumn lineColumn)
     {
-        ASSERT(line <= MaxFatLineModeLine);
-        ASSERT(column <= MaxFatLineModeColumn);
-        position = ((line & FatLineModeLineMask) << FatLineModeLineShift | (column & FatLineModeColumnMask));
+        ASSERT(lineColumn.line <= MaxFatLineModeLine);
+        ASSERT(lineColumn.column <= MaxFatLineModeColumn);
+        position = ((lineColumn.line & FatLineModeLineMask) << FatLineModeLineShift | (lineColumn.column & FatLineModeColumnMask));
     }
 
-    void encodeFatColumnMode(unsigned line, unsigned column)
+    void encodeFatColumnMode(LineColumn lineColumn)
     {
-        ASSERT(line <= MaxFatColumnModeLine);
-        ASSERT(column <= MaxFatColumnModeColumn);
-        position = ((line & FatColumnModeLineMask) << FatColumnModeLineShift | (column & FatColumnModeColumnMask));
+        ASSERT(lineColumn.line <= MaxFatColumnModeLine);
+        ASSERT(lineColumn.column <= MaxFatColumnModeColumn);
+        position = ((lineColumn.line & FatColumnModeLineMask) << FatColumnModeLineShift | (lineColumn.column & FatColumnModeColumnMask));
     }
 
-    void decodeFatLineMode(unsigned& line, unsigned& column) const
+    LineColumn decodeFatLineMode() const
     {
-        line = (position >> FatLineModeLineShift) & FatLineModeLineMask;
-        column = position & FatLineModeColumnMask;
+        LineColumn lineColumn;
+        lineColumn.line = (position >> FatLineModeLineShift) & FatLineModeLineMask;
+        lineColumn.column = position & FatLineModeColumnMask;
+        return lineColumn;
     }
 
-    void decodeFatColumnMode(unsigned& line, unsigned& column) const
+    LineColumn decodeFatColumnMode() const
     {
-        line = (position >> FatColumnModeLineShift) & FatColumnModeLineMask;
-        column = position & FatColumnModeColumnMask;
+        LineColumn lineColumn;
+        lineColumn.line = (position >> FatColumnModeLineShift) & FatColumnModeLineMask;
+        lineColumn.column = position & FatColumnModeColumnMask;
+        return lineColumn;
     }
 
     unsigned instructionOffset : 25;

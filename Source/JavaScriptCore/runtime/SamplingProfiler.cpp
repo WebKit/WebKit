@@ -496,7 +496,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 unsigned startOffset;
                 unsigned endOffset;
                 codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset,
-                    location.lineNumber, location.columnNumber);
+                    location.lineColumn);
                 location.bytecodeIndex = bytecodeIndex;
             }
             if (codeBlock->hasHash())

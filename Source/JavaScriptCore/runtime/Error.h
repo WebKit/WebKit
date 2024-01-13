@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "Exception.h"
 #include "InternalFunction.h"
 #include "JSObject.h"
+#include "LineColumn.h"
 #include "ThrowScope.h"
 #include <stdint.h>
 
@@ -67,7 +68,7 @@ JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension,
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM&, JSObject*, bool useCurrentFrame);
 std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
-bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL);
+bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, String& sourceURL);
 bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);
 JS_EXPORT_PRIVATE void addErrorInfo(JSGlobalObject*, JSObject*, bool);
 JSObject* addErrorInfo(VM&, JSObject* error, int line, const SourceCode&);

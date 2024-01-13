@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -179,10 +179,9 @@ std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM& vm, CallFrame* startC
     return { functor.codeBlock(), functor.bytecodeIndex() };
 }
 
-bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)
+bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, LineColumn& lineColumn, String& sourceURL)
 {
-    line = 0;
-    column = 0;
+    lineColumn = { };
     sourceURL = String();
     
     if (!stackTrace)
@@ -191,7 +190,7 @@ bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, unsigned& li
     for (unsigned i = 0 ; i < stackTrace->size(); ++i) {
         StackFrame& frame = stackTrace->at(i);
         if (frame.hasLineAndColumnInfo()) {
-            frame.computeLineAndColumn(line, column);
+            lineColumn = frame.computeLineAndColumn();
             sourceURL = frame.sourceURLStripped(vm);
             return true;
         }
@@ -206,12 +205,11 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
         return false;
 
     if (!stackTrace->isEmpty()) {
-        unsigned line;
-        unsigned column;
+        LineColumn lineColumn;
         String sourceURL;
-        getLineColumnAndSource(vm, stackTrace, line, column, sourceURL);
-        obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
-        obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
+        getLineColumnAndSource(vm, stackTrace, lineColumn, sourceURL);
+        obj->putDirect(vm, vm.propertyNames->line, jsNumber(lineColumn.line));
+        obj->putDirect(vm, vm.propertyNames->column, jsNumber(lineColumn.column));
         if (!sourceURL.isEmpty())
             obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(sourceURL)));
 

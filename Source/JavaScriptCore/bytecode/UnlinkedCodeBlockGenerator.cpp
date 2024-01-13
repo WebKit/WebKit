@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UnlinkedCodeBlockGenerator);
 
-void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned column)
+void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn lineColumn)
 {
     if (divot > ExpressionRangeInfo::MaxDivot) {
         // Overflow has occurred, we can only give line number info for errors for this region
@@ -58,9 +58,9 @@ void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, u
     }
 
     unsigned positionMode =
-        (line <= ExpressionRangeInfo::MaxFatLineModeLine && column <= ExpressionRangeInfo::MaxFatLineModeColumn)
+        (lineColumn.line <= ExpressionRangeInfo::MaxFatLineModeLine && lineColumn.column <= ExpressionRangeInfo::MaxFatLineModeColumn)
         ? ExpressionRangeInfo::FatLineMode
-        : (line <= ExpressionRangeInfo::MaxFatColumnModeLine && column <= ExpressionRangeInfo::MaxFatColumnModeColumn)
+        : (lineColumn.line <= ExpressionRangeInfo::MaxFatColumnModeLine && lineColumn.column <= ExpressionRangeInfo::MaxFatColumnModeColumn)
         ? ExpressionRangeInfo::FatColumnMode
         : ExpressionRangeInfo::FatLineAndColumnMode;
 
@@ -73,14 +73,14 @@ void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, u
     info.mode = positionMode;
     switch (positionMode) {
     case ExpressionRangeInfo::FatLineMode:
-        info.encodeFatLineMode(line, column);
+        info.encodeFatLineMode(lineColumn);
         break;
     case ExpressionRangeInfo::FatColumnMode:
-        info.encodeFatColumnMode(line, column);
+        info.encodeFatColumnMode(lineColumn);
         break;
     case ExpressionRangeInfo::FatLineAndColumnMode: {
         unsigned fatIndex = m_expressionInfoFatPositions.size();
-        ExpressionRangeInfo::FatPosition fatPos = { line, column };
+        ExpressionRangeInfo::FatPosition fatPos = { lineColumn };
         m_expressionInfoFatPositions.append(fatPos);
         info.position = fatIndex;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2040,29 +2040,21 @@ void CodeBlock::removeExceptionHandlerForCallSite(DisposableCallSiteIndex callSi
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-unsigned CodeBlock::lineNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
+LineColumn CodeBlock::lineColumnForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
     RELEASE_ASSERT(bytecodeIndex.offset() < instructions().size());
-    return ownerExecutable()->firstLine() + m_unlinkedCode->lineNumberForBytecodeIndex(bytecodeIndex);
+    auto lineColumn = m_unlinkedCode->lineColumnForBytecodeIndex(bytecodeIndex);
+    lineColumn.column += lineColumn.line ? 1 : firstLineColumnOffset();
+    lineColumn.line += ownerExecutable()->firstLine();
+    return lineColumn;
 }
 
-unsigned CodeBlock::columnNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
+void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, LineColumn& lineColumn) const
 {
-    unsigned divot;
-    unsigned startOffset;
-    unsigned endOffset;
-    unsigned line;
-    unsigned column;
-    expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
-    return column;
-}
-
-void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const
-{
-    m_unlinkedCode->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
+    m_unlinkedCode->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, lineColumn);
     divot += sourceOffset();
-    column += line ? 1 : firstLineColumnOffset();
-    line += ownerExecutable()->firstLine();
+    lineColumn.column += lineColumn.line ? 1 : firstLineColumnOffset();
+    lineColumn.line += ownerExecutable()->firstLine();
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column)
@@ -2070,11 +2062,8 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned
     const auto& instructionStream = instructions();
     for (const auto& it : instructionStream) {
         if (it->is<OpDebug>()) {
-            unsigned unused;
-            unsigned opDebugLine;
-            unsigned opDebugColumn;
-            expressionRangeForBytecodeIndex(it.index(), unused, unused, unused, opDebugLine, opDebugColumn);
-            if (line == opDebugLine && (!column || column == opDebugColumn))
+            auto lineColumn = lineColumnForBytecodeIndex(it.index());
+            if (line == lineColumn.line && (!column || column == lineColumn.column))
                 return true;
         }
     }

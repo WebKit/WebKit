@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,16 +46,15 @@ class LineAndColumnFunctor {
 public:
     IterationStatus operator()(StackVisitor& visitor) const
     {
-        visitor->computeLineAndColumn(m_line, m_column);
+        m_lineColumn = visitor->computeLineAndColumn();
         return IterationStatus::Done;
     }
 
-    unsigned line() const { return m_line; }
-    unsigned column() const { return m_column; }
+    unsigned line() const { return m_lineColumn.line; }
+    unsigned column() const { return m_lineColumn.column; }
 
 private:
-    mutable unsigned m_line { 0 };
-    mutable unsigned m_column { 0 };
+    mutable LineColumn m_lineColumn;
 };
 
 Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
@@ -297,8 +296,9 @@ TextPosition DebuggerCallFrame::currentPosition(VM& vm)
     if (isTailDeleted()) {
         CodeBlock* codeBlock = m_shadowChickenFrame.codeBlock;
         if (std::optional<BytecodeIndex> bytecodeIndex = codeBlock->bytecodeIndexFromCallSiteIndex(m_shadowChickenFrame.callSiteIndex)) {
-            return TextPosition(OrdinalNumber::fromOneBasedInt(codeBlock->lineNumberForBytecodeIndex(*bytecodeIndex)),
-                OrdinalNumber::fromOneBasedInt(codeBlock->columnNumberForBytecodeIndex(*bytecodeIndex)));
+            auto lineColumn = codeBlock->lineColumnForBytecodeIndex(*bytecodeIndex);
+            return TextPosition(OrdinalNumber::fromOneBasedInt(lineColumn.line),
+                OrdinalNumber::fromOneBasedInt(lineColumn.column));
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,12 +46,12 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
 {
 }
 
-ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, String&& message, ErrorType errorType, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, String&& message, ErrorType errorType, LineColumn lineColumn, String&& sourceURL, String&& stackString)
 {
     VM& vm = globalObject->vm();
     Structure* structure = globalObject->errorStructure(errorType);
     ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
-    instance->finishCreation(vm, WTFMove(message), line, column, WTFMove(sourceURL), WTFMove(stackString));
+    instance->finishCreation(vm, WTFMove(message), lineColumn, WTFMove(sourceURL), WTFMove(stackString));
     return instance;
 }
 
@@ -86,10 +86,9 @@ static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* ex
     unsigned startOffset = 0;
     unsigned endOffset = 0;
     unsigned divotPoint = 0;
-    unsigned line = 0;
-    unsigned column = 0;
+    LineColumn lineColumn;
 
-    codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, line, column);
+    codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, lineColumn);
     
     int expressionStart = divotPoint - startOffset;
     int expressionStop = divotPoint + endOffset;
@@ -147,13 +146,12 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-void ErrorInstance::finishCreation(VM& vm, String&& message, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+void ErrorInstance::finishCreation(VM& vm, String&& message, LineColumn lineColumn, String&& sourceURL, String&& stackString)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    m_line = line;
-    m_column = column;
+    m_lineColumn = lineColumn;
     m_sourceURL = WTFMove(sourceURL);
     m_stackString = WTFMove(stackString);
     if (!message.isNull())
@@ -249,7 +247,7 @@ void ErrorInstance::computeErrorInfo(VM& vm)
     ASSERT(!m_errorInfoMaterialized);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
-        getLineColumnAndSource(vm, m_stackTrace.get(), m_line, m_column, m_sourceURL);
+        getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
         m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
         m_stackTrace = nullptr;
     }
@@ -265,8 +263,8 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     if (!m_stackString.isNull()) {
         auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);
 
-        putDirect(vm, vm.propertyNames->line, jsNumber(m_line), attributes);
-        putDirect(vm, vm.propertyNames->column, jsNumber(m_column), attributes);
+        putDirect(vm, vm.propertyNames->line, jsNumber(m_lineColumn.line), attributes);
+        putDirect(vm, vm.propertyNames->column, jsNumber(m_lineColumn.column), attributes);
         if (!m_sourceURL.isEmpty())
             putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)), attributes);
 

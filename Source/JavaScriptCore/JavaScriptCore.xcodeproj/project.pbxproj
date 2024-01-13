@@ -2167,6 +2167,7 @@
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC160322339E9F900A04CB8 /* CellSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC160312339E9F900A04CB8 /* CellSize.h */; };
 		FEC3A3A1248735CA00395B54 /* DFGDoesGCCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A3A0248735BC00395B54 /* DFGDoesGCCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC503FE2B51E09700176A93 /* LineColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC503FD2B51E09700176A93 /* LineColumn.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797223105B4800BCA83F /* VMInspectorInlines.h */; };
 		FEC5797623105F4E00BCA83F /* Integrity.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797523105F4300BCA83F /* Integrity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC579772310954B00BCA83F /* IntegrityInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5995,6 +5996,7 @@
 		FEC160312339E9F900A04CB8 /* CellSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellSize.h; sourceTree = "<group>"; };
 		FEC3A39F248735BC00395B54 /* DFGDoesGCCheck.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDoesGCCheck.cpp; path = dfg/DFGDoesGCCheck.cpp; sourceTree = "<group>"; };
 		FEC3A3A0248735BC00395B54 /* DFGDoesGCCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGDoesGCCheck.h; path = dfg/DFGDoesGCCheck.h; sourceTree = "<group>"; };
+		FEC503FD2B51E09700176A93 /* LineColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineColumn.h; sourceTree = "<group>"; };
 		FEC5797223105B4800BCA83F /* VMInspectorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspectorInlines.h; sourceTree = "<group>"; };
 		FEC5797423105F4200BCA83F /* Integrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrity.cpp; sourceTree = "<group>"; };
 		FEC5797523105F4300BCA83F /* Integrity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrity.h; sourceTree = "<group>"; };
@@ -9501,6 +9503,7 @@
 				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
 				530F0A972AE0606900A0EEC0 /* LazyValueProfile.cpp */,
 				530F0A962AE0606900A0EEC0 /* LazyValueProfile.h */,
+				FEC503FD2B51E09700176A93 /* LineColumn.h */,
 				E3637EE8236E56B00096BD0A /* LinkTimeConstant.cpp */,
 				E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */,
 				53FA2AE21CF380390022711D /* LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp */,
@@ -11350,6 +11353,7 @@
 				99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */,
 				1409ECBF225E177400BEDD54 /* LeafExecutable.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
+				FEC503FE2B51E09700176A93 /* LineColumn.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */,
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
