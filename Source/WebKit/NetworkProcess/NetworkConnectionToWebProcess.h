@@ -118,7 +118,7 @@ struct DataKey;
 }
 
 class NetworkConnectionToWebProcess
-    : public RefCounted<NetworkConnectionToWebProcess>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkConnectionToWebProcess>
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     , public WebPaymentCoordinatorProxy::Client
 #endif
@@ -131,7 +131,11 @@ public:
 
     static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
-    
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkSession* networkSession();
 

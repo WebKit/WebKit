@@ -82,7 +82,7 @@ private:
     const WebCore::PlatformDisplayID m_displayID;
 #if ENABLE(GPU_PROCESS)
     Ref<IPC::Connection> m_connection;
-    mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    mutable RefPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     const WebPageProxyIdentifier m_pageProxyID;
     const WebCore::PageIdentifier m_pageID;
 #if ENABLE(VIDEO)

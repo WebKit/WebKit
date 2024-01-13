@@ -56,6 +56,16 @@
 
 namespace WebCore {
 
+void GraphicsContextGLTextureMapperANGLE::ref() const
+{
+    RefCounted::ref();
+}
+
+void GraphicsContextGLTextureMapperANGLE::deref() const
+{
+    RefCounted::deref();
+}
+
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     if (!makeContextCurrent())

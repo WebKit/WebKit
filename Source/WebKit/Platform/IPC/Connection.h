@@ -215,9 +215,11 @@ public:
     public:
         virtual void didClose(Connection&) = 0;
         virtual void didReceiveInvalidMessage(Connection&, MessageName) = 0;
-
-    protected:
         virtual ~Client() { }
+
+        virtual void ref() const = 0;
+        virtual void deref() const = 0;
+        virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
     };
 
     struct Identifier;
@@ -318,7 +320,7 @@ public:
 
     ~Connection();
 
-    Client* client() const { return m_client; }
+    RefPtr<Client> client() const { return m_client.get(); }
 
     enum UniqueIDType { };
     using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
@@ -537,7 +539,7 @@ private:
     void cancelAsyncReplyHandlers();
 
     static Lock s_connectionMapLock;
-    Client* m_client { nullptr };
+    ThreadSafeWeakPtr<Client> m_client;
     std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
     UniqueID m_uniqueID;
     bool m_isServer;
@@ -752,7 +754,8 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
         return Error::InvalidConnection;
 
     ASSERT(decoderOrError.value()->destinationID() == destinationID);
-    m_client->didReceiveMessage(*this, decoderOrError.value());
+    if (auto client = m_client.get())
+        client->didReceiveMessage(*this, decoderOrError.value());
     return Error::NoError;
 }
 

@@ -57,7 +57,7 @@ class WebSharedWorkerObjectConnection;
 
 enum class WebsiteDataType : uint32_t;
 
-class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
+class NetworkProcessConnection : public IPC::Connection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkProcessConnection> {
 public:
     static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
     {
@@ -93,6 +93,10 @@ public:
 #endif
 
     void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
 private:
     NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);

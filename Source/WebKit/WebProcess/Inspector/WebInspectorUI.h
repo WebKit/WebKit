@@ -53,7 +53,7 @@ class WebInspectorUIExtensionController;
 #endif
 
 class WebInspectorUI final
-    : public RefCounted<WebInspectorUI>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebInspectorUI>
     , private IPC::Connection::Client
     , public WebCore::InspectorFrontendClient {
 public:
@@ -175,6 +175,10 @@ public:
     void pageUnpaused() override;
 
     bool isUnderTest() override { return m_underTest; }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
 private:
     explicit WebInspectorUI(WebPage&);

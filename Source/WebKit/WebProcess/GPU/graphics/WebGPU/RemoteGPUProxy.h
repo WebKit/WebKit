@@ -48,7 +48,7 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy> {
+class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<RemoteGPUProxy> create(IPC::Connection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
@@ -59,8 +59,9 @@ public:
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
 
-    void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
-    void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
     void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 

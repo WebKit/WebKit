@@ -73,10 +73,14 @@ class RemoteImageBufferProxyFlushState;
 class RemoteImageBufferSetProxy;
 
 class RemoteRenderingBackendProxy
-    : public IPC::Connection::Client, SerialFunctionDispatcher {
+    : public IPC::Connection::Client, SerialFunctionDispatcher, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRenderingBackendProxy> {
 public:
-    static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
-    static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+    static Ref<RemoteRenderingBackendProxy> create(WebPage&);
+    static Ref<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
     ~RemoteRenderingBackendProxy();
 

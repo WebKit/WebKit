@@ -457,10 +457,10 @@ void Connection::setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQu
 
 bool Connection::open(Client& client, SerialFunctionDispatcher& dispatcher)
 {
-    ASSERT(!m_client);
+    ASSERT(!m_client.get());
     if (!platformPrepareForOpen())
         return false;
-    m_client = &client;
+    m_client = client;
     m_syncState = SyncMessageState::get(dispatcher);
     platformOpen();
 
@@ -477,7 +477,8 @@ bool Connection::platformPrepareForOpen()
 void Connection::invalidate()
 {
     m_isValid = false;
-    if (!m_client)
+    auto client = m_client.get();
+    if (!client)
         return;
     assertIsCurrent(dispatcher());
     m_client = nullptr;
@@ -1101,7 +1102,8 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         m_syncState->dispatchMessages();
     } else {
         // Hand off both the decoder and encoder to the client.
-        wasHandled = m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
+        if (auto client = m_client.get())
+            wasHandled = client->didReceiveSyncMessage(*this, decoder, replyEncoder);
     }
 
 #if ENABLE(IPC_TESTING_API)
@@ -1121,7 +1123,8 @@ void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
     dispatchToClient([protectedThis = Ref { *this }, messageName] {
         if (!protectedThis->isValid())
             return;
-        protectedThis->m_client->didReceiveInvalidMessage(protectedThis, messageName);
+        if (auto client = protectedThis->m_client.get())
+            client->didReceiveInvalidMessage(protectedThis, messageName);
     });
 }
 
@@ -1130,9 +1133,10 @@ void Connection::dispatchDidCloseAndInvalidate()
     dispatchToClient([protectedThis = Ref { *this }] {
         // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
         // then the connection client will be nullptr here.
-        if (!protectedThis->m_client)
+        auto client = protectedThis->m_client.get();
+        if (!client)
             return;
-        protectedThis->m_client->didClose(protectedThis);
+        client->didClose(protectedThis);
         protectedThis->invalidate();
     });
 }
@@ -1196,7 +1200,8 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
 void Connection::dispatchMessage(Decoder& decoder)
 {
     assertIsCurrent(dispatcher());
-    RELEASE_ASSERT(m_client);
+    auto client = m_client.get();
+    RELEASE_ASSERT(client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
         auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
         if (!handler) {
@@ -1226,7 +1231,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     }
 #endif
 
-    m_client->didReceiveMessage(*this, decoder);
+    client->didReceiveMessage(*this, decoder);
 }
 
 void Connection::dispatchMessage(UniqueRef<Decoder> message)
@@ -1254,7 +1259,8 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
             if (m_ignoreInvalidMessageForTesting)
                 return;
 #endif
-            m_client->didReceiveInvalidMessage(*this, message->messageName());
+            if (auto client = m_client.get())
+                client->didReceiveInvalidMessage(*this, message->messageName());
             return;
         }
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
@@ -1291,8 +1297,10 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
 #if ENABLE(IPC_TESTING_API)
         && !m_ignoreInvalidMessageForTesting
 #endif
-        && isValid())
-        m_client->didReceiveInvalidMessage(*this, message->messageName());
+        && isValid()) {
+        if (auto client = m_client.get())
+            client->didReceiveInvalidMessage(*this, message->messageName());
+    }
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }

@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebInspector : public ThreadSafeRefCounted<WebInspector>, private IPC::Connection::Client {
+class WebInspector : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebInspector>, private IPC::Connection::Client {
 public:
     static Ref<WebInspector> create(WebPage&);
     ~WebInspector();
@@ -83,6 +83,10 @@ public:
     void setFrontendConnection(IPC::Connection::Handle&&);
 
     void disconnectFromPage() { close(); }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
 private:
     friend class WebInspectorClient;
