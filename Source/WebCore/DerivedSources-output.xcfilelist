@@ -2234,8 +2234,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPromiseRejectionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPromiseRejectionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredential.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredential.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialClientCapabilities.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialClientCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialCreationOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialCreationOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialDescriptor.cpp

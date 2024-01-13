@@ -40,7 +40,6 @@
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSPublicKeyCredentialClientCapabilities.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
@@ -311,15 +310,14 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& d
     m_client->isConditionalMediationAvailable(document.securityOrigin(), WTFMove(completionHandler));
 }
 
-void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&& promise) const
+void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&& promise) const
 {
     if (!m_client)  {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (HashMap<String, bool>&& resultMap) mutable {
-        auto result = PublicKeyCredentialClientCapabilities::create(WTFMove(resultMap));
+    auto completionHandler = [promise = WTFMove(promise)] (const Vector<KeyValuePair<String, bool>> result) mutable {
         promise.resolve(result);
     };
 

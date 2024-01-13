@@ -862,21 +862,21 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const Web
     handler(false);
 }
 
-void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::SecurityOriginData& originData, CapbilitiesCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::SecurityOriginData& originData, CapabilitiesCompletionHandler&& handler)
 {
     if (![getASCWebKitSPISupportClass() respondsToSelector:@selector(getClientCapabilitiesForRelyingParty:withCompletionHandler:)]) {
-        HashMap<String, bool> resultMap;
-        handler(resultMap);
+        Vector<KeyValuePair<String, bool>> capabilities;
+        handler(WTFMove(capabilities));
         return;
     }
 
     [getASCWebKitSPISupportClass() getClientCapabilitiesForRelyingParty:originData.securityOrigin()->domain() withCompletionHandler:makeBlockPtr([handler = WTFMove(handler)](NSDictionary<NSString *, NSNumber *> *result) mutable {
-        HashMap<String, bool> resultMap;
+        Vector<KeyValuePair<String, bool>> capabilities;
         for (NSString *key in result)
-            resultMap.set(key, result[key].boolValue);
+            capabilities.append({ key, result[key].boolValue });
 
-        ensureOnMainRunLoop([handler = WTFMove(handler), resultMap = WTFMove(resultMap)] () mutable {
-            handler(resultMap);
+        ensureOnMainRunLoop([handler = WTFMove(handler), capabilities = WTFMove(capabilities)] () mutable {
+            handler(WTFMove(capabilities));
         });
     }).get()];
 }

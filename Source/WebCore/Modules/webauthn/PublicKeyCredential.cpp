@@ -70,7 +70,7 @@ void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document
         page->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(document, WTFMove(promise));
 }
 
-void PublicKeyCredential::getClientCapabilities(Document& document, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&& promise)
+void PublicKeyCredential::getClientCapabilities(Document& document, DOMPromiseDeferred<IDLRecord<IDLDOMString, IDLBoolean>>&& promise)
 {
     if (auto* page = document.page())
         page->authenticatorCoordinator().getClientCapabilities(document, WTFMove(promise));
