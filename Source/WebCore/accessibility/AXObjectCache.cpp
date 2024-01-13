@@ -4653,7 +4653,7 @@ static bool validRelation(void* origin, void* target, AXRelationType relationTyp
 void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
 {
     AXTRACE("AXObjectCache::addRelation"_s);
-    AXLOG(makeString("origin: ", origin->debugDescription(), " target: ", target->debugDescription(), " relationType ", String::number(static_cast<uint>(relationType))));
+    AXLOG(makeString("origin: ", origin->debugDescription(), " target: ", target->debugDescription(), " relationType ", String::number(static_cast<uint8_t>(relationType))));
 
     if (!validRelation(origin, target, relationType)) {
         ASSERT_NOT_REACHED();
