@@ -73,7 +73,6 @@ namespace WebKit {
 
 class PaymentSetupConfiguration;
 class PaymentSetupFeatures;
-class WebPageProxy;
 
 class WebPaymentCoordinatorProxy
     : public IPC::MessageReceiver
@@ -106,6 +105,8 @@ public:
     friend class NetworkConnectionToWebProcess;
     explicit WebPaymentCoordinatorProxy(Client&);
     ~WebPaymentCoordinatorProxy();
+
+    void webProcessExited();
 
 private:
     // IPC::MessageReceiver
@@ -176,7 +177,7 @@ private:
     Client& m_client;
     std::optional<WebCore::PageIdentifier> m_destinationID;
 
-    enum class State {
+    enum class State : uint16_t {
         // Idle - Nothing's happening.
         Idle,
 
@@ -202,6 +203,10 @@ private:
         // CouponCodeChanged - Dispatching the couponcodechanged event and waiting for a reply.
         CouponCodeChanged,
 #endif
+
+        // Deactivating - Could not complete the payment and is about to idle.
+        // Currently only transitions here when the web process terminates while the payment coordinator is active.
+        Deactivating,
 
         // Completing - Completing the payment and waiting for presenterDidFinish to be called.
         Completing,

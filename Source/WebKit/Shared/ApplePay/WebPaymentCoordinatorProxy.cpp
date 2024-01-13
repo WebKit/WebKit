@@ -292,6 +292,7 @@ bool WebPaymentCoordinatorProxy::canBegin() const
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     case State::CouponCodeChanged:
 #endif
+    case State::Deactivating:
         return false;
     }
 }
@@ -312,6 +313,7 @@ bool WebPaymentCoordinatorProxy::canCancel() const
 
     case State::Completing:
     case State::Idle:
+    case State::Deactivating:
         return false;
     }
 }
@@ -332,6 +334,7 @@ bool WebPaymentCoordinatorProxy::canCompletePayment() const
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     case State::CouponCodeChanged:
 #endif
+    case State::Deactivating:
         return false;
     }
 }
@@ -352,8 +355,15 @@ bool WebPaymentCoordinatorProxy::canAbort() const
 
     case State::Completing:
     case State::Idle:
+    case State::Deactivating:
         return false;
     }
+}
+
+void WebPaymentCoordinatorProxy::webProcessExited()
+{
+    if (m_state != State::Idle)
+        m_state = State::Deactivating;
 }
 
 void WebPaymentCoordinatorProxy::didReachFinalState(WebCore::PaymentSessionError&& error)
