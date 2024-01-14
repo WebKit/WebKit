@@ -1044,8 +1044,7 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
     auto& rubyBaseDisplayBox = displayBoxes[rubyBaseStart];
     auto& rubyBaseLayoutBox = rubyBaseDisplayBox.layoutBox();
     ASSERT(rubyBaseDisplayBox.isInlineBox());
-    // FIXME: This is temporary and will be converted to logical.
-    auto baseBorderBoxVisualRect = Rect { rubyBaseDisplayBox.visualRectIgnoringBlockDirection() };
+    auto baseBorderBoxLogicalRect = BoxGeometry::borderBoxRect(formattingContext.geometryForBox(rubyBaseLayoutBox));
 
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (annotationBox)
@@ -1069,7 +1068,7 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
                 };
                 if (isNestedRubyBase()) {
                     auto nestedAnnotationMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(interlinearAnnotationBox));
-                    baseBorderBoxVisualRect.expandToContain(nestedAnnotationMarginBoxRect);
+                    baseBorderBoxLogicalRect.expandToContain(nestedAnnotationMarginBoxRect);
                 }
             }
 
@@ -1094,14 +1093,14 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
             if (RubyFormattingContext::hasInterCharacterAnnotation(rubyBaseLayoutBox)) {
                 auto letterSpacing = LayoutUnit { rubyBaseLayoutBox.style().letterSpacing() };
                 // FIXME: Consult the LineBox to see if letter spacing indeed applies.
-                baseBorderBoxVisualRect.setWidth(std::max(0_lu, baseBorderBoxVisualRect.width() - letterSpacing));
+                baseBorderBoxLogicalRect.setWidth(std::max(0_lu, baseBorderBoxLogicalRect.width() - letterSpacing));
             }
 
-            auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, baseBorderBoxVisualRect, formattingContext);
-            auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, baseBorderBoxVisualRect, formattingContext);
+            auto borderBoxLogicalTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, baseBorderBoxLogicalRect, formattingContext);
+            auto contentBoxLogicalSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, baseBorderBoxLogicalRect, formattingContext);
             auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
-            annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
-            annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
+            annotationBoxGeometry.setTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
+            annotationBoxGeometry.setContentBoxSize(toLayoutSize(contentBoxLogicalSize));
         };
         placeAndSizeAnnotationBox();
     }
@@ -1140,10 +1139,19 @@ void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displ
     }
     applyRubyOverhang(displayBoxes, interlinearRubyColumnRangeList);
 
+    auto lineBoxLogicalRect = lineBox().logicalRect();
+    auto writingMode = root().style().writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
     for (auto baseIndex : makeReversedRange(rubyBaseStartIndexListWithAnnotation)) {
         auto& annotationBox = *displayBoxes[baseIndex].layoutBox().associatedRubyAnnotationBox();
-        auto visualBorderBoxRect = BoxGeometry::borderBoxRect(formattingContext().geometryForBox(annotationBox));
-        insertRubyAnnotationBox(annotationBox, baseIndex + 1, { visualBorderBoxRect }, displayBoxes);
+        auto annotationBorderBoxVisualRect = [&] {
+            auto borderBoxLogicalRect = InlineRect { BoxGeometry::borderBoxRect(formattingContext().geometryForBox(annotationBox)) };
+            borderBoxLogicalRect.setTop(borderBoxLogicalRect.top() - lineBoxLogicalRect.top());
+            auto visualRect = flipLogicalRectToVisualForWritingModeWithinLine(borderBoxLogicalRect, lineBoxLogicalRect, writingMode);
+            isHorizontalWritingMode ? visualRect.moveVertically(lineBoxLogicalRect.top()) : visualRect.moveHorizontally(lineBoxLogicalRect.top());
+            return visualRect;
+        };
+        insertRubyAnnotationBox(annotationBox, baseIndex + 1, annotationBorderBoxVisualRect(), displayBoxes);
     }
 }
 
@@ -1173,18 +1181,14 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         auto moveBoxRangeToVisualLeft = [&](auto start, auto end, auto shiftValue) {
             for (auto index = start; index <= end; ++index) {
                 auto& displayBox = displayBoxes[index];
-                auto& layoutBox = displayBox.layoutBox();
                 isHorizontalWritingMode ? displayBox.moveHorizontally(-shiftValue) : displayBox.moveVertically(-shiftValue);
+
+                auto& layoutBox = displayBox.layoutBox();
                 if (displayBox.isInlineLevelBox() && !displayBox.isRootInlineBox())
                     formattingContext.geometryForBox(layoutBox).moveHorizontally(LayoutUnit { -shiftValue });
 
-                auto updateAnnotationGeometryIfNeeded = [&] {
-                    if (!layoutBox.isRubyBase() || !layoutBox.associatedRubyAnnotationBox())
-                        return;
-                    auto& annotationBoxGeometry = formattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox());
-                    isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -shiftValue }) : annotationBoxGeometry.moveVertically(LayoutUnit { -shiftValue });
-                };
-                updateAnnotationGeometryIfNeeded();
+                if (layoutBox.isRubyBase() && layoutBox.associatedRubyAnnotationBox())
+                    formattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox()).moveHorizontally(LayoutUnit { -shiftValue });
             }
         };
         if (beforeOverhang)
