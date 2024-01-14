@@ -44,6 +44,7 @@
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 
@@ -82,7 +83,7 @@ class ServiceWorkerStorageManager;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
-class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
+class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver, public CanMakeCheckedPtr {
 public:
     static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);

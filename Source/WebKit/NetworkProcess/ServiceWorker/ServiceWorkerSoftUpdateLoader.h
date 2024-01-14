@@ -31,6 +31,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ServiceWorkerJobData.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,7 +46,7 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkSession;
 
-class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader> {
+class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;

@@ -33,6 +33,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -61,7 +62,7 @@ class ServiceWorkerNavigationPreloader;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
-class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
+class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);

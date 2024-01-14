@@ -31,6 +31,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
@@ -47,7 +48,7 @@ struct ServiceWorkerContextData;
 
 enum class IsAppInitiated : bool { No, Yes };
 
-class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
+class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&&);
@@ -118,6 +119,8 @@ private:
     void handleClientUnload();
     void softUpdate();
 
+    CheckedRef<SWServer> checkedServer() const { return m_server; }
+
     ServiceWorkerRegistrationIdentifier m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;
     ServiceWorkerUpdateViaCache m_updateViaCache;
@@ -133,7 +136,7 @@ private:
     WallTime m_lastUpdateTime;
     
     HashCountedSet<SWServerConnectionIdentifier> m_connectionsWithClientRegistrations;
-    SWServer& m_server;
+    CheckedRef<SWServer> m_server;
 
     MonotonicTime m_creationTime;
     HashMap<SWServerConnectionIdentifier, HashSet<ScriptExecutionContextIdentifier>> m_clientsUsingRegistration;

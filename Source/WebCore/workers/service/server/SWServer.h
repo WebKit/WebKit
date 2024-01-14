@@ -44,6 +44,7 @@
 #include "ServiceWorkerTypes.h"
 #include "WorkerThreadMode.h"
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
@@ -80,10 +81,10 @@ struct ServiceWorkerContextData;
 struct ServiceWorkerRegistrationData;
 struct WorkerFetchResult;
 
-class SWServer : public CanMakeWeakPtr<SWServer> {
+class SWServer : public CanMakeWeakPtr<SWServer>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Connection : public CanMakeWeakPtr<Connection> {
+    class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr {
         WTF_MAKE_FAST_ALLOCATED;
         friend class SWServer;
     public:
@@ -93,7 +94,7 @@ public:
         Identifier identifier() const { return m_identifier; }
 
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
-        SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) { return m_server.doRegistrationMatching(topOrigin, clientURL); }
+        SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) { return m_server->doRegistrationMatching(topOrigin, clientURL); }
         void resolveRegistrationReadyRequests(SWServerRegistration&);
 
         using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<BackgroundFetchInformation, ExceptionData>&&)>;
@@ -123,8 +124,10 @@ public:
 
         virtual void contextConnectionCreated(SWServerToContextConnection&) = 0;
 
-        SWServer& server() { return m_server; }
-        const SWServer& server() const { return m_server; }
+        SWServer& server() { return m_server.get(); }
+        const SWServer& server() const { return m_server.get(); }
+
+        CheckedRef<SWServer> checkedServer() const { return m_server; }
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, Identifier);
@@ -149,7 +152,7 @@ public:
             CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)> callback;
         };
 
-        SWServer& m_server;
+        CheckedRef<SWServer> m_server;
         Identifier m_identifier;
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
@@ -183,7 +186,7 @@ public:
     void fireInstallEvent(SWServerWorker&);
     void runServiceWorkerAndFireActivateEvent(SWServerWorker&);
 
-    WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
+    WEBCORE_EXPORT RefPtr<SWServerWorker> workerByID(ServiceWorkerIdentifier) const;
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ScriptExecutionContextIdentifier&) const;
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> topLevelServiceWorkerClientFromPageIdentifier(const ClientOrigin&, PageIdentifier) const;
     String serviceWorkerClientUserAgent(const ClientOrigin&) const;

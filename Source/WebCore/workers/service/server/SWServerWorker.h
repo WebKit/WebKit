@@ -162,6 +162,8 @@ private:
     void terminateIfPossible();
     bool shouldBeTerminated() const;
 
+    CheckedPtr<SWServer> checkedServer() const;
+
     WeakPtr<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     WeakPtr<SWServerRegistration> m_registration;

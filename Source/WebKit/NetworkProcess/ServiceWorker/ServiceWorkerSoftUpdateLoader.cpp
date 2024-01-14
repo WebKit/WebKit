@@ -203,8 +203,8 @@ void ServiceWorkerSoftUpdateLoader::didFailLoading(const ResourceError& error)
 void ServiceWorkerSoftUpdateLoader::didComplete()
 {
     m_networkLoad = nullptr;
-    if (m_session)
-        m_session->removeSoftUpdateLoader(this);
+    if (CheckedPtr session = m_session.get())
+        session->removeSoftUpdateLoader(this);
 }
 
 } // namespace WebKit

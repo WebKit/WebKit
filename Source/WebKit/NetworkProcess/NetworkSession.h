@@ -46,6 +46,7 @@
 #include <WebCore/SWServerDelegate.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -101,8 +102,7 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkSession
-    : public WebCore::SWServerDelegate {
+class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);

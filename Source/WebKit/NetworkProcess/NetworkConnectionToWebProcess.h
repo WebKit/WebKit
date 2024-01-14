@@ -227,7 +227,7 @@ public:
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
 #endif
 
-    WeakPtr<WebSWServerToContextConnection> swContextConnection() { return m_swContextConnection.get(); }
+    WebSWServerToContextConnection* swContextConnection() { return m_swContextConnection.get(); }
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);

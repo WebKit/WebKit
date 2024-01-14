@@ -91,7 +91,7 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
 void WebSWOriginStore::didInvalidateSharedMemory()
 {
     for (auto& connection : m_webSWServerConnections)
-        sendStoreHandle(connection);
+        sendStoreHandle(CheckedRef { connection }.get());
 }
 
 } // namespace WebKit
