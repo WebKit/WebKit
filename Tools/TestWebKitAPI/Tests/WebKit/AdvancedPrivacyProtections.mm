@@ -890,10 +890,10 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
     auto webViewWithPrivacyProtections1 = createWebViewWithAdvancedPrivacyProtections();
     auto webViewWithPrivacyProtections2 = createWebViewWithAdvancedPrivacyProtections();
 
-    [webView1 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
-    [webView1 _test_waitForDidFinishNavigation];
     [webView2 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
     [webView2 _test_waitForDidFinishNavigation];
+    [webView1 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
+    [webView1 _test_waitForDidFinishNavigation];
     [webViewWithPrivacyProtections1 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
     [webViewWithPrivacyProtections1 _test_waitForDidFinishNavigation];
     [webViewWithPrivacyProtections2 loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
@@ -910,7 +910,7 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
         for (size_t i = 0; i < length; ++i) {
             if ([values.first characterAtIndex:i] == [values.second characterAtIndex:i])
                 continue;
-            EXPECT_EQ([values.first characterAtIndex:i], [values.second characterAtIndex:i]);
+            EXPECT_EQ((char)[values.first characterAtIndex:i], (char)[values.second characterAtIndex:i]);
             EXPECT_EQ(i, 0u);
         }
     }
@@ -920,6 +920,15 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
         [webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun]
     };
     EXPECT_FALSE([values.first isEqualToString:values.second]);
+    if ([values.first isEqualToString:values.second]) {
+        auto length = values.first.length > values.second.length ? values.second.length : values.first.length;
+        for (size_t i = 0; i < length; ++i) {
+            if ([values.first characterAtIndex:i] != [values.second characterAtIndex:i])
+                continue;
+            EXPECT_NE((char)[values.first characterAtIndex:i], (char)[values.second characterAtIndex:i]);
+            EXPECT_EQ(i, 0u);
+        }
+    }
 
     values = std::pair {
         [webViewWithPrivacyProtections1 callAsyncJavaScriptAndWait:scriptToRun],
