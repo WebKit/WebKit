@@ -127,7 +127,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
         // c. Let bc be BoundFunctionCreate(F, «this value»).
         boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, { }, 2, jsEmptyString(vm));
         RETURN_IF_EXCEPTION(scope, { });
-        boundCompare->reifyLazyPropertyIfNeeded(vm, globalObject, vm.propertyNames->name);
+        boundCompare->reifyLazyPropertyIfNeeded<>(vm, globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });
         boundCompare->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         // d. Set collator.[[boundCompare]] to bc.
