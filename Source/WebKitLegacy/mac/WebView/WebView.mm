@@ -204,6 +204,7 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/PlatformTextAlternatives.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteFrameClient.h>
@@ -373,6 +374,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/ManagedConfigurationSoftLink.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
 #endif
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

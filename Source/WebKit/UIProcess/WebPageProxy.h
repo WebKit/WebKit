@@ -36,6 +36,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 
+#if USE(DICTATION_ALTERNATIVES)
+#include <WebCore/PlatformTextAlternatives.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -307,7 +311,6 @@ OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
-OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS QLPreviewPanel;
@@ -1068,7 +1071,7 @@ public:
     void clearDictationAlternatives(Vector<WebCore::DictationContext>&&);
 
 #if USE(DICTATION_ALTERNATIVES)
-    NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext);
+    PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext);
 #endif
 
     void hasMarkedText(CompletionHandler<void(bool)>&&);

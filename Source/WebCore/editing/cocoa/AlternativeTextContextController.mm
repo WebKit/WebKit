@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-DictationContext AlternativeTextContextController::addAlternatives(NSTextAlternatives *alternatives)
+DictationContext AlternativeTextContextController::addAlternatives(PlatformTextAlternatives *alternatives)
 {
     if (!alternatives)
         return { };
@@ -39,7 +39,7 @@ DictationContext AlternativeTextContextController::addAlternatives(NSTextAlterna
     }).iterator->value;
 }
 
-void AlternativeTextContextController::replaceAlternatives(NSTextAlternatives *alternatives, DictationContext context)
+void AlternativeTextContextController::replaceAlternatives(PlatformTextAlternatives *alternatives, DictationContext context)
 {
     removeAlternativesForContext(context);
     if (!alternatives)
@@ -49,7 +49,7 @@ void AlternativeTextContextController::replaceAlternatives(NSTextAlternatives *a
     m_alternatives.set(context, alternatives);
 }
 
-NSTextAlternatives *AlternativeTextContextController::alternativesForContext(DictationContext context) const
+PlatformTextAlternatives *AlternativeTextContextController::alternativesForContext(DictationContext context) const
 {
     if (!context)
         return nil;

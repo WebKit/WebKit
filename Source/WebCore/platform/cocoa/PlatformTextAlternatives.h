@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DictationContext.h"
-#import "PlatformTextAlternatives.h"
-#import <wtf/HashMap.h>
-#import <wtf/RetainPtr.h>
+#pragma once
 
-@class PlatformTextAlternatives;
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PlatformTextAlternativesAdditions.h>
+#endif
 
-namespace WebCore {
-
-class AlternativeTextContextController {
-public:
-    DictationContext addAlternatives(PlatformTextAlternatives *);
-    void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
-    void removeAlternativesForContext(DictationContext);
-    void clear();
-
-    PlatformTextAlternatives *alternativesForContext(DictationContext) const;
-
-private:
-    HashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
-    HashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
-};
-
-} // namespace WebCore
+#if !defined(SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE)
+OBJC_CLASS NSTextAlternatives;
+#define PlatformTextAlternatives NSTextAlternatives
+#define SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE 0
+#endif

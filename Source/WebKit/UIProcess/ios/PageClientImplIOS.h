@@ -33,7 +33,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-OBJC_CLASS NSTextAlternatives;
+OBJC_CLASS PlatformTextAlternatives;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 

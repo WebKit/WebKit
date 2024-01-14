@@ -35,11 +35,13 @@
 
 namespace WebCore {
 
-TextAlternativeWithRange::TextAlternativeWithRange(NSTextAlternatives *anAlternatives, NSRange aRange)
-    : range { aRange }
-    , alternatives { anAlternatives }
+TextAlternativeWithRange::TextAlternativeWithRange(PlatformTextAlternatives *textAlternatives, NSRange aRange)
+    : range(aRange)
+    , alternatives(textAlternatives)
 {
 }
+
+#if PLATFORM(MAC)
 
 void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlternativeWithRange>& alternatives) {
     NSRange effectiveRange = NSMakeRange(0, 0);
@@ -54,5 +56,7 @@ void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlt
         effectiveRange.location = NSMaxRange(effectiveRange);
     } while (effectiveRange.location < length);
 }
+
+#endif // PLATFORM(MAC)
 
 } // namespace WebCore

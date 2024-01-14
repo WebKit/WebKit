@@ -66,6 +66,10 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+#include <WebCore/PlatformTextAlternatives.h>
+#endif
+
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
@@ -434,12 +438,12 @@ public:
     virtual void performSwitchHapticFeedback() { }
 
 #if USE(DICTATION_ALTERNATIVES)
-    virtual WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) = 0;
-    virtual void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) = 0;
+    virtual WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) = 0;
+    virtual void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
     virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;
-    virtual NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
+    virtual PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
 #endif
 
 #if PLATFORM(MAC)
