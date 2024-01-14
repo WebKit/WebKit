@@ -1946,37 +1946,39 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 
-#if !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+#if !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
 
-- (void)_scrollView:(WKScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
+- (void)_scrollView:(WKScrollView *)scrollView asynchronouslyHandleScrollEvent:(WKSEScrollViewScrollUpdate *)scrollEvent completion:(void (^)(BOOL handled))completion
 {
-    [self scrollView:scrollView handleScrollEvent:scrollEvent completion:completion];
+    [self scrollView:scrollView handleScrollUpdate:scrollEvent completion:completion];
 }
 
-#endif // !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+#endif // !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
 
-- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void(^)(BOOL handled))completion
+- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKSEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion
 {
     BOOL isHandledByDefault = !scrollView.scrollEnabled;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    if ([scrollEvent _scrollDeviceCategory] == _UIScrollDeviceCategoryOverlayScroll) {
+    if (update._scrollDeviceCategory == _UIScrollDeviceCategoryOverlayScroll) {
         completion(isHandledByDefault);
         return;
     }
 #endif
 
-    if (scrollEvent.phase == UIScrollPhaseMayBegin) {
+#if !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+    if (update.phase == UIScrollPhaseMayBegin) {
         completion(isHandledByDefault);
         return;
     }
+#endif
 
-    if (scrollEvent.phase == UIScrollPhaseBegan) {
+    if (update.phase == WKSEScrollViewScrollUpdatePhaseBegan) {
         _currentScrollGestureState = std::nullopt;
         _wheelEventCountInCurrentScrollGesture = 0;
     }
 
-    WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([scrollEvent locationInView:_contentView.get()]);
+    WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([update locationInView:_contentView.get()]);
     auto eventListeners = WebKit::eventListenerTypesAtPoint(_contentView.get(), scrollLocation);
     bool hasWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::Wheel);
     if (!hasWheelHandlers) {
@@ -1988,8 +1990,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // cancelled, so we can short-circuit them here.
     // We make an exception for end-phase events, similar to the logic in
     // EventHandler::handleWheelEventInAppropriateEnclosingBox.
-    CGVector deltaVector = [scrollEvent _adjustedAcceleratedDeltaInView:_contentView.get()];
-    if (!deltaVector.dx && !deltaVector.dy && scrollEvent.phase != UIScrollPhaseEnded)  {
+    if (WebKit::WebIOSEventFactory::translationInView(update, _contentView.get()).isZero() && update.phase != WKSEScrollViewScrollUpdatePhaseEnded) {
         completion(isHandledByDefault);
         return;
     }
@@ -2000,10 +2001,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     std::optional<WebKit::WebWheelEvent::Phase> overridePhase;
     // The first event with non-zero delta in a given gesture should be considered the
     // "Began" event in the WebCore sense (e.g. for deciding cancelability). Note that
-    // this may not be a UIScrollPhaseBegin event, nor even necessarily the first UIScrollPhaseChanged event.
+    // this may not be a WKSEScrollViewScrollUpdatePhaseBegin event, nor even necessarily the first WKSEScrollViewScrollUpdatePhaseChanged event.
     if (!_wheelEventCountInCurrentScrollGesture)
         overridePhase = WebKit::WebWheelEvent::PhaseBegan;
-    auto event = WebIOSEventFactory::createWebWheelEvent(scrollEvent, _contentView.get(), overridePhase);
+    auto event = WebKit::WebIOSEventFactory::createWebWheelEvent(update, _contentView.get(), overridePhase);
 
     _wheelEventCountInCurrentScrollGesture++;
     _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isHandledByDefault](bool handled) {

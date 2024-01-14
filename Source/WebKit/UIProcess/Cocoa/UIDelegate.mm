@@ -302,7 +302,7 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy& page, const Web
 #if PLATFORM(MAC)
     auto modifierFlags = WebEventFactory::toNSEventModifierFlags(modifiers);
 #else
-    auto modifierFlags = WebIOSEventFactory::toUIKeyModifierFlags(modifiers);
+    auto modifierFlags = WebKit::WebIOSEventFactory::toUIKeyModifierFlags(modifiers);
 #endif
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:modifierFlags userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }

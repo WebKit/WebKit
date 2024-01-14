@@ -32,9 +32,10 @@
 #import <WebCore/ScrollingTreeScrollingNodeDelegate.h>
 
 @class CALayer;
-@class UIScrollEvent;
 @class UIScrollView;
 @class WKBaseScrollView;
+@class WKSEScrollViewScrollUpdate;
+@class WKSEScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 
 namespace WebCore {
@@ -72,7 +73,7 @@ public:
     void repositionScrollingLayers();
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled));
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKSEScrollViewScrollUpdate *, void (^completion)(BOOL handled));
 #endif
 
     OptionSet<WebCore::TouchAction> activeTouchActions() const { return m_activeTouchActions; }

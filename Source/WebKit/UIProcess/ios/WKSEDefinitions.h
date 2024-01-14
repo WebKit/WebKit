@@ -31,14 +31,19 @@
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
-
 #import <WebKitAdditions/WKSEDefinitionsAdditions.h>
+#endif
 
-#else
-
-#define WKSEScrollViewDelegate UIScrollViewDelegate
-#define WKSEScrollView UIScrollView
-
+#ifndef SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#define SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE 0
+#define WKSEScrollView                              UIScrollView
+#define WKSEScrollViewDelegate                      UIScrollViewDelegate
+#define WKSEScrollViewScrollUpdate                  UIScrollEvent
+#define WKSEScrollViewScrollUpdatePhase             UIScrollPhase
+#define WKSEScrollViewScrollUpdatePhaseBegan        UIScrollPhaseBegan
+#define WKSEScrollViewScrollUpdatePhaseChanged      UIScrollPhaseChanged
+#define WKSEScrollViewScrollUpdatePhaseEnded        UIScrollPhaseEnded
+#define WKSEScrollViewScrollUpdatePhaseCancelled    UIScrollPhaseCancelled
 #endif
 
 #ifndef SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE

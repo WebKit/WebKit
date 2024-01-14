@@ -254,8 +254,8 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
         }
         if (auto* node = RemoteLayerTreeNode::forCALayer(view.layer)) {
             if (auto* actingParent = host.nodeForID(node->actingScrollContainerID())) {
-                if ([actingParent->uiView() isKindOfClass:[UIScrollView class]])
-                    return (UIScrollView *)actingParent->uiView();
+                if (auto scrollView = dynamic_objc_cast<UIScrollView>(actingParent->uiView()))
+                    return scrollView;
             }
 
             scrollersToSkip.add(node->stationaryScrollContainerIDs().begin(), node->stationaryScrollContainerIDs().end());

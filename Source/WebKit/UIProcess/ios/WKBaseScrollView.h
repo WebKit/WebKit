@@ -30,19 +30,12 @@
 #import "WKSEDefinitions.h"
 #import <UIKit/UIKit.h>
 
-@class UIScrollEvent;
+@class WKSEScrollViewScrollUpdate;
 @class WKBaseScrollView;
 
 @protocol WKBaseScrollViewDelegate <NSObject>
 
 - (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView;
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)event completion:(void(^)(BOOL handled))completion;
-#endif
-
-@optional
-- (UIScrollView *)actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView;
 
 @end
 
