@@ -106,6 +106,7 @@ public:
 
     // To call any of these methods include JSFunctionInlines.h
     bool isHostFunction() const;
+    bool isNonBoundHostFunction() const;
     FunctionExecutable* jsExecutable() const;
     Intrinsic intrinsic() const;
 
@@ -163,6 +164,8 @@ public:
         Lazy,
         Reified,
     };
+    enum class SetHasModifiedLengthOrName : uint8_t { Yes, No };
+    template <SetHasModifiedLengthOrName set = SetHasModifiedLengthOrName::Yes>
     PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
     bool canAssumeNameAndLengthAreOriginal(VM&);
