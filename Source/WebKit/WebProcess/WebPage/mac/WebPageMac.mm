@@ -919,8 +919,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     }
 
 #if ENABLE(PDF_PLUGIN)
-    if (is<HTMLPlugInImageElement>(element)) {
-        if (RefPtr pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
+    if (RefPtr embedOrObject = dynamicDowncast<HTMLPlugInImageElement>(element)) {
+        if (RefPtr pluginView = static_cast<PluginView*>(embedOrObject->pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.
             auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
             if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {

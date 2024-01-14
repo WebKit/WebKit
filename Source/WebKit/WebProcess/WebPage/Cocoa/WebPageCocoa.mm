@@ -425,7 +425,8 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    completionHandler(is<LocalFrame>(m_page->mainFrame()) ? attributedString(makeRangeSelectingNodeContents(Ref { *downcast<LocalFrame>(m_page->mainFrame()).document() })) : AttributedString());
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(Ref { *localFrame->document() })) : AttributedString());
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)

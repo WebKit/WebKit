@@ -1611,10 +1611,10 @@ Ref<API::Array> WebPage::trackedRepaintRects()
 
 PluginView* WebPage::focusedPluginViewForFrame(LocalFrame& frame)
 {
-    if (!is<PluginDocument>(frame.document()))
+    RefPtr pluginDocument = dynamicDowncast<PluginDocument>(frame.document());
+    if (!pluginDocument)
         return nullptr;
 
-    Ref pluginDocument = downcast<PluginDocument>(*frame.document());
     if (pluginDocument->focusedElement() != pluginDocument->pluginElement())
         return nullptr;
 
@@ -6550,8 +6550,8 @@ void WebPage::setTextAsync(const String& text)
         return;
     }
 
-    if (is<HTMLInputElement>(m_focusedElement)) {
-        downcast<HTMLInputElement>(*m_focusedElement).setValueForUser(text);
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(m_focusedElement)) {
+        input->setValueForUser(text);
         return;
     }
 
@@ -8159,8 +8159,8 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
 void WebPage::setCanShowPlaceholder(const WebCore::ElementContext& elementContext, bool canShowPlaceholder)
 {
     RefPtr<Element> element = elementForContext(elementContext);
-    if (is<HTMLTextFormControlElement>(element))
-        downcast<HTMLTextFormControlElement>(*element).setCanShowPlaceholder(canShowPlaceholder);
+    if (RefPtr textFormControl = dynamicDowncast<HTMLTextFormControlElement>(element))
+        textFormControl->setCanShowPlaceholder(canShowPlaceholder);
 }
 
 RefPtr<Element> WebPage::elementForContext(const ElementContext& elementContext) const
@@ -8438,17 +8438,17 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 
 void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& options, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
-    if (!is<HTMLElement>(element)) {
+    RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
+    if (!htmlElement) {
         if (completion)
             completion({ });
         return;
     }
 
-    Ref htmlElement = downcast<HTMLElement>(element);
-    if (corePage()->hasCachedTextRecognitionResult(htmlElement.get())) {
+    if (corePage()->hasCachedTextRecognitionResult(*htmlElement)) {
         if (completion) {
             RefPtr<Element> imageOverlayHost;
-            if (ImageOverlay::hasOverlay(htmlElement.get()))
+            if (ImageOverlay::hasOverlay(*htmlElement))
                 imageOverlayHost = &element;
             completion(WTFMove(imageOverlayHost));
         }
@@ -8465,15 +8465,14 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         return;
     }
 
-    auto* renderer = element.renderer();
-    if (!is<RenderImage>(renderer)) {
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderImage) {
         if (completion)
             completion({ });
         return;
     }
 
-    auto& renderImage = downcast<RenderImage>(*renderer);
-    auto bitmap = createShareableBitmap(renderImage, {
+    auto bitmap = createShareableBitmap(*renderImage, {
         std::nullopt,
         AllowAnimatedImages::No,
         options.allowSnapshots == TextRecognitionOptions::AllowSnapshots::Yes ? UseSnapshotForTransparentImages::Yes : UseSnapshotForTransparentImages::No
@@ -8496,7 +8495,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         completionHandlers.append(WTFMove(completion));
     m_elementsPendingTextRecognition.append({ WeakPtr { element }, WTFMove(completionHandlers) });
 
-    auto cachedImage = renderImage.cachedImage();
+    auto cachedImage = renderImage->cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
     sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(*bitmapHandle), options.sourceLanguageIdentifier, options.targetLanguageIdentifier), [webPage = WeakPtr { *this }, weakElement = WeakPtr { element }] (auto&& result) {
         RefPtr protectedPage { webPage.get() };
@@ -8538,7 +8537,8 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
 void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
     auto elementToUpdate = elementForContext(context);
-    if (!is<HTMLElement>(elementToUpdate)) {
+    RefPtr htmlElementToUpdate = dynamicDowncast<HTMLElement>(elementToUpdate);
+    if (!htmlElementToUpdate) {
         completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
@@ -8549,7 +8549,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         return;
     }
 
-    ImageOverlay::updateWithTextRecognitionResult(downcast<HTMLElement>(*elementToUpdate), result);
+    ImageOverlay::updateWithTextRecognitionResult(*htmlElementToUpdate, result);
     auto hitTestResult = localMainFrame->eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
@@ -8562,7 +8562,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
             return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
-        if (DataDetection::findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
+        if (DataDetection::findDataDetectionResultElementInImageOverlay(location, *htmlElementToUpdate))
             return TextRecognitionUpdateResult::DataDetector;
 #endif
 
@@ -8591,13 +8591,13 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
         return;
     }
 
-    auto* renderer = dynamicDowncast<RenderImage>(element->renderer());
-    if (!renderer) {
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer());
+    if (!renderImage) {
         completion({ }, { });
         return;
     }
 
-    auto bitmap = createShareableBitmap(*renderer);
+    auto bitmap = createShareableBitmap(*renderImage);
     if (!bitmap) {
         completion({ }, { });
         return;
@@ -8610,7 +8610,7 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
     }
 
     String mimeType;
-    if (auto* cachedImage = renderer->cachedImage()) {
+    if (auto* cachedImage = renderImage->cachedImage()) {
         if (auto* image = cachedImage->image())
             mimeType = image->mimeType();
     }
