@@ -643,6 +643,65 @@ private:
                 break;
             }
 
+            if (node->canSpeculateInt32(node->sourceFor(FixupPass)) && !m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                auto convertToInt32 = [&](Edge& edge) {
+                    Node* toNumber = m_insertionSet.insertNode(m_indexInBlock, SpecInt32Only, ToNumber, node->origin, Edge(edge.node(), StringUse));
+                    toNumber->clearFlags(NodeMustGenerate);
+                    edge.setNode(toNumber);
+                    fixIntOrBooleanEdge(edge);
+                };
+
+                auto fixupNode = [&](Node* node) {
+                    node->setOp(ArithMul);
+                    node->setResult(NodeResultNumber);
+                    if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                        node->setArithMode(Arith::Unchecked);
+                    else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                        node->setArithMode(Arith::CheckOverflow);
+                    else
+                        node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                };
+
+                if (leftChild->shouldSpeculateInt32() && rightChild->shouldSpeculateString()) {
+                    fixIntOrBooleanEdge(leftChild);
+                    convertToInt32(rightChild);
+                    fixupNode(node);
+                    break;
+                }
+
+                if (rightChild->shouldSpeculateInt32() && leftChild->shouldSpeculateString()) {
+                    fixIntOrBooleanEdge(rightChild);
+                    convertToInt32(leftChild);
+                    fixupNode(node);
+                    break;
+                }
+            }
+
+            if (node->shouldSpeculateNumber()) {
+                auto convertToDouble = [&](Edge& edge) {
+                    Node* toNumber = m_insertionSet.insertNode(m_indexInBlock, SpecBytecodeNumber, ToNumber, node->origin, Edge(edge.node(), StringUse));
+                    toNumber->clearFlags(NodeMustGenerate);
+                    edge.setNode(toNumber);
+                    fixDoubleOrBooleanEdge(edge);
+                };
+
+                if (leftChild->shouldSpeculateNumber() && rightChild->shouldSpeculateString()) {
+                    fixDoubleOrBooleanEdge(leftChild);
+                    convertToDouble(rightChild);
+                    node->setOp(ArithMul);
+                    node->setResult(NodeResultDouble);
+                    break;
+                }
+
+                if (rightChild->shouldSpeculateNumber() && leftChild->shouldSpeculateString()) {
+                    fixDoubleOrBooleanEdge(rightChild);
+                    convertToDouble(leftChild);
+                    node->setOp(ArithMul);
+                    node->setResult(NodeResultDouble);
+                    break;
+                }
+            }
+
             // There are cases where we can have BigInt + Int32 operands reaching ValueMul.
             // Imagine the scenario where ValueMul was never executed, but we can predict types
             // reaching the node:
