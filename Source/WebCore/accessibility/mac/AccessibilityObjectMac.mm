@@ -45,7 +45,7 @@
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
 
-#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "PlatformScreen.h"
 #import "WebAccessibilityObjectWrapperMac.h"
@@ -901,4 +901,4 @@ PlatformRoleMap createPlatformRoleMap()
 
 } // WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

@@ -661,7 +661,7 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
     String previousValue = innerTextValueFrom(*innerText);
     bool textIsChanged = value != previousValue;
     if (textIsChanged || !innerText->hasChildNodes()) {
-#if ENABLE(ACCESSIBILITY) && !PLATFORM(COCOA)
+#if !PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
 #if USE(ATSPI)
             if (auto* input = dynamicDowncast<HTMLInputElement>(*this); input && input->isPasswordField()) {
@@ -689,7 +689,7 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
                 innerText->appendChild(HTMLBRElement::create(document()));
         }
 
-#if ENABLE(ACCESSIBILITY) && (PLATFORM(COCOA) || USE(ATSPI))
+#if PLATFORM(COCOA) || USE(ATSPI)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->deferTextReplacementNotificationForTextControl(*this, previousValue);

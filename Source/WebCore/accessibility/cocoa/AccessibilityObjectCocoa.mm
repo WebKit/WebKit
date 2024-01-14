@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AccessibilityObject.h"
 
-#if ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "AXObjectCache.h"
 #import "TextIterator.h"
@@ -254,4 +254,4 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
+#endif // PLATFORM(COCOA)

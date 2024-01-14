@@ -138,10 +138,8 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
             downcast<AccessibilityMenuListPopup>(*childObjects[0]).didUpdateActiveOption(optionIndex);
     }
 
-#if ENABLE(ACCESSIBILITY)
     if (auto* cache = document->axObjectCache())
         cache->deferMenuListValueChange(element());
-#endif
 }
 
 } // namespace WebCore

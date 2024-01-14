@@ -28,8 +28,6 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AXObjectCache.h"
 
 #include "AXImage.h"
@@ -5069,5 +5067,3 @@ void AXObjectCache::onWidgetVisibilityChanged(RenderWidget* widget)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY)

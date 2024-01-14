@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include <WebCore/NotImplemented.h>
 
 namespace WTR {
@@ -1084,5 +1082,3 @@ bool AccessibilityUIElement::isInNonNativeTextControl() const
 }
 
 } // namespace  WTF
-
-#endif // ENABLE(ACCESSIBILITY)

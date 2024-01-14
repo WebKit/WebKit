@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AXObjectCache.h"
 
-#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "AXIsolatedObject.h"
 #import "AccessibilityObject.h"
@@ -990,4 +990,4 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
 
 }
 
-#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

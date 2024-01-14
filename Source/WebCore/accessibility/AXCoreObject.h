@@ -1355,15 +1355,9 @@ public:
     virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) = 0;
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) = 0;
 
-#if ENABLE(ACCESSIBILITY)
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) { m_wrapper = wrapper; }
     void detachWrapper(AccessibilityDetachmentType);
-#else
-    AccessibilityObjectWrapper* wrapper() const { return nullptr; }
-    void setWrapper(AccessibilityObjectWrapper*) { }
-    void detachWrapper(AccessibilityDetachmentType) { }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     virtual int accessibilitySecureFieldLength() = 0;
@@ -1493,13 +1487,11 @@ inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
         detachRemoteParts(detachmentType);
 }
 
-#if ENABLE(ACCESSIBILITY)
 inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentType)
 {
     detachPlatformWrapper(detachmentType);
     m_wrapper = nullptr;
 }
-#endif
 
 inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNecessary)
 {

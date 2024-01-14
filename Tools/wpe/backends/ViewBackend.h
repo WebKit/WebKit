@@ -28,9 +28,7 @@
 #include <memory>
 #include <wpe/wpe.h>
 
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 typedef struct _AtkObject AtkObject;
-#endif
 
 namespace WPEToolingBackends {
 
@@ -50,9 +48,7 @@ public:
         virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     void setAccessibleChild(AtkObject*);
-#endif
 
     void addActivityState(uint32_t);
     void removeActivityState(uint32_t);
@@ -62,9 +58,7 @@ protected:
 
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     static void notifyAccessibilityKeyEventListeners(struct wpe_input_keyboard_event* event);
-#endif
 
     void dispatchInputPointerEvent(struct wpe_input_pointer_event*);
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);

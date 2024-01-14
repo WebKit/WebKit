@@ -11,6 +11,8 @@ endif ()
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
+find_package(ATK 2.16.0 REQUIRED)
+find_package(ATKBridge REQUIRED)
 find_package(Cairo 1.16.0 REQUIRED)
 find_package(Fontconfig 2.13.0 REQUIRED)
 find_package(Freetype 2.9.0 REQUIRED)
@@ -39,7 +41,6 @@ include(GStreamerDefinitions)
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a WPE reviewer. There must be strong reason to support
 # changing the value of the option.
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCESSIBILITY PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ENCRYPTED_MEDIA PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PDFJS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
@@ -226,17 +227,6 @@ set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to 
 set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
 set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/wpe-webkit-${WPE_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
 
-if (ENABLE_ACCESSIBILITY)
-    find_package(ATK 2.16.0)
-    if (NOT ATK_FOUND)
-        message(FATAL_ERROR "atk is needed for ENABLE_ACCESSIBILITY")
-    endif ()
-    find_package(ATKBridge)
-    if (NOT ATKBridge_FOUND)
-        message(FATAL_ERROR "at-spi2-atk is needed for ENABLE_ACCESSIBILITY")
-    endif ()
-endif ()
-
 if (ENABLE_GAMEPAD AND (NOT (WPE_VERSION VERSION_GREATER_EQUAL 1.13.90)))
     message(FATAL_ERROR "libwpe>=1.13.90 is required for ENABLE_GAMEPAD")
 endif ()
@@ -369,8 +359,7 @@ if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     set(BUILD_REVISION "tarball")
 endif ()
 
-SET_AND_EXPOSE_TO_BUILD(HAVE_ACCESSIBILITY ${ENABLE_ACCESSIBILITY})
-SET_AND_EXPOSE_TO_BUILD(USE_ATSPI ${ENABLE_ACCESSIBILITY})
+SET_AND_EXPOSE_TO_BUILD(USE_ATSPI TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_EGL TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)

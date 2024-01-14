@@ -513,7 +513,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     , m_viewGestureGeometryCollector(makeUnique<ViewGestureGeometryCollector>(*this))
-#elif ENABLE(ACCESSIBILITY) && PLATFORM(GTK)
+#elif PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
 #endif
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)

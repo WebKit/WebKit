@@ -31,16 +31,13 @@
 #include "KeyAutoRepeatHandler.h"
 #include "PageClientImpl.h"
 #include "WebFullScreenManagerProxy.h"
+#include "WebKitWebViewAccessible.h"
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/glib/GRefPtr.h>
-
-#if ENABLE(ACCESSIBILITY)
-#include "WebKitWebViewAccessible.h"
-#endif
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 typedef struct _WebKitInputMethodContext WebKitInputMethodContext;
@@ -132,9 +129,7 @@ public:
     bool setFullScreen(bool);
 #endif
 
-#if ENABLE(ACCESSIBILITY)
     WebKitWebViewAccessible* accessible() const;
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     WebKit::TouchGestureController& touchGestureController() const { return *m_touchGestureController; }
@@ -188,9 +183,7 @@ private:
     bool m_viewWasAlreadyInFullScreen { false };
 #endif
 
-#if ENABLE(ACCESSIBILITY)
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
-#endif
 
     bool m_horizontalScrollActive { false };
     bool m_verticalScrollActive { false };

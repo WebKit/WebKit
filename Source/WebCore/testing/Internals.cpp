@@ -592,10 +592,8 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::sharedManager().setIsPlayingToAutomotiveHeadUnit(false);
 #endif
-#if ENABLE(ACCESSIBILITY)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibility();
-#endif
 
     MockPageOverlayClient::singleton().uninstallAllOverlays();
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AccessibilityController.h"
 #include "EventSendingController.h"
 #include "GCController.h"
 #include "TestRunner.h"
@@ -36,10 +37,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(ACCESSIBILITY)
-#include "AccessibilityController.h"
-#endif
 
 namespace WTR {
 
@@ -58,9 +55,7 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
-#if ENABLE(ACCESSIBILITY)
     AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
-#endif
 
     InjectedBundlePage* page() const;
     WKBundlePageRef pageRef() const;
@@ -189,9 +184,7 @@ private:
     WKRetainPtr<WKBundleRef> m_bundle;
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
-#if ENABLE(ACCESSIBILITY)
     RefPtr<AccessibilityController> m_accessibilityController;
-#endif
     RefPtr<TestRunner> m_testRunner;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;

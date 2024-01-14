@@ -1450,10 +1450,8 @@ ExceptionOr<void> HTMLElement::showPopover(const HTMLFormControlElement* invoker
 
     queuePopoverToggleEventTask(PopoverVisibilityState::Hidden, PopoverVisibilityState::Showing);
 
-#if ENABLE(ACCESSIBILITY)
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->onPopoverToggle(*this);
-#endif
 
     return { };
 }
@@ -1513,10 +1511,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         popoverData()->setPreviouslyFocusedElement(nullptr);
     }
 
-#if ENABLE(ACCESSIBILITY)
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->onPopoverToggle(*this);
-#endif
 
     return { };
 }

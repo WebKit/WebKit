@@ -429,7 +429,6 @@ private:
 #endif
 
     // A retained, platform specific object used to help manage notifications for this object.
-#if ENABLE(ACCESSIBILITY)
 #if PLATFORM(COCOA)
     WeakObjCPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;
@@ -450,7 +449,6 @@ private:
     static RefPtr<AccessibilityController> s_controller;
     RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
     std::unique_ptr<AccessibilityNotificationHandler> m_notificationHandler;
-#endif
 #endif
 };
 

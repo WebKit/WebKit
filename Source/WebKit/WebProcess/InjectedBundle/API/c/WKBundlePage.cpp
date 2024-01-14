@@ -249,14 +249,11 @@ void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef
 
 void WKAccessibilityEnable()
 {
-#if ENABLE(ACCESSIBILITY)
     WebCore::AXObjectCache::enableAccessibility();
-#endif
 }
 
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
-#if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
 
@@ -279,15 +276,10 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
         return 0;
     
     return root->wrapper();
-#else
-    UNUSED_PARAM(pageRef);
-    return 0;
-#endif
 }
 
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
-#if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return 0;
 
@@ -307,15 +299,11 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 
     auto* focus = axObjectCache->focusedObjectForPage(page);
     return focus ? focus->wrapper() : 0;
-#else
-    UNUSED_PARAM(pageRef);
-    return 0;
-#endif // ENABLE(ACCESSIBILITY)
 }
 
 void* WKAccessibilityFocusedUIElement()
 {
-#if ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     return WebKit::WebProcess::accessibilityFocusedUIElement();
 #else
     return 0;
@@ -324,7 +312,6 @@ void* WKAccessibilityFocusedUIElement()
 
 void WKAccessibilityAnnounce(WKBundlePageRef pageRef, WKStringRef message)
 {
-#if ENABLE(ACCESSIBILITY)
     if (!pageRef)
         return;
 
@@ -342,10 +329,6 @@ void WKAccessibilityAnnounce(WKBundlePageRef pageRef, WKStringRef message)
 
     if (auto* cache = core.document()->axObjectCache())
         cache->announce(WebKit::toWTFString(message));
-#else // ENABLE(ACCESSIBILITY)
-    UNUSED_PARAM(pageRef);
-    UNUSED_PARAM(message);
-#endif
 }
 
 void WKAccessibilitySetForceDeferredSpellChecking(bool shouldForce)
@@ -355,18 +338,12 @@ void WKAccessibilitySetForceDeferredSpellChecking(bool shouldForce)
 
 void WKAccessibilityEnableEnhancedAccessibility(bool enable)
 {
-#if ENABLE(ACCESSIBILITY)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(enable);
-#endif
 }
 
 bool WKAccessibilityEnhancedAccessibilityEnabled()
 {
-#if ENABLE(ACCESSIBILITY)
     return WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
-#else
-    return false;
-#endif
 }
 
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)

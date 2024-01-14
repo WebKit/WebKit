@@ -93,7 +93,6 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
 
 std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath)
 {
-#if ENABLE(ACCESSIBILITY)
     if (!m_accessibilityProxyPath.isNull())
         return m_accessibilityProxyPath;
 
@@ -126,9 +125,6 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         m_args.append("--log");
 
     return m_accessibilityProxyPath;
-#else
-    return std::nullopt;
-#endif
 }
 
 static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)

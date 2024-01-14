@@ -65,10 +65,8 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
-#if ENABLE(ACCESSIBILITY)
     Ref<AccessibilityUIElement> rootElement();
     RefPtr<AccessibilityUIElement> focusedElement();
-#endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
     void announce(JSStringRef);
@@ -92,11 +90,6 @@ public:
     void resetToConsistentState();
 
     void overrideClient(JSStringRef clientType);
-
-#if !ENABLE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
-    RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }
-    RefPtr<AccessibilityUIElement> focusedElement() { return nullptr; }
-#endif
 
 private:
     AccessibilityController();

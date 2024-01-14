@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AccessibilityCommonCocoa.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import "InjectedBundle.h"
@@ -2633,5 +2631,3 @@ bool AccessibilityUIElement::isInNonNativeTextControl() const
 }
 
 } // namespace WTR
-
-#endif // ENABLE(ACCESSIBILITY)

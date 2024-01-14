@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 
 #include "JSAccessibilityUIElement.h"
@@ -91,14 +89,14 @@ bool AccessibilityUIElement::supportsExpanded() const { return false; }
 #endif
 
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+#if PLATFORM(COCOA)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return nullptr; }
 #endif
 
-#if !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
+#if !PLATFORM(MAC)
 bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* marker) { return !isTextMarkerValid(marker); }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
@@ -117,9 +115,9 @@ bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 JSValueRef AccessibilityUIElement::columns() { return { }; }
-#endif // !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
+#endif // !PLATFORM(MAC))
 
-#if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+#if !PLATFORM(COCOA)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const { return nullptr; }
 
@@ -145,7 +143,7 @@ void AccessibilityUIElement::dismiss() { }
 JSValueRef AccessibilityUIElement::children() const { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
-#endif // !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+#endif // !PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::controllerElementAtIndex(unsigned) { return nullptr; }
@@ -176,4 +174,3 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsig
 #endif // PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 
 } // namespace WTR
-#endif // ENABLE(ACCESSIBILITY)

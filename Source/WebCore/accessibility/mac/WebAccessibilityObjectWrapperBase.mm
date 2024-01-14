@@ -29,8 +29,6 @@
 #import "config.h"
 #import "WebAccessibilityObjectWrapperBase.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #import "AXCoreObject.h"
 #import "AXIsolatedObject.h"
 #import "AXObjectCache.h"
@@ -933,5 +931,3 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParamet
 }
 
 @end
-
-#endif // ENABLE(ACCESSIBILITY)

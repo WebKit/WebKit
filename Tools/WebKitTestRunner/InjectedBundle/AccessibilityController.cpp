@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -268,5 +266,3 @@ void AXThread::threadRunLoopSourceCallback()
 #endif // PLATFORM(COCOA)
 
 } // namespace WTR
-#endif // ENABLE(ACCESSIBILITY)
-

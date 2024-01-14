@@ -702,15 +702,10 @@ public:
     void overrideAttachmentParent(AccessibilityObject*) { }
 #endif
 
-#if ENABLE(ACCESSIBILITY)
     // A platform-specific method for determining if an attachment is ignored.
     bool accessibilityIgnoreAttachment() const;
     // Gives platforms the opportunity to indicate if an object should be included.
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const;
-#else
-    bool accessibilityIgnoreAttachment() const { return true; }
-    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return AccessibilityObjectInclusion::DefaultBehavior; }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     int accessibilitySecureFieldLength() override;
@@ -848,7 +843,6 @@ protected: // FIXME: Make the data members private.
     bool m_subtreeDirty { false };
 };
 
-#if ENABLE(ACCESSIBILITY)
 inline bool AccessibilityObject::hasDisplayContents() const
 {
     return is<Element>(node()) && downcast<Element>(node())->hasDisplayContents();
@@ -869,23 +863,8 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
 {
     return previousLineStartPositionInternal(position).value_or(VisiblePosition());
 }
-#else
-inline bool AccessibilityObject::hasDisplayContents() const { return false; }
-inline void AccessibilityObject::recomputeIsIgnored() { }
-inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&) const { return std::nullopt; }
-inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition&) const { return { }; }
-#endif
 
-#if !ENABLE(ACCESSIBILITY)
-inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
-inline String AccessibilityObject::localizedActionVerb() const { return emptyString(); }
-inline String AccessibilityObject::actionVerb() const { return emptyString(); }
-inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
-inline void AccessibilityObject::updateBackingStore() { }
-inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
-#endif
-
-#if !(ENABLE(ACCESSIBILITY) && USE(ATSPI))
+#if !USE(ATSPI)
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
 inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
 #endif

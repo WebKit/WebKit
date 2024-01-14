@@ -154,11 +154,7 @@ void AccessibilityObject::detachRemoteParts(AccessibilityDetachmentType detachme
 
 bool AccessibilityObject::isDetached() const
 {
-#if ENABLE(ACCESSIBILITY)
     return !wrapper();
-#else
-    return true;
-#endif
 }
 
 OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlags() const
@@ -1993,8 +1989,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
     // Both "true" (case-insensitive) and the empty string count as true.
     return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true"_s);
 }
-    
-#if ENABLE(ACCESSIBILITY)
+
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull() || !node())
@@ -2020,7 +2015,6 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
 
     return lineCount;
 }
-#endif
 
 // NOTE: Consider providing this utility method as AX API
 CharacterRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange& positionRange) const
@@ -2062,7 +2056,6 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
     return lineForPosition(visiblePositionForIndex(index, false));
 }
 
-#if ENABLE(ACCESSIBILITY)
 void AccessibilityObject::updateBackingStore()
 {
     if (!axObjectCache())
@@ -2080,7 +2073,6 @@ void AccessibilityObject::updateBackingStore()
     
     updateChildrenIfNecessary();
 }
-#endif
 
 const AccessibilityScrollView* AccessibilityObject::ancestorAccessibilityScrollView(bool includeSelf) const
 {
@@ -2129,7 +2121,6 @@ LocalFrameView* AccessibilityObject::documentFrameView() const
     return object->documentFrameView();
 }
 
-#if ENABLE(ACCESSIBILITY)
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool updateChildrenIfNeeded)
 {
     if (updateChildrenIfNeeded)
@@ -2137,7 +2128,6 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::chi
 
     return m_children;
 }
-#endif
 
 void AccessibilityObject::updateChildrenIfNecessary()
 {
@@ -2286,8 +2276,7 @@ const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRo
         return nullAtom();
     }
 }
-    
-#if ENABLE(ACCESSIBILITY)
+
 String AccessibilityObject::localizedActionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -2360,7 +2349,6 @@ String AccessibilityObject::actionVerb() const
 #endif
     return { };
 }
-#endif
 
 bool AccessibilityObject::ariaIsMultiline() const
 {

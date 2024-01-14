@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=ACCESSIBILITY,
-] interface AccessibilityController {
+interface AccessibilityController {
     undefined enableEnhancedAccessibility(boolean enable);
     readonly attribute boolean enhancedAccessibilityEnabled;
     undefined setIsolatedTreeMode(boolean enable);

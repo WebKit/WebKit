@@ -612,7 +612,7 @@ bool platformDrivenTextCheckerEnabled()
 
 bool platformOrClientDrivenTextCheckerEnabled()
 {
-#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     if (!AXObjectCache::shouldSpellCheck())
         return true;
 #endif

@@ -552,12 +552,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
-#if ENABLE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
     m_accessibilityController->setForceDeferredSpellChecking(false);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
-#endif
 #endif
 #if ENABLE(VIDEO)
     if (!m_captionUserPreferencesTestingModeToken)
@@ -610,9 +608,7 @@ void InjectedBundle::done()
         page()->stopLoading();
     setTopLoadingFrame(0);
 
-#if ENABLE(ACCESSIBILITY)
     m_accessibilityController->resetToConsistentState();
-#endif
 
     auto body = adoptWK(WKMutableDictionaryCreate());
 

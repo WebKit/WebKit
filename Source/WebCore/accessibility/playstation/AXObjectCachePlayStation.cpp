@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityObject.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -155,5 +153,3 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY)
