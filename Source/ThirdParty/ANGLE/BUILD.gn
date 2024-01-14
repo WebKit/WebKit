@@ -149,17 +149,7 @@ config("internal_config") {
     "src",
   ]
 
-  # Handle breaking changes in VulkanMemoryAllocator.
-  angle_vma_version_define = "ANGLE_VMA_VERSION="
-  if (defined(angle_vma_version)) {
-    angle_vma_version_define += angle_vma_version
-  } else {
-    # Default to 2.3.0. This can be bumped and include guards removed when all
-    # clients have migrated to 3.x.
-    angle_vma_version_define += 2003000
-  }
-
-  defines = [ angle_vma_version_define ]
+  defines = []
 
   if (is_win) {
     defines += [ "ANGLE_IS_WIN" ]

@@ -4764,6 +4764,10 @@ void ContextVk::updateColorMasks()
                                                  framebufferVk->getEmulatedAlphaAttachmentMask(),
                                                  framebufferVk->getState().getEnabledDrawBuffers());
 
+    // This function may be called outside of ContextVk::syncState, and so invalidates the graphics
+    // pipeline.
+    invalidateCurrentGraphicsPipeline();
+
     onColorAccessChange();
 }
 
@@ -4795,6 +4799,10 @@ void ContextVk::updateBlendFuncsAndEquations()
 
     mGraphicsPipelineDesc->updateBlendEquations(&mGraphicsPipelineTransition, blendStateExt,
                                                 mCachedDrawFramebufferColorAttachmentMask);
+
+    // This function may be called outside of ContextVk::syncState, and so invalidates the graphics
+    // pipeline.
+    invalidateCurrentGraphicsPipeline();
 }
 
 void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples)
@@ -6338,6 +6346,13 @@ void ContextVk::onDrawFramebufferRenderPassDescChange(FramebufferVk *framebuffer
     if (renderPassDescChangedOut)
     {
         // If render pass desc has changed while processing the dirty bits, notify the caller.
+        // In most paths, |renderPassDescChangedOut| is nullptr and the pipeline will be
+        // invalidated.
+        //
+        // |renderPassDescChangedOut| only serves |ContextVk::handleDirtyGraphicsRenderPass|, which
+        // may need to reprocess the pipeline while processing dirty bits.  At that point, marking
+        // the pipeline dirty is ineffective, and the pipeline dirty bit handler is directly called
+        // as a result of setting this variable to true.
         *renderPassDescChangedOut = true;
     }
     else

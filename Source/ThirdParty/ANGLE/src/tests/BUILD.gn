@@ -1535,7 +1535,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   template("angle_deqp_core_gtest") {
     _api = target_name
     forward_variables_from(invoker, [ "mustpass_suffix" ])
-    if (mustpass_suffix != "master") {
+    if (mustpass_suffix != "main") {
       target_name = "${_api}_${mustpass_suffix}"
       target_name = string_replace(target_name, "-", "_")
     }
@@ -1564,14 +1564,14 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     defines = [ "ANGLE_DEQP_GLES2_TESTS" ]
     deps = [ ":angle_deqp_gles2_common" ]
     mustpass_dir = _aosp_gles_mustpass
-    mustpass_suffix = "master"
+    mustpass_suffix = "main"
   }
 
   angle_deqp_core_gtest("gles3") {
     defines = [ "ANGLE_DEQP_GLES3_TESTS" ]
     deps = [ ":angle_deqp_gles3_common" ]
     mustpass_dir = _aosp_gles_mustpass
-    mustpass_suffix = "master"
+    mustpass_suffix = "main"
   }
 
   angle_deqp_core_gtest("gles3") {
@@ -1585,7 +1585,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     defines = [ "ANGLE_DEQP_GLES31_TESTS" ]
     deps = [ ":angle_deqp_gles31_common" ]
     mustpass_dir = _aosp_gles_mustpass
-    mustpass_suffix = "master"
+    mustpass_suffix = "main"
   }
 
   angle_deqp_core_gtest("gles31") {
@@ -1599,7 +1599,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     defines = [ "ANGLE_DEQP_EGL_TESTS" ]
     sources = deqp_egl_sources
     mustpass_dir = _aosp_egl_mustpass
-    mustpass_suffix = "master"
+    mustpass_suffix = "main"
   }
 
   if (is_android) {
@@ -1685,32 +1685,32 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   angle_deqp_khr_gtest("khr_gles2") {
     defines = [ "ANGLE_DEQP_KHR_GLES2_TESTS" ]
-    mustpass_name = "gles2-khr-master.txt"
+    mustpass_name = "gles2-khr-main.txt"
     api = "gles2"
   }
 
   angle_deqp_khr_gtest("khr_gles3") {
     defines = [ "ANGLE_DEQP_KHR_GLES3_TESTS" ]
-    mustpass_name = "gles3-khr-master.txt"
+    mustpass_name = "gles3-khr-main.txt"
     api = "gles3"
   }
 
   angle_deqp_khr_gtest("khr_gles31") {
     defines = [ "ANGLE_DEQP_KHR_GLES31_TESTS" ]
-    mustpass_name = "gles31-khr-master.txt"
+    mustpass_name = "gles31-khr-main.txt"
     api = "gles31"
   }
 
   angle_deqp_khr_gtest("khr_gles32") {
     defines = [ "ANGLE_DEQP_KHR_GLES32_TESTS" ]
-    mustpass_name = "gles32-khr-master.txt"
+    mustpass_name = "gles32-khr-main.txt"
     api = "gles32"
   }
 
   # The core Desktop GL CTS is in the same category as these KHR tests.
   angle_deqp_khr_gtest("gl46") {
     defines = [ "ANGLE_DEQP_GL_TESTS" ]
-    mustpass_name = "gl46-master.txt"
+    mustpass_name = "gl46-main.txt"
     api = "gl46"
   }
 
@@ -1733,13 +1733,13 @@ if (build_angle_deqp_tests && !is_fuchsia) {
 
   angle_deqp_khr_noctx_gtest("khr_noctx_gles2") {
     defines = [ "ANGLE_DEQP_KHR_NOCTX_GLES2_TESTS" ]
-    mustpass_name = "gles2-khr-noctx-master.txt"
+    mustpass_name = "gles2-khr-noctx-main.txt"
     api = "gles2"
   }
 
   angle_deqp_khr_noctx_gtest("khr_noctx_gles32") {
     defines = [ "ANGLE_DEQP_KHR_NOCTX_GLES32_TESTS" ]
-    mustpass_name = "gles32-khr-noctx-master.txt"
+    mustpass_name = "gles32-khr-noctx-main.txt"
     api = "gles32"
   }
 

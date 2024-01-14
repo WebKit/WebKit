@@ -6526,8 +6526,6 @@ TEST_P(ImageTest, MultithreadedAHBImportAndUseAsTexture)
     auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
         ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
 
-        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Start));
-
         EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
 
         // Wait for thread 0 to set up
@@ -6628,8 +6626,6 @@ TEST_P(ImageTest, MultithreadedAHBImportAndUseAsRenderbuffer)
 
     auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
         ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
-
-        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Start));
 
         EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
 

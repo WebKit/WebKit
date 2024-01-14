@@ -64,16 +64,16 @@ constexpr char kSupportPath[] = "src/tests/deqp_support/";
 #define EGL_CTS_DIR(PATH) "external/openglcts/data/mustpass/egl/" PATH
 
 const char *gCaseListFiles[] = {
-    EGL_CTS_DIR("aosp_mustpass/main/egl-master.txt"),
-    GLES_CTS_DIR("aosp_mustpass/main/gles2-master.txt"),
-    GLES_CTS_DIR("aosp_mustpass/main/gles3-master.txt"),
-    GLES_CTS_DIR("aosp_mustpass/main/gles31-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass/main/gles2-khr-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass/main/gles3-khr-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass/main/gles31-khr-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass/main/gles32-khr-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles2-khr-noctx-master.txt"),
-    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles32-khr-noctx-master.txt"),
+    EGL_CTS_DIR("aosp_mustpass/main/egl-main.txt"),
+    GLES_CTS_DIR("aosp_mustpass/main/gles2-main.txt"),
+    GLES_CTS_DIR("aosp_mustpass/main/gles3-main.txt"),
+    GLES_CTS_DIR("aosp_mustpass/main/gles31-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass/main/gles2-khr-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass/main/gles3-khr-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass/main/gles31-khr-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass/main/gles32-khr-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles2-khr-noctx-main.txt"),
+    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles32-khr-noctx-main.txt"),
     GLES_CTS_DIR("khronos_mustpass_single/main/gles32-khr-single.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-rotate-landscape.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-rotate-reverse-portrait.txt"),
@@ -85,7 +85,7 @@ const char *gCaseListFiles[] = {
     GLES_CTS_DIR("aosp_mustpass/main/gles3-565-no-depth-no-stencil.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles31-multisample.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles31-565-no-depth-no-stencil.txt"),
-    GL_CTS_DIR("khronos_mustpass/main/gl46-master.txt"),
+    GL_CTS_DIR("khronos_mustpass/main/gl46-main.txt"),
 };
 
 const std::vector<const char *> gTestSuiteConfigParameters[] = {

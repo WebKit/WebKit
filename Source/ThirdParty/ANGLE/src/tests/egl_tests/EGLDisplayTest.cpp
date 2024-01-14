@@ -53,6 +53,24 @@ class EGLDisplayTest : public ANGLETest<>
     }
 };
 
+// Tests that an eglInitialize can be re-initialized.  The spec says:
+//
+// > Initializing an already-initialized display is allowed, but the only effect of such a call is
+// to return EGL_TRUE and update the EGL version numbers
+TEST_P(EGLDisplayTest, InitializeMultipleTimes)
+{
+    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    EGLint major = 0, minor = 0;
+    EXPECT_EGL_TRUE(eglInitialize(display, &major, &minor) != EGL_FALSE);
+    for (uint32_t i = 0; i < 10; ++i)
+    {
+        EGLint retryMajor = 123456, retryMinor = -1;
+        EXPECT_EGL_TRUE(eglInitialize(display, &retryMajor, &retryMinor) != EGL_FALSE);
+        EXPECT_EQ(major, retryMajor) << i;
+        EXPECT_EQ(minor, retryMinor) << i;
+    }
+}
+
 // Tests that an EGLDisplay can be re-initialized.
 TEST_P(EGLDisplayTest, InitializeTerminateInitialize)
 {

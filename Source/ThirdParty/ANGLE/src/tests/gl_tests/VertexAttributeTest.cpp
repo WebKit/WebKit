@@ -2464,10 +2464,10 @@ void main() {
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, kInstanceCount);
 
         EXPECT_GL_NO_ERROR();
-        EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 2, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::yellow);
+        EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 2, GLColor::red) << i;
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green) << i;
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue) << i;
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::yellow) << i;
 
         glBindVertexArray(vao[1]);
         glUseProgram(computeProgram.get());
@@ -2478,11 +2478,12 @@ void main() {
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, kInstanceCount);
 
         EXPECT_GL_NO_ERROR();
-        EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 2, GLColor::yellow);
-        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::blue);
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 2, GLColor::yellow) << i;
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::blue) << i;
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green) << i;
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::red) << i;
     }
+    ASSERT_GL_NO_ERROR();
 }
 
 TEST_P(VertexAttributeTestES31, UseComputeShaderToUpdateVertexBuffer)

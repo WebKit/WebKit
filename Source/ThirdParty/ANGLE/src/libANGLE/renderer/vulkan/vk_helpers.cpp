@@ -3625,9 +3625,6 @@ void BufferPool::addStats(std::ostringstream *out) const
         const std::unique_ptr<BufferBlock> &block = mBufferBlocks[i];
         vma::StatInfo statInfo;
         block->calculateStats(&statInfo);
-#if ANGLE_VMA_VERSION < 3000000
-        VkDeviceSize unusedBytes = statInfo.unusedBytes;
-#else
         ASSERT(statInfo.basicInfo.blockCount == 1);
         INFO() << "[" << i << "]={" << " allocationCount:" << statInfo.basicInfo.allocationCount
                << " blockBytes:" << statInfo.basicInfo.blockBytes
@@ -3639,7 +3636,6 @@ void BufferPool::addStats(std::ostringstream *out) const
                << " unusedRangeSizeMax:" << statInfo.unusedRangeSizeMax << " }";
         VkDeviceSize unusedBytes =
             statInfo.basicInfo.blockBytes - statInfo.basicInfo.allocationBytes;
-#endif
         totalUnusedBytes += unusedBytes;
         totalMemorySize += block->getMemorySize();
     }

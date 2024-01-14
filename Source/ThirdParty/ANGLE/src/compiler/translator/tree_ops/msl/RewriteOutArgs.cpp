@@ -155,14 +155,66 @@ class Rewriter : public TIntermRebuild
                 break;
 
                 default:
-                    break;
+                {
+                    // If a function directly accesses global or stage output variables, the
+                    // relevant internal struct is passed in as a parameter during translation.
+                    // Ensure it is included in the aliasing checks.
+                    const TVariable *var = GetVariable(*args[i]);
+                    if (var != nullptr && var->symbolType() == SymbolType::AngleInternal)
+                    {
+                        // These names are set in Pipeline::getStructInstanceName
+                        const ImmutableString &name = var->name();
+                        if (name == "vertexOut" || name == "fragmentOut" ||
+                            name == "nonConstGlobals")
+                        {
+                            mVarBuffer.insert(var);
+                        }
+                    }
+                }
+                break;
             }
         }
 
+        // Non-symbol (e.g., TIntermBinary) parameters are cached as null pointers.
         const bool hasIndeterminateVar = mVarBuffer.find(nullptr);
 
         if (!mightAlias)
         {
+            // Support aliasing when there is only one unresolved parameter
+            // and at least one resolved parameter. This may happen in the
+            // following cases:
+            //
+            //   - A struct member (or an array element) is passed along with the struct
+            //
+            //         struct S { float f; };
+            //         void foo(out S a, out float b) {...}
+            //         void bar() {
+            //             S s;
+            //             foo(s, s.f);
+            //         }
+            //
+            //     mVarBuffer: s and nullptr (for s.f)
+            //
+            //   - A global (or built-in) variable is passed as an out/inout
+            //     parameter and also used in the called function directly
+            //
+            //         float x;
+            //         bool foo(out float a) {
+            //             a = 2.0;
+            //             return x == 1.0 && a == 2.0;
+            //         }
+            //         void bar() {
+            //             x = 1.0;
+            //             foo(x); // == true
+            //         }
+            //
+            //     In this case, foo and x will be translated to
+            //
+            //         struct ANGLE_NonConstGlobals { float _ux; };
+            //         bool _ufoo(thread ANGLE_NonConstGlobals & ANGLE_nonConstGlobals,
+            //                    thread float & _ua)
+            //
+            //     mVarBuffer: nonConstGlobals and nullptr (for nonConstGlobals._ux)
             mightAlias = hasIndeterminateVar && mVarBuffer.uniqueSize() > 1;
         }
 

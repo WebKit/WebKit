@@ -8419,7 +8419,6 @@ TEST_P(StateChangeTestES3, PolygonOffset)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -8507,7 +8506,6 @@ TEST_P(StateChangeTestES3, PolygonOffsetClamp)
 
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -8809,7 +8807,6 @@ TEST_P(StateChangeTestES3, StencilWriteMaskVsDiscard)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -8948,7 +8945,6 @@ TEST_P(StateChangeTestES3, PrimitiveMode)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 
 // Hardcoded positions for a number of draw modes, using different vertex offsets.
 const vec2 kVertices[35] = vec2[35](
@@ -9625,7 +9621,6 @@ TEST_P(StateChangeTestES3, PolygonOffsetFill)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -9796,7 +9791,6 @@ TEST_P(StateChangeTestES3, LogicOp)
 
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -10036,7 +10030,6 @@ TEST_P(StateChangeTestES3, SamplerSwap)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -10121,7 +10114,6 @@ TEST_P(StateChangeTestES3, SamplerReordering)
 {
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
-uniform float height;
 void main()
 {
     // gl_VertexID    x    y
@@ -10394,6 +10386,191 @@ TEST_P(StateChangeTestES3, AlphaToCoverageFramebufferAttachmentSwitch)
 
     // A2C must have no effect
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(0, 255, 0, 0));
+}
+
+// Test that switching FBO attachments affects depth test
+TEST_P(StateChangeTestES3, DepthTestFramebufferAttachmentSwitch)
+{
+    // Keep this state unchanged during the test
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_GREATER);
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+uniform float u_depth;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, u_depth * 2. - 1., 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+uniform mediump vec4 u_color;
+out mediump vec4 color;
+void main(void)
+{
+    color = u_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint depthUni = glGetUniformLocation(program, "u_depth");
+    GLint colorUni = glGetUniformLocation(program, "u_color");
+
+    constexpr uint32_t kWidth  = 17;
+    constexpr uint32_t kHeight = 23;
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw with the depth buffer attached, set depth to 0.5.  Should succeed and the color buffer
+    // becomes red.
+    glUniform4f(colorUni, 1, 0, 0, 0);
+    glUniform1f(depthUni, 0.5);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Detach the depth buffer and draw with a smaller depth.  Should still succeed because there is
+    // no depth buffer test against.  Green should be added.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glUniform4f(colorUni, 0, 0.2, 0, 0.6);
+    glUniform1f(depthUni, 0.3);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    // Higher depth should also pass
+    glUniform1f(depthUni, 0.9);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Reattach the depth buffer and draw with a depth in between.  Should fail the depth.  Blue
+    // should not be added.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    glUniform4f(colorUni, 0, 0, 1, 1);
+    glUniform1f(depthUni, 0.4);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Reattach the depth buffer and draw with a depth larger than 0.5.  Should pass the depth test.
+    // Blue should be added.
+    glUniform4f(colorUni, 0, 0.8, 0, 0);
+    glUniform1f(depthUni, 0.6);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that switching FBO attachments affects blend state
+TEST_P(StateChangeTestES3, BlendFramebufferAttachmentSwitch)
+{
+    // Keep this state unchanged during the test
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+uniform mediump vec4 u_color;
+layout(location=0) out mediump vec4 color0;
+layout(location=1) out mediump vec4 color1;
+void main(void)
+{
+    color0 = u_color;
+    color1 = u_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint colorUni = glGetUniformLocation(program, "u_color");
+
+    constexpr uint32_t kWidth  = 17;
+    constexpr uint32_t kHeight = 23;
+
+    GLRenderbuffer color0;
+    glBindRenderbuffer(GL_RENDERBUFFER, color0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+
+    GLRenderbuffer color1;
+    glBindRenderbuffer(GL_RENDERBUFFER, color1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr GLenum kDrawBuffers[2] = {
+        GL_COLOR_ATTACHMENT0,
+        GL_COLOR_ATTACHMENT1,
+    };
+    glDrawBuffers(2, kDrawBuffers);
+
+    // Clear the first attachment to transparent green
+    glClearColor(0, 1, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear the second attachment to transparent blue
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color1);
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw with only one attachment.  Attachment 0 is now transparent yellow-ish.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color0);
+    glUniform4f(colorUni, 0.6, 0, 0, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Attach the second renderbuffer and draw to both.  Attachment 0 is now yellow-ish, while
+    // attachment 1 is blue.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, color1);
+    glUniform4f(colorUni, 0, 0, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Detach the second renderbuffer again and draw.  Attachment 0 is now yellow.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, 0);
+    glUniform4f(colorUni, 0.6, 0, 0, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::yellow);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Tests state change for sample shading.

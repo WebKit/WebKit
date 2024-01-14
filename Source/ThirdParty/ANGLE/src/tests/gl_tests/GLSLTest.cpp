@@ -18489,6 +18489,42 @@ void main() {
     EXPECT_EQ(0u, shader);
 }
 
+// Regression test for const globals losing const qualifiers during MSL
+// translation and exceeding available temporary registers on Apple GPUs.
+TEST_P(GLSLTest_ES3, LargeConstGlobalArraysOfStructs)
+{
+    const int n = 128;
+    std::stringstream fragmentShader;
+    fragmentShader << "#version 300 es\n"
+                   << "precision mediump float;\n"
+                   << "uniform mediump int zero;\n"
+                   << "out vec4 color;\n"
+                   << "struct S { vec3 A; vec3 B; float C; };\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        fragmentShader << "const S s" << i << "[" << n << "] = S[" << n << "](\n";
+        for (int j = 0; j < n; ++j)
+        {
+            fragmentShader << "  S(vec3(0., 1., 0.), vec3(" << j << "), 0.)"
+                           << (j != n - 1 ? ",\n" : "\n");
+        }
+        fragmentShader << ");\n";
+    }
+    // To ensure that the array is not rescoped, it must be accessed from two functions.
+    // To ensure that the array is not optimized out, it must be accessed with a dynamic index.
+    fragmentShader << "vec4 foo() {\n"
+                   << "  return vec4(s0[zero].A * s1[zero].A * s2[zero].A, 1.0);\n"
+                   << "}\n"
+                   << "void main() {\n"
+                   << "  color = foo() * vec4(s0[zero].A * s1[zero].A * s2[zero].A, 1.0);\n"
+                   << "}\n";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), fragmentShader.str().c_str());
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(

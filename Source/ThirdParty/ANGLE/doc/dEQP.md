@@ -21,9 +21,9 @@ Note:
 To run an individual test, use the `--gtest_filter` argument.
 It supports simple wildcards. For example: `--gtest_filter=dEQP-GLES2.functional.shaders.linkage.*`.
 
-The tests lists are sourced from the Android CTS masters in
-`third_party/VK-GL-CTS/src/android/cts/master`. See `gles2-master.txt`,
-`gles3-master.txt`, `gles31-master.txt` and `egl-master.txt`.
+The tests lists are sourced from the Android CTS mains in
+`third_party/VK-GL-CTS/src/android/cts/main`. See `gles2-main.txt`,
+`gles3-main.txt`, `gles31-main.txt` and `egl-main.txt`.
 
 If you're running a full test suite, it might take very long time. Running in
 Debug is only useful to isolate and fix particular failures, Release will give

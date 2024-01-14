@@ -1531,7 +1531,7 @@ class ColorMaskForDrawBuffersTest : public DrawBuffersTest
         glUniform4fv(color1UniformLocation, 1, GLColor::green.toNormalizedVector().data());
         glUniform4fv(color2UniformLocation, 1, GLColor::yellow.toNormalizedVector().data());
 
-        // First draw into both buffers so that buffer0 is red and buffer1 is green
+        // Draw into the buffers so that buffer0 is red, buffer1 is green and buffer2 is yellow
         resetDrawBuffers();
         drawQuad(program, positionAttrib(), 0.5);
         EXPECT_GL_NO_ERROR();
@@ -1661,6 +1661,98 @@ TEST_P(ColorMaskForDrawBuffersTest, Blit)
                       getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     verifyAttachment2DColor(0, mTextures[0], GL_TEXTURE_2D, 0, GLColor::yellow);
     verifyAttachment2DColor(1, mTextures[1], GL_TEXTURE_2D, 0, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that enabling/disabling FBO draw buffers affects color mask
+TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsColorMask)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+    setupColorMaskForDrawBuffersTest();
+
+    // Setup draw
+    glUseProgram(program);
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    // Draw with some attachments disabled.  Attachments are initially, red, green and yellow.
+    drawBuffers[0] = GL_COLOR_ATTACHMENT0;
+    drawBuffers[1] = GL_NONE;
+    drawBuffers[2] = GL_NONE;
+    setDrawBuffers(4, drawBuffers);
+    glUniform4fv(color0UniformLocation, 1, GLColor::blue.toNormalizedVector().data());
+    glUniform4fv(color1UniformLocation, 1, GLColor::cyan.toNormalizedVector().data());
+    // Attachment 0 is now blue
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with the second attachment enabled
+    drawBuffers[0] = GL_COLOR_ATTACHMENT0;
+    drawBuffers[1] = GL_COLOR_ATTACHMENT1;
+    setDrawBuffers(4, drawBuffers);
+    glUniform4fv(color0UniformLocation, 1, GLColor::magenta.toNormalizedVector().data());
+    glUniform4fv(color1UniformLocation, 1, GLColor::white.toNormalizedVector().data());
+    // Attachment 0 is now magenta, and attachment 1 is white.  Attachment 2 is still yellow.
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    // Check second attachment was updated by the second draw
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that enabling/disabling FBO draw buffers affects blend state appropriately as well as the
+// color mask.
+TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsBlendState)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+    setupColorMaskForDrawBuffersTest();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Setup draw
+    glUseProgram(program);
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+
+    // Draw with some attachments disabled.  Attachments are initially, red, green and yellow.
+    drawBuffers[0] = GL_COLOR_ATTACHMENT0;
+    drawBuffers[1] = GL_NONE;
+    drawBuffers[2] = GL_NONE;
+    setDrawBuffers(4, drawBuffers);
+    glUniform4fv(color0UniformLocation, 1, GLColor::blue.toNormalizedVector().data());
+    glUniform4fv(color1UniformLocation, 1, GLColor::cyan.toNormalizedVector().data());
+    // Attachment 0 is now magenta.
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw with the second attachment enabled
+    drawBuffers[0] = GL_COLOR_ATTACHMENT0;
+    drawBuffers[1] = GL_COLOR_ATTACHMENT1;
+    setDrawBuffers(4, drawBuffers);
+    glUniform4fv(color0UniformLocation, 1, GLColor::green.toNormalizedVector().data());
+    glUniform4fv(color1UniformLocation, 1, GLColor::blue.toNormalizedVector().data());
+    // Attachment 0 is now white, attachment 1 is cyan and attachment 2 is still yellow.
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    // Check second attachment was updated by the second draw
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+    glReadBuffer(GL_COLOR_ATTACHMENT2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
     EXPECT_GL_NO_ERROR();
 }
 
