@@ -5,8 +5,7 @@ The test has passed if there are no empty lines (quoted or unquoted).
 | "\n        "
 | <div>
 |   contenteditable="true"
-|   "\n            "
-|   "unquoted"
+|   "\n            unquoted"
 |   <br>
 |   <blockquote>
 |     type="cite"

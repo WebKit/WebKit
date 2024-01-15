@@ -39,7 +39,7 @@ async function presentationUpdate()
 }
 
 addEventListener("load", async () => {
-    getSelection().setPosition(target, 1);
+    getSelection().setPosition(target, 0);
     await presentationUpdate();
 
     target.scrollIntoView();
