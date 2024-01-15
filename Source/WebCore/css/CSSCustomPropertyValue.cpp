@@ -187,4 +187,9 @@ bool CSSCustomPropertyValue::isCurrentColor() const
     return token.id() == CSSValueCurrentcolor;
 }
 
+bool CSSCustomPropertyValue::isAnimatable() const
+{
+    return std::holds_alternative<SyntaxValue>(m_value) || std::holds_alternative<SyntaxValueList>(m_value);
+}
+
 }
