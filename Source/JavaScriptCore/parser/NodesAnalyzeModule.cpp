@@ -43,10 +43,13 @@ static Expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tr
 #if USE(BUN_JSC_ADDITIONS)
     String hostDefinedImportType = String();
 #endif
+// Ignore unsupported attributes in Bun
+#if !USE(BUN_JSC_ADDITIONS)
     for (auto& [key, value] : attributesList->attributes()) {
         if (*key != vm.propertyNames->type)
             return makeUnexpected(std::tuple { ErrorType::SyntaxError, makeString("Import attribute \""_s, StringView(key->impl()), "\" is not supported"_s) });
     }
+#endif
 
     for (auto& [key, value] : attributesList->attributes()) {
         if (*key == vm.propertyNames->type) {
