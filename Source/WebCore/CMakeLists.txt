@@ -1997,7 +1997,6 @@ list(APPEND WebCore_CSS_VALUE_KEYWORDS
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         html/canvas/ANGLEInstancedArrays.cpp
-        html/canvas/EXTBlendFuncExtended.cpp
         html/canvas/EXTBlendMinMax.cpp
         html/canvas/EXTClipControl.cpp
         html/canvas/EXTColorBufferFloat.cpp
@@ -2031,6 +2030,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureHalfFloatLinear.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGL2RenderingContext.cpp
+        html/canvas/WebGLBlendFuncExtended.cpp
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLClipCullDistance.cpp
         html/canvas/WebGLColorBufferFloat.cpp
@@ -2078,7 +2078,6 @@ endif ()
 
 list(APPEND WebCore_IDL_FILES
     html/canvas/ANGLEInstancedArrays.idl
-    html/canvas/EXTBlendFuncExtended.idl
     html/canvas/EXTBlendMinMax.idl
     html/canvas/EXTClipControl.idl
     html/canvas/EXTColorBufferFloat.idl
@@ -2114,6 +2113,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/OESVertexArrayObject.idl
     html/canvas/WebGL2RenderingContext.idl
     html/canvas/WebGLActiveInfo.idl
+    html/canvas/WebGLBlendFuncExtended.idl
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLClipCullDistance.idl
     html/canvas/WebGLColorBufferFloat.idl

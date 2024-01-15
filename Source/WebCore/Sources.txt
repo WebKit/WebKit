@@ -1487,7 +1487,6 @@ html/canvas/CanvasRenderingContext.cpp
 html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
-html/canvas/EXTBlendFuncExtended.cpp
 html/canvas/EXTBlendMinMax.cpp
 html/canvas/EXTClipControl.cpp
 html/canvas/EXTColorBufferFloat.cpp
@@ -1529,6 +1528,7 @@ html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 html/canvas/PredefinedColorSpace.cpp
 html/canvas/WebGL2RenderingContext.cpp
+html/canvas/WebGLBlendFuncExtended.cpp
 html/canvas/WebGLBuffer.cpp
 html/canvas/WebGLClipCullDistance.cpp
 html/canvas/WebGLColorBufferFloat.cpp
@@ -3451,7 +3451,6 @@ JSDoubleRange.cpp
 JSDragEvent.cpp
 JSDynamicsCompressorNode.cpp
 JSDynamicsCompressorOptions.cpp
-JSEXTBlendFuncExtended.cpp
 JSEXTBlendMinMax.cpp
 JSEXTClipControl.cpp
 JSEXTColorBufferFloat.cpp
@@ -4462,6 +4461,7 @@ JSWebCodecsVideoFrameOutputCallback.cpp
 JSWebCodecsVideoFrame.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp
+JSWebGLBlendFuncExtended.cpp
 JSWebGLBuffer.cpp
 JSWebGLClipCullDistance.cpp
 JSWebGLColorBufferFloat.cpp

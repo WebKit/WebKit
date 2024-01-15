@@ -35,7 +35,6 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
-#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -99,6 +98,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLBlendFuncExtended.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
@@ -2137,10 +2137,10 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
             return getUnsignedIntParameter(pname);
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_clip_control not enabled");
         return nullptr;
-    case GraphicsContextGL::MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT: // EXT_blend_func_extended
-        if (m_extBlendFuncExtended)
+    case GraphicsContextGL::MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT: // WEBGL_blend_func_extended
+        if (m_webglBlendFuncExtended)
             return getUnsignedIntParameter(pname);
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_blend_func_extended not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_blend_func_extended not enabled");
         return nullptr;
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers || isWebGL2())
@@ -2690,7 +2690,6 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
         return variable != nullptr;
 
     CHECK_EXTENSION(m_angleInstancedArrays, "ANGLE_instanced_arrays");
-    CHECK_EXTENSION(m_extBlendFuncExtended, "EXT_blend_func_extended");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extClipControl, "EXT_clip_control");
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
@@ -2723,6 +2722,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_oesTextureHalfFloat, "OES_texture_half_float");
     CHECK_EXTENSION(m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear");
     CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
+    CHECK_EXTENSION(m_webglBlendFuncExtended, "WEBGL_blend_func_extended");
     CHECK_EXTENSION(m_webglClipCullDistance, "WEBGL_clip_cull_distance");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc");
@@ -5573,7 +5573,6 @@ template<typename T> void loseExtension(RefPtr<T> extension)
 void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 {
     loseExtension(WTFMove(m_angleInstancedArrays));
-    loseExtension(WTFMove(m_extBlendFuncExtended));
     loseExtension(WTFMove(m_extBlendMinMax));
     loseExtension(WTFMove(m_extClipControl));
     loseExtension(WTFMove(m_extColorBufferFloat));
@@ -5606,6 +5605,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     loseExtension(WTFMove(m_oesTextureHalfFloat));
     loseExtension(WTFMove(m_oesTextureHalfFloatLinear));
     loseExtension(WTFMove(m_oesVertexArrayObject));
+    loseExtension(WTFMove(m_webglBlendFuncExtended));
     loseExtension(WTFMove(m_webglClipCullDistance));
     loseExtension(WTFMove(m_webglColorBufferFloat));
     loseExtension(WTFMove(m_webglCompressedTextureASTC));

@@ -37,7 +37,6 @@ class WebCoreOpaqueRoot;
 // to the concrete type.
 enum class WebGLExtensionName {
     ANGLEInstancedArrays,
-    EXTBlendFuncExtended,
     EXTBlendMinMax,
     EXTClipControl,
     EXTColorBufferFloat,
@@ -70,6 +69,7 @@ enum class WebGLExtensionName {
     OESTextureHalfFloat,
     OESTextureHalfFloatLinear,
     OESVertexArrayObject,
+    WebGLBlendFuncExtended,
     WebGLClipCullDistance,
     WebGLColorBufferFloat,
     WebGLCompressedTextureASTC,

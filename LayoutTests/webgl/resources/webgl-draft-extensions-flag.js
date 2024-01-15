@@ -4,11 +4,9 @@
 
 let currentDraftExtensions = {
     "webgl": [
-        "EXT_blend_func_extended",
         "EXT_texture_mirror_clamp_to_edge",
     ],
     "webgl2" : [
-        "EXT_blend_func_extended",
         "EXT_render_snorm",
         "EXT_texture_mirror_clamp_to_edge",
         "OES_sample_variables",
