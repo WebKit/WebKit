@@ -66,11 +66,6 @@ RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, 
 
 RenderSVGResourceClipper::~RenderSVGResourceClipper() = default;
 
-SVGGraphicsElement* RenderSVGResourceClipper::shouldApplyPathClipping() const
-{
-    return clipPathElement().shouldApplyPathClipping();
-}
-
 enum class ClippingMode {
     NoClipping,
     PathClipping,
@@ -92,6 +87,13 @@ static Path& sharedClipAllPath()
         clipAllPath.get().addRect(FloatRect());
     });
     return clipAllPath.get();
+}
+
+SVGGraphicsElement* RenderSVGResourceClipper::shouldApplyPathClipping() const
+{
+    if (currentClippingMode() == ClippingMode::MaskClipping)
+        return nullptr;
+    return clipPathElement().shouldApplyPathClipping();
 }
 
 void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)

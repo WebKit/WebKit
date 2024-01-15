@@ -26,11 +26,13 @@
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceClipper.h"
+#include "RenderElementInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "StyleResolver.h"
@@ -150,6 +152,20 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
 
 FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
+    auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
+        if (!document().settings().layerBasedSVGEngineEnabled())
+            return std::nullopt;
+
+        if (!child.isTransformed() || !child.hasLayer())
+            return std::nullopt;
+
+        ASSERT(child.isSVGLayerAwareRenderer());
+        ASSERT(!child.isRenderSVGRoot());
+
+        auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
+        return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
+    };
+
     FloatRect clipContentRepaintRect;
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
     for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
@@ -161,7 +177,12 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
         auto& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
             continue;
-        clipContentRepaintRect.unite(renderer->repaintRectInLocalCoordinates(repaintRectCalculation));
+        auto r = renderer->repaintRectInLocalCoordinates(repaintRectCalculation);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (auto transform = transformationMatrixFromChild(downcast<RenderLayerModelObject>(*renderer)))
+            r = transform->mapRect(r);
+#endif
+        clipContentRepaintRect.unite(r);
     }
     return clipContentRepaintRect;
 }

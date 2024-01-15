@@ -138,6 +138,9 @@ svg/animations/animate-marker-orienttype-1.html   [ ImageOnlyFailure ]
 svg/animations/animate-marker-orienttype-2.html   [ ImageOnlyFailure ]
 svg/animations/animate-marker-orienttype-3.html   [ ImageOnlyFailure ]
 svg/animations/animate-marker-orienttype-4.html   [ ImageOnlyFailure ]
+svg/clip-path/clip-path-on-marker-001.svg         [ ImageOnlyFailure ]
+svg/clip-path/clip-path-on-marker-002.svg         [ ImageOnlyFailure ]
+svg/clip-path/clip-path-on-marker-003.svg         [ ImageOnlyFailure ]
 svg/custom/circular-marker-reference-2.svg        [ Failure ]
 svg/custom/js-late-marker-and-object-creation.svg [ Failure ]
 svg/custom/js-late-marker-creation.svg            [ Failure ]
@@ -225,7 +228,6 @@ svg/custom/pattern-y-offset.svg                                 [ Failure ]
 svg/custom/pending-resource-after-removal.xhtml                 [ Failure ]
 svg/custom/recursive-pattern.svg                                [ Failure ]
 svg/custom/stroked-pattern.svg                                  [ Failure ]
-svg/custom/textPath-change-reference2-using-baseval-pattern.svg [ ImageOnlyFailure ]
 svg/custom/transformed-pattern-clamp-svg-root.svg               [ Failure ]
 svg/custom/use-on-symbol-inside-pattern.svg                     [ ImageOnlyFailure ]
 svg/stroke/non-scaling-stroke-pattern.svg                       [ ImageOnlyFailure ]
@@ -233,35 +235,18 @@ svg/transforms/text-with-pattern-inside-transformed-html.xhtml  [ Failure ]
 svg/transforms/text-with-pattern-with-svg-transform.svg         [ Failure ]
 
 # Clipping problems
-svg/W3C-SVG-1.1/masking-path-01-b.svg                     [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/masking-path-04-b.svg                     [ ImageOnlyFailure ]
 svg/batik/text/textEffect2.svg                            [ ImageOnlyFailure ]
 svg/batik/text/textProperties.svg                         [ ImageOnlyFailure ]
 svg/clip-path/clip-path-css-transform-002.svg             [ ImageOnlyFailure ]
-svg/clip-path/clip-path-objectboundingbox-004.svg         [ ImageOnlyFailure ]
-svg/clip-path/clip-path-on-marker-001.svg                 [ ImageOnlyFailure ]
-svg/clip-path/clip-path-on-marker-002.svg                 [ ImageOnlyFailure ]
-svg/clip-path/clip-path-on-marker-003.svg                 [ ImageOnlyFailure ]
 svg/clip-path/clip-path-on-overflowing.html               [ ImageOnlyFailure ]
 svg/clip-path/clip-path-precision-001.svg                 [ ImageOnlyFailure ]
 svg/clip-path/clip-path-use-referencing-clipped-text.html [ ImageOnlyFailure ]
-svg/clip-path/mask-nested-clip-path-001.svg               [ ImageOnlyFailure ]
-svg/clip-path/mask-nested-clip-path-006.svg               [ ImageOnlyFailure ]
-svg/clip-path/mask-nested-clip-path-007.svg               [ ImageOnlyFailure ]
-svg/clip-path/mask-nested-clip-path-008.svg               [ ImageOnlyFailure ]
-svg/clip-path/mask-nested-clip-path-009.svg               [ ImageOnlyFailure ]
-svg/custom/use-clipped-transform.svg                      [ ImageOnlyFailure ]
 svg/custom/use-on-clip-path-with-transformation.svg       [ Failure ]
 svg/repaint/image-with-clip-path.svg                      [ ImageOnlyFailure ]
-svg/transforms/svg-css-transforms-clip-path.xhtml         [ Failure ]
 
 # Masking problems
-svg/custom/empty-mask.svg                                 [ ImageOnlyFailure ]
-svg/custom/transformedMaskFails.svg                       [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal3.svg                   [ ImageOnlyFailure ]
-svg/gradients/spreadMethodDiagonal4.svg                   [ ImageOnlyFailure ]
 svg/masking/mask-negative-scale.svg                       [ ImageOnlyFailure ]
-svg/masking/mask-transformed-text-missing.svg             [ ImageOnlyFailure ]
 svg/repaint/mask-clip-target-transform.svg                [ Failure ]
 
 # Hit testing issues
@@ -316,9 +301,6 @@ webkit.org/b/256702 svg/custom/use-nested-symbol-viewport.html [ ImageOnlyFailur
 # SVG text repainting issue (spurious repaint rect in wrong coordinate system in addition to correct one).
 svg/repaint/text-repainting-after-modifying-container-transform-repaint-rects.html [ Failure ]
 svg/repaint/text-repainting-after-modifying-transform-repaint-rects.html           [ Failure ]
-
-# Missing invalidation/repaint after viewport size change for percentage-dependant lengths.
-svg/custom/relative-sized-content-with-resources.xhtml [ ImageOnlyFailure ]
 
 ###############
 # Buggy tests #
