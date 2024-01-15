@@ -2910,15 +2910,19 @@ def getStatusMap(map={})
         # ignore any stale results from a previous run).
         forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
             copyRemoteResultToHost(host)
-            File.open(getLocalRemoteResultPath(host) + STATUS_FILE).each do |line|
-                processStatusLine(map, line.strip)
+            File.open(getLocalRemoteResultPath(host) + STATUS_FILE) do |f|
+                f.each do |line|
+                    processStatusLine(map, line.strip)
+                end
             end
             clearLocalRemoteResults(host)
         }
     else
         Dir.chdir($runnerDir) {
-            File.open(STATUS_FILE).each do |line|
-                processStatusLine(map, line.strip)
+            File.open(STATUS_FILE) do |f|
+                f.each do |line|
+                    processStatusLine(map, line.strip)
+                end
             end
         }
     end
