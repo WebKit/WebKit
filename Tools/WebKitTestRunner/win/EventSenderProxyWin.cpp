@@ -140,9 +140,10 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     }
 }
 
-void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int, int, int, int)
+void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int /* phase */, int /* momentum */)
 {
-    notImplemented();
+    // Ignore arguments `phase` and `momentum` because they are used only if ENABLE(KINETIC_SCROLLING).
+    mouseScrollBy(x, y);
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int, int, bool)

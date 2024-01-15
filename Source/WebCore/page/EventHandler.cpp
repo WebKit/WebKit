@@ -3123,7 +3123,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     }
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
     auto monitor = frame->page()->wheelEventTestMonitor();
     if (monitor)
