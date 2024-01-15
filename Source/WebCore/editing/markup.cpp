@@ -451,8 +451,8 @@ inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, c
 void StyledMarkupAccumulator::wrapWithNode(Node& node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
     StringBuilder markup;
-    if (is<Element>(node))
-        appendStartTag(markup, downcast<Element>(node), convertBlocksToInlines && isBlock(node), rangeFullySelectsNode);
+    if (RefPtr element = dynamicDowncast<Element>(node))
+        appendStartTag(markup, *element, convertBlocksToInlines && isBlock(node), rangeFullySelectsNode);
     else
         appendNonElementNode(markup, node, nullptr);
     m_reversedPrecedingMarkup.append(markup.toString());
@@ -589,8 +589,8 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
             appendAttribute(out, element, { webkitattachmentpathAttr, AtomString { file->path() } }, namespaces);
             appendAttribute(out, element, { webkitattachmentbloburlAttr, AtomString { file->url().string() } }, namespaces);
         }
-    } else if (is<HTMLImageElement>(element)) {
-        if (RefPtr attachment = downcast<HTMLImageElement>(element).attachmentElement())
+    } else if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(element)) {
+        if (RefPtr attachment = imgElement->attachmentElement())
             appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
     }
 #else
@@ -666,8 +666,8 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         if (replacementType == SpanReplacementType::Slot)
             newInlineStyle->addDisplayContents();
 
-        if (is<StyledElement>(element) && downcast<StyledElement>(element).inlineStyle())
-            newInlineStyle->overrideWithStyle(*downcast<StyledElement>(element).inlineStyle());
+        if (RefPtr styledElement = dynamicDowncast<StyledElement>(element); styledElement && styledElement->inlineStyle())
+            newInlineStyle->overrideWithStyle(*styledElement->inlineStyle());
 
 #if ENABLE(DATA_DETECTION)
         if (replacementType == SpanReplacementType::DataDetector && newInlineStyle->style())
@@ -961,9 +961,9 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
     // If two or more tabs are selected, commonAncestor will be the tab span.
     // In either case, if there is a specialCommonAncestor already, it will necessarily be above 
     // any tab span that needs to be included.
-    if (!specialCommonAncestor && isTabSpanTextNode(&commonAncestor))
+    if (!specialCommonAncestor && parentTabSpanNode(&commonAncestor))
         specialCommonAncestor = commonAncestor.parentNode();
-    if (!specialCommonAncestor && isTabSpanNode(&commonAncestor))
+    if (!specialCommonAncestor && tabSpanNode(&commonAncestor))
         specialCommonAncestor = &commonAncestor;
 
     if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), aTag))
@@ -1232,11 +1232,8 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
 bool isPlainTextMarkup(Node* node)
 {
     ASSERT(node);
-    if (!is<HTMLDivElement>(*node))
-        return false;
-
-    Ref element = downcast<HTMLDivElement>(*node);
-    if (element->hasAttributes())
+    RefPtr element = dynamicDowncast<HTMLDivElement>(*node);
+    if (!element || element->hasAttributes())
         return false;
 
     RefPtr firstChild = element->firstChild();
@@ -1250,7 +1247,7 @@ bool isPlainTextMarkup(Node* node)
     if (secondChild->nextSibling())
         return false;
     
-    return isTabSpanTextNode(firstChild->protectedFirstChild().get()) && secondChild->isTextNode();
+    return parentTabSpanNode(firstChild->protectedFirstChild().get()) && is<Text>(secondChild);
 }
 
 static bool contextPreservesNewline(const SimpleRange& context)
@@ -1452,9 +1449,9 @@ ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, co
     return fragment;
 }
 
-static inline bool hasOneTextChild(ContainerNode& node)
+static inline RefPtr<Text> singleTextChild(ContainerNode& node)
 {
-    return node.hasOneChild() && node.firstChild()->isTextNode();
+    return node.hasOneChild() ? dynamicDowncast<Text>(node.firstChild()) : nullptr;
 }
 
 static inline bool hasMutationEventListeners(const Document& document)
@@ -1482,15 +1479,13 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
 
     // We don't Use RefPtr here because canUseSetDataOptimization() below relies on the
     // containerChild's ref count.
-    WeakPtr containerChild = containerNode->firstChild();
+    auto* containerChild = dynamicDowncast<Text>(containerNode->firstChild());
     if (containerChild && !containerChild->nextSibling()) {
-        if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
-            Ref { downcast<Text>(*containerChild) }->setData(downcast<Text>(*fragment->firstChild()).data());
+        if (RefPtr fragmentChild = singleTextChild(fragment); fragmentChild && canUseSetDataOptimization(*containerChild, mutation)) {
+            Ref { *containerChild }->setData(fragmentChild->data());
             return { };
         }
-
-        Ref protectedContainerChild { *containerChild };
-        return containerNode->replaceChild(fragment, protectedContainerChild);
+        return containerNode->replaceChild(fragment, Ref { *containerChild });
     }
 
     containerNode->removeChildren();

@@ -548,14 +548,15 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
 {
     ASSERT(node);
     // FIXME: We should support other elements that can be removed.
-    if (!is<HTMLDivElement>(*node))
+    RefPtr divElement = dynamicDowncast<HTMLDivElement>(*node);
+    if (!divElement)
         return false;
 
     RefPtr parentNode = node->parentNode();
     if (!parentNode || !parentNode->hasOneChild())
         return false;
 
-    if (!downcast<HTMLDivElement>(*node).hasAttributes())
+    if (!divElement->hasAttributes())
         return true;
 
     return false;
@@ -604,8 +605,8 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
             appendNode(WTFMove(insertChild), downcast<ContainerNode>(*refChild));
     } else if (caretMinOffset(*refChild) >= offset)
         insertNodeBefore(WTFMove(insertChild), *refChild);
-    else if (is<Text>(*refChild) && caretMaxOffset(*refChild) > offset) {
-        splitTextNode(downcast<Text>(*refChild), offset);
+    else if (auto* text = dynamicDowncast<Text>(*refChild); text && caretMaxOffset(*refChild) > offset) {
+        splitTextNode(*text, offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
         if (!refChild->isConnected())
@@ -790,7 +791,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
 {
     Position start = endingSelection().start();
     Position end = endingSelection().end();
-    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode() || isTabSpanTextNode(start.containerNode()))
+    if (start.containerNode() != end.containerNode() || !is<Text>(start.containerNode()) || parentTabSpanNode(start.containerNode()))
         return Position();
 
     RefPtr<Text> textNode = start.containerText();
@@ -818,7 +819,7 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
 {
-    if (!isTabSpanTextNode(position.anchorNode()))
+    if (!parentTabSpanNode(position.anchorNode()))
         return position;
 
     switch (position.anchorType()) {
@@ -834,7 +835,7 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
         return positionInParentAfterNode(position.anchorNode());
     }
 
-    RefPtr tabSpan { tabSpanNode(position.containerNode()) };
+    RefPtr tabSpan { parentTabSpanNode(position.containerNode()) };
 
     if (position.offsetInContainerNode() <= caretMinOffset(*position.containerNode()))
         return positionInParentBeforeNode(tabSpan.get());
@@ -966,7 +967,10 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
     String string = text.substring(upstream, length);
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
-    const bool nextSiblingIsTextNodeWithoutLeadingSpace = textNode.nextSibling() && textNode.nextSibling()->isTextNode() && downcast<Text>(textNode.nextSibling())->data().length() && !deprecatedIsEditingWhitespace(downcast<Text>(textNode.nextSibling())->data()[0]);
+    RefPtr nextSiblingTextNode = dynamicDowncast<Text>(textNode.nextSibling());
+    const bool nextSiblingIsTextNodeWithoutLeadingSpace = nextSiblingTextNode
+        && nextSiblingTextNode->data().length()
+        && !deprecatedIsEditingWhitespace(nextSiblingTextNode->data()[0]);
     String rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleUpstreamPos) || !upstream,
         (isEndOfParagraph(visibleDownstreamPos) || downstream == text.length()) && !nextSiblingIsTextNodeWithoutLeadingSpace);
 
@@ -1104,8 +1108,8 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
 
     Vector<Ref<Text>> nodes;
     for (RefPtr node = start.protectedDeprecatedNode(); node; node = NodeTraversal::next(*node)) {
-        if (is<Text>(*node))
-            nodes.append(downcast<Text>(*node));
+        if (RefPtr textNode = dynamicDowncast<Text>(*node))
+            nodes.append(*textNode);
         if (node == end.deprecatedNode())
             break;
     }
@@ -1608,13 +1612,13 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
 
     RefPtr<Element> newBlock;
     if (RefPtr blockEnclosingList = listNode->parentNode()) {
-        if (is<HTMLLIElement>(*blockEnclosingList)) { // listNode is inside another list item
+        if (RefPtr liElement = dynamicDowncast<HTMLLIElement>(*blockEnclosingList)) { // listNode is inside another list item
             if (visiblePositionAfterNode(*blockEnclosingList) == visiblePositionAfterNode(*listNode)) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
-                splitElement(downcast<HTMLLIElement>(*blockEnclosingList), *listNode);
+                splitElement(*liElement, *listNode);
                 removeNodePreservingChildren(*listNode->protectedParentNode());
                 newBlock = HTMLLIElement::create(document);
             }
@@ -1696,13 +1700,12 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     
     if (caretPos.deprecatedNode()->hasTagName(brTag))
         removeNodeAndPruneAncestors(*caretPos.protectedDeprecatedNode());
-    else if (is<Text>(*caretPos.deprecatedNode())) {
+    else if (RefPtr textNode = dynamicDowncast<Text>(*caretPos.deprecatedNode())) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
-        auto textNode = downcast<Text>(caretPos.protectedDeprecatedNode().releaseNonNull());
         RefPtr parentNode { textNode->parentNode() };
         // The preserved newline must be the first thing in the node, since otherwise the previous
         // paragraph would be quoted, and we verified that it wasn't above.
-        deleteTextFromNode(textNode, 0, 1);
+        deleteTextFromNode(*textNode, 0, 1);
         prune(parentNode.get());
     }
 
@@ -1784,13 +1787,14 @@ RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool 
     RefPtr<Node> node;
     for (node = &start; node && node->parentNode() != adjustedEnd;) {
         RefPtr parentNode = node->parentNode();
-        if (!parentNode || !is<Element>(*parentNode) || editingIgnoresContent(*parentNode))
+        RefPtr parentElement = dynamicDowncast<Element>(parentNode);
+        if (!parentElement || editingIgnoresContent(*parentNode))
             break;
         // Do not split a node when doing so introduces an empty node.
         VisiblePosition positionInParent = firstPositionInNode(parentNode.get());
         VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
-            splitElement(downcast<Element>(*parentNode), *node);
+            splitElement(*parentElement, *node);
         node = parentNode;
     }
 

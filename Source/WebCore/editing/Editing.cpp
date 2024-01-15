@@ -782,20 +782,16 @@ Ref<HTMLElement> createHTMLElement(Document& document, const AtomString& tagName
     return createHTMLElement(document, QualifiedName(nullAtom(), tagName, xhtmlNamespaceURI));
 }
 
-bool isTabSpanNode(const Node* node)
+HTMLSpanElement* tabSpanNode(Node* node)
 {
-    RefPtr span = dynamicDowncast<HTMLSpanElement>(node);
-    return span && span->attributeWithoutSynchronization(classAttr) == AppleTabSpanClass;
+    if (auto* span = dynamicDowncast<HTMLSpanElement>(node); span && span->attributeWithoutSynchronization(classAttr) == AppleTabSpanClass)
+        return span;
+    return nullptr;
 }
 
-bool isTabSpanTextNode(const Node* node)
+HTMLSpanElement* parentTabSpanNode(Node* node)
 {
-    return is<Text>(node) && isTabSpanNode(node->parentNode());
-}
-
-HTMLSpanElement* tabSpanNode(const Node* node)
-{
-    return isTabSpanTextNode(node) ? downcast<HTMLSpanElement>(node->parentNode()) : nullptr;
+    return is<Text>(node) ? tabSpanNode(node->parentNode()) : nullptr;
 }
 
 static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)

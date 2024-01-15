@@ -57,7 +57,7 @@ InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& tex
 Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
-    if (isTabSpanTextNode(pos.anchorNode())) {
+    if (parentTabSpanNode(pos.anchorNode())) {
         auto textNode = document().createEditingTextNode(String { emptyString() });
         insertNodeAtTabSpanPosition(textNode.copyRef(), pos);
         return firstPositionInNode(textNode.ptr());
@@ -248,7 +248,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     unsigned int offset = node->isTextNode() ? insertPos.offsetInContainerNode() : 0;
 
     // keep tabs coalesced in tab span
-    if (isTabSpanTextNode(node.get())) {
+    if (parentTabSpanNode(node.get())) {
         Ref textNode = downcast<Text>(node.releaseNonNull());
         insertTextIntoNode(textNode, offset, "\t"_s);
         return Position(WTFMove(textNode), offset + 1);
@@ -258,22 +258,20 @@ Position InsertTextCommand::insertTab(const Position& pos)
     auto spanNode = createTabSpanElement(document());
     
     // place it
-    if (!is<Text>(*node))
-        insertNodeAt(spanNode.copyRef(), insertPos);
-    else {
-        Ref textNode = downcast<Text>(node.releaseNonNull());
+    if (RefPtr textNode = dynamicDowncast<Text>(*node)) {
         if (offset >= textNode->length())
-            insertNodeAfter(spanNode.copyRef(), textNode);
+            insertNodeAfter(spanNode.copyRef(), *textNode);
         else {
             // split node to make room for the span
             // NOTE: splitTextNode uses textNode for the
             // second node in the split, so we need to
             // insert the span before it.
             if (offset > 0)
-                splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode.copyRef(), textNode);
+                splitTextNode(*textNode, offset);
+            insertNodeBefore(spanNode.copyRef(), *textNode);
         }
-    }
+    } else
+        insertNodeAt(spanNode.copyRef(), insertPos);
 
     // return the position following the new tab
     return lastPositionInNode(spanNode.ptr());

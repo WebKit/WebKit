@@ -61,7 +61,8 @@ RefPtr<Node> enclosingEmptyListItem(const VisiblePosition&);
 RefPtr<Element> enclosingAnchorElement(const Position&);
 Element* enclosingElementWithTag(const Position&, const QualifiedName&);
 RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-HTMLSpanElement* tabSpanNode(const Node*);
+HTMLSpanElement* tabSpanNode(Node*);
+HTMLSpanElement* parentTabSpanNode(Node*);
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 
@@ -88,8 +89,6 @@ bool isAtomicNode(const Node*);
 bool isBlock(const Node&);
 bool isBlockFlowElement(const Node&);
 bool isInline(const Node&);
-bool isTabSpanNode(const Node*);
-bool isTabSpanTextNode(const Node*);
 bool isMailBlockquote(const Node&);
 bool isRenderedTable(const Node*);
 bool isTableCell(const Node&);

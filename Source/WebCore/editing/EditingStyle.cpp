@@ -531,9 +531,9 @@ static int textAlignResolvingStartAndEnd(T& style)
 
 void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 {
-    if (isTabSpanTextNode(node))
-        node = tabSpanNode(node)->parentNode();
-    else if (isTabSpanNode(node))
+    if (auto* tabSpan = parentTabSpanNode(node))
+        node = tabSpan->parentNode();
+    else if (tabSpanNode(node))
         node = node->parentNode();
 
     ComputedStyleExtractor computedStyleAtPosition(node);
@@ -955,7 +955,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         auto propertyID = property.id();
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
-        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode) && isTabSpanNode(&element))
+        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode) && tabSpanNode(&element))
             continue;
 
         if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
@@ -1784,7 +1784,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     }
 
     // Changing the whitespace style in a tab span would collapse the tab into a space.
-    if (isTabSpanTextNode(position.deprecatedNode()) || isTabSpanNode((position.deprecatedNode()))) {
+    if (parentTabSpanNode(position.deprecatedNode()) || tabSpanNode(position.deprecatedNode())) {
         mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
         mutableStyle->removeProperty(CSSPropertyTextWrapMode);
     }
