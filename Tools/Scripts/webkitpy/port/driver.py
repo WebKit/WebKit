@@ -567,7 +567,7 @@ class Driver(object):
             cmd.append('--remote-layer-tree')
         if self._port.get_option('no_remote_layer_tree'):
             cmd.append('--no-remote-layer-tree')
-        if self._port.get_option('wpe-platform-api'):
+        if self._port.get_option('wpe_platform_api'):
             cmd.append('--wpe-platform-api')
         if self._port.get_option('world_leaks'):
             cmd.append('--world-leaks')
