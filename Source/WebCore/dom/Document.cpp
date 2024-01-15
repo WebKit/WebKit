@@ -2583,6 +2583,11 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     updateStyleIfNeeded();
 
+    if (!element.renderer() || !frameView->layoutContext().needsLayout()) {
+        // Tree is clean, we don't need to walk the ancestor chain to figure out whether we have a sufficiently clean subtree.
+        return false;
+    }
+
     bool isVertical = false;
     bool hasSpecifiedLogicalHeight = false;
     if (CheckedPtr renderer = element.renderer()) {
