@@ -7,7 +7,8 @@
     #resizable {
         box-sizing: border-box; /* to make the output width/height predictable */
         align-content: center;
-        border: 3px solid;
+        padding: 20px;
+        border: 19px solid;
     }
     </style>
 </head>
@@ -24,9 +25,9 @@
 <script>
 function drag(startX, startY, destX, destY) {
     const actions = new test_driver.Actions()
-        .pointerMove(startX - 6, startY - 7)
+        .pointerMove(startX - 22, startY - 23) // subtract padding + 2-3px
         .pointerDown()
-        .pointerMove(destX - 6, destY - 7)
+        .pointerMove(destX - 22, destY - 23) // subtract padding + 2-3px
         .pointerUp();
     return actions.send();
 }
