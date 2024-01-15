@@ -1,12 +1,13 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-
-FAIL Element.setAttributeNS assigned via policy (successful HTML transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-FAIL Element.setAttributeNS assigned via policy (successful Script transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-FAIL Element.setAttributeNS assigned via policy (successful ScriptURL transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS Element.setAttributeNS assigned via policy (successful HTML transformation)
+PASS Element.setAttributeNS assigned via policy (successful Script transformation)
+PASS Element.setAttributeNS assigned via policy (successful ScriptURL transformation)
 PASS Element.setAttributeNS accepts untrusted string for non-specced accessor
 PASS Element.setAttributeNS accepts null for non-specced accessor
+PASS Assigning TrustedScriptURL to <svg:script xlink:href=...> works
+FAIL Blocking non-TrustedScriptURL assignment to <svg:script xlink:href=...> works assert_throws_js: function "_ => {
+          elem.setAttributeNS(xlink, "href", v);
+        }" did not throw
 

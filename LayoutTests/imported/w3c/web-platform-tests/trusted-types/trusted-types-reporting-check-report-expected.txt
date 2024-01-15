@@ -1,7 +1,5 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
 

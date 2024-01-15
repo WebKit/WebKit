@@ -1,7 +1,79 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: TrustedHTML
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: TrustedHTML
-
+PASS TrustedHTML.fromLiteral is supported
+FAIL TrustedHTML.fromLiteral: Basic string literal works. assert_equals: expected "abc" but got ""
+PASS TrustedHTML.fromLiteral: Empty string literal works.
+FAIL TrustedHTML.fromLiteral: A very important emoji works. assert_equals: expected "💩" but got ""
+FAIL TrustedHTML.fromLiteral: Multi-line string literal works. assert_true: expected true got false
+FAIL TrustedHTML.fromLiteral: Bound method works. assert_equals: expected "abc" but got ""
+PASS TrustedHTML.fromLiteral: String throws.
+PASS TrustedHTML.fromLiteral: null throws.
+PASS TrustedHTML.fromLiteral: undefined throws.
+FAIL TrustedHTML.fromLiteral: Object throws. assert_throws_js: function "_ => {
+      type.fromLiteral({});
+    }" did not throw
+FAIL TrustedHTML.fromLiteral: template literal with expression throws. assert_throws_js: function "_ => {
+      type.fromLiteral`Hello ${2+3} world`
+    }" did not throw
+FAIL TrustedHTML.fromLiteral: non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc"]);
+    }" did not throw
+FAIL TrustedHTML.fromLiteral: frozen non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(Object.freeze(["abc"]));
+    }" did not throw
+FAIL TrustedHTML.fromLiteral: non-literal with param throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc", "def"], "xxx");
+    }" did not throw
+PASS TrustedScript.fromLiteral is supported
+FAIL TrustedScript.fromLiteral: Basic string literal works. assert_equals: expected "abc" but got ""
+PASS TrustedScript.fromLiteral: Empty string literal works.
+FAIL TrustedScript.fromLiteral: A very important emoji works. assert_equals: expected "💩" but got ""
+FAIL TrustedScript.fromLiteral: Multi-line string literal works. assert_true: expected true got false
+FAIL TrustedScript.fromLiteral: Bound method works. assert_equals: expected "abc" but got ""
+PASS TrustedScript.fromLiteral: String throws.
+PASS TrustedScript.fromLiteral: null throws.
+PASS TrustedScript.fromLiteral: undefined throws.
+FAIL TrustedScript.fromLiteral: Object throws. assert_throws_js: function "_ => {
+      type.fromLiteral({});
+    }" did not throw
+FAIL TrustedScript.fromLiteral: template literal with expression throws. assert_throws_js: function "_ => {
+      type.fromLiteral`Hello ${2+3} world`
+    }" did not throw
+FAIL TrustedScript.fromLiteral: non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc"]);
+    }" did not throw
+FAIL TrustedScript.fromLiteral: frozen non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(Object.freeze(["abc"]));
+    }" did not throw
+FAIL TrustedScript.fromLiteral: non-literal with param throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc", "def"], "xxx");
+    }" did not throw
+PASS TrustedScriptURL.fromLiteral is supported
+FAIL TrustedScriptURL.fromLiteral: Basic string literal works. assert_equals: expected "abc" but got ""
+PASS TrustedScriptURL.fromLiteral: Empty string literal works.
+FAIL TrustedScriptURL.fromLiteral: A very important emoji works. assert_equals: expected "💩" but got ""
+FAIL TrustedScriptURL.fromLiteral: Multi-line string literal works. assert_true: expected true got false
+FAIL TrustedScriptURL.fromLiteral: Bound method works. assert_equals: expected "abc" but got ""
+PASS TrustedScriptURL.fromLiteral: String throws.
+PASS TrustedScriptURL.fromLiteral: null throws.
+PASS TrustedScriptURL.fromLiteral: undefined throws.
+FAIL TrustedScriptURL.fromLiteral: Object throws. assert_throws_js: function "_ => {
+      type.fromLiteral({});
+    }" did not throw
+FAIL TrustedScriptURL.fromLiteral: template literal with expression throws. assert_throws_js: function "_ => {
+      type.fromLiteral`Hello ${2+3} world`
+    }" did not throw
+FAIL TrustedScriptURL.fromLiteral: non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc"]);
+    }" did not throw
+FAIL TrustedScriptURL.fromLiteral: frozen non-literal throws. assert_throws_js: function "_ => {
+      type.fromLiteral(Object.freeze(["abc"]));
+    }" did not throw
+FAIL TrustedScriptURL.fromLiteral: non-literal with param throws. assert_throws_js: function "_ => {
+      type.fromLiteral(["abc", "def"], "xxx");
+    }" did not throw
+FAIL TrustedHTML.fromLiteral: Normalization of value works. assert_equals: expected "<b></b>" but got ""
+FAIL TrustedScript.fromLiteral: No normalization of value occurs. assert_equals: expected "<b>" but got ""
+FAIL TrustedScriptURL.fromLiteral: No normalization of value occurs. assert_equals: expected "<b>" but got ""
 

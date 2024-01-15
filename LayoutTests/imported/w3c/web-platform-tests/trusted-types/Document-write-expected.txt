@@ -1,3 +1,4 @@
+Quack, I want to be a duck!
 
-FAIL document.write with html assigned via policy (successful transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS document.write with html assigned via policy (successful transformation).
 

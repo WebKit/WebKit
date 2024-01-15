@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL Trusted Type violation report: evaluating a string. assert_throws_js: function "_ => eval('beacon="should not run"')" did not throw
+FAIL Trusted Type violation report: evaluating a Trusted Script. assert_equals: expected "i ran" but got "never_overwritten2"
+FAIL Trusted Type violation report: default policy transforms the script before CSP checks runs. assert_equals: expected "default policy" but got "payload"
 

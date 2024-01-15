@@ -1,7 +1,129 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+'createScript';
+'createScript';
+'createScript';
+'createScript';
+'createScript';
+'createScript #1';'#2;'
+'createScript #1';'#2;'
+'createScript #1';'#2;'
+'createScript #1';'#2;'
+'createScript #1';'#2;'
+'plain text';
+'plain text';
+'plain text';
+'plain text';
+'plain text';
+'plain text #1';'plain text #2';
+'plain text #1';'plain text #2';
+'plain text #1';'plain text #2';
+'plain text #1';'plain text #2';
+'plain text #1';'plain text #2';
+'mixed';
+'mixed';
+'mixed';
+'mixed';
+'mixed';
+'mixed';'script';
+'mixed';'script';
+'mixed';'script';
+'mixed';'script';
+'mixed';'script';
+'script';
+'script';
+'script';
+'script';
+'script';
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
-
+PASS replaceWith('createScript';) on <div> should pass
+PASS after('createScript';) on <div> should pass
+PASS before('createScript';) on <div> should pass
+PASS append('createScript';) on <div> should pass
+PASS prepend('createScript';) on <div> should pass
+PASS replaceWith('createScript #1';,'#2;') on <div> should pass
+PASS after('createScript #1';,'#2;') on <div> should pass
+PASS before('createScript #1';,'#2;') on <div> should pass
+PASS append('createScript #1';,'#2;') on <div> should pass
+PASS prepend('createScript #1';,'#2;') on <div> should pass
+PASS replaceWith('plain text';) on <div> should pass
+PASS after('plain text';) on <div> should pass
+PASS before('plain text';) on <div> should pass
+PASS append('plain text';) on <div> should pass
+PASS prepend('plain text';) on <div> should pass
+PASS replaceWith('plain text #1';,'plain text #2';) on <div> should pass
+PASS after('plain text #1';,'plain text #2';) on <div> should pass
+PASS before('plain text #1';,'plain text #2';) on <div> should pass
+PASS append('plain text #1';,'plain text #2';) on <div> should pass
+PASS prepend('plain text #1';,'plain text #2';) on <div> should pass
+PASS replaceWith([object Text]) on <div> should pass
+PASS after([object Text]) on <div> should pass
+PASS before([object Text]) on <div> should pass
+PASS append([object Text]) on <div> should pass
+PASS prepend([object Text]) on <div> should pass
+PASS replaceWith([object Text],[object Text]) on <div> should pass
+PASS after([object Text],[object Text]) on <div> should pass
+PASS before([object Text],[object Text]) on <div> should pass
+PASS append([object Text],[object Text]) on <div> should pass
+PASS prepend([object Text],[object Text]) on <div> should pass
+PASS replaceWith('mixed';,[object Text]) on <div> should pass
+PASS after('mixed';,[object Text]) on <div> should pass
+PASS before('mixed';,[object Text]) on <div> should pass
+PASS append('mixed';,[object Text]) on <div> should pass
+PASS prepend('mixed';,[object Text]) on <div> should pass
+PASS replaceWith('mixed';,'script';) on <div> should pass
+PASS after('mixed';,'script';) on <div> should pass
+PASS before('mixed';,'script';) on <div> should pass
+PASS append('mixed';,'script';) on <div> should pass
+PASS prepend('mixed';,'script';) on <div> should pass
+PASS replaceWith([object Text],'script';) on <div> should pass
+PASS after([object Text],'script';) on <div> should pass
+PASS before([object Text],'script';) on <div> should pass
+PASS append([object Text],'script';) on <div> should pass
+PASS prepend([object Text],'script';) on <div> should pass
+PASS replaceWith('createScript';) on <script> should pass
+PASS after('createScript';) on <script> should pass
+PASS before('createScript';) on <script> should pass
+PASS append('createScript';) on <script> should pass
+PASS prepend('createScript';) on <script> should pass
+PASS replaceWith('createScript #1';,'#2;') on <script> should pass
+PASS after('createScript #1';,'#2;') on <script> should pass
+PASS before('createScript #1';,'#2;') on <script> should pass
+PASS append('createScript #1';,'#2;') on <script> should pass
+PASS prepend('createScript #1';,'#2;') on <script> should pass
+FAIL replaceWith('plain text';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after('plain text';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before('plain text';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append('plain text';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend('plain text';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith('plain text #1';,'plain text #2';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after('plain text #1';,'plain text #2';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before('plain text #1';,'plain text #2';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append('plain text #1';,'plain text #2';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend('plain text #1';,'plain text #2';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith([object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after([object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before([object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append([object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend([object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith([object Text],[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after([object Text],[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before([object Text],[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append([object Text],[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend([object Text],[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith('mixed';,[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after('mixed';,[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before('mixed';,[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append('mixed';,[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend('mixed';,[object Text]) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith('mixed';,'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after('mixed';,'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before('mixed';,'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append('mixed';,'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend('mixed';,'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL replaceWith([object Text],'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL after([object Text],'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL before([object Text],'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(inner, args); }" did not throw
+FAIL append([object Text],'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
+FAIL prepend([object Text],'script';) on <script> should fail assert_throws_js: This should throw. function "_ => { setter.apply(outer, args); }" did not throw
 

@@ -1,4 +1,4 @@
 
-FAIL createPolicy - duplicate policies are allowed when Trusted Types are not enforced. Can't find variable: trustedTypes
-FAIL createPolicy - duplicate "default" policy is never allowed. Can't find variable: trustedTypes
+PASS createPolicy - duplicate policies are allowed when Trusted Types are not enforced.
+FAIL createPolicy - duplicate "default" policy is never allowed. assert_throws_js: function "_ => trustedTypes.createPolicy("default", policy)" did not throw
 

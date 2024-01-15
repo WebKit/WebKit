@@ -1,8 +1,8 @@
 
-FAIL embed.src assigned via policy (successful ScriptURL transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-FAIL script.src assigned via policy (successful ScriptURL transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-FAIL iframe.srcdoc assigned via policy (successful HTML transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-FAIL script.src assigned via policy (successful script transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS embed.src assigned via policy (successful ScriptURL transformation)
+PASS script.src assigned via policy (successful ScriptURL transformation)
+PASS iframe.srcdoc assigned via policy (successful HTML transformation)
+PASS script.src assigned via policy (successful script transformation)
 PASS a.rel accepts strings
 PASS a.rel accepts null
 

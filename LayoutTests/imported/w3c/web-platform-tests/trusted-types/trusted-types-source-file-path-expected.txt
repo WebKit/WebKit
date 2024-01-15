@@ -2,8 +2,10 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted
 
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL same-document script assert_throws_js: function "_ => {
+    document.getElementById("to-be-modified").innerHTML = "'test'";
+  }" did not throw
+FAIL same-origin script assert_throws_js: function "() => setInnerHtml(toBeModified, "'test'")" did not throw
+FAIL cross-origin script assert_throws_js: function "() => setInnerHtml(toBeModified, "'test'")" did not throw
 

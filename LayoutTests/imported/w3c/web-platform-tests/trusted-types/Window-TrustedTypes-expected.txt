@@ -1,8 +1,4 @@
 
-FAIL factory = window.trustedTypes Can't find variable: TrustedTypePolicyFactory
-FAIL factory construction fails assert_throws_js: function "_ => {
-      let factory = new TrustedTypePolicyFactory();
-    }" threw object "ReferenceError: Can't find variable: TrustedTypePolicyFactory" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS factory = window.trustedTypes
+PASS factory construction fails
 

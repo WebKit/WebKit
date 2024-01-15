@@ -1201,6 +1201,11 @@ dom/Traversal.cpp
 dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TreeWalker.cpp
+dom/TrustedHTML.cpp
+dom/TrustedScript.cpp
+dom/TrustedScriptURL.cpp
+dom/TrustedTypePolicy.cpp
+dom/TrustedTypePolicyFactory.cpp
 dom/UIEvent.cpp
 dom/UIEventWithKeyState.cpp
 dom/UserActionElementSet.cpp
@@ -1211,6 +1216,7 @@ dom/ViewportArguments.cpp
 dom/VisitedLinkState.cpp
 dom/WheelEvent.cpp
 dom/WindowEventLoop.cpp
+dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 dom/XMLDocument.cpp
 dom/messageports/MessagePortChannel.cpp
 dom/messageports/MessagePortChannelProvider.cpp
@@ -3361,6 +3367,9 @@ JSCookieStoreDeleteOptions.cpp
 JSCookieStoreGetOptions.cpp
 JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
+JSCreateHTMLCallback.cpp
+JSCreateScriptCallback.cpp
+JSCreateScriptURLCallback.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialMediationRequirement.cpp
 JSCredentialRequestOptions.cpp
@@ -4349,6 +4358,12 @@ JSTransferFunction.cpp
 JSTransformStream.cpp
 JSTransformStreamDefaultController.cpp
 JSTreeWalker.cpp
+JSTrustedHTML.cpp
+JSTrustedScript.cpp
+JSTrustedScriptURL.cpp
+JSTrustedTypePolicy.cpp
+JSTrustedTypePolicyFactory.cpp
+JSTrustedTypePolicyOptions.cpp
 JSCSSKeywordValue.cpp
 JSCSSStyleImageValue.cpp
 JSCSSColor.cpp

@@ -1,7 +1,34 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL embed.src accepts only TrustedScriptURL assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL object.data accepts only TrustedScriptURL assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL object.codeBase accepts only TrustedScriptURL assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL script.src accepts only TrustedScriptURL assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL iframe.srcdoc accepts only TrustedHTML assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL div.onclick accepts only TrustedScript assert_throws_js: function "_ => {
+    elem.setAttribute(attribute, value);
+  }" did not throw
+FAIL `Script.prototype.setAttribute.SrC = string` throws. assert_throws_js: function "_ => {
+      el.setAttribute('SrC', INPUTS.URL);
+    }" did not throw
+FAIL embed.src accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL object.data accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL object.codeBase accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL script.src accepts string and null after default policy was created. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL iframe.srcdoc accepts string and null after default policy was created. assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
+FAIL div.onclick accepts string and null after default policy was created. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
+PASS a.rel accepts strings
+PASS a.rel accepts null
+FAIL `script.src = setAttributeNode(embed.src)` with string works. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
 

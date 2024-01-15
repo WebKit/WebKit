@@ -1,7 +1,10 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL Document.execCommand("insertHTML") throws. assert_throws_js: function "_ => document.execCommand(command, false, "<em>Hello World</em>")" did not throw
+PASS Document.execCommand("insertHTML") works with a TrustedHTML argument.
+PASS Document.execCommand("paste") works as usual."
+PASS Document.execCommand("paste") works with a TrustedHTML argument.
+PASS Document.execCommand("insertHTML") works as usual with a default policy.
+PASS Document.execCommand("paste") works as usual with a default policy.
 

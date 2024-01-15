@@ -1025,6 +1025,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
+    $(WebCore)/dom/CreateHTMLCallback.idl \
+    $(WebCore)/dom/CreateScriptCallback.idl \
+    $(WebCore)/dom/CreateScriptURLCallback.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
     $(WebCore)/dom/CustomStateSet.idl \
@@ -1144,6 +1147,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/TextEvent.idl \
     $(WebCore)/dom/ToggleEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
+    $(WebCore)/dom/TrustedHTML.idl \
+    $(WebCore)/dom/TrustedScript.idl \
+    $(WebCore)/dom/TrustedScriptURL.idl \
+    $(WebCore)/dom/TrustedTypePolicy.idl \
+    $(WebCore)/dom/TrustedTypePolicyFactory.idl \
+    $(WebCore)/dom/TrustedTypePolicyOptions.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/ValidityStateFlags.idl \
@@ -1151,6 +1160,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ViewTransitionUpdateCallback.idl \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/WheelEvent.idl \
+    $(WebCore)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \
     $(WebCore)/fileapi/BlobCallback.idl \

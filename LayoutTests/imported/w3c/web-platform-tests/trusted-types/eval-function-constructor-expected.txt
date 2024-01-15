@@ -1,7 +1,20 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL Function constructor with mixed plain and trusted strings, mask #0 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #1 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #2 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #3 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #4 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #5 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #6 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #7 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #8 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #9 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #10 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #11 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #12 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #13 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+FAIL Function constructor with mixed plain and trusted strings, mask #14 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+PASS Function constructor with mixed plain and trusted strings, mask #15
 

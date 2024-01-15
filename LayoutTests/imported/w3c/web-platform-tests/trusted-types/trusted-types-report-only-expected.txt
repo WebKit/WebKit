@@ -2,8 +2,12 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
 
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
+abc
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (TIMEOUT), message = null
 
+TIMEOUT Trusted Type violation report-only: assign string to html Test timed out
+NOTRUN Trusted Type violation report-only: assign string to script.src
+NOTRUN Trusted Type violation report-only: assign string to script content
+NOTRUN Trusted Type violation report: check report contents
 

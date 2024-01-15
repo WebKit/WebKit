@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL eval blocks if the default policy rejects a value. assert_throws_js: function "_ => {
+      eval('a="hello there"');
+    }" did not throw
 

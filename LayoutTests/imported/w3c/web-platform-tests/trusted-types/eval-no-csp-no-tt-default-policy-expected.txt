@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL eval of TrustedScript works. assert_equals: expected (number) 2 but got (object) object "1+1"
+PASS eval of string works and does not call a default policy.
+PASS eval of !TrustedScript and !string works.
+PASS Function constructor of TrustedScript works.
+PASS Function constructor of string works and does not call a default policy.
 

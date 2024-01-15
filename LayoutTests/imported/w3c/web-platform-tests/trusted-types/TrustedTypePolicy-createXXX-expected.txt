@@ -1,8 +1,34 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: TrustedHTML
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: TrustedHTML
-
-FAIL calling undefined callbacks throws Can't find variable: trustedTypes
-FAIL Attributes without type constraints will work as before. Can't find variable: trustedTypes
-FAIL trustedTypes.createPolicy(.., null) creates empty policy. Can't find variable: trustedTypes
+PASS calling undefined callbacks throws
+PASS Attributes without type constraints will work as before.
+PASS trustedTypes.createPolicy(.., null) creates empty policy.
+PASS TestPolicyTrustedHTML0 (TrustedHTML: s => s)
+PASS TestPolicyTrustedHTML1 (TrustedHTML: s => null)
+PASS TestPolicyTrustedHTML2 (TrustedHTML: s => "well, " + s)
+PASS TestPolicyTrustedHTML3 (TrustedHTML: s => { throw new Error() })
+PASS TestPolicyTrustedHTML4 (TrustedHTML: s => { aGlobalVarForSideEffectTesting = s; return s })
+PASS TestPolicyTrustedHTML5 (TrustedHTML: s => aGlobalVarForSideEffectTesting + s)
+PASS TestPolicyTrustedHTML6 (TrustedHTML: function aGlobalFunction() {
+    [native code]
+})
+PASS TestPolicyTrustedHTML7 (TrustedHTML: s => aGlobalFunction(s))
+PASS TestPolicyTrustedScript0 (TrustedScript: s => s)
+PASS TestPolicyTrustedScript1 (TrustedScript: s => null)
+PASS TestPolicyTrustedScript2 (TrustedScript: s => "well, " + s)
+PASS TestPolicyTrustedScript3 (TrustedScript: s => { throw new Error() })
+PASS TestPolicyTrustedScript4 (TrustedScript: s => { aGlobalVarForSideEffectTesting = s; return s })
+PASS TestPolicyTrustedScript5 (TrustedScript: s => aGlobalVarForSideEffectTesting + s)
+PASS TestPolicyTrustedScript6 (TrustedScript: function aGlobalFunction() {
+    [native code]
+})
+PASS TestPolicyTrustedScript7 (TrustedScript: s => aGlobalFunction(s))
+PASS TestPolicyTrustedScriptURL0 (TrustedScriptURL: s => s)
+PASS TestPolicyTrustedScriptURL1 (TrustedScriptURL: s => null)
+PASS TestPolicyTrustedScriptURL2 (TrustedScriptURL: s => s + "#duck")
+PASS TestPolicyTrustedScriptURL3 (TrustedScriptURL: s => { throw new Error() })
+PASS TestPolicyTrustedScriptURL4 (TrustedScriptURL: s => s + "#" + aGlobalVarForSideEffectTesting)
+PASS TestPolicyTrustedScriptURL5 (TrustedScriptURL: function anotherGlobalFunction() {
+    [native code]
+})
+PASS TestPolicyTrustedScriptURL6 (TrustedScriptURL: s => anotherGlobalFunction(s))
 

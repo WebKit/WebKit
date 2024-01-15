@@ -1,3 +1,3 @@
 
-FAIL CSP supports wildcards. undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+PASS CSP supports wildcards.
 
