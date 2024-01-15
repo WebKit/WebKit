@@ -2841,7 +2841,7 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContex
     auto* rootPaintingLayer = enclosingSVGRootLayer();
     ASSERT(rootPaintingLayer);
 
-    LayerPaintingInfo paintingInfo(rootPaintingLayer, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize(), 0);
+    LayerPaintingInfo paintingInfo(rootPaintingLayer, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize());
     paintingInfo.clipToDirtyRect = false;
 
     OptionSet<PaintLayerFlag> flags { PaintLayerFlag::TemporaryClipRects };
@@ -3490,7 +3490,8 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     // Now do a paint with the root layer shifted to be us.
     LayerPaintingInfo transformedPaintingInfo(paintingInfo);
     transformedPaintingInfo.rootLayer = this;
-    transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
+    if (!transformedPaintingInfo.paintDirtyRect.isInfinite())
+        transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 
