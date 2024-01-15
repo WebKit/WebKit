@@ -395,6 +395,7 @@ fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
+http/wpt/mediastream/worker-mediastreamtrack.worker.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
 
@@ -2757,3 +2758,6 @@ streams/writable-stream-create-within-multiple-workers-crash.html [ Skip ]
 http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeout ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
+
+# EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases isn't implemented yet
+fast/events/wheel/wheel-event-after-document-open.html [ Skip ] # Timeout
