@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ TextAreasAreResizable=false ] -->
+<!DOCTYPE html>
+<textarea id="textarea"></textarea>
+<div>textarea has resize: <span id="computedStyle"></span></div>
+<script>
+computedStyle.textContent = getComputedStyle(textarea).resize;
+</script>

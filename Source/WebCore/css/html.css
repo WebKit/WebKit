@@ -808,7 +808,7 @@ textarea {
     padding-block: 2px;
 #endif
     flex-direction: column;
-    resize: auto;
+    resize: -internal-textarea-auto;
     cursor: auto;
     white-space: pre-wrap;
     word-wrap: break-word;

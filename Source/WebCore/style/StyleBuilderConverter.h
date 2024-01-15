@@ -798,8 +798,8 @@ inline Resize BuilderConverter::convertResize(BuilderState& builderState, const 
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    Resize resize = Resize::None;
-    if (primitiveValue.valueID() == CSSValueAuto)
+    auto resize = Resize::None;
+    if (primitiveValue.valueID() == CSSValueInternalTextareaAuto)
         resize = builderState.document().settings().textAreasAreResizable() ? Resize::Both : Resize::None;
     else
         resize = fromCSSValue<Resize>(value);

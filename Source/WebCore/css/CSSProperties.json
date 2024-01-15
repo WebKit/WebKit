@@ -5412,8 +5412,8 @@
                     "url": "https://www.w3.org/TR/css-logical/#resize"
                 },
                 {
-                    "value": "auto",
-                    "status": "non-standard"
+                    "value": "-internal-textarea-auto",
+                    "status": "internal"
                 }
             ],
             "codegen-properties": {
