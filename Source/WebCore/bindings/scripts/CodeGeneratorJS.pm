@@ -6674,6 +6674,7 @@ sub GenerateCallbackHeaderContent
                 my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
                 if ($argument->isVariadic) {
                     AddToIncludes("JSDOMConvertVariadic.h", $includesRef, 1);
+                    AddToIncludesForIDLType($argument->type, $includesRef, 1);
                     push(@arguments, "FixedVector<typename VariadicConverter<${IDLType}>::Item>&& " . $argument->name);
                 } else {
                     push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
