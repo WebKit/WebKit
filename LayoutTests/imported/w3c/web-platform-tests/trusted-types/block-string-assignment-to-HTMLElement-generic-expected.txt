@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+
+FAIL embed.src accepts only TrustedScriptURL undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL object.codeBase accepts only TrustedScriptURL undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL object.data accepts only TrustedScriptURL undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL script.src accepts only TrustedScriptURL undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL div.innerHTML accepts only TrustedHTML undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL iframe.srcdoc accepts only TrustedHTML undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+

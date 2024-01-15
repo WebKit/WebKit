@@ -1,0 +1,327 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+
+FAIL Event handler onclick should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler onchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler onfocus should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler oNclick should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler OnClIcK should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+PASS Non-event handler one should not be blocked.
+PASS Non-event handler oNe should not be blocked.
+PASS Non-event handler onIcon should not be blocked.
+PASS Non-event handler offIcon should not be blocked.
+PASS Non-event handler blubb should not be blocked.
+PASS Non-event handler div.align should not be blocked.
+PASS Non-event handler div.title should not be blocked.
+PASS Non-event handler div.lang should not be blocked.
+PASS Non-event handler div.translate should not be blocked.
+PASS Non-event handler div.dir should not be blocked.
+PASS Non-event handler div.cue should not be blocked.
+PASS Non-event handler div.cuebackground should not be blocked.
+PASS Non-event handler div.hidden should not be blocked.
+PASS Non-event handler div.accessKey should not be blocked.
+PASS Non-event handler div.accessKeyLabel should not be blocked.
+PASS Non-event handler div.draggable should not be blocked.
+PASS Non-event handler div.spellcheck should not be blocked.
+PASS Non-event handler div.innerText should not be blocked.
+PASS Non-event handler div.inert should not be blocked.
+PASS Non-event handler div.popover should not be blocked.
+PASS Non-event handler div.outerText should not be blocked.
+PASS Non-event handler div.autocorrect should not be blocked.
+PASS Non-event handler div.webkitdropzone should not be blocked.
+PASS Non-event handler div.style should not be blocked.
+PASS Non-event handler div.attributeStyleMap should not be blocked.
+PASS Non-event handler div.contentEditable should not be blocked.
+PASS Non-event handler div.enterKeyHint should not be blocked.
+PASS Non-event handler div.isContentEditable should not be blocked.
+PASS Non-event handler div.inputMode should not be blocked.
+FAIL Event handler div.onabort should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onbeforetoggle should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onblur should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncancel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncanplay should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncanplaythrough should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onclick should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onclose should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncontentvisibilityautostatechange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncontextmenu should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncopy should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncuechange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oncut should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondblclick should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondrag should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondragend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondragenter should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondragleave should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondragover should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondragstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondrop should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ondurationchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onemptied should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onended should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onerror should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onfocus should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onformdata should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oninput should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.oninvalid should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onkeydown should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onkeypress should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onkeyup should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onload should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onloadeddata should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onloadedmetadata should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onloadstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmousedown should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmouseenter should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmouseleave should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmousemove should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmouseout should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmouseover should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmouseup should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpaste should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpause should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onplay should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onplaying should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onprogress should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onratechange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onreset should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onresize should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onscroll should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onsecuritypolicyviolation should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onseeked should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onseeking should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onselect should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onslotchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onstalled should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onsubmit should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onsuspend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontimeupdate should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontoggle should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onvolumechange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwaiting should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwebkitanimationend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwebkitanimationiteration should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwebkitanimationstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwebkittransitionend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onwheel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onmousewheel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onanimationstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onanimationiteration should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onanimationend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onanimationcancel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontransitionrun should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontransitionstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontransitionend should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ontransitioncancel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.ongotpointercapture should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onlostpointercapture should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerdown should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointermove should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerup should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointercancel should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerover should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerout should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerenter should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onpointerleave should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onselectstart should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onselectionchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+PASS Non-event handler div.offsetParent should not be blocked.
+PASS Non-event handler div.offsetTop should not be blocked.
+PASS Non-event handler div.offsetLeft should not be blocked.
+PASS Non-event handler div.offsetWidth should not be blocked.
+PASS Non-event handler div.offsetHeight should not be blocked.
+PASS Non-event handler div.dataset should not be blocked.
+PASS Non-event handler div.nonce should not be blocked.
+PASS Non-event handler div.autofocus should not be blocked.
+PASS Non-event handler div.tabIndex should not be blocked.
+PASS Non-event handler div.click should not be blocked.
+PASS Non-event handler div.attachInternals should not be blocked.
+PASS Non-event handler div.showPopover should not be blocked.
+PASS Non-event handler div.hidePopover should not be blocked.
+PASS Non-event handler div.togglePopover should not be blocked.
+PASS Non-event handler div.focus should not be blocked.
+PASS Non-event handler div.blur should not be blocked.
+PASS Non-event handler div.namespaceURI should not be blocked.
+PASS Non-event handler div.prefix should not be blocked.
+PASS Non-event handler div.localName should not be blocked.
+PASS Non-event handler div.tagName should not be blocked.
+PASS Non-event handler div.id should not be blocked.
+PASS Non-event handler div.className should not be blocked.
+PASS Non-event handler div.classList should not be blocked.
+PASS Non-event handler div.slot should not be blocked.
+PASS Non-event handler div.part should not be blocked.
+PASS Non-event handler div.attributes should not be blocked.
+PASS Non-event handler div.shadowRoot should not be blocked.
+PASS Non-event handler div.role should not be blocked.
+PASS Non-event handler div.ariaActiveDescendantElement should not be blocked.
+PASS Non-event handler div.ariaAtomic should not be blocked.
+PASS Non-event handler div.ariaAutoComplete should not be blocked.
+PASS Non-event handler div.ariaBusy should not be blocked.
+PASS Non-event handler div.ariaChecked should not be blocked.
+PASS Non-event handler div.ariaColCount should not be blocked.
+PASS Non-event handler div.ariaColIndex should not be blocked.
+PASS Non-event handler div.ariaColSpan should not be blocked.
+PASS Non-event handler div.ariaControlsElements should not be blocked.
+PASS Non-event handler div.ariaCurrent should not be blocked.
+PASS Non-event handler div.ariaDescribedByElements should not be blocked.
+PASS Non-event handler div.ariaDescription should not be blocked.
+PASS Non-event handler div.ariaDetailsElements should not be blocked.
+PASS Non-event handler div.ariaDisabled should not be blocked.
+PASS Non-event handler div.ariaErrorMessageElements should not be blocked.
+PASS Non-event handler div.ariaExpanded should not be blocked.
+PASS Non-event handler div.ariaFlowToElements should not be blocked.
+PASS Non-event handler div.ariaHasPopup should not be blocked.
+PASS Non-event handler div.ariaHidden should not be blocked.
+PASS Non-event handler div.ariaInvalid should not be blocked.
+PASS Non-event handler div.ariaKeyShortcuts should not be blocked.
+PASS Non-event handler div.ariaLabel should not be blocked.
+PASS Non-event handler div.ariaLabelledByElements should not be blocked.
+PASS Non-event handler div.ariaLevel should not be blocked.
+PASS Non-event handler div.ariaLive should not be blocked.
+PASS Non-event handler div.ariaModal should not be blocked.
+PASS Non-event handler div.ariaMultiLine should not be blocked.
+PASS Non-event handler div.ariaMultiSelectable should not be blocked.
+PASS Non-event handler div.ariaOrientation should not be blocked.
+PASS Non-event handler div.ariaOwnsElements should not be blocked.
+PASS Non-event handler div.ariaPlaceholder should not be blocked.
+PASS Non-event handler div.ariaPosInSet should not be blocked.
+PASS Non-event handler div.ariaPressed should not be blocked.
+PASS Non-event handler div.ariaReadOnly should not be blocked.
+PASS Non-event handler div.ariaRelevant should not be blocked.
+PASS Non-event handler div.ariaRequired should not be blocked.
+PASS Non-event handler div.ariaRoleDescription should not be blocked.
+PASS Non-event handler div.ariaRowCount should not be blocked.
+PASS Non-event handler div.ariaRowIndex should not be blocked.
+PASS Non-event handler div.ariaRowSpan should not be blocked.
+PASS Non-event handler div.ariaSelected should not be blocked.
+PASS Non-event handler div.ariaSetSize should not be blocked.
+PASS Non-event handler div.ariaSort should not be blocked.
+PASS Non-event handler div.ariaValueMax should not be blocked.
+PASS Non-event handler div.ariaValueMin should not be blocked.
+PASS Non-event handler div.ariaValueNow should not be blocked.
+PASS Non-event handler div.ariaValueText should not be blocked.
+PASS Non-event handler div.scrollTop should not be blocked.
+PASS Non-event handler div.scrollLeft should not be blocked.
+PASS Non-event handler div.scrollWidth should not be blocked.
+PASS Non-event handler div.scrollHeight should not be blocked.
+PASS Non-event handler div.clientTop should not be blocked.
+PASS Non-event handler div.clientLeft should not be blocked.
+PASS Non-event handler div.clientWidth should not be blocked.
+PASS Non-event handler div.clientHeight should not be blocked.
+PASS Non-event handler div.outerHTML should not be blocked.
+FAIL Event handler div.onfullscreenchange should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+FAIL Event handler div.onfullscreenerror should be blocked. assert_throws_js: function "_ => element.setAttribute(name, "2+2")" did not throw
+PASS Non-event handler div.innerHTML should not be blocked.
+PASS Non-event handler div.previousElementSibling should not be blocked.
+PASS Non-event handler div.nextElementSibling should not be blocked.
+PASS Non-event handler div.children should not be blocked.
+PASS Non-event handler div.firstElementChild should not be blocked.
+PASS Non-event handler div.lastElementChild should not be blocked.
+PASS Non-event handler div.childElementCount should not be blocked.
+PASS Non-event handler div.assignedSlot should not be blocked.
+PASS Non-event handler div.hasAttributes should not be blocked.
+PASS Non-event handler div.getAttributeNames should not be blocked.
+PASS Non-event handler div.getAttribute should not be blocked.
+PASS Non-event handler div.getAttributeNS should not be blocked.
+PASS Non-event handler div.setAttribute should not be blocked.
+PASS Non-event handler div.setAttributeNS should not be blocked.
+PASS Non-event handler div.removeAttribute should not be blocked.
+PASS Non-event handler div.removeAttributeNS should not be blocked.
+PASS Non-event handler div.toggleAttribute should not be blocked.
+PASS Non-event handler div.hasAttribute should not be blocked.
+PASS Non-event handler div.hasAttributeNS should not be blocked.
+PASS Non-event handler div.getAttributeNode should not be blocked.
+PASS Non-event handler div.getAttributeNodeNS should not be blocked.
+PASS Non-event handler div.setAttributeNode should not be blocked.
+PASS Non-event handler div.setAttributeNodeNS should not be blocked.
+PASS Non-event handler div.removeAttributeNode should not be blocked.
+PASS Non-event handler div.attachShadow should not be blocked.
+PASS Non-event handler div.closest should not be blocked.
+PASS Non-event handler div.matches should not be blocked.
+PASS Non-event handler div.webkitMatchesSelector should not be blocked.
+PASS Non-event handler div.getElementsByTagName should not be blocked.
+PASS Non-event handler div.getElementsByTagNameNS should not be blocked.
+PASS Non-event handler div.getElementsByClassName should not be blocked.
+PASS Non-event handler div.insertAdjacentElement should not be blocked.
+PASS Non-event handler div.insertAdjacentText should not be blocked.
+PASS Non-event handler div.animate should not be blocked.
+PASS Non-event handler div.getAnimations should not be blocked.
+PASS Non-event handler div.before should not be blocked.
+PASS Non-event handler div.after should not be blocked.
+PASS Non-event handler div.replaceWith should not be blocked.
+PASS Non-event handler div.remove should not be blocked.
+PASS Non-event handler div.getClientRects should not be blocked.
+PASS Non-event handler div.getBoundingClientRect should not be blocked.
+PASS Non-event handler div.checkVisibility should not be blocked.
+PASS Non-event handler div.scrollIntoView should not be blocked.
+PASS Non-event handler div.scroll should not be blocked.
+PASS Non-event handler div.scrollTo should not be blocked.
+PASS Non-event handler div.scrollBy should not be blocked.
+PASS Non-event handler div.scrollIntoViewIfNeeded should not be blocked.
+PASS Non-event handler div.computedStyleMap should not be blocked.
+PASS Non-event handler div.insertAdjacentHTML should not be blocked.
+PASS Non-event handler div.requestFullscreen should not be blocked.
+PASS Non-event handler div.webkitRequestFullScreen should not be blocked.
+PASS Non-event handler div.webkitRequestFullscreen should not be blocked.
+PASS Non-event handler div.setPointerCapture should not be blocked.
+PASS Non-event handler div.releasePointerCapture should not be blocked.
+PASS Non-event handler div.hasPointerCapture should not be blocked.
+PASS Non-event handler div.requestPointerLock should not be blocked.
+PASS Non-event handler div.setHTMLUnsafe should not be blocked.
+PASS Non-event handler div.prepend should not be blocked.
+PASS Non-event handler div.append should not be blocked.
+PASS Non-event handler div.replaceChildren should not be blocked.
+PASS Non-event handler div.querySelector should not be blocked.
+PASS Non-event handler div.querySelectorAll should not be blocked.
+PASS Non-event handler div.nodeType should not be blocked.
+PASS Non-event handler div.nodeName should not be blocked.
+PASS Non-event handler div.baseURI should not be blocked.
+PASS Non-event handler div.isConnected should not be blocked.
+PASS Non-event handler div.ownerDocument should not be blocked.
+PASS Non-event handler div.parentNode should not be blocked.
+PASS Non-event handler div.parentElement should not be blocked.
+PASS Non-event handler div.childNodes should not be blocked.
+PASS Non-event handler div.firstChild should not be blocked.
+PASS Non-event handler div.lastChild should not be blocked.
+PASS Non-event handler div.previousSibling should not be blocked.
+PASS Non-event handler div.nextSibling should not be blocked.
+PASS Non-event handler div.nodeValue should not be blocked.
+PASS Non-event handler div.textContent should not be blocked.
+PASS Non-event handler div.getRootNode should not be blocked.
+PASS Non-event handler div.hasChildNodes should not be blocked.
+PASS Non-event handler div.normalize should not be blocked.
+PASS Non-event handler div.cloneNode should not be blocked.
+PASS Non-event handler div.isEqualNode should not be blocked.
+PASS Non-event handler div.isSameNode should not be blocked.
+PASS Non-event handler div.compareDocumentPosition should not be blocked.
+PASS Non-event handler div.contains should not be blocked.
+PASS Non-event handler div.lookupPrefix should not be blocked.
+PASS Non-event handler div.lookupNamespaceURI should not be blocked.
+PASS Non-event handler div.isDefaultNamespace should not be blocked.
+PASS Non-event handler div.insertBefore should not be blocked.
+PASS Non-event handler div.appendChild should not be blocked.
+PASS Non-event handler div.replaceChild should not be blocked.
+PASS Non-event handler div.removeChild should not be blocked.
+PASS Non-event handler div.ELEMENT_NODE should not be blocked.
+PASS Non-event handler div.ATTRIBUTE_NODE should not be blocked.
+PASS Non-event handler div.TEXT_NODE should not be blocked.
+PASS Non-event handler div.CDATA_SECTION_NODE should not be blocked.
+PASS Non-event handler div.ENTITY_REFERENCE_NODE should not be blocked.
+PASS Non-event handler div.ENTITY_NODE should not be blocked.
+PASS Non-event handler div.PROCESSING_INSTRUCTION_NODE should not be blocked.
+PASS Non-event handler div.COMMENT_NODE should not be blocked.
+PASS Non-event handler div.DOCUMENT_NODE should not be blocked.
+PASS Non-event handler div.DOCUMENT_TYPE_NODE should not be blocked.
+PASS Non-event handler div.DOCUMENT_FRAGMENT_NODE should not be blocked.
+PASS Non-event handler div.NOTATION_NODE should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_DISCONNECTED should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_PRECEDING should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_FOLLOWING should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_CONTAINS should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_CONTAINED_BY should not be blocked.
+PASS Non-event handler div.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC should not be blocked.
+PASS Non-event handler div.addEventListener should not be blocked.
+PASS Non-event handler div.removeEventListener should not be blocked.
+PASS Non-event handler div.dispatchEvent should not be blocked.
+

@@ -1,0 +1,5 @@
+
+FAIL Element.setAttributeNS assigned via policy (successful HTML transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL Element.setAttributeNS assigned via policy (successful Script transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL Element.setAttributeNS assigned via policy (successful ScriptURL transformation) undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+

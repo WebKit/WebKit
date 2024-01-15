@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+CONSOLE MESSAGE: The Content Security Policy 'trusted-types a b c' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+
+FAIL TrustedTypePolicyFactory and policy list in CSP. Can't find variable: trustedTypes
+

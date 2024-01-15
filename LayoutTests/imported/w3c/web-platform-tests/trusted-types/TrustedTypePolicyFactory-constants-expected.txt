@@ -1,0 +1,8 @@
+
+FAIL trustedTypes.emptyHTML returns the intended value. Can't find variable: trustedTypes
+FAIL trustedTypes.emptyHTML cannot be redefined. Can't find variable: trustedTypes
+FAIL trustedTypes.emptyHTML cannot be redefined via defineProperty. Can't find variable: trustedTypes
+FAIL trustedTypes.emptyScript returns the intended value. Can't find variable: trustedTypes
+FAIL trustedTypes.emptyScript cannot be redefined. Can't find variable: trustedTypes
+FAIL trustedTypes.emptyScript cannot be redefined via defineProperty. Can't find variable: trustedTypes
+

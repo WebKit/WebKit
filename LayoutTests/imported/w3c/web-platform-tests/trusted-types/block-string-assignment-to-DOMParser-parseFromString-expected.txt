@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+
+FAIL document.innerText assigned via policy (successful HTML transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL `document.innerText = string` throws. assert_throws_js: function "_ => {
+      var doc = parser.parseFromString("Fail", "text/html");
+    }" did not throw
+FAIL 'document.innerText = null' throws assert_throws_js: function "_ => {
+      var doc = parser.parseFromString(null, "text/html");
+    }" did not throw
+FAIL 'document.innerText = string' assigned via default policy (successful HTML transformation). undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+PASS 'document.innerText = null' assigned via default policy does not throw
+

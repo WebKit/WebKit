@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: TrustedHTML
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: TrustedHTML
+
+FAIL calling undefined callbacks throws Can't find variable: trustedTypes
+FAIL Attributes without type constraints will work as before. Can't find variable: trustedTypes
+FAIL trustedTypes.createPolicy(.., null) creates empty policy. Can't find variable: trustedTypes
+

@@ -5588,6 +5588,12 @@
     "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html": [
         "slow"
     ],

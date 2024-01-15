@@ -2455,6 +2455,10 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 
 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 
+# Trusted Types aren't implemented yet
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting-check-report.html [ Failure Pass ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-attribute-via-attribute-node.html [ Failure Pass ]
+
 # Flaky tests on Aug-2023
 webkit.org/b/261024 animations/change-completed-animation-transform.html [ ImageOnlyFailure Pass ]
 webkit.org/b/261024 animations/dynamic-stylesheet-loading.html [ Failure Pass ]

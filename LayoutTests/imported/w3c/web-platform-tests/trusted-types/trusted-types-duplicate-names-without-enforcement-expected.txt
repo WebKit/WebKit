@@ -1,0 +1,4 @@
+
+FAIL createPolicy - duplicate policies are allowed when Trusted Types are not enforced. Can't find variable: trustedTypes
+FAIL createPolicy - duplicate "default" policy is never allowed. Can't find variable: trustedTypes
+

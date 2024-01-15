@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+
+

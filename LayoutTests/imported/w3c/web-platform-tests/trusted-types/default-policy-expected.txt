@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+
+TIMEOUT Count SecurityPolicyViolation events. Test timed out
+FAIL script.src no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL div.innerHTML no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL script.text no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+
+TIMEOUT Count SecurityPolicyViolation events. Test timed out
+FAIL script.src no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL div.innerHTML no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+FAIL script.text no default policy assert_throws_js: function "_ => element[c[1]] = "nodefault"" did not throw
+

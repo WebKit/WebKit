@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+
+FAIL policy.name = name Can't find variable: trustedTypes
+FAIL duplicate policy name attempt throws assert_throws_js: function "_ => {
+     trustedTypes.createPolicy('SomeName', {} );
+    }" threw object "ReferenceError: Can't find variable: trustedTypes" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Error messages for duplicates and unlisted policies should be different assert_true: expected true got false
+

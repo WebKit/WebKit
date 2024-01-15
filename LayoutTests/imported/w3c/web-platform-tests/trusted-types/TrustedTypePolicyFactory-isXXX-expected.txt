@@ -1,0 +1,6 @@
+
+FAIL TrustedTypePolicyFactory.isHTML requires the object to be created via policy. Can't find variable: trustedTypes
+FAIL TrustedTypePolicyFactory.isScript requires the object to be created via policy. Can't find variable: trustedTypes
+FAIL TrustedTypePolicyFactory.isScriptURL requires the object to be created via policy. Can't find variable: trustedTypes
+FAIL TrustedTypePolicyFactory.isXXX should accept anything without throwing. Can't find variable: trustedTypes
+

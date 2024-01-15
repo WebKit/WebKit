@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Navigate a window with javascript:-urls in enforcing mode. Test timed out
+NOTRUN Navigate a window with javascript:-urls w/ default policy in enforcing mode.
+NOTRUN Navigate a window with javascript:-urls in report-only mode.
+NOTRUN Navigate a window with javascript:-urls w/ default policy in report-only mode.
+NOTRUN Navigate a frame with javascript:-urls in enforcing mode.
+NOTRUN Navigate a frame with javascript:-urls w/ default policy in enforcing mode.
+NOTRUN Navigate a frame with javascript:-urls in report-only mode.
+NOTRUN Navigate a frame with javascript:-urls w/ default policy in report-only mode.
+

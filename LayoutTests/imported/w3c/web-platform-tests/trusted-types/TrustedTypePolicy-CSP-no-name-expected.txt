@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+
+PASS No name list given - policy creation fails.
+

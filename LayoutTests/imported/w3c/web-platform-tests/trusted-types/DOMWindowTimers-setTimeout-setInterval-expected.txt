@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+
+FAIL window.setTimeout assigned via policy (successful Script transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+FAIL window.setInterval assigned via policy (successful Script transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+

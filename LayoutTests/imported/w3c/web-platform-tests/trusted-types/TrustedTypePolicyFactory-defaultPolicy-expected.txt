@@ -1,0 +1,5 @@
+
+FAIL defaultPolicy with no default created is not an error undefined is not an object (evaluating 'window.trustedTypes.defaultPolicy')
+FAIL defaultPolicy returns the correct default policy undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+FAIL defaultPolicy is a read-only property undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+

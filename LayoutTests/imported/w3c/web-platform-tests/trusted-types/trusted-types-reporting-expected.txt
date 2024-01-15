@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Trusted Type violation report: creating a forbidden policy. Test timed out
+NOTRUN Trusted Type violation report: creating a report-only-forbidden policy.
+NOTRUN Trusted Type violation report: creating a forbidden-but-not-reported policy.
+NOTRUN Trusted Type violation report: assign string to script url
+NOTRUN Trusted Type violation report: assign string to html
+NOTRUN Trusted Type violation report: assign trusted script to script; no report
+NOTRUN Trusted Type violation report: assign trusted HTML to html; no report
+NOTRUN Trusted Type violation report: sample for innerHTML assignment
+NOTRUN Trusted Type violation report: sample for text assignment
+NOTRUN Trusted Type violation report: sample for script.src assignment
+NOTRUN Trusted Type violation report: sample for script innerText assignment
+NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment
+NOTRUN Trusted Type violation report: sample for SVGScriptElement href assignment by setAttribute
+NOTRUN Trusted Type violation report: sample for SVGScriptElement text assignment
+NOTRUN Trusted Type violation report: sample for eval
+NOTRUN Trusted Type violation report: large values should be handled sanely.
+NOTRUN Trusted Type violation report: sample for custom element assignment
+NOTRUN Trusted Type violation report: Worker constructor
+

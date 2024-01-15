@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
+
+
+FAIL Allowed-name policy creation works. undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+FAIL Another allowed-name policy creation works. undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+PASS Non-allowed name policy creation throws.
+

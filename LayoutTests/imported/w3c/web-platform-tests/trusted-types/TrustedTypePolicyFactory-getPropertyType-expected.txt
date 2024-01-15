@@ -1,0 +1,26 @@
+
+FAIL sanity check trustedTypes.getPropertyType for the HTML script element. Can't find variable: trustedTypes
+FAIL sanity check trustedTypes.getAttributeType. Can't find variable: trustedTypes
+FAIL sanity check trustedTypes.getTypeMapping Can't find variable: trustedTypes
+FAIL getPropertyType tests adapted from w3c/trusted-types polyfill Can't find variable: trustedTypes
+FAIL getAttributeType tests adapted from w3c/trusted-types polyfill Can't find variable: trustedTypes
+FAIL getTypeMapping tests adapted from w3c/trusted-types polyfill Can't find variable: trustedTypes
+FAIL object[codeBase] is defined Can't find variable: trustedTypes
+FAIL object.codeBase is maybe defined Can't find variable: trustedTypes
+FAIL OBJECT[codeBase] is defined Can't find variable: trustedTypes
+FAIL OBJECT.codeBase is maybe defined Can't find variable: trustedTypes
+FAIL oBjEcT[codeBase] is defined Can't find variable: trustedTypes
+FAIL oBjEcT.codeBase is maybe defined Can't find variable: trustedTypes
+FAIL object[CODEBASE] is defined Can't find variable: trustedTypes
+FAIL object.CODEBASE is maybe defined Can't find variable: trustedTypes
+FAIL OBJECT[CODEBASE] is defined Can't find variable: trustedTypes
+FAIL OBJECT.CODEBASE is maybe defined Can't find variable: trustedTypes
+FAIL oBjEcT[CODEBASE] is defined Can't find variable: trustedTypes
+FAIL oBjEcT.CODEBASE is maybe defined Can't find variable: trustedTypes
+FAIL object[codebase] is defined Can't find variable: trustedTypes
+FAIL object.codebase is maybe defined Can't find variable: trustedTypes
+FAIL OBJECT[codebase] is defined Can't find variable: trustedTypes
+FAIL OBJECT.codebase is maybe defined Can't find variable: trustedTypes
+FAIL oBjEcT[codebase] is defined Can't find variable: trustedTypes
+FAIL oBjEcT.codebase is maybe defined Can't find variable: trustedTypes
+

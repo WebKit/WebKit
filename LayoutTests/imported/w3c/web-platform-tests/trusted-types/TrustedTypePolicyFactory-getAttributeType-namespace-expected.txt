@@ -1,0 +1,23 @@
+
+FAIL 0: getAttributeType with full namespace info. Can't find variable: trustedTypes
+FAIL 0: getAttributeType with element namespace and empty attribute namespace Can't find variable: trustedTypes
+FAIL 0: getAttributeType without namespaces. Can't find variable: trustedTypes
+FAIL 0: getAttributeType with undefined and empty namespace. Can't find variable: trustedTypes
+FAIL 0: getAttributeType with empty and undefined namespace. Can't find variable: trustedTypes
+FAIL 0: getAttributeType with empty namespaces. Can't find variable: trustedTypes
+FAIL 0: getAttributeType with element namespace and empty attribute namespace. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with full namespace info. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with element namespace and empty attribute namespace Can't find variable: trustedTypes
+FAIL 1: getAttributeType without namespaces. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with undefined and empty namespace. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with empty and undefined namespace. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with empty namespaces. Can't find variable: trustedTypes
+FAIL 1: getAttributeType with element namespace and empty attribute namespace. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with full namespace info. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with element namespace and empty attribute namespace Can't find variable: trustedTypes
+FAIL 2: getAttributeType without namespaces. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with undefined and empty namespace. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with empty and undefined namespace. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with empty namespaces. Can't find variable: trustedTypes
+FAIL 2: getAttributeType with element namespace and empty attribute namespace. Can't find variable: trustedTypes
+
