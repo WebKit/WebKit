@@ -40,6 +40,9 @@ static Expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tr
     // https://tc39.es/proposal-import-attributes/#sec-AllImportAttributesSupported
     // Currently, only "type" is supported.
     std::optional<ScriptFetchParameters::Type> type;
+#if USE(BUN_JSC_ADDITIONS)
+    String hostDefinedImportType = String();
+#endif
     for (auto& [key, value] : attributesList->attributes()) {
         if (*key != vm.propertyNames->type)
             return makeUnexpected(std::tuple { ErrorType::SyntaxError, makeString("Import attribute \""_s, StringView(key->impl()), "\" is not supported"_s) });
@@ -50,12 +53,25 @@ static Expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tr
             type = ScriptFetchParameters::parseType(value->impl());
             if (!type)
                 return makeUnexpected(std::tuple { ErrorType::TypeError, makeString("Import attribute type \""_s, StringView(value->impl()), "\" is not valid"_s) });
+
+#if USE(BUN_JSC_ADDITIONS)
+            if (type.value() == ScriptFetchParameters::Type::HostDefined) {
+                hostDefinedImportType = value->impl();
+            }
+#endif
         }
     }
 
-    if (type)
+    if (type) {
+#if USE(BUN_JSC_ADDITIONS)
+        if (type.value() == ScriptFetchParameters::Type::HostDefined) {
+            return RefPtr<ScriptFetchParameters>(ScriptFetchParameters::create(hostDefinedImportType));
+        }
+#endif
+
         return RefPtr<ScriptFetchParameters>(ScriptFetchParameters::create(type.value()));
-    return RefPtr<ScriptFetchParameters> { };
+    }
+    return RefPtr<ScriptFetchParameters> {};
 }
 
 bool ScopeNode::analyzeModule(ModuleAnalyzer& analyzer)
