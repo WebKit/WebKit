@@ -390,7 +390,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         }
     }
 
-    priv->codecString = codecString;
+    priv->codecString = codecString.isolatedCopy();
     encoderDefinition->setupEncoder(self);
 
     encoderDefinition->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
