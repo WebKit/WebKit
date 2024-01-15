@@ -940,11 +940,11 @@ public:
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
+private:
     void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
     template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 
-private:
     template<FailureAction> bool growImpl(size_t);
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
     template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
