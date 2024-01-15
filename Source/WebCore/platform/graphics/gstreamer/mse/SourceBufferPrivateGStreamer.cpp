@@ -315,7 +315,10 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
     });
 
     // If any track type size isn't specified, we consider that it has no limit and the values from the
-    // element have to be used. Otherwise, the track limits are accumulative.
+    // element have to be used. Otherwise, the track limits are accumulative. If everything is specified
+    // but there's no track (eg: because we're processing an init segment that we don't know yet which
+    // kind of track(s) is going to generate) we assume that the 3 kind of tracks might appear (audio,
+    // video, text) and use all the accumulated limits at once to make room for any possible outcome.
     do {
         bool hasVideo = false;
         bool hasAudio = false;
@@ -338,19 +341,19 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
             }
         }
 
-        if (hasVideo) {
+        if (hasVideo || m_tracks.empty()) {
             if (maxBufferSizeVideo)
                 bufferSize += maxBufferSizeVideo;
             else
                 break;
         }
-        if (hasAudio) {
+        if (hasAudio || m_tracks.empty()) {
             if (maxBufferSizeAudio)
                 bufferSize += maxBufferSizeAudio;
             else
                 break;
         }
-        if (hasText) {
+        if (hasText || m_tracks.empty()) {
             if (maxBufferSizeText)
                 bufferSize += maxBufferSizeText;
             else
