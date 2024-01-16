@@ -50,7 +50,6 @@ public:
 
     void setCheckerAndIdentifier(SpellChecker*, TextCheckingRequestIdentifier);
     void requesterDestroyed();
-    bool isStarted() const { return m_checker; }
 
     const TextCheckingRequestData& data() const final;
 
