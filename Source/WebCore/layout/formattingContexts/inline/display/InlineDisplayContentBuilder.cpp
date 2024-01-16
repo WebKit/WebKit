@@ -357,56 +357,22 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
 {
     ASSERT(lineRun.layoutBox().isInlineBox());
     ASSERT(inlineBox.isInlineBox());
-
-    auto& layoutBox = lineRun.layoutBox();
-    // This inline box showed up first on this line.
-    ASSERT(inlineBox.isFirstBox());
-    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, true);
-
-    if (!lineHasContent) {
-        // While "<div><span> </span></div>" produces empty line with no display boxes, we still need to assign box geometry to the associated inline box.
-        return;
-    }
-
-    m_hasSeenRubyBase = m_hasSeenRubyBase || layoutBox.isRubyBase();
-    auto inkOverflow = [&] {
-        auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
-        auto inkOverflow = FloatRect { inlineBoxBorderBox };
-        m_contentHasInkOverflow = computeInkOverflowForInlineBox(inlineBox, style, inkOverflow) || m_contentHasInkOverflow;
-        return inkOverflow;
-    };
-
-    boxes.append({ m_lineIndex
-        , InlineDisplay::Box::Type::NonRootInlineBox
-        , layoutBox
-        , lineRun.bidiLevel()
-        , inlineBoxBorderBox
-        , inkOverflow()
-        , { }
-        , { }
-        , inlineBox.hasContent()
-        , isLineFullyTruncatedInBlockDirection()
-        , isFirstLastBox(inlineBox)
-    });
-}
-
-void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool lineHasContent, InlineDisplay::Boxes& boxes)
-{
-    ASSERT(lineRun.layoutBox().isInlineBox());
-    ASSERT(inlineBox.isInlineBox());
-    ASSERT(!inlineBox.isFirstBox());
+    ASSERT((inlineBox.isFirstBox() && lineRun.isInlineBoxStart()) || (!inlineBox.isFirstBox() && lineRun.isLineSpanningInlineBoxStart()));
 
     if (!lineHasContent) {
         // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
         // (empty here means no content at all including line breaks, not just visually empty) then we
         // don't extend the spanning line box over to this line.
+        if (lineRun.isLineSpanningInlineBoxStart())
+            return;
+        // While "<div><span> </span></div>" produces empty line with no display boxes, we still need to assign box geometry to the associated inline box.
+        setInlineBoxGeometry(lineRun.layoutBox(), inlineBoxBorderBox, inlineBox.isFirstBox());
         return;
     }
-
-    // Middle or end of the inline box. Let's stretch the box as needed.
     auto& layoutBox = lineRun.layoutBox();
     m_hasSeenRubyBase = m_hasSeenRubyBase || layoutBox.isRubyBase();
-    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, false);
+    setInlineBoxGeometry(layoutBox, inlineBoxBorderBox, inlineBox.isFirstBox());
+
     auto inkOverflow = [&] {
         auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
         auto inkOverflow = FloatRect { inlineBoxBorderBox };
@@ -478,59 +444,56 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
 
     for (size_t index = 0; index < lineLayoutResult.inlineContent.size(); ++index) {
         auto& lineRun = lineLayoutResult.inlineContent[index];
-        auto& layoutBox = lineRun.layoutBox();
+        if (lineRun.isWordBreakOpportunity() || lineRun.isInlineBoxEnd())
+            continue;
 
-        auto visualRectRelativeToRoot = [&](auto logicalRect) {
+        auto& layoutBox = lineRun.layoutBox();
+        auto logicalRect = [&]() -> InlineRect {
+            if (lineRun.isText() || lineRun.isSoftLineBreak())
+                return lineBox.logicalRectForTextRun(lineRun);
+            if (lineRun.isHardLineBreak())
+                return lineBox.logicalRectForLineBreakBox(layoutBox);
+
+            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+            if (lineRun.isBox() || lineRun.isListMarker())
+                return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
+            if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
+                return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+            if (lineRun.isOpaque()) {
+                if (layoutBox.style().isOriginalDisplayInlineType()) {
+                    auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
+                    logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
+                    return { logicalTopLeft, boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
+                }
+                // Computed at a later stage.
+                return { { }, { } };
+            }
+            ASSERT_NOT_REACHED();
+            return { };
+        }();
+        auto visualRectRelativeToRoot = [&] {
             auto visualRect = flipLogicalRectToVisualForWritingModeWithinLine(logicalRect, lineBox.logicalRect(), writingMode);
             visualRect.moveBy(contentStartInVisualOrder);
             return visualRect;
-        };
+        }();
 
-        if (lineRun.isText()) {
-            appendTextDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
-            continue;
-        }
-        if (lineRun.isSoftLineBreak()) {
-            appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun)), boxes);
-            continue;
-        }
-        if (lineRun.isHardLineBreak()) {
-            appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
-            continue;
-        }
-        if (lineRun.isBox() || lineRun.isListMarker()) {
-            appendAtomicInlineLevelDisplayBox(lineRun
-                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingContext().geometryForBox(layoutBox)))
-                , boxes);
-            continue;
-        }
-        if (lineRun.isInlineBoxStart()) {
-            appendInlineBoxDisplayBox(lineRun
-                , lineBox.inlineLevelBoxFor(lineRun)
-                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox)))
-                , lineBox.hasContent()
-                , boxes);
-            continue;
-        }
-        if (lineRun.isLineSpanningInlineBoxStart()) {
-            appendSpanningInlineBoxDisplayBox(lineRun
-                , lineBox.inlineLevelBoxFor(lineRun)
-                , visualRectRelativeToRoot(lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox)))
-                , lineBox.hasContent()
-                , boxes);
-            continue;
-        }
-        if (lineRun.isOpaque()) {
-            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            if (layoutBox.style().isOriginalDisplayInlineType()) {
-                auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                boxGeometry.setTopLeft(toLayoutPoint(logicalTopLeft));
-            } else
+        if (lineRun.isText())
+            appendTextDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
+        else if (lineRun.isSoftLineBreak())
+            appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
+        else if (lineRun.isHardLineBreak())
+            appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
+        else if (lineRun.isBox() || lineRun.isListMarker())
+            appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
+        else if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
+            appendInlineBoxDisplayBox(lineRun, lineBox.inlineLevelBoxFor(lineRun), visualRectRelativeToRoot, lineBox.hasContent(), boxes);
+        else if (lineRun.isOpaque()) {
+            if (layoutBox.style().isOriginalDisplayInlineType())
+                formattingContext().geometryForBox(layoutBox).setTopLeft(toLayoutPoint(logicalRect.topLeft()));
+            else
                 blockLevelOutOfFlowBoxList.append(index);
-            continue;
-        }
-        ASSERT(lineRun.isWordBreakOpportunity() || lineRun.isInlineBoxEnd());
+        } else
+            ASSERT_NOT_REACHED();
     }
     setGeometryForBlockLevelOutOfFlowBoxes(blockLevelOutOfFlowBoxList, lineBox, lineLayoutResult.inlineContent);
 }
@@ -725,60 +688,77 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
             ASSERT(inlineContent[logicalIndex].bidiLevel() != InlineItem::opaqueBidiLevel);
 
             auto& lineRun = inlineContent[logicalIndex];
-            auto& layoutBox = lineRun.layoutBox();
-
             auto needsDisplayBoxOrGeometrySetting = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
             if (!needsDisplayBoxOrGeometrySetting)
                 continue;
 
-            auto visualRectRelativeToRoot = [&](auto logicalRect) {
+            auto& layoutBox = lineRun.layoutBox();
+            auto logicalRect = [&]() -> InlineRect {
+                if (lineRun.isText() || lineRun.isSoftLineBreak())
+                    return lineBox.logicalRectForTextRun(lineRun);
+                if (lineRun.isHardLineBreak())
+                    return lineBox.logicalRectForLineBreakBox(layoutBox);
+                if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
+                    // Computed at a later stage.
+                    return { { }, { } };
+                }
+                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+                if (lineRun.isBox() || lineRun.isListMarker())
+                    return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
+                if (lineRun.isOpaque()) {
+                    if (layoutBox.style().isOriginalDisplayInlineType()) {
+                        auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
+                        logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
+                        return InlineRect { logicalTopLeft, boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
+                    }
+                    // Computed at a later stage.
+                    return { { }, { } };
+                }
+                ASSERT_NOT_REACHED();
+                return { };
+            }();
+
+            auto visualRectRelativeToRoot = [&] {
                 auto visualRect = flipLogicalRectToVisualForWritingModeWithinLine(logicalRect, lineBox.logicalRect(), writingMode);
                 if (isHorizontalWritingMode) {
                     visualRect.setLeft(contentRightInInlineDirectionVisualOrder);
                     visualRect.moveVertically(lineLogicalTop);
-                } else {
-                    visualRect.setTop(contentRightInInlineDirectionVisualOrder);
-                    visualRect.moveHorizontally(lineLogicalTop);
+                    return visualRect;
                 }
+                visualRect.setTop(contentRightInInlineDirectionVisualOrder);
+                visualRect.moveHorizontally(lineLogicalTop);
                 return visualRect;
-            };
+            }();
 
             auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
             hasInlineBox = hasInlineBox || parentDisplayBoxNodeIndex || lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart();
             if (lineRun.isText()) {
-                auto logicalRect = lineBox.logicalRectForTextRun(lineRun);
-                auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto wordSpacingMargin = lineRun.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
-
-                isHorizontalWritingMode ? visualRect.moveHorizontally(wordSpacingMargin) : visualRect.moveVertically(wordSpacingMargin);
-                appendTextDisplayBox(lineRun, visualRect, boxes);
+                isHorizontalWritingMode ? visualRectRelativeToRoot.moveHorizontally(wordSpacingMargin) : visualRectRelativeToRoot.moveVertically(wordSpacingMargin);
+                appendTextDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
                 contentRightInInlineDirectionVisualOrder += logicalRect.width() + wordSpacingMargin;
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isSoftLineBreak()) {
-                auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForTextRun(lineRun));
-                ASSERT((isHorizontalWritingMode && !visualRect.width()) || (!isHorizontalWritingMode && !visualRect.height()));
-                appendSoftLineBreakDisplayBox(lineRun, visualRect, boxes);
+                ASSERT((isHorizontalWritingMode && !visualRectRelativeToRoot.width()) || (!isHorizontalWritingMode && !visualRectRelativeToRoot.height()));
+                appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isHardLineBreak()) {
-                auto visualRect = visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox));
-                ASSERT((isHorizontalWritingMode && !visualRect.width()) || (!isHorizontalWritingMode && !visualRect.height()));
-                appendHardLineBreakDisplayBox(lineRun, visualRect, boxes);
+                ASSERT((isHorizontalWritingMode && !visualRectRelativeToRoot.width()) || (!isHorizontalWritingMode && !visualRectRelativeToRoot.height()));
+                appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
             if (lineRun.isBox() || lineRun.isListMarker()) {
                 auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
-                auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
-                isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
+                isHorizontalWritingMode ? visualRectRelativeToRoot.moveHorizontally(boxMarginLeft) : visualRectRelativeToRoot.moveVertically(boxMarginLeft);
 
-                appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
+                appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
                 contentRightInInlineDirectionVisualOrder += boxMarginLeft + logicalRect.width() + marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
@@ -820,12 +800,9 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 continue;
             }
             if (lineRun.isOpaque()) {
-                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                if (layoutBox.style().isOriginalDisplayInlineType()) {
-                    auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                    logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                    boxGeometry.setTopLeft(toLayoutPoint(logicalTopLeft));
-                } else
+                if (layoutBox.style().isOriginalDisplayInlineType())
+                    formattingContext().geometryForBox(layoutBox).setTopLeft(toLayoutPoint(logicalRect.topLeft()));
+                else
                     blockLevelOutOfFlowBoxList.append(index);
                 continue;
             }
