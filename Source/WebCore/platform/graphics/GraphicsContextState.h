@@ -176,13 +176,11 @@ private:
         m_changeFlags.add(change);
     }
 
-    ChangeFlags m_changeFlags;
-
     SourceBrush m_fillBrush { Color::black };
-    WindRule m_fillRule { WindRule::NonZero };
-
     SourceBrush m_strokeBrush { Color::black };
+    ChangeFlags m_changeFlags;
     float m_strokeThickness { 0 };
+    WindRule m_fillRule { WindRule::NonZero };
     StrokeStyle m_strokeStyle { StrokeStyle::SolidStroke };
 
     CompositeMode m_compositeMode { CompositeOperator::SourceOver, BlendMode::Normal };

@@ -2681,13 +2681,9 @@ class WebCore::TransformOperations {
     WebCore::Pattern::Parameters parameters();
 }
 
-[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush::Brush {
-    std::variant<WebCore::SourceBrush::Brush::LogicalGradient, Ref<WebCore::Pattern>> brush;
-}
-
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
     WebCore::Color color();
-    std::optional<WebCore::SourceBrush::Brush> brush();
+    WebCore::SourceBrush::OptionalPatternGradient patternGradient();
 }
 
 header: <WebCore/ThreadSafeDataBuffer.h>
@@ -6561,11 +6557,11 @@ header: <WebCore/GraphicsContextState.h>
 };
 
 [LegacyPopulateFromEmptyConstructor, AdditionalEncoder=StreamConnectionEncoder] class WebCore::GraphicsContextState {
-    OptionSet<WebCore::GraphicsContextState::Change> m_changeFlags;
     WebCore::SourceBrush m_fillBrush;
-    WebCore::WindRule m_fillRule;
     WebCore::SourceBrush m_strokeBrush;
+    OptionSet<WebCore::GraphicsContextState::Change> m_changeFlags;
     float m_strokeThickness;
+    WebCore::WindRule m_fillRule;
     WebCore::StrokeStyle m_strokeStyle;
     WebCore::CompositeMode m_compositeMode;
     std::optional<WebCore::GraphicsDropShadow> m_dropShadow;
