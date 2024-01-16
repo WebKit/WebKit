@@ -318,7 +318,7 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
 
 std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(StringView name, const CSSSelectorParserContext& context)
 {
-    if (name.isNull())
+    if (name.isEmpty())
         return std::nullopt;
 
     auto type = parsePseudoElementString(name);
@@ -355,6 +355,24 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
         break;
     }
     return type;
+}
+
+std::optional<PseudoId> CSSSelector::parseStandalonePseudoElement(StringView input, const CSSSelectorParserContext& context)
+{
+    // FIXME: Tokenize input.
+    if (input.startsWith("::"_s)) {
+        auto pseudoElement = parsePseudoElement(input.substring(2), context);
+        if (!pseudoElement)
+            return std::nullopt;
+        return pseudoId(*pseudoElement);
+    }
+    if (input.startsWith(":"_s)) {
+        auto pseudoClassOrElement = parsePseudoClassAndCompatibilityElementString(input.substring(1));
+        if (!pseudoClassOrElement.compatibilityPseudoElement)
+            return std::nullopt;
+        return pseudoId(*pseudoClassOrElement.compatibilityPseudoElement);
+    }
+    return std::nullopt;
 }
 
 const CSSSelector* CSSSelector::firstInCompound() const

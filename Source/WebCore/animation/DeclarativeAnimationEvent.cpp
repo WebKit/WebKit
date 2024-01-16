@@ -45,9 +45,9 @@ DeclarativeAnimationEvent::DeclarativeAnimationEvent(const AtomString& type, con
     , m_elapsedTime(elapsedTime)
     , m_pseudoElement(pseudoElement)
 {
-    auto pseudoIdOrException = pseudoIdFromString(m_pseudoElement);
-    if (!pseudoIdOrException.hasException())
-        m_pseudoId = pseudoIdOrException.returnValue();
+    auto pseudoId = pseudoIdFromString(m_pseudoElement);
+    if (pseudoId)
+        m_pseudoId = *pseudoId;
 }
 
 DeclarativeAnimationEvent::~DeclarativeAnimationEvent() = default;
