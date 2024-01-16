@@ -1616,8 +1616,9 @@ webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-all-pause-locat
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Timeout Pass ]
 webkit.org/b/252878 js/weakref-finalizationregistry.html [ Pass Timeout ]
 webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Timeout ]
-webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Failure Pass Timeout ]
-webkit.org/b/252878 webrtc/audio-samplerate-change.html [ Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Failure Pass Timeout ]
+#webkit.org/b/252878 webrtc/audio-samplerate-change.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure Pass ]
 webkit.org/b/252878 webrtc/video-h264.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/video-mute-vp8.html [ Pass Timeout ]
@@ -1661,7 +1662,8 @@ webkit.org/b/257624 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-w
 webkit.org/b/257624 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Failure Pass ]
 webkit.org/b/257624 media/video-audio-session-mode.html [ Pass Timeout ]
 webkit.org/b/257624 webanimations/accelerated-animations-and-motion-path.html [ Failure Pass ]
-webkit.org/b/257624 webrtc/connection-state.html [ Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/257624 webrtc/connection-state.html [ Pass Timeout ]
 webkit.org/b/257624 webrtc/video-autoplay.html [ Pass Timeout ]
 webkit.org/b/257624 webrtc/video-replace-track-to-null.html [ Pass Timeout ]
 
@@ -2589,7 +2591,8 @@ webkit.org/b/264680 inspector/heap/getPreview.html [ Failure Pass ]
 webkit.org/b/264680 media/video-seek-past-end-playing.html [ Pass Timeout ]
 webkit.org/b/264680 scrollbars/scrollbar-selectors.html [ Missing Pass Timeout ]
 webkit.org/b/264680 webanimations/accelerated-animation-opacity-animation-begin-time-after-scale-animation-ends.html [ ImageOnlyFailure Pass ]
-webkit.org/b/264680 webrtc/peer-connection-audio-mute2.html [ Failure Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/264680 webrtc/peer-connection-audio-mute2.html [ Failure Pass Timeout ]
 
 webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Crash ]
 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Crash ]
