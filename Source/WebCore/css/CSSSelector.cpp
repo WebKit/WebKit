@@ -203,7 +203,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
     case CSSSelector::Match::PseudoElement:
         // Slotted only competes with other slotted selectors for specificity,
         // so whether we add the ClassC specificity shouldn't be observable.
-        if (simpleSelector.pseudoElementType() == CSSSelector::PseudoElementSlotted)
+        if (simpleSelector.pseudoElement() == CSSSelector::PseudoElement::Slotted)
             return maxSpecificity(simpleSelector.selectorList());
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::Unknown:
@@ -238,12 +238,12 @@ unsigned CSSSelector::specificityForPage() const
             s += tagQName().localName() == starAtom() ? 0 : 4;
             break;
         case Match::PagePseudoClass:
-            switch (component->pagePseudoClassType()) {
-            case PagePseudoClassFirst:
+            switch (component->pagePseudoClass()) {
+            case PagePseudoClass::First:
                 s += 2;
                 break;
-            case PagePseudoClassLeft:
-            case PagePseudoClassRight:
+            case PagePseudoClass::Left:
+            case PagePseudoClass::Right:
                 s += 1;
                 break;
             }
@@ -255,60 +255,60 @@ unsigned CSSSelector::specificityForPage() const
     return s;
 }
 
-PseudoId CSSSelector::pseudoId(PseudoElementType type)
+PseudoId CSSSelector::pseudoId(PseudoElement type)
 {
     switch (type) {
-    case PseudoElementFirstLine:
+    case PseudoElement::FirstLine:
         return PseudoId::FirstLine;
-    case PseudoElementFirstLetter:
+    case PseudoElement::FirstLetter:
         return PseudoId::FirstLetter;
-    case PseudoElementGrammarError:
+    case PseudoElement::GrammarError:
         return PseudoId::GrammarError;
-    case PseudoElementSpellingError:
+    case PseudoElement::SpellingError:
         return PseudoId::SpellingError;
-    case PseudoElementSelection:
+    case PseudoElement::Selection:
         return PseudoId::Selection;
-    case PseudoElementHighlight:
+    case PseudoElement::Highlight:
         return PseudoId::Highlight;
-    case PseudoElementMarker:
+    case PseudoElement::Marker:
         return PseudoId::Marker;
-    case PseudoElementBackdrop:
+    case PseudoElement::Backdrop:
         return PseudoId::Backdrop;
-    case PseudoElementBefore:
+    case PseudoElement::Before:
         return PseudoId::Before;
-    case PseudoElementAfter:
+    case PseudoElement::After:
         return PseudoId::After;
-    case PseudoElementScrollbar:
+    case PseudoElement::Scrollbar:
         return PseudoId::Scrollbar;
-    case PseudoElementScrollbarButton:
+    case PseudoElement::ScrollbarButton:
         return PseudoId::ScrollbarButton;
-    case PseudoElementScrollbarCorner:
+    case PseudoElement::ScrollbarCorner:
         return PseudoId::ScrollbarCorner;
-    case PseudoElementScrollbarThumb:
+    case PseudoElement::ScrollbarThumb:
         return PseudoId::ScrollbarThumb;
-    case PseudoElementScrollbarTrack:
+    case PseudoElement::ScrollbarTrack:
         return PseudoId::ScrollbarTrack;
-    case PseudoElementScrollbarTrackPiece:
+    case PseudoElement::ScrollbarTrackPiece:
         return PseudoId::ScrollbarTrackPiece;
-    case PseudoElementResizer:
+    case PseudoElement::Resizer:
         return PseudoId::Resizer;
-    case PseudoElementViewTransition:
+    case PseudoElement::ViewTransition:
         return PseudoId::ViewTransition;
-    case PseudoElementViewTransitionGroup:
+    case PseudoElement::ViewTransitionGroup:
         return PseudoId::ViewTransitionGroup;
-    case PseudoElementViewTransitionImagePair:
+    case PseudoElement::ViewTransitionImagePair:
         return PseudoId::ViewTransitionImagePair;
-    case PseudoElementViewTransitionOld:
+    case PseudoElement::ViewTransitionOld:
         return PseudoId::ViewTransitionOld;
-    case PseudoElementViewTransitionNew:
+    case PseudoElement::ViewTransitionNew:
         return PseudoId::ViewTransitionNew;
 #if ENABLE(VIDEO)
-    case PseudoElementCue:
+    case PseudoElement::Cue:
 #endif
-    case PseudoElementSlotted:
-    case PseudoElementPart:
-    case PseudoElementWebKitCustom:
-    case PseudoElementWebKitCustomLegacyPrefixed:
+    case PseudoElement::Slotted:
+    case PseudoElement::Part:
+    case PseudoElement::WebKitCustom:
+    case PseudoElement::WebKitCustomLegacyPrefixed:
         return PseudoId::None;
     }
 
@@ -316,7 +316,7 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     return PseudoId::None;
 }
 
-std::optional<CSSSelector::PseudoElementType> CSSSelector::parsePseudoElementType(StringView name, const CSSSelectorParserContext& context)
+std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(StringView name, const CSSSelectorParserContext& context)
 {
     if (name.isNull())
         return std::nullopt;
@@ -325,29 +325,29 @@ std::optional<CSSSelector::PseudoElementType> CSSSelector::parsePseudoElementTyp
     if (!type) {
         // FIXME: Investigate removing -apple- as it's non-standard.
         if (name.startsWithIgnoringASCIICase("-webkit-"_s) || name.startsWithIgnoringASCIICase("-apple-"_s))
-            return PseudoElementWebKitCustom;
+            return PseudoElement::WebKitCustom;
         return type;
     }
 
     switch (*type) {
-    case PseudoElementWebKitCustom:
+    case PseudoElement::WebKitCustom:
         if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
             return std::nullopt;
         break;
-    case PseudoElementHighlight:
+    case PseudoElement::Highlight:
         if (!context.highlightAPIEnabled)
             return std::nullopt;
         break;
-    case PseudoElementGrammarError:
-    case PseudoElementSpellingError:
+    case PseudoElement::GrammarError:
+    case PseudoElement::SpellingError:
         if (!context.grammarAndSpellingPseudoElementsEnabled)
             return std::nullopt;
         break;
-    case PseudoElementViewTransition:
-    case PseudoElementViewTransitionGroup:
-    case PseudoElementViewTransitionImagePair:
-    case PseudoElementViewTransitionOld:
-    case PseudoElementViewTransitionNew:
+    case PseudoElement::ViewTransition:
+    case PseudoElement::ViewTransitionGroup:
+    case PseudoElement::ViewTransitionImagePair:
+    case PseudoElement::ViewTransitionOld:
+    case PseudoElement::ViewTransitionNew:
         if (!context.viewTransitionsEnabled)
             return std::nullopt;
         break;
@@ -791,23 +791,23 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             }
         } else if (cs->match() == Match::PseudoElement) {
-            switch (cs->pseudoElementType()) {
-            case CSSSelector::PseudoElementSlotted:
+            switch (cs->pseudoElement()) {
+            case CSSSelector::PseudoElement::Slotted:
                 builder.append("::slotted("_s);
                 cs->selectorList()->buildSelectorsText(builder);
                 builder.append(')');
                 break;
-            case CSSSelector::PseudoElementHighlight:
-            case CSSSelector::PseudoElementViewTransitionGroup:
-            case CSSSelector::PseudoElementViewTransitionImagePair:
-            case CSSSelector::PseudoElementViewTransitionOld:
-            case CSSSelector::PseudoElementViewTransitionNew: {
+            case CSSSelector::PseudoElement::Highlight:
+            case CSSSelector::PseudoElement::ViewTransitionGroup:
+            case CSSSelector::PseudoElement::ViewTransitionImagePair:
+            case CSSSelector::PseudoElement::ViewTransitionOld:
+            case CSSSelector::PseudoElement::ViewTransitionNew: {
                 builder.append("::"_s, cs->serializingValue(), '(');
                 serializeIdentifierOrStar(cs->argumentList()->first().identifier);
                 builder.append(')');
                 break;
             }
-            case CSSSelector::PseudoElementPart: {
+            case CSSSelector::PseudoElement::Part: {
                 builder.append("::part("_s);
                 bool isFirst = true;
                 for (auto& partName : *cs->argumentList()) {
@@ -819,14 +819,14 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(')');
                 break;
             }
-            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
                 if (cs->value() == "placeholder"_s)
                     builder.append("::-webkit-input-placeholder"_s);
                 if (cs->value() == "file-selector-button"_s)
                     builder.append("::-webkit-file-upload-button"_s);
                 break;
 #if ENABLE(VIDEO)
-            case CSSSelector::PseudoElementCue: {
+            case CSSSelector::PseudoElement::Cue: {
                 if (auto* selectorList = cs->selectorList()) {
                     builder.append("::cue("_s);
                     selectorList->buildSelectorsText(builder);
@@ -881,14 +881,14 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                     builder.append(']');
             }
         } else if (cs->match() == Match::PagePseudoClass) {
-            switch (cs->pagePseudoClassType()) {
-            case PagePseudoClassFirst:
+            switch (cs->pagePseudoClass()) {
+            case PagePseudoClass::First:
                 builder.append(":first");
                 break;
-            case PagePseudoClassLeft:
+            case PagePseudoClass::Left:
                 builder.append(":left");
                 break;
-            case PagePseudoClassRight:
+            case PagePseudoClass::Right:
                 builder.append(":right");
                 break;
             }

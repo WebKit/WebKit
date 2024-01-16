@@ -34,33 +34,33 @@ namespace WebCore {
 
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(StringView pseudoTypeString)
 {
-    CSSSelector::PagePseudoClassType pseudoType;
+    CSSSelector::PagePseudoClass pseudoType;
     if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"_s))
-        pseudoType = CSSSelector::PagePseudoClassFirst;
+        pseudoType = CSSSelector::PagePseudoClass::First;
     else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"_s))
-        pseudoType = CSSSelector::PagePseudoClassLeft;
+        pseudoType = CSSSelector::PagePseudoClass::Left;
     else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"_s))
-        pseudoType = CSSSelector::PagePseudoClassRight;
+        pseudoType = CSSSelector::PagePseudoClass::Right;
     else
         return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::Match::PagePseudoClass);
-    selector->m_selector->setPagePseudoType(pseudoType);
+    selector->m_selector->setPagePseudoClass(pseudoType);
     return selector;
 }
 
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
-    auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString, context);
+    auto pseudoType = CSSSelector::parsePseudoElement(pseudoTypeString, context);
     if (!pseudoType)
         return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-    selector->m_selector->setPseudoElementType(*pseudoType);
+    selector->m_selector->setPseudoElement(*pseudoType);
     AtomString name;
-    if (*pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
+    if (*pseudoType != CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed)
         name = pseudoTypeString.convertToASCIILowercaseAtom();
     else {
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
@@ -88,7 +88,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(S
     if (pseudoType.compatibilityPseudoElement) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-        selector->m_selector->setPseudoElementType(*pseudoType.compatibilityPseudoElement);
+        selector->m_selector->setPseudoElement(*pseudoType.compatibilityPseudoElement);
         selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
         return selector;
     }

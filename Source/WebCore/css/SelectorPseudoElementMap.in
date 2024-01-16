@@ -10,10 +10,10 @@ grammar-error
 highlight
 marker
 part
-file-selector-button, PseudoElementWebKitCustom
-placeholder, PseudoElementWebKitCustom
--webkit-input-placeholder, PseudoElementWebKitCustomLegacyPrefixed
--webkit-file-upload-button, PseudoElementWebKitCustomLegacyPrefixed
+file-selector-button, PseudoElement::WebKitCustom
+placeholder, PseudoElement::WebKitCustom
+-webkit-input-placeholder, PseudoElement::WebKitCustomLegacyPrefixed
+-webkit-file-upload-button, PseudoElement::WebKitCustomLegacyPrefixed
 -webkit-resizer
 -webkit-scrollbar
 -webkit-scrollbar-button
@@ -24,8 +24,8 @@ placeholder, PseudoElementWebKitCustom
 selection
 slotted
 spelling-error
-thumb, PseudoElementWebKitCustom
-track, PseudoElementWebKitCustom
+thumb, PseudoElement::WebKitCustom
+track, PseudoElement::WebKitCustom
 view-transition
 view-transition-group
 view-transition-image-pair

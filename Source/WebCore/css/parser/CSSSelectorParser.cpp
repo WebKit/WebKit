@@ -287,7 +287,7 @@ static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelec
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
     // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
     // input[type="range" i]::-webkit-media-slider-container > div {
-    if (parserMode == UASheetMode && simpleSelector.pseudoElementType() == CSSSelector::PseudoElementWebKitCustom)
+    if (parserMode == UASheetMode && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::WebKitCustom)
         return { };
 
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
@@ -430,57 +430,57 @@ static bool isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
     }
 }
 
-static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudoClass, CSSSelector::PseudoElementType compoundPseudoElement)
+static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudoClass, CSSSelector::PseudoElement compoundPseudoElement)
 {
     // Validity of these is determined by their content.
     if (isLogicalCombinationPseudoClass(pseudoClass))
         return true;
 
     switch (compoundPseudoElement) {
-    case CSSSelector::PseudoElementPart:
+    case CSSSelector::PseudoElement::Part:
         return !isTreeStructuralPseudoClass(pseudoClass);
-    case CSSSelector::PseudoElementSlotted:
+    case CSSSelector::PseudoElement::Slotted:
         return false;
-    case CSSSelector::PseudoElementResizer:
-    case CSSSelector::PseudoElementScrollbar:
-    case CSSSelector::PseudoElementScrollbarCorner:
-    case CSSSelector::PseudoElementScrollbarButton:
-    case CSSSelector::PseudoElementScrollbarThumb:
-    case CSSSelector::PseudoElementScrollbarTrack:
-    case CSSSelector::PseudoElementScrollbarTrackPiece:
+    case CSSSelector::PseudoElement::Resizer:
+    case CSSSelector::PseudoElement::Scrollbar:
+    case CSSSelector::PseudoElement::ScrollbarCorner:
+    case CSSSelector::PseudoElement::ScrollbarButton:
+    case CSSSelector::PseudoElement::ScrollbarThumb:
+    case CSSSelector::PseudoElement::ScrollbarTrack:
+    case CSSSelector::PseudoElement::ScrollbarTrackPiece:
         return isScrollbarPseudoClass(pseudoClass);
-    case CSSSelector::PseudoElementSelection:
+    case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
-    case CSSSelector::PseudoElementWebKitCustom:
-    case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+    case CSSSelector::PseudoElement::WebKitCustom:
+    case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
         return isUserActionPseudoClass(pseudoClass);
     default:
         return false;
     }
 }
 
-static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElementType pseudoElementType)
+static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElement pseudoElement)
 {
-    switch (pseudoElementType) {
+    switch (pseudoElement) {
     // FIXME: This list should also include ::placeholder and ::file-selector-button
-    case CSSSelector::PseudoElementBefore:
-    case CSSSelector::PseudoElementAfter:
-    case CSSSelector::PseudoElementMarker:
-    case CSSSelector::PseudoElementBackdrop:
+    case CSSSelector::PseudoElement::Before:
+    case CSSSelector::PseudoElement::After:
+    case CSSSelector::PseudoElement::Marker:
+    case CSSSelector::PseudoElement::Backdrop:
         return true;
     default:
         return false;
     }
 }
 
-static bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSelector, CSSSelector::PseudoElementType compoundPseudoElement)
+static bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSelector, CSSSelector::PseudoElement compoundPseudoElement)
 {
-    if (compoundPseudoElement == CSSSelector::PseudoElementPart) {
-        if (simpleSelector.match() == CSSSelector::Match::PseudoElement && simpleSelector.pseudoElementType() != CSSSelector::PseudoElementPart)
+    if (compoundPseudoElement == CSSSelector::PseudoElement::Part) {
+        if (simpleSelector.match() == CSSSelector::Match::PseudoElement && simpleSelector.pseudoElement() != CSSSelector::PseudoElement::Part)
             return true;
     }
-    if (compoundPseudoElement == CSSSelector::PseudoElementSlotted) {
-        if (simpleSelector.match() == CSSSelector::Match::PseudoElement && isTreeAbidingPseudoElement(simpleSelector.pseudoElementType()))
+    if (compoundPseudoElement == CSSSelector::PseudoElement::Slotted) {
+        if (simpleSelector.match() == CSSSelector::Match::PseudoElement && isTreeAbidingPseudoElement(simpleSelector.pseudoElement()))
             return true;
     }
     if (simpleSelector.match() != CSSSelector::Match::PseudoClass)
@@ -509,12 +509,12 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CS
         if (!compoundSelector)
             return nullptr;
         if (compoundSelector->match() == CSSSelector::Match::PseudoElement)
-            m_precedingPseudoElement = compoundSelector->pseudoElementType();
+            m_precedingPseudoElement = compoundSelector->pseudoElement();
     }
 
     while (auto simpleSelector = consumeSimpleSelector(range)) {
         if (simpleSelector->match() == CSSSelector::Match::PseudoElement)
-            m_precedingPseudoElement = simpleSelector->pseudoElementType();
+            m_precedingPseudoElement = simpleSelector->pseudoElement();
 
         if (compoundSelector)
             compoundSelector->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(simpleSelector));
@@ -730,17 +730,17 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClass pseudoClass)
     return false;
 }
     
-static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElementType pseudoElementType)
+static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElement pseudoElement)
 {
     // Note that we omit ::cue since it can be either an ident or a function.
-    switch (pseudoElementType) {
-    case CSSSelector::PseudoElementHighlight:
-    case CSSSelector::PseudoElementPart:
-    case CSSSelector::PseudoElementSlotted:
-    case CSSSelector::PseudoElementViewTransitionGroup:
-    case CSSSelector::PseudoElementViewTransitionImagePair:
-    case CSSSelector::PseudoElementViewTransitionOld:
-    case CSSSelector::PseudoElementViewTransitionNew:
+    switch (pseudoElement) {
+    case CSSSelector::PseudoElement::Highlight:
+    case CSSSelector::PseudoElement::Part:
+    case CSSSelector::PseudoElement::Slotted:
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+    case CSSSelector::PseudoElement::ViewTransitionNew:
         return true;
     default:
         break;
@@ -789,8 +789,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)
         // Treat the ident version of cue as PseudoElementWebkitCustom.
-        if (token.type() == IdentToken && selector && selector->match() == CSSSelector::Match::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue)
-            selector->setPseudoElementType(CSSSelector::PseudoElementWebKitCustom);
+        if (token.type() == IdentToken && selector && selector->match() == CSSSelector::Match::PseudoElement && selector->pseudoElement() == CSSSelector::PseudoElement::Cue)
+            selector->setPseudoElement(CSSSelector::PseudoElement::WebKitCustom);
 #endif
     }
 
@@ -804,7 +804,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     if (token.type() == IdentToken) {
         range.consume();
-        if ((selector->match() == CSSSelector::Match::PseudoElement && isOnlyPseudoElementFunction(selector->pseudoElementType()))
+        if ((selector->match() == CSSSelector::Match::PseudoElement && isOnlyPseudoElementFunction(selector->pseudoElement()))
             || (selector->match() == CSSSelector::Match::PseudoClass && isOnlyPseudoClassFunction(selector->pseudoClass())))
             return nullptr;
         return selector;
@@ -915,9 +915,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     }
     
     if (selector->match() == CSSSelector::Match::PseudoElement) {
-        switch (selector->pseudoElementType()) {
+        switch (selector->pseudoElement()) {
 #if ENABLE(VIDEO)
-        case CSSSelector::PseudoElementCue: {
+        case CSSSelector::PseudoElement::Cue: {
             auto selectorList = consumeCompoundSelectorList(block);
             if (selectorList.isEmpty() || !block.atEnd())
                 return nullptr;
@@ -925,7 +925,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
 #endif
-        case CSSSelector::PseudoElementHighlight: {
+        case CSSSelector::PseudoElement::Highlight: {
             auto& ident = block.consumeIncludingWhitespace();
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
@@ -933,10 +933,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
 
-        case CSSSelector::PseudoElementViewTransitionGroup:
-        case CSSSelector::PseudoElementViewTransitionImagePair:
-        case CSSSelector::PseudoElementViewTransitionOld:
-        case CSSSelector::PseudoElementViewTransitionNew: {
+        case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionImagePair:
+        case CSSSelector::PseudoElement::ViewTransitionOld:
+        case CSSSelector::PseudoElement::ViewTransitionNew: {
             auto& ident = block.consumeIncludingWhitespace();
             if (!block.atEnd())
                 return nullptr;
@@ -949,7 +949,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
 
-        case CSSSelector::PseudoElementPart: {
+        case CSSSelector::PseudoElement::Part: {
             Vector<PossiblyQuotedIdentifier> argumentList;
             do {
                 auto& ident = block.consumeIncludingWhitespace();
@@ -960,7 +960,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setArgumentList(FixedVector<PossiblyQuotedIdentifier> { WTFMove(argumentList) });
             return selector;
         }
-        case CSSSelector::PseudoElementSlotted: {
+        case CSSSelector::PseudoElement::Slotted: {
             auto innerSelector = consumeCompoundSelector(block);
             block.consumeWhitespace();
             if (!innerSelector || !block.atEnd())
@@ -1213,10 +1213,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
         return compoundSelector;
 
     // ::part() combines with other pseudo elements.
-    bool isPart = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElementType() == CSSSelector::PseudoElementPart;
+    bool isPart = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Part;
 
     // ::slotted() combines with other pseudo elements.
-    bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElementType() == CSSSelector::PseudoElementSlotted;
+    bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Slotted;
 
     std::unique_ptr<CSSParserSelector> secondCompound;
     if (context.mode == UASheetMode || isPart) {
@@ -1242,7 +1242,7 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
 {
     for (auto current = &complexSelector; current; current = current->tagHistory()) {
         if (current->match() == CSSSelector::Match::PseudoElement) {
-            if (current->pseudoElementType() != CSSSelector::PseudoElementWebKitCustom)
+            if (current->pseudoElement() != CSSSelector::PseudoElement::WebKitCustom)
                 continue;
 
             if (!parsePseudoElementString(StringView(current->value())))

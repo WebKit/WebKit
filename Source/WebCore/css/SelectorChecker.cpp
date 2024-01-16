@@ -294,7 +294,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (checkingContext.resolvingMode == Mode::QueryingRules)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
-            PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoElementType());
+            auto pseudoId = CSSSelector::pseudoId(context.selector->pseudoElement());
             if (pseudoId != PseudoId::None)
                 dynamicPseudoIdSet.add(pseudoId);
             matchType = MatchType::VirtualPseudoElementOnly;
@@ -1132,9 +1132,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
     }
 
     if (selector.match() == CSSSelector::Match::PseudoElement) {
-        switch (selector.pseudoElementType()) {
+        switch (selector.pseudoElement()) {
 #if ENABLE(VIDEO)
-        case CSSSelector::PseudoElementCue: {
+        case CSSSelector::PseudoElement::Cue: {
             LocalContext subcontext(context);
 
             const CSSSelector* const & selector = context.selector;
@@ -1149,7 +1149,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
         }
 #endif
-        case CSSSelector::PseudoElementSlotted: {
+        case CSSSelector::PseudoElement::Slotted: {
             if (!context.element->assignedSlot())
                 return false;
             // ::slotted matches after flattening so it can't match an active <slot>.
@@ -1164,7 +1164,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             PseudoIdSet ignoredDynamicPseudo;
             return matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo).match == Match::SelectorMatches;
         }
-        case CSSSelector::PseudoElementPart: {
+        case CSSSelector::PseudoElement::Part: {
             auto translatePartNameToRuleScope = [&](AtomString partName) {
                 Vector<AtomString, 1> mappedNames { partName };
 
@@ -1200,7 +1200,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return true;
         }
 
-        case CSSSelector::PseudoElementHighlight:
+        case CSSSelector::PseudoElement::Highlight:
             // Always matches when not specifically requested so it gets added to the pseudoIdSet.
             if (checkingContext.pseudoId == PseudoId::None)
                 return true;
@@ -1208,14 +1208,14 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return false;
             return selector.argumentList()->first() == checkingContext.nameIdentifier;
 
-        case CSSSelector::PseudoElementViewTransitionGroup:
-        case CSSSelector::PseudoElementViewTransitionImagePair:
-        case CSSSelector::PseudoElementViewTransitionOld:
-        case CSSSelector::PseudoElementViewTransitionNew: {
+        case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionImagePair:
+        case CSSSelector::PseudoElement::ViewTransitionOld:
+        case CSSSelector::PseudoElement::ViewTransitionNew: {
             // Always matches when not specifically requested so it gets added to the pseudoIdSet.
             if (checkingContext.pseudoId == PseudoId::None)
                 return true;
-            if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElementType()) || !selector.argumentList())
+            if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElement()) || !selector.argumentList())
                 return false;
 
             // Wildcard always matches.

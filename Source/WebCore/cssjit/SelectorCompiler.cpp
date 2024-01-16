@@ -1471,39 +1471,39 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             if (selectorContext == SelectorContext::QuerySelector)
                 return FunctionType::CannotMatchAnything;
 
-            switch (selector->pseudoElementType()) {
-            case CSSSelector::PseudoElementAfter:
-            case CSSSelector::PseudoElementBackdrop:
-            case CSSSelector::PseudoElementBefore:
-            case CSSSelector::PseudoElementFirstLetter:
-            case CSSSelector::PseudoElementFirstLine:
-            case CSSSelector::PseudoElementGrammarError:
-            case CSSSelector::PseudoElementMarker:
-            case CSSSelector::PseudoElementResizer:
-            case CSSSelector::PseudoElementScrollbar:
-            case CSSSelector::PseudoElementScrollbarButton:
-            case CSSSelector::PseudoElementScrollbarCorner:
-            case CSSSelector::PseudoElementScrollbarThumb:
-            case CSSSelector::PseudoElementScrollbarTrack:
-            case CSSSelector::PseudoElementScrollbarTrackPiece:
-            case CSSSelector::PseudoElementSelection:
-            case CSSSelector::PseudoElementSpellingError:
-            case CSSSelector::PseudoElementViewTransition:
-            case CSSSelector::PseudoElementWebKitCustom:
-            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+            switch (selector->pseudoElement()) {
+            case CSSSelector::PseudoElement::After:
+            case CSSSelector::PseudoElement::Backdrop:
+            case CSSSelector::PseudoElement::Before:
+            case CSSSelector::PseudoElement::FirstLetter:
+            case CSSSelector::PseudoElement::FirstLine:
+            case CSSSelector::PseudoElement::GrammarError:
+            case CSSSelector::PseudoElement::Marker:
+            case CSSSelector::PseudoElement::Resizer:
+            case CSSSelector::PseudoElement::Scrollbar:
+            case CSSSelector::PseudoElement::ScrollbarButton:
+            case CSSSelector::PseudoElement::ScrollbarCorner:
+            case CSSSelector::PseudoElement::ScrollbarThumb:
+            case CSSSelector::PseudoElement::ScrollbarTrack:
+            case CSSSelector::PseudoElement::ScrollbarTrackPiece:
+            case CSSSelector::PseudoElement::Selection:
+            case CSSSelector::PseudoElement::SpellingError:
+            case CSSSelector::PseudoElement::ViewTransition:
+            case CSSSelector::PseudoElement::WebKitCustom:
+            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;
 #if ENABLE(VIDEO)
-            case CSSSelector::PseudoElementCue:
+            case CSSSelector::PseudoElement::Cue:
 #endif
-            case CSSSelector::PseudoElementHighlight:
-            case CSSSelector::PseudoElementPart:
-            case CSSSelector::PseudoElementSlotted:
-            case CSSSelector::PseudoElementViewTransitionGroup:
-            case CSSSelector::PseudoElementViewTransitionImagePair:
-            case CSSSelector::PseudoElementViewTransitionOld:
-            case CSSSelector::PseudoElementViewTransitionNew:
+            case CSSSelector::PseudoElement::Highlight:
+            case CSSSelector::PseudoElement::Part:
+            case CSSSelector::PseudoElement::Slotted:
+            case CSSSelector::PseudoElement::ViewTransitionGroup:
+            case CSSSelector::PseudoElement::ViewTransitionImagePair:
+            case CSSSelector::PseudoElement::ViewTransitionOld:
+            case CSSSelector::PseudoElement::ViewTransitionNew:
                 return FunctionType::CannotCompile;
             }
 
@@ -4422,7 +4422,7 @@ void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudo
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(PseudoId::None))));
         else {
             Assembler::Jump skip = m_assembler.branch8(Assembler::Equal, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(PseudoId::None)));
-            failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElementType())))));
+            failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElement())))));
             skip.link(&m_assembler);
         }
     }
@@ -4512,7 +4512,7 @@ void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::J
     successCases.append(branchOnResolvingModeWithCheckingContext(Assembler::Equal, SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements, checkingContext));
 
     // When resolving mode is ResolvingStyle, mark the pseudo style for pseudo element.
-    PseudoId dynamicPseudo = CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElementType());
+    PseudoId dynamicPseudo = CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElement());
     if (dynamicPseudo < PseudoId::FirstInternalPseudoId) {
         failureCases.append(branchOnResolvingModeWithCheckingContext(Assembler::NotEqual, SelectorChecker::Mode::ResolvingStyle, checkingContext));
 

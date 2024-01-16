@@ -98,10 +98,10 @@ static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeft
             if (localName != starAtom() && localName != pageName)
                 return false;
         } else if (component->match() == CSSSelector::Match::PagePseudoClass) {
-            CSSSelector::PagePseudoClassType pseudoType = component->pagePseudoClassType();
-            if ((pseudoType == CSSSelector::PagePseudoClassLeft && !isLeftPage)
-                || (pseudoType == CSSSelector::PagePseudoClassRight && isLeftPage)
-                || (pseudoType == CSSSelector::PagePseudoClassFirst && !isFirstPage))
+            auto pseudoType = component->pagePseudoClass();
+            if ((pseudoType == CSSSelector::PagePseudoClass::Left && !isLeftPage)
+                || (pseudoType == CSSSelector::PagePseudoClass::Right && isLeftPage)
+                || (pseudoType == CSSSelector::PagePseudoClass::First && !isFirstPage))
             {
                 return false;
             }

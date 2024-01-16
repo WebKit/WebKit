@@ -1668,7 +1668,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElementType(StringView { pseudoElement }.substring(colonStart), parserContext);
+    auto pseudoType = CSSSelector::parsePseudoElement(StringView { pseudoElement }.substring(colonStart), parserContext);
     if (!pseudoType && !pseudoElement.isEmpty())
         return nullptr;
 
