@@ -623,8 +623,7 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
 
             String subresourceFileName = generateValidFileName(url, uniqueFileNames);
             uniqueFileNames.add(subresourceFileName);
-            String subresourceFilePath = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
-            addResult.iterator->value = frame.isMainFrame() ? subresourceFilePath : subresourceFileName;
+            addResult.iterator->value = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
             relativeUniqueCSSStyleSheets.add(currentCSSStyleSheet, subresourceFileName);
         }
     }
@@ -645,7 +644,7 @@ static HashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIf
             subresources.append(newResource.releaseNonNull());
     }
 
-    return uniqueCSSStyleSheets;
+    return frame.isMainFrame() ? uniqueCSSStyleSheets : relativeUniqueCSSStyleSheets;
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
