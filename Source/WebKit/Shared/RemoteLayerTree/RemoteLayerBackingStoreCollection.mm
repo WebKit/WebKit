@@ -78,8 +78,6 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
             if (!remoteBackingStore->hasFrontBuffer() || !remoteBackingStore->supportsPartialRepaint())
                 remoteBackingStore->setNeedsDisplay();
 
-            remoteBackingStore->clearBackingStore();
-
             prepareBuffersData.append({
                 bufferSet,
                 remoteBackingStore->dirtyRegion(),
@@ -89,8 +87,9 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
             });
 
             backingStoreList.append(*remoteBackingStore);
-        } else
-            downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore).prepareToDisplay();
+        }
+
+        backingStore.prepareToDisplay();
     }
 
     if (prepareBuffersData.size()) {

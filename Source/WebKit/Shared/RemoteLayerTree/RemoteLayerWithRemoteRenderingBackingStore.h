@@ -37,6 +37,7 @@ public:
 
     bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
 
+    void prepareToDisplay() final;
     void clearBackingStore() final;
     void createContextAndPaintContents() final;
 
