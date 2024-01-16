@@ -42,8 +42,6 @@ layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0)
   RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (0,0) size 200x200
   RenderSVGViewportContainer {svg} at (30,0) size 200x200
-layer at (0,0) size 80x80
-  RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
 layer at (-30,83.78) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 114x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 114x45

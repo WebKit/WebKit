@@ -16,11 +16,11 @@ layer at (556.44,16.41) size 394x17 backgroundClip at (0,0) size 800x600 clip at
       chunk 1 (end anchor) text run 1 at (556.45,30.00) startOffset 0 endOffset 59 width 393.55: "One can also drag the images and the scrollbars will adopt."
 layer at (0,0) size 900x200 backgroundClip at (0,0) size 800x200 clip at (0,0) size 800x200
   RenderSVGViewportContainer {svg} at (0,0) size 900x200
-layer at (0,0) size 3607x421 backgroundClip at (40,60) size 760x200 clip at (40,60) size 760x200
+layer at (0,0) size 3607x421 backgroundClip at (40,60) size 720x160 clip at (40,60) size 720x160
   RenderSVGTransformableContainer {g} at (0,0) size 3607x420.50
-layer at (0,0) size 3607x421 backgroundClip at (40,60) size 760x200 clip at (40,60) size 760x200
+layer at (0,0) size 3607x421 backgroundClip at (40,60) size 720x160 clip at (40,60) size 720x160
   RenderSVGImage {image} at (0,0) size 3607x420.50
-layer at (411.80,66.22) size 2036x324 backgroundClip at (40,60) size 760x200 clip at (40,60) size 760x200
+layer at (411.80,66.22) size 2036x324 backgroundClip at (40,60) size 720x160 clip at (40,60) size 720x160
   RenderSVGTransformableContainer {g} at (411.80,66.22) size 2034.25x323.47
 layer at (411.80,75.22) size 88x17
   RenderSVGText {text} at (0,9) size 89x17 contains 1 chunk(s)
@@ -34,10 +34,6 @@ layer at (590.81,66.22) size 88x17
   RenderSVGText {text} at (179,0) size 89x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x17
       chunk 1 (middle anchor) text run 1 at (590.82,79.80) startOffset 0 endOffset 13 width 88.37: "Zervreilahorn"
-layer at (766.63,99.22) size 77x17 backgroundClip at (40,60) size 760x200 clip at (40,60) size 760x200
-  RenderSVGText {text} at (354,33) size 78x17 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 77x17
-      chunk 1 (middle anchor) text run 1 at (766.64,112.80) startOffset 0 endOffset 11 width 76.72: "Plattenberg"
 layer at (50.50,50.50) size 916x216 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (50.50,50.50) size 915x215
 layer at (50.50,250.50) size 899x15 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -56,9 +52,9 @@ layer at (439.55,269.13) size 510x14 backgroundClip at (0,0) size 800x600 clip a
       chunk 1 (end anchor) text run 1 at (439.55,280.00) startOffset 0 endOffset 89 width 510.45: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
 layer at (0,0) size 900x200 backgroundClip at (0,0) size 800x200 clip at (0,0) size 800x200
   RenderSVGViewportContainer {svg} at (0,0) size 900x200
-layer at (0,0) size 3561x689 backgroundClip at (40,300) size 760x200 clip at (40,300) size 760x200
+layer at (0,0) size 3561x689 backgroundClip at (40,300) size 720x160 clip at (40,300) size 720x160
   RenderSVGTransformableContainer {g} at (0,0) size 3560.75x689
-layer at (0,0) size 3561x689 backgroundClip at (40,300) size 760x200 clip at (40,300) size 760x200
+layer at (0,0) size 3561x689 backgroundClip at (40,300) size 720x160 clip at (40,300) size 720x160
   RenderSVGImage {image} at (0,0) size 3560.75x689
 layer at (50.50,350.50) size 911x211 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (50.50,350.50) size 910x210

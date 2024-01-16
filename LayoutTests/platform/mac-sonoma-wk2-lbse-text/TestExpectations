@@ -11,7 +11,7 @@
 #                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg
 #
 # Notes:
-# - 'platform/mac-sonoma-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Monterey using legacy SVG engine
+# - 'platform/mac-sonoma-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Sonoma 14.2.1 using legacy SVG engine
 # - 'platform/mac-sonoma-wk2-lbse-text' -> contains mostly text results (-expected.txt) which are intrinsically different between LBSE / legacy
 #                                          SVG engine plus a few pixel test results (-expected.png) that differ from the legacy SVG engine
 #                                          (e.g. progressions in individual tests)

@@ -12,8 +12,6 @@ layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0
   RenderSVGTransformableContainer {use} at (-70,-10) size 140x20
 layer at (0,0) size 800x600
   RenderSVGViewportContainer {svg} at (70,10) size 800x600
-layer at (-70,-10) size 140x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGRect {rect} at (-70,-10) size 140x20 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
 layer at (90,116) size 44x18
   RenderSVGText {text} at (90,116) size 44x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x18
