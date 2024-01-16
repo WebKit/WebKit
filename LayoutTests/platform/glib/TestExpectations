@@ -1697,6 +1697,9 @@ webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/api/request/request-ke
 webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Failure ]
 webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/private-network-access/fetch.https.window.html [ Failure ]
 
+# SVG Animations Failures on WPT Import
+imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
+
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 
 # The following tests need LBSE enabled builds, which is off by default for this port.
