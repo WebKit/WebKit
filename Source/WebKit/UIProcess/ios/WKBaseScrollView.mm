@@ -49,7 +49,7 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING) && !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING) && !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
     self._allowsAsyncScrollEvent = YES;
 #endif
 
@@ -140,36 +140,6 @@
     auto delegate = self.baseScrollViewDelegate;
     return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
-
-- (BOOL)_subclassHandlesAsyncScrollEvent
-{
-    return YES;
-}
-
-- (void)_asynchronouslyHandleScrollEvent:(UIScrollEvent *)event completion:(void (^)(BOOL handled))completion
-{
-    auto delegate = retainPtr(self.baseScrollViewDelegate);
-    if (!delegate)
-        return completion(NO);
-
-    [delegate scrollView:self handleScrollEvent:event completion:completion];
-}
-
-#endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
-
-#if HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
-
-- (UIScrollView *)_actingParentScrollView
-{
-    if (![self.baseScrollViewDelegate respondsToSelector:@selector(actingParentScrollViewForScrollView:)])
-        return nil;
-
-    return [self.baseScrollViewDelegate actingParentScrollViewForScrollView:self];
-}
-
-#endif // HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
 
 #pragma mark - UIGestureRecognizerDelegate
 

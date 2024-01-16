@@ -156,7 +156,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 
 - (UIKeyModifierFlags)modifierFlags
 {
-    return WebIOSEventFactory::toUIKeyModifierFlags(_navigationAction->modifiers());
+    return WebKit::WebIOSEventFactory::toUIKeyModifierFlags(_navigationAction->modifiers());
 }
 
 #endif

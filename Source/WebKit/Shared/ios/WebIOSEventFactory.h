@@ -27,13 +27,17 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "WKSEDefinitions.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
 #import "WebWheelEvent.h"
 #import <UIKit/UIKit.h>
+#import <WebCore/FloatSize.h>
 #import <WebCore/WebEvent.h>
 
-OBJC_CLASS UIScrollEvent;
+OBJC_CLASS WKSEScrollViewScrollUpdate;
+
+namespace WebKit {
 
 class WebIOSEventFactory {
 public:
@@ -41,11 +45,14 @@ public:
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
+    static WebKit::WebWheelEvent createWebWheelEvent(WKSEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
+    static WebCore::FloatSize translationInView(WKSEScrollViewScrollUpdate *, UIView *);
 #endif
 
     static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags);
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEventModifier>);
 };
+
+} // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
