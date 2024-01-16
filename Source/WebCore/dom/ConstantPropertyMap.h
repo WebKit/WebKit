@@ -38,6 +38,7 @@ namespace WebCore {
 class CSSCustomPropertyValue;
 class CSSVariableData;
 class Document;
+class WeakPtrImplWithEventTargetData;
 
 enum class ConstantProperty {
     SafeAreaInsetTop,

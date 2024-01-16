@@ -28,6 +28,7 @@
 
 #include "DOMRect.h"
 #include "DataTransfer.h"
+#include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"

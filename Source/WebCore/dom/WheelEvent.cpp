@@ -26,6 +26,7 @@
 
 #include "DataTransfer.h"
 #include "EventNames.h"
+#include "Node.h"
 #include "PlatformMouseEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>

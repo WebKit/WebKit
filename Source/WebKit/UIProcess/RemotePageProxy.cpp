@@ -33,6 +33,7 @@
 #include "HandleMessage.h"
 #include "NativeWebMouseEvent.h"
 #include "NavigationActionData.h"
+#include "NavigationActionPolicyParameters.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"

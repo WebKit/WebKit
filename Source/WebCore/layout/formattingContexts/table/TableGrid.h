@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FormattingContext.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutUnits.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>

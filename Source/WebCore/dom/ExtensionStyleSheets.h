@@ -48,6 +48,7 @@ class Node;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
+class WeakPtrImplWithEventTargetData;
 
 class ExtensionStyleSheets {
     WTF_MAKE_FAST_ALLOCATED;

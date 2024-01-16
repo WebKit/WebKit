@@ -45,6 +45,7 @@
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRuleImport.h"
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 

@@ -41,6 +41,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "RenderView.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGPathData.h"
 #include "SVGRenderingContext.h"

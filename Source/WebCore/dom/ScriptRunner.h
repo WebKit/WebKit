@@ -37,6 +37,7 @@ namespace WebCore {
 class Document;
 class ScriptElement;
 class LoadableScript;
+class WeakPtrImplWithEventTargetData;
 
 class ScriptRunner : public PendingScriptClient {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;

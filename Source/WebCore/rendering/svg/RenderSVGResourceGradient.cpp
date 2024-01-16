@@ -21,7 +21,10 @@
 #include "RenderSVGResourceGradient.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceGradientInlines.h"
+#include "RenderSVGShape.h"
+#include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

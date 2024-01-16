@@ -44,6 +44,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
+#include "JITThunks.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JITWorklist.h"
 #include "JSAsyncFunction.h"

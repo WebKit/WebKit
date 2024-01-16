@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WakeLockSentinel.h"
 
+#include "Document.h"
 #include "EventNames.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"

@@ -27,6 +27,7 @@
 #include "CSSSelector.h"
 
 #include "CSSMarkup.h"
+#include "CSSParserTokenRange.h"
 #include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParserContext.h"

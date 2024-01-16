@@ -36,9 +36,12 @@
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace Wasm {
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 namespace WasmCallsiteCollectionInternal {
 static constexpr bool verbose = false;
 }
+#endif
 
 void CallsiteCollection::addCallsites(const AbstractLocker& calleeGroupLocker, CalleeGroup& calleeGroup, const FixedVector<UnlinkedWasmToWasmCall>& callsites)
 {

@@ -111,6 +111,10 @@
 #include "HighPerformanceGPUManager.h"
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#include "APIPageConfiguration.h"
+#endif
+
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShimProxy.h"
 #endif

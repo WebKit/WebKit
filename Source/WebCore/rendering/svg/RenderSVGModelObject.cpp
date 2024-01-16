@@ -43,6 +43,7 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"

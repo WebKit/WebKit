@@ -37,6 +37,7 @@
 #include "IDBTransaction.h"
 #include "IDBVersionChangeEvent.h"
 #include "Logging.h"
+#include "Node.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/IsoMallocInlines.h>
