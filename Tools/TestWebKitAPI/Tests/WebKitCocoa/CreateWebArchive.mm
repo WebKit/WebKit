@@ -447,7 +447,7 @@ TEST(WebArchive, SaveResourcesValidFileName)
     NSMutableString *mutableFileName = [NSMutableString stringWithCapacity:256];
     for (unsigned i = 0; i < 256; ++i)
         [mutableFileName appendString:@"x"];
-    NSArray *tests = [NSArray arrayWithObjects:[NSString stringWithString:mutableFileName], @"a/image.png", @"b/image.png", @"image.png(1)", @"webarchivetest://host/file:image.png", @"image1/", @"image2///", @"image3.png/./", @"image4/content/../", @"image5%20file.png", @"image 6.png", nil];
+    NSArray *tests = [NSArray arrayWithObjects:[NSString stringWithString:mutableFileName], @"a/image.png", @"b/image.png", @"c/image.png", @"d/image.png", @"image.png(1)", @"webarchivetest://host/file:image.png", @"image1/", @"image2///", @"image3.png/./", @"image4/content/../", @"image5%20file.png", @"image 6.png", nil];
     NSMutableString *mutableHTMLString = [NSMutableString string];
     NSString *scriptString = [NSString stringWithFormat:@"<script>count = 0; function onImageLoad() { if (++count == %d) window.webkit.messageHandlers.testHandler.postMessage('done'); }</script>", (int)tests.count];
     [mutableHTMLString appendString:scriptString];
@@ -480,7 +480,7 @@ TEST(WebArchive, SaveResourcesValidFileName)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
     Util::run(&messageReceived);
 
-    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png-1", @"image.png-1-", @"file-image.png", @"image1", @"file", @"image3.png", @"image4", @"image5-file.png", @"image-6.png", nil]];
+    NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:[mutableFileName substringFromIndex:1], @"image.png", @"image.png-1", @"image.png-2", @"image.png-3", @"image.png-1-", @"file-image.png", @"image1", @"file", @"image3.png", @"image4", @"image5-file.png", @"image-6.png", nil]];
     static bool saved = false;
     [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
         EXPECT_NULL(error);

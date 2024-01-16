@@ -113,17 +113,19 @@ static String generateValidFileName(const URL& url, const HashSet<String>& exist
 {
     auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
     auto fileName = extractedFileName.isEmpty() ? String::fromLatin1(defaultFileName) : extractedFileName;
+    String uniqueFileName;
 
     unsigned count = 0;
     do {
+        uniqueFileName = fileName;
         if (count)
-            fileName = makeString(fileName, '-', count);
-        if (fileName.sizeInBytes() > maxFileNameSizeInBytes)
-            fileName = fileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
+            uniqueFileName = makeString(fileName, '-', count);
+        if (uniqueFileName.sizeInBytes() > maxFileNameSizeInBytes)
+            uniqueFileName = uniqueFileName.substring(fileName.sizeInBytes() - maxFileNameSizeInBytes, maxFileNameSizeInBytes);
         ++count;
-    } while (existingFileNames.contains(fileName));
+    } while (existingFileNames.contains(uniqueFileName));
 
-    return fileName;
+    return uniqueFileName;
 }
 
 RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(ArchiveResource* resource, MainResourceStatus isMainResource)
