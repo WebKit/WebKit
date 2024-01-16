@@ -1072,13 +1072,15 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
 
     BlendingKeyframes blendingKeyframes(AtomString { backingAnimation.name().name });
-    if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, blendingKeyframes);
+    if (m_target) {
+        if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal))
+            styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, blendingKeyframes);
 
-    // Ensure resource loads for all the frames.
-    for (auto& keyframe : blendingKeyframes) {
-        if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
-            Style::loadPendingResources(*style, *document(), m_target.get());
+        // Ensure resource loads for all the frames.
+        for (auto& keyframe : blendingKeyframes) {
+            if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
+                Style::loadPendingResources(*style, *document(), m_target.get());
+        }
     }
 
     m_animationType = WebAnimationType::CSSAnimation;

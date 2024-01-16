@@ -62,7 +62,11 @@ CFStringRef contentSizeCategory()
 
 void setContentSizeCategory(const String& contentSizeCategory)
 {
+    if (contentSizeCategory == contentSizeCategoryStorage())
+        return;
+
     contentSizeCategoryStorage() = contentSizeCategory;
+    FontCache::invalidateAllFontCaches();
 }
 
 } // namespace WebCore
