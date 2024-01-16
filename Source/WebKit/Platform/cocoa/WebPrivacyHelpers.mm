@@ -37,6 +37,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
+#import <wtf/RunLoop.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/WebPrivacySoftLink.h>
