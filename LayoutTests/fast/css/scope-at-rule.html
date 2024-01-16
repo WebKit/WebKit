@@ -84,6 +84,13 @@ div {
   }
 }
 
+@scope (.root) to (.limit) {
+  :scope.outer .green-17 {
+      color: green;
+    }
+  }
+}
+
 </style>
 
 <div class="a">
@@ -187,4 +194,13 @@ div {
    should be green
   </div>
   should not be green
+</div>
+
+<div class="root outer">
+  <span class="green-17">should be green</span>
+  <div class="limit">
+    <div class="root inner">
+      <span class="green-17">should not be green</span>
+    </div>
+  </div>
 </div>
