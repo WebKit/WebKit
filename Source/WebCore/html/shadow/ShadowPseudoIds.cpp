@@ -33,11 +33,13 @@ namespace WebCore {
 
 namespace ShadowPseudoIds {
 
+#if ENABLE(VIDEO)
 const AtomString& cue()
 {
     static MainThreadNeverDestroyed<const AtomString> cue("cue"_s);
     return cue;
 }
+#endif
 
 const AtomString& fileSelectorButton()
 {
@@ -111,16 +113,23 @@ const AtomString& webkitColorSwatchWrapper()
     return webkitColorSwatchWrapper;
 }
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+const AtomString& webkitDateAndTimeValue()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDateAndTimeValue("-webkit-date-and-time-value"_s);
+    return webkitDateAndTimeValue;
+}
+
 const AtomString& webkitDatetimeEdit()
 {
     static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEdit("-webkit-datetime-edit"_s);
     return webkitDatetimeEdit;
 }
 
-const AtomString& webkitDatetimeEditText()
+const AtomString& webkitDatetimeEditDayField()
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditText("-webkit-datetime-edit-text"_s);
-    return webkitDatetimeEditText;
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditDayField("-webkit-datetime-edit-day-field"_s);
+    return webkitDatetimeEditDayField;
 }
 
 const AtomString& webkitDatetimeEditFieldsWrapper()
@@ -129,11 +138,54 @@ const AtomString& webkitDatetimeEditFieldsWrapper()
     return webkitDatetimeEditFieldsWrapper;
 }
 
-const AtomString& webkitDateAndTimeValue()
+const AtomString& webkitDatetimeEditHourField()
 {
-    static MainThreadNeverDestroyed<const AtomString> webkitDateAndTimeValue("-webkit-date-and-time-value"_s);
-    return webkitDateAndTimeValue;
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditHourField("-webkit-datetime-edit-hour-field"_s);
+    return webkitDatetimeEditHourField;
 }
+
+const AtomString& webkitDatetimeEditMeridiemField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditMeridiemField("-webkit-datetime-edit-meridiem-field"_s);
+    return webkitDatetimeEditMeridiemField;
+}
+
+const AtomString& webkitDatetimeEditMillisecondField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditMillisecondField("-webkit-datetime-edit-millisecond-field"_s);
+    return webkitDatetimeEditMillisecondField;
+}
+
+const AtomString& webkitDatetimeEditMinuteField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditMinuteField("-webkit-datetime-edit-minute-field"_s);
+    return webkitDatetimeEditMinuteField;
+}
+
+const AtomString& webkitDatetimeEditMonthField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditMonthField("-webkit-datetime-edit-month-field"_s);
+    return webkitDatetimeEditMonthField;
+}
+
+const AtomString& webkitDatetimeEditSecondField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditSecondField("-webkit-datetime-edit-second-field"_s);
+    return webkitDatetimeEditSecondField;
+}
+
+const AtomString& webkitDatetimeEditText()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditText("-webkit-datetime-edit-text"_s);
+    return webkitDatetimeEditText;
+}
+
+const AtomString& webkitDatetimeEditYearField()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitDatetimeEditYearField("-webkit-datetime-edit-year-field"_s);
+    return webkitDatetimeEditYearField;
+}
+#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 const AtomString& webkitDetailsMarker()
 {
