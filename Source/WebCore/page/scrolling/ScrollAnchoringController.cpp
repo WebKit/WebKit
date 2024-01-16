@@ -107,7 +107,7 @@ void ScrollAnchoringController::notifyChildHadSuppressingStyleChange()
 {
     LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::notifyChildHadSuppressingStyleChange() for scroller: " << m_owningScrollableArea);
 
-    m_shouldSupressScrollPositionUpdate = true;
+    m_shouldSuppressScrollPositionUpdate = true;
 }
 
 bool ScrollAnchoringController::isInScrollAnchoringAncestorChain(const RenderObject& object)
@@ -346,15 +346,15 @@ void ScrollAnchoringController::updateAnchorElement()
 void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 {
     auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
-    auto supressed = std::exchange(m_shouldSupressScrollPositionUpdate, false);
+    auto suppressed = std::exchange(m_shouldSuppressScrollPositionUpdate, false);
     if (!m_anchorElement || !queued)
         return;
     auto* renderer = m_anchorElement->renderer();
-    if (!renderer || supressed) {
+    if (!renderer || suppressed) {
         invalidateAnchorElement();
         updateAnchorElement();
-        if (supressed)
-            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() supressing scroll adjustment for frame: " << frameView() << " for scroller: " << m_owningScrollableArea);
+        if (suppressed)
+            LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() suppressing scroll adjustment for frame: " << frameView() << " for scroller: " << m_owningScrollableArea);
         return;
     }
     SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);

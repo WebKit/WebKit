@@ -48,7 +48,6 @@ public:
     ~ScrollAnchoringController();
     void invalidateAnchorElement();
     void adjustScrollPositionForAnchoring();
-    void selectAnchorElement();
     void chooseAnchorElement(Document&);
     CandidateExaminationResult examineAnchorCandidate(Element&);
     void updateAnchorElement();
@@ -67,7 +66,7 @@ private:
     FloatPoint m_lastOffsetForAnchorElement;
     bool m_midUpdatingScrollPositionForAnchorElement { false };
     bool m_isQueuedForScrollPositionUpdate { false };
-    bool m_shouldSupressScrollPositionUpdate { false };
+    bool m_shouldSuppressScrollPositionUpdate { false };
 };
 
 } // namespace WebCore
