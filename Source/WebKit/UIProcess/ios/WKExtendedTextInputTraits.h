@@ -30,6 +30,10 @@
 #import "UIKitSPI.h"
 #import "WKSEDefinitions.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 @interface WKExtendedTextInputTraits : NSObject
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     <WKSEExtendedTextInputTraits>
@@ -46,11 +50,19 @@
 @property (nonatomic) UIReturnKeyType returnKeyType;
 @property (nonatomic, getter=isSecureTextEntry) BOOL secureTextEntry;
 @property (nonatomic, getter=isSingleLineDocument) BOOL singleLineDocument;
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+@property (nonatomic, getter=isTypingAdaptationEnabled) BOOL typingAdaptationEnabled;
+#else
 @property (nonatomic) BOOL typingAdaptationDisabled;
+#endif
 @property (nonatomic, copy) UITextContentType textContentType;
 
 @property (nonatomic, strong) UIColor *insertionPointColor;
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+@property (nonatomic, strong) UIColor *selectionHandleColor;
+#else
 @property (nonatomic, strong) UIColor *selectionBarColor;
+#endif
 @property (nonatomic, strong) UIColor *selectionHighlightColor;
 
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor;

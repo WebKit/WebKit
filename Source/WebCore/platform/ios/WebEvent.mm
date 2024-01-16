@@ -43,12 +43,16 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
 @implementation WebEvent {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    RetainPtr<WebSEKeyEvent> _originalKeyEvent;
+    RetainPtr<WebSEKeyEntry> _originalKeyEntry;
 #endif
 }
 
@@ -496,14 +500,14 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
-@implementation WebEvent (WebSEKeyEventSupport)
+@implementation WebEvent (WebSEKeyEntrySupport)
 
-static inline WebEventType webEventType(WebSEKeyEventType type)
+static inline WebEventType webEventType(WebSEKeyPressState type)
 {
     switch (type) {
-    case WebSEKeyEventKeyDown:
+    case WebSEKeyPressStateKeyDown:
         return WebEventKeyDown;
-    case WebSEKeyEventKeyUp:
+    case WebSEKeyPressStateKeyUp:
         return WebEventKeyUp;
     }
     ASSERT_NOT_REACHED();
@@ -526,9 +530,14 @@ static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
     return modifiers;
 }
 
-static inline bool isChangingKeyModifiers(WebSEKeyEvent *event)
+static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
 {
-    switch (event.keyCode) {
+#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
+    auto keyCode = event.key.keyCode;
+#else
+    auto keyCode = event.keyCode;
+#endif
+    switch (keyCode) {
     case VK_LWIN:
     case VK_APPS:
     case VK_CAPITAL:
@@ -544,33 +553,38 @@ static inline bool isChangingKeyModifiers(WebSEKeyEvent *event)
     }
 }
 
-- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event
+- (instancetype)initWithKeyEntry:(WebSEKeyEntry *)event
 {
     if (!(self = [super init]))
         return nil;
 
     _type = webEventType(event.type);
     _timestamp = static_cast<CFTimeInterval>(event.timestamp);
-    _modifierFlags = webEventModifierFlags(event.modifierFlags);
     _keyboardFlags = 0;
     if (isChangingKeyModifiers(event))
         _keyboardFlags |= WebEventKeyboardInputModifierFlagsChanged;
     if (event.keyRepeating)
         _keyboardFlags |= WebEventKeyboardInputRepeat;
 
-    _keyCode = static_cast<uint16_t>(event.keyCode);
-    _characters = [event.characters retain];
-    _charactersIgnoringModifiers = [event.charactersIgnoringModifiers retain];
+#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
+    auto keyInfo = event.key;
+#else
+    auto keyInfo = event;
+#endif
+    _modifierFlags = webEventModifierFlags(keyInfo.modifierFlags);
+    _keyCode = static_cast<uint16_t>(keyInfo.keyCode);
+    _characters = [keyInfo.characters retain];
+    _charactersIgnoringModifiers = [keyInfo.charactersIgnoringModifiers retain];
     _tabKey = NO; // FIXME: Populate this field appropriately.
     _keyRepeating = event.keyRepeating;
-    _originalKeyEvent = event;
+    _originalKeyEntry = event;
 
     return self;
 }
 
-- (WebSEKeyEvent *)originalKeyEvent
+- (WebSEKeyEntry *)originalKeyEntry
 {
-    return _originalKeyEvent.get();
+    return _originalKeyEntry.get();
 }
 
 @end

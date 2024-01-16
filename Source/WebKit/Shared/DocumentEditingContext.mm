@@ -33,6 +33,10 @@
 #import <WebCore/ElementContext.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 namespace WebKit {
 
 static inline NSRange toNSRange(DocumentEditingContext::Range range)

@@ -52,6 +52,10 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
@@ -837,12 +841,17 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     if (auto asyncInput = asyncTextInput()) {
-        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSArray<UITextSelectionRect *> *) {
+        auto completionWrapper = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSArray<UITextSelectionRect *> *) {
             dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
                 if (m_context)
                     m_context->asyncTaskComplete(callbackID);
             }).get());
-        }).get()];
+        });
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 completionHandler:completionWrapper.get()];
+#else
+        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 withCompletionHandler:completionWrapper.get()];
+#endif
         return;
     }
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

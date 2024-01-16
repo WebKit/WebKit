@@ -30,6 +30,10 @@
 #import "UIKitSPI.h"
 #import "WKSEDefinitions.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 @class WKContentView;
 
 @interface WKTextInteractionWrapper : NSObject
@@ -43,8 +47,7 @@
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOverflow;
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKSEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKSESelectionFlags)flags;
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouch)touch withFlags:(WKSESelectionFlags)flags;
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouchPhase)touch withFlags:(WKSESelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;

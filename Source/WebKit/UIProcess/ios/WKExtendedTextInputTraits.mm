@@ -33,7 +33,7 @@
 @implementation WKExtendedTextInputTraits {
     RetainPtr<UITextContentType> _textContentType;
     RetainPtr<UIColor> _insertionPointColor;
-    RetainPtr<UIColor> _selectionBarColor;
+    RetainPtr<UIColor> _selectionHandleColor;
     RetainPtr<UIColor> _selectionHighlightColor;
 }
 
@@ -57,15 +57,31 @@
     return _insertionPointColor.get();
 }
 
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+
+- (void)setSelectionHandleColor:(UIColor *)color
+{
+    _selectionHandleColor = color;
+}
+
+- (UIColor *)selectionHandleColor
+{
+    return _selectionHandleColor.get();
+}
+
+#else
+
 - (void)setSelectionBarColor:(UIColor *)color
 {
-    _selectionBarColor = color;
+    _selectionHandleColor = color;
 }
 
 - (UIColor *)selectionBarColor
 {
-    return _selectionBarColor.get();
+    return _selectionHandleColor.get();
 }
+
+#endif
 
 - (void)setSelectionHighlightColor:(UIColor *)color
 {
@@ -82,7 +98,11 @@
     static constexpr auto selectionHighlightAlphaComponent = 0.2;
     BOOL shouldUseTintColor = tintColor && tintColor != UIColor.systemBlueColor;
     self.insertionPointColor = shouldUseTintColor ? tintColor : nil;
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    self.selectionHandleColor = shouldUseTintColor ? tintColor : nil;
+#else
     self.selectionBarColor = shouldUseTintColor ? tintColor : nil;
+#endif
     self.selectionHighlightColor = shouldUseTintColor ? [tintColor colorWithAlphaComponent:selectionHighlightAlphaComponent] : nil;
 }
 

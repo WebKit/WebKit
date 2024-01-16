@@ -50,9 +50,7 @@
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     if (view.shouldUseAsyncInteractions) {
         _asyncTextInteraction = adoptNS([[WKSETextInteraction alloc] init]);
-#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
         [_asyncTextInteraction setDelegate:view];
-#endif
         [view addInteraction:_asyncTextInteraction.get()];
     } else
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
@@ -102,12 +100,16 @@
 {
     [_textInteractionAssistant selectionChanged];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction refreshKeyboardUI];
+#else
     [_asyncTextInteraction selectionChanged];
+#endif
 
     [self stopShowEditMenuTimer];
     if (std::exchange(_showEditMenuAfterNextSelectionChange, NO))
         _showEditMenuTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(showEditMenuTimerFired) userInfo:nil repeats:NO];
-#endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)setGestureRecognizers
@@ -160,72 +162,96 @@
 {
     [_textInteractionAssistant selectionChangedWithGestureAt:point withGesture:static_cast<UIWKGestureType>(gestureType) withState:gestureState withFlags:static_cast<UIWKSelectionFlags>(flags)];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction selectionChangedWithGestureAtPoint:point gesture:gestureType state:gestureState flags:flags];
+#else
     [_asyncTextInteraction selectionChangedWithGestureAt:point withGesture:gestureType withState:gestureState withFlags:flags];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect
-{
-    [_textInteractionAssistant showDictionaryFor:selectedTerm fromRect:presentationRect];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    [_asyncTextInteraction showDictionaryFor:selectedTerm fromRect:presentationRect];
-#endif
-}
-
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouch)touch withFlags:(WKSESelectionFlags)flags
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouchPhase)touch withFlags:(WKSESelectionFlags)flags
 {
     [_textInteractionAssistant selectionChangedWithTouchAt:point withSelectionTouch:static_cast<UIWKSelectionTouch>(touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction selectionBoundaryAdjustedToPoint:point touchPhase:touch flags:flags];
+#else
     [_asyncTextInteraction selectionChangedWithTouchAt:point withSelectionTouch:touch withFlags:flags];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant lookup:textWithContext withRange:range fromRect:presentationRect];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction showDictionaryForTextInContext:textWithContext definingTextInRange:range fromRect:presentationRect];
+#else
     [_asyncTextInteraction lookup:textWithContext withRange:range fromRect:presentationRect];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant showShareSheetFor:selectedTerm fromRect:presentationRect];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction shareText:selectedTerm fromRect:presentationRect];
+#else
     [_asyncTextInteraction showShareSheetFor:selectedTerm fromRect:presentationRect];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant showTextServiceFor:selectedTerm fromRect:presentationRect];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction addShortcutForText:selectedTerm fromRect:presentationRect];
+#else
     [_asyncTextInteraction showTextServiceFor:selectedTerm fromRect:presentationRect];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)scheduleReplacementsForText:(NSString *)text
 {
     [_textInteractionAssistant scheduleReplacementsForText:text];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction showReplacementsForText:text];
+#else
     [_asyncTextInteraction scheduleReplacementsForText:text];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)scheduleChineseTransliterationForText:(NSString *)text
 {
     [_textInteractionAssistant scheduleChineseTransliterationForText:text];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction transliterateChineseForText:text];
+#else
     [_asyncTextInteraction scheduleChineseTransliterationForText:text];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)translate:(NSString *)text fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant translate:text fromRect:presentationRect];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    [_asyncTextInteraction translateText:text fromRect:presentationRect];
+#else
     [_asyncTextInteraction translate:text fromRect:presentationRect];
 #endif
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)selectWord

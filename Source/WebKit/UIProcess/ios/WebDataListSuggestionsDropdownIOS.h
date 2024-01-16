@@ -31,6 +31,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 OBJC_CLASS WKContentView;
 
 @interface WKDataListTextSuggestion : WKSETextSuggestion

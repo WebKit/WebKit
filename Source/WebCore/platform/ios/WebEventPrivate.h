@@ -30,12 +30,12 @@
 #import "WebSEDefinitions.h"
 #import <WebCore/WebEvent.h>
 
-@class WebSEKeyEvent;
+@class WebSEKeyEntry;
 
-@interface WebEvent (WebSEKeyEventSupport)
+@interface WebEvent (WebSEKeyEntrySupport)
 
-- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event;
-@property (nonatomic, readonly) WebSEKeyEvent *originalKeyEvent;
+- (instancetype)initWithKeyEntry:(WebSEKeyEntry *)event;
+@property (nonatomic, readonly) WebSEKeyEntry *originalKeyEntry;
 
 @end
 
