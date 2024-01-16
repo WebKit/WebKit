@@ -54,7 +54,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     , mode(mode)
 {
     // FIXME: We should turn all of the features on from their WebCore Settings defaults.
-    if (mode == UASheetMode) {
+    if (isUASheetBehavior(mode)) {
         colorMixEnabled = true;
         focusVisibleEnabled = true;
         lightDarkEnabled = true;

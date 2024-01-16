@@ -333,6 +333,9 @@ class Value:
                 print(f"SKIPPED value {json_value['value']} in {key_path} due to '{json_value['status']}' status designation.")
             return None
 
+        if json_value.get("status", None) != "internal" and json_value["value"].startswith("-internal-"):
+            raise Exception(f'Value "{json_value["value"]}" starts with "-internal-" but does not have "status": "internal" set.')
+
         return Value(**json_value)
 
     @property
@@ -4514,7 +4517,7 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                 else:
                     conditions.append(f"!{context_string}.{keyword_term.settings_flag}")
             if keyword_term.status == "internal":
-                conditions.append(f"!isValueAllowedInMode(keyword, {context_string}.mode)")
+                conditions.append(f"!isUASheetBehavior({context_string}.mode)")
 
             if keyword_term.aliased_to:
                 return_value = keyword_term.aliased_to.id
@@ -4623,7 +4626,7 @@ class KeywordFastPathGenerator:
                     else:
                         return_expression.append(f"context.{keyword_term.settings_flag}")
                 if keyword_term.status == "internal":
-                    return_expression.append("isValueAllowedInMode(keyword, context.mode)")
+                    return_expression.append("isUASheetBehavior(context.mode)")
 
                 keyword_term_and_return_expressions.append(KeywordTermReturnExpression(keyword_term, return_expression))
 

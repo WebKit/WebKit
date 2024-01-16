@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
+bool isColorKeywordAllowedInMode(CSSValueID id, CSSParserMode mode)
 {
     switch (id) {
     case CSSValueWebkitFocusRingColor:
@@ -46,8 +46,6 @@ bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
     case CSSValueAppleSystemQuaternaryFill:
 #endif
     case CSSValueInternalDocumentTextColor:
-    case CSSValueInternalTextareaAuto:
-    case CSSValueInternalThCenter:
         return isUASheetBehavior(mode);
     default:
         return true;

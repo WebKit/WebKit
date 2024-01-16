@@ -524,7 +524,7 @@ static RefPtr<CSSValue> parseColor(StringView string, const CSSParserContext& co
     ASSERT(!string.isEmpty());
     auto valueID = cssValueKeywordID(string);
     if (StyleColor::isColorKeyword(valueID)) {
-        if (!isValueAllowedInMode(valueID, context.mode))
+        if (!isColorKeywordAllowedInMode(valueID, context.mode))
             return nullptr;
         return CSSPrimitiveValue::create(valueID);
     }
