@@ -75,7 +75,6 @@ public:
         ASSERT(isMainThread());
         ASSERT(!m_lock.isHeld());
         ASSERT(m_channel.isEmpty());
-        startAborting();
     }
 
     // ===========================
