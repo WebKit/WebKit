@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,16 +44,8 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // FIXME: Can this be shared/replaced with number parsing in WTF?
 template <typename CharacterType, typename FloatType = float> static std::optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
-    FloatType number = 0;
-    FloatType integer = 0;
-    FloatType decimal = 0;
-    FloatType frac = 1;
-    FloatType exponent = 0;
-    int sign = 1;
-    int expsign = 1;
-    auto start = buffer.position();
-
     // read the sign
+    int sign = 1;
     if (buffer.hasCharactersRemaining() && *buffer == '+')
         ++buffer;
     else if (buffer.hasCharactersRemaining() && *buffer == '-') {
@@ -70,6 +62,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
     // Advance to first non-digit.
     skipWhile<isASCIIDigit>(buffer);
 
+    FloatType integer = 0;
     if (buffer.position() != ptrStartIntPart) {
         auto ptrScanIntPart = buffer.position() - 1;
         FloatType multiplier = 1;
@@ -83,6 +76,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
     }
 
     // read the decimals
+    FloatType decimal = 0;
     if (buffer.hasCharactersRemaining() && *buffer == '.') {
         ++buffer;
         
@@ -90,11 +84,15 @@ template <typename CharacterType, typename FloatType = float> static std::option
         if (buffer.atEnd() || !isASCIIDigit(*buffer))
             return std::nullopt;
         
+        FloatType frac = 1;
         while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer))
             decimal += (*(buffer++) - '0') * (frac *= static_cast<FloatType>(0.1));
     }
 
     // read the exponent part
+    FloatType exponent = 0;
+    int expsign = 1;
+    auto start = buffer.position();
     if (buffer.position() != start && buffer.position() + 1 < buffer.end() && (*buffer == 'e' || *buffer == 'E')
         && (buffer[1] != 'x' && buffer[1] != 'm')) {
         ++buffer;
@@ -120,6 +118,7 @@ template <typename CharacterType, typename FloatType = float> static std::option
             return std::nullopt;
     }
 
+    FloatType number = 0;
     number = integer + decimal;
     number *= sign;
 
