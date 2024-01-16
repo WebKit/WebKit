@@ -167,20 +167,19 @@ IntRect InjectedBundleHitTestResult::imageRect() const
 
 RefPtr<WebImage> InjectedBundleHitTestResult::image() const
 {
-    Image* image = m_hitTestResult.image();
     // For now, we only handle bitmap images.
-    if (!is<BitmapImage>(image))
+    auto* bitmapImage = dynamicDowncast<BitmapImage>(m_hitTestResult.image());
+    if (!bitmapImage)
         return nullptr;
 
-    BitmapImage& bitmapImage = downcast<BitmapImage>(*image);
-    IntSize size(bitmapImage.size());
+    IntSize size(bitmapImage->size());
     auto webImage = WebImage::create(size, static_cast<ImageOptions>(0), DestinationColorSpace::SRGB());
     if (!webImage->context())
         return nullptr;
 
     // FIXME: need to handle EXIF rotation.
     auto& graphicsContext = *webImage->context();
-    graphicsContext.drawImage(bitmapImage, { { }, size });
+    graphicsContext.drawImage(*bitmapImage, { { }, size });
 
     return webImage;
 }

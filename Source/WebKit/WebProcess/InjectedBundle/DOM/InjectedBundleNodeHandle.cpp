@@ -134,10 +134,11 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
 
 IntRect InjectedBundleNodeHandle::elementBounds()
 {
-    if (!is<Element>(m_node))
+    RefPtr element = dynamicDowncast<Element>(m_node);
+    if (!element)
         return IntRect();
 
-    return downcast<Element>(*m_node).boundsInRootViewSpace();
+    return element->boundsInRootViewSpace();
 }
     
 IntRect InjectedBundleNodeHandle::absoluteBoundingRect(bool* isReplaced)
@@ -243,120 +244,137 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setValueForUser(value);
+    input->setValueForUser(value);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled(bool enabled)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setSpellcheckDisabledExceptTextReplacement(!enabled);
+    input->setSpellcheckDisabledExceptTextReplacement(!enabled);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
     
-    return downcast<HTMLInputElement>(*m_node).isAutoFilled();
+    return input->isAutoFilled();
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isAutoFilledAndViewable();
+    return input->isAutoFilledAndViewable();
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndObscured() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isAutoFilledAndObscured();
+    return input->isAutoFilledAndObscured();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFilled(filled);
+    input->setAutoFilled(filled);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool autoFilledAndViewable)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFilledAndViewable(autoFilledAndViewable);
+    input->setAutoFilledAndViewable(autoFilledAndViewable);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndObscured(bool autoFilledAndObscured)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFilledAndObscured(autoFilledAndObscured);
+    input->setAutoFilledAndObscured(autoFilledAndObscured);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
     
-    return downcast<HTMLInputElement>(*m_node).autoFillButtonType() != AutoFillButtonType::None;
+    return input->autoFillButtonType() != AutoFillButtonType::None;
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFillButtonType autoFillButtonType)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setShowAutoFillButton(autoFillButtonType);
+    input->setShowAutoFillButton(autoFillButtonType);
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return AutoFillButtonType::None;
-    return downcast<HTMLInputElement>(*m_node).autoFillButtonType();
+
+    return input->autoFillButtonType();
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonType() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return AutoFillButtonType::None;
-    return downcast<HTMLInputElement>(*m_node).lastAutoFillButtonType();
+
+    return input->lastAutoFillButtonType();
 }
 
 bool InjectedBundleNodeHandle::isAutoFillAvailable() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isAutoFillAvailable();
+    return input->isAutoFillAvailable();
 }
 
 void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFillAvailable(autoFillAvailable);
+    input->setAutoFillAvailable(autoFillAvailable);
 }
 
 IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return IntRect();
 
-    auto autoFillButton = downcast<HTMLInputElement>(*m_node).autoFillButtonElement();
+    auto autoFillButton = input->autoFillButtonElement();
     if (!autoFillButton)
         return IntRect();
 
@@ -365,26 +383,29 @@ IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()
 
 bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).lastChangeWasUserEdit();
+    return input->lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
 {
-    if (!is<HTMLTextAreaElement>(m_node))
+    RefPtr textarea = dynamicDowncast<HTMLTextAreaElement>(m_node);
+    if (!textarea)
         return false;
 
-    return downcast<HTMLTextAreaElement>(*m_node).lastChangeWasUserEdit();
+    return textarea->lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::isTextField() const
 {
-    if (!is<HTMLInputElement>(m_node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
+    if (!input)
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isTextField();
+    return input->isTextField();
 }
 
 bool InjectedBundleNodeHandle::isSelectElement() const
@@ -403,18 +424,20 @@ bool InjectedBundleNodeHandle::isSelectableTextNode() const
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
 {
-    if (!is<HTMLTableCellElement>(m_node))
+    RefPtr tableCell = dynamicDowncast<HTMLTableCellElement>(m_node);
+    if (!tableCell)
         return nullptr;
 
-    return getOrCreate(downcast<HTMLTableCellElement>(*m_node).cellAbove());
+    return getOrCreate(tableCell->cellAbove());
 }
 
 RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
-    if (!m_node || !m_node->isDocumentNode())
+    RefPtr document = dynamicDowncast<Document>(m_node);
+    if (!document)
         return nullptr;
 
-    auto* frame = downcast<Document>(*m_node).frame();
+    auto* frame = document->frame();
     if (!frame)
         return nullptr;
 
