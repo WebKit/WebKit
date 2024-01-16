@@ -30,7 +30,7 @@ requestAnimationFrame(() => {
         internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         initialCompositingUpdateCount = internals.compositingUpdateCount();
     }
-}, 0);
+});
 
 test.onanimationend = () => {
     if (!window.internals)

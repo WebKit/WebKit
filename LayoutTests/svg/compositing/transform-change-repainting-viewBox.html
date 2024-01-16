@@ -1,7 +1,6 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <html>
 <head>
-    <meta name="fuzzy" content="maxDifference=35; totalPixels=12" />
     <title>Tests that SVG documents with viewBox don't trigger unnecessary repaints during animations.</title>
     <style>
         svg { border: 1px solid black; }
@@ -9,10 +8,10 @@
         #animating {
             transform-origin: 50% 50%;
             transform-box: border-box;
-	    transform: translateZ(0);
+            transform: translateZ(0);
 
             animation: rotation 1s 1s;
-	    animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
         }
 
         @keyframes rotation {
@@ -31,11 +30,6 @@
             ["rotation", 1.5, "animating", "webkitTransform", "matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0)", 0],
         ];
 
-        if (window.internals) {
-            internals.settings.setShowRepaintCounter(true);
-            internals.settings.setShowDebugBorders(true);
-        }
-
         var doPixelTest = true;
         var disablePauseAPI = true;
         runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
@@ -45,6 +39,6 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="500" height="300">    
         <rect id="animating" x="10" y="10" width="180" height="180" fill="green"/>
     </svg>
-    <div id="result"/>
+    <div id="result"></div>
 </body>
 </html>
