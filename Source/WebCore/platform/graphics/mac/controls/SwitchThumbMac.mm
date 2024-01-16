@@ -58,6 +58,8 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
+    GraphicsContextStateSaver stateSaver(context);
+
     auto isOn = owningPart().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
@@ -75,12 +77,17 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     if (isVertical)
         inflatedTrackRect.setSize(inflatedTrackRect.size().transposedSize());
 
+    if (style.zoomFactor != 1) {
+        inflatedTrackRect.scale(1 / style.zoomFactor);
+        context.scale(style.zoomFactor);
+    }
+
     auto drawingThumbLength = inflatedTrackRect.height();
     auto drawingThumbIsLogicallyLeft = (!isRTL && !isOn) || (isRTL && isOn);
     auto drawingThumbLogicalXAxis = inflatedTrackRect.width() - drawingThumbLength;
     auto drawingThumbLogicalXAxisProgress = drawingThumbLogicalXAxis * progress;
-    auto drawingThumbX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
-    auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, drawingThumbLength, drawingThumbLength);
+    auto drawingThumbLogicalX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
+    auto drawingThumbRect = NSMakeRect(drawingThumbLogicalX, 0, drawingThumbLength, drawingThumbLength);
 
     auto trackBuffer = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);
 
@@ -89,15 +96,17 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto cgContext = trackBuffer->context().platformContext();
 
-    GraphicsContextStateSaver stateSaver(context);
+    {
+        CGContextStateSaver stateSaverTrack(cgContext);
 
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingThumbRect context:cgContext options:@{
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,
-        (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive),
-        (__bridge NSString *)kCUISizeKey: SwitchMacUtilities::coreUISizeForControlSize(controlSize),
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
-        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
-    }];
+        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingThumbRect context:cgContext options:@{
+            (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,
+            (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive),
+            (__bridge NSString *)kCUISizeKey: SwitchMacUtilities::coreUISizeForControlSize(controlSize),
+            (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
+            (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
+        }];
+    }
 
     if (isVertical)
         SwitchMacUtilities::rotateContextForVerticalWritingMode(context, inflatedTrackRect);

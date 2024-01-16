@@ -1,0 +1,21 @@
+<!doctype html>
+<html class="reftest-wait">
+<meta name="fuzzy" content="maxDifference=0-37; totalPixels=0-1288">
+<style>
+body { zoom: 5; display: grid }
+span { display: inline-block; background: white }
+input, span { grid-area: 1/1 }
+</style>
+
+<input type=checkbox switch>
+<span></span>
+
+<script>
+window.onload = () => {
+  const span = document.querySelector("span");
+  const input = document.querySelector("input");
+  span.style.width = getComputedStyle(input).width;
+  span.style.height = getComputedStyle(input).height;
+  document.documentElement.removeAttribute("class");
+}
+</script>
