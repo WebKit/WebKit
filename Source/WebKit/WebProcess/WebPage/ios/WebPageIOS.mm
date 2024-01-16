@@ -809,13 +809,14 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     }
 
     auto nodeTriggersFastPath = [&](auto& targetNode) {
-        if (!is<Element>(targetNode))
+        RefPtr element = dynamicDowncast<Element>(targetNode);
+        if (!element)
             return false;
-        if (is<HTMLFormControlElement>(targetNode))
+        if (is<HTMLFormControlElement>(*element))
             return true;
-        if (targetNode.document().quirks().shouldIgnoreAriaForFastPathContentObservationCheck())
+        if (element->document().quirks().shouldIgnoreAriaForFastPathContentObservationCheck())
             return false;
-        auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(downcast<Element>(targetNode).getAttribute(HTMLNames::roleAttr));
+        auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(element->getAttribute(HTMLNames::roleAttr));
         return AccessibilityObject::isARIAControl(ariaRole);
     };
     auto targetNodeTriggersFastPath = nodeTriggersFastPath(nodeRespondingToClick);
@@ -1116,13 +1117,13 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
     if (m_page->isEditable() && node == localMainFrame->document()->body())
         return;
 
-    if (is<Element>(*node)) {
+    if (RefPtr element = dynamicDowncast<Element>(*node)) {
         ASSERT(m_page);
-        localMainFrame->loader().client().prefetchDNS(downcast<Element>(*node).absoluteLinkURL().host().toString());
+        localMainFrame->loader().client().prefetchDNS(element->absoluteLinkURL().host().toString());
     }
 
-    if (is<HTMLAreaElement>(node)) {
-        node = downcast<HTMLAreaElement>(node)->imageElement().get();
+    if (RefPtr area = dynamicDowncast<HTMLAreaElement>(*node)) {
+        node = area->imageElement().get();
         if (!node)
             return;
     }
@@ -1139,10 +1140,11 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         }
 
         RoundedRect::Radii borderRadii;
-        if (is<RenderBox>(*renderer))
-            borderRadii = downcast<RenderBox>(*renderer).borderRadii();
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*renderer))
+            borderRadii = renderBox->borderRadii();
 
-        bool nodeHasBuiltInClickHandling = is<HTMLFormControlElement>(*node) || is<HTMLAnchorElement>(*node) || is<HTMLLabelElement>(*node) || is<HTMLSummaryElement>(*node) || (is<Element>(*node) && downcast<Element>(*node).isLink());
+        RefPtr element = dynamicDowncast<Element>(*node);
+        bool nodeHasBuiltInClickHandling = element && (is<HTMLFormControlElement>(*element) || is<HTMLAnchorElement>(*element) || is<HTMLLabelElement>(*element) || is<HTMLSummaryElement>(*element) || element->isLink());
         send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight()), nodeHasBuiltInClickHandling));
     }
 #else
@@ -1196,10 +1198,10 @@ void WebPage::commitPotentialTap(OptionSet<WebEventModifier> modifiers, Transact
     auto invalidTargetForSingleClick = !m_potentialTapNode;
     if (!invalidTargetForSingleClick) {
         bool targetRenders = m_potentialTapNode->renderer();
-        if (!targetRenders && is<Element>(m_potentialTapNode))
-            targetRenders = downcast<Element>(*m_potentialTapNode).renderOrDisplayContentsStyle();
-        if (!targetRenders && is<ShadowRoot>(m_potentialTapNode))
-            targetRenders = downcast<ShadowRoot>(*m_potentialTapNode).host()->renderOrDisplayContentsStyle();
+        if (RefPtr element = dynamicDowncast<Element>(m_potentialTapNode); element && !targetRenders)
+            targetRenders = element->renderOrDisplayContentsStyle();
+        if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(m_potentialTapNode); shadowRoot && !targetRenders)
+            targetRenders = shadowRoot->host()->renderOrDisplayContentsStyle();
         invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode);
     }
     if (invalidTargetForSingleClick) {
@@ -1328,17 +1330,15 @@ void WebPage::blurFocusedElement()
 
 void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
 {
-    RefPtr<Element> element = elementForContext(context);
     // FIXME: should also handle the case of HTMLSelectElement.
-    if (is<HTMLInputElement>(element))
-        downcast<HTMLInputElement>(*element).setValue(value, DispatchInputAndChangeEvent);
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(elementForContext(context)))
+        input->setValue(value, DispatchInputAndChangeEvent);
 }
 
 void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
-    RefPtr<Element> element = elementForContext(context);
-    if (is<HTMLSelectElement>(element))
-        downcast<HTMLSelectElement>(*element).optionSelectedByUser(index, true, allowMultipleSelection);
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(elementForContext(context)))
+        select->optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 void WebPage::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
@@ -1749,16 +1749,14 @@ IntRect WebPage::absoluteInteractionBounds(const Node& node)
     if (!renderer)
         return { };
 
-    if (is<RenderBox>(*renderer)) {
-        auto& box = downcast<RenderBox>(*renderer);
-
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(*renderer)) {
         FloatRect rect;
         // FIXME: want borders or not?
-        if (box.style().isOverflowVisible())
-            rect = box.layoutOverflowRect();
+        if (box->style().isOverflowVisible())
+            rect = box->layoutOverflowRect();
         else
-            rect = box.clientBoxRect();
-        return box.localToAbsoluteQuad(rect).enclosingBoundingBox();
+            rect = box->clientBoxRect();
+        return box->localToAbsoluteQuad(rect).enclosingBoundingBox();
     }
 
     auto& style = renderer->style();
@@ -2809,14 +2807,13 @@ static inline bool isAssistableElement(Element& element)
         return true;
     if (is<HTMLTextAreaElement>(element))
         return true;
-    if (is<HTMLInputElement>(element)) {
-        HTMLInputElement& inputElement = downcast<HTMLInputElement>(element);
+    if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element)) {
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
 #if ENABLE(INPUT_TYPE_COLOR)
-        if (inputElement.isColorControl())
+        if (inputElement->isColorControl())
             return true;
 #endif
-        return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
+        return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField();
     }
     if (is<HTMLIFrameElement>(element))
         return false;
@@ -2953,18 +2950,18 @@ static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overl
 
 static std::optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Element& element)
 {
-    if (!is<RenderImage>(element.renderer()))
+    auto* renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderImage)
         return std::nullopt;
 
-    auto& renderImage = downcast<RenderImage>(*element.renderer());
-    if (!renderImage.cachedImage() || renderImage.cachedImage()->errorOccurred())
+    if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
         return std::nullopt;
 
-    auto* image = renderImage.cachedImage()->imageForRenderer(&renderImage);
+    auto* image = renderImage->cachedImage()->imageForRenderer(renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
         return std::nullopt;
 
-    return {{ renderImage, *image }};
+    return { { *renderImage, *image } };
 }
 
 static void videoPositionInformation(WebPage& page, HTMLVideoElement& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -2991,14 +2988,10 @@ static RefPtr<HTMLVideoElement> hostVideoElementIgnoringImageOverlay(Node& node)
     if (ImageOverlay::isInsideOverlay(node))
         return { };
 
-    if (is<HTMLVideoElement>(node))
-        return downcast<HTMLVideoElement>(&node);
+    if (RefPtr video = dynamicDowncast<HTMLVideoElement>(node))
+        return video;
 
-    RefPtr shadowHost = node.shadowHost();
-    if (!is<HTMLVideoElement>(shadowHost.get()))
-        return { };
-
-    return downcast<HTMLVideoElement>(shadowHost.get());
+    return dynamicDowncast<HTMLVideoElement>(node.shadowHost());
 }
 
 static void imagePositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -3013,7 +3006,8 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.isAnimating = image.isAnimating();
-    info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
+    RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
+    info.elementContainsImageOverlay = htmlElement && ImageOverlay::hasOverlay(*htmlElement);
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
@@ -3023,8 +3017,8 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
 {
-    if (renderer.isRenderImage())
-        info.bounds = downcast<RenderImage>(renderer).absoluteContentQuad().enclosingBoundingBox();
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer))
+        info.bounds = renderImage->absoluteContentQuad().enclosingBoundingBox();
     else
         info.bounds = renderer.absoluteBoundingBoxRect();
 
@@ -3115,8 +3109,8 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         if (renderer->style().effectiveUserSelect() == UserSelect::None)
             return InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone;
 
-        if (is<Element>(*hitNode)) {
-            if (isAssistableElement(downcast<Element>(*hitNode)))
+        if (RefPtr element = dynamicDowncast<Element>(*hitNode)) {
+            if (isAssistableElement(*element))
                 return InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement;
 
             if (rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame())) {
@@ -3138,18 +3132,15 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 
     boundsPositionInformation(*renderer, info);
     
-    if (is<Element>(*hitNode)) {
-        Element& element = downcast<Element>(*hitNode);
-        info.idAttribute = element.getIdAttribute();
-    }
+    if (RefPtr element = dynamicDowncast<Element>(*hitNode))
+        info.idAttribute = element->getIdAttribute();
     
-    if (is<HTMLAttachmentElement>(*hitNode)) {
+    if (RefPtr attachment = dynamicDowncast<HTMLAttachmentElement>(*hitNode)) {
         info.isAttachment = true;
-        HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
-        info.title = attachment.attachmentTitle();
-        linkIndicatorPositionInformation(page, attachment, request, info);
-        if (attachment.file())
-            info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
+        info.title = attachment->attachmentTitle();
+        linkIndicatorPositionInformation(page, *attachment, request, info);
+        if (attachment->file())
+            info.url = URL::fileURLWithFileSystemPath(attachment->file()->path());
     }
 
     for (RefPtr currentNode = hitNode; currentNode; currentNode = currentNode->parentOrShadowHostNode()) {
@@ -3353,12 +3344,11 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 
     RefPtr hitTestNode = hitTestResult.innerNonSharedNode();
-    if (is<Element>(nodeRespondingToClickEvents)) {
-        auto& element = downcast<Element>(*nodeRespondingToClickEvents);
-        elementPositionInformation(*this, element, request, hitTestNode.get(), info);
+    if (RefPtr element = dynamicDowncast<Element>(nodeRespondingToClickEvents)) {
+        elementPositionInformation(*this, *element, request, hitTestNode.get(), info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
-            info.image = shareableBitmapSnapshotForNode(element);
+            info.image = shareableBitmapSnapshotForNode(*element);
     }
 
 #if ENABLE(DATA_DETECTION)
@@ -3366,12 +3356,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         if (!hitTestNode || !info.isImageOverlayText)
             return nullptr;
 
-        RefPtr shadowHost = hitTestNode->shadowHost();
-        if (!is<HTMLElement>(shadowHost.get()))
-            return nullptr;
-
-        RefPtr htmlElement = downcast<HTMLElement>(shadowHost.get());
-        if (!ImageOverlay::hasOverlay(*htmlElement))
+        RefPtr htmlElement = dynamicDowncast<HTMLElement>(hitTestNode->shadowHost());
+        if (!htmlElement || !ImageOverlay::hasOverlay(*htmlElement))
             return nullptr;
 
         return htmlElement;
@@ -3384,8 +3370,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (!info.isImage && request.includeImageData && hitTestNode) {
         if (auto video = hostVideoElementIgnoringImageOverlay(*hitTestNode))
             videoPositionInformation(*this, *video, request, info);
-        else if (is<HTMLImageElement>(hitTestNode))
-            imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
+        else if (RefPtr img = dynamicDowncast<HTMLImageElement>(hitTestNode))
+            imagePositionInformation(*this, *img, request, info);
     }
 
     animationPositionInformation(*this, request, hitTestResult, info);
@@ -3393,8 +3379,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)
-    if (is<HTMLInputElement>(nodeRespondingToClickEvents))
-        textInteractionPositionInformation(*this, downcast<HTMLInputElement>(*nodeRespondingToClickEvents), request, info);
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(nodeRespondingToClickEvents))
+        textInteractionPositionInformation(*this, *input, request, info);
 #endif
 
     return info;
@@ -3441,18 +3427,15 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
 {
     CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
 
-    if (!is<HTMLElement>(m_interactionNode))
-        return;
-
-    HTMLElement& element = downcast<HTMLElement>(*m_interactionNode);
-    if (!element.renderer())
+    RefPtr element = dynamicDowncast<HTMLElement>(m_interactionNode);
+    if (!element || !element->renderer())
         return;
 
     if (static_cast<SheetAction>(action) == SheetAction::Copy) {
-        if (is<RenderImage>(*element.renderer())) {
+        if (is<RenderImage>(*element->renderer())) {
             URL urlToCopy;
             String titleToCopy;
-            if (RefPtr linkElement = containingLinkAnchorElement(element)) {
+            if (RefPtr linkElement = containingLinkAnchorElement(*element)) {
                 if (auto url = linkElement->href(); !url.isEmpty() && !url.protocolIsJavaScript()) {
                     urlToCopy = url;
                     titleToCopy = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
@@ -3461,17 +3444,18 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
                     titleToCopy = titleToCopy.trim(isASCIIWhitespace);
                 }
             }
-            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element.document().pageID())), element, urlToCopy, titleToCopy);
-        } else if (element.isLink())
-            m_interactionNode->document().editor().copyURL(element.document().completeURL(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)), element.textContent());
+            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element->document().pageID())), *element, urlToCopy, titleToCopy);
+        } else if (element->isLink())
+            m_interactionNode->document().editor().copyURL(element->document().completeURL(element->attributeWithoutSynchronization(HTMLNames::hrefAttr)), element->textContent());
 #if ENABLE(ATTACHMENT_ELEMENT)
-        else if (auto attachmentInfo = element.document().editor().promisedAttachmentInfo(element))
+        else if (auto attachmentInfo = element->document().editor().promisedAttachmentInfo(*element))
             send(Messages::WebPageProxy::WritePromisedAttachmentToPasteboard(WTFMove(attachmentInfo), authorizationToken));
 #endif
     } else if (static_cast<SheetAction>(action) == SheetAction::SaveImage) {
-        if (!is<RenderImage>(*element.renderer()))
+        CheckedPtr renderImage = dynamicDowncast<RenderImage>(*element->renderer());
+        if (!renderImage)
             return;
-        CachedImage* cachedImage = downcast<RenderImage>(*element.renderer()).cachedImage();
+        auto* cachedImage = renderImage->cachedImage();
         if (!cachedImage)
             return;
         RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
@@ -3489,7 +3473,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(*handle), authorizationToken));
     }
 
-    handleAnimationActions(element, action);
+    handleAnimationActions(*element, action);
 }
 
 void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
@@ -3502,10 +3486,10 @@ void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::Ele
 
 static inline RefPtr<Element> nextAssistableElement(Node* startNode, Page& page, bool isForward)
 {
-    if (!is<Element>(startNode))
+    RefPtr nextElement = dynamicDowncast<Element>(startNode);
+    if (!nextElement)
         return nullptr;
 
-    RefPtr nextElement = downcast<Element>(startNode);
     CheckedRef focusController { page.focusController() };
     do {
         nextElement = isForward ? focusController->nextFocusableElement(*nextElement) : focusController->previousFocusableElement(*nextElement);
@@ -3563,11 +3547,12 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     } else
         information.interactionRect = { };
 
-    if (is<HTMLElement>(focusedElement))
-        information.isSpellCheckingEnabled = downcast<HTMLElement>(*focusedElement).spellcheck();
+    RefPtr htmlElement = dynamicDowncast<HTMLElement>(focusedElement);
+    if (htmlElement)
+        information.isSpellCheckingEnabled = htmlElement->spellcheck();
 
-    if (is<HTMLFormControlElement>(focusedElement))
-        information.isFocusingWithValidationMessage = downcast<HTMLFormControlElement>(*focusedElement).isFocusingWithValidationMessage();
+    if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(focusedElement))
+        information.isFocusingWithValidationMessage = formControlElement->isFocusingWithValidationMessage();
 
     information.minimumScaleFactor = minimumPageScaleFactor();
     information.maximumScaleFactor = maximumPageScaleFactor();
@@ -3584,12 +3569,12 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     }
     information.identifier = m_lastFocusedElementInformationIdentifier.increment();
 
-    if (is<HTMLElement>(*focusedElement)) {
-        if (auto labels = downcast<HTMLElement>(*focusedElement).labels()) {
+    if (htmlElement) {
+        if (auto labels = htmlElement->labels()) {
             Vector<Ref<Element>> associatedLabels;
             for (unsigned index = 0; index < labels->length(); ++index) {
-                if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
-                    associatedLabels.append(downcast<Element>(*labels->item(index)));
+                if (RefPtr label = dynamicDowncast<Element>(labels->item(index)); label && label->renderer())
+                    associatedLabels.append(*label);
             }
             for (auto& labelElement : associatedLabels) {
                 auto text = labelElement->innerText();
@@ -3604,19 +3589,18 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     information.title = focusedElement->title();
     information.ariaLabel = focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
 
-    if (is<HTMLSelectElement>(*focusedElement)) {
+    if (RefPtr element = dynamicDowncast<HTMLSelectElement>(*focusedElement)) {
 #if USE(UICONTEXTMENU)
         static bool selectPickerUsesMenu = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
 #else
         bool selectPickerUsesMenu = false;
 #endif
 
-        HTMLSelectElement& element = downcast<HTMLSelectElement>(*focusedElement);
         information.elementType = InputType::Select;
 
         RefPtr<ContainerNode> parentGroup;
         int parentGroupID = 0;
-        for (auto& item : element.listItems()) {
+        for (auto& item : element->listItems()) {
             if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get())) {
                 if (parentGroup && optionElement->parentNode() != parentGroup) {
                     parentGroupID++;
@@ -3637,96 +3621,93 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
                 information.selectOptions.append(OptionItem(emptyString(), true, false, false, parentGroupID));
             }
         }
-        information.selectedIndex = element.selectedIndex();
-        information.isMultiSelect = element.multiple();
-    } else if (is<HTMLTextAreaElement>(*focusedElement)) {
-        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*focusedElement);
-        information.autocapitalizeType = element.autocapitalizeType();
-        information.isAutocorrect = element.shouldAutocorrect();
+        information.selectedIndex = element->selectedIndex();
+        information.isMultiSelect = element->multiple();
+    } else if (RefPtr element = dynamicDowncast<HTMLTextAreaElement>(*focusedElement)) {
+        information.autocapitalizeType = element->autocapitalizeType();
+        information.isAutocorrect = element->shouldAutocorrect();
         information.elementType = InputType::TextArea;
-        information.isReadOnly = element.isReadOnly();
-        information.value = element.value();
-        information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
-        information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
-        information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
-        information.inputMode = element.canonicalInputMode();
-        information.enterKeyHint = element.canonicalEnterKeyHint();
-    } else if (is<HTMLInputElement>(*focusedElement)) {
-        HTMLInputElement& element = downcast<HTMLInputElement>(*focusedElement);
-        HTMLFormElement* form = element.form();
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
+        information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
+        information.placeholder = element->attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.inputMode = element->canonicalInputMode();
+        information.enterKeyHint = element->canonicalEnterKeyHint();
+    } else if (RefPtr element = dynamicDowncast<HTMLInputElement>(*focusedElement)) {
+        auto* form = element->form();
         if (form)
             information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr).string();
-        if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(element)) {
+        if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(*element)) {
             information.acceptsAutofilledLoginCredentials = true;
             information.isAutofillableUsernameField = autofillElements->username() == focusedElement;
         }
-        information.representingPageURL = element.document().urlForBindings();
-        information.autocapitalizeType = element.autocapitalizeType();
-        information.isAutocorrect = element.shouldAutocorrect();
-        information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
-        information.hasEverBeenPasswordField = element.hasEverBeenPasswordField();
-        if (element.isPasswordField())
+        information.representingPageURL = element->document().urlForBindings();
+        information.autocapitalizeType = element->autocapitalizeType();
+        information.isAutocorrect = element->shouldAutocorrect();
+        information.placeholder = element->attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.hasEverBeenPasswordField = element->hasEverBeenPasswordField();
+        if (element->isPasswordField())
             information.elementType = InputType::Password;
-        else if (element.isSearchField())
+        else if (element->isSearchField())
             information.elementType = InputType::Search;
-        else if (element.isEmailField())
+        else if (element->isEmailField())
             information.elementType = InputType::Email;
-        else if (element.isTelephoneField())
+        else if (element->isTelephoneField())
             information.elementType = InputType::Phone;
-        else if (element.isNumberField())
-            information.elementType = element.getAttribute(HTMLNames::patternAttr) == "\\d*"_s || element.getAttribute(HTMLNames::patternAttr) == "[0-9]*"_s ? InputType::NumberPad : InputType::Number;
-        else if (element.isDateTimeLocalField())
+        else if (element->isNumberField())
+            information.elementType = element->getAttribute(HTMLNames::patternAttr) == "\\d*"_s || element->getAttribute(HTMLNames::patternAttr) == "[0-9]*"_s ? InputType::NumberPad : InputType::Number;
+        else if (element->isDateTimeLocalField())
             information.elementType = InputType::DateTimeLocal;
-        else if (element.isDateField())
+        else if (element->isDateField())
             information.elementType = InputType::Date;
-        else if (element.isTimeField())
+        else if (element->isTimeField())
             information.elementType = InputType::Time;
-        else if (element.isWeekField())
+        else if (element->isWeekField())
             information.elementType = InputType::Week;
-        else if (element.isMonthField())
+        else if (element->isMonthField())
             information.elementType = InputType::Month;
-        else if (element.isURLField())
+        else if (element->isURLField())
             information.elementType = InputType::URL;
-        else if (element.isText()) {
-            const AtomString& pattern = element.attributeWithoutSynchronization(HTMLNames::patternAttr);
+        else if (element->isText()) {
+            const AtomString& pattern = element->attributeWithoutSynchronization(HTMLNames::patternAttr);
             if (pattern == "\\d*"_s || pattern == "[0-9]*"_s)
                 information.elementType = InputType::NumberPad;
             else {
                 information.elementType = InputType::Text;
                 if (!information.formAction.isEmpty()
-                    && (element.getNameAttribute().contains("search"_s) || element.getIdAttribute().contains("search"_s) || element.attributeWithoutSynchronization(HTMLNames::titleAttr).contains("search"_s)))
+                    && (element->getNameAttribute().contains("search"_s) || element->getIdAttribute().contains("search"_s) || element->attributeWithoutSynchronization(HTMLNames::titleAttr).contains("search"_s)))
                     information.elementType = InputType::Search;
             }
         }
 #if ENABLE(INPUT_TYPE_COLOR)
-        else if (element.isColorControl()) {
+        else if (element->isColorControl()) {
             information.elementType = InputType::Color;
-            information.colorValue = element.valueAsColor();
+            information.colorValue = element->valueAsColor();
 #if ENABLE(DATALIST_ELEMENT)
-            information.suggestedColors = element.suggestedColors();
+            information.suggestedColors = element->suggestedColors();
 #endif
         }
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-        information.isFocusingWithDataListDropdown = element.isFocusingWithDataListDropdown();
-        information.hasSuggestions = !!element.list();
+        information.isFocusingWithDataListDropdown = element->isFocusingWithDataListDropdown();
+        information.hasSuggestions = !!element->list();
 #endif
-        information.inputMode = element.canonicalInputMode();
-        information.enterKeyHint = element.canonicalEnterKeyHint();
-        information.isReadOnly = element.isReadOnly();
-        information.value = element.value();
-        information.valueAsNumber = element.valueAsNumber();
-        information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
-        information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
+        information.inputMode = element->canonicalInputMode();
+        information.enterKeyHint = element->canonicalEnterKeyHint();
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+        information.valueAsNumber = element->valueAsNumber();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
+        information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
     } else if (focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
-        if (is<HTMLElement>(*focusedElement)) {
-            auto& focusedHTMLElement = downcast<HTMLElement>(*focusedElement);
-            information.isAutocorrect = focusedHTMLElement.shouldAutocorrect();
-            information.autocapitalizeType = focusedHTMLElement.autocapitalizeType();
-            information.inputMode = focusedHTMLElement.canonicalInputMode();
-            information.enterKeyHint = focusedHTMLElement.canonicalEnterKeyHint();
+        if (RefPtr focusedHTMLElement = dynamicDowncast<HTMLElement>(*focusedElement)) {
+            information.isAutocorrect = focusedHTMLElement->shouldAutocorrect();
+            information.autocapitalizeType = focusedHTMLElement->autocapitalizeType();
+            information.inputMode = focusedHTMLElement->canonicalInputMode();
+            information.enterKeyHint = focusedHTMLElement->canonicalEnterKeyHint();
             information.shouldSynthesizeKeyEventsForEditing = true;
         } else {
             information.isAutocorrect = true;
@@ -3750,8 +3731,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)
 {
-    if (is<HTMLInputElement>(m_focusedElement)) {
-        if (auto autofillElements = AutofillElements::computeAutofillElements(downcast<HTMLInputElement>(*m_focusedElement)))
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(m_focusedElement)) {
+        if (auto autofillElements = AutofillElements::computeAutofillElements(*input))
             autofillElements->autofill(username, password);
     }
 }
@@ -4751,9 +4732,8 @@ void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(
 void WebPage::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
 {
     if (auto element = elementForContext(placeholder)) {
-        RELEASE_ASSERT(is<TextPlaceholderElement>(element));
         if (RefPtr frame = element->document().frame())
-            frame->editor().removeTextPlaceholder(downcast<TextPlaceholderElement>(*element));
+            frame->editor().removeTextPlaceholder(checkedDowncast<TextPlaceholderElement>(*element));
     }
     completionHandler();
 }
@@ -4864,10 +4844,9 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
         if (!request.rect.isEmpty()) {
             rangeOfInterest.start = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.minXMinYCorner()));
             rangeOfInterest.end = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
-        } else if (is<HTMLTextFormControlElement>(element)) {
-            auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
-            rangeOfInterest.start = textFormControlElement.visiblePositionForIndex(0);
-            rangeOfInterest.end = textFormControlElement.visiblePositionForIndex(textFormControlElement.value().length());
+        } else if (RefPtr textFormControlElement = dynamicDowncast<HTMLTextFormControlElement>(element)) {
+            rangeOfInterest.start = textFormControlElement->visiblePositionForIndex(0);
+            rangeOfInterest.end = textFormControlElement->visiblePositionForIndex(textFormControlElement->value().length());
         } else {
             rangeOfInterest.start = firstPositionInOrBeforeNode(element.get());
             rangeOfInterest.end = lastPositionInOrAfterNode(element.get());
