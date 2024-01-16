@@ -17,8 +17,6 @@
 #                                          (e.g. progressions in individual tests)
 
 # No filters
-svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg                                              [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1-SE/filters-image-05-f.svg                                              [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-blend-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-color-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-composite-02-b.svg                                             [ ImageOnlyFailure ]
@@ -133,9 +131,6 @@ svg/repaint/filter-child-repaint.svg                                            
 svg/repaint/filter-repaint.svg                                                         [ ImageOnlyFailure ]
 
 # No markers
-svg/W3C-SVG-1.1-SE/painting-marker-05-f.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1-SE/painting-marker-06-f.svg       [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg       [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/painting-marker-01-f.svg          [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/painting-marker-02-f.svg          [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/painting-marker-03-f.svg          [ ImageOnlyFailure ]
@@ -189,8 +184,6 @@ svg/as-image/img-preserveAspectRatio-support-1.html                       [ Imag
 svg/dynamic-updates [ Skip ]
 
 # No gradients
-svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg                         [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg                         [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/color-prop-01-b.svg                               [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/coords-units-01-b.svg                             [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/masking-mask-01-b.svg                             [ ImageOnlyFailure ]
@@ -289,7 +282,6 @@ svg/zoom/page/zoom-svg-as-background-with-relative-size.html      [ ImageOnlyFai
 svg/zoom/page/zoom-svg-through-object-with-override-size.html     [ ImageOnlyFailure ]
 
 # No patterns
-svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg                    [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/pservers-grad-03-b.svg                          [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/pservers-pattern-01-b.svg                       [ ImageOnlyFailure ]
 svg/batik/paints/patternPreserveAspectRatioA.svg                [ ImageOnlyFailure ]

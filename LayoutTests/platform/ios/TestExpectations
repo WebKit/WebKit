@@ -1440,7 +1440,6 @@ webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.h
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # SVG tests that fail:
-svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
 svg/as-object/svg-embedded-in-html-in-iframe.html [ Failure ]
 svg/batik/filters/feTile.svg [ Failure ]
 svg/batik/filters/filterRegions.svg [ Failure ]
