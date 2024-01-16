@@ -2753,3 +2753,6 @@ http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeou
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 
 webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Failure Pass ]
+
+# Trusted Types aren't implemented yet
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
