@@ -858,8 +858,7 @@ webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak-empty-string.htm
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak.html [ Crash Failure Pass ]
 webkit.org/b/252878 gamepad/gamepad-event-handlers.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/media/video-play-waiting.html [ Failure Pass ]
-# Uncomment when webkit.org/b/266280 is fixed
-#webkit.org/b/252878 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass Timeout ]
+webkit.org/b/252878 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass Timeout ]
 webkit.org/b/252878 http/wpt/fetch/fetch-in-pagehide.html [ Failure Pass ]
 webkit.org/b/252878 http/wpt/service-workers/controlled-sharedworker.https.html [ Failure Pass ]
 webkit.org/b/252878 imported/blink/compositing/squashing/squashing-does-not-stop-transform-propagation.html [ ImageOnlyFailure Pass ]
@@ -923,8 +922,7 @@ webkit.org/b/257624 imported/blink/compositing/video/video-controls-layer-creati
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1a.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1c.html [ ImageOnlyFailure Pass ]
-# Uncomment when webkit.org/b/266280 is fixed
-#webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
+webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/svg/import/text-intro-02-b-manual.svg [ Failure Missing Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/svg/import/text-intro-03-b-manual.svg [ Failure Missing ]
