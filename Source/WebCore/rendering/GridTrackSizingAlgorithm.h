@@ -252,7 +252,7 @@ private:
     SizingState m_sizingState;
 
     GridBaselineAlignment m_baselineAlignment;
-    typedef HashMap<const RenderBox*, bool> BaselineItemsCache;
+    using BaselineItemsCache = HashMap<SingleThreadWeakRef<const RenderBox>, bool>;
     BaselineItemsCache m_columnBaselineItemsMap;
     BaselineItemsCache m_rowBaselineItemsMap;
 

@@ -669,7 +669,7 @@ void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned n
                 continue;
             if (r < totalRows - 1 && cell == primaryCellAt(r + 1, c))
                 continue;
-            addOverflowFromChild(cell);
+            addOverflowFromChild(*cell);
 #if ASSERT_ENABLED
             hasOverflowingCell |= cell->hasVisualOverflow();
 #endif

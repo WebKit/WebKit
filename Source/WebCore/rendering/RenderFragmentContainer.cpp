@@ -316,13 +316,13 @@ void RenderFragmentContainer::detachFragment()
     m_fragmentedFlow = nullptr;
 }
 
-RenderBoxFragmentInfo* RenderFragmentContainer::renderBoxFragmentInfo(const RenderBox* box) const
+RenderBoxFragmentInfo* RenderFragmentContainer::renderBoxFragmentInfo(const RenderBox& box) const
 {
     ASSERT(isValid());
     return m_renderBoxFragmentInfo.get(box);
 }
 
-RenderBoxFragmentInfo* RenderFragmentContainer::setRenderBoxFragmentInfo(const RenderBox* box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
+RenderBoxFragmentInfo* RenderFragmentContainer::setRenderBoxFragmentInfo(const RenderBox& box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
     bool containingBlockChainIsInset)
 {
     ASSERT(isValid());
@@ -333,12 +333,12 @@ RenderBoxFragmentInfo* RenderFragmentContainer::setRenderBoxFragmentInfo(const R
 
 std::unique_ptr<RenderBoxFragmentInfo> RenderFragmentContainer::takeRenderBoxFragmentInfo(const RenderBox* box)
 {
-    return m_renderBoxFragmentInfo.take(box);
+    return m_renderBoxFragmentInfo.take(*box);
 }
 
 void RenderFragmentContainer::removeRenderBoxFragmentInfo(const RenderBox& box)
 {
-    m_renderBoxFragmentInfo.remove(&box);
+    m_renderBoxFragmentInfo.remove(box);
 }
 
 void RenderFragmentContainer::deleteAllRenderBoxFragmentInfo()
@@ -406,7 +406,7 @@ void RenderFragmentContainer::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation) const
+void RenderFragmentContainer::ensureOverflowForBox(const RenderBox& box, RefPtr<RenderOverflow>& overflow, bool forceCreation) const
 {
     ASSERT(m_fragmentedFlow->renderFragmentContainerList().contains(*this));
     ASSERT(isValid());
@@ -420,14 +420,14 @@ void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<
         return;
     }
     
-    LayoutRect borderBox = box->borderBoxRectInFragment(this);
+    LayoutRect borderBox = box.borderBoxRectInFragment(this);
     LayoutRect clientBox;
-    ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(box, this));
+    ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(&box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);
-        
-        clientBox = box->clientBoxRectInFragment(this);
+
+        clientBox = box.clientBoxRectInFragment(this);
         clientBox = rectFlowPortionForBox(box, clientBox);
         
         m_fragmentedFlow->flipForWritingModeLocalCoordinates(borderBox);
@@ -441,9 +441,9 @@ void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<
         overflow = adoptRef(new RenderOverflow(clientBox, borderBox));
 }
 
-LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
+LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox& box, const LayoutRect& rect) const
 {
-    LayoutRect mappedRect = m_fragmentedFlow->mapFromLocalToFragmentedFlow(box, rect);
+    LayoutRect mappedRect = m_fragmentedFlow->mapFromLocalToFragmentedFlow(&box, rect);
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
@@ -461,10 +461,10 @@ LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox* box, 
         }
     }
 
-    return m_fragmentedFlow->mapFromFragmentedFlowToLocal(box, mappedRect);
+    return m_fragmentedFlow->mapFromFragmentedFlowToLocal(&box, mappedRect);
 }
 
-void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox& box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -478,7 +478,7 @@ void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox* box, cons
     fragmentOverflow->addLayoutOverflow(rect);
 }
 
-void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox& box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -501,7 +501,7 @@ LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxMode
 
     if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(box)) {
         RefPtr<RenderOverflow> overflow;
-        ensureOverflowForBox(renderBox.get(), overflow, true);
+        ensureOverflowForBox(*renderBox, overflow, true);
 
         ASSERT(overflow);
         return overflow->visualOverflowRect();
@@ -512,25 +512,25 @@ LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxMode
 }
 
 // FIXME: This doesn't work for writing modes.
-LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox* box)
+LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox& box)
 {
     // Only propagate interior layout overflow if we don't clip it.
-    LayoutRect rect = box->borderBoxRectInFragment(this);
+    LayoutRect rect = box.borderBoxRectInFragment(this);
     rect = rectFlowPortionForBox(box, rect);
-    if (!box->hasNonVisibleOverflow()) {
+    if (!box.hasNonVisibleOverflow()) {
         RefPtr<RenderOverflow> overflow;
         ensureOverflowForBox(box, overflow, true);
         ASSERT(overflow);
         rect.unite(overflow->layoutOverflowRect());
     }
 
-    bool hasTransform = box->isTransformed();
-    if (box->isInFlowPositioned() || hasTransform) {
+    bool hasTransform = box.isTransformed();
+    if (box.isInFlowPositioned() || hasTransform) {
         if (hasTransform)
-            rect = box->layer()->currentTransform().mapRect(rect);
+            rect = box.layer()->currentTransform().mapRect(rect);
 
-        if (box->isInFlowPositioned())
-            rect.move(box->offsetForInFlowPosition());
+        if (box.isInFlowPositioned())
+            rect.move(box.offsetForInFlowPosition());
     }
 
     return rect;

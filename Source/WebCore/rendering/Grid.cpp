@@ -129,13 +129,13 @@ void Grid::clampAreaToSubgridIfNeeded(GridArea& area)
 
 GridArea Grid::gridItemArea(const RenderBox& item) const
 {
-    ASSERT(m_gridItemArea.contains(&item));
-    return m_gridItemArea.get(&item);
+    ASSERT(m_gridItemArea.contains(item));
+    return m_gridItemArea.get(item);
 }
 
 void Grid::setGridItemArea(const RenderBox& item, GridArea area)
 {
-    m_gridItemArea.set(&item, area);
+    m_gridItemArea.set(item, area);
 }
 
 void Grid::setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns)

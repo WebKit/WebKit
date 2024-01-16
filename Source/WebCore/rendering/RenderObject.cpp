@@ -1249,7 +1249,7 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
 
     RenderFragmentContainer* startContainer = nullptr;
     RenderFragmentContainer* endContainer = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(box, startContainer, endContainer);
+    fragmentedFlow->getFragmentRangeForBox(*box, startContainer, endContainer);
     stream << " [spans fragment containers in flow " << fragmentedFlow.get() << " from " << startContainer << " to " << endContainer << "]";
 }
 

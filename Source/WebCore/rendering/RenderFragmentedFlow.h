@@ -109,7 +109,7 @@ public:
 
     virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
 
-    void logicalWidthChangedInFragmentsForBlock(const RenderBlock*, bool&);
+    void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, bool&);
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;
@@ -119,8 +119,8 @@ public:
     RenderFragmentContainer* lastFragment() const;
 
     virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
-    bool getFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
-    bool computedFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool computedFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
     bool hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object is in fragment and the fragment is part of this flow thread.
@@ -143,12 +143,12 @@ public:
     LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
     void clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
 
-    void addFragmentsVisualEffectOverflow(const RenderBox*);
-    void addFragmentsVisualOverflowFromTheme(const RenderBlock*);
-    void addFragmentsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
-    void addFragmentsLayoutOverflow(const RenderBox*, const LayoutRect&);
-    void addFragmentsVisualOverflow(const RenderBox*, const LayoutRect&);
-    void clearFragmentsOverflow(const RenderBox*);
+    void addFragmentsVisualEffectOverflow(const RenderBox&);
+    void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
+    void addFragmentsOverflowFromChild(const RenderBox&, const RenderBox&, const LayoutSize&);
+    void addFragmentsLayoutOverflow(const RenderBox&, const LayoutRect&);
+    void addFragmentsVisualOverflow(const RenderBox&, const LayoutRect&);
+    void clearFragmentsOverflow(const RenderBox&);
 
     LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
@@ -160,7 +160,7 @@ public:
 
     bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
-    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*) const;
+    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox&) const;
 
     void layout() override;
 
@@ -198,7 +198,7 @@ protected:
     void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
-    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
     void removeRenderBoxFragmentInfo(RenderBox&);
     void removeLineFragmentInfo(const RenderBlockFlow&);

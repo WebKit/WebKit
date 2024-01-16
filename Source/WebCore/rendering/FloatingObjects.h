@@ -149,7 +149,7 @@ typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
 
 // FIXME: This is really the same thing as FloatingObjectSet.
 // Change clients to use that set directly, and replace the moveAllToFloatInfoMap function with a takeSet function.
-typedef HashMap<RenderBox*, std::unique_ptr<FloatingObject>> RendererToFloatInfoMap;
+using RendererToFloatInfoMap = HashMap<SingleThreadWeakRef<RenderBox>, std::unique_ptr<FloatingObject>>;
 
 class FloatingObjects {
     WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;

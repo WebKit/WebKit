@@ -2184,7 +2184,7 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment);
+    fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment);
     return (endFragment && fragment != endFragment);
 }
 
@@ -2509,7 +2509,7 @@ void RenderBlockFlow::addOverflowFromFloats()
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         const auto& floatingObject = *it->get();
         if (floatingObject.isDescendant())
-            addOverflowFromChild(&floatingObject.renderer(), floatingObject.locationOffsetOfBorderBox());
+            addOverflowFromChild(floatingObject.renderer(), floatingObject.locationOffsetOfBorderBox());
     }
 }
 
@@ -3088,7 +3088,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
             
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject.isDescendant())
-                child.addOverflowFromChild(&renderer, floatingObject.locationOffsetOfBorderBox());
+                child.addOverflowFromChild(renderer, floatingObject.locationOffsetOfBorderBox());
         }
     }
     return lowestFloatLogicalBottom;

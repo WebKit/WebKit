@@ -259,7 +259,7 @@ public:
     std::optional<SingleThreadWeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
 };
 
-typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
+using RenderBlockRareDataMap = HashMap<SingleThreadWeakRef<const RenderBlock>, std::unique_ptr<RenderBlockRareData>>;
 static RenderBlockRareDataMap* gRareDataMap;
 
 // This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
@@ -593,7 +593,7 @@ void RenderBlock::layout()
 
 static RenderBlockRareData* getBlockRareData(const RenderBlock& block)
 {
-    return gRareDataMap ? gRareDataMap->get(&block) : nullptr;
+    return gRareDataMap ? gRareDataMap->get(block) : nullptr;
 }
 
 static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
@@ -601,7 +601,7 @@ static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
     if (!gRareDataMap)
         gRareDataMap = new RenderBlockRareDataMap;
     
-    auto& rareData = gRareDataMap->add(&block, nullptr).iterator->value;
+    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
     if (!rareData)
         rareData = makeUnique<RenderBlockRareData>();
     return *rareData.get();
@@ -612,7 +612,7 @@ void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
     // Fragments changing widths can force us to relayout our children.
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->logicalWidthChangedInFragmentsForBlock(this, relayoutChildren);
+        fragmentedFlow->logicalWidthChangedInFragmentsForBlock(*this, relayoutChildren);
 }
 
 bool RenderBlock::recomputeLogicalWidth()
@@ -641,7 +641,7 @@ void RenderBlock::addOverflowFromChildren()
         // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
         if (m_overflow) {
             if (auto* flow = enclosingFragmentedFlow())
-                flow->addFragmentsVisualOverflow(this, m_overflow->visualOverflowRect());
+                flow->addFragmentsVisualOverflow(*this, m_overflow->visualOverflowRect());
         }
     } else
         addOverflowFromBlockChildren();
@@ -735,7 +735,7 @@ void RenderBlock::addOverflowFromBlockChildren()
 {
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (!child->isFloatingOrOutOfFlowPositioned())
-            addOverflowFromChild(child);
+            addOverflowFromChild(*child);
     }
 }
 
@@ -748,7 +748,7 @@ void RenderBlock::addOverflowFromPositionedObjects()
     for (auto& positionedObject : *positionedDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject.style().position() != PositionType::Fixed)
-            addOverflowFromChild(&positionedObject, { positionedObject.x(), positionedObject.y() });
+            addOverflowFromChild(positionedObject, { positionedObject.x(), positionedObject.y() });
     }
 }
 
@@ -762,7 +762,7 @@ void RenderBlock::addVisualOverflowFromTheme()
     addVisualOverflow(snappedIntRect(LayoutRect(inflatedRect)));
 
     if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualOverflowFromTheme(this);
+        fragmentedFlow->addFragmentsVisualOverflowFromTheme(*this);
 }
 
 void RenderBlock::setLogicalLeftForChild(RenderBox& child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode applyDelta)
@@ -2771,7 +2771,7 @@ void RenderBlock::absoluteQuadsIgnoringContinuation(const FloatRect& logicalRect
     // FIXME: This is wrong for block-flows that are horizontal.
     // https://bugs.webkit.org/show_bug.cgi?id=46781
     auto* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
+    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
         quads.append(localToAbsoluteQuad(logicalRect, UseTransforms, wasFixed));
 }
 
@@ -2962,13 +2962,13 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(&box, startFragment, endFragment);
+    fragmentedFlow->getFragmentRangeForBox(box, startFragment, endFragment);
 
     computeFragmentRangeForBoxChild(box);
 
     RenderFragmentContainer* newStartFragment = nullptr;
     RenderFragmentContainer* newEndFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(&box, newStartFragment, newEndFragment);
+    fragmentedFlow->getFragmentRangeForBox(box, newStartFragment, newEndFragment);
 
 
     // Changing the start fragment means we shift everything and a relayout is needed.

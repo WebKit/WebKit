@@ -1002,9 +1002,9 @@ void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, G
         axis = axis == GridAxis::GridColumnAxis ? GridAxis::GridRowAxis : GridAxis::GridColumnAxis;
 
     if (axis == GridAxis::GridColumnAxis)
-        m_columnBaselineItemsMap.add(&item, true);
+        m_columnBaselineItemsMap.add(item, true);
     else
-        m_rowBaselineItemsMap.add(&item, true);
+        m_rowBaselineItemsMap.add(item, true);
 
     const auto* gridItemParent = dynamicDowncast<RenderGrid>(item.parent());
     if (gridItemParent) {
@@ -1623,12 +1623,12 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
     m_baselineAlignment.setWritingMode(m_renderGrid->style().writingMode());
     BaselineItemsCache& baselineItemsCache = axis == GridAxis::GridColumnAxis ? m_columnBaselineItemsMap : m_rowBaselineItemsMap;
     BaselineItemsCache tmpBaselineItemsCache = baselineItemsCache;
-    for (auto* child : tmpBaselineItemsCache.keys()) {
+    for (auto& child : tmpBaselineItemsCache.keys()) {
         // FIXME (jfernandez): We may have to get rid of the baseline participation
         // flag (hence just using a HashSet) depending on the CSS WG resolution on
         // https://github.com/w3c/csswg-drafts/issues/3046
-        if (canParticipateInBaselineAlignment(*child, axis)) {
-            updateBaselineAlignmentContext(*child, axis);
+        if (canParticipateInBaselineAlignment(child, axis)) {
+            updateBaselineAlignmentContext(child, axis);
             baselineItemsCache.set(child, true);
         } else
             baselineItemsCache.set(child, false);

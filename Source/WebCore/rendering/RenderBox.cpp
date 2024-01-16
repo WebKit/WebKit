@@ -112,16 +112,16 @@ static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox shoul
 
 using namespace HTMLNames;
 
-typedef HashMap<const RenderBox*, LayoutUnit> OverrideSizeMap;
+using OverrideSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit>;
 static OverrideSizeMap* gOverridingLogicalHeightMap = nullptr;
 static OverrideSizeMap* gOverridingLogicalWidthMap = nullptr;
 
-typedef HashMap<const RenderBox*, Length> OverridingLengthMap;
+using OverridingLengthMap = HashMap<SingleThreadWeakRef<const RenderBox>, Length>;
 static OverridingLengthMap* gOverridingLogicalHeightLengthMap = nullptr;
 static OverridingLengthMap* gOverridingLogicalWidthLengthMap = nullptr;
 
 // FIXME: We should store these based on physical direction.
-typedef HashMap<const RenderBox*, std::optional<LayoutUnit>> OverrideOptionalSizeMap;
+using OverrideOptionalSizeMap = HashMap<SingleThreadWeakRef<const RenderBox>, std::optional<LayoutUnit>>;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverridingContainingBlockContentLogicalWidthMap = nullptr;
 
@@ -185,7 +185,7 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (!fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment))
+    if (!fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment))
         return fragment;
 
     if (fragment->logicalTopForFragmentedFlowContent() < startFragment->logicalTopForFragmentedFlowContent())
@@ -642,7 +642,7 @@ void RenderBox::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accu
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
         return;
 
     auto localRect = FloatRect { 0, 0, width(), height() };
@@ -1256,38 +1256,38 @@ LayoutUnit RenderBox::maxPreferredLogicalWidth() const
 
 bool RenderBox::hasOverridingLogicalHeight() const
 {
-    return gOverridingLogicalHeightMap && gOverridingLogicalHeightMap->contains(this);
+    return gOverridingLogicalHeightMap && gOverridingLogicalHeightMap->contains(*this);
 }
 
 bool RenderBox::hasOverridingLogicalWidth() const
 {
-    return gOverridingLogicalWidthMap && gOverridingLogicalWidthMap->contains(this);
+    return gOverridingLogicalWidthMap && gOverridingLogicalWidthMap->contains(*this);
 }
 
 void RenderBox::setOverridingLogicalHeight(LayoutUnit height)
 {
     if (!gOverridingLogicalHeightMap)
         gOverridingLogicalHeightMap = new OverrideSizeMap();
-    gOverridingLogicalHeightMap->set(this, height);
+    gOverridingLogicalHeightMap->set(*this, height);
 }
 
 void RenderBox::setOverridingLogicalWidth(LayoutUnit width)
 {
     if (!gOverridingLogicalWidthMap)
         gOverridingLogicalWidthMap = new OverrideSizeMap();
-    gOverridingLogicalWidthMap->set(this, width);
+    gOverridingLogicalWidthMap->set(*this, width);
 }
 
 void RenderBox::clearOverridingLogicalHeight()
 {
     if (gOverridingLogicalHeightMap)
-        gOverridingLogicalHeightMap->remove(this);
+        gOverridingLogicalHeightMap->remove(*this);
 }
 
 void RenderBox::clearOverridingLogicalWidth()
 {
     if (gOverridingLogicalWidthMap)
-        gOverridingLogicalWidthMap->remove(this);
+        gOverridingLogicalWidthMap->remove(*this);
 }
 
 void RenderBox::clearOverridingContentSize()
@@ -1299,29 +1299,29 @@ void RenderBox::clearOverridingContentSize()
 LayoutUnit RenderBox::overridingLogicalWidth() const
 {
     ASSERT(hasOverridingLogicalWidth());
-    return gOverridingLogicalWidthMap->get(this);
+    return gOverridingLogicalWidthMap->get(*this);
 }
 
 LayoutUnit RenderBox::overridingLogicalHeight() const
 {
     ASSERT(hasOverridingLogicalHeight());
-    return gOverridingLogicalHeightMap->get(this);
+    return gOverridingLogicalHeightMap->get(*this);
 }
 
 std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentWidth() const
 {
     ASSERT(hasOverridingContainingBlockContentWidth());
     return containingBlock()->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalWidthMap->get(this)
-        : gOverridingContainingBlockContentLogicalHeightMap->get(this);
+        ? gOverridingContainingBlockContentLogicalWidthMap->get(*this)
+        : gOverridingContainingBlockContentLogicalHeightMap->get(*this);
 }
 
 std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentHeight() const
 {
     ASSERT(hasOverridingContainingBlockContentHeight());
     return containingBlock()->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalHeightMap->get(this)
-        : gOverridingContainingBlockContentLogicalWidthMap->get(this);
+        ? gOverridingContainingBlockContentLogicalHeightMap->get(*this)
+        : gOverridingContainingBlockContentLogicalWidthMap->get(*this);
 }
 
 bool RenderBox::hasOverridingContainingBlockContentWidth() const
@@ -1331,8 +1331,8 @@ bool RenderBox::hasOverridingContainingBlockContentWidth() const
         return false;
 
     return cb->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(this)
-        : gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(this);
+        ? gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this)
+        : gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this);
 }
 
 bool RenderBox::hasOverridingContainingBlockContentHeight() const
@@ -1342,105 +1342,105 @@ bool RenderBox::hasOverridingContainingBlockContentHeight() const
         return false;
 
     return cb->style().isHorizontalWritingMode()
-        ? gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(this)
-        : gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(this);
+        ? gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this)
+        : gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this);
 }
 
 std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentLogicalWidth() const
 {
     ASSERT(hasOverridingContainingBlockContentLogicalWidth());
-    return gOverridingContainingBlockContentLogicalWidthMap->get(this);
+    return gOverridingContainingBlockContentLogicalWidthMap->get(*this);
 }
 
 std::optional<LayoutUnit> RenderBox::overridingContainingBlockContentLogicalHeight() const
 {
     ASSERT(hasOverridingContainingBlockContentLogicalHeight());
-    return gOverridingContainingBlockContentLogicalHeightMap->get(this);
+    return gOverridingContainingBlockContentLogicalHeightMap->get(*this);
 }
 
 bool RenderBox::hasOverridingContainingBlockContentLogicalWidth() const
 {
-    return gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(this);
+    return gOverridingContainingBlockContentLogicalWidthMap && gOverridingContainingBlockContentLogicalWidthMap->contains(*this);
 }
 
 bool RenderBox::hasOverridingContainingBlockContentLogicalHeight() const
 {
-    return gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(this);
+    return gOverridingContainingBlockContentLogicalHeightMap && gOverridingContainingBlockContentLogicalHeightMap->contains(*this);
 }
 
 void RenderBox::setOverridingContainingBlockContentLogicalWidth(std::optional<LayoutUnit> logicalWidth)
 {
     if (!gOverridingContainingBlockContentLogicalWidthMap)
         gOverridingContainingBlockContentLogicalWidthMap = new OverrideOptionalSizeMap;
-    gOverridingContainingBlockContentLogicalWidthMap->set(this, logicalWidth);
+    gOverridingContainingBlockContentLogicalWidthMap->set(*this, logicalWidth);
 }
 
 void RenderBox::setOverridingContainingBlockContentLogicalHeight(std::optional<LayoutUnit> logicalHeight)
 {
     if (!gOverridingContainingBlockContentLogicalHeightMap)
         gOverridingContainingBlockContentLogicalHeightMap = new OverrideOptionalSizeMap;
-    gOverridingContainingBlockContentLogicalHeightMap->set(this, logicalHeight);
+    gOverridingContainingBlockContentLogicalHeightMap->set(*this, logicalHeight);
 }
 
 void RenderBox::clearOverridingContainingBlockContentSize()
 {
     if (gOverridingContainingBlockContentLogicalWidthMap)
-        gOverridingContainingBlockContentLogicalWidthMap->remove(this);
+        gOverridingContainingBlockContentLogicalWidthMap->remove(*this);
     clearOverridingContainingBlockContentLogicalHeight();
 }
 
 void RenderBox::clearOverridingContainingBlockContentLogicalHeight()
 {
     if (gOverridingContainingBlockContentLogicalHeightMap)
-        gOverridingContainingBlockContentLogicalHeightMap->remove(this);
+        gOverridingContainingBlockContentLogicalHeightMap->remove(*this);
 }
 
 Length RenderBox::overridingLogicalHeightLength() const
 {
     ASSERT(hasOverridingLogicalHeightLength());
-    return gOverridingLogicalHeightLengthMap->get(this);
+    return gOverridingLogicalHeightLengthMap->get(*this);
 }
 
 void RenderBox::setOverridingLogicalHeightLength(const Length& height)
 {
     if (!gOverridingLogicalHeightLengthMap)
         gOverridingLogicalHeightLengthMap = new OverridingLengthMap();
-    gOverridingLogicalHeightLengthMap->set(this, height);
+    gOverridingLogicalHeightLengthMap->set(*this, height);
 }
 
 bool RenderBox::hasOverridingLogicalHeightLength() const
 {
-    return gOverridingLogicalHeightLengthMap && gOverridingLogicalHeightLengthMap->contains(this);
+    return gOverridingLogicalHeightLengthMap && gOverridingLogicalHeightLengthMap->contains(*this);
 }
 
 void RenderBox::clearOverridingLogicalHeightLength()
 {
     if (gOverridingLogicalHeightLengthMap)
-        gOverridingLogicalHeightLengthMap->remove(this);
+        gOverridingLogicalHeightLengthMap->remove(*this);
 }
 
 Length RenderBox::overridingLogicalWidthLength() const
 {
     ASSERT(hasOverridingLogicalWidthLength());
-    return gOverridingLogicalWidthLengthMap->get(this);
+    return gOverridingLogicalWidthLengthMap->get(*this);
 }
 
 void RenderBox::setOverridingLogicalWidthLength(const Length& height)
 {
     if (!gOverridingLogicalWidthLengthMap)
         gOverridingLogicalWidthLengthMap = new OverridingLengthMap();
-    gOverridingLogicalWidthLengthMap->set(this, height);
+    gOverridingLogicalWidthLengthMap->set(*this, height);
 }
 
 bool RenderBox::hasOverridingLogicalWidthLength() const
 {
-    return gOverridingLogicalWidthLengthMap && gOverridingLogicalWidthLengthMap->contains(this);
+    return gOverridingLogicalWidthLengthMap && gOverridingLogicalWidthLengthMap->contains(*this);
 }
 
 void RenderBox::clearOverridingLogicalWidthLength()
 {
     if (gOverridingLogicalWidthLengthMap)
-        gOverridingLogicalWidthLengthMap->remove(this);
+        gOverridingLogicalWidthLengthMap->remove(*this);
 }
 
 void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
@@ -3128,7 +3128,7 @@ RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer*
 
     // If we have computed our width in this fragment already, it will be cached, and we can
     // just return it.
-    RenderBoxFragmentInfo* boxInfo = fragment->renderBoxFragmentInfo(this);
+    RenderBoxFragmentInfo* boxInfo = fragment->renderBoxFragmentInfo(*this);
     if (boxInfo && cacheFlag == CacheRenderBoxFragmentInfo)
         return boxInfo;
 
@@ -5116,7 +5116,7 @@ void RenderBox::addVisualEffectOverflow()
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
     if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualEffectOverflow(this);
+        fragmentedFlow->addFragmentsVisualEffectOverflow(*this);
 }
 
 LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
@@ -5158,20 +5158,20 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
-void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& delta)
+void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta)
 {
     // Never allow flow threads to propagate overflow up to a parent.
-    if (child->isRenderFragmentedFlow())
+    if (child.isRenderFragmentedFlow())
         return;
 
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
+        fragmentedFlow->addFragmentsOverflowFromChild(*this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it. layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
-    LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(&style());
+    LayoutRect childLayoutOverflowRect = child.layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
 
@@ -5186,17 +5186,17 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
 
     std::optional<LayoutRect> childVisualOverflowRect;
     auto computeChildVisualOverflowRect = [&] () {
-        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect = child.visualOverflowRectForPropagation(&style());
         childVisualOverflowRect->move(delta);
     };
     // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
     if (fragmentedFlow) {
         computeChildVisualOverflowRect();
-        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
+        fragmentedFlow->addFragmentsVisualOverflow(*this, *childVisualOverflowRect);
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (child->hasSelfPaintingLayer())
+        if (child.hasSelfPaintingLayer())
             return;
     }
     if (!childVisualOverflowRect)
@@ -5257,7 +5257,7 @@ void RenderBox::clearOverflow()
     m_overflow = nullptr;
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->clearFragmentsOverflow(this);
+        fragmentedFlow->clearFragmentsOverflow(*this);
 }
     
 bool RenderBox::percentageLogicalHeightIsResolvable() const

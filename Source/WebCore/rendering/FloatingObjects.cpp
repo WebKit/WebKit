@@ -300,7 +300,7 @@ void FloatingObjects::moveAllToFloatInfoMap(RendererToFloatInfoMap& map)
         // FIXME: The only reason it is safe to move these out of the set is that
         // we are about to clear it. Otherwise it would break the hash table invariant.
         // A clean way to do this would be to add a takeAll function to HashSet.
-        map.add(&renderer, WTFMove(*it));
+        map.add(renderer, WTFMove(*it));
     }
     clear();
 }

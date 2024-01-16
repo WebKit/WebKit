@@ -611,8 +611,8 @@ LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const Ren
     if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(child))
         return renderReplaced->intrinsicLogicalHeight();
     
-    if (m_intrinsicContentLogicalHeights.contains(&child))
-        return m_intrinsicContentLogicalHeights.get(&child);
+    if (m_intrinsicContentLogicalHeights.contains(child))
+        return m_intrinsicContentLogicalHeights.get(child);
     
     return child.contentLogicalHeight();
 }
@@ -621,14 +621,14 @@ void RenderFlexibleBox::setCachedChildIntrinsicContentLogicalHeight(const Render
 {
     if (child.isRenderReplaced())
         return; // Replaced elements know their intrinsic height already, so save space by not caching.
-    m_intrinsicContentLogicalHeights.set(&child, height);
+    m_intrinsicContentLogicalHeights.set(child, height);
 }
 
 void RenderFlexibleBox::clearCachedChildIntrinsicContentLogicalHeight(const RenderBox& child)
 {
     if (child.isRenderReplaced())
         return; // Replaced elements know their intrinsic height already, so nothing to do.
-    m_intrinsicContentLogicalHeights.remove(&child);
+    m_intrinsicContentLogicalHeights.remove(child);
 }
 
 LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(RenderBox& child) const
@@ -1226,13 +1226,13 @@ void RenderFlexibleBox::cacheChildMainSize(const RenderBox& child)
             mainSize = child.logicalHeight();
     }
   
-    m_intrinsicSizeAlongMainAxis.set(&child, mainSize);
+    m_intrinsicSizeAlongMainAxis.set(child, mainSize);
     m_relaidOutChildren.add(child);
 }
 
 void RenderFlexibleBox::clearCachedMainSizeForChild(const RenderBox& child)
 {
-    m_intrinsicSizeAlongMainAxis.remove(&child);
+    m_intrinsicSizeAlongMainAxis.remove(child);
 }
 
 // This is a RAII class that is used to temporarily set the flex basis as the child size in the main axis.
@@ -1286,8 +1286,8 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
     LayoutUnit mainAxisExtent;
     if (!mainAxisIsChildInlineAxis(child)) {
         ASSERT(!child.needsLayout());
-        ASSERT(m_intrinsicSizeAlongMainAxis.contains(&child));
-        mainAxisExtent = m_intrinsicSizeAlongMainAxis.get(&child);
+        ASSERT(m_intrinsicSizeAlongMainAxis.contains(child));
+        mainAxisExtent = m_intrinsicSizeAlongMainAxis.get(child);
     } else {
         // We don't need to add scrollbarLogicalWidth here because the preferred
         // width includes the scrollbar, even for overflow: auto.
@@ -1687,7 +1687,7 @@ void RenderFlexibleBox::maybeCacheChildMainIntrinsicSize(RenderBox& child, bool 
     // Don't resolve percentages in children. This is especially important for the min-height calculation,
     // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
     // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-    if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
+    if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(child)) {
         if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
             child.setOverridingContainingBlockContentLogicalHeight(std::nullopt);
         else
