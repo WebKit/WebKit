@@ -48,7 +48,7 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
 }
 
 // FIXME: Merge these with the other integration layout functions.
-static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
+static inline Layout::BoxGeometry::Edges flexBoxLogicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
     UNUSED_PARAM(blockFlowDirection);
@@ -61,7 +61,7 @@ static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& ren
     return { { borderLeft, borderRight }, { borderTop, borderBottom } };
 }
 
-static inline Layout::Edges flexBoxLogicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
+static inline Layout::BoxGeometry::Edges flexBoxLogicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
     UNUSED_PARAM(blockFlowDirection);
@@ -104,7 +104,7 @@ void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUni
     boxGeometry.setVerticalMargin({ flexItem.marginTop(), flexItem.marginBottom() });
     boxGeometry.setHorizontalMargin({ flexItem.marginLeft(), flexItem.marginRight() });
     boxGeometry.setBorder({ { flexItem.borderLeft(), flexItem.borderRight() }, { flexItem.borderTop(), flexItem.borderBottom() } });
-    boxGeometry.setPadding(Layout::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
+    boxGeometry.setPadding(Layout::BoxGeometry::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
 
     if (style.width().isFixed() || style.width().isPercentOrCalculated()) {
         auto widthValue = minimumValueForLength(style.width(), rootGeometry.contentBoxWidth());

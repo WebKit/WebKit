@@ -45,17 +45,23 @@ public:
     static Rect borderBoxRect(const BoxGeometry& box) { return { box.top(), box.left(), box.borderBoxWidth(), box.borderBoxHeight() }; }
     static Rect marginBoxRect(const BoxGeometry& box) { return { box.top() - box.marginBefore(), box.left() - box.marginStart(), box.marginBoxWidth(), box.marginBoxHeight() }; }
 
-    struct VerticalMargin {
+    struct VerticalEdges {
         LayoutUnit before;
         LayoutUnit after;
     };
-    VerticalMargin verticalMargin() const;
 
-    struct HorizontalMargin {
+    struct HorizontalEdges {
         LayoutUnit start;
         LayoutUnit end;
     };
-    HorizontalMargin horizontalMargin() const;
+
+    struct Edges {
+        HorizontalEdges horizontal;
+        VerticalEdges vertical;
+    };
+
+    HorizontalEdges horizontalMargin() const;
+    VerticalEdges verticalMargin() const;
     LayoutUnit marginBefore() const;
     LayoutUnit marginStart() const;
     LayoutUnit marginAfter() const;
@@ -136,19 +142,19 @@ public:
     void setContentBoxWidth(LayoutUnit);
     void setContentBoxSize(const LayoutSize&);
 
-    void setHorizontalMargin(HorizontalMargin);
+    void setHorizontalMargin(HorizontalEdges);
     void setMarginStart(LayoutUnit);
     void setMarginEnd(LayoutUnit);
 
-    void setVerticalMargin(VerticalMargin);
+    void setVerticalMargin(VerticalEdges);
 
-    void setBorder(Layout::Edges);
-    void setHorizontalBorder(Layout::HorizontalEdges);
-    void setVerticalBorder(Layout::VerticalEdges);
+    void setBorder(Edges);
+    void setHorizontalBorder(HorizontalEdges);
+    void setVerticalBorder(VerticalEdges);
 
-    void setHorizontalPadding(std::optional<Layout::HorizontalEdges>);
-    void setVerticalPadding(std::optional<Layout::VerticalEdges>);
-    void setPadding(std::optional<Layout::Edges>);
+    void setHorizontalPadding(std::optional<HorizontalEdges>);
+    void setVerticalPadding(std::optional<VerticalEdges>);
+    void setPadding(std::optional<Edges>);
 
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
@@ -180,11 +186,9 @@ private:
     LayoutUnit m_contentBoxWidth;
     LayoutUnit m_contentBoxHeight;
 
-    HorizontalMargin m_horizontalMargin;
-    VerticalMargin m_verticalMargin;
-
-    Layout::Edges m_border;
-    std::optional<Layout::Edges> m_padding;
+    Edges m_margin;
+    Edges m_border;
+    std::optional<Edges> m_padding;
 
     LayoutUnit m_verticalSpaceForScrollbar;
     LayoutUnit m_horizontalSpaceForScrollbar;
@@ -288,12 +292,12 @@ inline LayoutUnit BoxGeometry::contentBoxWidth() const
     return m_contentBoxWidth;
 }
 
-inline void BoxGeometry::setHorizontalMargin(HorizontalMargin margin)
+inline void BoxGeometry::setHorizontalMargin(HorizontalEdges margin)
 {
 #if ASSERT_ENABLED
     setHasValidHorizontalMargin();
 #endif
-    m_horizontalMargin = margin;
+    m_margin.horizontal = margin;
 }
 
 inline void BoxGeometry::setMarginStart(LayoutUnit marginStart)
@@ -301,7 +305,7 @@ inline void BoxGeometry::setMarginStart(LayoutUnit marginStart)
 #if ASSERT_ENABLED
     setHasValidHorizontalMargin();
 #endif
-    m_horizontalMargin = { marginStart, m_horizontalMargin.end };
+    m_margin.horizontal = { marginStart, m_margin.horizontal.end };
 }
 
 inline void BoxGeometry::setMarginEnd(LayoutUnit marginEnd)
@@ -309,19 +313,19 @@ inline void BoxGeometry::setMarginEnd(LayoutUnit marginEnd)
 #if ASSERT_ENABLED
     setHasValidHorizontalMargin();
 #endif
-    m_horizontalMargin = { m_horizontalMargin.start, marginEnd };
+    m_margin.horizontal = { m_margin.horizontal.start, marginEnd };
 }
 
-inline void BoxGeometry::setVerticalMargin(VerticalMargin margin)
+inline void BoxGeometry::setVerticalMargin(VerticalEdges margin)
 {
 #if ASSERT_ENABLED
     setHasValidVerticalMargin();
     invalidatePrecomputedMarginBefore();
 #endif
-    m_verticalMargin = margin;
+    m_margin.vertical = margin;
 }
 
-inline void BoxGeometry::setBorder(Layout::Edges border)
+inline void BoxGeometry::setBorder(Edges border)
 {
 #if ASSERT_ENABLED
     setHasValidBorder();
@@ -329,7 +333,7 @@ inline void BoxGeometry::setBorder(Layout::Edges border)
     m_border = border;
 }
 
-inline void BoxGeometry::setHorizontalBorder(Layout::HorizontalEdges horizontalBorder)
+inline void BoxGeometry::setHorizontalBorder(HorizontalEdges horizontalBorder)
 {
 #if ASSERT_ENABLED
     setHasValidBorder();
@@ -337,7 +341,7 @@ inline void BoxGeometry::setHorizontalBorder(Layout::HorizontalEdges horizontalB
     m_border.horizontal = horizontalBorder;
 }
 
-inline void BoxGeometry::setVerticalBorder(Layout::VerticalEdges verticalBorder)
+inline void BoxGeometry::setVerticalBorder(VerticalEdges verticalBorder)
 {
 #if ASSERT_ENABLED
     setHasValidBorder();
@@ -345,7 +349,7 @@ inline void BoxGeometry::setVerticalBorder(Layout::VerticalEdges verticalBorder)
     m_border.vertical = verticalBorder;
 }
 
-inline void BoxGeometry::setPadding(std::optional<Layout::Edges> padding)
+inline void BoxGeometry::setPadding(std::optional<Edges> padding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
@@ -353,56 +357,56 @@ inline void BoxGeometry::setPadding(std::optional<Layout::Edges> padding)
     m_padding = padding;
 }
 
-inline void BoxGeometry::setHorizontalPadding(std::optional<Layout::HorizontalEdges> horizontalPadding)
+inline void BoxGeometry::setHorizontalPadding(std::optional<HorizontalEdges> horizontalPadding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
 #endif
-    m_padding = Layout::Edges { horizontalPadding ? *horizontalPadding : Layout::HorizontalEdges(), m_padding ? m_padding->vertical : Layout::VerticalEdges() };
+    m_padding = Edges { horizontalPadding ? *horizontalPadding : HorizontalEdges(), m_padding ? m_padding->vertical : VerticalEdges() };
 }
 
-inline void BoxGeometry::setVerticalPadding(std::optional<Layout::VerticalEdges> verticalPadding)
+inline void BoxGeometry::setVerticalPadding(std::optional<VerticalEdges> verticalPadding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
 #endif
-    m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding ? *verticalPadding : Layout::VerticalEdges() };
+    m_padding = Edges { m_padding ? m_padding->horizontal : HorizontalEdges(), verticalPadding ? *verticalPadding : VerticalEdges() };
 }
 
-inline BoxGeometry::VerticalMargin BoxGeometry::verticalMargin() const
+inline BoxGeometry::VerticalEdges BoxGeometry::verticalMargin() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin;
+    return m_margin.vertical;
 }
 
-inline BoxGeometry::HorizontalMargin BoxGeometry::horizontalMargin() const
+inline BoxGeometry::HorizontalEdges BoxGeometry::horizontalMargin() const
 {
     ASSERT(m_hasValidHorizontalMargin);
-    return m_horizontalMargin;
+    return m_margin.horizontal;
 }
 
 inline LayoutUnit BoxGeometry::marginBefore() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.before;
+    return m_margin.vertical.before;
 }
 
 inline LayoutUnit BoxGeometry::marginStart() const
 {
     ASSERT(m_hasValidHorizontalMargin);
-    return m_horizontalMargin.start;
+    return m_margin.horizontal.start;
 }
 
 inline LayoutUnit BoxGeometry::marginAfter() const
 {
     ASSERT(m_hasValidVerticalMargin);
-    return m_verticalMargin.after;
+    return m_margin.vertical.after;
 }
 
 inline LayoutUnit BoxGeometry::marginEnd() const
 {
     ASSERT(m_hasValidHorizontalMargin);
-    return m_horizontalMargin.end;
+    return m_margin.horizontal.end;
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::paddingBefore() const
@@ -410,7 +414,7 @@ inline std::optional<LayoutUnit> BoxGeometry::paddingBefore() const
     ASSERT(m_hasValidPadding);
     if (!m_padding)
         return { };
-    return m_padding->vertical.top;
+    return m_padding->vertical.before;
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::paddingStart() const
@@ -418,7 +422,7 @@ inline std::optional<LayoutUnit> BoxGeometry::paddingStart() const
     ASSERT(m_hasValidPadding);
     if (!m_padding)
         return { };
-    return m_padding->horizontal.left;
+    return m_padding->horizontal.start;
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::paddingAfter() const
@@ -426,7 +430,7 @@ inline std::optional<LayoutUnit> BoxGeometry::paddingAfter() const
     ASSERT(m_hasValidPadding);
     if (!m_padding)
         return { };
-    return m_padding->vertical.bottom;
+    return m_padding->vertical.after;
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::paddingEnd() const
@@ -434,7 +438,7 @@ inline std::optional<LayoutUnit> BoxGeometry::paddingEnd() const
     ASSERT(m_hasValidPadding);
     if (!m_padding)
         return { };
-    return m_padding->horizontal.right;
+    return m_padding->horizontal.end;
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::verticalPadding() const
@@ -458,25 +462,36 @@ inline std::optional<LayoutUnit> BoxGeometry::horizontalPadding() const
 inline LayoutUnit BoxGeometry::borderBefore() const
 {
     ASSERT(m_hasValidBorder);
-    return m_border.vertical.top;
+    return m_border.vertical.before;
 }
 
 inline LayoutUnit BoxGeometry::borderStart() const
 {
     ASSERT(m_hasValidBorder);
-    return m_border.horizontal.left;
+    return m_border.horizontal.start;
 }
 
 inline LayoutUnit BoxGeometry::borderAfter() const
 {
     ASSERT(m_hasValidBorder);
-    return m_border.vertical.bottom;
+    return m_border.vertical.after;
 }
 
 inline LayoutUnit BoxGeometry::borderEnd() const
 {
     ASSERT(m_hasValidBorder);
-    return m_border.horizontal.right;
+    return m_border.horizontal.end;
+}
+
+// FIXME: Remove this when all layout code transitioned over to BoxGeometry edges.
+static inline BoxGeometry::Edges toBoxGeometryEdges(const Layout::Edges& edges)
+{
+    return { { edges.horizontal.left, edges.horizontal.right }, { edges.vertical.top, edges.vertical.bottom } };
+}
+
+static inline std::optional<BoxGeometry::Edges> toBoxGeometryEdges(std::optional<Layout::Edges> edges)
+{
+    return edges ? std::make_optional(toBoxGeometryEdges(*edges)) : std::nullopt;
 }
 
 }

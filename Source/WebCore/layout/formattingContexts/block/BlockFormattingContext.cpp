@@ -717,8 +717,8 @@ void BlockFormattingContext::updateMarginAfterForPreviousSibling(const ElementBo
 void BlockFormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)
 {
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setBorder(formattingGeometry().computedBorder(layoutBox));
-    boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
+    boxGeometry.setBorder(toBoxGeometryEdges(formattingGeometry().computedBorder(layoutBox)));
+    boxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth)));
 }
 
 BlockMarginCollapse BlockFormattingContext::marginCollapse() const

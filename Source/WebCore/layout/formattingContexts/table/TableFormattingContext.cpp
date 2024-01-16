@@ -96,8 +96,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         cellBoxGeometry.setHorizontalMargin({ });
         cellBoxGeometry.setVerticalMargin({ });
 
-        cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(*cell));
-        cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
+        cellBoxGeometry.setBorder(toBoxGeometryEdges(formattingGeometry.computedCellBorder(*cell)));
+        cellBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace)));
         cellBoxGeometry.setTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
         cellBoxGeometry.setLeft(columnList[cell->startColumn()].usedLogicalLeft());
         cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(*cell));
@@ -166,7 +166,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                 };
                 adjustCellContentWithInstrinsicPaddingBefore();
             }
-            cellBoxGeometry.setVerticalPadding(VerticalEdges { paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
+            cellBoxGeometry.setVerticalPadding(BoxGeometry::VerticalEdges { paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
         };
         computeIntrinsicVerticalPaddingForCell();
     }
@@ -184,7 +184,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         auto& rowBox = row.box();
         auto& rowBoxGeometry = formattingState().boxGeometry(rowBox);
 
-        rowBoxGeometry.setPadding(formattingGeometry().computedPadding(rowBox, availableHorizontalSpace));
+        rowBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry().computedPadding(rowBox, availableHorizontalSpace)));
         // Internal table elements do not have margins.
         rowBoxGeometry.setHorizontalMargin({ });
         rowBoxGeometry.setVerticalMargin({ });
@@ -220,7 +220,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             computedRowBorder.horizontal.right = { };
         }
         rowBoxGeometry.setContentBoxWidth(rowLogicalWidth - computedRowBorder.width());
-        rowBoxGeometry.setBorder(computedRowBorder);
+        rowBoxGeometry.setBorder(toBoxGeometryEdges(computedRowBorder));
 
         if (previousRow && &previousRow->parent() != &rowBox.parent()) {
             // This row is in a different section.
@@ -265,7 +265,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         // Section borders are either collapsed or ignored.
         sectionBoxGeometry.setBorder({ });
         // Use fake vertical padding to space out the sections.
-        sectionBoxGeometry.setPadding(Edges { { }, { paddingBefore.value_or(0_lu), paddingAfter } });
+        sectionBoxGeometry.setPadding(BoxGeometry::Edges { { }, { paddingBefore.value_or(0_lu), paddingAfter } });
         paddingBefore = std::nullopt;
         // Internal table elements do not have margins.
         sectionBoxGeometry.setHorizontalMargin({ });
@@ -531,8 +531,8 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             auto layoutCellContent = [&](auto& cell) {
                 auto& cellBox = cell.box();
                 auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
-                cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(cell));
-                cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
+                cellBoxGeometry.setBorder(toBoxGeometryEdges(formattingGeometry.computedCellBorder(cell)));
+                cellBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace)));
                 cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(cell));
 
                 if (cellBox.hasInFlowOrFloatingChild())

@@ -140,8 +140,8 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
     grid.setCollapsedBorder(collapsedBorder);
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
-    boxGeometry.setBorder(collapsedBorder / 2);
-    boxGeometry.setPadding(formattingGeometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
+    boxGeometry.setBorder(toBoxGeometryEdges(collapsedBorder / 2));
+    boxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry().computedPadding(tableBox, horizontalConstraints.logicalWidth)));
 }
 
 void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ElementBox& tableBox, const HorizontalConstraints& horizontalConstraints)

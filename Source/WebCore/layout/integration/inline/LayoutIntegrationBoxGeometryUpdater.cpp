@@ -128,7 +128,7 @@ static inline LayoutUnit contentLogicalHeightForRenderer(const RenderBox& render
 }
 
 enum class UseComputedValues : bool { No, Yes };
-static inline Layout::BoxGeometry::HorizontalMargin horizontalLogicalMargin(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, bool isHorizontalWritingMode, UseComputedValues useComputedValues = UseComputedValues::No, bool retainMarginStart = true, bool retainMarginEnd = true)
+static inline Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, bool isHorizontalWritingMode, UseComputedValues useComputedValues = UseComputedValues::No, bool retainMarginStart = true, bool retainMarginEnd = true)
 {
     auto& style = renderer.style();
     auto marginLeft = useComputedValues == UseComputedValues::No ? renderer.marginLeft() : fixedValueOrZero(style.marginLeft());
@@ -146,7 +146,7 @@ static inline Layout::BoxGeometry::HorizontalMargin horizontalLogicalMargin(cons
     return { retainMarginStart ? marginBottom : 0_lu, retainMarginEnd ? marginTop : 0_lu };
 }
 
-static inline Layout::BoxGeometry::VerticalMargin verticalLogicalMargin(const RenderBoxModelObject& renderer, BlockFlowDirection blockFlowDirection)
+static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject& renderer, BlockFlowDirection blockFlowDirection)
 {
     switch (blockFlowDirection) {
     case BlockFlowDirection::TopToBottom:
@@ -162,7 +162,7 @@ static inline Layout::BoxGeometry::VerticalMargin verticalLogicalMargin(const Re
 }
 
 enum class IsPartOfFormattingContext : bool { No, Yes };
-static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainBorderStart = true, bool retainBorderEnd = true)
+static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainBorderStart = true, bool retainBorderEnd = true)
 {
     auto& style = renderer.style();
     auto borderLeft = useComputedValues == UseComputedValues::No ? renderer.borderLeft() : LayoutUnit(style.borderLeft().width());
@@ -184,7 +184,7 @@ static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, 
     return { { borderLogicalLeft, borderLogicalRight }, { borderLogicalTop, borderLogicalBottom } };
 }
 
-static inline Layout::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainPaddingStart = true, bool retainPaddingEnd = true)
+static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainPaddingStart = true, bool retainPaddingEnd = true)
 {
     auto& style = renderer.style();
     auto paddingLeft = useComputedValues == UseComputedValues::No ? renderer.paddingLeft() : fixedValueOrZero(style.paddingLeft());
@@ -382,11 +382,11 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     auto shouldPlaceVerticalScrollbarOnLeft = rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
 
     auto contentBoxWidth = WebCore::isHorizontalWritingMode(writingMode) ? rootRenderer.contentWidth() : rootRenderer.contentHeight();
-    auto contentBoxLeft = border.horizontal.left + padding.horizontal.left + (isLeftToRightInlineDirection && shouldPlaceVerticalScrollbarOnLeft ? scrollbarSize.width() : 0_lu);
-    auto contentBoxTop = border.vertical.top + padding.vertical.top;
+    auto contentBoxLeft = border.horizontal.start + padding.horizontal.start + (isLeftToRightInlineDirection && shouldPlaceVerticalScrollbarOnLeft ? scrollbarSize.width() : 0_lu);
+    auto contentBoxTop = border.vertical.before + padding.vertical.before;
 
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLeft, contentBoxWidth };
-    auto visualLeft = !isLeftToRightInlineDirection || shouldPlaceVerticalScrollbarOnLeft ? border.horizontal.right + scrollbarSize.width() + padding.horizontal.right : contentBoxLeft;
+    auto visualLeft = !isLeftToRightInlineDirection || shouldPlaceVerticalScrollbarOnLeft ? border.horizontal.end + scrollbarSize.width() + padding.horizontal.end : contentBoxLeft;
 
     auto createRootGeometryIfNeeded = [&] {
         // FIXME: BFC should be responsible for creating the box geometry for this block box (IFC root) as part of the block layout.

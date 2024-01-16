@@ -70,8 +70,8 @@ static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(c
     auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
 
     auto borderBoxLogicalRect = Layout::BoxGeometry::borderBoxRect(logicalGeometry);
-    auto horizontalMargin = Layout::BoxGeometry::HorizontalMargin { logicalGeometry.marginStart(), logicalGeometry.marginEnd() };
-    auto verticalMargin = Layout::BoxGeometry::VerticalMargin { logicalGeometry.marginBefore(), logicalGeometry.marginAfter() };
+    auto horizontalMargin = Layout::BoxGeometry::HorizontalEdges { logicalGeometry.marginStart(), logicalGeometry.marginEnd() };
+    auto verticalMargin = Layout::BoxGeometry::VerticalEdges { logicalGeometry.marginBefore(), logicalGeometry.marginAfter() };
 
     auto flipMarginsIfApplicable = [&] {
         if (isHorizontalWritingMode && isLeftToRightDirection && !isFlippedBlocksWritingMode)
@@ -79,7 +79,7 @@ static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(c
 
         if (!isHorizontalWritingMode) {
             auto logicalHorizontalMargin = horizontalMargin;
-            horizontalMargin = !isFlippedBlocksWritingMode ? Layout::BoxGeometry::HorizontalMargin { verticalMargin.after, verticalMargin.before } : Layout::BoxGeometry::HorizontalMargin { verticalMargin.before, verticalMargin.after };
+            horizontalMargin = !isFlippedBlocksWritingMode ? Layout::BoxGeometry::HorizontalEdges { verticalMargin.after, verticalMargin.before } : Layout::BoxGeometry::HorizontalEdges { verticalMargin.before, verticalMargin.after };
             verticalMargin = { logicalHorizontalMargin.start, logicalHorizontalMargin.end };
         }
         if (!isLeftToRightDirection) {
