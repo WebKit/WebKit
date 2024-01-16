@@ -723,12 +723,14 @@ static bool renderThemePaintSwitchTrack(OptionSet<ControlStyle::State>, const Re
 
 void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* element) const
 {
-    if (!style.width().isAuto() && !style.height().isAuto())
-        return;
+    // FIXME: Deduplicate sizing with the generic code somehow.
+    if (style.width().isAuto() || style.height().isAuto()) {
+        auto size = std::max(style.computedFontSize(), logicalSwitchHeight);
+        style.setLogicalWidth({ size * (logicalSwitchWidth / logicalSwitchHeight), LengthType::Fixed });
+        style.setLogicalHeight({ size, LengthType::Fixed });
+    }
 
-    auto size = std::max(style.computedFontSize(), logicalSwitchHeight);
-    style.setLogicalWidth({ size * (logicalSwitchWidth / logicalSwitchHeight), LengthType::Fixed });
-    style.setLogicalHeight({ size, LengthType::Fixed });
+    adjustSwitchStyleDisplay(style);
 
     if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
         style.setOutlineStyle(BorderStyle::None);

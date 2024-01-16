@@ -261,6 +261,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustSearchFieldResultsButtonStyle(style, element);
     case StyleAppearance::Switch:
         return adjustSwitchStyle(style, element);
+    case StyleAppearance::SwitchThumb:
+    case StyleAppearance::SwitchTrack:
+        return adjustSwitchThumbOrSwitchTrackStyle(style);
     case StyleAppearance::ProgressBar:
         return adjustProgressBarStyle(style, element);
     case StyleAppearance::Meter:
@@ -1501,6 +1504,21 @@ void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* elem
     adjustSliderThumbSize(style, element);
 }
 
+void RenderTheme::adjustSwitchStyleDisplay(RenderStyle& style) const
+{
+    // RenderTheme::adjustStyle() normalizes a bunch of display types to InlineBlock and Block.
+    switch (style.display()) {
+    case DisplayType::InlineBlock:
+        style.setEffectiveDisplay(DisplayType::InlineGrid);
+        break;
+    case DisplayType::Block:
+        style.setEffectiveDisplay(DisplayType::Grid);
+        break;
+    default:
+        break;
+    }
+}
+
 void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
     // FIXME: This probably has the same flaw as
@@ -1509,6 +1527,17 @@ void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
     auto controlSize = Theme::singleton().controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, style.effectiveZoom());
     style.setLogicalWidth(WTFMove(controlSize.width));
     style.setLogicalHeight(WTFMove(controlSize.height));
+
+    adjustSwitchStyleDisplay(style);
+}
+
+void RenderTheme::adjustSwitchThumbOrSwitchTrackStyle(RenderStyle& style) const
+{
+    GridPosition position;
+    position.setExplicitPosition(1, nullString());
+
+    style.setGridItemRowStart(position);
+    style.setGridItemColumnStart(position);
 }
 
 void RenderTheme::purgeCaches()
