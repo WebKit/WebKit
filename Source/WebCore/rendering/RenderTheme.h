@@ -135,7 +135,8 @@ public:
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
-    virtual void adjustRepaintRect(const RenderObject&, FloatRect&) { }
+    virtual void inflateRectForControlRenderer(const RenderObject&, FloatRect&) { }
+    virtual void adjustRepaintRect(const RenderBox&, FloatRect&) { }
 
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
