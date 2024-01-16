@@ -97,26 +97,26 @@ class ClassLayoutBase(object):
             str_list.append('%+4u <%3u> %s%s%s%s %s' % (total_offset, self.total_byte_size, '    ' * depth, type_start, self.typename, color_end, member_name))
         else:
             str_list.append('%+4u <%3u> %s%s%s%s' % (total_offset, self.total_byte_size, '    ' * depth, type_start, self.typename, color_end))
-
+        depth += 1
         start_offset = total_offset
 
         for data_member in self.data_members:
             member_total_offset = start_offset + data_member[self.MEMBER_OFFSET]
             if self.MEMBER_CLASS_INSTANCE in data_member:
-                data_member[self.MEMBER_CLASS_INSTANCE]._to_string_recursive(str_list, colorize, data_member[self.MEMBER_NAME_KEY], depth + 1, member_total_offset)
+                data_member[self.MEMBER_CLASS_INSTANCE]._to_string_recursive(str_list, colorize, data_member[self.MEMBER_NAME_KEY], depth, member_total_offset)
             else:
                 byte_size = data_member[self.MEMBER_BYTE_SIZE]
 
                 if self.MEMBER_IS_BITFIELD in data_member:
                     num_bits = data_member[self.MEMBER_BITFIELD_BIT_SIZE]
-                    str_list.append('%+4u < :%1u> %s  %s %s : %d' % (member_total_offset, num_bits, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY], num_bits))
+                    str_list.append('%+4u < :%1u> %s%s %s : %d' % (member_total_offset, num_bits, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY], num_bits))
                 elif data_member[self.MEMBER_TYPE_KEY] == self.PADDING_BYTES_TYPE:
-                    str_list.append('%+4u <%3u> %s  %s<PADDING: %d %s>%s' % (member_total_offset, byte_size, '    ' * depth, warn_start, byte_size, 'bytes' if byte_size > 1 else 'byte', color_end))
+                    str_list.append('%+4u <%3u> %s%s<PADDING: %d %s>%s' % (member_total_offset, byte_size, '    ' * depth, warn_start, byte_size, 'bytes' if byte_size > 1 else 'byte', color_end))
                 elif data_member[self.MEMBER_TYPE_KEY] == self.PADDING_BITS_TYPE:
                     padding_bits = data_member[self.PADDING_BITS_SIZE]
-                    str_list.append('%+4u < :%1u> %s  %s<UNUSED BITS: %d %s>%s' % (member_total_offset, padding_bits, '    ' * depth, warn_start, padding_bits, 'bits' if padding_bits > 1 else 'bit', color_end))
+                    str_list.append('%+4u < :%1u> %s%s<UNUSED BITS: %d %s>%s' % (member_total_offset, padding_bits, '    ' * depth, warn_start, padding_bits, 'bits' if padding_bits > 1 else 'bit', color_end))
                 else:
-                    str_list.append('%+4u <%3u> %s  %s %s' % (member_total_offset, byte_size, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY]))
+                    str_list.append('%+4u <%3u> %s%s %s' % (member_total_offset, byte_size, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY]))
 
     def as_string_list(self, colorize=False):
         str_list = []
@@ -176,8 +176,8 @@ class ClassLayout(ClassLayoutBase):
         # base-most polymorphic class (unless virtual inheritance is involved).
         if self.type.IsPolymorphicClass() and not self._has_polymorphic_non_virtual_base_class():
             data_member = {
-                self.MEMBER_NAME_KEY : '__vtbl_ptr_type * _vptr',
-                self.MEMBER_TYPE_KEY : '',
+                self.MEMBER_NAME_KEY: '_vptr',
+                self.MEMBER_TYPE_KEY: '__vtbl_ptr_type *',
                 self.MEMBER_BYTE_SIZE : self.pointer_size,
                 self.MEMBER_OFFSET : 0
             }
