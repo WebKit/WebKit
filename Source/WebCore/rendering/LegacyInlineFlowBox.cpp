@@ -85,8 +85,8 @@ LayoutUnit LegacyInlineFlowBox::getFlowSpacingLogicalWidth()
 {
     LayoutUnit totalWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
     for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (is<LegacyInlineFlowBox>(*child))
-            totalWidth += downcast<LegacyInlineFlowBox>(*child).getFlowSpacingLogicalWidth();
+        if (auto* blockFlow = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            totalWidth += blockFlow->getFlowSpacingLogicalWidth();
     }
     return totalWidth;
 }
@@ -121,8 +121,8 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (child->renderer().parent() == &renderer())
             m_hasTextChildren = true;
         setHasTextDescendantsOnAncestors(this);
-    } else if (is<LegacyInlineFlowBox>(*child)) {
-        if (downcast<LegacyInlineFlowBox>(*child).hasTextDescendants())
+    } else if (auto* blockFlow = dynamicDowncast<LegacyInlineFlowBox>(*child)) {
+        if (blockFlow->hasTextDescendants())
             setHasTextDescendantsOnAncestors(this);
     }
     if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer().isOutOfFlowPositioned()) {
@@ -168,10 +168,8 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (child->behavesLikeText()) {
             const RenderStyle* childStyle = &child->lineStyle();
             bool hasMarkers = false;
-            if (is<LegacyInlineTextBox>(child)) {
-                const auto* textBox = downcast<LegacyInlineTextBox>(child);
+            if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child))
                 hasMarkers = textBox->hasMarkers();
-            }
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers || !childStyle->textUnderlineOffset().isAuto() || !childStyle->textDecorationThickness().isAuto() || childStyle->textUnderlinePosition() != TextUnderlinePosition::Auto)
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplacedOrInlineBlock()) {
@@ -188,8 +186,11 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (lineStyle().hasOutlineInVisualOverflow())
             clearKnownToHaveNoOverflow();
         
-        if (knownToHaveNoOverflow() && is<LegacyInlineFlowBox>(*child) && !downcast<LegacyInlineFlowBox>(*child).knownToHaveNoOverflow())
-            clearKnownToHaveNoOverflow();
+        if (knownToHaveNoOverflow()) {
+            auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child);
+            if (flowBox && !flowBox->knownToHaveNoOverflow())
+                clearKnownToHaveNoOverflow();
+        }
     }
     if (auto* renderInline = dynamicDowncast<RenderInline>(child->renderer()); renderInline && renderInline->hasSelfPaintingLayer())
         m_hasSelfPaintInlineBox = true;
@@ -367,8 +368,8 @@ void LegacyInlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLog
 
     // Recur into our children.
     for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (is<LegacyInlineFlowBox>(*child))
-            downcast<LegacyInlineFlowBox>(*child).determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            flowBox->determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
     }
 }
 
@@ -430,7 +431,7 @@ float LegacyInlineFlowBox::placeBoxRangeInInlineDirection(LegacyInlineBox* first
                 if (knownToHaveNoOverflow())
                     maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
                 logicalLeft += flow.marginLogicalRight();
-            } else if (!is<RenderListMarker>(child->renderer()) || downcast<RenderListMarker>(child->renderer()).isInside()) {
+            } else if (auto* listMarker = dynamicDowncast<RenderListMarker>(child->renderer()); !listMarker || listMarker->isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
                 LayoutUnit logicalLeftMargin = isHorizontal() ? child->boxModelObject()->marginLeft() : child->boxModelObject()->marginTop();
@@ -467,16 +468,16 @@ bool LegacyInlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFall
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        if (is<LegacyInlineFlowBox>(*child)) {
-            if (downcast<LegacyInlineFlowBox>(*child).requiresIdeographicBaseline(textBoxDataMap))
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child)) {
+            if (flowBox->requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
             if (child->lineStyle().fontCascade().primaryFont().hasVerticalGlyphs())
                 return true;
             
             const Vector<SingleThreadWeakPtr<const Font>>* usedFonts = nullptr;
-            if (is<LegacyInlineTextBox>(*child)) {
-                GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(downcast<LegacyInlineTextBox>(child));
+            if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
+                auto it = textBoxDataMap.find(textBox);
                 usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;
             }
 
@@ -524,8 +525,8 @@ void LegacyInlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, Layou
                 break;
         }
 
-        if (is<LegacyInlineFlowBox>(*child))
-            downcast<LegacyInlineFlowBox>(*child).adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            flowBox->adjustMaxAscentAndDescent(maxAscent, maxDescent, maxPositionTop, maxPositionBottom);
     }
 }
 
@@ -692,8 +693,8 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
         if (child->behavesLikeText() || is<LegacyInlineFlowBox>(*child)) {
             const FontMetrics& fontMetrics = childLineStyle.metricsOfPrimaryFont();
             newLogicalTop += child->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
-            if (is<LegacyInlineFlowBox>(*child)) {
-                RenderBoxModelObject& boxObject = downcast<LegacyInlineFlowBox>(*child).renderer();
+            if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child)) {
+                auto& boxObject = flowBox->renderer();
                 newLogicalTop -= childLineStyle.isHorizontalWritingMode()
                     ? boxObject.borderTop() + boxObject.paddingTop()
                     : boxObject.borderRight() + boxObject.paddingRight();
@@ -712,7 +713,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
         child->setLogicalTop(newLogicalTop);
 
         if (childAffectsTopBottomPos) {
-            if (is<RenderRubyRun>(child->renderer())) {
+            if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer())) {
                 // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
                 // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
                 // inline-block.
@@ -721,16 +722,15 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
                 else
                     hasAnnotationsAfter = true;
 
-                auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
-                if (RenderRubyBase* rubyBase = rubyRun.rubyBase()) {
+                if (auto* rubyBase = rubyRun->rubyBase()) {
                     LayoutUnit bottomRubyBaseLeading { (child->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0_lu) };
                     LayoutUnit topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0_lu);
                     newLogicalTop += !inlineBox.renderer().style().isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
             }
-            if (is<LegacyInlineTextBox>(*child)) {
-                if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle)) {
+            if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
+                if (auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle)) {
                     if (*markExistsAndIsAbove != childLineStyle.isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
                     else
@@ -796,8 +796,8 @@ void LegacyInlineFlowBox::flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUn
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders aren't affected here.
         
-        if (is<LegacyInlineFlowBox>(*child))
-            downcast<LegacyInlineFlowBox>(*child).flipLinesInBlockDirection(lineTop, lineBottom);
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            flowBox->flipLinesInBlockDirection(lineTop, lineBottom);
         else
             child->setLogicalTop(lineBottom - (child->logicalTop() - lineTop) - child->logicalHeight());
     }
@@ -1207,24 +1207,25 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        if (is<LegacyInlineFlowBox>(*child))
-            result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeOverAnnotationAdjustment(allowedPosition));
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            result = std::max(result, flowBox->computeOverAnnotationAdjustment(allowedPosition));
         
-        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
-            auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
-
-            auto [above, below] = rubyRun.annotationsAboveAndBelow();
-            auto top = LayoutUnit { child->logicalTop() - above };
-            auto bottom = LayoutUnit { child->logicalBottom() + below };
-            if (!rubyRun.style().isFlippedLinesWritingMode())
-                result = std::max(result, allowedPosition - top);
-            else
-                result = std::max(result, bottom - allowedPosition);
+        if (child->renderer().isReplacedOrInlineBlock()) {
+            auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer());
+            if (rubyRun && child->renderer().style().rubyPosition() == RubyPosition::Before) {
+                auto [above, below] = rubyRun->annotationsAboveAndBelow();
+                auto top = LayoutUnit { child->logicalTop() - above };
+                auto bottom = LayoutUnit { child->logicalBottom() + below };
+                if (!rubyRun->style().isFlippedLinesWritingMode())
+                    result = std::max(result, allowedPosition - top);
+                else
+                    result = std::max(result, bottom - allowedPosition);
+            }
         }
 
-        if (is<LegacyInlineTextBox>(*child)) {
+        if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle);
+            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle);
             if (markExistsAndIsAbove && *markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
@@ -1246,24 +1247,25 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (is<LegacyInlineFlowBox>(*child))
-            result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeUnderAnnotationAdjustment(allowedPosition));
+        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
+            result = std::max(result, flowBox->computeUnderAnnotationAdjustment(allowedPosition));
 
-        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
-            auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
-
-            auto [above, below] = rubyRun.annotationsAboveAndBelow();
-            auto top = LayoutUnit { child->logicalTop() - above };
-            auto bottom = LayoutUnit { child->logicalBottom() + below };
-            if (rubyRun.style().isFlippedLinesWritingMode())
-                result = std::max(result, allowedPosition - top);
-            else
-                result = std::max(result, bottom - allowedPosition);
+        if (child->renderer().isReplacedOrInlineBlock()) {
+            auto* rubyRun = dynamicDowncast<RenderRubyRun>(child->renderer());
+            if (rubyRun && child->renderer().style().rubyPosition() == RubyPosition::After) {
+                auto [above, below] = rubyRun->annotationsAboveAndBelow();
+                auto top = LayoutUnit { child->logicalTop() - above };
+                auto bottom = LayoutUnit { child->logicalBottom() + below };
+                if (rubyRun->style().isFlippedLinesWritingMode())
+                    result = std::max(result, allowedPosition - top);
+                else
+                    result = std::max(result, bottom - allowedPosition);
+            }
         }
 
-        if (is<LegacyInlineTextBox>(*child)) {
+        if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(downcast<LegacyInlineTextBox>(*child).renderer(), childLineStyle);
+            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle);
             if (markExistsAndIsAbove && !*markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     LayoutUnit bottomOfEmphasisMark { child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString()) };

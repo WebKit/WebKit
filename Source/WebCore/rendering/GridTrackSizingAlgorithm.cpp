@@ -1116,9 +1116,7 @@ static inline double normalizedFlexFraction(const GridTrack& track)
 void IndefiniteSizeStrategy::accumulateFlexFraction(double& flexFraction, GridIterator& iterator, GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet) const
 {
     while (auto* gridItem = iterator.nextGridItem()) {
-        if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
-            RenderGrid* inner = downcast<RenderGrid>(gridItem);
-
+        if (CheckedPtr inner = dynamicDowncast<RenderGrid>(gridItem); inner && inner->isSubgridInParentDirection(iterator.direction())) {
             GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
             accumulateFlexFraction(flexFraction, childIterator, outermostDirection, itemsSet);
             continue;
@@ -1393,9 +1391,8 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
                 continue;
         }
 
-        if (is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem)->isSubgridInParentDirection(iterator.direction())) {
+        if (CheckedPtr inner = dynamicDowncast<RenderGrid>(gridItem); inner && inner->isSubgridInParentDirection(iterator.direction())) {
             // Contribute the mbp of wrapper to the first and last tracks that we span.
-            RenderGrid* inner = downcast<RenderGrid>(gridItem);
             GridSpan span = m_renderGrid->gridSpanForChild(*gridItem, m_direction);
 
             auto extraMarginFromSubgridAncestorGutters = [&]() -> std::optional<LayoutUnit> {
@@ -1426,7 +1423,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
                 }
                 return gutterTotal;
             }();
-            auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner);
+            auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner.get());
             track.setBaseSize(std::max(track.baseSize(), accumulatedMbpWithSubgrid + extraMarginFromSubgridAncestorGutters.value_or(0_lu)));
 
             GridIterator childIterator = GridIterator::createForSubgrid(*inner, iterator);
@@ -1659,7 +1656,6 @@ static void removeSubgridMarginBorderPaddingFromTracks(Vector<GridTrack>& tracks
 
 bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
 {
-    ASSERT(is<RenderGrid>(m_renderGrid->parent()));
     RenderGrid* outer = downcast<RenderGrid>(m_renderGrid->parent());
     GridTrackSizingAlgorithm& parentAlgo = outer->m_trackSizingAlgorithm;
     GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForParent(*m_renderGrid, *outer, m_direction);

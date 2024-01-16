@@ -66,8 +66,8 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     auto rect = roundedRect.rect();
-    if (is<RenderLayerModelObject>(renderer))
-        rect = snapRectToDevicePixelsIfNeeded(rect, downcast<RenderLayerModelObject>(renderer));
+    if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(renderer))
+        rect = snapRectToDevicePixelsIfNeeded(rect, *modelObject);
     auto layerBounds = transformAndClipIfNeeded(rect, [](auto affineTransform, auto rect) {
         return affineTransform.mapRect(rect);
     });
@@ -213,9 +213,9 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& render
         }
 
         // We can't consolidate this region but it might be a container we can remove later.
-        if (hasNoVisualBorders && is<RenderElement>(renderer)) {
-            auto& renderElement = downcast<RenderElement>(renderer);
-            m_containerRemovalCandidates.add(renderElement.element()->identifier());
+        if (hasNoVisualBorders) {
+            if (auto* renderElement = dynamicDowncast<RenderElement>(renderer))
+                m_containerRemovalCandidates.add(renderElement->element()->identifier());
         }
 
         // We found a region nested inside a container candidate for removal, flag it for removal.

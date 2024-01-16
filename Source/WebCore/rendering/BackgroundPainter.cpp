@@ -405,8 +405,8 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, isFirstLine))) {
             context.setDrawLuminanceMask(bgLayer.maskMode() == MaskMode::Luminance);
 
-            if (is<BitmapImage>(image))
-                downcast<BitmapImage>(*image).updateFromSettings(document().settings());
+            if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+                bitmapImage->updateFromSettings(document().settings());
 
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? bgLayer.compositeForPainting() : op,

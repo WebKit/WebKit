@@ -208,8 +208,8 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect)
     if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !m_renderer.theme().supportsFocusRing(styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
-        if (is<RenderBox>(m_renderer))
-            paintRectToUse = m_renderer.theme().adjustedPaintRect(downcast<RenderBox>(m_renderer), paintRectToUse);
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer))
+            paintRectToUse = m_renderer.theme().adjustedPaintRect(*box, paintRectToUse);
         m_renderer.addFocusRingRects(focusRingRects, paintRectToUse.location(), m_paintInfo.paintContainer);
         m_renderer.paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
     }
@@ -490,7 +490,8 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     if (!styleImage->canRender(&m_renderer, style.effectiveZoom()))
         return false;
 
-    if (!is<RenderBoxModelObject>(m_renderer))
+    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer);
+    if (!modelObject)
         return false;
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
@@ -501,7 +502,7 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    auto source = downcast<RenderBoxModelObject>(m_renderer).calculateImageIntrinsicDimensions(styleImage, destination.size(), RenderBoxModelObject::DoNotScaleByEffectiveZoom);
+    auto source = modelObject->calculateImageIntrinsicDimensions(styleImage, destination.size(), RenderBoxModelObject::DoNotScaleByEffectiveZoom);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
     styleImage->setContainerContextForRenderer(m_renderer, source, style.effectiveZoom());

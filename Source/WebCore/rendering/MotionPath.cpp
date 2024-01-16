@@ -61,7 +61,11 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 {
     MotionPathData data;
     auto pathOperation = renderer.style().offsetPath();
-    if (!is<RenderLayerModelObject>(renderer) || !pathOperation || (is<ShapePathOperation>(pathOperation) && is<BasicShapePath>(downcast<ShapePathOperation>(*pathOperation).shape())))
+    if (!is<RenderLayerModelObject>(renderer) || !pathOperation)
+        return std::nullopt;
+
+    auto* shapeOperation = dynamicDowncast<ShapePathOperation>(pathOperation);
+    if (shapeOperation && is<BasicShapePath>(shapeOperation->shape()))
         return std::nullopt;
 
     auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
@@ -82,9 +86,8 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
         if (is<ShapePathOperation>(pathOperation))
             data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
-        if (is<RayPathOperation>(pathOperation)) {
-            auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
-            auto startingPosition = rayPathOperation.position();
+        if (auto* rayPathOperation = dynamicDowncast<RayPathOperation>(pathOperation)) {
+            auto startingPosition = rayPathOperation->position();
             data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
         }
         return data;
@@ -230,10 +233,9 @@ std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pa
     if (auto motionPathData = data.motionPathData) {
         auto& shape = pathOperation.basicShape();
         auto containingBlockRect = offsetRectForData(*motionPathData).rect();
-        if (is<BasicShapeCircleOrEllipse>(shape)) {
-            auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
-            if (centerCoordShape.positionWasOmitted())
-                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
+        if (auto* centerCoordShape = dynamicDowncast<BasicShapeCircleOrEllipse>(shape)) {
+            if (centerCoordShape->positionWasOmitted())
+                return centerCoordShape->pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }

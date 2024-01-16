@@ -228,22 +228,22 @@ static LayoutRect computeCaretRectForSVGInlineText(const InlineBoxAndOffset& box
     auto* box = boxAndOffset.box ? boxAndOffset.box->legacyInlineBox() : nullptr;
     auto caretOffset = boxAndOffset.offset;
 
-    if (!is<LegacyInlineTextBox>(box))
+    auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*box);
+    if (!textBox)
         return { };
 
-    auto& textBox = downcast<LegacyInlineTextBox>(*box);
-    if (caretOffset < textBox.start() || caretOffset > textBox.start() + textBox.len())
+    if (caretOffset < textBox->start() || caretOffset > textBox->start() + textBox->len())
         return { };
 
     // Use the edge of the selection rect to determine the caret rect.
-    if (caretOffset < textBox.start() + textBox.len()) {
-        LayoutRect rect = textBox.localSelectionRect(caretOffset, caretOffset + 1);
-        LayoutUnit x = textBox.isLeftToRightDirection() ? rect.x() : rect.maxX();
+    if (caretOffset < textBox->start() + textBox->len()) {
+        LayoutRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
+        LayoutUnit x = textBox->isLeftToRightDirection() ? rect.x() : rect.maxX();
         return LayoutRect(x, rect.y(), caretWidth(), rect.height());
     }
 
-    LayoutRect rect = textBox.localSelectionRect(caretOffset - 1, caretOffset);
-    LayoutUnit x = textBox.isLeftToRightDirection() ? rect.maxX() : rect.x();
+    LayoutRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
+    LayoutUnit x = textBox->isLeftToRightDirection() ? rect.maxX() : rect.x();
     return { x, rect.y(), caretWidth(), rect.height() };
 }
 
@@ -335,14 +335,14 @@ LayoutRect computeLocalCaretRect(const RenderObject& renderer, const InlineBoxAn
     if (is<RenderLineBreak>(renderer))
         return computeCaretRectForLineBreak(boxAndOffset, caretRectMode);
 
-    if (is<RenderBlock>(renderer))
-        return computeCaretRectForBlock(downcast<RenderBlock>(renderer), boxAndOffset, caretRectMode);
+    if (auto* block = dynamicDowncast<RenderBlock>(renderer))
+        return computeCaretRectForBlock(*block, boxAndOffset, caretRectMode);
 
-    if (is<RenderBox>(renderer))
-        return computeCaretRectForBox(downcast<RenderBox>(renderer), boxAndOffset, caretRectMode);
+    if (auto* box = dynamicDowncast<RenderBox>(renderer))
+        return computeCaretRectForBox(*box, boxAndOffset, caretRectMode);
 
-    if (is<RenderInline>(renderer))
-        return computeCaretRectForInline(downcast<RenderInline>(renderer));
+    if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
+        return computeCaretRectForInline(*renderInline);
 
     return { };
 }

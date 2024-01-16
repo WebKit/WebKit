@@ -97,7 +97,7 @@ private:
     {
         if (!isSameType(other))
             return false;
-        auto& referenceClip = downcast<ReferencePathOperation>(other);
+        auto& referenceClip = uncheckedDowncast<ReferencePathOperation>(other);
         return m_url == referenceClip.m_url;
     }
 
@@ -128,12 +128,12 @@ public:
 
     bool canBlend(const PathOperation& to) const final
     {
-        return is<ShapePathOperation>(to) && m_shape->canBlend(downcast<ShapePathOperation>(to).basicShape());
+        auto* operation = dynamicDowncast<ShapePathOperation>(to);
+        return operation && m_shape->canBlend(operation->basicShape());
     }
 
     RefPtr<PathOperation> blend(const PathOperation* to, const BlendingContext& context) const final
     {
-        ASSERT(is<ShapePathOperation>(to));
         return ShapePathOperation::create(downcast<ShapePathOperation>(*to).basicShape().blend(m_shape, context));
     }
 
@@ -154,7 +154,7 @@ private:
     {
         if (!isSameType(other))
             return false;
-        auto& shapeClip = downcast<ShapePathOperation>(other);
+        auto& shapeClip = uncheckedDowncast<ShapePathOperation>(other);
         return referenceBox() == shapeClip.referenceBox()
             && (m_shape.ptr() == shapeClip.m_shape.ptr() || m_shape.get() == shapeClip.m_shape.get());
     }
@@ -202,7 +202,7 @@ private:
     {
         if (!isSameType(other))
             return false;
-        auto& boxClip = downcast<BoxPathOperation>(other);
+        auto& boxClip = uncheckedDowncast<BoxPathOperation>(other);
         return referenceBox() == boxClip.referenceBox();
     }
 
@@ -250,7 +250,7 @@ private:
         if (!isSameType(other))
             return false;
 
-        auto& otherCasted = downcast<RayPathOperation>(other);
+        auto& otherCasted = uncheckedDowncast<RayPathOperation>(other);
         return m_angle == otherCasted.m_angle
             && m_size == otherCasted.m_size
             && m_isContaining == otherCasted.m_isContaining

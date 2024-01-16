@@ -134,14 +134,14 @@ float LegacyInlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
 
-    if (is<LegacyRootInlineBox>(*this) && downcast<LegacyRootInlineBox>(*this).isForTrailingFloats())
+    if (auto* inlineBox = dynamicDowncast<LegacyRootInlineBox>(*this); inlineBox && inlineBox->isForTrailingFloats())
         return 0;
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isRenderTextOrLineBreak())
         return lineStyle.metricsOfPrimaryFont().height();
-    if (is<RenderBox>(renderer()) && parent())
-        return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();
+    if (auto* box = dynamicDowncast<RenderBox>(renderer()); box && parent())
+        return isHorizontal() ? box->height() : box->width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();

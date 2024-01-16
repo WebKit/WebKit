@@ -446,7 +446,11 @@ String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) con
 
 const RenderCombineText* LegacyInlineTextBox::combinedText() const
 {
-    return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
+    if (!lineStyle().hasTextCombine())
+        return nullptr;
+
+    auto* renderCombineText = dynamicDowncast<RenderCombineText>(renderer());
+    return renderCombineText && renderCombineText->isCombined() ? renderCombineText : nullptr;
 }
 
 ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const

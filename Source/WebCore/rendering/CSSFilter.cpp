@@ -246,7 +246,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::Type::Blur:
-            function = createBlurEffect(downcast<BlurFilterOperation>(*operation));
+            function = createBlurEffect(uncheckedDowncast<BlurFilterOperation>(*operation));
             break;
 
         case FilterOperation::Type::Brightness:
@@ -258,7 +258,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::Type::DropShadow:
-            function = createDropShadowEffect(downcast<DropShadowFilterOperation>(*operation));
+            function = createDropShadowEffect(uncheckedDowncast<DropShadowFilterOperation>(*operation));
             break;
 
         case FilterOperation::Type::Grayscale:
@@ -286,7 +286,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::Type::Reference:
-            function = createReferenceFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
+            function = createReferenceFilter(*this, uncheckedDowncast<ReferenceFilterOperation>(*operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
             break;
 
         default:
@@ -320,10 +320,8 @@ FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) con
             continue;
         }
 
-        if (function->isSVGFilter()) {
-            auto& filter = downcast<SVGFilter>(function.get());
-            effects.appendVector(filter.effectsOfType(filterType));
-        }
+        if (RefPtr filter = dynamicDowncast<SVGFilter>(function))
+            effects.appendVector(filter->effectsOfType(filterType));
     }
 
     return effects;
@@ -390,8 +388,8 @@ bool CSSFilter::isIdentity(RenderElement& renderer, const FilterOperations& oper
         return false;
 
     for (auto& operation : operations.operations()) {
-        if (operation->type() == FilterOperation::Type::Reference) {
-            if (!isIdentityReferenceFilter(downcast<ReferenceFilterOperation>(*operation), renderer))
+        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation)) {
+            if (!isIdentityReferenceFilter(*referenceOperation, renderer))
                 return false;
             continue;
         }
@@ -408,8 +406,8 @@ IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOper
     IntOutsets outsets;
 
     for (auto& operation : operations.operations()) {
-        if (operation->type() == FilterOperation::Type::Reference) {
-            outsets += calculateReferenceFilterOutsets(downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
+        if (RefPtr referenceOperation = dynamicDowncast<ReferenceFilterOperation>(*operation)) {
+            outsets += calculateReferenceFilterOutsets(*referenceOperation, renderer, targetBoundingBox);
             continue;
         }
 
