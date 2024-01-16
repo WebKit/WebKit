@@ -959,6 +959,15 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             }
         }
     }
+#if ENABLE(FULLSCREEN_API)
+    if (m_document.quirks().needsFullscreenObjectFitQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
+        bool isFullscreen = m_document.fullscreenManager().isFullscreen();
+        RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element);
+        if (video && isFullscreen && video->hasClass() && video->classNames().contains(playerClassName) && style.objectFit() == ObjectFit::Fill)
+            style.setObjectFit(ObjectFit::Contain);
+    }
+#endif
 #endif
 }
 
