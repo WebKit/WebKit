@@ -49,7 +49,8 @@ StyleCanvasImage::~StyleCanvasImage()
 
 bool StyleCanvasImage::operator==(const StyleImage& other) const
 {
-    return is<StyleCanvasImage>(other) && equals(downcast<StyleCanvasImage>(other));
+    auto* otherCanvasImage = dynamicDowncast<StyleCanvasImage>(other);
+    return otherCanvasImage && equals(*otherCanvasImage);
 }
 
 bool StyleCanvasImage::equals(const StyleCanvasImage& other) const
