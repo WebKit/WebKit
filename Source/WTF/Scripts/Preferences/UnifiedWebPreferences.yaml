@@ -1930,17 +1930,17 @@ CustomPasteboardDataEnabled:
 
 CustomStateSetEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
-  humanReadableName: "CustomStateSet"
+  humanReadableName: "CustomStateSet and :state() pseudo class"
   humanReadableDescription: "Support for CustomStateSet in custom elements"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DNSPrefetchingEnabled:
   type: bool
