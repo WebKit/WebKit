@@ -377,7 +377,7 @@ void NetworkStorageManager::spaceGrantedForOrigin(const WebCore::ClientOrigin& o
     if (m_totalUsage)
         m_totalUsage = *m_totalUsage + amount;
 
-    if (!m_totalUsage || *m_totalUsage > m_totalQuota)
+    if (!m_totalUsage || *m_totalUsage > *m_totalQuota)
         schedulePerformEviction();
 }
 
@@ -484,7 +484,8 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
     assertIsCurrent(workQueue());
 
     m_isEvictionScheduled = false;
-    if (!m_totalQuota || !m_totalUsage || *m_totalUsage <= m_totalQuota)
+    ASSERT(m_totalQuota);
+    if (!m_totalUsage || *m_totalUsage <= *m_totalQuota)
         return;
 
     Vector<std::pair<WebCore::SecurityOriginData, AccessRecord>> sortedOriginRecords;
@@ -496,7 +497,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
     });
 
     uint64_t deletedOriginCount = 0;
-    while (!sortedOriginRecords.isEmpty() && *m_totalUsage > m_totalQuota) {
+    while (!sortedOriginRecords.isEmpty() && *m_totalUsage > *m_totalQuota) {
         auto [topOrigin, record] = sortedOriginRecords.takeLast();
         if (record.isActive || valueOrDefault(record.isPersisted))
             continue;
@@ -512,7 +513,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
     }
 
     UNUSED_PARAM(deletedOriginCount);
-    RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins, current usage %" PRIu64 ", total quota %" PRIu64, this, deletedOriginCount, valueOrDefault(m_totalUsage), m_totalQuota);
+    RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins, current usage %" PRIu64 ", total quota %" PRIu64, this, deletedOriginCount, valueOrDefault(m_totalUsage), *m_totalQuota);
 }
 
 OriginQuotaManager::Parameters NetworkStorageManager::originQuotaManagerParameters(const WebCore::ClientOrigin& origin)
