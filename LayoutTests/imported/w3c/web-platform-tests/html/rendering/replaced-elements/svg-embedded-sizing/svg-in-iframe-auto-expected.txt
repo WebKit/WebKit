@@ -11,22 +11,22 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?13 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?14 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?15 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?16 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?17 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?18 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?19 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?20 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?21 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?22 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?23 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',  assert_equals: (append ?24 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', svgWidthAttr: '200',  assert_equals: (append ?25 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200',  assert_equals: (append ?26 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200',  assert_equals: (append ?27 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200',  assert_equals: (append ?28 to debug) Wrong width expected 300 but got 200
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200',
+PASS placeholder: 'iframe', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200',
 PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '200',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200',
@@ -35,18 +35,18 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '200',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?37 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?38 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?39 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?40 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?41 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?42 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?43 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?44 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?45 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?46 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?47 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',  assert_equals: (append ?48 to debug) Wrong height expected 150 but got 400
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200',
 PASS placeholder: 'iframe', svgWidthAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '25%',
@@ -59,90 +59,90 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?61 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?62 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?63 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?64 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?65 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?66 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?67 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?68 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?69 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?70 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?71 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',  assert_equals: (append ?72 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', svgHeightAttr: '200',  assert_equals: (append ?73 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgHeightAttr: '200',  assert_equals: (append ?74 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgHeightAttr: '200',  assert_equals: (append ?75 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgHeightAttr: '200',  assert_equals: (append ?76 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgHeightAttr: '200',  assert_equals: (append ?77 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',  assert_equals: (append ?78 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',  assert_equals: (append ?79 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',  assert_equals: (append ?80 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgHeightAttr: '200',  assert_equals: (append ?81 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',  assert_equals: (append ?82 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',  assert_equals: (append ?83 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',  assert_equals: (append ?84 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?85 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?86 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?87 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?88 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?89 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?90 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?91 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?92 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?93 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?94 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?95 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',  assert_equals: (append ?96 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?97 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?98 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?99 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?100 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?101 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?102 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?103 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?104 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?105 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?106 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?107 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?108 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?109 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?110 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?111 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?112 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?113 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?114 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?115 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?116 to debug) Wrong height expected 150 but got 100
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?117 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?118 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?119 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',  assert_equals: (append ?120 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?121 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?122 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?123 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?124 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?125 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?126 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?127 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?128 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?129 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?130 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?131 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?132 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?133 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?134 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?135 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?136 to debug) Wrong width expected 300 but got 100
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?137 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?138 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?139 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?140 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?141 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?142 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?143 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',  assert_equals: (append ?144 to debug) Wrong height expected 150 but got 400
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%',
+PASS placeholder: 'iframe', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '200',
+PASS placeholder: 'iframe', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '200',
 PASS placeholder: 'iframe', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', svgHeightAttr: '25%',
@@ -155,22 +155,22 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgHeightAttr: '25%',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?157 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?158 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?159 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?160 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?161 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?162 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?163 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?164 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?165 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?166 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?167 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',  assert_equals: (append ?168 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?169 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?170 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?171 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?172 to debug) Wrong width expected 300 but got 200
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgWidthAttr: '200', svgHeightAttr: '25%',
@@ -179,18 +179,18 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '200', sv
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '200', svgHeightAttr: '25%',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?181 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?182 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?183 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?184 to debug) Wrong width expected 300 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?185 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?186 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?187 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?188 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?189 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?190 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?191 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',  assert_equals: (append ?192 to debug) Wrong height expected 150 but got 400
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '200', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', svgWidthAttr: '25%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', svgWidthAttr: '25%', svgHeightAttr: '25%',
@@ -203,16 +203,16 @@ PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgWidthAttr: '25%', sv
 PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '25%',
 PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgWidthAttr: '25%', svgHeightAttr: '25%',
-FAIL placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?205 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?206 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?207 to debug) Wrong width expected 300 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?208 to debug) Wrong width expected 300 but got 400
-FAIL placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?209 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?210 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?211 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?212 to debug) Wrong height expected 150 but got 200
-FAIL placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?213 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?214 to debug) Wrong height expected 150 but got 400
-FAIL placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?215 to debug) Wrong height expected 150 but got 800
-FAIL placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',  assert_equals: (append ?216 to debug) Wrong height expected 150 but got 400
+PASS placeholder: 'iframe', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '100', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
+PASS placeholder: 'iframe', containerWidthStyle: '400px', containerHeightStyle: '400px', placeholderWidthAttr: '50%', svgViewBoxAttr: '0 0 100 200', svgWidthAttr: '25%', svgHeightAttr: '25%',
 
