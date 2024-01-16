@@ -1,0 +1,4 @@
+
+PASS ::part():lang() invalidation
+PASS ::part():lang() invalidation from setAttribute
+
