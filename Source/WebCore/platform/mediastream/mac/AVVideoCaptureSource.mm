@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -558,11 +558,10 @@ void AVVideoCaptureSource::rejectPendingPhotoRequest(const String& error)
 {
     Locker lock { m_photoLock };
 
-    if (!m_photoProducer) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "no photo producer");
+    if (!m_photoProducer)
         return;
-    }
 
+    ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, error);
     m_photoProducer->reject(error);
     m_photoProducer = nullptr;
 }
@@ -654,7 +653,7 @@ auto AVVideoCaptureSource::takePhotoInternal(PhotoSettings&& photoSettings) -> R
     }
 
     auto avPhotoSettings = photoConfiguration(photoSettings);
-    if (avPhotoSettings) {
+    if (!avPhotoSettings) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "photoConfiguration() failed");
         return TakePhotoNativePromise::createAndReject("Internal error"_s);
     }

@@ -362,6 +362,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
 void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, double zoom, std::optional<VideoPreset>&& preset)
 {
     UNUSED_PARAM(zoom);
+    ASSERT(m_beingConfigured);
     m_preset = WTFMove(preset);
     if (m_preset)
         setIntrinsicSize(m_preset->size());
@@ -416,6 +417,7 @@ void MockRealtimeVideoSource::startCaptureTimer()
 
 void MockRealtimeVideoSource::startProducingData()
 {
+    ASSERT(!m_beingConfigured);
     startCaptureTimer();
     m_startTime = MonotonicTime::now();
 }
@@ -725,6 +727,16 @@ void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
             source.startCaptureTimer();
         source.notifyMutedChange(isInterrupted);
     }
+}
+
+void MockRealtimeVideoSource::startApplyingConstraints()
+{
+    m_beingConfigured = true;
+}
+
+void MockRealtimeVideoSource::endApplyingConstraints()
+{
+    m_beingConfigured = false;
 }
 
 } // namespace WebCore
