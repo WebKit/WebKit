@@ -114,6 +114,12 @@ private:
     AST::Expression& bufferLengthType();
     AST::Expression& bufferLengthReferenceType();
 
+    // atomics
+    void initializeAtomics(AST::Function&, const Vector<AST::Variable*>&, size_t);
+    void insertWorkgroupBarrier(AST::Function&, size_t);
+    AST::Identifier& findOrInsertLocalInvocationIndex(AST::Function&);
+    AST::Statement::List atomicStoreInitialValue(const Vector<AST::Variable*>&);
+
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
     void packStructResource(AST::Variable&, const Types::Struct*);
@@ -1391,22 +1397,155 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
                 initializer,
                 AST::Attribute::List { }
             );
-            auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
-                SourceSpan::empty(),
-                variable
-            );
-            m_callGraph.ast().insert(function.body().statements(), 0, AST::Statement::Ref(variableStatement));
+
+            auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), variable);
+            m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
         }
     }
 }
 
 void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
 {
+    Vector<AST::Variable*> atomics;
+    auto initialBodySize = function.body().statements().size();
     for (auto* global : usedPrivateGlobals) {
-        auto& variable = *global->declaration;
-        auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), variable);
+        if (std::holds_alternative<Types::Atomic>(*global->declaration->storeType()))
+            atomics.append(global->declaration);
+
+        auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), *global->declaration);
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
+
+    if (atomics.size()) {
+        auto offset = function.body().statements().size() - initialBodySize;
+        initializeAtomics(function, atomics, offset);
+    }
+}
+
+void RewriteGlobalVariables::initializeAtomics(AST::Function& function, const Vector<AST::Variable*>& atomics, size_t offset)
+{
+    insertWorkgroupBarrier(function, offset);
+
+    auto localInvocationIndex = findOrInsertLocalInvocationIndex(function);
+    auto initializations = atomicStoreInitialValue(atomics);
+
+    auto& testLhs = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make(localInvocationIndex.id())
+    );
+    testLhs.m_inferredType = m_callGraph.ast().types().u32Type();
+
+    auto& testRhs = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(SourceSpan::empty(), 0);
+    testLhs.m_inferredType = m_callGraph.ast().types().u32Type();
+
+
+    auto& testExpression = m_callGraph.ast().astBuilder().construct<AST::BinaryExpression>(
+        SourceSpan::empty(),
+        testLhs,
+        testRhs,
+        AST::BinaryOperation::Equal
+    );
+    testExpression.m_inferredType = m_callGraph.ast().types().boolType();
+
+    auto& body = m_callGraph.ast().astBuilder().construct<AST::CompoundStatement>(
+        SourceSpan::empty(),
+        WTFMove(initializations)
+    );
+
+    auto& ifStatement = m_callGraph.ast().astBuilder().construct<AST::IfStatement>(
+        SourceSpan::empty(),
+        testExpression,
+        body,
+        nullptr,
+        AST::Attribute::List { }
+    );
+    m_callGraph.ast().insert(function.body().statements(), offset, std::reference_wrapper<AST::Statement>(ifStatement));
+}
+
+void RewriteGlobalVariables::insertWorkgroupBarrier(AST::Function& function, size_t offset)
+{
+    auto& callee = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("workgroupBarrier"_s));
+    callee.m_inferredType = m_callGraph.ast().types().bottomType();
+
+    auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
+        SourceSpan::empty(),
+        callee,
+        AST::Expression::List { }
+    );
+    call.m_inferredType = m_callGraph.ast().types().voidType();
+
+    auto& callStatement = m_callGraph.ast().astBuilder().construct<AST::CallStatement>(
+        SourceSpan::empty(),
+        call
+    );
+    m_callGraph.ast().insert(function.body().statements(), offset, std::reference_wrapper<AST::Statement>(callStatement));
+}
+
+AST::Identifier& RewriteGlobalVariables::findOrInsertLocalInvocationIndex(AST::Function& function)
+{
+    for (auto& parameter : function.parameters()) {
+        if (auto builtin = parameter.builtin(); builtin.has_value() && *builtin == Builtin::LocalInvocationIndex)
+            return parameter.name();
+    }
+
+    auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make("u32"_s)
+    );
+    type.m_inferredType = m_callGraph.ast().types().u32Type();
+
+    auto& builtinAttribute = m_callGraph.ast().astBuilder().construct<AST::BuiltinAttribute>(
+        SourceSpan::empty(),
+        Builtin::LocalInvocationIndex
+    );
+
+    auto& parameter = m_callGraph.ast().astBuilder().construct<AST::Parameter>(
+        SourceSpan::empty(),
+        AST::Identifier::make("__localInvocationIndex"_s),
+        type,
+        AST::Attribute::List { builtinAttribute },
+        AST::ParameterRole::UserDefined
+    );
+
+    m_callGraph.ast().append(function.parameters(), parameter);
+
+    return parameter.name();
+}
+
+AST::Statement::List RewriteGlobalVariables::atomicStoreInitialValue(const Vector<AST::Variable*>& atomics)
+{
+    AST::Statement::List statements;
+    for (auto* variable : atomics) {
+        auto& callee = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("atomicStore"_s));
+        callee.m_inferredType = m_callGraph.ast().types().bottomType();
+
+        auto& atomic = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(variable->name()));
+        atomic.m_inferredType = m_callGraph.ast().types().bottomType();
+
+        auto& pointer = m_callGraph.ast().astBuilder().construct<AST::UnaryExpression>(
+            SourceSpan::empty(),
+            atomic,
+            AST::UnaryOperation::AddressOf
+        );
+        pointer.m_inferredType = m_callGraph.ast().types().bottomType();
+
+        auto& value = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(SourceSpan::empty(), 0);
+        value.m_inferredType = m_callGraph.ast().types().abstractIntType();
+
+        auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
+            SourceSpan::empty(),
+            callee,
+            AST::Expression::List { pointer, value }
+        );
+        call.m_inferredType = m_callGraph.ast().types().voidType();
+
+        auto& callStatement = m_callGraph.ast().astBuilder().construct<AST::CallStatement>(
+            SourceSpan::empty(),
+            call
+        );
+        statements.append(AST::Statement::Ref(callStatement));
+    }
+    return statements;
 }
 
 void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* variable)

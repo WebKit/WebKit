@@ -49,6 +49,10 @@ private:
         AST::Attribute::List attributes;
     };
 
+    struct BuiltinMemberOrParameter : MemberOrParameter {
+        Builtin builtin;
+    };
+
     enum class IsBuiltin {
         No = 0,
         Yes = 1,
@@ -65,7 +69,7 @@ private:
     ShaderModule& m_shaderModule;
     const AST::Function& m_function;
 
-    Vector<MemberOrParameter> m_builtins;
+    Vector<BuiltinMemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
     AST::Statement::List m_materializations;
     const Type* m_structType;
@@ -315,22 +319,25 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
         return;
     }
 
-    bool isBuiltin = false;
+    std::optional<Builtin> builtin;
     for (auto& attribute : data.attributes) {
         if (is<AST::BuiltinAttribute>(attribute)) {
-            isBuiltin = true;
+            builtin = downcast<AST::BuiltinAttribute>(attribute).builtin();
             break;
         }
     }
 
-    if (isBuiltin) {
+    if (builtin.has_value()) {
         // if path is empty, then it was already a parameter and there's nothing to do
         if (!path.isEmpty())
             materialize(path, data, IsBuiltin::Yes);
 
         // builtin was hoisted from a struct into a parameter, we need to reconstruct the struct
         // ${path}.${data.name} = ${data.name}
-        m_builtins.append(WTFMove(data));
+        m_builtins.append({
+            data,
+            *builtin
+        });
         return;
     }
 
@@ -343,13 +350,15 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_shaderModule.append(m_function.parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
+        auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
             data.type,
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
-        ));
+        );
+        parameter.m_builtin = data.builtin;
+        m_shaderModule.append(m_function.parameters(), parameter);
     }
 }
 
