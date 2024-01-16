@@ -5584,9 +5584,10 @@ void StaticPropertyAnalysis::record()
     }
 }
 
-void BytecodeGenerator::emitToThis()
+RegisterID* BytecodeGenerator::emitToThis(RegisterID* srcDst)
 {
-    OpToThis::emit(this, kill(&m_thisRegister), ecmaMode(), nextValueProfileIndex());
+    OpToThis::emit(this, kill(srcDst), ecmaMode(), nextValueProfileIndex());
+    return srcDst;
 }
 
 ForInContext* BytecodeGenerator::findForInContext(RegisterID* property)
