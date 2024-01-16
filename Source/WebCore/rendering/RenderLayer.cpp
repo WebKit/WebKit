@@ -2345,17 +2345,12 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     const auto& renderer = layer->renderer();
     auto position = renderer.style().position();
 
-    // FIXME: Special casing RenderFragmentedFlow so much for fixed positioning here is not great.
-    auto* fixedFragmentedFlowContainer = position == PositionType::Fixed ? renderer.enclosingFragmentedFlow() : nullptr;
-    if (fixedFragmentedFlowContainer && !fixedFragmentedFlowContainer->isOutOfFlowPositioned())
-        fixedFragmentedFlowContainer = nullptr;
-
     // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFragmentedFlow
     // may need to be revisited in a future patch.
     // If the fixed renderer is inside a RenderFragmentedFlow, we should not compute location using localToAbsolute,
     // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
     // positioned in a completely different place in the viewport (RenderView).
-    if (position == PositionType::Fixed && !fixedFragmentedFlowContainer && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
+    if (position == PositionType::Fixed && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
         location.moveBy(LayoutPoint(renderer.localToAbsolute({ }, IsFixed)));
@@ -2365,7 +2360,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     // For the fixed positioned elements inside a render flow thread, we should also skip the code path below
     // Otherwise, for the case of ancestorLayer == rootLayer and fixed positioned element child of a transformed
     // element in render flow thread, we will hit the fixed positioned container before hitting the ancestor layer.
-    if (position == PositionType::Fixed && !fixedFragmentedFlowContainer) {
+    if (position == PositionType::Fixed) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
         // so we should always find the ancestor at or before we find the fixed position container.
@@ -2392,7 +2387,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         }
     }
 
-    if (position == PositionType::Fixed && fixedFragmentedFlowContainer) {
+    if (position == PositionType::Fixed) {
         ASSERT(ancestorLayer);
         if (ancestorLayer == renderer.view().layer()) {
             // Add location in flow thread coordinates.
