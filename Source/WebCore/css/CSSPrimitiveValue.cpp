@@ -715,7 +715,7 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_RCH:
         ASSERT(fontCascadeForUnit);
-        return fontCascadeForUnit->metricsOfPrimaryFont().zeroWidth().value_or(fontCascadeForUnit->fontDescription().computedSize() / 2) * value;
+        return fontCascadeForUnit->zeroWidth() * value;
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_RIC:
         ASSERT(fontCascadeForUnit);
