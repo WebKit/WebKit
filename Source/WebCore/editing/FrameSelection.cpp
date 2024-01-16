@@ -2199,9 +2199,9 @@ static Vector<Style::PseudoClassChangeInvalidation> invalidateFocusedElementAndS
 {
     Vector<Style::PseudoClassChangeInvalidation> invalidations;
     for (RefPtr element = focusedElement; element; element = element->shadowHost()) {
-        invalidations.append({ *element, { { CSSSelector::PseudoClassType::Focus, activeAndFocused }, { CSSSelector::PseudoClassType::FocusVisible, activeAndFocused } } });
+        invalidations.append({ *element, { { CSSSelector::PseudoClass::Focus, activeAndFocused }, { CSSSelector::PseudoClass::FocusVisible, activeAndFocused } } });
         for (auto& lineage : lineageOfType<Element>(*element))
-            invalidations.append({ lineage, CSSSelector::PseudoClassType::FocusWithin, activeAndFocused });
+            invalidations.append({ lineage, CSSSelector::PseudoClass::FocusWithin, activeAndFocused });
     }
     return invalidations;
 }

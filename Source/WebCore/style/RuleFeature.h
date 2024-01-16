@@ -123,8 +123,8 @@ struct RuleFeatureSet {
 
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
-    HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
-    HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassTypes;
+    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
+    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasss;
 
     std::array<bool, matchElementCount> usedMatchElements { };
 
@@ -151,7 +151,7 @@ bool isHasPseudoClassMatchElement(MatchElement);
 MatchElement computeHasPseudoClassMatchElement(const CSSSelector&);
 
 enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Tag };
-PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType, InvalidationKeyType, const AtomString& = starAtom());
+PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
 
 inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
 {

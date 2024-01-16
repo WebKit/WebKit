@@ -75,7 +75,7 @@ static void appendImplicitSelectorPseudoClassScopeIfNeeded(CSSParserSelector& se
     if ((!selector.hasExplicitNestingParent() && !selector.hasExplicitPseudoClassScope()) || selector.startsWithExplicitCombinator()) {
         auto scopeSelector = makeUnique<CSSParserSelector>();
         scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
-        scopeSelector->setPseudoClassType(CSSSelector::PseudoClassType::Scope);
+        scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
         scopeSelector->selector()->setImplicit();
         selector.appendTagHistoryAsRelative(WTFMove(scopeSelector));
     }

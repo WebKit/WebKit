@@ -103,7 +103,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         }
     };
 
-    for (auto key : makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType::Has, changedElement))
+    for (auto key : makePseudoClassInvalidationKeys(CSSSelector::PseudoClass::Has, changedElement))
         addHasInvalidation(ruleSets.hasPseudoClassInvalidationRuleSets(key));
 
     Invalidator::invalidateWithMatchElementRuleSets(changedElement, matchElementRuleSets);

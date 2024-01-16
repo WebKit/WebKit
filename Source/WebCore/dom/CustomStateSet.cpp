@@ -39,7 +39,7 @@ bool CustomStateSet::addToSetLike(const AtomString& state)
 {
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (RefPtr element = m_element.get())
-        styleInvalidation.emplace(*element, CSSSelector::PseudoClassType::State, Style::PseudoClassChangeInvalidation::AnyValue);
+        styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
 
     return m_states.add(AtomString(state)).isNewEntry;
 }
@@ -48,7 +48,7 @@ bool CustomStateSet::removeFromSetLike(const AtomString& state)
 {
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (RefPtr element = m_element.get())
-        styleInvalidation.emplace(*element, CSSSelector::PseudoClassType::State, Style::PseudoClassChangeInvalidation::AnyValue);
+        styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
 
     return m_states.remove(AtomString(state));
 }
@@ -57,7 +57,7 @@ void CustomStateSet::clearFromSetLike()
 {
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (RefPtr element = m_element.get())
-        styleInvalidation.emplace(*element, CSSSelector::PseudoClassType::State, Style::PseudoClassChangeInvalidation::AnyValue);
+        styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
 
     m_states.clear();
 }
