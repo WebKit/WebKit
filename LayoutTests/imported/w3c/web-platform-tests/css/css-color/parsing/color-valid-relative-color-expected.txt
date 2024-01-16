@@ -734,6 +734,8 @@ Error: assert_array_approx_equals: Numeric parameters are approximately equal. l
 PASS e.style['color'] = "lab(from lab(25 20 50 / 40%) l a a / a)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50) calc(l) calc(a) calc(b))" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50 / 40%) calc(l) calc(a) calc(b) / calc(alpha))" should set the property value
+PASS e.style['color'] = "lab(from lab(50 -30 40) calc(l - 20) a b)" should set the property value
+PASS e.style['color'] = "lab(from lab(50 -30 40) l calc(a / 3) calc(b / 2))" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50) none none none)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50) none none none / none)" should set the property value
 PASS e.style['color'] = "lab(from lab(25 20 50) l a none)" should set the property value
@@ -782,6 +784,11 @@ Error: assert_array_approx_equals: Numeric parameters are approximately equal. l
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5 / 40%) l a a / a)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) calc(l) calc(a) calc(b))" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5 / 40%) calc(l) calc(a) calc(b) / calc(alpha))" should set the property value
+PASS e.style['color'] = "oklab(from oklab(0.7 0.25 -0.15) calc(l - 0.2) a b)" should set the property value
+FAIL e.style['color'] = "oklab(from oklab(0.7 0.25 -0.15) l calc(a / 2) calc(b / 3))" should set the property value Colors do not match.
+Actual:   oklab(0.7 0.125 -0.05)
+Expected: oklab(0.7 0.125 -0.075).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected -0.075 +/- 0.01, expected -0.075 but got -0.05
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) none none none)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) none none none / none)" should set the property value
 PASS e.style['color'] = "oklab(from oklab(0.25 0.2 0.5) l a none)" should set the property value
@@ -834,6 +841,9 @@ PASS e.style['color'] = "lch(from lch(.7 45 30) l c c / alpha)" should set the p
 PASS e.style['color'] = "lch(from lch(.7 45 30 / 40%) l c c / alpha)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) calc(l) calc(c) calc(h))" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))" should set the property value
+PASS e.style['color'] = "lch(from lch(50 100 300) calc(l - 20) c h)" should set the property value
+PASS e.style['color'] = "lch(from lch(50 100 300) l calc(c / 2) h)" should set the property value
+PASS e.style['color'] = "lch(from lch(50 100 300) l c calc(h * 2.5))" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) none none none)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) none none none / none)" should set the property value
 PASS e.style['color'] = "lch(from lch(0.7 45 30) l c none)" should set the property value
@@ -886,6 +896,9 @@ PASS e.style['color'] = "oklch(from oklch(.7 0.45 30) l c c / alpha)" should set
 PASS e.style['color'] = "oklch(from oklch(.7 0.45 30 / 40%) l c c / alpha)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) calc(l) calc(c) calc(h))" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))" should set the property value
+PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) calc(l - 0.2) c h)" should set the property value
+PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) l calc(c / 2) h)" should set the property value
+PASS e.style['color'] = "oklch(from oklch(0.7 0.2 300) l c calc(h * 2.5))" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) none none none)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) none none none / none)" should set the property value
 PASS e.style['color'] = "oklch(from oklch(0.7 0.45 30) l c none)" should set the property value

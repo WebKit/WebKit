@@ -4791,6 +4791,10 @@ webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-curre
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-xyzd50-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-xyzd65-01.html [ ImageOnlyFailure ]
 
+# light-dark()
+webkit.org/b/266889 imported/w3c/web-platform-tests/css/css-color/light-dark-currentcolor.html [ ImageOnlyFailure ]
+webkit.org/b/266889 imported/w3c/web-platform-tests/css/css-color/light-dark-inheritance.html [ ImageOnlyFailure ]
+
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle-negative.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ ImageOnlyFailure ]

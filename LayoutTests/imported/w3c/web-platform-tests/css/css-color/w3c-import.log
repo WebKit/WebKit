@@ -118,6 +118,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-visited-fallback-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-visited-fallback-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-visited-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002-expected.html
@@ -300,6 +303,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/light-dark-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/light-dark-currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/light-dark-currentcolor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/light-dark-inheritance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/light-dark-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/mossgreensquare-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001.html
@@ -360,6 +368,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/out-of-gamut-legacy-rgb-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/out-of-gamut-legacy-rgb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/out-of-gamut-legacy-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/predefined-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/predefined-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/predefined-002-expected.html
@@ -489,6 +500,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-support.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b.xht
@@ -498,8 +510,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.0-a-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.0-a.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-0.6-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-1.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t32-opacity-basic-1.0-a-ref.html
@@ -552,7 +564,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.0-a.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.6-a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.6-a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.6-a-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a0.6-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a1.0-a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t422-rgba-a1.0-a-ref.html
@@ -642,8 +655,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-9-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-9-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t424-hsl-values-b-9.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-basic-a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b-ref.html

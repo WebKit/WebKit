@@ -2143,6 +2143,8 @@ webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
 
+webkit.org/b/266900 imported/w3c/web-platform-tests/css/css-color/xyz-d50-004.html [ ImageOnlyFailure ]
+
 # web-platform-tests XHR tests
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow ]
 
