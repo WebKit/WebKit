@@ -126,7 +126,7 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
                 auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[lineIndex].position;
                 flexRects[flexItemIndex] = {
                     { flexItemMainPosition, flexItemCrossPosition, flexItemsMainSizeList[flexItemIndex], flexItemsCrossSizeList[flexItemIndex] },
-                    { { mainPositionAndMargins[flexItemIndex].marginStart, mainPositionAndMargins[flexItemIndex].marginEnd }, { crossPositionAndMargins[flexItemIndex].marginStart, crossPositionAndMargins[flexItemIndex].marginEnd } }
+                    { mainPositionAndMargins[flexItemIndex].marginStart, mainPositionAndMargins[flexItemIndex].marginEnd }, { crossPositionAndMargins[flexItemIndex].marginStart, crossPositionAndMargins[flexItemIndex].marginEnd }
                 };
             }
         }

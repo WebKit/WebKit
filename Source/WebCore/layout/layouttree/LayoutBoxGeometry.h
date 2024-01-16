@@ -58,6 +58,9 @@ public:
     struct Edges {
         HorizontalEdges horizontal;
         VerticalEdges vertical;
+
+        LayoutUnit width() const { return horizontal.start + horizontal.end; }
+        LayoutUnit height() const { return vertical.before + vertical.after; }
     };
 
     HorizontalEdges horizontalMargin() const;
@@ -455,12 +458,6 @@ inline LayoutUnit BoxGeometry::borderEnd() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.end;
-}
-
-// FIXME: Remove this when all layout code transitioned over to BoxGeometry edges.
-static inline BoxGeometry::Edges toBoxGeometryEdges(const Layout::Edges& edges)
-{
-    return { { edges.horizontal.left, edges.horizontal.right }, { edges.vertical.top, edges.vertical.bottom } };
 }
 
 }

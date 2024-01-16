@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 // Floating boxes intersect their margin box with the other floats in the context,
 // while other float avoiders (e.g. non-floating formatting context roots) intersect their border box.
-FloatAvoider::FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const Edges& margin, HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned)
+FloatAvoider::FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned)
     : m_absoluteTopLeft(absoluteTopLeft)
     , m_borderBoxWidth(borderBoxWidth)
     , m_margin(margin)
@@ -62,9 +62,9 @@ void FloatAvoider::setHorizontalPosition(LayoutUnit horizontalPosition)
         // Horizontal position is constrained by the containing block's content box.
         // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
         if (isLeftAligned())
-            return std::max(m_containingBlockAbsoluteContentBox.left + marginStart(), horizontalPosition);
+            return std::max(m_containingBlockAbsoluteContentBox.start + marginStart(), horizontalPosition);
         // Make sure it does not overflow the containing block on the right.
-        return std::min(horizontalPosition, m_containingBlockAbsoluteContentBox.right - marginBoxWidth() + marginStart());
+        return std::min(horizontalPosition, m_containingBlockAbsoluteContentBox.end - marginBoxWidth() + marginStart());
     }();
     m_absoluteTopLeft.setX(constrainedByContainingBlock);
 }
@@ -79,18 +79,18 @@ void FloatAvoider::setVerticalPosition(LayoutUnit verticalPosition)
 LayoutUnit FloatAvoider::initialHorizontalPosition() const
 {
     if (isLeftAligned())
-        return { m_containingBlockAbsoluteContentBox.left + marginStart() };
-    return { m_containingBlockAbsoluteContentBox.right - marginEnd() - borderBoxWidth() };
+        return { m_containingBlockAbsoluteContentBox.start + marginStart() };
+    return { m_containingBlockAbsoluteContentBox.end - marginEnd() - borderBoxWidth() };
 }
 
 bool FloatAvoider::overflowsContainingBlock() const
 {
     auto left = m_absoluteTopLeft.x() - marginStart();
-    if (m_containingBlockAbsoluteContentBox.left > left)
+    if (m_containingBlockAbsoluteContentBox.start > left)
         return true;
 
     auto right = left + marginBoxWidth();
-    return m_containingBlockAbsoluteContentBox.right < right;
+    return m_containingBlockAbsoluteContentBox.end < right;
 }
 
 }

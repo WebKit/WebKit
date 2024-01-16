@@ -96,8 +96,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         cellBoxGeometry.setHorizontalMargin({ });
         cellBoxGeometry.setVerticalMargin({ });
 
-        cellBoxGeometry.setBorder(toBoxGeometryEdges(formattingGeometry.computedCellBorder(*cell)));
-        cellBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace)));
+        cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(*cell));
+        cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
         cellBoxGeometry.setTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
         cellBoxGeometry.setLeft(columnList[cell->startColumn()].usedLogicalLeft());
         cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(*cell));
@@ -184,7 +184,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         auto& rowBox = row.box();
         auto& rowBoxGeometry = formattingState().boxGeometry(rowBox);
 
-        rowBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry().computedPadding(rowBox, availableHorizontalSpace)));
+        rowBoxGeometry.setPadding(formattingGeometry().computedPadding(rowBox, availableHorizontalSpace));
         // Internal table elements do not have margins.
         rowBoxGeometry.setHorizontalMargin({ });
         rowBoxGeometry.setVerticalMargin({ });
@@ -196,9 +196,9 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // Border collapsing delegates borders to table/cells.
             border.horizontal = { };
             if (!rowIndex)
-                border.vertical.top = { };
+                border.vertical.before = { };
             if (rowIndex == rows.size() - 1)
-                border.vertical.bottom = { };
+                border.vertical.after = { };
             return border;
         }();
         if (computedRowBorder.height() > row.logicalHeight()) {
@@ -208,19 +208,19 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // or with a wide frame box.
             // If it happens to cause issues in the display tree, we could also consider
             // a special frame box override, where padding box + border != frame box.
-            computedRowBorder.vertical.top = { };
-            computedRowBorder.vertical.bottom = { };
+            computedRowBorder.vertical.before = { };
+            computedRowBorder.vertical.after = { };
         }
         rowBoxGeometry.setContentBoxHeight(row.logicalHeight() - computedRowBorder.height());
 
         auto rowLogicalWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
         if (computedRowBorder.width() > rowLogicalWidth) {
             // See comment above.
-            computedRowBorder.horizontal.left = { };
-            computedRowBorder.horizontal.right = { };
+            computedRowBorder.horizontal.start = { };
+            computedRowBorder.horizontal.end = { };
         }
         rowBoxGeometry.setContentBoxWidth(rowLogicalWidth - computedRowBorder.width());
-        rowBoxGeometry.setBorder(toBoxGeometryEdges(computedRowBorder));
+        rowBoxGeometry.setBorder(computedRowBorder);
 
         if (previousRow && &previousRow->parent() != &rowBox.parent()) {
             // This row is in a different section.
@@ -531,8 +531,8 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             auto layoutCellContent = [&](auto& cell) {
                 auto& cellBox = cell.box();
                 auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
-                cellBoxGeometry.setBorder(toBoxGeometryEdges(formattingGeometry.computedCellBorder(cell)));
-                cellBoxGeometry.setPadding(toBoxGeometryEdges(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace)));
+                cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(cell));
+                cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
                 cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(cell));
 
                 if (cellBox.hasInFlowOrFloatingChild())

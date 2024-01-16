@@ -201,7 +201,7 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
 struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     LayoutPoint topLeft;
     LayoutPoint containingBlockTopLeft;
-    HorizontalEdges containingBlockContentBox;
+    BoxGeometry::HorizontalEdges containingBlockContentBox;
 };
 
 FloatingContext::FloatingContext(const ElementBox& formattingContextRoot, const LayoutState& layoutState, const PlacedFloats& placedFloats)
@@ -258,12 +258,12 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
         verticalPositionCandidate = lastOrClearedFloatPosition + boxGeometry.marginBefore();
 
     absoluteTopLeft.setY(verticalPositionCandidate);
-    auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
+    auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateLeftPositionedInPlacedFloats(layoutBox) };
     findAvailablePosition(floatBox, m_placedFloats.list());
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
-    return { floatBox.left() + margins.horizontal.left - containingBlockTopLeft.x(), floatBox.top() + margins.vertical.top - containingBlockTopLeft.y() };
+    return { floatBox.left() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.top() + margins.vertical.before - containingBlockTopLeft.y() };
 }
 
 LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layoutBox, const BoxGeometry& boxGeometry) const
@@ -278,7 +278,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
         return borderBoxTopLeft;
 
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
-    auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
+    auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, false, layoutBox.style().isLeftToRightDirection() };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;

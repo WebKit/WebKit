@@ -1090,7 +1090,7 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
     return layoutBox.isInlineLevelBox() ? layoutBox.parent().style().writingMode() : FormattingContext::containingBlock(layoutBox).style().writingMode();
 }
 
-Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
+BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
 {
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
@@ -1100,7 +1100,7 @@ Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
     };
 }
 
-Edges FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
+BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
 {
     if (!layoutBox.isPaddingApplicable())
         return { };
