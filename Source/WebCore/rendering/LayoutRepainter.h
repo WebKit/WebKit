@@ -36,8 +36,6 @@ class LayoutRepainter {
 public:
     LayoutRepainter(RenderElement&, bool checkForRepaint, RepaintOutlineBounds = RepaintOutlineBounds::Yes);
 
-    bool checkForRepaint() const { return m_checkForRepaint; }
-
     // Return true if it repainted.
     bool repaintAfterLayout();
 
