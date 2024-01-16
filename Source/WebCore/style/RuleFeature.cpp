@@ -134,53 +134,53 @@ RuleFeatureWithInvalidationSelector::RuleFeatureWithInvalidationSelector(const R
 {
 }
 
-static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
+static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelector::Relation relation)
 {
     ASSERT(!isHasPseudoClassMatchElement(matchElement));
 
     if (isSiblingOrSubject(matchElement)) {
         switch (relation) {
-        case CSSSelector::RelationType::Subselector:
+        case CSSSelector::Relation::Subselector:
             return matchElement;
-        case CSSSelector::RelationType::DescendantSpace:
+        case CSSSelector::Relation::DescendantSpace:
             return MatchElement::Ancestor;
-        case CSSSelector::RelationType::Child:
+        case CSSSelector::Relation::Child:
             return MatchElement::Parent;
-        case CSSSelector::RelationType::IndirectAdjacent:
+        case CSSSelector::Relation::IndirectAdjacent:
             if (matchElement == MatchElement::AnySibling)
                 return MatchElement::AnySibling;
             return MatchElement::IndirectSibling;
-        case CSSSelector::RelationType::DirectAdjacent:
+        case CSSSelector::Relation::DirectAdjacent:
             if (matchElement == MatchElement::AnySibling)
                 return MatchElement::AnySibling;
             return matchElement == MatchElement::Subject ? MatchElement::DirectSibling : MatchElement::IndirectSibling;
-        case CSSSelector::RelationType::ShadowDescendant:
-        case CSSSelector::RelationType::ShadowPartDescendant:
+        case CSSSelector::Relation::ShadowDescendant:
+        case CSSSelector::Relation::ShadowPartDescendant:
             return MatchElement::Host;
-        case CSSSelector::RelationType::ShadowSlotted:
+        case CSSSelector::Relation::ShadowSlotted:
             return MatchElement::HostChild;
         };
     }
     switch (relation) {
-    case CSSSelector::RelationType::Subselector:
+    case CSSSelector::Relation::Subselector:
         return matchElement;
-    case CSSSelector::RelationType::DescendantSpace:
-    case CSSSelector::RelationType::Child:
+    case CSSSelector::Relation::DescendantSpace:
+    case CSSSelector::Relation::Child:
         return MatchElement::Ancestor;
-    case CSSSelector::RelationType::IndirectAdjacent:
-    case CSSSelector::RelationType::DirectAdjacent:
+    case CSSSelector::Relation::IndirectAdjacent:
+    case CSSSelector::Relation::DirectAdjacent:
         return matchElement == MatchElement::Parent ? MatchElement::ParentSibling : MatchElement::AncestorSibling;
-    case CSSSelector::RelationType::ShadowDescendant:
-    case CSSSelector::RelationType::ShadowPartDescendant:
+    case CSSSelector::Relation::ShadowDescendant:
+    case CSSSelector::Relation::ShadowPartDescendant:
         return MatchElement::Host;
-    case CSSSelector::RelationType::ShadowSlotted:
+    case CSSSelector::Relation::ShadowSlotted:
         return MatchElement::HostChild;
     };
     ASSERT_NOT_REACHED();
     return matchElement;
 };
 
-static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElement, CSSSelector::RelationType relation, CanBreakScope canBreakScope)
+static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElement, CSSSelector::Relation relation, CanBreakScope canBreakScope)
 {
     ASSERT(isHasPseudoClassMatchElement(matchElement));
 
@@ -188,10 +188,10 @@ static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElem
         return matchElement;
 
     // `:has(:is(foo bar))` can be affected by changes outside the :has scope.
-    if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
+    if (relation == CSSSelector::Relation::DescendantSpace || relation == CSSSelector::Relation::Child)
         return MatchElement::HasScopeBreaking;
 
-    if (relation == CSSSelector::RelationType::IndirectAdjacent || relation == CSSSelector::RelationType::DirectAdjacent) {
+    if (relation == CSSSelector::Relation::IndirectAdjacent || relation == CSSSelector::Relation::DirectAdjacent) {
         // `:has(~ :is(.x ~ .y))` must look at previous siblings of the :scope scope too.
         if (matchElement == MatchElement::HasSibling)
             return MatchElement::HasAnySibling;
@@ -360,7 +360,7 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
         if (simpleSelector->match() == CSSSelector::Match::Tag)
             tagName = simpleSelector->tagLowercaseLocalName();
 
-        if (simpleSelector->relation() != CSSSelector::RelationType::Subselector)
+        if (simpleSelector->relation() != CSSSelector::Relation::Subselector)
             break;
     }
     if (!className.isEmpty())

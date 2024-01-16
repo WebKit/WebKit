@@ -129,7 +129,7 @@ static bool computeContainsUncommonAttributeSelector(const CSSSelector& rootSele
             }
         }
 
-        if (selector->relation() != CSSSelector::RelationType::Subselector)
+        if (selector->relation() != CSSSelector::Relation::Subselector)
             matchesRightmostElement = false;
 
         selector = selector->tagHistory();

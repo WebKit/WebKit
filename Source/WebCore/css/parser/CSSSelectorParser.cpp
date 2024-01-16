@@ -293,9 +293,9 @@ static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelec
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
 }
 
-static bool isDescendantCombinator(CSSSelector::RelationType relation)
+static bool isDescendantCombinator(CSSSelector::Relation relation)
 {
-    return relation == CSSSelector::RelationType::DescendantSpace;
+    return relation == CSSSelector::Relation::DescendantSpace;
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNestedComplexSelector(CSSParserTokenRange& range)
@@ -324,7 +324,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
 
     while (true) {
         auto combinator = consumeCombinator(range);
-        if (combinator == CSSSelector::RelationType::Subselector)
+        if (combinator == CSSSelector::Relation::Subselector)
             break;
 
         auto nextSelector = consumeCompoundSelector(range);
@@ -352,8 +352,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeScopeSelect
 {
     auto scopeCombinator = consumeCombinator(range);
 
-    if (scopeCombinator == CSSSelector::RelationType::Subselector)
-        scopeCombinator = CSSSelector::RelationType::DescendantSpace;
+    if (scopeCombinator == CSSSelector::Relation::Subselector)
+        scopeCombinator = CSSSelector::Relation::DescendantSpace;
 
     auto selector = consumeComplexSelector(range);
     if (!selector)
@@ -379,7 +379,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeNestedSelec
 
     // Nesting should only work with ~ > + combinators in this function. 
     // The descendant combinator is handled in another code path.
-    if (scopeCombinator != CSSSelector::RelationType::DirectAdjacent && scopeCombinator != CSSSelector::RelationType::IndirectAdjacent && scopeCombinator != CSSSelector::RelationType::Child)
+    if (scopeCombinator != CSSSelector::Relation::DirectAdjacent && scopeCombinator != CSSSelector::Relation::IndirectAdjacent && scopeCombinator != CSSSelector::Relation::Child)
         return nullptr;
     
     auto selector = consumeComplexSelector(range);
@@ -517,7 +517,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CS
             m_precedingPseudoElement = simpleSelector->pseudoElementType();
 
         if (compoundSelector)
-            compoundSelector->appendTagHistory(CSSSelector::RelationType::Subselector, WTFMove(simpleSelector));
+            compoundSelector->appendTagHistory(CSSSelector::Relation::Subselector, WTFMove(simpleSelector));
         else
             compoundSelector = WTFMove(simpleSelector);
     }
@@ -976,12 +976,12 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     return nullptr;
 }
 
-CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
+CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
 {
-    auto fallbackResult = CSSSelector::RelationType::Subselector;
+    auto fallbackResult = CSSSelector::Relation::Subselector;
     while (range.peek().type() == WhitespaceToken) {
         range.consume();
-        fallbackResult = CSSSelector::RelationType::DescendantSpace;
+        fallbackResult = CSSSelector::Relation::DescendantSpace;
     }
 
     if (range.peek().type() != DelimiterToken)
@@ -992,10 +992,10 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
     if (delimiter == '+' || delimiter == '~' || delimiter == '>') {
         range.consumeIncludingWhitespace();
         if (delimiter == '+')
-            return CSSSelector::RelationType::DirectAdjacent;
+            return CSSSelector::Relation::DirectAdjacent;
         if (delimiter == '~')
-            return CSSSelector::RelationType::IndirectAdjacent;
-        return CSSSelector::RelationType::Child;
+            return CSSSelector::Relation::IndirectAdjacent;
+        return CSSSelector::Relation::Child;
     }
 
     return fallbackResult;
@@ -1229,10 +1229,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
 
     auto relation = [&] {
         if (isSlotted)
-            return CSSSelector::RelationType::ShadowSlotted;
+            return CSSSelector::Relation::ShadowSlotted;
         if (isPart)
-            return CSSSelector::RelationType::ShadowPartDescendant;
-        return CSSSelector::RelationType::ShadowDescendant;
+            return CSSSelector::Relation::ShadowPartDescendant;
+        return CSSSelector::Relation::ShadowDescendant;
     }();
     secondCompound->appendTagHistory(relation, WTFMove(compoundSelector));
     return secondCompound;

@@ -61,7 +61,7 @@ public:
     void setArgument(const AtomString& value) { m_selector->setArgument(value); }
     void setNth(int a, int b) { m_selector->setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
-    void setRelation(CSSSelector::RelationType value) { m_selector->setRelation(value); }
+    void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
 
     CSSSelector::Match match() const { return m_selector->match(); }
@@ -98,8 +98,8 @@ public:
     bool startsWithExplicitCombinator() const;
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
-    void insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector>, CSSSelector::RelationType after);
-    void appendTagHistory(CSSSelector::RelationType, std::unique_ptr<CSSParserSelector>);
+    void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
+    void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
     void appendTagHistoryAsRelative(std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
