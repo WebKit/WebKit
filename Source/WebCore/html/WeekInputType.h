@@ -50,7 +50,6 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;

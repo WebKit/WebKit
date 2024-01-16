@@ -50,7 +50,6 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
     WallTime valueAsDate() const final;
     String serializeWithMilliseconds(double) const final;
     Decimal parseToNumber(const String&, const Decimal&) const final;

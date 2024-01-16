@@ -50,7 +50,6 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
     WallTime valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(WallTime) const final;
     StepRange createStepRange(AnyStepHandling) const final;

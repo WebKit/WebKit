@@ -60,11 +60,6 @@ const AtomString& DateInputType::formControlType() const
     return InputTypeNames::date();
 }
 
-DateComponentsType DateInputType::dateType() const
-{
-    return DateComponentsType::Date;
-}
-
 StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     ASSERT(element());

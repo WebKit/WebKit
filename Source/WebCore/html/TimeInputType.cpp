@@ -63,11 +63,6 @@ const AtomString& TimeInputType::formControlType() const
     return InputTypeNames::time();
 }
 
-DateComponentsType TimeInputType::dateType() const
-{
-    return DateComponentsType::Time;
-}
-
 Decimal TimeInputType::defaultValueForStepUp() const
 {
     double current = WallTime::now().secondsSinceEpoch().milliseconds();

@@ -680,11 +680,6 @@ String InputType::serialize(const Decimal&) const
     return String();
 }
 
-DateComponentsType InputType::dateType() const
-{
-    return DateComponentsType::Invalid;
-}
-
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent& event) const
 {
     ASSERT(element());

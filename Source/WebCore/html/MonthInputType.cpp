@@ -59,11 +59,6 @@ const AtomString& MonthInputType::formControlType() const
     return InputTypeNames::month();
 }
 
-DateComponentsType MonthInputType::dateType() const
-{
-    return DateComponentsType::Month;
-}
-
 WallTime MonthInputType::valueAsDate() const
 {
     ASSERT(element());

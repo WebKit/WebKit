@@ -397,8 +397,6 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
-    virtual DateComponentsType dateType() const;
-
     virtual String displayString() const;
 
     virtual String resultForDialogSubmit() const;

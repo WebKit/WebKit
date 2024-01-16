@@ -54,11 +54,6 @@ const AtomString& WeekInputType::formControlType() const
     return InputTypeNames::week();
 }
 
-DateComponentsType WeekInputType::dateType() const
-{
-    return DateComponentsType::Week;
-}
-
 StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     ASSERT(element());

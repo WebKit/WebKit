@@ -57,11 +57,6 @@ const AtomString& DateTimeLocalInputType::formControlType() const
     return InputTypeNames::datetimelocal();
 }
 
-DateComponentsType DateTimeLocalInputType::dateType() const
-{
-    return DateComponentsType::DateTimeLocal;
-}
-
 WallTime DateTimeLocalInputType::valueAsDate() const
 {
     // valueAsDate doesn't work for the datetime-local type according to the standard.

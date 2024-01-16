@@ -47,7 +47,6 @@ private:
     explicit TimeInputType(HTMLInputElement&);
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
     Decimal defaultValueForStepUp() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
