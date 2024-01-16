@@ -112,12 +112,11 @@ namespace WebCore {
 
 bool isDraggableLink(const Element& element)
 {
-    if (is<HTMLAnchorElement>(element)) {
-        auto& anchorElement = downcast<HTMLAnchorElement>(element);
-        if (!anchorElement.isLiveLink())
+    if (RefPtr anchorElement = dynamicDowncast<HTMLAnchorElement>(element)) {
+        if (!anchorElement->isLiveLink())
             return false;
 #if ENABLE(DATA_DETECTION)
-        return !DataDetection::isDataDetectorURL(anchorElement.href());
+        return !DataDetection::isDataDetectorURL(anchorElement->href());
 #else
         return true;
 #endif
@@ -349,12 +348,11 @@ void DragController::disallowFileAccessIfNeeded(DragData& dragData)
         dragData.disallowFileAccess();
 }
 
-static HTMLInputElement* asFileInput(Node& node)
+static RefPtr<HTMLInputElement> asFileInput(Node& node)
 {
-    if (!is<HTMLInputElement>(node))
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(node);
+    if (!inputElement)
         return nullptr;
-
-    auto* inputElement = &downcast<HTMLInputElement>(node);
 
     // If this is a button inside of the a file input, move up to the file input.
     if (inputElement->isTextButton())
@@ -367,10 +365,10 @@ static HTMLInputElement* asFileInput(Node& node)
 
 static bool isEnabledColorInput(Node& node)
 {
-    if (!is<HTMLInputElement>(node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+    if (!input)
         return false;
-    auto& input = downcast<HTMLInputElement>(node);
-    return input.isColorControl() && !input.isDisabledFormControl();
+    return input->isColorControl() && !input->isDisabledFormControl();
 }
 
 static bool isInShadowTreeOfEnabledColorInput(Node& node)
@@ -451,7 +449,7 @@ DragHandlingMethod DragController::tryDocumentDrag(LocalFrame& frame, const Drag
         if (!element)
             return DragHandlingMethod::None;
         
-        HTMLInputElement* elementAsFileInput = asFileInput(*element);
+        RefPtr elementAsFileInput = asFileInput(*element);
         if (m_fileInputElementUnderMouse != elementAsFileInput) {
             if (m_fileInputElementUnderMouse)
                 m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);

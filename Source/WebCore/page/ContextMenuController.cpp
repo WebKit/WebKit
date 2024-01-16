@@ -179,7 +179,8 @@ static void prepareContextForQRCode(ContextMenuContext& context)
         return;
 
     RefPtr<Element> element;
-    for (auto& lineage : lineageOfType<Element>(is<Element>(*node) ? downcast<Element>(*node) : *node->parentElement())) {
+    RefPtr nodeElement = dynamicDowncast<Element>(*node);
+    for (auto& lineage : lineageOfType<Element>(nodeElement ? *nodeElement : *node->parentElement())) {
         if (is<HTMLTableElement>(lineage) || is<HTMLCanvasElement>(lineage) || is<HTMLImageElement>(lineage) || is<SVGSVGElement>(lineage)) {
             element = &lineage;
             break;
@@ -216,18 +217,18 @@ static void prepareContextForQRCode(ContextMenuContext& context)
 
 std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type contextType)
 {
-    if (!is<MouseEvent>(event))
+    RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event);
+    if (!mouseEvent)
         return nullptr;
 
-    auto& mouseEvent = downcast<MouseEvent>(event);
-    if (!is<Node>(mouseEvent.target()))
+    RefPtr node = dynamicDowncast<Node>(mouseEvent->target());
+    if (!node)
         return nullptr;
-    auto& node = downcast<Node>(*mouseEvent.target());
-    auto* frame = node.document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return nullptr;
 
-    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent.absoluteLocation(), WTFMove(hitType));
+    auto result = frame->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation(), WTFMove(hitType));
     if (!result.innerNonSharedNode())
         return nullptr;
 

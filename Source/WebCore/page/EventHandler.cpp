@@ -5013,9 +5013,10 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
             pointerTarget = result.targetElement();
         }
 
-        if (!is<Node>(touchTarget))
+        RefPtr touchTargetNode = dynamicDowncast<Node>(touchTarget);
+        if (!touchTargetNode)
             continue;
-        auto& document = downcast<Node>(*touchTarget).document();
+        auto& document = touchTargetNode->document();
         if (!document.hasTouchEventHandlers())
             continue;
         RefPtr targetFrame = document.frame();

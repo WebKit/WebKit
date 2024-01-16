@@ -89,7 +89,8 @@ static const HTMLFormControlElement* invokerForPopoverShowingState(const Node* n
 
 static inline bool hasCustomFocusLogic(const Element& element)
 {
-    return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasCustomFocusLogic();
+    RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
+    return htmlElement && htmlElement->hasCustomFocusLogic();
 }
 
 static inline bool isFocusScopeOwner(const Element& element)
@@ -179,7 +180,7 @@ private:
 // FIXME: Focus navigation should work with shadow trees that have slots.
 Node* FocusNavigationScope::firstChildInScope(const Node& node) const
 {
-    if (is<Element>(node) && isFocusScopeOwner(downcast<Element>(node)))
+    if (RefPtr element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element))
         return nullptr;
     auto* first = node.firstChild();
     while (isOpenPopoverWithInvoker(first))
@@ -189,7 +190,7 @@ Node* FocusNavigationScope::firstChildInScope(const Node& node) const
 
 Node* FocusNavigationScope::lastChildInScope(const Node& node) const
 {
-    if (is<Element>(node) && isFocusScopeOwner(downcast<Element>(node)))
+    if (RefPtr element = dynamicDowncast<Element>(node); element && isFocusScopeOwner(*element))
         return nullptr;
     auto* last = node.lastChild();
     while (isOpenPopoverWithInvoker(last))
@@ -327,8 +328,8 @@ Element* FocusNavigationScope::owner() const
         return m_slotElement.get();
 
     ASSERT(m_treeScopeRootNode);
-    if (is<ShadowRoot>(*m_treeScopeRootNode))
-        return downcast<ShadowRoot>(*m_treeScopeRootNode).host();
+    if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*m_treeScopeRootNode))
+        return shadowRoot->host();
     if (isOpenPopoverWithInvoker(m_treeScopeRootNode.get())) {
         RELEASE_ASSERT(is<HTMLElement>(m_treeScopeRootNode.get()));
         return downcast<HTMLElement>(*m_treeScopeRootNode).popoverData()->invoker();
@@ -349,15 +350,15 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
             if (isFocusScopeOwner(*slot))
                 return FocusNavigationScope(*slot, SlotKind::Assigned);
         }
-        if (is<ShadowRoot>(currentNode))
-            return FocusNavigationScope(downcast<ShadowRoot>(*currentNode));
+        if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(currentNode))
+            return FocusNavigationScope(*shadowRoot);
         if (isOpenPopoverWithInvoker(currentNode.get()))
             return FocusNavigationScope(downcast<Element>(*currentNode));
         parentNode = currentNode->parentNode();
         // The scope of a fallback content of a HTMLSlotElement is the slot element
         // but the scope of a HTMLSlotElement is its parent scope.
-        if (parentNode && is<HTMLSlotElement>(parentNode) && !downcast<HTMLSlotElement>(*parentNode).assignedNodes())
-            return FocusNavigationScope(downcast<HTMLSlotElement>(*parentNode), SlotKind::Fallback);
+        if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(parentNode); slot && !slot->assignedNodes())
+            return FocusNavigationScope(*slot, SlotKind::Fallback);
     }
     ASSERT(root);
     return FocusNavigationScope(root->treeScope());
@@ -366,10 +367,8 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
 FocusNavigationScope FocusNavigationScope::scopeOwnedByScopeOwner(Element& element)
 {
     ASSERT(element.shadowRoot() || is<HTMLSlotElement>(element));
-    if (is<HTMLSlotElement>(element)) {
-        auto& slot = downcast<HTMLSlotElement>(element);
-        return FocusNavigationScope(slot, slot.assignedNodes() ? SlotKind::Assigned : SlotKind::Fallback);
-    }
+    if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(element))
+        return FocusNavigationScope(*slot, slot->assignedNodes() ? SlotKind::Assigned : SlotKind::Fallback);
     return FocusNavigationScope(*element.shadowRoot());
 }
 
@@ -519,13 +518,12 @@ Element* FocusController::findFocusableElementDescendingIntoSubframes(FocusDirec
     // The node we found might be a HTMLFrameOwnerElement, so descend down the tree until we find either:
     // 1) a focusable node, or
     // 2) the deepest-nested HTMLFrameOwnerElement.
-    while (is<HTMLFrameOwnerElement>(element)) {
-        HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
-        auto* localContentFrame = dynamicDowncast<LocalFrame>(owner.contentFrame());
+    while (RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(element)) {
+        auto* localContentFrame = dynamicDowncast<LocalFrame>(owner->contentFrame());
         if (!localContentFrame || !localContentFrame->document())
             break;
         localContentFrame->document()->updateLayoutIgnorePendingStylesheets();
-        Element* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(owner), nullptr, event);
+        auto* foundElement = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByIFrame(*owner), nullptr, event);
         if (!foundElement)
             break;
         ASSERT(element != foundElement);
@@ -622,15 +620,14 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         return true;
     }
 
-    if (is<HTMLFrameOwnerElement>(*element) && (!is<HTMLPlugInElement>(*element) || !element->isKeyboardFocusable(event))) {
+    if (RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(*element); owner && (!is<HTMLPlugInElement>(*element) || !element->isKeyboardFocusable(event))) {
         // We focus frames rather than frame owners.
         // FIXME: We should not focus frames that have no scrollbars, as focusing them isn't useful to the user.
-        HTMLFrameOwnerElement& owner = downcast<HTMLFrameOwnerElement>(*element);
-        if (!owner.contentFrame())
+        if (!owner->contentFrame())
             return false;
 
         document->setFocusedElement(nullptr);
-        setFocusedFrame(owner.contentFrame());
+        setFocusedFrame(owner->contentFrame());
         return true;
     }
     
@@ -663,12 +660,12 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
 {
     ASSERT(!is<Element>(currentNode) || !isNonFocusableScopeOwner(downcast<Element>(*currentNode), event));
 
-    if (currentNode && direction == FocusDirection::Forward && is<Element>(currentNode)) {
-        if (isFocusableScopeOwner(downcast<Element>(*currentNode), event)) {
-            if (Element* candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByScopeOwner(downcast<Element>(*currentNode)), 0, event))
+    if (RefPtr currentElement = dynamicDowncast<Element>(currentNode); currentElement && direction == FocusDirection::Forward) {
+        if (isFocusableScopeOwner(*currentElement, event)) {
+            if (auto* candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByScopeOwner(*currentElement), 0, event))
                 return candidateInInnerScope;
         } else if (auto* invoker = invokerForPopoverShowingState(currentNode)) {
-            if (Element* candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByPopoverInvoker(*invoker), nullptr, event))
+            if (auto* candidateInInnerScope = findFocusableElementWithinScope(direction, FocusNavigationScope::scopeOwnedByPopoverInvoker(*invoker), nullptr, event))
                 return candidateInInnerScope;
         }
     }
@@ -747,11 +744,11 @@ Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScop
 {
     // Search is inclusive of start
     for (Node* node = start; node; node = direction == FocusDirection::Forward ? scope.nextInScope(node) : scope.previousInScope(node)) {
-        if (!is<Element>(*node))
+        auto* element = dynamicDowncast<Element>(*node);
+        if (!element)
             continue;
-        Element& element = downcast<Element>(*node);
-        if (isFocusableElementOrScopeOwner(element, event) && shadowAdjustedTabIndex(element, event) == tabIndex)
-            return &element;
+        if (isFocusableElementOrScopeOwner(*element, event) && shadowAdjustedTabIndex(*element, event) == tabIndex)
+            return element;
     }
     return nullptr;
 }
@@ -762,12 +759,12 @@ static Element* nextElementWithGreaterTabIndex(const FocusNavigationScope& scope
     int winningTabIndex = std::numeric_limits<int>::max();
     Element* winner = nullptr;
     for (Node* node = scope.firstNodeInScope(); node; node = scope.nextInScope(node)) {
-        if (!is<Element>(*node))
+        auto* candidate = dynamicDowncast<Element>(*node);
+        if (!candidate)
             continue;
-        Element& candidate = downcast<Element>(*node);
-        int candidateTabIndex = shadowAdjustedTabIndex(candidate, event);
-        if (isFocusableElementOrScopeOwner(candidate, event) && candidateTabIndex > tabIndex && (!winner || candidateTabIndex < winningTabIndex)) {
-            winner = &candidate;
+        int candidateTabIndex = shadowAdjustedTabIndex(*candidate, event);
+        if (isFocusableElementOrScopeOwner(*candidate, event) && candidateTabIndex > tabIndex && (!winner || candidateTabIndex < winningTabIndex)) {
+            winner = candidate;
             winningTabIndex = candidateTabIndex;
         }
     }
@@ -781,12 +778,12 @@ static Element* previousElementWithLowerTabIndex(const FocusNavigationScope& sco
     int winningTabIndex = 0;
     Element* winner = nullptr;
     for (Node* node = start; node; node = scope.previousInScope(node)) {
-        if (!is<Element>(*node))
+        auto* element = dynamicDowncast<Element>(*node);
+        if (!element)
             continue;
-        Element& element = downcast<Element>(*node);
-        int currentTabIndex = shadowAdjustedTabIndex(element, event);
-        if (isFocusableElementOrScopeOwner(element, event) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
-            winner = &element;
+        int currentTabIndex = shadowAdjustedTabIndex(*element, event);
+        if (isFocusableElementOrScopeOwner(*element, event) && currentTabIndex < tabIndex && currentTabIndex > winningTabIndex) {
+            winner = element;
             winningTabIndex = currentTabIndex;
         }
     }
@@ -810,23 +807,23 @@ Element* FocusController::previousFocusableElement(Node& start)
 Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, KeyboardEvent* event)
 {
     int startTabIndex = 0;
-    if (start && is<Element>(*start))
-        startTabIndex = shadowAdjustedTabIndex(downcast<Element>(*start), event);
+    if (RefPtr element = dynamicDowncast<Element>(start))
+        startTabIndex = shadowAdjustedTabIndex(*element, event);
 
     if (start) {
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
         if (startTabIndex < 0) {
             for (Node* node = scope.nextInScope(start); node; node = scope.nextInScope(node)) {
-                if (!is<Element>(*node))
+                auto* element = dynamicDowncast<Element>(*node);
+                if (!element)
                     continue;
-                Element& element = downcast<Element>(*node);
-                if (isFocusableElementOrScopeOwner(element, event) && shadowAdjustedTabIndex(element, event) >= 0)
-                    return &element;
+                if (isFocusableElementOrScopeOwner(*element, event) && shadowAdjustedTabIndex(*element, event) >= 0)
+                    return element;
             }
         }
 
         // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (Element* winner = findElementWithExactTabIndex(scope, scope.nextInScope(start), startTabIndex, event, FocusDirection::Forward))
+        if (auto* winner = findElementWithExactTabIndex(scope, scope.nextInScope(start), startTabIndex, event, FocusDirection::Forward))
             return winner;
 
         if (!startTabIndex)
@@ -857,23 +854,23 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
     int startingTabIndex = 0;
     if (start) {
         startingNode = scope.previousInScope(start);
-        if (is<Element>(*start))
-            startingTabIndex = shadowAdjustedTabIndex(downcast<Element>(*start), event);
+        if (RefPtr element = dynamicDowncast<Element>(*start))
+            startingTabIndex = shadowAdjustedTabIndex(*element, event);
     } else
         startingNode = last;
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
         for (Node* node = startingNode; node; node = scope.previousInScope(node)) {
-            if (!is<Element>(*node))
+            auto* element = dynamicDowncast<Element>(*node);
+            if (!element)
                 continue;
-            Element& element = downcast<Element>(*node);
-            if (isFocusableElementOrScopeOwner(element, event) && shadowAdjustedTabIndex(element, event) >= 0)
-                return &element;
+            if (isFocusableElementOrScopeOwner(*element, event) && shadowAdjustedTabIndex(*element, event) >= 0)
+                return element;
         }
     }
 
-    if (Element* winner = findElementWithExactTabIndex(scope, startingNode, startingTabIndex, event, FocusDirection::Backward))
+    if (auto* winner = findElementWithExactTabIndex(scope, startingNode, startingTabIndex, event, FocusDirection::Backward))
         return winner;
 
     // There are no nodes before start with the same tabindex as start, so look for a node that:
@@ -1231,10 +1228,9 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         if (!hasOffscreenRect(focusedElement)) {
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, focusedElement);
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
-        } else if (is<HTMLAreaElement>(*focusedElement)) {
-            HTMLAreaElement& area = downcast<HTMLAreaElement>(*focusedElement);
-            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement().get());
-            startingRect = virtualRectForAreaElementAndDirection(&area, direction);
+        } else if (auto* area = dynamicDowncast<HTMLAreaElement>(*focusedElement)) {
+            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area->imageElement().get());
+            startingRect = virtualRectForAreaElementAndDirection(area, direction);
         }
     }
 
