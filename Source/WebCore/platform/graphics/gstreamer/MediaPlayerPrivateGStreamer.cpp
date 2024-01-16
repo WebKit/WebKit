@@ -129,6 +129,10 @@
 #include <gst/allocators/gstdmabuf.h>
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 
+#if USE(EXTERNAL_HOLEPUNCH)
+#include "MediaPlayerPrivateHolePunch.h"
+#endif
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -2831,16 +2835,24 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
 #endif
     }
 
-    if (!ensureGStreamerInitialized())
-        return result;
-
-    GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     if (parameters.type.isEmpty())
         return result;
 
     // This player doesn't support pictures rendering.
     if (parameters.type.raw().startsWith("image"_s))
         return result;
+
+#if USE(EXTERNAL_HOLEPUNCH)
+    HashSet<String> externalHolePunchTypes;
+    MediaPlayerPrivateHolePunch::getSupportedTypes(externalHolePunchTypes);
+    if (externalHolePunchTypes.contains(parameters.type.containerType()))
+        return result;
+#endif
+
+    if (!ensureGStreamerInitialized())
+        return result;
+
+    GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
 
     registerWebKitGStreamerElements();
 

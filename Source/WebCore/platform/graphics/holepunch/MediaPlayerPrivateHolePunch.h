@@ -108,9 +108,10 @@ public:
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const final;
 #endif
 
+    static void getSupportedTypes(HashSet<String>&);
+
 private:
     friend class MediaPlayerFactoryHolePunch;
-    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void notifyReadyState();
