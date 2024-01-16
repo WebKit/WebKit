@@ -179,11 +179,16 @@
     RELEASE_ASSERT(hitTestedToAccessoryView);
 }
 
-- (void)dismissDatePicker
+- (void)dismissDatePickerAnimated:(BOOL)animated
 {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:[strongSelf = retainPtr(self)] {
+    [self.presentingViewController dismissViewControllerAnimated:animated completion:[strongSelf = retainPtr(self)] {
         [strongSelf _dispatchPopoverControllerDidDismissIfNeeded];
     }];
+}
+
+- (void)dismissDatePicker
+{
+    [self dismissDatePickerAnimated:YES];
 }
 
 - (void)viewDidLoad
@@ -221,6 +226,14 @@
     }
 
     [self _scaleDownToFitHeightIfNeeded];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    if (!self.isBeingPresented && !self.isBeingDismissed)
+        [self dismissDatePickerAnimated:NO];
 }
 
 - (void)_scaleDownToFitHeightIfNeeded
