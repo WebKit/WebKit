@@ -1425,20 +1425,6 @@ VisiblePosition endOfDocument(const VisiblePosition& c)
     return endOfDocument(c.deepEquivalent().protectedDeprecatedNode().get());
 }
 
-bool inSameDocument(const VisiblePosition& a, const VisiblePosition& b)
-{
-    Position ap = a.deepEquivalent();
-    RefPtr an = ap.deprecatedNode();
-    if (!an)
-        return false;
-    Position bp = b.deepEquivalent();
-    RefPtr bn = bp.deprecatedNode();
-    if (an == bn)
-        return true;
-
-    return &an->document() == &bn->document();
-}
-
 bool isStartOfDocument(const VisiblePosition& p)
 {
     return p.isNotNull() && p.previous(CanCrossEditingBoundary).isNull();
