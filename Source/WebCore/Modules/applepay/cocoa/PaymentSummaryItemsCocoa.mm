@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static NSDecimalNumber *toDecimalNumber(const String& amount)
+NSDecimalNumber *toDecimalNumber(const String& amount)
 {
     if (!amount)
         return [NSDecimalNumber zero];

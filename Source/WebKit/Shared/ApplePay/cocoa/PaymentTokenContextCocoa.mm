@@ -30,6 +30,7 @@
 
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/ApplePayPaymentTokenContext.h>
+#import <WebCore/PaymentHeaders.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -44,7 +45,7 @@ RetainPtr<PKPaymentTokenContext> platformPaymentTokenContext(const ApplePayPayme
     RetainPtr<NSString> merchantDomain;
     if (!webTokenContext.merchantDomain.isNull())
         merchantDomain = webTokenContext.merchantDomain;
-    return adoptNS([PAL::allocPKPaymentTokenContextInstance() initWithMerchantIdentifier:webTokenContext.merchantIdentifier externalIdentifier:webTokenContext.externalIdentifier merchantName:webTokenContext.merchantName merchantDomain:merchantDomain.get() amount:toDecimalNumber(webTokenContext.amount)]);
+    return adoptNS([PAL::allocPKPaymentTokenContextInstance() initWithMerchantIdentifier:webTokenContext.merchantIdentifier externalIdentifier:webTokenContext.externalIdentifier merchantName:webTokenContext.merchantName merchantDomain:merchantDomain.get() amount:WebCore::toDecimalNumber(webTokenContext.amount)]);
 }
 
 RetainPtr<NSArray<PKPaymentTokenContext *>> platformPaymentTokenContexts(const Vector<ApplePayPaymentTokenContext>& webTokenContexts)

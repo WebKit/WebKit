@@ -32,20 +32,13 @@
 #import "ApplePayInstallmentItemType.h"
 #import "ApplePayInstallmentRetailChannel.h"
 #import "ExceptionOr.h"
+#import "PaymentSummaryItems.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
-
-// FIXME: Merge with toDecimalNumber() in WebPaymentCoordinatorProxyCocoa.
-static NSDecimalNumber *toDecimalNumber(const String& amount)
-{
-    if (!amount)
-        return [NSDecimalNumber zero];
-    return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
-}
 
 static String fromDecimalNumber(NSDecimalNumber *number)
 {

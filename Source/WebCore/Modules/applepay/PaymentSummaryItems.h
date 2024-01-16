@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 OBJC_CLASS NSArray;
+OBJC_CLASS NSDecimalNumber;
 OBJC_CLASS PKAutomaticReloadPaymentSummaryItem;
 OBJC_CLASS PKDeferredPaymentSummaryItem;
 OBJC_CLASS PKPaymentSummaryItem;
@@ -51,6 +52,8 @@ WEBCORE_EXPORT PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSumma
 
 WEBCORE_EXPORT PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem&);
 WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
+
+WEBCORE_EXPORT NSDecimalNumber *toDecimalNumber(const String& amount);
 
 } // namespace WebCore
 
