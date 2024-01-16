@@ -1,13 +1,13 @@
 
-FAIL getComputedStyle() for ::highlight(foo) assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL Different getComputedStyle() for ::highlight(bar) and same element assert_equals: Background color is cyan. expected "rgb(0, 255, 255)" but got "rgba(0, 0, 0, 0)"
-PASS getComputedStyle() for ::highlight(foo): should be element's default
-PASS getComputedStyle() for ::highlight(foo)) should be element's default
-PASS getComputedStyle() for ::highlight(foo)( should be element's default
+FAIL getComputedStyle() for ::highlight(foo) assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got ""
+FAIL Different getComputedStyle() for ::highlight(bar) and same element assert_equals: Background color is cyan. expected "rgb(0, 255, 255)" but got ""
+FAIL getComputedStyle() for ::highlight(foo): should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo)) should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo)( should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
 PASS getComputedStyle() for ::highlight should be element's default
-PASS getComputedStyle() for ::highlight(foo)(foo) should be element's default
-PASS getComputedStyle() for ::highlight(foo)() should be element's default
-PASS getComputedStyle() for :::highlight(foo) should be element's default
-PASS getComputedStyle() for ::highlight(foo). should be element's default
-PASS getComputedStyle() for ::highlight(foo,bar) should be element's default
+FAIL getComputedStyle() for ::highlight(foo)(foo) should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo)() should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for :::highlight(foo) should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo). should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
+FAIL getComputedStyle() for ::highlight(foo,bar) should be element's default assert_equals: Background color is element's default. expected "rgba(0, 0, 0, 0)" but got ""
 

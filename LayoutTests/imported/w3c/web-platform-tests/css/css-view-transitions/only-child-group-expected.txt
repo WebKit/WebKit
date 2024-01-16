@@ -1,6 +1,6 @@
 
-FAIL :only-child should match because ::view-transition-group is generated for root element only promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-group is generated for multiple elements promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should match because ::view-transition-group is generated for sub element only promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-group is generated for multiple sub elements promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
+FAIL :only-child should match because ::view-transition-group is generated for root element only promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-group is generated for multiple elements promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should match because ::view-transition-group is generated for sub element only promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-group is generated for multiple sub elements promise_test: Unhandled rejection with value: " and "
 
