@@ -40,10 +40,13 @@
 #include <gst/gst.h>
 #include <mutex>
 #include <wtf/FileSystem.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -443,6 +446,27 @@ void registerWebKitGStreamerVideoEncoder()
         GStreamerRegistryScanner::singleton().refresh();
 }
 
+static Lock s_activePipelinesMapLock;
+static HashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
+{
+    static NeverDestroyed<HashMap<String, GRefPtr<GstElement>>> activePipelines;
+    return activePipelines.get();
+}
+
+void registerActivePipeline(const GRefPtr<GstElement>& pipeline)
+{
+    GUniquePtr<gchar> name(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
+    Locker locker { s_activePipelinesMapLock };
+    activePipelinesMap().add(makeString(name.get()), GRefPtr<GstElement>(pipeline));
+}
+
+void unregisterPipeline(const GRefPtr<GstElement>& pipeline)
+{
+    GUniquePtr<gchar> name(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
+    Locker locker { s_activePipelinesMapLock };
+    activePipelinesMap().remove(makeString(name.get()));
+}
+
 void deinitializeGStreamer()
 {
 #if USE(GSTREAMER_GL)
@@ -459,6 +483,18 @@ void deinitializeGStreamer()
 #if ENABLE(VIDEO)
     teardownVideoEncoderSingleton();
 #endif
+
+    // Make sure there is no active pipeline left. Those might trigger deadlocks during gst_deinit().
+    {
+        Locker locker { s_activePipelinesMapLock };
+        for (auto& pipeline : activePipelinesMap().values()) {
+            GST_DEBUG("Pipeline %" GST_PTR_FORMAT " was left running. Forcing clean-up.", pipeline.get());
+            disconnectSimpleBusMessageCallback(pipeline.get());
+            gst_element_set_state(pipeline.get(), GST_STATE_NULL);
+        }
+        activePipelinesMap().clear();
+    }
+
     gst_deinit();
 }
 
@@ -485,8 +521,17 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
+static GQuark customMessageHandlerQuark()
+{
+    static GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
+    return quark;
+}
+
 void disconnectSimpleBusMessageCallback(GstElement* pipeline)
 {
+    if (!g_object_get_qdata(G_OBJECT(pipeline), customMessageHandlerQuark()))
+        return;
+
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     g_signal_handlers_disconnect_by_data(bus.get(), pipeline);
     gst_bus_remove_signal_watch(bus.get());
@@ -505,9 +550,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
 
-    auto* holder = new CustomMessageHandlerHolder(WTFMove(customHandler));
-    GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
-    g_object_set_qdata_full(G_OBJECT(pipeline), quark, holder, [](gpointer data) {
+    g_object_set_qdata_full(G_OBJECT(pipeline), customMessageHandlerQuark(), new CustomMessageHandlerHolder(WTFMove(customHandler)), [](gpointer data) {
         delete reinterpret_cast<CustomMessageHandlerHolder*>(data);
     });
 
@@ -542,8 +585,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
             break;
         }
 
-        GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
-        auto* holder = reinterpret_cast<CustomMessageHandlerHolder*>(g_object_get_qdata(G_OBJECT(pipeline), quark));
+        auto* holder = reinterpret_cast<CustomMessageHandlerHolder*>(g_object_get_qdata(G_OBJECT(pipeline), customMessageHandlerQuark()));
         if (!holder)
             return;
 

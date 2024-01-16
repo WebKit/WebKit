@@ -211,6 +211,8 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     }
 
     if (m_pipeline) {
+        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        gst_bus_disable_sync_message_emission(bus.get());
         disconnectSimpleBusMessageCallback(m_pipeline.get());
         g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
@@ -242,8 +244,11 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
     // about handlers running in the GStreamer thread.
-    if (m_pipeline)
+    if (m_pipeline) {
+        unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+    }
+
 
     m_player = nullptr;
     m_notifier->invalidate();
@@ -2979,6 +2984,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
         return;
     }
+
+    registerActivePipeline(m_pipeline);
 
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 

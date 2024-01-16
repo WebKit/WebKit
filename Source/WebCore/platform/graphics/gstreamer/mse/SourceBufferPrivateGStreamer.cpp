@@ -73,7 +73,7 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
     : SourceBufferPrivate(mediaSource)
     , m_type(contentType)
     , m_playerPrivate(playerPrivate)
-    , m_appendPipeline(makeUniqueRef<AppendPipeline>(*this, playerPrivate))
+    , m_appendPipeline(makeUnique<AppendPipeline>(*this, playerPrivate))
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource.logger())
     , m_logIdentifier(mediaSource.nextSourceBufferLogIdentifier())
@@ -113,6 +113,9 @@ Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>
 void SourceBufferPrivateGStreamer::resetParserStateInternal()
 {
     ASSERT(isMainThread());
+    if (!m_appendPipeline)
+        return;
+
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "resetting parser state");
     m_appendPipeline->resetParserState();
 }
@@ -126,6 +129,12 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     m_hasBeenRemovedFromMediaSource = true;
 
     m_appendPipeline->stopParser();
+
+    // Release the resources used by the AppendPipeline. This effectively makes the
+    // SourceBufferPrivate useless. Ideally the entire instance should be destroyed. For now we
+    // explicitely release the AppendPipeline because that's the biggest resource user. In case the
+    // process remains alive, GC might kick in later on and release the SourceBufferPrivate.
+    m_appendPipeline = nullptr;
 
     SourceBufferPrivate::removedFromMediaSource();
 }

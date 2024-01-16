@@ -94,6 +94,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
     static uint32_t nPipeline = 0;
     auto pipelineName = makeString("webkit-webrtc-pipeline-", nPipeline);
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
+    registerActivePipeline(m_pipeline);
 
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         handleMessage(message);
@@ -186,6 +187,7 @@ void GStreamerMediaEndpoint::teardownPipeline()
 {
     ASSERT(m_pipeline);
     GST_DEBUG_OBJECT(m_pipeline.get(), "Tearing down.");
+    unregisterPipeline(m_pipeline);
 #if !RELEASE_LOG_DISABLED
     stopLoggingStats();
 #endif

@@ -154,6 +154,8 @@ AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
 AudioFileReader::~AudioFileReader()
 {
     if (m_pipeline) {
+        unregisterPipeline(m_pipeline);
+
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
         ASSERT(bus);
         gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
@@ -395,6 +397,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     // A deinterleave element is added once a src pad becomes available in decodebin.
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("audio-file-reader-", pipelineId.exchangeAdd(1)).ascii().data());
+    registerActivePipeline(m_pipeline);
 
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);

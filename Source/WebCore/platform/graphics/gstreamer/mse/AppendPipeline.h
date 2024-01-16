@@ -121,7 +121,6 @@ private:
     void handleEndOfAppend();
     void didReceiveInitializationSegment();
 
-    GstBus* bus() { return m_bus.get(); }
     GstElement* pipeline() { return m_pipeline.get(); }
     GstElement* appsrc() { return m_appsrc.get(); }
 
@@ -155,7 +154,6 @@ private:
 
     MediaTime m_initialDuration;
     GRefPtr<GstElement> m_pipeline;
-    GRefPtr<GstBus> m_bus;
     GRefPtr<GstElement> m_appsrc;
     // To simplify the code, mtypefind and m_demux can be a GstIdentity when not needed.
     GRefPtr<GstElement> m_typefind;
