@@ -578,6 +578,7 @@ $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSharedWorkerContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSharedWorkerObjectConnection.messages.in
+$(PROJECT_DIR)/WebProcess/UserContent/InjectUserScriptImmediately.serialization.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in

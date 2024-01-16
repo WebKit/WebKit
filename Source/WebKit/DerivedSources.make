@@ -758,6 +758,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in \
 	WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in \
 	WebProcess/Network/NetworkProcessConnectionInfo.serialization.in \
+	WebProcess/UserContent/InjectUserScriptImmediately.serialization.in \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 	WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in \
 #

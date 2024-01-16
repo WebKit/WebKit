@@ -585,6 +585,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 
+    WebProcess/UserContent/InjectUserScriptImmediately.serialization.in
+
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )
 
