@@ -141,11 +141,15 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
             if ([layer isKindOfClass:[CABackdropLayer class]]) {
-                // If the backdrop is transparent, we need `normalizeEdgesTransparent`
-                // in order to render correctly. That's hard to determine from this code,
-                // so use it unconditionally for now.
+#if PLATFORM(VISION)
+                // If the backdrop is displayed inside a transparent web view over
+                // a material background, we need `normalizeEdgesTransparent`
+                // in order to render correctly.
                 [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
+#else
                 [filter setValue:@YES forKey:@"inputNormalizeEdges"];
+#endif
+
             }
             [filter setName:filterName];
             return filter;
