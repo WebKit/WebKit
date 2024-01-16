@@ -348,8 +348,8 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
         return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
 
     bool privateBrowsingEnabled = false;
-    if (is<Document>(*context)) {
-        if (auto* page = downcast<Document>(*context).page())
+    if (auto* document = dynamicDowncast<Document>(*context)) {
+        if (auto* page = document->page())
             privateBrowsingEnabled = page->sessionID().isEphemeral();
     }
 

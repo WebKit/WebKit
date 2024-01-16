@@ -469,8 +469,10 @@ void IDBDatabase::dispatchEvent(Event& event)
 
     EventTarget::dispatchEvent(event);
 
-    if (event.isVersionChangeEvent() && event.type() == m_eventNames.versionchangeEvent)
-        m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
+    if (auto* versionChangeEvent = dynamicDowncast<IDBVersionChangeEvent>(event)) {
+        if (versionChangeEvent->type() == m_eventNames.versionchangeEvent)
+            m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, versionChangeEvent->requestIdentifier());
+    }
 }
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)

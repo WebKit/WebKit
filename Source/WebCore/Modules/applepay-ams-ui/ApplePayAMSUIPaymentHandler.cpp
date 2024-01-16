@@ -108,7 +108,7 @@ ApplePayAMSUIPaymentHandler::ApplePayAMSUIPaymentHandler(Document& document, con
 
 Document& ApplePayAMSUIPaymentHandler::document() const
 {
-    ASSERT(is<Document>(scriptExecutionContext()));
+    ASSERT(scriptExecutionContext());
     return downcast<Document>(*scriptExecutionContext());
 }
 

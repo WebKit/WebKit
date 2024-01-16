@@ -700,7 +700,8 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
-    if (context->isDocument() && downcast<Document>(context)->quirks().needsVP9FullRangeFlagQuirk())
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
     auto sourceBufferPrivate = createSourceBufferPrivate(contentType);
@@ -892,10 +893,8 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
 bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
 {
     Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
-    if (context.isDocument()) {
-        auto& document = downcast<Document>(context);
-        mediaContentTypesRequiringHardwareSupport.appendVector(document.settings().mediaContentTypesRequiringHardwareSupport());
-    }
+    if (RefPtr document = dynamicDowncast<Document>(context))
+        mediaContentTypesRequiringHardwareSupport.appendVector(document->settings().mediaContentTypesRequiringHardwareSupport());
 
     return isTypeSupported(context, type, WTFMove(mediaContentTypesRequiringHardwareSupport));
 }
@@ -909,7 +908,8 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
         return false;
 
     ContentType contentType(type);
-    if (context.isDocument() && downcast<Document>(context).quirks().needsVP9FullRangeFlagQuirk())
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
     String codecs = contentType.parameter("codecs"_s);
@@ -927,8 +927,8 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
 
-    if (context.isDocument()) {
-        auto& settings = downcast<Document>(context).settings();
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        auto& settings = document->settings();
         if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
             return false;
 
@@ -1123,8 +1123,9 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 {
     ContentType type { incomingType };
 
-    auto context = scriptExecutionContext();
-    if (context && context->isDocument() && downcast<Document>(context)->quirks().needsVP9FullRangeFlagQuirk())
+    RefPtr context = scriptExecutionContext();
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         type = addVP9FullRangeVideoFlagToContentType(incomingType);
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
