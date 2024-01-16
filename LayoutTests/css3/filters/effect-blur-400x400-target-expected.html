@@ -1,0 +1,26 @@
+<style>
+    .blur-box {
+        width: 400px;
+        height: 400px;
+        margin: 20px;
+        background-color: grey;
+        display: flex;
+        justify-content: flex-end;
+        filter: url(#svg-blur);
+    }
+    .diagonal {
+        border-bottom: 400px solid red;
+        border-left: 400px solid rgba(0, 0, 0, 0);
+    }
+</style>
+<body>
+    <div class="blur-box">
+        <div class="diagonal"></div>
+    </div>
+    <svg style="position: absolute; top: -99999px">
+        <filter id="svg-blur">
+            <feOffset in="SourceGraphic" dx="0" dy="0"/>
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" color-interpolation-filters="sRGB" />
+        </filter>
+    </svg>
+</body>
