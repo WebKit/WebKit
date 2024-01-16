@@ -1672,7 +1672,7 @@ CONSTANT_FUNCTION(Bitcast)
     const auto& vectorVector = [&](const Types::Vector& dst, const ConstantVector& src) -> ConstantResult {
         if (dst.size == src.elements.size()) {
             return scalarOrVector([&](auto& value) {
-                return convertValue<BitwiseCast>(dst.element, value);
+                return constantBitcast(dst.element, { value });
             }, src);
         }
 
