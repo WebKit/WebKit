@@ -108,7 +108,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
 
 static bool singletonInitialized = false;
 
-bool GStreamerRegistryScanner::singletonNeedsInitialization()
+bool GStreamerRegistryScanner::singletonWasInitialized()
 {
     return singletonInitialized;
 }
@@ -122,7 +122,7 @@ GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
 
 void teardownGStreamerRegistryScanner()
 {
-    if (GStreamerRegistryScanner::singletonNeedsInitialization())
+    if (!GStreamerRegistryScanner::singletonWasInitialized())
         return;
 
     auto& scanner = GStreamerRegistryScanner::singleton();

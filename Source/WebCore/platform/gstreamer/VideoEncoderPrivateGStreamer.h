@@ -46,3 +46,4 @@ GType webkit_video_encoder_get_type(void);
 
 bool videoEncoderSupportsFormat(WebKitVideoEncoder*, const GRefPtr<GstCaps>&);
 bool videoEncoderSetFormat(WebKitVideoEncoder*, GRefPtr<GstCaps>&&);
+void teardownVideoEncoderSingleton();
