@@ -136,8 +136,8 @@ private:
     const Type* m_textureDepthMultisampled2d;
     const Type* m_atomicI32;
     const Type* m_atomicU32;
-    const Type* m_atomicCompareExchangeResultI32;
-    const Type* m_atomicCompareExchangeResultU32;
+    const Type* m_atomicCompareExchangeResultI32 { nullptr };
+    const Type* m_atomicCompareExchangeResultU32 { nullptr };
 };
 
 } // namespace WGSL

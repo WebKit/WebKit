@@ -273,7 +273,7 @@ const Type* TypeStore::atomicCompareExchangeResultType(const Type* type)
         FixedVector<const Type*> values(2);
         values[PrimitiveStruct::AtomicCompareExchangeResult::oldValue] = type;
         values[PrimitiveStruct::AtomicCompareExchangeResult::exchanged] = boolType();
-        member = allocateType<PrimitiveStruct>("__atomic_compare_exchange_result"_s, PrimitiveStruct::ModfResult::kind, values);
+        member = allocateType<PrimitiveStruct>("__atomic_compare_exchange_result"_s, PrimitiveStruct::AtomicCompareExchangeResult::kind, values);
         return member;
     };
 

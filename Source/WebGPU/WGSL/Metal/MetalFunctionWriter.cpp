@@ -322,12 +322,12 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_callGraph.ast().usesAtomicCompareExchange()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n");
         m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "T old_value;\n");
-            m_stringBuilder.append(m_indent, "bool exchanged;\n");
+            m_stringBuilder.append(m_indent, "U exchanged;\n");
         }
         m_stringBuilder.append(m_indent, "};\n\n");
 
@@ -335,7 +335,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
-            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed) }; \\\n");
+            m_stringBuilder.append(m_indent, "bool exchanged = atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed); \\\n");
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, exchanged }; \\\n");
             m_stringBuilder.append(m_indent, "})\n");
         }
     }
