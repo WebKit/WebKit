@@ -67,10 +67,12 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
             }
         } else if (object.isFloating())
             m_block.legacyLineLayout()->positionNewFloatOnLine(*m_block.insertFloatingObject(downcast<RenderBox>(object)), lastFloatFromPreviousLine, lineInfo, width);
-        else if (object.style().hasTextCombine() && is<RenderCombineText>(object)) {
-            downcast<RenderCombineText>(object).combineTextIfNeeded();
-            if (downcast<RenderCombineText>(object).isCombined())
-                continue;
+        else if (object.style().hasTextCombine()) {
+            if (CheckedPtr combineText = dynamicDowncast<RenderCombineText>(object)) {
+                combineText->combineTextIfNeeded();
+                if (combineText->isCombined())
+                    continue;
+            }
         }
         resolver.increment();
     }

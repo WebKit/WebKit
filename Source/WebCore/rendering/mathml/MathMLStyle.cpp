@@ -50,10 +50,10 @@ Ref<MathMLStyle> MathMLStyle::create()
 const MathMLStyle* MathMLStyle::getMathMLStyle(RenderObject* renderer)
 {
     // FIXME: Should we make RenderMathMLTable derive from RenderMathMLBlock in order to simplify this?
-    if (is<RenderMathMLTable>(renderer))
-        return &downcast<RenderMathMLTable>(*renderer).mathMLStyle();
-    if (is<RenderMathMLBlock>(renderer))
-        return &downcast<RenderMathMLBlock>(*renderer).mathMLStyle();
+    if (auto* mathMLTable = dynamicDowncast<RenderMathMLTable>(renderer))
+        return &mathMLTable->mathMLStyle();
+    if (auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(renderer))
+        return &mathMLBlock->mathMLStyle();
     return nullptr;
 }
 
@@ -61,10 +61,10 @@ void MathMLStyle::resolveMathMLStyleTree(RenderObject* renderer)
 {
     for (auto* child = renderer; child; child = child->nextInPreOrder(renderer)) {
         // FIXME: Should we make RenderMathMLTable derive from RenderMathMLBlock in order to simplify this?
-        if (is<RenderMathMLTable>(child))
-            downcast<RenderMathMLTable>(*child).mathMLStyle().resolveMathMLStyle(child);
-        else if (is<RenderMathMLBlock>(child))
-            downcast<RenderMathMLBlock>(*child).mathMLStyle().resolveMathMLStyle(child);
+        if (auto* mathMLTable = dynamicDowncast<RenderMathMLTable>(child))
+            mathMLTable->mathMLStyle().resolveMathMLStyle(child);
+        else if (auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(child))
+            mathMLBlock->mathMLStyle().resolveMathMLStyle(child);
     }
 }
 
@@ -82,11 +82,10 @@ void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, MathMLElement::Mat
 {
     // RenderMathMLFencedOperator does not support mathvariant transforms.
     // See https://bugs.webkit.org/show_bug.cgi?id=160509#c1.
-    bool isNonAnonymousTokenElement = is<RenderMathMLToken>(renderer) && !renderer->isAnonymous();
-
     if (oldMathVariant != m_mathVariant) {
-        if (isNonAnonymousTokenElement)
-            downcast<RenderMathMLToken>(renderer)->updateTokenContent();
+        auto* mathMLToken = dynamicDowncast<RenderMathMLToken>(renderer);
+        if (mathMLToken && !mathMLToken->isAnonymous())
+            mathMLToken->updateTokenContent();
     }
 }
 
@@ -111,9 +110,8 @@ void MathMLStyle::resolveMathMLStyle(RenderObject* renderer)
     }
 
     // The mathvariant attributes override the default behavior.
-    auto* element = downcast<RenderElement>(renderer)->element();
-    if (is<MathMLElement>(element)) {
-        std::optional<MathMLElement::MathVariant> mathVariant = downcast<MathMLElement>(element)->specifiedMathVariant();
+    if (auto* element = dynamicDowncast<MathMLElement>(downcast<RenderElement>(renderer)->element())) {
+        std::optional<MathMLElement::MathVariant> mathVariant = element->specifiedMathVariant();
         if (mathVariant)
             m_mathVariant = mathVariant.value();
     }
