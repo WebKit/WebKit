@@ -65,12 +65,12 @@ static inline LayoutUnit borderRightInInlineDirection(const Layout::BoxGeometry&
 
 static inline LayoutUnit paddingLeftInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
-    return isLeftToRightDirection ? boxGeometry.paddingStart().value_or(0_lu) : boxGeometry.paddingEnd().value_or(0_lu);
+    return isLeftToRightDirection ? boxGeometry.paddingStart() : boxGeometry.paddingEnd();
 }
 
 static inline LayoutUnit paddingRightInInlineDirection(const Layout::BoxGeometry& boxGeometry, bool isLeftToRightDirection)
 {
-    return isLeftToRightDirection ? boxGeometry.paddingEnd().value_or(0_lu) : boxGeometry.paddingStart().value_or(0_lu);
+    return isLeftToRightDirection ? boxGeometry.paddingEnd() : boxGeometry.paddingStart();
 }
 
 static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirstLastBox(const InlineLevelBox& inlineBox)

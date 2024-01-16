@@ -122,9 +122,8 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
 {
     auto logicalRect = logicalRectForInlineLevelBox(layoutBox);
     // This logical rect is as tall as the "text" content is. Let's adjust with vertical border and padding.
-    auto verticalBorderAndPadding = boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu);
-    logicalRect.expandVertically(verticalBorderAndPadding);
-    logicalRect.moveVertically(-(boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0_lu)));
+    logicalRect.expandVertically(boxGeometry.verticalBorderAndPadding());
+    logicalRect.moveVertically(-boxGeometry.borderAndPaddingBefore());
     return logicalRect;
 }
 

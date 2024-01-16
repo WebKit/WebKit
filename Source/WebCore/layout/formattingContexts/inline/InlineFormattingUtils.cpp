@@ -325,15 +325,15 @@ InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inline
         return boxGeometry.marginBoxWidth();
 
     if (inlineItem.isInlineBoxStart()) {
-        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart().value_or(0);
+        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart();
         auto& style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-            logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0_lu);
+            logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd();
         return logicalWidth;
     }
 
     if (inlineItem.isInlineBoxEnd())
-        return boxGeometry.marginEnd() + boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0);
+        return boxGeometry.marginEnd() + boxGeometry.borderEnd() + boxGeometry.paddingEnd();
 
     if (inlineItem.isOpaque())
         return { };

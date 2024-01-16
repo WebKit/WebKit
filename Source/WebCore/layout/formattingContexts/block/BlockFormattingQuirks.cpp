@@ -72,7 +72,7 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
         auto documentBoxContentHeight = formattingContext.geometryForBox(FormattingContext::initialContainingBlock(layoutBox), FormattingContext::EscapeReason::DocumentBoxStretchesToViewportQuirk).contentBoxHeight();
         // Document box's own vertical margin/border/padding values always shrink the content height.
         auto& documentBoxGeometry = formattingContext.geometryForBox(layoutBox);
-        documentBoxContentHeight -= nonCollapsedVerticalMargin + documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().value_or(0);
+        documentBoxContentHeight -= nonCollapsedVerticalMargin + documentBoxGeometry.verticalBorderAndPadding();
         return std::max(contentHeightAndMargin.contentHeight,  documentBoxContentHeight);
     }
 
@@ -84,7 +84,7 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
     auto bodyBoxContentHeight = initialContainingBlockGeometry.contentBoxHeight();
     // Body box's own border and padding shrink the content height.
     auto& bodyBoxGeometry = formattingContext.geometryForBox(layoutBox);
-    bodyBoxContentHeight -= bodyBoxGeometry.verticalBorder() + bodyBoxGeometry.verticalPadding().value_or(0);
+    bodyBoxContentHeight -= bodyBoxGeometry.verticalBorderAndPadding();
     // Body box never collapses its vertical margins with the document box but it might collapse its margin with its descendants.
     auto nonCollapsedMargin = contentHeightAndMargin.nonCollapsedMargin;
     auto marginCollapse = BlockMarginCollapse { formattingContext.layoutState(), formattingContext.formattingState() };
@@ -95,7 +95,7 @@ std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicab
     // Document box's padding and border also shrink the body box's content height.
     auto& documentBox = layoutBox.parent();
     auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk);
-    bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().value_or(0);
+    bodyBoxContentHeight -= documentBoxGeometry.verticalBorderAndPadding();
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
         auto& formattingGeometry = formattingContext.formattingGeometry();
@@ -149,9 +149,7 @@ LayoutUnit BlockFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
             auto verticalMargin = formattingGeometry.computedVerticalMargin(containingBlock, horizontalConstraints);
 
             auto& boxGeometry = formattingContext.geometryForBox(containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
-            auto verticalPadding = boxGeometry.paddingBefore().value_or(0) + boxGeometry.paddingAfter().value_or(0);
-            auto verticalBorder = boxGeometry.borderBefore() + boxGeometry.borderAfter();
-            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.value_or(0) + verticalMargin.after.value_or(0) + verticalPadding + verticalBorder;
+            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.value_or(0) + verticalMargin.after.value_or(0) + boxGeometry.verticalPadding() + boxGeometry.verticalBorder();
         }
     }
     // Initial containing block has to have a height.

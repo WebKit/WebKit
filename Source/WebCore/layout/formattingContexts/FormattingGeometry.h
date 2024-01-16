@@ -62,7 +62,7 @@ public:
     LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth) const;
 
     Edges computedBorder(const Box&) const;
-    std::optional<Edges> computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
+    Edges computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
 
     ComputedHorizontalMargin computedHorizontalMargin(const Box&, const HorizontalConstraints&) const;
     ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;

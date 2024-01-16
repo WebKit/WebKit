@@ -157,7 +157,7 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
     // No column spacing when spanning.
     logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
     auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
-    logicalWidth -= (cellBoxGeometry.horizontalBorder() + cellBoxGeometry.horizontalPadding().value_or(0));
+    logicalWidth -= cellBoxGeometry.horizontalBorderAndPadding();
     return logicalWidth;
 }
 
@@ -171,7 +171,7 @@ LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGrid:
     auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
     if (heightUsesBorderBox) {
         auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
-        *computedHeight -= (cellBoxGeometry.verticalBorder() + cellBoxGeometry.verticalPadding().value_or(0));
+        *computedHeight -= cellBoxGeometry.verticalBorderAndPadding();
     }
     return std::max(contentHeight, *computedHeight);
 }

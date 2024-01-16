@@ -97,7 +97,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             // In standards mode, inline boxes always start with an imaginary strut.
-            auto isContentful = formattingContext().layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            auto isContentful = formattingContext().layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorderAndPadding();
             if (!isContentful)
                 continue;
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);

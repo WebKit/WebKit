@@ -112,7 +112,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBo
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
             return height;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-        return *height - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0));
+        return *height - boxGeometry.verticalBorderAndPadding();
     }
     return { };
 }
@@ -175,7 +175,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox
         if (style.boxSizing() == BoxSizing::ContentBox || style.width().isIntrinsicOrAuto())
             return computedWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-        return *computedWidth - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0));
+        return *computedWidth - boxGeometry.horizontalBorderAndPadding();
     }
     return { };
 }
@@ -359,8 +359,8 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox, containingBlockHeight);
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
-    auto paddingTop = boxGeometry.paddingBefore().value_or(0);
-    auto paddingBottom = boxGeometry.paddingAfter().value_or(0);
+    auto paddingTop = boxGeometry.paddingBefore();
+    auto paddingBottom = boxGeometry.paddingAfter();
     auto borderTop = boxGeometry.borderBefore();
     auto borderBottom = boxGeometry.borderAfter();
 
@@ -479,8 +479,8 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
     UsedHorizontalMargin usedHorizontalMargin;
-    auto paddingLeft = boxGeometry.paddingStart().value_or(0);
-    auto paddingRight = boxGeometry.paddingEnd().value_or(0);
+    auto paddingLeft = boxGeometry.paddingStart();
+    auto paddingRight = boxGeometry.paddingEnd();
     auto borderLeft = boxGeometry.borderStart();
     auto borderRight = boxGeometry.borderEnd();
     if (!left && !width && !right) {
@@ -607,8 +607,8 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Ele
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
     std::optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     std::optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
-    auto paddingTop = boxGeometry.paddingBefore().value_or(0);
-    auto paddingBottom = boxGeometry.paddingAfter().value_or(0);
+    auto paddingTop = boxGeometry.paddingBefore();
+    auto paddingBottom = boxGeometry.paddingAfter();
     auto borderTop = boxGeometry.borderBefore();
     auto borderBottom = boxGeometry.borderAfter();
 
@@ -692,8 +692,8 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     std::optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
     std::optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedContentWidthAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenHorizontalValues).contentWidth;
-    auto paddingLeft = boxGeometry.paddingStart().value_or(0);
-    auto paddingRight = boxGeometry.paddingEnd().value_or(0);
+    auto paddingLeft = boxGeometry.paddingStart();
+    auto paddingRight = boxGeometry.paddingEnd();
     auto borderLeft = boxGeometry.borderStart();
     auto borderRight = boxGeometry.borderEnd();
 
@@ -1100,14 +1100,14 @@ Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
     };
 }
 
-std::optional<Edges> FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
+Edges FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
 {
     if (!layoutBox.isPaddingApplicable())
-        return std::nullopt;
+        return { };
 
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
-    return Edges {
+    return {
         { valueForLength(style.paddingStart(), containingBlockWidth), valueForLength(style.paddingEnd(), containingBlockWidth) },
         { valueForLength(style.paddingBefore(), containingBlockWidth), valueForLength(style.paddingAfter(), containingBlockWidth) }
     };
