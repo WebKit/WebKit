@@ -4,6 +4,7 @@ Menu option 1
 Menu option 2
 Menu option 3
 This works like a switch.
+This behaves like a textbox
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -28,6 +29,8 @@ This works like a switch.
         (interaction (40,96) width=760 height=20)
         (cornerRadius 8.00),
         (interaction (0,132) width=800 height=20)
+        (cornerRadius 8.00),
+        (interaction (0,152) width=800 height=20)
         (cornerRadius 8.00)])
       )
     )
