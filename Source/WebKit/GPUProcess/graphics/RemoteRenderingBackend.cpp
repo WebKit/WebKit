@@ -149,6 +149,7 @@ void RemoteRenderingBackend::workQueueUninitialize()
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.clear();
     m_remoteImageBuffers.clear();
+    m_remoteImageBufferSets.clear();
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     m_remoteResourceCache.releaseAllResources();
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
