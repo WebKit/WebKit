@@ -38,6 +38,7 @@ namespace JSC {
     macro(TypeError) \
     macro(URIError) \
     macro(AggregateError) \
+    macro(SuppressedError) \
 
 #define JSC_ERROR_TYPES_WITH_EXTENSION(macro) \
     JSC_ERROR_TYPES(macro) \

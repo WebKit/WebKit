@@ -302,7 +302,7 @@ inline void BuiltinNames::appendExternalName(const Identifier& publicName, const
     #ifndef BUN_SKIP_FAILING_ASSERTIONS
     ASSERT_UNUSED(publicName, String(publicName.impl()) == String(privateName.impl()));
     #else
-    UNUSED_PARAM(privateName);
+    UNUSED_PARAM(publicName);
     #endif
     checkPublicToPrivateMapConsistency(privateName.impl());
     

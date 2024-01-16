@@ -118,6 +118,7 @@
     macro(enumerable) \
     macro(era) \
     macro(eraYear) \
+    macro(error) \
     macro(errors) \
     macro(eval) \
     macro(events) \
@@ -262,6 +263,7 @@
     macro(style) \
     macro(subarray) \
     macro(summary) \
+    macro(suppressed) \
     macro(target) \
     macro(test) \
     macro(then) \

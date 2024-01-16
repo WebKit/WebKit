@@ -1413,6 +1413,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/Width.h
     runtime/ClonedArguments.h
     runtime/InternalFieldTuple.h
+    runtime/SuppressedError.h
 
     runtime/JSModuleEnvironment.h
     runtime/JSModuleEnvironmentInlines.h

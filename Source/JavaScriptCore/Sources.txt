@@ -1229,3 +1229,6 @@ yarr/YarrTZoneImpls.cpp
 yarr/YarrCanonicalizeUnicode.cpp
 
 runtime/InternalFieldTuple.cpp
+runtime/SuppressedError.cpp
+runtime/SuppressedErrorConstructor.cpp
+runtime/SuppressedErrorPrototype.cpp

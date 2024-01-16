@@ -31,9 +31,12 @@
 #include "JSGlobalObject.h"
 
 #include "AggregateError.h"
+#include "SuppressedError.h"
 #include "InternalFieldTuple.h"
 #include "AggregateErrorConstructorInlines.h"
+#include "SuppressedErrorConstructorInlines.h"
 #include "AggregateErrorPrototypeInlines.h"
+#include "SuppressedErrorPrototypeInlines.h"
 #include "ArrayConstructorInlines.h"
 #include "ArrayIteratorPrototypeInlines.h"
 #include "ArrayPrototypeInlines.h"
@@ -636,6 +639,7 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
   TypeError             JSGlobalObject::m_typeErrorStructure         DontEnum|ClassStructure
   URIError              JSGlobalObject::m_URIErrorStructure          DontEnum|ClassStructure
   AggregateError        JSGlobalObject::m_aggregateErrorStructure    DontEnum|ClassStructure
+  SuppressedError       JSGlobalObject::m_suppressedErrorStructure   DontEnum|ClassStructure
   Proxy                 createProxyProperty                          DontEnum|PropertyCallback
   Reflect               createReflectProperty                        DontEnum|PropertyCallback
   JSON                  createJSONProperty                           DontEnum|PropertyCallback
@@ -767,6 +771,13 @@ void JSGlobalObject::initializeAggregateErrorConstructor(LazyClassStructure::Ini
     init.setPrototype(AggregateErrorPrototype::create(init.vm, AggregateErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
     init.setStructure(ErrorInstance::createStructure(init.vm, this, init.prototype));
     init.setConstructor(AggregateErrorConstructor::create(init.vm, AggregateErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<AggregateErrorPrototype*>(init.prototype)));
+}
+
+void JSGlobalObject::initializeSuppressedErrorConstructor(LazyClassStructure::Initializer& init)
+{
+    init.setPrototype(SuppressedErrorPrototype::create(init.vm, SuppressedErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
+    init.setStructure(ErrorInstance::createStructure(init.vm, this, init.prototype));
+    init.setConstructor(SuppressedErrorConstructor::create(init.vm, SuppressedErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<SuppressedErrorPrototype*>(init.prototype)));
 }
 
 SUPPRESS_ASAN inline void JSGlobalObject::initStaticGlobals(VM& vm)
@@ -1185,6 +1196,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_aggregateErrorStructure.initLater(
         [] (LazyClassStructure::Initializer& init) {
             init.global->initializeAggregateErrorConstructor(init);
+        });
+    m_suppressedErrorStructure.initLater(
+        [] (LazyClassStructure::Initializer& init) {
+            init.global->initializeSuppressedErrorConstructor(init);
         });
 
     m_generatorFunctionPrototype.set(vm, this, GeneratorFunctionPrototype::create(vm, GeneratorFunctionPrototype::createStructure(vm, this, m_functionPrototype.get())));
@@ -2446,6 +2461,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_typeErrorStructure.visit(visitor);
     thisObject->m_URIErrorStructure.visit(visitor);
     thisObject->m_aggregateErrorStructure.visit(visitor);
+    thisObject->m_suppressedErrorStructure.visit(visitor);
     visitor.append(thisObject->m_arrayConstructor);
     visitor.append(thisObject->m_shadowRealmConstructor);
     visitor.append(thisObject->m_regExpConstructor);
