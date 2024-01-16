@@ -1118,6 +1118,7 @@
 		E51A740E2B0442180047FEB1 /* ColorInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E51A740D2B0442180047FEB1 /* ColorInputTests.mm */; };
 		E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */; };
 		E540058827B3A8B20005653A /* contenteditable-user-select-user-drag.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E540058727B3A8320005653A /* contenteditable-user-select-user-drag.html */; };
+		E55999F72B476C2F00A3719F /* FullscreenOverriddenLayoutParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = E55999F62B476C2F00A3719F /* FullscreenOverriddenLayoutParameters.mm */; };
 		E57B44C129ABFB3B006069DE /* qr-code.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = E57B44C029ABFAA4006069DE /* qr-code.png */; };
 		E589183C252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */; };
 		E5AA42F2259128AE00410A3D /* UserInterfaceIdiomUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */; };
@@ -3435,6 +3436,7 @@
 		E51A740D2B0442180047FEB1 /* ColorInputTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorInputTests.mm; sourceTree = "<group>"; };
 		E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTitlebarSeparatorTests.mm; sourceTree = "<group>"; };
 		E540058727B3A8320005653A /* contenteditable-user-select-user-drag.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "contenteditable-user-select-user-drag.html"; sourceTree = "<group>"; };
+		E55999F62B476C2F00A3719F /* FullscreenOverriddenLayoutParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenOverriddenLayoutParameters.mm; sourceTree = "<group>"; };
 		E57B44C029ABFAA4006069DE /* qr-code.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qr-code.png"; sourceTree = "<group>"; };
 		E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DateTimeInputsAccessoryViewTests.mm; sourceTree = "<group>"; };
 		E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInterfaceIdiomUpdate.mm; sourceTree = "<group>"; };
@@ -4548,6 +4550,7 @@
 				A11E7DA224A17C7D00026745 /* ElementActionTests.mm */,
 				F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */,
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
+				E55999F62B476C2F00A3719F /* FullscreenOverriddenLayoutParameters.mm */,
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
 				F4636A992A0DA61800C88CC0 /* GestureRecognizerTests.mm */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
@@ -6515,6 +6518,7 @@
 				7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */,
 				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
+				E55999F72B476C2F00A3719F /* FullscreenOverriddenLayoutParameters.mm in Sources */,
 				CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
