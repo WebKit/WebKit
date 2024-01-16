@@ -773,6 +773,20 @@ bool HTMLMediaElement::isInteractiveContent() const
     return controls();
 }
 
+void HTMLMediaElement::removeAllEventListeners()
+{
+    Element::removeAllEventListeners();
+
+    if (m_audioTracks)
+        m_audioTracks->removeAllEventListeners();
+
+    if (m_textTracks)
+        m_textTracks->removeAllEventListeners();
+
+    if (m_videoTracks)
+        m_videoTracks->removeAllEventListeners();
+}
+
 void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {

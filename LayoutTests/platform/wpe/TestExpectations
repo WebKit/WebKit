@@ -1619,12 +1619,6 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-srgb8_alpha8-
 
 webkit.org/b/266671 http/wpt/webcodecs/videoFrame-rect.html [ Failure ]
 
-webkit.org/b/266711 fast/mediastream/microphone-change-while-capturing.html [ Pass Crash ]
-webkit.org/b/266711 media/modern-media-controls/audio/audio-controls-styles.html [ Failure Crash ]
-webkit.org/b/266711 webrtc/canvas-to-peer-connection.html  [ Failure Timeout Crash ]
-webkit.org/b/266711 webrtc/release-after-getting-track.html [ Pass Crash ]
-webkit.org/b/266711 fast/mediastream/applyConstraints-deviceId.html [ Pass Crash ]
-webkit.org/b/266711 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure Pass Crash ]
 webkit.org/b/266711 fast/editing/create-link-inline-style-change-crash-001.html [ Pass Crash ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]

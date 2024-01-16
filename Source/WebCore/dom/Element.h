@@ -762,7 +762,7 @@ protected:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
-    void removeAllEventListeners() final;
+    void removeAllEventListeners() override;
     virtual void parserDidSetAttributes();
 
     void setTabIndexExplicitly(std::optional<int>);
