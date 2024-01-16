@@ -691,14 +691,13 @@ static NSString *webProcessLoaderAccessibilityBundlePath()
     return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
 }
 
+#if !PLATFORM(MACCATALYST)
 static NSString *webProcessAccessibilityBundlePath()
 {
     NSString *path = (__bridge NSString *)GSSystemRootDirectory();
-#if PLATFORM(MACCATALYST)
-    path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
-#endif
     return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcess.axbundle"];
 }
+#endif // !PLATFORM(MACCATALYST)
 #endif
 
 static void registerWithAccessibility()
