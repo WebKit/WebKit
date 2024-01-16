@@ -138,30 +138,42 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
         AudioSession::sharedSession().setPreferredBufferSize(preferredBufferSize);
 }
 
+bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude)
+{
+    for (auto& proxy : m_proxies) {
+        if (proxy.isActive() && &proxy != &proxyToExclude)
+            return true;
+    }
+    return false;
+}
+
+bool RemoteAudioSessionProxyManager::hasActiveNotInterruptedProxy()
+{
+    for (auto& proxy : m_proxies) {
+        if (proxy.isActive() && !proxy.isInterrupted())
+            return true;
+    }
+    return false;
+}
+
 bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
 {
     ASSERT(m_proxies.contains(proxy));
 
-    size_t activeProxyCount { 0 };
-    for (auto& otherProxy : m_proxies) {
-        if (otherProxy.isActive() && !otherProxy.isInterrupted())
-            ++activeProxyCount;
-    }
-
-    if (!active && activeProxyCount > 1) {
-        // This proxy wants to de-activate, but other proxies are still
-        // active. No-op, and return deactivation was sucessful.
-        return true;
-    }
-
     if (!active) {
+        if (hasOtherActiveProxyThan(proxy)) {
+            // This proxy wants to de-activate, but other proxies are still
+            // active. No-op, and return deactivation was sucessful.
+            return true;
+        }
+
         // This proxy wants to de-activate, and is the last remaining active
         // proxy. Deactivate the session, and return whether that deactivation
-        // was sucessful;
+        // was sucessful.
         return AudioSession::sharedSession().tryToSetActive(false);
     }
 
-    if (active && !activeProxyCount) {
+    if (!hasActiveNotInterruptedProxy()) {
         // This proxy and only this proxy wants to become active. Activate
         // the session, and return whether that activation was successful.
         return AudioSession::sharedSession().tryToSetActive(active);
