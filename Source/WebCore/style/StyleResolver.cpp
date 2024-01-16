@@ -597,15 +597,17 @@ void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
 
 void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult)
 {
-    unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult);
-    auto includedProperties = PropertyCascade::allProperties();
-
     auto& style = *state.style();
     auto& parentStyle = *state.parentStyle();
     auto& element = *state.element();
 
-    auto* cacheEntry = m_matchedDeclarationsCache.find(cacheHash, matchResult);
-    if (cacheEntry && MatchedDeclarationsCache::isCacheable(element, style, parentStyle)) {
+    unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult, parentStyle.inheritedCustomProperties());
+    auto includedProperties = PropertyCascade::allProperties();
+
+    auto* cacheEntry = m_matchedDeclarationsCache.find(cacheHash, matchResult, parentStyle.inheritedCustomProperties());
+
+    auto hasUsableEntry = cacheEntry && MatchedDeclarationsCache::isCacheable(element, style, parentStyle);
+    if (hasUsableEntry) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
@@ -633,8 +635,6 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
             includedProperties.add(PropertyCascade::PropertyType::Inherited);
         if (hasExplicitlyInherited)
             includedProperties.add(PropertyCascade::PropertyType::ExplicitlyInherited);
-        if (!inheritedStyleEqual && !parentStyle.inheritedCustomPropertiesEqual(*cacheEntry->parentRenderStyle))
-            includedProperties.add(PropertyCascade::PropertyType::VariableReference);
     }
 
     if (elementTypeHasAppearanceFromUAStyle(element)) {

@@ -241,11 +241,6 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             if (propertyID >= firstDeferredProperty && m_lastIndexForDeferred)
                 return true;
 
-            if (m_includedProperties.contains(PropertyType::VariableReference)) {
-                if (current.value()->hasVariableReferences())
-                    return true;
-            }
-
             return false;
         }();
 
