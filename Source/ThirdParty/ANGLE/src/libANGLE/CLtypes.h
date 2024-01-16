@@ -25,16 +25,6 @@
 #include <utility>
 #include <vector>
 
-#define ANGLE_CL_TRY(expression)              \
-    do                                        \
-    {                                         \
-        const cl_int _errorCode = expression; \
-        if (_errorCode != CL_SUCCESS)         \
-        {                                     \
-            return _errorCode;                \
-        }                                     \
-    } while (0)
-
 namespace cl
 {
 

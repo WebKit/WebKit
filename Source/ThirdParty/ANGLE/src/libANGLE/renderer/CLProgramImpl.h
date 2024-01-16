@@ -21,36 +21,34 @@ class CLProgramImpl : angle::NonCopyable
     CLProgramImpl(const cl::Program &program);
     virtual ~CLProgramImpl();
 
-    virtual std::string getSource(cl_int &errorCode) const = 0;
+    virtual angle::Result build(const cl::DevicePtrs &devices,
+                                const char *options,
+                                cl::Program *notify) = 0;
 
-    virtual cl_int build(const cl::DevicePtrs &devices,
-                         const char *options,
-                         cl::Program *notify) = 0;
+    virtual angle::Result compile(const cl::DevicePtrs &devices,
+                                  const char *options,
+                                  const cl::ProgramPtrs &inputHeaders,
+                                  const char **headerIncludeNames,
+                                  cl::Program *notify) = 0;
 
-    virtual cl_int compile(const cl::DevicePtrs &devices,
-                           const char *options,
-                           const cl::ProgramPtrs &inputHeaders,
-                           const char **headerIncludeNames,
-                           cl::Program *notify) = 0;
+    virtual angle::Result getInfo(cl::ProgramInfo name,
+                                  size_t valueSize,
+                                  void *value,
+                                  size_t *valueSizeRet) const = 0;
 
-    virtual cl_int getInfo(cl::ProgramInfo name,
-                           size_t valueSize,
-                           void *value,
-                           size_t *valueSizeRet) const = 0;
+    virtual angle::Result getBuildInfo(const cl::Device &device,
+                                       cl::ProgramBuildInfo name,
+                                       size_t valueSize,
+                                       void *value,
+                                       size_t *valueSizeRet) const = 0;
 
-    virtual cl_int getBuildInfo(const cl::Device &device,
-                                cl::ProgramBuildInfo name,
-                                size_t valueSize,
-                                void *value,
-                                size_t *valueSizeRet) const = 0;
+    virtual angle::Result createKernel(const cl::Kernel &kernel,
+                                       const char *name,
+                                       CLKernelImpl::Ptr *kernelOut) = 0;
 
-    virtual CLKernelImpl::Ptr createKernel(const cl::Kernel &kernel,
-                                           const char *name,
-                                           cl_int &errorCode) = 0;
-
-    virtual cl_int createKernels(cl_uint numKernels,
-                                 CLKernelImpl::CreateFuncs &createFuncs,
-                                 cl_uint *numKernelsRet) = 0;
+    virtual angle::Result createKernels(cl_uint numKernels,
+                                        CLKernelImpl::CreateFuncs &createFuncs,
+                                        cl_uint *numKernelsRet) = 0;
 
   protected:
     const cl::Program &mProgram;

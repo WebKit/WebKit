@@ -352,6 +352,12 @@ void GLES1State::multMatrix(const angle::Mat4 &m)
     currentMatrixStack().back() = currentMatrix.product(m);
 }
 
+void GLES1State::setTextureEnabled(GLint activeSampler, TextureType type, bool enabled)
+{
+    setDirty(DIRTY_GLES1_TEXTURE_UNIT_ENABLE);
+    mTexUnitEnables[activeSampler].set(type, enabled);
+}
+
 void GLES1State::setLogicOpEnabled(bool enabled)
 {
     setDirty(DIRTY_GLES1_LOGIC_OP);

@@ -15,11 +15,17 @@
  */
 package com.android.angle.common;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
@@ -41,14 +47,16 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
 {
 
     private final String TAG = this.getClass().getSimpleName();
+    private final boolean DEBUG = false;
 
-    private SharedPreferences mPrefs;
+    private SharedPreferences mSharedPreferences;
+    private SwitchPreference mShowAngleInUseSwitchPref;
+    private List<ListPreference> mApplicationListPreferences = new ArrayList<>();
+
     private GlobalSettings mGlobalSettings;
     private Receiver mRefreshReceiver = new Receiver();
-    private SwitchPreference mAllAngleSwitchPref;
-    private SwitchPreference mShowAngleInUseDialogSwitchPref;
-    private List<PackageInfo> mInstalledPkgs      = new ArrayList<>();
-    private List<ListPreference> mDriverListPrefs = new ArrayList<>();
+    private List<PackageInfo> mInstalledPackages = new ArrayList<>();
+    private AngleRuleHelper angleRuleHelper;
 
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -63,19 +71,23 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
     {
         super.onCreate(savedInstanceState);
 
-        getInstalledPkgsList();
+        queryInstalledPackages();
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(
                 getActivity().getApplicationContext());
-        validatePreferences();
+        if (DEBUG)
+        {
+            Map<String, ?> preferences = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity().getApplicationContext()).getAll();
+            for (String key : preferences.keySet())
+            {
+                Log.d(TAG, key + ", " + preferences.get(key));
+            }
+        }
+        mGlobalSettings = new GlobalSettings(getContext(), mSharedPreferences, mInstalledPackages);
 
-        mGlobalSettings = new GlobalSettings(getContext(), mInstalledPkgs);
-        mergeGlobalSettings();
-
-        createAllUseAnglePreference();
-        createShowAngleInUseDialogPreference();
-
-        updatePreferencesFromGlobalSettings();
+        createShowAngleInUseSwitchPreference();
+        createInstalledAppsListPreference();
     }
 
     @Override
@@ -83,13 +95,12 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
     {
         super.onResume();
 
-        updatePreferencesFromGlobalSettings();
-
         getActivity().registerReceiver(mRefreshReceiver,
                 new IntentFilter(
                         getContext().getString(R.string.intent_angle_for_android_toast_message)));
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(
                 listener);
+        updatePreferences();
     }
 
     @Override
@@ -111,119 +122,85 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        Log.v(TAG, "Shared preference changed: key = '" + key + "'");
+        Log.v(TAG, "Shared preference changed: " + key);
     }
 
-    private void updatePreferencesFromGlobalSettings()
+    private void updatePreferences()
     {
-        mAllAngleSwitchPref.setChecked(mGlobalSettings.getAllUseAngle());
-        mShowAngleInUseDialogSwitchPref.setChecked(mGlobalSettings.getShowAngleInUseDialogBox());
-        createInstalledAppsListPreference();
+        mShowAngleInUseSwitchPref.setChecked(mGlobalSettings.getShowAngleInUse());
     }
 
-    private void createAllUseAnglePreference()
+    private void createShowAngleInUseSwitchPreference()
     {
-        String allUseAngleKey = getContext().getString(R.string.pref_key_all_angle);
-        Boolean allUseAngle   = mPrefs.getBoolean(allUseAngleKey, false);
-        mAllAngleSwitchPref   = (SwitchPreference) findPreference(allUseAngleKey);
-        mAllAngleSwitchPref.setOnPreferenceClickListener(
-                new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference)
-                    {
-                        Receiver.updateAllUseAngle(getContext());
-                        return true;
-                    }
-                });
-    }
-
-    private void createShowAngleInUseDialogPreference()
-    {
-        String showAngleInUseDialogKey =
+        final String showAngleInUseKey =
                 getContext().getString(R.string.pref_key_angle_in_use_dialog);
-        Boolean showAngleInUseDialogBox = mPrefs.getBoolean(showAngleInUseDialogKey, false);
-        mShowAngleInUseDialogSwitchPref =
-                (SwitchPreference) findPreference(showAngleInUseDialogKey);
-        mShowAngleInUseDialogSwitchPref.setOnPreferenceClickListener(
-                new Preference.OnPreferenceClickListener() {
+        mShowAngleInUseSwitchPref =
+                (SwitchPreference) findPreference(showAngleInUseKey);
+
+        mShowAngleInUseSwitchPref.setOnPreferenceChangeListener(
+                new Preference.OnPreferenceChangeListener() {
                     @Override
-                    public boolean onPreferenceClick(Preference preference)
+                    public boolean onPreferenceChange(Preference preference, Object newValue)
                     {
-                        Receiver.updateShowAngleInUseDialogBox(getContext());
+                        if (DEBUG)
+                        {
+                            Log.v(TAG, "Show angle in use switch: " + newValue.toString());
+                        }
+                        GlobalSettings.updateShowAngleInUse(getContext(), (Boolean) newValue);
                         return true;
                     }
-                });
+        });
     }
 
     private void createInstalledAppsListPreference()
     {
-        getInstalledPkgsList();
-        mGlobalSettings.setInstalledPkgs(mInstalledPkgs);
-        mergeGlobalSettings();
-
-        String selectDriverCatKey =
+        final String selectDriverCategoryKey =
                 getContext().getString(R.string.pref_key_select_opengl_driver_category);
-        PreferenceCategory installedPkgsCat =
-                (PreferenceCategory) findPreference(selectDriverCatKey);
-        installedPkgsCat.removeAll();
-        mDriverListPrefs.clear();
-        if (mInstalledPkgs.isEmpty())
+        final PreferenceCategory preferenceCategory =
+                (PreferenceCategory) findPreference(selectDriverCategoryKey);
+        preferenceCategory.removeAll();
+        mApplicationListPreferences.clear();
+
+        final Context context = preferenceCategory.getContext();
+        for (PackageInfo packageInfo : mInstalledPackages)
         {
-            ListPreference listPreference = new ListPreference(installedPkgsCat.getContext());
-            initEmptyListPreference(listPreference);
-            installedPkgsCat.addPreference(listPreference);
-        }
-        else
-        {
-            for (PackageInfo packageInfo : mInstalledPkgs)
-            {
-                ListPreference listPreference = new ListPreference(installedPkgsCat.getContext());
-                initListPreference(packageInfo, listPreference);
-                installedPkgsCat.addPreference(listPreference);
-            }
+            ListPreference listPreference = new ListPreference(context);
+            initListPreference(packageInfo, listPreference);
+            preferenceCategory.addPreference(listPreference);
         }
     }
 
-    private void validatePreferences()
+    private void queryInstalledPackages()
     {
-        Map<String, ?> allPrefs = mPrefs.getAll();
+        mInstalledPackages.clear();
 
-        // Remove Preference values for any uninstalled PKGs
-        for (String key : allPrefs.keySet())
+        final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final PackageManager packageManager = getActivity().getPackageManager();
+
+        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(mainIntent, 0);
+
+        for (ResolveInfo resolveInfo : resolveInfos)
         {
-            // Remove any uninstalled PKGs
-            PackageInfo packageInfo = getPackageInfoForPackageName(key);
-
-            if (packageInfo != null)
+            final String packageName = resolveInfo.activityInfo.packageName;
+            if (DEBUG)
             {
-                removePkgPreference(key);
+                Log.d(TAG, "Package found: " + packageName);
             }
-        }
-    }
-
-    private void getInstalledPkgsList()
-    {
-        List<PackageInfo> pkgs = getActivity().getPackageManager().getInstalledPackages(0);
-
-        mInstalledPkgs.clear();
-
-        for (PackageInfo packageInfo : pkgs)
-        {
-            if (packageInfo.applicationInfo.uid == Process.SYSTEM_UID)
+            try
             {
+                PackageInfo packageInfo = packageManager.getPackageInfo(packageName,
+                        PackageManager.PackageInfoFlags.of(0));
+                mInstalledPackages.add(packageInfo);
+            }
+            catch (NameNotFoundException e)
+            {
+                Log.v(TAG, "Package not found: " + packageName);
                 continue;
             }
-
-            // Filter out apps that are system apps
-            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
-            {
-                continue;
-            }
-
-            mInstalledPkgs.add(packageInfo);
         }
 
-        Collections.sort(mInstalledPkgs, displayNameComparator);
+        Collections.sort(mInstalledPackages, displayNameComparator);
     }
 
     private final Comparator<PackageInfo> displayNameComparator = new Comparator<PackageInfo>() {
@@ -240,103 +217,39 @@ public class MainFragment extends PreferenceFragment implements OnSharedPreferen
         return packageInfo.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
     }
 
-    private void initEmptyListPreference(ListPreference listPreference)
-    {
-        String noAppsInstalledTitle = getContext().getString(R.string.no_apps_installed_title);
-        listPreference.setTitle(noAppsInstalledTitle);
-
-        String noAppsInstalledSummary = getContext().getString(R.string.no_apps_installed_summary);
-        listPreference.setSummary(noAppsInstalledSummary);
-
-        listPreference.setSelectable(false);
-
-        mDriverListPrefs.add(listPreference);
-    }
-
     private void initListPreference(PackageInfo packageInfo, ListPreference listPreference)
     {
         CharSequence[] drivers = getResources().getStringArray(R.array.driver_values);
-        listPreference.setEntryValues(drivers);
         listPreference.setEntries(drivers);
+        listPreference.setEntryValues(drivers);
 
-        String defaultDriver = getContext().getString(R.string.default_driver);
-        listPreference.setDefaultValue(defaultDriver);
-
-        String dialogTitleKey = getContext().getString(R.string.select_opengl_driver_title);
-        listPreference.setDialogTitle(dialogTitleKey);
-        listPreference.setKey(packageInfo.packageName);
-
+        final String packageName = packageInfo.packageName;
+        listPreference.setKey(packageName);
         listPreference.setTitle(getAppName(packageInfo));
-        listPreference.setSummary(mPrefs.getString(packageInfo.packageName, defaultDriver));
+
+        final String driverSelectionValue = mSharedPreferences.getString(packageName,
+                GlobalSettings.DRIVER_SELECTION_DEFAULT);
+        listPreference.setDefaultValue(driverSelectionValue);
+        listPreference.setValue(driverSelectionValue);
+        listPreference.setSummary(driverSelectionValue);
+
+        final String dialogTitle = getContext().getString(R.string.select_opengl_driver_title);
+        listPreference.setDialogTitle(dialogTitle);
+
+        listPreference.setDialogIcon(packageInfo.applicationInfo.loadIcon(getActivity().getPackageManager()));
 
         listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue)
             {
-                ListPreference listPreference = (ListPreference) preference;
-
-                listPreference.setSummary(newValue.toString());
-                mGlobalSettings.updatePkg(preference.getKey(), newValue.toString());
-
+                final ListPreference listPreference = (ListPreference) preference;
+                final String newDriverSelectionValue = newValue.toString();
+                listPreference.setSummary(newDriverSelectionValue);
+                mGlobalSettings.updatePackageDriverSelection(preference.getKey(), newDriverSelectionValue);
                 return true;
             }
         });
 
-        mDriverListPrefs.add(listPreference);
-    }
-
-    private void removePkgPreference(String key)
-    {
-        SharedPreferences.Editor editor = mPrefs.edit();
-
-        editor.remove(key);
-        editor.apply();
-
-        for (ListPreference listPreference : mDriverListPrefs)
-        {
-            if (listPreference.getKey().equals(key))
-            {
-                mDriverListPrefs.remove(listPreference);
-            }
-        }
-    }
-
-    private PackageInfo getPackageInfoForPackageName(String pkgName)
-    {
-        PackageInfo foundPackageInfo = null;
-
-        for (PackageInfo packageInfo : mInstalledPkgs)
-        {
-            if (pkgName.equals(getAppName(packageInfo)))
-            {
-                foundPackageInfo = packageInfo;
-                break;
-            }
-        }
-
-        return foundPackageInfo;
-    }
-
-    private void mergeGlobalSettings()
-    {
-        SharedPreferences.Editor editor = mPrefs.edit();
-
-        for (PackageInfo packageInfo : mInstalledPkgs)
-        {
-            String driver = mGlobalSettings.getDriverForPkg(packageInfo.packageName);
-
-            if (driver != null)
-            {
-                editor.putString(packageInfo.packageName, driver);
-            }
-            else
-            {
-                // No Global.Setting driver value for this package, so must be 'default'
-                String defaultDriver = getContext().getString(R.string.default_driver);
-                editor.putString(packageInfo.packageName, defaultDriver);
-            }
-        }
-
-        editor.apply();
+        mApplicationListPreferences.add(listPreference);
     }
 }

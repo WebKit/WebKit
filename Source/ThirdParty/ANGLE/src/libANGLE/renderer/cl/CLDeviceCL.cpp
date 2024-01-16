@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/cl/cl_util.h"
 
 #include "libANGLE/CLDevice.h"
+#include "libANGLE/cl_utils.h"
 
 namespace rx
 {
@@ -181,59 +182,64 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
     return info;
 }
 
-cl_int CLDeviceCL::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
+angle::Result CLDeviceCL::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
 {
-    return mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                  value, nullptr);
+    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
+                                                        value, nullptr));
+    return angle::Result::Continue;
 }
 
-cl_int CLDeviceCL::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
+angle::Result CLDeviceCL::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
 {
-    return mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                  value, nullptr);
+    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
+                                                        value, nullptr));
+    return angle::Result::Continue;
 }
 
-cl_int CLDeviceCL::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
+angle::Result CLDeviceCL::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
 {
-    return mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                  value, nullptr);
+    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
+                                                        value, nullptr));
+    return angle::Result::Continue;
 }
 
-cl_int CLDeviceCL::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
+angle::Result CLDeviceCL::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
 {
-    return mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), 0u, nullptr, value);
+    ANGLE_CL_TRY(
+        mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), 0u, nullptr, value));
+    return angle::Result::Continue;
 }
 
-cl_int CLDeviceCL::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
+angle::Result CLDeviceCL::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
 {
-    return mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), size, value,
-                                                  nullptr);
+    ANGLE_CL_TRY(
+        mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), size, value, nullptr));
+    return angle::Result::Continue;
 }
 
-cl_int CLDeviceCL::createSubDevices(const cl_device_partition_property *properties,
-                                    cl_uint numDevices,
-                                    CreateFuncs &createFuncs,
-                                    cl_uint *numDevicesRet)
+angle::Result CLDeviceCL::createSubDevices(const cl_device_partition_property *properties,
+                                           cl_uint numDevices,
+                                           CreateFuncs &createFuncs,
+                                           cl_uint *numDevicesRet)
 {
     if (numDevices == 0u)
     {
-        return mNative->getDispatch().clCreateSubDevices(mNative, properties, 0u, nullptr,
-                                                         numDevicesRet);
+        ANGLE_CL_TRY(mNative->getDispatch().clCreateSubDevices(mNative, properties, 0u, nullptr,
+                                                               numDevicesRet));
+        return angle::Result::Continue;
     }
 
     std::vector<cl_device_id> nativeSubDevices(numDevices, nullptr);
-    const cl_int errorCode = mNative->getDispatch().clCreateSubDevices(
-        mNative, properties, numDevices, nativeSubDevices.data(), nullptr);
-    if (errorCode == CL_SUCCESS)
+    ANGLE_CL_TRY(mNative->getDispatch().clCreateSubDevices(mNative, properties, numDevices,
+                                                           nativeSubDevices.data(), nullptr));
+
+    for (cl_device_id nativeSubDevice : nativeSubDevices)
     {
-        for (cl_device_id nativeSubDevice : nativeSubDevices)
-        {
-            createFuncs.emplace_back([nativeSubDevice](const cl::Device &device) {
-                return Ptr(new CLDeviceCL(device, nativeSubDevice));
-            });
-        }
+        createFuncs.emplace_back([nativeSubDevice](const cl::Device &device) {
+            return Ptr(new CLDeviceCL(device, nativeSubDevice));
+        });
     }
-    return errorCode;
+    return angle::Result::Continue;
 }
 
 CLDeviceCL::CLDeviceCL(const cl::Device &device, cl_device_id native)

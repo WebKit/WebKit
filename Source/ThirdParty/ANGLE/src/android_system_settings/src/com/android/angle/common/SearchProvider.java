@@ -36,7 +36,7 @@ import android.provider.Settings;
 public class SearchProvider extends SearchIndexablesProvider
 {
 
-    private static final String TAG = "SearchProvider";
+    private static final String TAG = "AngleSearchProvider";
 
     @Override
     public boolean onCreate()
@@ -85,9 +85,6 @@ public class SearchProvider extends SearchIndexablesProvider
             cursor.addRow(row);
             return cursor;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 }

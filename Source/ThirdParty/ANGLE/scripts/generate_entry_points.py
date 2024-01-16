@@ -510,6 +510,7 @@ void CL_API_CALL cl{name}({params})
 
     ANGLE_CL_VALIDATE_VOID({name}{comma_if_needed}{internal_params});
 
+    cl::gClErrorTls = CL_SUCCESS;
     {name}({internal_params});
 }}
 """
@@ -523,6 +524,7 @@ cl_int CL_API_CALL cl{name}({params})
 
     ANGLE_CL_VALIDATE_ERROR({name}{comma_if_needed}{internal_params});
 
+    cl::gClErrorTls = CL_SUCCESS;
     return {name}({internal_params});
 }}
 """
@@ -536,13 +538,13 @@ TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET = """\
 
     ANGLE_CL_VALIDATE_ERRCODE_RET({name}{comma_if_needed}{internal_params});
 
-    cl_int errorCode = CL_SUCCESS;
-    {return_type} object = {name}({internal_params}, errorCode);
+    cl::gClErrorTls      = CL_SUCCESS;
+    {return_type} object = {name}({internal_params});
 
-    ASSERT((errorCode == CL_SUCCESS) == (object != nullptr));
+    ASSERT((cl::gClErrorTls == CL_SUCCESS) == (object != nullptr));
     if (errcode_ret != nullptr)
     {{
-        *errcode_ret = errorCode;
+        *errcode_ret = cl::gClErrorTls;
     }}
     return object;
 }}
@@ -555,6 +557,7 @@ TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_POINTER = """\
 
     {packed_gl_enum_conversions}
 
+    cl::gClErrorTls = CL_SUCCESS;
     ANGLE_CL_VALIDATE_POINTER({name}{comma_if_needed}{internal_params});
 
     return {name}({internal_params});
@@ -3131,7 +3134,8 @@ def write_stubs_header(api, annotation, title, data_source, out_file, all_comman
         params = [] if api == apis.CL else ["Thread *thread"]
         params += ["".join(param.itertext()) for param in command.findall('param')]
         if params and just_the_name(params[-1]) == "errcode_ret":
-            params[-1] = "cl_int &errorCode"
+            # Using TLS object for CL error handling, no longer a need for errcode_ret
+            del params[-1]
         return_type = proto_text[:-len(cmd_name)].strip()
 
         internal_params = get_internal_params(api, cmd_name, params, cmd_packed_egl_enums,

@@ -867,7 +867,8 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
                                        GLsizei count,
                                        DrawElementsType type,
                                        const void *indices,
-                                       GLsizei primcount)
+                                       GLsizei primcount,
+                                       GLuint baseinstance)
 {
     if (primcount <= 0)
     {
@@ -893,7 +894,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
         return true;
     }
 
-    return ValidateDrawInstancedAttribs(context, entryPoint, primcount);
+    return ValidateDrawInstancedAttribs(context, entryPoint, primcount, baseinstance);
 }
 
 bool ValidateDrawArraysInstancedBase(const Context *context,
@@ -901,7 +902,8 @@ bool ValidateDrawArraysInstancedBase(const Context *context,
                                      PrimitiveMode mode,
                                      GLint first,
                                      GLsizei count,
-                                     GLsizei primcount)
+                                     GLsizei primcount,
+                                     GLuint baseinstance)
 {
     if (primcount <= 0)
     {
@@ -926,7 +928,7 @@ bool ValidateDrawArraysInstancedBase(const Context *context,
         return true;
     }
 
-    return ValidateDrawInstancedAttribs(context, entryPoint, primcount);
+    return ValidateDrawInstancedAttribs(context, entryPoint, primcount, baseinstance);
 }
 
 bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryPoint)
@@ -4540,7 +4542,7 @@ bool ValidateDrawArraysInstancedANGLE(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, primcount))
+    if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, primcount, 0))
     {
         return false;
     }
@@ -4561,7 +4563,7 @@ bool ValidateDrawArraysInstancedEXT(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, primcount))
+    if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, primcount, 0))
     {
         return false;
     }
@@ -4631,7 +4633,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
     }
 
     if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           primcount))
+                                           primcount, 0))
     {
         return false;
     }
@@ -4654,7 +4656,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
     }
 
     if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           primcount))
+                                           primcount, 0))
     {
         return false;
     }

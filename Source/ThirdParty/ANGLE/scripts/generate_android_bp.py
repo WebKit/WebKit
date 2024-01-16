@@ -703,6 +703,7 @@ def main():
             # However, the internal branch currently uses these files with patches in that branch.
             'srcs': [
                 'src/android_system_settings/src/com/android/angle/MainActivity.java',
+                'src/android_system_settings/src/com/android/angle/common/AngleRuleHelper.java',
                 'src/android_system_settings/src/com/android/angle/common/GlobalSettings.java',
                 'src/android_system_settings/src/com/android/angle/common/MainFragment.java',
                 'src/android_system_settings/src/com/android/angle/common/Receiver.java',
@@ -757,6 +758,39 @@ def main():
     blueprint_targets.append(('android_app', {
         'name': 'ANGLE',
         'defaults': ['ANGLE_java_defaults'],
+        'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
+        'static_libs': ['ANGLE_library'],
+        'optimize': {
+            'enabled': True,
+            'shrink': True,
+            'proguard_compatibility': False,
+        },
+        'asset_dirs': ['src/android_system_settings/assets',],
+    }))
+
+    blueprint_targets.append((
+        'java_defaults',
+        {
+            'name': 'ANGLE_java_settings_defaults',
+            'sdk_version': 'system_current',
+            'target_sdk_version': TARGET_SDK_VERSION,
+            'min_sdk_version': MIN_SDK_VERSION,
+            'compile_multilib': 'both',
+            'use_embedded_native_libs': True,
+            'aaptflags': [
+                '-0 .json',  # Don't compress *.json files
+                "--extra-packages com.android.angle.common",
+            ],
+            'srcs': [':ANGLE_srcs'],
+            'privileged': True,
+            'product_specific': True,
+            'owner': 'google',
+            'required': ['android.software.angle.xml'],
+        }))
+
+    blueprint_targets.append(('android_app', {
+        'name': 'ANGLE_settings',
+        'defaults': ['ANGLE_java_settings_defaults'],
         'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
         'static_libs': ['ANGLE_library'],
         'optimize': {

@@ -132,7 +132,8 @@ bool TryCreateModifiedStruct(TCompiler &compiler,
                              const Name &modifiedStructName,
                              ModifiedStructMachineries &outMachineries,
                              const bool isUBO,
-                             const bool allowPadding);
+                             const bool allowPadding,
+                             const bool useAttributeAliasing);
 
 }  // namespace sh
 

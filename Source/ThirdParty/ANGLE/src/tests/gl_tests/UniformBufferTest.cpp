@@ -192,6 +192,119 @@ TEST_P(UniformBufferTest, UniformBufferBindings)
     EXPECT_PIXEL_EQ(px, py, 10, 20, 30, 40);
 }
 
+// Test when the only change between draw calls is the change in the uniform binding range.
+TEST_P(UniformBufferTest, BufferBindingRangeChange)
+{
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2);
+    // Half red
+    colors[0] = 0.55;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 0.35;
+    // Greenish yellow
+    colors[alignment / 4 + 0] = 0.55;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 0.75;
+
+    glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+
+    const GLint positionLoc = glGetAttribLocation(mProgram, essl3_shaders::PositionAttrib());
+    setupQuadVertexBuffer(0.5f, 1.0f);
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw twice, binding the uniform buffer to a different range each time
+    glUseProgram(mProgram);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, mUniformBuffer, 0, kVec4Size);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, mUniformBuffer, alignment, kVec4Size);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Test when glUniformBlockBinding is called between draws while the program is not current.
+// Regression test for a missing dirty bit bug in this scenario.
+TEST_P(UniformBufferTest, BufferBlockBindingChange)
+{
+    constexpr GLsizei kVec4Size = 4 * sizeof(float);
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+    if (alignment < kVec4Size)
+    {
+        alignment = kVec4Size;
+    }
+    ASSERT_EQ(alignment % 4, 0);
+
+    // Put two colors in the uniform buffer, the sum of which is yellow.
+    // Note: |alignment| is in bytes, so we can place each uniform in |alignment/4| floats.
+    std::vector<float> colors(alignment / 2);
+    // Half red
+    colors[0] = 0.55;
+    colors[1] = 0.0;
+    colors[2] = 0.0;
+    colors[3] = 0.35;
+    // Greenish yellow
+    colors[alignment / 4 + 0] = 0.55;
+    colors[alignment / 4 + 1] = 1.0;
+    colors[alignment / 4 + 2] = 0.0;
+    colors[alignment / 4 + 3] = 0.75;
+
+    glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, alignment * 2, colors.data(), GL_STATIC_DRAW);
+
+    const GLint positionLoc = glGetAttribLocation(mProgram, essl3_shaders::PositionAttrib());
+    setupQuadVertexBuffer(0.5f, 1.0f);
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw twice, binding the uniform buffer to a different range each time
+    glUseProgram(mProgram);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, mUniformBuffer, 0, kVec4Size);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Change the block binding while the program is not current
+    glUseProgram(0);
+    glUniformBlockBinding(mProgram, 0, 1);
+    glUseProgram(mProgram);
+
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, mUniformBuffer, alignment, kVec4Size);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
 // Update a UBO many time and verify that ANGLE uses the latest version of the data.
 // https://code.google.com/p/angleproject/issues/detail?id=965
 TEST_P(UniformBufferTest, UniformBufferManyUpdates)

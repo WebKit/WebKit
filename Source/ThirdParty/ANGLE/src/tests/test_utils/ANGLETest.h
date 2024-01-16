@@ -244,6 +244,9 @@ bool IsFormatEmulated(GLenum target);
 
 #define EXPECT_PIXEL_ALPHA_EQ(x, y, a) EXPECT_EQ(a, angle::ReadColor(x, y).A)
 
+#define EXPECT_PIXEL_ALPHA_NEAR(x, y, a, abs_error) \
+    EXPECT_NEAR(a, angle::ReadColor(x, y).A, abs_error);
+
 #define EXPECT_PIXEL_ALPHA32F_EQ(x, y, a) EXPECT_EQ(a, angle::ReadColor32F(x, y).A)
 
 #define EXPECT_PIXEL_COLOR_EQ(x, y, angleColor) EXPECT_EQ(angleColor, angle::ReadColor(x, y))

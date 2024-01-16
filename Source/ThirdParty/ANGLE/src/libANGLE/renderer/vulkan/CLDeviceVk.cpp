@@ -6,8 +6,9 @@
 // CLDeviceVk.cpp: Implements the class methods for CLDeviceVk.
 
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
-
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
+
+#include "libANGLE/cl_utils.h"
 
 namespace rx
 {
@@ -18,41 +19,48 @@ CLDeviceVk::~CLDeviceVk() = default;
 
 CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
 {
+    UNIMPLEMENTED();
     Info info(type);
     return info;
 }
 
-cl_int CLDeviceVk::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
+angle::Result CLDeviceVk::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLDeviceVk::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
+angle::Result CLDeviceVk::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLDeviceVk::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
+angle::Result CLDeviceVk::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLDeviceVk::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
+angle::Result CLDeviceVk::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLDeviceVk::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
+angle::Result CLDeviceVk::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
-cl_int CLDeviceVk::createSubDevices(const cl_device_partition_property *properties,
-                                    cl_uint numDevices,
-                                    CreateFuncs &subDevices,
-                                    cl_uint *numDevicesRet)
+angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *properties,
+                                           cl_uint numDevices,
+                                           CreateFuncs &subDevices,
+                                           cl_uint *numDevicesRet)
 {
-    return CL_INVALID_VALUE;
+    UNIMPLEMENTED();
+    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
 }
 
 }  // namespace rx

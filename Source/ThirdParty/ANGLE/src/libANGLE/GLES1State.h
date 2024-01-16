@@ -205,6 +205,8 @@ class GLES1State final : angle::NonCopyable
     void loadMatrix(const angle::Mat4 &m);
     void multMatrix(const angle::Mat4 &m);
 
+    void setTextureEnabled(GLint activeSampler, TextureType type, bool enabled);
+
     void setLogicOpEnabled(bool enabled);
     void setLogicOp(LogicalOperation opcodePacked);
 

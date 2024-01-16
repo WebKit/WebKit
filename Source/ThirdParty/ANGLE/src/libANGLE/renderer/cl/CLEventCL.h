@@ -23,16 +23,16 @@ class CLEventCL : public CLEventImpl
 
     cl_event getNative() const;
 
-    cl_int getCommandExecutionStatus(cl_int &executionStatus) override;
+    angle::Result getCommandExecutionStatus(cl_int &executionStatus) override;
 
-    cl_int setUserEventStatus(cl_int executionStatus) override;
+    angle::Result setUserEventStatus(cl_int executionStatus) override;
 
-    cl_int setCallback(cl::Event &event, cl_int commandExecCallbackType) override;
+    angle::Result setCallback(cl::Event &event, cl_int commandExecCallbackType) override;
 
-    cl_int getProfilingInfo(cl::ProfilingInfo name,
-                            size_t valueSize,
-                            void *value,
-                            size_t *valueSizeRet) override;
+    angle::Result getProfilingInfo(cl::ProfilingInfo name,
+                                   size_t valueSize,
+                                   void *value,
+                                   size_t *valueSizeRet) override;
 
     static std::vector<cl_event> Cast(const cl::EventPtrs &events);
 

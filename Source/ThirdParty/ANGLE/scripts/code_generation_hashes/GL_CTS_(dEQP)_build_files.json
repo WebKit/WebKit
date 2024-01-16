@@ -68,7 +68,7 @@
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/device_group/CMakeLists.txt":
     "451a6c35fd38aec3212d02f14f201cf9",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/draw/CMakeLists.txt":
-    "a4c10157d51b25408740a76a899ca95f",
+    "b38e8a3627004e3556ea88df76bdb088",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/dynamic_state/CMakeLists.txt":
     "3db8818671533ace06b9b7710aeda461",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/fragment_ops/CMakeLists.txt":
@@ -106,7 +106,7 @@
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/rasterization/CMakeLists.txt":
     "20691d4d355ac09d18b98f0c8e184842",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/ray_query/CMakeLists.txt":
-    "18416b8e861b7fb0b66bb085e87bdefd",
+    "e2e1ca16288794542a6da7d323bc2844",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/ray_tracing/CMakeLists.txt":
     "e41b3bce4d13b7a373bc5cf04308c096",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/reconvergence/CMakeLists.txt":

@@ -619,23 +619,53 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromR8IOSurface)
     doSampleTest(ioSurface, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, &color, sizeof(color), R);
 }
 
+// Test using RG1616 IOSurfaces for rendering
+TEST_P(IOSurfaceClientBufferTest, RenderToRG1616IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, '2C16', 4);
+
+    std::array<uint16_t, 2> color{257, 514};
+    doClearTest(ioSurface, 1, 1, 0, GL_RG, GL_UNSIGNED_SHORT, color);
+}
+
+// Test reading from RG1616 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromRG1616IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, '2C16', 4);
+
+    uint16_t color[2] = {257, 514};
+    doSampleTest(ioSurface, 1, 1, 0, GL_RG, GL_UNSIGNED_SHORT, &color, sizeof(color), R | G);
+}
+
 // Test using R16 IOSurfaces for rendering
 TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
 {
     ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
 
-    // This test only works on ES3 since it requires an integer texture.
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
-
-    // HACK(cwallez@chromium.org) 'L016' doesn't seem to be an official pixel format but it works
-    // sooooooo let's test using it
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L016', 2);
 
     std::array<uint16_t, 1> color{257};
-    doClearTest(ioSurface, 1, 1, 0, GL_R16UI, GL_UNSIGNED_SHORT, color);
+    doClearTest(ioSurface, 1, 1, 0, GL_RED, GL_UNSIGNED_SHORT, color);
 }
-// TODO(cwallez@chromium.org): test reading from R16? It returns 0 maybe because samplerRect is
-// only for floating textures?
+
+// Test reading from R16 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromR16IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L016', 2);
+
+    uint16_t color = 257;
+    doSampleTest(ioSurface, 1, 1, 0, GL_RED, GL_UNSIGNED_SHORT, &color, sizeof(color), R);
+}
 
 // Test using BGRA_1010102 IOSurfaces for rendering
 TEST_P(IOSurfaceClientBufferTest, RenderToBGRA1010102IOSurface)

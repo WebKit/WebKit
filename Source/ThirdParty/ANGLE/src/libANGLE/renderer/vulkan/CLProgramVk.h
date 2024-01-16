@@ -20,6 +20,35 @@ class CLProgramVk : public CLProgramImpl
   public:
     CLProgramVk(const cl::Program &program);
     ~CLProgramVk() override;
+
+    angle::Result build(const cl::DevicePtrs &devices,
+                        const char *options,
+                        cl::Program *notify) override;
+
+    angle::Result compile(const cl::DevicePtrs &devices,
+                          const char *options,
+                          const cl::ProgramPtrs &inputHeaders,
+                          const char **headerIncludeNames,
+                          cl::Program *notify) override;
+
+    angle::Result getInfo(cl::ProgramInfo name,
+                          size_t valueSize,
+                          void *value,
+                          size_t *valueSizeRet) const override;
+
+    angle::Result getBuildInfo(const cl::Device &device,
+                               cl::ProgramBuildInfo name,
+                               size_t valueSize,
+                               void *value,
+                               size_t *valueSizeRet) const override;
+
+    angle::Result createKernel(const cl::Kernel &kernel,
+                               const char *name,
+                               CLKernelImpl::Ptr *kernelOut) override;
+
+    angle::Result createKernels(cl_uint numKernels,
+                                CLKernelImpl::CreateFuncs &createFuncs,
+                                cl_uint *numKernelsRet) override;
 };
 
 }  // namespace rx

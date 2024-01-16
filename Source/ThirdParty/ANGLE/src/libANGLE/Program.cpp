@@ -1626,6 +1626,8 @@ void Program::bindUniformBlock(UniformBlockIndex uniformBlockIndex, GLuint unifo
     onUniformBufferStateChange(
         gl::ProgramExecutable::DirtyBitType::DIRTY_BIT_UNIFORM_BLOCK_BINDING_0 +
         uniformBlockIndex.value);
+
+    onStateChange(angle::SubjectMessage::ProgramUniformBlockBindingUpdated);
 }
 
 void Program::setTransformFeedbackVaryings(const Context *context,
@@ -2400,4 +2402,21 @@ void Program::dumpProgramInfo(const Context *context) const
     INFO() << "Dumped program: " << path;
 }
 
+void Program::onPPOUniformBufferStateChange(ShaderType shaderType,
+                                            size_t uniformBufferIndex,
+                                            ProgramExecutable *ppoExecutable,
+                                            const ProgramPipelineUniformBlockIndexMap &blockMap)
+{
+    if (uniformBufferIndex >= mUniformBlockBindingMasks.size())
+    {
+        mUniformBlockBindingMasks.resize(uniformBufferIndex + 1, UniformBlockBindingMask());
+    }
+    for (size_t index : mUniformBlockBindingMasks[uniformBufferIndex])
+    {
+        if (getExecutable().getUniformBlocks()[index].isActive(shaderType))
+        {
+            ppoExecutable->mDirtyBits.set(blockMap[static_cast<uint32_t>(index)]);
+        }
+    }
+}
 }  // namespace gl

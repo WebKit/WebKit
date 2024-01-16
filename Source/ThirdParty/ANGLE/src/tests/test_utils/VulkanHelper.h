@@ -102,6 +102,8 @@ class VulkanHelper
                                         VkImageLayout oldLayout,
                                         VkImageLayout newLayout,
                                         VkSemaphore semaphore);
+    // Just signal the given semaphore
+    void signalSemaphore(VkSemaphore semaphore);
 
     // Performs a queue ownership transfer from VK_QUEUE_FAMILY_EXTERNAL on an
     // image owned by an external instance. The current image layout must be

@@ -8,6 +8,7 @@
 #include "libANGLE/renderer/cl/CLEventCL.h"
 
 #include "libANGLE/CLEvent.h"
+#include "libANGLE/cl_utils.h"
 
 namespace rx
 {
@@ -23,31 +24,35 @@ CLEventCL::~CLEventCL()
     }
 }
 
-cl_int CLEventCL::getCommandExecutionStatus(cl_int &executionStatus)
+angle::Result CLEventCL::getCommandExecutionStatus(cl_int &executionStatus)
 {
-    return mNative->getDispatch().clGetEventInfo(mNative, CL_EVENT_COMMAND_EXECUTION_STATUS,
-                                                 sizeof(executionStatus), &executionStatus,
-                                                 nullptr);
+    ANGLE_CL_TRY(mNative->getDispatch().clGetEventInfo(mNative, CL_EVENT_COMMAND_EXECUTION_STATUS,
+                                                       sizeof(executionStatus), &executionStatus,
+                                                       nullptr));
+    return angle::Result::Continue;
 }
 
-cl_int CLEventCL::setUserEventStatus(cl_int executionStatus)
+angle::Result CLEventCL::setUserEventStatus(cl_int executionStatus)
 {
-    return mNative->getDispatch().clSetUserEventStatus(mNative, executionStatus);
+    ANGLE_CL_TRY(mNative->getDispatch().clSetUserEventStatus(mNative, executionStatus));
+    return angle::Result::Continue;
 }
 
-cl_int CLEventCL::setCallback(cl::Event &event, cl_int commandExecCallbackType)
+angle::Result CLEventCL::setCallback(cl::Event &event, cl_int commandExecCallbackType)
 {
-    return mNative->getDispatch().clSetEventCallback(mNative, commandExecCallbackType, Callback,
-                                                     &event);
+    ANGLE_CL_TRY(mNative->getDispatch().clSetEventCallback(mNative, commandExecCallbackType,
+                                                           Callback, &event));
+    return angle::Result::Continue;
 }
 
-cl_int CLEventCL::getProfilingInfo(cl::ProfilingInfo name,
-                                   size_t valueSize,
-                                   void *value,
-                                   size_t *valueSizeRet)
+angle::Result CLEventCL::getProfilingInfo(cl::ProfilingInfo name,
+                                          size_t valueSize,
+                                          void *value,
+                                          size_t *valueSizeRet)
 {
-    return mNative->getDispatch().clGetEventProfilingInfo(mNative, cl::ToCLenum(name), valueSize,
-                                                          value, valueSizeRet);
+    ANGLE_CL_TRY(mNative->getDispatch().clGetEventProfilingInfo(mNative, cl::ToCLenum(name),
+                                                                valueSize, value, valueSizeRet));
+    return angle::Result::Continue;
 }
 
 std::vector<cl_event> CLEventCL::Cast(const cl::EventPtrs &events)

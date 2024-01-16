@@ -20,6 +20,7 @@
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/CLSampler.h"
+#include "libANGLE/cl_utils.h"
 
 namespace rx
 {
@@ -71,7 +72,7 @@ bool GetArgString(cl_kernel kernel,
 {
     size_t size = 0u;
     errorCode   = kernel->getDispatch().clGetKernelArgInfo(kernel, index, cl::ToCLenum(name), 0u,
-                                                         nullptr, &size);
+                                                           nullptr, &size);
     if (errorCode == CL_KERNEL_ARG_INFO_NOT_AVAILABLE)
     {
         errorCode = CL_SUCCESS;
@@ -126,7 +127,7 @@ CLKernelCL::~CLKernelCL()
     }
 }
 
-cl_int CLKernelCL::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
+angle::Result CLKernelCL::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
 {
     void *value = nullptr;
     if (argValue != nullptr)
@@ -164,30 +165,31 @@ cl_int CLKernelCL::setArg(cl_uint argIndex, size_t argSize, const void *argValue
     {
         argValue = &value;
     }
-    return mNative->getDispatch().clSetKernelArg(mNative, argIndex, argSize, argValue);
+    ANGLE_CL_TRY(mNative->getDispatch().clSetKernelArg(mNative, argIndex, argSize, argValue));
+    return angle::Result::Continue;
 }
 
-CLKernelImpl::Info CLKernelCL::createInfo(cl_int &errorCode) const
+angle::Result CLKernelCL::createInfo(CLKernelImpl::Info *infoOut) const
 {
+    cl_int errorCode       = CL_SUCCESS;
     const cl::Context &ctx = mKernel.getProgram().getContext();
-    Info info;
 
-    if (!GetKernelString(mNative, cl::KernelInfo::FunctionName, info.functionName, errorCode) ||
-        !GetKernelInfo(mNative, cl::KernelInfo::NumArgs, info.numArgs, errorCode) ||
+    if (!GetKernelString(mNative, cl::KernelInfo::FunctionName, infoOut->functionName, errorCode) ||
+        !GetKernelInfo(mNative, cl::KernelInfo::NumArgs, infoOut->numArgs, errorCode) ||
         (ctx.getPlatform().isVersionOrNewer(1u, 2u) &&
-         !GetKernelString(mNative, cl::KernelInfo::Attributes, info.attributes, errorCode)))
+         !GetKernelString(mNative, cl::KernelInfo::Attributes, infoOut->attributes, errorCode)))
     {
-        return Info{};
+        ANGLE_CL_RETURN_ERROR(errorCode);
     }
 
-    info.workGroups.resize(ctx.getDevices().size());
+    infoOut->workGroups.resize(ctx.getDevices().size());
     for (size_t index = 0u; index < ctx.getDevices().size(); ++index)
     {
         const cl_device_id device = ctx.getDevices()[index]->getImpl<CLDeviceCL>().getNative();
-        WorkGroupInfo &workGroup  = info.workGroups[index];
+        WorkGroupInfo &workGroup  = infoOut->workGroups[index];
 
         if ((ctx.getPlatform().isVersionOrNewer(1u, 2u) &&
-             ctx.getDevices()[index]->supportsBuiltInKernel(info.functionName) &&
+             ctx.getDevices()[index]->supportsBuiltInKernel(infoOut->functionName) &&
              !GetWorkGroupInfo(mNative, device, cl::KernelWorkGroupInfo::GlobalWorkSize,
                                workGroup.globalWorkSize, errorCode)) ||
             !GetWorkGroupInfo(mNative, device, cl::KernelWorkGroupInfo::WorkGroupSize,
@@ -202,16 +204,16 @@ CLKernelImpl::Info CLKernelCL::createInfo(cl_int &errorCode) const
             !GetWorkGroupInfo(mNative, device, cl::KernelWorkGroupInfo::PrivateMemSize,
                               workGroup.privateMemSize, errorCode))
         {
-            return Info{};
+            ANGLE_CL_RETURN_ERROR(errorCode);
         }
     }
 
-    info.args.resize(info.numArgs);
+    infoOut->args.resize(infoOut->numArgs);
     if (ctx.getPlatform().isVersionOrNewer(1u, 2u))
     {
-        for (cl_uint index = 0u; index < info.numArgs; ++index)
+        for (cl_uint index = 0u; index < infoOut->numArgs; ++index)
         {
-            ArgInfo &arg = info.args[index];
+            ArgInfo &arg = infoOut->args[index];
             if (!GetArgInfo(mNative, index, cl::KernelArgInfo::AddressQualifier,
                             arg.addressQualifier, errorCode) ||
                 !GetArgInfo(mNative, index, cl::KernelArgInfo::AccessQualifier, arg.accessQualifier,
@@ -222,12 +224,12 @@ CLKernelImpl::Info CLKernelCL::createInfo(cl_int &errorCode) const
                             errorCode) ||
                 !GetArgString(mNative, index, cl::KernelArgInfo::Name, arg.name, errorCode))
             {
-                return Info{};
+                ANGLE_CL_RETURN_ERROR(errorCode);
             }
         }
     }
 
-    return info;
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

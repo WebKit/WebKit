@@ -568,10 +568,6 @@ class Texture final : public RefCountObject<TextureID>,
     GLenum getImplementationColorReadFormat(const Context *context) const;
     GLenum getImplementationColorReadType(const Context *context) const;
 
-    bool isCompressedFormatEmulated(const Context *context,
-                                    TextureTarget target,
-                                    GLint level) const;
-
     // We pass the pack buffer and state explicitly so they can be overridden during capture.
     angle::Result getTexImage(const Context *context,
                               const PixelPackState &packState,

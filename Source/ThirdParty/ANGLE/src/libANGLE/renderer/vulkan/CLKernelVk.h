@@ -20,6 +20,10 @@ class CLKernelVk : public CLKernelImpl
   public:
     CLKernelVk(const cl::Kernel &kernel);
     ~CLKernelVk() override;
+
+    angle::Result setArg(cl_uint argIndex, size_t argSize, const void *argValue) override;
+
+    angle::Result createInfo(CLKernelImpl::Info *infoOut) const override;
 };
 
 }  // namespace rx
