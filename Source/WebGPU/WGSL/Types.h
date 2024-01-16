@@ -40,6 +40,19 @@ class TypeChecker;
 class TypeStore;
 struct Type;
 
+enum Packing : uint8_t {
+    Packed       = 1 << 0,
+    Unpacked     = 1 << 1,
+    Either       = Packed | Unpacked,
+
+    PStruct = 1 << 2,
+    Vec3   = 1 << 3,
+
+    PackedStruct = Packed | PStruct,
+    PackedVec3   = Packed | Vec3,
+};
+
+
 namespace Types {
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
@@ -257,6 +270,8 @@ struct Type : public std::variant<
     String toString() const;
     unsigned size() const;
     unsigned alignment() const;
+    Packing packing() const;
+    bool isConstructible() const;
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;

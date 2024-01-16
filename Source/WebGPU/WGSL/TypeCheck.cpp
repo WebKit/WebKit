@@ -347,6 +347,7 @@ void TypeChecker::visit(AST::Structure& structure)
         ASSERT_UNUSED(result, result.isNewEntry);
     }
     const Type* structType = m_types.structType(structure, WTFMove(fields));
+    structure.m_inferredType = structType;
     introduceType(structure.name(), structType);
 }
 

@@ -68,10 +68,6 @@ public:
     void setUsesPackArray() { m_usesPackArray = true; }
     void clearUsesPackArray() { m_usesPackArray = false; }
 
-    bool usesPackedStructs() const { return m_usesPackedStructs; }
-    void setUsesPackedStructs() { m_usesPackedStructs = true; }
-    void clearUsesPackedStructs() { m_usesPackedStructs = false; }
-
     bool usesUnpackArray() const { return m_usesUnpackArray; }
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
     void clearUsesUnpackArray() { m_usesUnpackArray = false; }
@@ -273,7 +269,6 @@ private:
     String m_source;
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
-    bool m_usesPackedStructs { false };
     bool m_usesUnpackArray { false };
     bool m_usesWorkgroupUniformLoad { false };
     bool m_usesDivision { false };

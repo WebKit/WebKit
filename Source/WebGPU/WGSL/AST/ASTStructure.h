@@ -33,6 +33,8 @@
 namespace WGSL {
 
 class AttributeValidator;
+class RewriteGlobalVariables;
+class TypeChecker;
 
 namespace AST {
 
@@ -52,6 +54,8 @@ enum class StructureRole : uint8_t {
 class Structure final : public Declaration {
     WGSL_AST_BUILDER_NODE(Structure);
     friend AttributeValidator;
+    friend RewriteGlobalVariables;
+    friend TypeChecker;
 
 public:
     using Ref = std::reference_wrapper<Structure>;
@@ -65,6 +69,7 @@ public:
     StructureMember::List& members() { return m_members; }
     Structure* original() const { return m_original; }
     Structure* packed() const { return m_packed; }
+    const Type* inferredType() const { return m_inferredType; }
 
     void setRole(StructureRole role) { m_role = role; }
 
@@ -95,6 +100,7 @@ private:
     StructureRole m_role;
     Structure* m_original;
     Structure* m_packed { nullptr };
+    const Type* m_inferredType { nullptr };
 
     // Computed properties
     bool m_hasSizeOrAlignmentAttributes { false };

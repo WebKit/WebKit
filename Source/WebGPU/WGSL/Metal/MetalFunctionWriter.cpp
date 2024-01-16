@@ -426,28 +426,6 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "}\n");
     }
-
-    if (m_callGraph.ast().usesPackedStructs()) {
-        m_callGraph.ast().clearUsesPackedStructs();
-
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __pack(T unpacked)\n");
-        m_stringBuilder.append(m_indent, "{\n");
-        {
-            IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return unpacked;\n");
-        }
-        m_stringBuilder.append(m_indent, "}\n\n");
-
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __unpack(T packed)\n");
-        m_stringBuilder.append(m_indent, "{\n");
-        {
-            IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return packed;\n");
-        }
-        m_stringBuilder.append(m_indent, "}\n\n");
-    }
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -573,7 +551,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
 void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
 {
-    if (structure.role() != AST::StructureRole::PackedResource)
+    if (structure.role() != AST::StructureRole::PackedResource || !structure.inferredType()->isConstructible())
         return;
 
     const String& packedName = structure.name();
@@ -586,7 +564,10 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, packedName, " packed;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
+            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+                m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
+            else
+                m_stringBuilder.append(m_indent, "packed.", name, " = unpacked.", name, ";\n");
         }
         m_stringBuilder.append(m_indent, "return packed;\n");
     }
@@ -599,7 +580,10 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
+            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+                m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
+            else
+                m_stringBuilder.append(m_indent, "unpacked.", name, " = packed.", name, ";\n");
         }
         m_stringBuilder.append(m_indent, "return unpacked;\n");
     }

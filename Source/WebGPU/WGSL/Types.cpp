@@ -430,6 +430,95 @@ unsigned Type::alignment() const
         });
 }
 
+Packing Type::packing() const
+{
+    if (auto* referenceType = std::get_if<Types::Reference>(this))
+        return referenceType->element->packing();
+
+    if (auto* structType = std::get_if<Types::Struct>(this)) {
+        if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
+            return Packing::PackedStruct;
+    } else if (auto* vectorType = std::get_if<Types::Vector>(this)) {
+        if (vectorType->size == 3)
+            return Packing::PackedVec3;
+    } else if (auto* arrayType = std::get_if<Types::Array>(this))
+        return arrayType->element->packing();
+
+    return Packing::Unpacked;
+}
+
+// https://www.w3.org/TR/WGSL/#constructible-types
+bool Type::isConstructible() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+                return true;
+            case Types::Primitive::Void:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector&) -> bool {
+            return true;
+        },
+        [&](const Matrix&) -> bool {
+            return true;
+        },
+        [&](const Array& array) -> bool {
+            return array.size.has_value() && array.element->isConstructible();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->isConstructible())
+                    return false;
+            }
+            return true;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TextureStorage&) -> bool {
+            return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Atomic&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return false;
+        });
+}
+
 bool isPrimitive(const Type* type, Primitive::Kind kind)
 {
     auto* primitive = std::get_if<Primitive>(type);
