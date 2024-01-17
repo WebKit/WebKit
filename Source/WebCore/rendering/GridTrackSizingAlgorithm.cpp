@@ -1623,7 +1623,7 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
 {
     GridAxis axis = gridAxisForDirection(m_direction);
     m_baselineAlignment.clear(axis);
-    m_baselineAlignment.setBlockFlow(m_renderGrid->style().writingMode());
+    m_baselineAlignment.setWritingMode(m_renderGrid->style().writingMode());
     BaselineItemsCache& baselineItemsCache = axis == GridAxis::GridColumnAxis ? m_columnBaselineItemsMap : m_rowBaselineItemsMap;
     BaselineItemsCache tmpBaselineItemsCache = baselineItemsCache;
     for (auto* child : tmpBaselineItemsCache.keys()) {
