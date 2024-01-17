@@ -1655,7 +1655,6 @@ webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ Imag
 webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 
-webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
 
