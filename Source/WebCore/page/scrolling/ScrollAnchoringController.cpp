@@ -361,13 +361,11 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 
     FloatSize adjustment = computeOffsetFromOwningScroller(*renderer) - m_lastOffsetForAnchorElement;
     if (!adjustment.isZero()) {
-#if PLATFORM(IOS_FAMILY)
         if (m_owningScrollableArea.isUserScrollInProgress()) {
             invalidateAnchorElement();
             updateAnchorElement();
             return;
         }
-#endif
         auto newScrollPosition = m_owningScrollableArea.scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
         RELEASE_LOG(ScrollAnchoring, "ScrollAnchoringController::updateScrollPosition() is main frame: %d, is main scroller: %d, adjusting from: (%d, %d) to: (%d, %d)",  frameView().frame().isMainFrame(), !m_owningScrollableArea.isRenderLayer(), m_owningScrollableArea.scrollPosition().x(), m_owningScrollableArea.scrollPosition().y(), newScrollPosition.x(), newScrollPosition.y());
         LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for scroller element: " << ValueOrNull(elementForScrollableArea(m_owningScrollableArea)) << " anchor node: " << *m_anchorElement << "adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);
