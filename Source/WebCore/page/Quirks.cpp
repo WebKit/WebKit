@@ -721,6 +721,22 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
 #endif
 }
 
+// cnn.com rdar://119640248
+bool Quirks::needsFullscreenObjectFitQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsFullscreenObjectFitQuirk)
+        m_needsFullscreenObjectFitQuirk = isDomain("cnn.com"_s);
+
+    return *m_needsFullscreenObjectFitQuirk;
+#else
+    return false;
+#endif
+}
+
 // FIXME: weChat <rdar://problem/74377902>
 bool Quirks::needsWeChatScrollingQuirk() const
 {
