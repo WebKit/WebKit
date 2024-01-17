@@ -38,6 +38,7 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
+#include "Quirks.h"
 #include "RenderSearchField.h"
 #include "RenderStyleSetters.h"
 #include "RenderTextControl.h"

@@ -66,6 +66,7 @@
 #include "PointerEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
+#include "Quirks.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
@@ -2274,6 +2275,31 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         element->didMoveToNewDocument(oldDocument, newDocument);
 }
 
+bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget& target)
+{
+    auto& eventNames = WebCore::eventNames();
+#if ENABLE(TOUCH_EVENTS)
+    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
+        if (eventType == eventNames.mousedownEvent || eventType == eventNames.mousemoveEvent || eventType == eventNames.mouseupEvent)
+            return true;
+    }
+#endif
+    UNUSED_PARAM(target);
+    return eventType == eventNames.touchstartEvent
+        || eventType == eventNames.touchmoveEvent
+        || eventType == eventNames.touchendEvent
+        || eventType == eventNames.touchcancelEvent
+        || eventType == eventNames.touchforcechangeEvent
+        || eventType == eventNames.pointeroverEvent
+        || eventType == eventNames.pointerenterEvent
+        || eventType == eventNames.pointerdownEvent
+        || eventType == eventNames.pointermoveEvent
+        || eventType == eventNames.pointerupEvent
+        || eventType == eventNames.pointeroutEvent
+        || eventType == eventNames.pointerleaveEvent
+        || eventType == eventNames.pointercancelEvent;
+}
+
 static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
@@ -2284,7 +2310,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     auto& eventNames = WebCore::eventNames();
     if (eventNames.isWheelEventType(eventType))
         targetNode->document().didAddWheelEventHandler(*targetNode);
-    else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
+    else if (isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didAddTouchEventHandler(*targetNode);
     else if (eventNames.isMouseClickRelatedEventType(eventType))
         targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
@@ -2296,7 +2322,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
+    if (isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
@@ -2324,7 +2350,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     auto& eventNames = WebCore::eventNames();
     if (eventNames.isWheelEventType(eventType))
         targetNode->document().didRemoveWheelEventHandler(*targetNode);
-    else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
+    else if (isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
     else if (eventNames.isMouseClickRelatedEventType(eventType))
         targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
@@ -2336,7 +2362,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
+    if (isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
@@ -2563,7 +2589,7 @@ void Node::defaultEventHandler(Event& event)
                 frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), *wheelEvent);
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    } else if (auto* touchEvent = dynamicDowncast<TouchEvent>(event); touchEvent && eventNames.isTouchRelatedEventType(eventType, *this)) {
+    } else if (auto* touchEvent = dynamicDowncast<TouchEvent>(event); touchEvent && isTouchRelatedEventType(eventType, *this)) {
         // Capture the target node's visibility state before dispatching touchStart.
         if (auto* element = dynamicDowncast<Element>(*this); element && eventType == eventNames.touchstartEvent) {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
@@ -2610,9 +2636,8 @@ bool Node::willRespondToMouseMoveEvents() const
 
 bool Node::willRespondToTouchEvents() const
 {
-    auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
-        return eventNames.isTouchRelatedEventType(type, *this);
+        return isTouchRelatedEventType(type, *this);
     });
 }
 
