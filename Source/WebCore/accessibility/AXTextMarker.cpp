@@ -487,8 +487,10 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction) const
         return { treeID(), objectID(), direction == AXDirection::Next ? offset() + 1 : offset() - 1 };
     }
     // offset() pointed to the last character in the given object's runs, so let's traverse to find the next object with runs.
-    if (RefPtr object = findObjectWithRuns(*this->isolatedObject(), direction))
-        return { object->treeID(), object->objectID(), direction == AXDirection::Next ? 0 : object->textRuns()->lastRunLength() };
+    if (RefPtr object = findObjectWithRuns(*this->isolatedObject(), direction)) {
+        RELEASE_ASSERT(direction == AXDirection::Next ? object->textRuns()->runLength(0) : object->textRuns()->lastRunLength());
+        return { object->treeID(), object->objectID(), direction == AXDirection::Next ? 1 : object->textRuns()->lastRunLength() };
+    }
 
     return { };
 }

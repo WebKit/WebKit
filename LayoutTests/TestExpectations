@@ -292,6 +292,9 @@ http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-privat
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Skip ]
 media/deactivate-audio-session.html [ Skip ]
 
+# To be removed after AccessibilityThreadTextApisEnabled is enabled by default.
+accessibility/ax-thread-text-apis [ Skip ]
+
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 fast/css/appearance-apple-pay-button.html [ Skip ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Skip ]

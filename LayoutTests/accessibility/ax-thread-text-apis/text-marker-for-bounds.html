@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This is a modern-style rewrite of mac/text-marker-for-bounds.html, and should replace it after AccessibilityThreadTextApisEnabled is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text">Text text text text text text text text text text.</div>
+
+<script>
+var output = "This tests that endTextMarkerForBounds and startTextMarkerForBounds work correctly.\n\n";
+
+if (window.accessibilityController) {
+    var text = accessibilityController.accessibleElementById("text");
+
+    var startMarker = text.startTextMarkerForBounds(text.x, text.y, text.width, text.height);
+    var endMarker = text.endTextMarkerForBounds(text.x, text.y, text.width, text.height);
+    // Get text range from boundary markers.
+    var rangeFromBounds = text.textMarkerRangeLength(text.textMarkerRangeForMarkers(startMarker, endMarker));
+    // Get text range from element.
+    var rangeFromElement = text.textMarkerRangeLength(text.textMarkerRangeForElement(text));
+
+    output += expect("rangeFromBounds", "rangeFromElement");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

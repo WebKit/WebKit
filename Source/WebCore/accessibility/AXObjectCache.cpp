@@ -205,6 +205,9 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 bool AXObjectCache::gForceDeferredSpellChecking = false;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+bool AXObjectCache::gAccessibilityThreadTextApisEnabled = false;
+#endif
 
 void AXObjectCache::enableAccessibility()
 {
@@ -258,6 +261,11 @@ AXObjectCache::AXObjectCache(Document& document)
         AXLOG("No pageID.");
 #endif
     ASSERT(isMainThread());
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (auto* frame = document.frame(); frame && frame->isMainFrame())
+        gAccessibilityThreadTextApisEnabled = document.settings().accessibilityThreadTextApisEnabled();
+#endif
 
     // If loading completed before the cache was created, loading progress will have been reset to zero.
     // Consider loading progress to be 100% in this case.

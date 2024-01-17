@@ -272,6 +272,9 @@ public:
     // Note: these may be called from a non-main thread concurrently as other readers.
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    static bool useAccessibilityThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
+#endif
 
     const Element* rootAXEditableElement(const Node*);
     bool nodeIsTextControl(const Node*);
@@ -674,6 +677,10 @@ private:
     WEBCORE_EXPORT static bool gAccessibilityEnabled;
     WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
     static bool gForceDeferredSpellChecking;
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    static bool gAccessibilityThreadTextApisEnabled;
+#endif
 
     HashSet<AXID> m_idsInUse;
 

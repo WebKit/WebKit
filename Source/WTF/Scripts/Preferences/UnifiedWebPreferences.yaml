@@ -186,6 +186,19 @@ AccessHandleEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+AccessibilityThreadTextApisEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Off Main-Thread Accessibility Text APIs"
+  humanReadableDescription: "Serve accessibility text APIs off the main-thread"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AggressiveTileRetentionEnabled:
   type: bool
   status: embedder

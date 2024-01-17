@@ -40,3 +40,6 @@ accessibility/mac/document-links.html [ Failure ]
 
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
+
+# When ENABLE(AX_THREAD_TEXT_APIS) is on by default, un-comment this.
+# accessibility/ax-thread-text-apis [ Pass ]
