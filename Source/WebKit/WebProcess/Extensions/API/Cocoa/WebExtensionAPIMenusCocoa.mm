@@ -229,13 +229,8 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         parameters.parentIdentifier = parentIdentifier.stringValue;
 
     if (NSString *title = properties[titleKey]) {
-        if (!title.length) {
+        if (!title.length && parameters.type != WebExtensionMenuItemType::Separator) {
             *outExceptionString = toErrorString(nil, titleKey, @"it must not be empty");
-            return false;
-        }
-
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, titleKey, @"it cannot be provided when type is 'separator'");
             return false;
         }
 
@@ -248,11 +243,6 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
             return false;
         }
 
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, onclickKey, @"it cannot be provided when type is 'separator'");
-            return false;
-        }
-
         outClickCallback = WebExtensionCallbackHandler::create(clickCallback);
     }
 
@@ -262,11 +252,6 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         iconDictionary = @{ @"16": iconPath };
 
     if (NSDictionary *iconPaths = objectForKey<NSDictionary>(properties, iconsKey)) {
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, iconsKey, @"it cannot be provided when type is 'separator'");
-            return false;
-        }
-
         for (NSString *key in iconPaths) {
             if (!WebExtensionAPIAction::isValidDimensionKey(key)) {
                 *outExceptionString = toErrorString(nil, iconsKey, @"'%@' in not a valid dimension", key);
@@ -284,11 +269,6 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         parameters.iconDictionaryJSON = encodeJSONString(iconDictionary);
 
     if (NSString *command = properties[commandKey]) {
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, commandKey, @"it cannot be provided when type is 'separator'");
-            return false;
-        }
-
         if (!command.length) {
             *outExceptionString = toErrorString(nil, commandKey, @"it must not be empty");
             return false;
@@ -297,23 +277,11 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         parameters.command = command;
     }
 
-    if (NSNumber *checked = properties[checkedKey]) {
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, checkedKey, @"it cannot be provided when type is 'separator'");
-            return false;
-        }
-
+    if (NSNumber *checked = properties[checkedKey])
         parameters.checked = checked.boolValue;
-    }
 
-    if (NSNumber *enabled = properties[enabledKey]) {
-        if (parameters.type == WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, enabledKey, @"it cannot be provided when type is 'separator'");
-            return false;
-        }
-
+    if (NSNumber *enabled = properties[enabledKey])
         parameters.enabled = enabled.boolValue;
-    }
 
     if (NSNumber *visible = properties[visibleKey])
         parameters.visible = visible.boolValue;

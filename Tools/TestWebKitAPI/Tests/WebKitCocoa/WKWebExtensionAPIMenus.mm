@@ -91,7 +91,6 @@ TEST(WKWebExtensionAPIMenus, Errors)
 
         @"browser.test.assertThrows(() => browser.menus.create({ type: 123, title: 'Test' }), /'type' is expected to be a string, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ type: 'bad', title: 'Test' }), /'type' value is invalid, because it must specify either 'normal', 'checkbox', 'radio', or 'separator'/i)",
-        @"browser.test.assertThrows(() => browser.menus.create({ type: 'separator', title: 'Test' }), /'title' value is invalid, because it cannot be provided when type is 'separator'/i)",
 
         @"browser.test.assertThrows(() => browser.menus.create({ command: 123, title: 'Test' }), /'command' is expected to be a string, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.menus.create({ command: '', title: 'Test' }), /'command' value is invalid, because it must not be empty/i)",
