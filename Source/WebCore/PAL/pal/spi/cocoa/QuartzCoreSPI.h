@@ -219,6 +219,17 @@ typedef enum {
 @property BOOL matchesTransform;
 @end
 
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+typedef uint32_t CAHighFrameRateReason;
+
+#define CAHighFrameRateReasonMake(component, code) \
+    (((uint32_t)((component) & 0xffff) << 16) | ((code) & 0xffff))
+
+@interface CAAnimation ()
+@property CAHighFrameRateReason highFrameRateReason;
+@end
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+
 #endif // __OBJC__
 
 #endif
