@@ -1261,9 +1261,6 @@ fast/backgrounds/gradient-background-on-subpixel-position.html [ ImageOnlyFailur
 # Difference of less 0.03% between images.
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
 
-# SVG
-webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
-
 # HTTP tests that time out:
 http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
 http/tests/local/blob/send-hybrid-blob.html
