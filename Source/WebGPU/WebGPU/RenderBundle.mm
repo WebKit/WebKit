@@ -29,13 +29,15 @@
 #import "APIConversions.h"
 
 @implementation ResourceUsageAndRenderStage
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding
 {
     if (!(self = [super init]))
         return nil;
 
     _usage = usage;
     _renderStages = renderStages;
+    _entryUsage = entryUsage;
+    _binding = binding;
 
     return self;
 }

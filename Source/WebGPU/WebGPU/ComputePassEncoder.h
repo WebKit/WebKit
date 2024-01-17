@@ -44,6 +44,8 @@ class ComputePipeline;
 class Device;
 class QuerySet;
 
+struct BindableResources;
+
 // https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
 class ComputePassEncoder : public WGPUComputePassEncoderImpl, public RefCounted<ComputePassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,6 +67,7 @@ public:
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
+
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setPipeline(const ComputePipeline&);
     void setLabel(String&&);
@@ -80,7 +83,7 @@ private:
     bool validatePopDebugGroup() const;
 
     void makeInvalid();
-    void executePreDispatchCommands();
+    void executePreDispatchCommands(id<MTLBuffer> = nil);
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
@@ -97,6 +100,7 @@ private:
     const ComputePipeline* m_pipeline { nullptr };
     Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    HashMap<uint32_t, Vector<const BindableResources*>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupResources;
 };
 
 } // namespace WebGPU

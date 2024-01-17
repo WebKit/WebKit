@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "BindableResource.h"
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
@@ -63,9 +64,105 @@ ComputePassEncoder::~ComputePassEncoder()
     [m_computeCommandEncoder endEncoding];
 }
 
-void ComputePassEncoder::executePreDispatchCommands()
+using EntryUsage = OptionSet<BindGroupEntryUsage>;
+struct EntryUsageData {
+    EntryUsage usage;
+    uint32_t bindGroup;
+};
+using EntryMap = HashMap<uint64_t, EntryUsageData>;
+static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, HashMap<void*, EntryMap>& usagesForResource, uint32_t bindGroup)
 {
-    if (!m_computeDynamicOffsets.size() || !m_pipeline)
+    uint32_t baseMipLevel = 0;
+    uint32_t baseArrayLayer = 0;
+    WGPUTextureAspect aspect = WGPUTextureAspect_All;
+    if (isTextureBindGroupEntryUsage(initialUsage)) {
+        ASSERT([mtlResource conformsToProtocol:@protocol(MTLTexture)]);
+        id<MTLTexture> textureView = (id<MTLTexture>)mtlResource;
+        if (id<MTLTexture> parentTexture = textureView.parentTexture) {
+            mtlResource = parentTexture;
+            ASSERT(textureView.parentRelativeLevel <= std::numeric_limits<uint32_t>::max() && textureView.parentRelativeSlice <= std::numeric_limits<uint32_t>::max());
+            if (baseMipLevel || baseArrayLayer) {
+                ASSERT(textureView.parentRelativeLevel == baseMipLevel);
+                ASSERT(textureView.parentRelativeSlice == baseArrayLayer);
+            }
+            baseMipLevel = static_cast<uint32_t>(textureView.parentRelativeLevel);
+            baseArrayLayer = static_cast<uint32_t>(textureView.parentRelativeSlice);
+        }
+    }
+
+    auto mapKey = BindGroup::makeEntryMapKey(baseMipLevel, baseArrayLayer, aspect);
+    EntryUsage resourceUsage = initialUsage;
+    auto* mtlResourceAddr = (__bridge void*)mtlResource;
+    EntryMap* entryMap = nullptr;
+    if (auto it = usagesForResource.find(mtlResourceAddr); it != usagesForResource.end()) {
+        entryMap = &it->value;
+        if (auto innerIt = it->value.find(mapKey); innerIt != it->value.end()) {
+            auto existingUsage = innerIt->value.usage;
+            resourceUsage.add(existingUsage);
+            if (innerIt->value.bindGroup != bindGroup) {
+                if ((initialUsage == BindGroupEntryUsage::StorageTextureWriteOnly && existingUsage == BindGroupEntryUsage::StorageTextureWriteOnly) || (initialUsage == BindGroupEntryUsage::StorageTextureReadWrite && existingUsage == BindGroupEntryUsage::StorageTextureReadWrite))
+                    return false;
+            }
+        } else
+            entryMap->set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup });
+    }
+
+    if (!BindGroup::allowedUsage(resourceUsage))
+        return false;
+
+    if (!entryMap) {
+        EntryMap entryMap;
+        entryMap.set(mapKey, EntryUsageData { .usage = resourceUsage, .bindGroup = bindGroup });
+        usagesForResource.set(mtlResourceAddr, entryMap);
+    }
+
+    return true;
+}
+
+void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer)
+{
+    if (!m_pipeline) {
+        makeInvalid();
+        return;
+    }
+
+    HashMap<void*, EntryMap> usagesForResource;
+    if (indirectBuffer)
+        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource, INT32_MAX);
+
+    auto& pipelineLayout = m_pipeline->pipelineLayout();
+    auto pipelineLayoutCount = pipelineLayout.numberOfBindGroupLayouts();
+    for (auto& kvp : m_bindGroupResources) {
+        auto bindGroupIndex = kvp.key;
+        if (bindGroupIndex >= pipelineLayoutCount)
+            continue;
+
+        auto& bindGroupLayout = pipelineLayout.bindGroupLayout(bindGroupIndex);
+        for (auto* bindGroupResources : kvp.value) {
+            for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
+                id<MTLResource> mtlResource = bindGroupResources->mtlResources[i];
+                auto& usageData = bindGroupResources->resourceUsages[i];
+                constexpr ShaderStage shaderStages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
+                std::optional<BindGroupLayout::StageMapValue> bindingAccess = std::nullopt;
+                for (auto shaderStage : shaderStages) {
+                    bindingAccess = bindGroupLayout.bindingAccessForBindingIndex(usageData.binding, shaderStage);
+                    if (bindingAccess)
+                        break;
+                }
+                if (!bindingAccess)
+                    continue;
+
+                if (!addResourceToActiveResources(mtlResource, usageData.usage, usagesForResource, bindGroupIndex)) {
+                    makeInvalid();
+                    return;
+                }
+            }
+        }
+    }
+
+    m_bindGroupResources.clear();
+
+    if (!m_computeDynamicOffsets.size())
         return;
 
     for (auto& kvp : m_bindGroupDynamicOffsets) {
@@ -101,7 +198,12 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
         return;
     }
 
-    executePreDispatchCommands();
+    if (&indirectBuffer.device() != m_device.ptr()) {
+        makeInvalid();
+        return;
+    }
+
+    executePreDispatchCommands(indirectBuffer.buffer());
     [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
@@ -177,11 +279,16 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
+    Vector<const BindableResources*> resourceList;
     for (const auto& resource : group.resources()) {
         if (resource.renderStages == BindGroup::MTLRenderStageCompute)
             [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+
+        ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+        resourceList.append(&resource);
     }
 
+    m_bindGroupResources.set(groupIndex, resourceList);
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 

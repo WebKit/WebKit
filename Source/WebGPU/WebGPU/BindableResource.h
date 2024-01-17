@@ -26,12 +26,40 @@
 #pragma once
 
 #import <Metal/Metal.h>
+#import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
 
 namespace WebGPU {
 
+enum class BindGroupEntryUsage {
+    Undefined = 0,
+    Input = 1 << 0,
+    Constant = 1 << 1,
+    Storage = 1 << 2,
+    StorageRead = 1 << 3,
+    Attachment = 1 << 4,
+    AttachmentRead = 1 << 5,
+    ConstantTexture = 1 << 6,
+    StorageTextureWriteOnly = 1 << 7,
+    StorageTextureRead = 1 << 8,
+    StorageTextureReadWrite = 1 << 9,
+};
+
+static constexpr auto isTextureBindGroupEntryUsage(OptionSet<BindGroupEntryUsage> usage)
+{
+    return usage.toRaw() >= static_cast<std::underlying_type<BindGroupEntryUsage>::type>(BindGroupEntryUsage::Attachment);
+}
+
+struct BindGroupEntryUsageData {
+    OptionSet<BindGroupEntryUsage> usage { BindGroupEntryUsage::Undefined };
+    uint32_t binding { 0 };
+    static constexpr uint32_t invalidBindingIndex = INT_MAX;
+    static constexpr BindGroupEntryUsage invalidBindGroupUsage = static_cast<BindGroupEntryUsage>(std::numeric_limits<std::underlying_type<BindGroupEntryUsage>::type>::max());
+};
+
 struct BindableResources {
     Vector<id<MTLResource>> mtlResources;
+    Vector<BindGroupEntryUsageData> resourceUsages;
     MTLResourceUsage usage;
     MTLRenderStages renderStages;
 };

@@ -1098,6 +1098,28 @@ function :textureLoad, {
     [T < ConcreteInteger, U < ConcreteInteger].(texture_depth_multisampled_2d, vec2[T], U) => f32,
 
     [T < ConcreteInteger].(texture_external, vec2[T]) => vec4[f32],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_2d<F,AM>, coords: vec2<C>) -> vec4<CF>
+    [F, AM, T < ConcreteInteger].(texture_storage_2d[F, AM], vec2[T]) => vec4[ChannelFormat[F]],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # A is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_2d_array<F,AM>, coords: vec2<C>, array_index: A) -> vec4<CF>
+    [F, AM, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, AM], vec2[T], S) => vec4[ChannelFormat[F]],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_3d<F,AM>, coords: vec2<C>) -> vec4<CF>
+    [F, AM, T < ConcreteInteger].(texture_storage_3d[F, AM], vec3[T]) => vec4[ChannelFormat[F]],
 }
 
 # 16.7.5

@@ -444,26 +444,32 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         }
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
-        uint64_t depthSlice = 0;
+        uint64_t depthSliceOrArrayLayer = 0;
+        auto textureDimension = texture.dimension();
         if (attachment.depthSlice) {
-            if (texture.dimension() != WGPUTextureViewDimension_3D)
+            if (textureDimension != WGPUTextureViewDimension_3D)
                 return RenderPassEncoder::createInvalid(*this, m_device);
-            depthSlice = *attachment.depthSlice;
-            if (depthSlice >= texture.depthOrArrayLayers())
+            depthSliceOrArrayLayer = *attachment.depthSlice;
+            if (depthSliceOrArrayLayer >= texture.depthOrArrayLayers())
                 return RenderPassEncoder::createInvalid(*this, m_device);
 
-            auto* bridgedTexture = (__bridge void*)texture.parentTexture();
-            uint64_t depthAndMipLevel = depthSlice | (static_cast<uint64_t>(texture.baseMipLevel()) << 32);
-            if (auto it = depthSlices.find(bridgedTexture); it != depthSlices.end()) {
-                auto addResult = it->value.add(depthAndMipLevel);
-                if (!addResult.isNewEntry)
-                    return RenderPassEncoder::createInvalid(*this, m_device);
-            } else
-                depthSlices.set(bridgedTexture, SliceSet { depthAndMipLevel });
-        } else if (texture.dimension() == WGPUTextureViewDimension_3D)
-            return RenderPassEncoder::createInvalid(*this, m_device);
+        } else {
+            if (textureDimension == WGPUTextureViewDimension_3D)
+                return RenderPassEncoder::createInvalid(*this, m_device);
+            depthSliceOrArrayLayer = texture.baseArrayLayer();
+        }
 
-        mtlAttachment.depthPlane = depthSlice;
+        auto* bridgedTexture = (__bridge void*)texture.parentTexture();
+        uint64_t depthAndMipLevel = depthSliceOrArrayLayer | (static_cast<uint64_t>(texture.baseMipLevel()) << 32);
+        if (auto it = depthSlices.find(bridgedTexture); it != depthSlices.end()) {
+            auto addResult = it->value.add(depthAndMipLevel);
+            if (!addResult.isNewEntry)
+                return RenderPassEncoder::createInvalid(*this, m_device);
+        } else
+            depthSlices.set(bridgedTexture, SliceSet { depthAndMipLevel });
+
+        mtlAttachment.depthPlane = textureDimension == WGPUTextureViewDimension_3D ? depthSliceOrArrayLayer : 0;
+        mtlAttachment.slice = 0;
         mtlAttachment.loadAction = loadAction(attachment.loadOp, attachment.storeOp);
         mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp, attachment.loadOp);
 

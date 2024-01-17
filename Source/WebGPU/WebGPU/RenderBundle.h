@@ -35,10 +35,12 @@ struct WGPURenderBundleImpl {
 };
 
 @interface ResourceUsageAndRenderStage : NSObject
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages;
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding;
 
 @property (nonatomic) MTLResourceUsage usage;
 @property (nonatomic) MTLRenderStages renderStages;
+@property (nonatomic) OptionSet<WebGPU::BindGroupEntryUsage> entryUsage;
+@property (nonatomic) uint32_t binding;
 @end
 
 @class RenderBundleICBWithResources;

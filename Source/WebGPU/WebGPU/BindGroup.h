@@ -43,6 +43,7 @@ class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static constexpr MTLRenderStages MTLRenderStageCompute = static_cast<MTLRenderStages>(0);
+    static constexpr MTLRenderStages MTLRenderStageUndefined = static_cast<MTLRenderStages>(MTLRenderStageFragment + 1);
     static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, Device& device)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), device));
@@ -65,6 +66,8 @@ public:
     const Vector<BindableResources>& resources() const { return m_resources; }
 
     Device& device() const { return m_device; }
+    static bool allowedUsage(const OptionSet<BindGroupEntryUsage>&);
+    static uint64_t makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);
 
 private:
     BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, Device&);

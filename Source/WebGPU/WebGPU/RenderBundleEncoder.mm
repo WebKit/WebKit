@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "BindableResource.h"
 #import "Buffer.h"
 #import "Device.h"
 #import "RenderBundle.h"
@@ -71,23 +72,27 @@ namespace WebGPU {
 static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline)
 {
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
-    constexpr auto maxStageValue = MTLRenderStageVertex | MTLRenderStageFragment;
-    static_assert(maxResourceUsageValue == 3 && maxStageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3 and MTLRenderStageVertex | MTLRenderStageFragment == 3");
+    constexpr auto maxStageValue = (MTLRenderStageVertex | MTLRenderStageFragment) + 1;
+    static_assert(maxResourceUsageValue == 3 && maxStageValue == 4, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3 and MTLRenderStageVertex | MTLRenderStageFragment == 3");
     Vector<id<MTLResource>> stageResources[maxStageValue][maxResourceUsageValue];
+    Vector<BindGroupEntryUsageData> stageResourceUsages[maxStageValue][maxResourceUsageValue];
 
     for (id<MTLResource> r : resources) {
         ResourceUsageAndRenderStage *usageAndStage = [resources objectForKey:r];
         stageResources[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(r);
+        stageResourceUsages[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(BindGroupEntryUsageData { .usage = usageAndStage.entryUsage, .binding = usageAndStage.binding });
     }
 
     RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline];
 
     for (size_t stage = 0; stage < maxStageValue; ++stage) {
         for (size_t i = 0; i < maxResourceUsageValue; ++i) {
-            Vector<id<MTLResource>> &v = stageResources[stage][i];
+            auto &v = stageResources[stage][i];
+            auto &u = stageResourceUsages[stage][i];
             if (v.size()) {
                 renderBundle.resources->append(BindableResources {
                     .mtlResources = WTFMove(v),
+                    .resourceUsages = WTFMove(u),
                     .usage = static_cast<MTLResourceUsage>(i + 1),
                     .renderStages = static_cast<MTLRenderStages>(stage + 1)
                 });
@@ -159,12 +164,16 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
     if (m_renderPassEncoder) {
         if (resource.renderStages)
             [m_renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:resource.usage stages:resource.renderStages];
+        ASSERT(resource.entryUsage.hasExactlyOneBitSet());
+        m_renderPassEncoder->addResourceToActiveResources(mtlResource, *resource.entryUsage.toSingleValue());
         return;
     }
 
     if (ResourceUsageAndRenderStage *existingResource = [resources objectForKey:mtlResource]) {
         existingResource.usage |= resource.usage;
         existingResource.renderStages |= resource.renderStages;
+        existingResource.entryUsage |= resource.entryUsage;
+        existingResource.binding = resource.binding;
     } else
         [resources setObject:resource forKey:mtlResource];
 }
@@ -176,7 +185,7 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         return;
     }
 
-    return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage]);
+    return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex]);
 }
 
 void RenderBundleEncoder::executePreDrawCommands()
@@ -526,9 +535,11 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         m_bindGroupDynamicOffsets->set(groupIndex, WTFMove(*dynamicOffsets));
 
     for (const auto& resource : group.resources()) {
-        ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages];
-        for (id<MTLResource> mtlResource : resource.mtlResources)
-            addResource(m_resources, mtlResource, usageAndRenderStage);
+        ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+        for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
+            ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages entryUsage:resource.resourceUsages[i].usage binding:resource.resourceUsages[i].binding];
+            addResource(m_resources, resource.mtlResources[i], usageAndRenderStage);
+        }
     }
 
     if (group.vertexArgumentBuffer()) {

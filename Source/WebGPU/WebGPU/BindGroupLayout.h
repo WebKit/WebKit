@@ -41,7 +41,8 @@ namespace WebGPU {
 enum class ShaderStage {
     Vertex = 0,
     Fragment = 1,
-    Compute = 2
+    Compute = 2,
+    Undefined = 3
 };
 
 class Device;
