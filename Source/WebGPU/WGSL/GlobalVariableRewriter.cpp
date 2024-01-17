@@ -115,10 +115,12 @@ private:
     AST::Expression& bufferLengthReferenceType();
 
     // atomics
-    void initializeAtomics(AST::Function&, const Vector<AST::Variable*>&, size_t);
+    void initializeAtomics(AST::Function&, const UsedPrivateGlobals&, size_t);
     void insertWorkgroupBarrier(AST::Function&, size_t);
     AST::Identifier& findOrInsertLocalInvocationIndex(AST::Function&);
-    AST::Statement::List atomicStoreInitialValue(const Vector<AST::Variable*>&);
+    AST::Statement::List atomicStoreInitialValue(const UsedPrivateGlobals&);
+    void atomicStoreInitialValue(AST::Expression&, AST::Statement::List&, unsigned);
+    bool containsAtomic(const Type*);
 
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
@@ -1406,28 +1408,25 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
 
 void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
 {
-    Vector<AST::Variable*> atomics;
     auto initialBodySize = function.body().statements().size();
     for (auto* global : usedPrivateGlobals) {
-        if (std::holds_alternative<Types::Atomic>(*global->declaration->storeType()))
-            atomics.append(global->declaration);
-
         auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), *global->declaration);
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
 
-    if (atomics.size()) {
-        auto offset = function.body().statements().size() - initialBodySize;
-        initializeAtomics(function, atomics, offset);
-    }
+    auto offset = function.body().statements().size() - initialBodySize;
+    initializeAtomics(function, usedPrivateGlobals, offset);
 }
 
-void RewriteGlobalVariables::initializeAtomics(AST::Function& function, const Vector<AST::Variable*>& atomics, size_t offset)
+void RewriteGlobalVariables::initializeAtomics(AST::Function& function, const UsedPrivateGlobals& globals, size_t offset)
 {
+    auto initializations = atomicStoreInitialValue(globals);
+    if (initializations.isEmpty())
+        return;
+
     insertWorkgroupBarrier(function, offset);
 
     auto localInvocationIndex = findOrInsertLocalInvocationIndex(function);
-    auto initializations = atomicStoreInitialValue(atomics);
 
     auto& testLhs = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
@@ -1512,40 +1511,171 @@ AST::Identifier& RewriteGlobalVariables::findOrInsertLocalInvocationIndex(AST::F
     return parameter.name();
 }
 
-AST::Statement::List RewriteGlobalVariables::atomicStoreInitialValue(const Vector<AST::Variable*>& atomics)
+AST::Statement::List RewriteGlobalVariables::atomicStoreInitialValue(const UsedPrivateGlobals& globals)
 {
     AST::Statement::List statements;
-    for (auto* variable : atomics) {
-        auto& callee = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("atomicStore"_s));
-        callee.m_inferredType = m_callGraph.ast().types().bottomType();
+    for (auto* global : globals) {
+        auto& variable = *global->declaration;
+        auto* type = variable.storeType();
+        if (!containsAtomic(type))
+            continue;
 
-        auto& atomic = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(variable->name()));
-        atomic.m_inferredType = m_callGraph.ast().types().bottomType();
-
-        auto& pointer = m_callGraph.ast().astBuilder().construct<AST::UnaryExpression>(
+        auto& target = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
-            atomic,
-            AST::UnaryOperation::AddressOf
+            AST::Identifier::make(variable.name().id())
         );
-        pointer.m_inferredType = m_callGraph.ast().types().bottomType();
-
-        auto& value = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(SourceSpan::empty(), 0);
-        value.m_inferredType = m_callGraph.ast().types().abstractIntType();
-
-        auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
-            SourceSpan::empty(),
-            callee,
-            AST::Expression::List { pointer, value }
-        );
-        call.m_inferredType = m_callGraph.ast().types().voidType();
-
-        auto& callStatement = m_callGraph.ast().astBuilder().construct<AST::CallStatement>(
-            SourceSpan::empty(),
-            call
-        );
-        statements.append(AST::Statement::Ref(callStatement));
+        target.m_inferredType = type;
+        atomicStoreInitialValue(target, statements, 0);
     }
     return statements;
+}
+
+bool RewriteGlobalVariables::containsAtomic(const Type* type)
+{
+    if (std::holds_alternative<Types::Atomic>(*type))
+        return true;
+    if (auto* arrayType = std::get_if<Types::Array>(type))
+        return containsAtomic(arrayType->element);
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        for (const auto& [_, fieldType] : structType->fields) {
+            if (containsAtomic(fieldType))
+                return true;
+        }
+        return false;
+    }
+    return false;
+}
+
+void RewriteGlobalVariables::atomicStoreInitialValue(AST::Expression& target, AST::Statement::List& statements, unsigned arrayDepth)
+{
+
+    auto* type = target.inferredType();
+    if (auto* arrayType = std::get_if<Types::Array>(type)) {
+        RELEASE_ASSERT(arrayType->size.has_value());
+        String indexVariableName = makeString("__i", String::number(arrayDepth));
+
+        auto& indexVariable = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+            SourceSpan::empty(),
+            AST::Identifier::make(indexVariableName)
+        );
+        indexVariable.m_inferredType = m_callGraph.ast().types().u32Type();
+
+        auto& arrayAccess = m_callGraph.ast().astBuilder().construct<AST::IndexAccessExpression>(
+            SourceSpan::empty(),
+            target,
+            indexVariable
+        );
+        arrayAccess.m_inferredType = arrayType->element;
+
+        AST::Statement::List forBodyStatements;
+        atomicStoreInitialValue(arrayAccess, forBodyStatements, arrayDepth + 1);
+
+        auto& zero = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
+            SourceSpan::empty(),
+            0
+        );
+        zero.m_inferredType = m_callGraph.ast().types().u32Type();
+
+        auto& forVariable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
+            SourceSpan::empty(),
+            AST::VariableFlavor::Var,
+            AST::Identifier::make(indexVariableName),
+            nullptr,
+            &zero
+        );
+
+        auto& forInitializer = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+            SourceSpan::empty(),
+            forVariable
+        );
+
+        auto& arrayLength = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
+            SourceSpan::empty(),
+            *arrayType->size
+        );
+        arrayLength.m_inferredType = m_callGraph.ast().types().u32Type();
+
+        auto& forTest = m_callGraph.ast().astBuilder().construct<AST::BinaryExpression>(
+            SourceSpan::empty(),
+            indexVariable,
+            arrayLength,
+            AST::BinaryOperation::LessThan
+        );
+        forTest.m_inferredType = m_callGraph.ast().types().boolType();
+
+        auto& one = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
+            SourceSpan::empty(),
+            1
+        );
+        one.m_inferredType = m_callGraph.ast().types().u32Type();
+
+        auto& forUpdate = m_callGraph.ast().astBuilder().construct<AST::CompoundAssignmentStatement>(
+            SourceSpan::empty(),
+            indexVariable,
+            one,
+            AST::BinaryOperation::Add
+        );
+
+        auto& forBody = m_callGraph.ast().astBuilder().construct<AST::CompoundStatement>(
+            SourceSpan::empty(),
+            WTFMove(forBodyStatements)
+        );
+
+        auto& forStatement = m_callGraph.ast().astBuilder().construct<AST::ForStatement>(
+            SourceSpan::empty(),
+            &forInitializer,
+            &forTest,
+            &forUpdate,
+            forBody
+        );
+
+        statements.append(AST::Statement::Ref(forStatement));
+        return;
+    }
+
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        for (auto& member : structType->structure.members()) {
+            auto* fieldType = member.type().inferredType();
+            if (!containsAtomic(fieldType))
+                continue;
+
+            auto& fieldAccess = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(
+                SourceSpan::empty(),
+                target,
+                AST::Identifier::make(member.name())
+            );
+            fieldAccess.m_inferredType = fieldType;
+            atomicStoreInitialValue(fieldAccess, statements, arrayDepth);
+        }
+        return;
+    }
+
+    RELEASE_ASSERT(std::holds_alternative<Types::Atomic>(*type));
+    auto& callee = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("atomicStore"_s));
+    callee.m_inferredType = m_callGraph.ast().types().bottomType();
+
+    auto& pointer = m_callGraph.ast().astBuilder().construct<AST::UnaryExpression>(
+        SourceSpan::empty(),
+        target,
+        AST::UnaryOperation::AddressOf
+    );
+    pointer.m_inferredType = m_callGraph.ast().types().bottomType();
+
+    auto& value = m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(SourceSpan::empty(), 0);
+    value.m_inferredType = m_callGraph.ast().types().abstractIntType();
+
+    auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
+        SourceSpan::empty(),
+        callee,
+        AST::Expression::List { pointer, value }
+    );
+    call.m_inferredType = m_callGraph.ast().types().voidType();
+
+    auto& callStatement = m_callGraph.ast().astBuilder().construct<AST::CallStatement>(
+        SourceSpan::empty(),
+        call
+    );
+    statements.append(AST::Statement::Ref(callStatement));
 }
 
 void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* variable)
