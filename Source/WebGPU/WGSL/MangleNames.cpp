@@ -84,6 +84,8 @@ public:
     void visit(AST::Variable&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::LoopStatement&) override;
+    void visit(AST::Continuing&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::FieldAccessExpression&) override;
 
@@ -172,6 +174,18 @@ void NameManglerVisitor::visit(AST::ForStatement& statement)
 {
     ContextScope forScope(this);
     AST::Visitor::visit(statement);
+}
+
+void NameManglerVisitor::visit(AST::LoopStatement& statement)
+{
+    ContextScope loopScope(this);
+    AST::Visitor::visit(statement);
+}
+
+void NameManglerVisitor::visit(AST::Continuing& continuing)
+{
+    ContextScope continuingScope(this);
+    AST::Visitor::visit(continuing);
 }
 
 void NameManglerVisitor::visit(AST::IdentifierExpression& identifier)
