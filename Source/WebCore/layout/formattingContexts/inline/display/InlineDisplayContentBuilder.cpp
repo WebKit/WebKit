@@ -997,19 +997,19 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
         if (!displayBox.isText())
             continue;
 
-        auto& style = displayBox.style();
-        auto textDecorations = style.textDecorationsInEffect();
+        auto& parentStyle = displayBox.layoutBox().parent().style();
+        auto textDecorations = parentStyle.textDecorationsInEffect();
         if (!textDecorations)
             continue;
 
         auto decorationOverflow = [&] {
             if (!textDecorations.contains(TextDecorationLine::Underline))
-                return visualOverflowForDecorations(style);
+                return visualOverflowForDecorations(parentStyle);
 
             if (!logicalBottomForTextDecoration)
                 logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
             auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
-            return visualOverflowForDecorations(style, m_displayLine.baselineType(), { displayBox.height(), textRunLogicalOffsetFromLineBottom });
+            return visualOverflowForDecorations(parentStyle, m_displayLine.baselineType(), { displayBox.height(), textRunLogicalOffsetFromLineBottom });
         }();
 
         if (!decorationOverflow.isEmpty()) {
