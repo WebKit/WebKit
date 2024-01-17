@@ -1637,13 +1637,10 @@ int Element::scrollHeight()
     return 0;
 }
 
-inline bool shouldObtainBoundsFromSVGModel(const Element* element)
+inline RefPtr<const SVGElement> elementWithSVGLayoutBox(const Element& element)
 {
-    ASSERT(element);
-    if (RefPtr svg = dynamicDowncast<SVGElement>(element))
-        return svg->hasAssociatedSVGLayoutBox();
-
-    return false;
+    RefPtr svg = dynamicDowncast<SVGElement>(element);
+    return svg && svg->hasAssociatedSVGLayoutBox() ? svg : nullptr;
 }
 
 inline bool shouldObtainBoundsFromBoxModel(const Element* element)
@@ -1674,10 +1671,8 @@ IntRect Element::boundsInRootViewSpace()
 
     Vector<FloatQuad> quads;
 
-    if (shouldObtainBoundsFromSVGModel(this)) {
-        // Get the bounding rectangle from the SVG model.
-        SVGElement& svgElement = downcast<SVGElement>(*this);
-        if (auto localRect = svgElement.getBoundingBox())
+    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+        if (auto localRect = svgElement->getBoundingBox())
             quads.append(checkedRenderer()->localToAbsoluteQuad(*localRect));
     } else if (shouldObtainBoundsFromBoxModel(this)) {
         // Get the bounding rectangle from the box model.
@@ -1740,10 +1735,8 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
         return LayoutRect();
 
     LayoutRect result;
-    if (shouldObtainBoundsFromSVGModel(this)) {
-        // Get the bounding rectangle from the SVG model.
-        SVGElement& svgElement = downcast<SVGElement>(*this);
-        if (auto localRect = svgElement.getBoundingBox())
+    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+        if (auto localRect = svgElement->getBoundingBox())
             result = LayoutRect(checkedRenderer()->localToAbsoluteQuad(*localRect, UseTransforms, &includesFixedPositionElements).boundingBox());
     } else {
         CheckedPtr renderer = this->renderer();
@@ -1845,8 +1838,8 @@ Ref<DOMRectList> Element::getClientRects()
 
     Vector<FloatQuad> quads;
 
-    if (shouldObtainBoundsFromSVGModel(this)) {
-        if (auto localRect = downcast<SVGElement>(*this).getBoundingBox())
+    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+        if (auto localRect = svgElement->getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = WTFMove(pair.value().first);
@@ -1867,8 +1860,8 @@ std::optional<std::pair<CheckedPtr<RenderObject>, FloatRect>> Element::boundingA
 {
     CheckedPtr<RenderObject> renderer = this->renderer();
     Vector<FloatQuad> quads;
-    if (shouldObtainBoundsFromSVGModel(this)) {
-        if (auto localRect = downcast<SVGElement>(*this).getBoundingBox())
+    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+        if (auto localRect = svgElement->getBoundingBox())
             quads.append(renderer->localToAbsoluteQuad(*localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = WTFMove(pair.value().first);
