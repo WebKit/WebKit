@@ -69,7 +69,6 @@
 #import <WebCore/HTMLScriptElement.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/LocalDOMWindow.h>
-#import <WebCore/NameNodeList.h>
 #import <WebCore/NativeNodeFilter.h>
 #import <WebCore/NodeIterator.h>
 #import <WebCore/NodeList.h>
