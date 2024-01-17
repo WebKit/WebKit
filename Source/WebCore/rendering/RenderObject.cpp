@@ -220,6 +220,12 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
+bool RenderObject::isBlockBox() const
+{
+    // A block-level box that is also a block container.
+    return isBlockLevelBox() && isBlockContainer();
+}
+
 bool RenderObject::isBlockContainer() const
 {
     auto display = style().display();
