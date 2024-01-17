@@ -37,6 +37,7 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
 SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostable);
+SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostingHandle);
 SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostingUpdateCoordinator);
 #endif
 
@@ -76,7 +77,8 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
 #endif
     };
 #if USE(EXTENSIONKIT)
-    if (options.useHostable && [get_SEHostableClass() respondsToSelector:@selector(createHostableWithOptions:error:)]) {
+    if (options.useHostable) {
+        // Note: this reads like a leak, but the object returned from createHostableWithOptions should not be adopted.
         layerHostingContext->m_hostable = [get_SEHostableClass() createHostableWithOptions:contextOptions error:nil];
         return layerHostingContext;
     }
@@ -127,9 +129,6 @@ LayerHostingContext::LayerHostingContext()
 
 LayerHostingContext::~LayerHostingContext()
 {
-#if USE(EXTENSIONKIT)
-    [m_hostingUpdateCoordinator commit];
-#endif
 }
 
 void LayerHostingContext::setRootLayer(CALayer *rootLayer)
@@ -156,7 +155,7 @@ LayerHostingContextID LayerHostingContext::contextID() const
 {
 #if USE(EXTENSIONKIT)
     if (auto xpcDictionary = xpcRepresentation())
-        return xpc_dictionary_get_uint64(xpcDictionary.get(), "cid");
+        return xpc_dictionary_get_uint64(xpcDictionary.get(), contextIDKey);
 #endif
     return [m_context contextId];
 }
@@ -191,14 +190,7 @@ bool LayerHostingContext::colorMatchUntaggedContent() const
 void LayerHostingContext::setFencePort(mach_port_t fencePort)
 {
 #if USE(EXTENSIONKIT)
-    if (m_hostable) {
-        auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_mach_send(xpcRepresentation.get(), "p", fencePort);
-        [m_hostingUpdateCoordinator commit];
-        m_hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
-        [m_hostingUpdateCoordinator addHostable:m_hostable.get()];
-        return;
-    }
+    ASSERT(!m_hostable);
 #endif
     [m_context setFencePort:fencePort];
 }
@@ -226,10 +218,19 @@ OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
     return [[m_hostable handle] xpcRepresentation];
 }
 
-void LayerHostingContext::commit()
+RetainPtr<_SEHostingUpdateCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
-    [m_hostingUpdateCoordinator commit];
-    m_hostingUpdateCoordinator = nullptr;
+    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
+    return adoptNS([alloc_SEHostingUpdateCoordinatorInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
+}
+
+RetainPtr<_SEHostingHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
+{
+    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
+    xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
+    return adoptNS([alloc_SEHostingHandleInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
 }
 #endif
 

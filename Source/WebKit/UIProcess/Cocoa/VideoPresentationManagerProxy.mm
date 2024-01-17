@@ -61,7 +61,7 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
 #if USE(EXTENSIONKIT)
-#import "ExtensionKitSoftlink.h"
+#import "ExtensionKitSoftLink.h"
 #endif
 
 @interface WKLayerHostView : PlatformView
@@ -75,7 +75,6 @@
 #if USE(EXTENSIONKIT)
 @public
     RetainPtr<_SEHostingView> _hostingView;
-    RetainPtr<_SEHostingUpdateCoordinator> _hostingUpdateCoordinator;
 #endif
 }
 
@@ -87,14 +86,6 @@
 - (CALayer *)makeBackingLayer
 {
     return adoptNS([[CALayerHost alloc] init]).autorelease();
-}
-#endif
-
-#if USE(EXTENSIONKIT)
-- (void)dealloc
-{
-    [_hostingUpdateCoordinator commit];
-    [super dealloc];
 }
 #endif
 
@@ -732,27 +723,23 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 #endif
         model->setLayerHostView(view);
 
-        [view layer].masksToBounds = NO;
-        [view layer].name = @"WKLayerHostView layer";
-        [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+#if USE(EXTENSIONKIT)
+        auto hostingView = adoptNS([[_SEHostingView alloc] init]);
+        view->_hostingView = hostingView;
+        [view addSubview:hostingView.get()];
+        auto layer = [hostingView layer];
+#else
+        auto layer = [view layer];
+#endif
+        layer.masksToBounds = NO;
+        layer.name = @"WKLayerHostView layer";
+        layer.frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
     }
 
 #if USE(EXTENSIONKIT)
-    if (!view->_hostingView) {
-        auto pid = m_page->process().processPool().gpuProcess()->processID();
-        auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_uint64(xpcRepresentation.get(), "pid", pid);
-        xpc_dictionary_set_uint64(xpcRepresentation.get(), "cid", videoLayerID);
-        auto handle = adoptNS([alloc_SEHostingHandleInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
-        auto hostingView = adoptNS([[_SEHostingView alloc] init]);
-        [hostingView setHandle:handle.get()];
-        view->_hostingView = hostingView;
-        [view addSubview:hostingView.get()];
-
-        [hostingView layer].masksToBounds = NO;
-        [hostingView layer].name = @"WKLayerHostView layer";
-        [hostingView layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
-    }
+    auto pid = m_page->process().processPool().gpuProcess()->processID();
+    auto handle = LayerHostingContext::createHostingHandle(pid, videoLayerID);
+    [view->_hostingView setHandle:handle.get()];
 #else
     [view setContextID:videoLayerID];
 #endif
@@ -1227,13 +1214,13 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
 #if USE(EXTENSIONKIT)
     RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
     if (view && view->_hostingView) {
-        if (!view->_hostingUpdateCoordinator) {
-            auto hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() init]);
-            [hostingUpdateCoordinator addHostingView:view->_hostingView.get()];
-            view->_hostingUpdateCoordinator = hostingUpdateCoordinator;
-        }
-        OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [view->_hostingUpdateCoordinator xpcRepresentation];
-        fenceSendRight = MachSendRight::adopt(xpc_dictionary_copy_mach_send(xpcRepresentationHostingCoordinator.get(), "p"));
+        auto hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() init]);
+        [hostingUpdateCoordinator addHostingView:view->_hostingView.get()];
+        OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [hostingUpdateCoordinator xpcRepresentation];
+        fenceSendRight = MachSendRight::adopt(xpc_dictionary_copy_mach_send(xpcRepresentationHostingCoordinator.get(), machPortKey));
+        m_page->send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)));
+        [hostingUpdateCoordinator commit];
+        return;
     }
 #else
     fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);

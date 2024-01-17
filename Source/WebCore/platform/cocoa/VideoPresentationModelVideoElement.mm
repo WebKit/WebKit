@@ -223,7 +223,6 @@ void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& siz
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
     m_videoElement->setVideoLayerSizeFenced(size, WTFMove(fence));
     m_videoElement->setVideoFullscreenFrame({ { }, size });
-
 }
 
 void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
