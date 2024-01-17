@@ -32,4 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/http-windows-1250-at-charset-windows-1253.windows1250.css.headers
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/no-decl-ascii-only.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/no-decl.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/utf8-bom-http-windows-1251.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/utf8-bom-http-windows-1251.css.headers
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/support/utf8-bom.css

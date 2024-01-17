@@ -1,0 +1,16 @@
+
+PASS Plain var()
+PASS Whole-value block with var()
+PASS Whole-value block with var() (spaces)
+FAIL Trailing block, leading var() assert_equals: expected "rgb(2, 2, 2)" but got "var(--x) { }"
+FAIL Leading block, trailing var() assert_equals: expected "rgb(2, 2, 2)" but got "{ } var(--x)"
+FAIL In-block var() with trailing token assert_equals: expected "rgb(2, 2, 2)" but got "{ var(--x) } A"
+FAIL In-block var() with leading token assert_equals: expected "rgb(2, 2, 2)" but got "A { var(--x) }"
+PASS Plain var() (custom property)
+PASS Whole-value block with var() (custom property)
+PASS Whole-value block with var() (spaces, custom property)
+PASS Trailing block, leading var() (custom property)
+PASS Leading block, trailing var() (custom property)
+PASS In-block var() with trailing token (custom property)
+PASS In-block var() with leading token (custom property)
+
