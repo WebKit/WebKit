@@ -202,10 +202,6 @@ void ProcessLauncher::launchProcess()
 
             launcher->m_xpcConnection = WTFMove(xpcConnection);
             launcher->m_process = WTFMove(process);
-            if (!launcher->m_xpcConnection) {
-                NSLog(@"Failed to create XPC connection, error = %@", error);
-                return;
-            }
             launcher->finishLaunchingProcess(name.characters());
         });
     };
@@ -225,9 +221,7 @@ void ProcessLauncher::finishLaunchingProcess(const char* name)
     uuid_t uuid;
     uuid_generate(uuid);
 
-#if !USE(EXTENSIONKIT)
     xpc_connection_set_oneshot_instance(m_xpcConnection.get(), uuid);
-#endif
 
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
