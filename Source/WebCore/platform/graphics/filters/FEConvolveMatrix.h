@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class EdgeModeType {
+enum class EdgeModeType : uint8_t {
     Unknown,
     Duplicate,
     Wrap,
@@ -88,20 +88,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::EdgeModeType> {
-    using values = EnumValues<
-        WebCore::EdgeModeType,
-
-        WebCore::EdgeModeType::Unknown,
-        WebCore::EdgeModeType::Duplicate,
-        WebCore::EdgeModeType::Wrap,
-        WebCore::EdgeModeType::None
-    >;
-};
-
-} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEConvolveMatrix)

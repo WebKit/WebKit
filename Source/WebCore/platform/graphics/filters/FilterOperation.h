@@ -403,28 +403,3 @@ SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BasicComponentTransferFilterOperation, is
 SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(InvertLightnessFilterOperation, type() == WebCore::FilterOperation::Type::AppleInvertLightness)
 SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(BlurFilterOperation, type() == WebCore::FilterOperation::Type::Blur)
 SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(DropShadowFilterOperation, type() == WebCore::FilterOperation::Type::DropShadow)
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FilterOperation::Type> {
-    using values = EnumValues<
-        WebCore::FilterOperation::Type,
-        WebCore::FilterOperation::Type::Reference,
-        WebCore::FilterOperation::Type::Grayscale,
-        WebCore::FilterOperation::Type::Sepia,
-        WebCore::FilterOperation::Type::Saturate,
-        WebCore::FilterOperation::Type::HueRotate,
-        WebCore::FilterOperation::Type::Invert,
-        WebCore::FilterOperation::Type::AppleInvertLightness,
-        WebCore::FilterOperation::Type::Opacity,
-        WebCore::FilterOperation::Type::Brightness,
-        WebCore::FilterOperation::Type::Contrast,
-        WebCore::FilterOperation::Type::Blur,
-        WebCore::FilterOperation::Type::DropShadow,
-        WebCore::FilterOperation::Type::Passthrough,
-        WebCore::FilterOperation::Type::Default,
-        WebCore::FilterOperation::Type::None
-    >;
-};
-
-} // namespace WTF

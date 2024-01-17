@@ -55,4 +55,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(PointLightSource, LS_POINT)
+SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(PointLightSource, LightType::LS_POINT)

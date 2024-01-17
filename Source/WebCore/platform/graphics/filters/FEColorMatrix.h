@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum ColorMatrixType {
+enum class ColorMatrixType : uint8_t {
     FECOLORMATRIX_TYPE_UNKNOWN          = 0,
     FECOLORMATRIX_TYPE_MATRIX           = 1,
     FECOLORMATRIX_TYPE_SATURATE         = 2,
@@ -71,21 +71,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ColorMatrixType> {
-    using values = EnumValues<
-        WebCore::ColorMatrixType,
-
-        WebCore::FECOLORMATRIX_TYPE_UNKNOWN,
-        WebCore::FECOLORMATRIX_TYPE_MATRIX,
-        WebCore::FECOLORMATRIX_TYPE_SATURATE,
-        WebCore::FECOLORMATRIX_TYPE_HUEROTATE,
-        WebCore::FECOLORMATRIX_TYPE_LUMINANCETOALPHA
-    >;
-};
-
-} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEColorMatrix)

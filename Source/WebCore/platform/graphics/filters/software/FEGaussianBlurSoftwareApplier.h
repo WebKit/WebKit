@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class FEGaussianBlur;
-enum class EdgeModeType;
+enum class EdgeModeType : uint8_t;
 
 class FEGaussianBlurSoftwareApplier final : public FilterEffectConcreteApplier<FEGaussianBlur> {
     WTF_MAKE_FAST_ALLOCATED;

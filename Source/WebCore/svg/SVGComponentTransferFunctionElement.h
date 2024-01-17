@@ -30,22 +30,22 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<ComponentTransferType> {
-    static unsigned highestEnumValue() { return FECOMPONENTTRANSFER_TYPE_GAMMA; }
+    static unsigned highestEnumValue() { return enumToUnderlyingType(ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA); }
 
     static String toString(ComponentTransferType type)
     {
         switch (type) {
-        case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
             return emptyString();
-        case FECOMPONENTTRANSFER_TYPE_IDENTITY:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
             return "identity"_s;
-        case FECOMPONENTTRANSFER_TYPE_TABLE:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
             return "table"_s;
-        case FECOMPONENTTRANSFER_TYPE_DISCRETE:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
             return "discrete"_s;
-        case FECOMPONENTTRANSFER_TYPE_LINEAR:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
             return "linear"_s;
-        case FECOMPONENTTRANSFER_TYPE_GAMMA:
+        case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
             return "gamma"_s;
         }
 
@@ -56,14 +56,14 @@ struct SVGPropertyTraits<ComponentTransferType> {
     static ComponentTransferType fromString(const String& value)
     {
         static constexpr std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType> mappings[] = {
-            { "discrete", FECOMPONENTTRANSFER_TYPE_DISCRETE },
-            { "gamma", FECOMPONENTTRANSFER_TYPE_GAMMA },
-            { "identity", FECOMPONENTTRANSFER_TYPE_IDENTITY },
-            { "linear", FECOMPONENTTRANSFER_TYPE_LINEAR },
-            { "table", FECOMPONENTTRANSFER_TYPE_TABLE }
+            { "discrete", ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE },
+            { "gamma", ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA },
+            { "identity", ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY },
+            { "linear", ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR },
+            { "table", ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE }
         };
         static constexpr SortedArrayMap map { mappings };
-        return  map.get(value, FECOMPONENTTRANSFER_TYPE_UNKNOWN);
+        return map.get(value, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN);
     }
 };
 
@@ -100,7 +100,7 @@ protected:
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
-    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, FECOMPONENTTRANSFER_TYPE_IDENTITY) };
+    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY) };
     Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
     Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
     Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };

@@ -54,9 +54,9 @@ bool SVGFEColorMatrixElement::isInvalidValuesLength() const
     auto filterType = type();
     auto size = values().size();
 
-    return (filterType == FECOLORMATRIX_TYPE_MATRIX    && size != 20)
-        || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
-        || (filterType == FECOLORMATRIX_TYPE_SATURATE  && size != 1);
+    return (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX    && size != 20)
+        || (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
+        || (filterType == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE  && size != 1);
 }
 
 void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -64,7 +64,7 @@ void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr: {
         auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(newValue);
-        if (propertyValue > 0)
+        if (enumToUnderlyingType(propertyValue))
             m_type->setBaseValInternal<ColorMatrixType>(propertyValue);
         break;
     }
@@ -125,17 +125,17 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEff
     // Use defaults if values is empty (SVG 1.1 15.10).
     if (!hasAttribute(SVGNames::valuesAttr)) {
         switch (filterType) {
-        case FECOLORMATRIX_TYPE_MATRIX: {
+        case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX: {
             static constexpr unsigned matrixValueCount = 20;
             filterValues = Vector<float>(matrixValueCount, [](size_t i) {
                 return (i % 6) ? 0.0 : 1.0;
             });
             break;
         }
-        case FECOLORMATRIX_TYPE_HUEROTATE:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
             filterValues = { 0 };
             break;
-        case FECOLORMATRIX_TYPE_SATURATE:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
             filterValues = { 1 };
             break;
         default:

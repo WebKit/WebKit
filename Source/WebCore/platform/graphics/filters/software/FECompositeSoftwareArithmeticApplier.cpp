@@ -38,7 +38,7 @@ namespace WebCore {
 FECompositeSoftwareArithmeticApplier::FECompositeSoftwareArithmeticApplier(const FEComposite& effect)
     : Base(effect)
 {
-    ASSERT(m_effect.operation() == FECOMPOSITE_OPERATOR_ARITHMETIC);
+    ASSERT(m_effect.operation() == CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC);
 }
 
 uint8_t FECompositeSoftwareArithmeticApplier::clampByte(int c)

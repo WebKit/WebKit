@@ -103,7 +103,7 @@ static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOper
 static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.type = ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR;
     transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation.amount());
     transferFunction.intercept = 0;
 
@@ -114,7 +114,7 @@ static RefPtr<FilterEffect> createBrightnessEffect(const BasicComponentTransferF
 static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.type = ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR;
     float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
     transferFunction.slope = amount;
     transferFunction.intercept = -0.5 * amount + 0.5;
@@ -139,19 +139,19 @@ static RefPtr<FilterEffect> createGrayScaleEffect(const BasicColorMatrixFilterOp
         0, 0, 0, 1, 0,
     };
 
-    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createHueRotateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-    return FEColorMatrix::create(FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createInvertEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.type = ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR;
     float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
     transferFunction.slope = 1 - 2 * amount;
     transferFunction.intercept = amount;
@@ -163,7 +163,7 @@ static RefPtr<FilterEffect> createInvertEffect(const BasicComponentTransferFilte
 static RefPtr<FilterEffect> createOpacityEffect(const BasicComponentTransferFilterOperation& componentTransferOperation)
 {
     ComponentTransferFunction transferFunction;
-    transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+    transferFunction.type = ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR;
     float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
     transferFunction.slope = amount;
     transferFunction.intercept = 0;
@@ -175,7 +175,7 @@ static RefPtr<FilterEffect> createOpacityEffect(const BasicComponentTransferFilt
 static RefPtr<FilterEffect> createSaturateEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
 {
     Vector<float> inputParameters { narrowPrecisionToFloat(colorMatrixOperation.amount()) };
-    return FEColorMatrix::create(FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE, WTFMove(inputParameters));
 }
 
 static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)
@@ -188,7 +188,7 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
         0, 0, 0, 1, 0,
     };
 
-    return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
+    return FEColorMatrix::create(ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
 static RefPtr<SVGFilterElement> referenceFilterElement(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)

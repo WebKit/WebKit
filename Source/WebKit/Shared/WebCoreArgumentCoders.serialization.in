@@ -7305,3 +7305,129 @@ header: <WebCore/VideoTrackPrivate.h>
 };
 
 #endif
+header: <WebCore/FEComposite.h>
+enum class WebCore::CompositeOperationType : uint8_t {
+    FECOMPOSITE_OPERATOR_UNKNOWN,
+    FECOMPOSITE_OPERATOR_OVER,
+    FECOMPOSITE_OPERATOR_IN,
+    FECOMPOSITE_OPERATOR_OUT,
+    FECOMPOSITE_OPERATOR_ATOP,
+    FECOMPOSITE_OPERATOR_XOR,
+    FECOMPOSITE_OPERATOR_ARITHMETIC,
+    FECOMPOSITE_OPERATOR_LIGHTER
+};
+
+header: <WebCore/FEColorMatrix.h>
+enum class WebCore::ColorMatrixType : uint8_t {
+    FECOLORMATRIX_TYPE_UNKNOWN,
+    FECOLORMATRIX_TYPE_MATRIX,
+    FECOLORMATRIX_TYPE_SATURATE,
+    FECOLORMATRIX_TYPE_HUEROTATE,
+    FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+};
+
+header: <WebCore/FETurbulence.h>
+enum class WebCore::TurbulenceType : uint8_t {
+    Unknown,
+    FractalNoise,
+    Turbulence
+};
+
+header: <WebCore/FilterRenderingMode.h>
+[OptionSet] enum class WebCore::FilterRenderingMode : uint8_t {
+    Software,
+    Accelerated,
+    GraphicsContext
+};
+
+header: <WebCore/LightSource.h>
+enum class WebCore::LightType : uint8_t {
+    LS_DISTANT,
+    LS_POINT,
+    LS_SPOT
+};
+
+header: <WebCore/FEComponentTransfer.h>
+enum class WebCore::ComponentTransferType : uint8_t {
+    FECOMPONENTTRANSFER_TYPE_UNKNOWN,
+    FECOMPONENTTRANSFER_TYPE_IDENTITY,
+    FECOMPONENTTRANSFER_TYPE_TABLE,
+    FECOMPONENTTRANSFER_TYPE_DISCRETE,
+    FECOMPONENTTRANSFER_TYPE_LINEAR,
+    FECOMPONENTTRANSFER_TYPE_GAMMA
+};
+
+enum class WebCore::ComponentTransferChannel : uint8_t {
+    Red,
+    Green,
+    Blue,
+    Alpha
+};
+
+header: <WebCore/FEMorphology.h>
+enum class WebCore::MorphologyOperatorType : uint8_t {
+    Unknown,
+    Erode,
+    Dilate
+};
+
+header: <WebCore/FEDisplacementMap.h>
+enum class WebCore::ChannelSelectorType : uint8_t {
+    CHANNEL_UNKNOWN,
+    CHANNEL_R,
+    CHANNEL_G,
+    CHANNEL_B,
+    CHANNEL_A
+};
+
+header: <WebCore/FEConvolveMatrix.h>
+enum class WebCore::EdgeModeType : uint8_t {
+    Unknown,
+    Duplicate,
+    Wrap,
+    None
+};
+
+header: <WebCore/FilterOperation.h>
+[Nested] enum class WebCore::FilterOperation::Type : uint8_t {
+    Reference,
+    Grayscale,
+    Sepia,
+    Saturate,
+    HueRotate,
+    Invert,
+    AppleInvertLightness,
+    Opacity,
+    Brightness,
+    Contrast,
+    Blur,
+    DropShadow,
+    Passthrough,
+    Default,
+    None
+};
+
+header: <WebCore/FilterFunction.h>
+[Nested] enum class WebCore::FilterFunction::Type : uint8_t {
+    CSSFilter,
+    SVGFilter,
+    FEBlend,
+    FEColorMatrix,
+    FEComponentTransfer,
+    FEComposite,
+    FEConvolveMatrix,
+    FEDiffuseLighting,
+    FEDisplacementMap,
+    FEDropShadow,
+    FEFlood,
+    FEGaussianBlur,
+    FEImage,
+    FEMerge,
+    FEMorphology,
+    FEOffset,
+    FESpecularLighting,
+    FETile,
+    FETurbulence,
+    SourceAlpha,
+    SourceGraphic
+};

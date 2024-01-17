@@ -45,8 +45,8 @@ FEComponentTransferCoreImageApplier::FEComponentTransferCoreImageApplier(const F
 bool FEComponentTransferCoreImageApplier::supportsCoreImageRendering(const FEComponentTransfer& effect)
 {
     auto isNullOrLinear = [] (const ComponentTransferFunction& function) {
-        return function.type == FECOMPONENTTRANSFER_TYPE_UNKNOWN
-            || function.type == FECOMPONENTTRANSFER_TYPE_LINEAR;
+        return function.type == ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN
+            || function.type == ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR;
     };
 
     return isNullOrLinear(effect.redFunction())
@@ -68,7 +68,7 @@ bool FEComponentTransferCoreImageApplier::apply(const Filter&, const FilterImage
     [componentTransferFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
     auto setCoefficients = [&] (NSString *key, const ComponentTransferFunction& function) {
-        if (function.type == FECOMPONENTTRANSFER_TYPE_LINEAR)
+        if (function.type == ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR)
             [componentTransferFilter setValue:[CIVector vectorWithX:function.intercept Y:function.slope Z:0 W:0] forKey:key];
     };
 

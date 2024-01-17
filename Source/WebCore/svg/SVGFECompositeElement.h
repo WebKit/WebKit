@@ -28,30 +28,30 @@
 namespace WebCore {
 
 template<>
-inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
+inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC); }
 
 template<>
 struct SVGPropertyTraits<CompositeOperationType> {
-    static unsigned highestEnumValue() { return FECOMPOSITE_OPERATOR_LIGHTER; }
+    static unsigned highestEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
 
     static String toString(CompositeOperationType type)
     {
         switch (type) {
-        case FECOMPOSITE_OPERATOR_UNKNOWN:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN:
             return emptyString();
-        case FECOMPOSITE_OPERATOR_OVER:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_OVER:
             return "over"_s;
-        case FECOMPOSITE_OPERATOR_IN:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_IN:
             return "in"_s;
-        case FECOMPOSITE_OPERATOR_OUT:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_OUT:
             return "out"_s;
-        case FECOMPOSITE_OPERATOR_ATOP:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP:
             return "atop"_s;
-        case FECOMPOSITE_OPERATOR_XOR:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_XOR:
             return "xor"_s;
-        case FECOMPOSITE_OPERATOR_ARITHMETIC:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC:
             return "arithmetic"_s;
-        case FECOMPOSITE_OPERATOR_LIGHTER:
+        case CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER:
             return "lighter"_s;
         }
 
@@ -62,16 +62,16 @@ struct SVGPropertyTraits<CompositeOperationType> {
     static CompositeOperationType fromString(const String& value)
     {
         static constexpr std::pair<ComparableASCIILiteral, CompositeOperationType> mappings[] = {
-            { "arithmetic", FECOMPOSITE_OPERATOR_ARITHMETIC },
-            { "atop", FECOMPOSITE_OPERATOR_ATOP },
-            { "in", FECOMPOSITE_OPERATOR_IN },
-            { "lighter", FECOMPOSITE_OPERATOR_LIGHTER },
-            { "out", FECOMPOSITE_OPERATOR_OUT },
-            { "over", FECOMPOSITE_OPERATOR_OVER },
-            { "xor", FECOMPOSITE_OPERATOR_XOR },
+            { "arithmetic", CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC },
+            { "atop", CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP },
+            { "in", CompositeOperationType::FECOMPOSITE_OPERATOR_IN },
+            { "lighter", CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER },
+            { "out", CompositeOperationType::FECOMPOSITE_OPERATOR_OUT },
+            { "over", CompositeOperationType::FECOMPOSITE_OPERATOR_OVER },
+            { "xor", CompositeOperationType::FECOMPOSITE_OPERATOR_XOR },
         };
         static constexpr SortedArrayMap map { mappings };
-        return map.get(value, FECOMPOSITE_OPERATOR_UNKNOWN);
+        return map.get(value, CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN);
     }
 };
 
@@ -110,7 +110,7 @@ private:
 
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, FECOMPOSITE_OPERATOR_OVER) };
+    Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, CompositeOperationType::FECOMPOSITE_OPERATOR_OVER) };
     Ref<SVGAnimatedNumber> m_k1 { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_k2 { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_k3 { SVGAnimatedNumber::create(this) };

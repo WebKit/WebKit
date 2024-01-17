@@ -45,9 +45,9 @@ FEColorMatrixCoreImageApplier::FEColorMatrixCoreImageApplier(const FEColorMatrix
 
 bool FEColorMatrixCoreImageApplier::supportsCoreImageRendering(const FEColorMatrix& effect)
 {
-    return effect.type() == FECOLORMATRIX_TYPE_SATURATE
-        || effect.type() == FECOLORMATRIX_TYPE_HUEROTATE
-        || effect.type() == FECOLORMATRIX_TYPE_MATRIX;
+    return effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE
+        || effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE
+        || effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX;
 }
 
 bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
@@ -63,19 +63,19 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
     float components[9];
 
     switch (m_effect.type()) {
-    case FECOLORMATRIX_TYPE_SATURATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
         FEColorMatrix::calculateSaturateComponents(components, values[0]);
         break;
 
-    case FECOLORMATRIX_TYPE_HUEROTATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
         FEColorMatrix::calculateHueRotateComponents(components, values[0]);
         break;
 
-    case FECOLORMATRIX_TYPE_MATRIX:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
         break;
 
-    case FECOLORMATRIX_TYPE_UNKNOWN:
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA: // FIXME: Add Luminance to Alpha Implementation
+    case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: // FIXME: Add Luminance to Alpha Implementation
         return false;
     }
 
@@ -83,8 +83,8 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
     [colorMatrixFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
     switch (m_effect.type()) {
-    case FECOLORMATRIX_TYPE_SATURATE:
-    case FECOLORMATRIX_TYPE_HUEROTATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
         [colorMatrixFilter setValue:[CIVector vectorWithX:components[0] Y:components[1] Z:components[2] W:0] forKey:@"inputRVector"];
         [colorMatrixFilter setValue:[CIVector vectorWithX:components[3] Y:components[4] Z:components[5] W:0] forKey:@"inputGVector"];
         [colorMatrixFilter setValue:[CIVector vectorWithX:components[6] Y:components[7] Z:components[8] W:0] forKey:@"inputBVector"];
@@ -92,7 +92,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
         [colorMatrixFilter setValue:[CIVector vectorWithX:0             Y:0             Z:0             W:0] forKey:@"inputBiasVector"];
         break;
 
-    case FECOLORMATRIX_TYPE_MATRIX:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
         [colorMatrixFilter setValue:[CIVector vectorWithX:values[0]  Y:values[1]  Z:values[2]  W:values[3]]  forKey:@"inputRVector"];
         [colorMatrixFilter setValue:[CIVector vectorWithX:values[5]  Y:values[6]  Z:values[7]  W:values[8]]  forKey:@"inputGVector"];
         [colorMatrixFilter setValue:[CIVector vectorWithX:values[10] Y:values[11] Z:values[12] W:values[13]] forKey:@"inputBVector"];
@@ -100,8 +100,8 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
         [colorMatrixFilter setValue:[CIVector vectorWithX:values[4]  Y:values[9]  Z:values[14] W:values[19]] forKey:@"inputBiasVector"];
         break;
 
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-    case FECOLORMATRIX_TYPE_UNKNOWN:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
         return false;
     }
 

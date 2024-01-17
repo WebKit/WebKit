@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class TurbulenceType {
+enum class TurbulenceType : uint8_t {
     Unknown,
     FractalNoise,
     Turbulence
@@ -81,19 +81,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TurbulenceType> {
-    using values = EnumValues<
-        WebCore::TurbulenceType,
-
-        WebCore::TurbulenceType::Unknown,
-        WebCore::TurbulenceType::FractalNoise,
-        WebCore::TurbulenceType::Turbulence
-    >;
-};
-
-} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FETurbulence)
