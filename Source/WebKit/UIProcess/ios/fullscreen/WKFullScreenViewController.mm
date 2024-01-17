@@ -600,6 +600,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self videoControlsManagerDidChange];
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+    [_bannerLabel setPreferredMaxLayoutWidth:self.view.bounds.size.width];
     [_banner setAlpha:0];
     [_banner setHidden:YES];
 #endif
@@ -638,6 +639,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _updateWebViewFullscreenInsets];
     _secheuristic.setSize(self.view.bounds.size);
     [self._webView setFrame:[_animatingView bounds]];
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+    [_bannerLabel setPreferredMaxLayoutWidth:self.view.bounds.size.width];
+#endif
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
