@@ -9251,7 +9251,9 @@
         "view-transition-name": {
             "codegen-properties": {
                 "converter": "ViewTransitionName",
-                "parser-grammar": "none | <custom-ident>",
+                "parser-function": "consumeViewTransitionName",
+                "parser-grammar-unused": "none | <custom-ident>",
+                "parser-grammar-unused-reason": "Needs support for applying restrictions to <custom-ident>. The <custom-ident> production used here excludes the keyword auto.",
                 "settings-flag": "viewTransitionsEnabled"
             },
             "specification": {
@@ -9407,7 +9409,6 @@
                     "parser-function-requires-context": true,
                     "parser-grammar-unused": "[ <integer [0,inf]> && <symbol> ]#",
                     "parser-grammar-unused-reason": "Needs support for '&&' groups"
-                    
                 },
                 "specification": {
                     "category": "css-counter-styles",

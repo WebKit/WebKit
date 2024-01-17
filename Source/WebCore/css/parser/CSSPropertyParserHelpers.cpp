@@ -8445,6 +8445,15 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
+RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
+{
+    if (auto noneValue = consumeIdent<CSSValueNone>(range))
+        return noneValue;
+    if (isAuto(range.peek().id()))
+        return nullptr;
+    return consumeCustomIdent(range);
+}
+
 // MARK: - @-rule descriptor consumers:
 
 // MARK: @font-face
