@@ -27,17 +27,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUProcessConnection.h"
 #include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUPresentationContext.h>
 #include <wtf/Deque.h>
-
-namespace WebKit {
-class GPUProcessConnection;
-}
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 class IntSize;
@@ -52,10 +48,10 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy> {
+class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<RemoteGPUProxy> create(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
+    static RefPtr<RemoteGPUProxy> create(IPC::Connection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
 
     virtual ~RemoteGPUProxy();
 
@@ -63,15 +59,15 @@ public:
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
 
-    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::ref(); }
-    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::controlBlock(); }
+    void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
+    void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
+
     void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) final;
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(GPUProcessConnection&, Ref<IPC::StreamClientConnection>, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteGPUProxy(IPC::Connection&, Ref<IPC::StreamClientConnection>, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
     void initializeIPC(IPC::StreamServerConnection::Handle&&, RenderingBackendIdentifier);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
@@ -81,11 +77,8 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didClose(IPC::Connection&) final { }
+    void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
-
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // Messages to be received.
     void wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
@@ -105,7 +98,6 @@ private:
     {
         return root().streamClientConnection().sendSync(std::forward<T>(message), backing(), defaultSendTimeout);
     }
-    IPC::Connection& connection() const { return m_gpuProcessConnection.get()->connection(); }
 
     void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
 
@@ -120,7 +112,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    RefPtr<IPC::Connection> m_connection;
     bool m_didInitialize { false };
     bool m_lost { false };
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
