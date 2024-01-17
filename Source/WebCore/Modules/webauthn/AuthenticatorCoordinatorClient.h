@@ -50,7 +50,7 @@ struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
 class SecurityOriginData;
 
-using CapabilitiesCompletionHandler = CompletionHandler<void(HashMap<String, bool>&&)>;
+using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<String, bool>>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
