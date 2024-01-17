@@ -249,7 +249,7 @@ bool canUseHandlerIC();
     v(Unsigned, maxPolymorphicAccessInliningListSize, 8, Normal, nullptr) \
     v(Bool, usePolymorphicCallInlining, true, Normal, nullptr) \
     v(Bool, usePolymorphicCallInliningForNonStubStatus, false, Normal, nullptr) \
-    v(Unsigned, maxPolymorphicCallVariantListSize, 15, Normal, nullptr) \
+    v(Unsigned, maxPolymorphicCallVariantListSize, 8, Normal, nullptr) \
     v(Unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5, Normal, nullptr) \
     v(Unsigned, maxPolymorphicCallVariantListSizeForWebAssemblyToJS, 5, Normal, nullptr) \
     v(Unsigned, maxPolymorphicCallVariantsForInlining, 5, Normal, nullptr) \
