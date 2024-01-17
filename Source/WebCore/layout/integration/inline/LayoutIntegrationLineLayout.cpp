@@ -375,13 +375,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
             if (!needsResizing)
                 return;
-            auto visualMarginBoxRect = Layout::BoxGeometry::marginBoxRect(visualGeometry);
-            if (visualMarginBoxRect.size() == renderer.size())
+            auto visualMarginBoxSize = Layout::BoxGeometry::marginBoxRect(visualGeometry).size();
+            auto logicalMarginBoxSize = isHorizontalWritingMode ? visualMarginBoxSize : visualMarginBoxSize.transposedSize();
+            if (logicalMarginBoxSize == renderer.size())
                 return;
-            renderer.setSize(visualMarginBoxRect.size());
-            // FIXME: See webkit.org/b/266814
-            auto logicalMarginBoxWidth = visualMarginBoxRect.width();
-            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxWidth, LengthType::Fixed });
+            renderer.setSize(logicalMarginBoxSize);
+            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxSize.width(), LengthType::Fixed });
             renderer.setNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
             renderer.clearOverridingLogicalWidthLength();

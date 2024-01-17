@@ -1143,7 +1143,6 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
     auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
     auto baseMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(rubyBaseLayoutBox));
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
 
     if (annotationBox)
         rubyBaseStartIndexListWithAnnotation.append(rubyBaseStart);
@@ -1199,8 +1198,7 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
             auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, formattingContext);
             auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
             annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
-            // FIXME: See webkit.org/b/266814 (move BoxGeometry to visual coords)
-            isHorizontalWritingMode ? annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize)) : annotationBoxGeometry.setContentBoxSize({ visualContentBoxSize.height(), visualContentBoxSize.width() });
+            annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
         };
         placeAndSizeAnnotationBox();
     }
@@ -1215,6 +1213,12 @@ void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displ
     if (!m_hasSeenRubyBase)
         return;
 
+    HashSet<CheckedPtr<const Box>> lineSpanningRubyBaseList;
+    for (auto& lineRun : lineLayoutResult.inlineContent) {
+        if (lineRun.isLineSpanningInlineBoxStart() && lineRun.layoutBox().isRubyBase())
+            lineSpanningRubyBaseList.add(&lineRun.layoutBox());
+    }
+
     auto rubyBasesMayHaveCollapsed = !lineLayoutResult.directionality.visualOrderList.isEmpty();
     RubyFormattingContext::applyAlignmentOffsetList(displayBoxes, lineLayoutResult.ruby.baseAlignmentOffsetList, rubyBasesMayHaveCollapsed ? RubyFormattingContext::RubyBasesMayNeedResizing::Yes : RubyFormattingContext::RubyBasesMayNeedResizing::No, formattingContext());
 
@@ -1224,6 +1228,10 @@ void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displ
         auto& displayBox = displayBoxes[index];
         if (!displayBox.isNonRootInlineBox() || !displayBox.layoutBox().isRubyBase())
             continue;
+        if (lineSpanningRubyBaseList.contains(&displayBox.layoutBox())) {
+            // FIXME: Base content split across multiple lines don't affect annotation atm.
+            continue;
+        }
 
         index = processRubyBase(index, displayBoxes, interlinearRubyColumnRangeList, rubyBaseStartIndexListWithAnnotation);
     }
