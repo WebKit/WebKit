@@ -119,4 +119,37 @@ promise_test(async (t) => {
     await new Promise(resolve => generator.track.onunmute = resolve);
 }, "Track gets muted based on VideoTrackGenerator.muted");
 
+promise_test(async (t) => {
+    const frame1 = makeOffscreenCanvasVideoFrame(100, 100);
+    t.add_cleanup(() => frame1.close());
+
+    const frame2 = makeOffscreenCanvasVideoFrame(200, 200);
+    t.add_cleanup(() => frame2.close());
+
+    const generator = new VideoTrackGenerator();
+    const processor = new MediaStreamTrackProcessor({ track : generator.track });
+
+    const writer = generator.writable.getWriter();
+    const reader = processor.readable.getReader();
+
+    writer.write(frame1);
+
+    let chunk = await reader.read();
+    assert_equals(chunk.value.codedWidth, 100);
+
+    writer.write(frame2);
+
+    chunk = await reader.read();
+    assert_equals(chunk.value.codedWidth, 200);
+
+    const endedPromise = new Promise(resolve => generator.track.onended = resolve);
+
+    writer.close();
+
+    chunk = await reader.read();
+    assert_true(chunk.done);
+
+    await endedPromise;
+}, "VideoTrackGenerator to MediaStreamTrackProcessor");
+
 done();

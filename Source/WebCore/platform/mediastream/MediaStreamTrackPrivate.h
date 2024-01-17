@@ -98,6 +98,7 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     WEBCORE_EXPORT RealtimeMediaSource& source();
+    RealtimeMediaSource& sourceForProcessor();
     bool hasSource(const RealtimeMediaSource*) const;
 
     RealtimeMediaSource::Type type() const { return m_type; }

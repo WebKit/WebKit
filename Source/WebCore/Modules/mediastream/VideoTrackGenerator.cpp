@@ -199,4 +199,4 @@ void VideoTrackGenerator::Sink::error(String&&)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)

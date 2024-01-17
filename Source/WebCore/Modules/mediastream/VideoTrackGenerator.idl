@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=MEDIA_STREAM,
+    Conditional=MEDIA_STREAM&WEB_CODECS,
     PrivateIdentifier,
     PublicIdentifier,
     EnabledBySetting=MediaStreamTrackProcessingEnabled,

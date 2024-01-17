@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
 #include "ExceptionOr.h"
 #include "RealtimeMediaSource.h"
@@ -101,4 +101,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
