@@ -101,8 +101,9 @@ private:
     RetainPtr<VTDecompressionSessionRef> ensureDecompressionSessionForSample(CMSampleBufferRef);
 
     void setTimebaseWithLockHeld(CMTimebaseRef);
-    void enqueueCompressedSample(CMSampleBufferRef, bool displaying);
-    void decodeSample(CMSampleBufferRef, bool displaying);
+    void enqueueCompressedSample(CMSampleBufferRef, bool displaying, uint32_t flushId);
+    using DecodingPromise = NativePromise<RetainPtr<CMSampleBufferRef>, OSStatus>;
+    Ref<DecodingPromise> decodeSample(CMSampleBufferRef, bool displaying);
     void enqueueDecodedSample(CMSampleBufferRef);
     void maybeDecodeNextSample();
     void handleDecompressionOutput(bool displaying, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
@@ -110,8 +111,6 @@ private:
     void resetAutomaticDequeueTimer();
     void automaticDequeue();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
-    void finishCurrentDecodingAndDecodeNextSample();
-    void finishCurrentDecodingAndReportError(OSStatus);
 
     static CMTime getDecodeTime(CMBufferRef, void* refcon);
     static CMTime getPresentationTime(CMBufferRef, void* refcon);
@@ -135,7 +134,6 @@ private:
     mutable Lock m_lock;
     RetainPtr<VTDecompressionSessionRef> m_decompressionSession WTF_GUARDED_BY_LOCK(m_lock);
     RetainPtr<CMBufferQueueRef> m_producerQueue;
-    RetainPtr<CMBufferQueueRef> m_consumerQueue;
     RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
     const Ref<WorkQueue> m_decompressionQueue;
     const Ref<WorkQueue> m_enqueingQueue;
@@ -148,6 +146,7 @@ private:
     std::atomic<unsigned> m_framesSinceLastQosCheck { 0 };
     double m_decodeRatioMovingAverage { 0 };
 
+    uint32_t m_flushId { 0 };
     std::atomic<bool> m_isUsingVideoDecoder { true };
     std::unique_ptr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_LOCK(m_lock);
     bool m_videoDecoderCreationFailed { false };
@@ -159,8 +158,9 @@ private:
     std::optional<PendingDecodeData> m_pendingDecodeData WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
     // A VideoDecoder can't process more than one request at a time.
     // Handle the case should the DecompressionSession be used even if isReadyForMoreMediaData() returned false;
-    Deque<std::pair<RetainPtr<CMSampleBufferRef>, bool>> m_pendingSamples WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
+    Deque<std::tuple<RetainPtr<CMSampleBufferRef>, bool, uint32_t>> m_pendingSamples WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get()) { false };
+    RetainPtr<CMSampleBufferRef> m_lastDecodedSample WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get());
     OSStatus m_lastDecodingError WTF_GUARDED_BY_CAPABILITY(m_decompressionQueue.get()) { noErr };
 
     Function<void(OSStatus)> m_errorListener WTF_GUARDED_BY_CAPABILITY(mainThread);

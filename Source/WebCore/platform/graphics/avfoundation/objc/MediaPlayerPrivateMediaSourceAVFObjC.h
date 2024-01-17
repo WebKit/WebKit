@@ -341,8 +341,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
     double m_rate { 1 };
-    bool m_playing { false };
-    bool m_synchronizerSeeking { false };
+    bool m_isPlaying { false };
+    bool m_isSynchronizerSeeking { false };
     SeekState m_seekState { SeekCompleted };
     mutable bool m_loadingProgressed { false };
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)

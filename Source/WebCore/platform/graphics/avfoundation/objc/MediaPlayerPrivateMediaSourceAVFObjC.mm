@@ -161,15 +161,14 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 #if LOG_DISABLED
         UNUSED_PARAM(time);
 #endif
-        // FIXME: Remove the below once <rdar://problem/15798050> is fixed.
         if (!weakThis)
             return;
 
         auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
-        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_synchronizerSeeking, ", pending = ", !!m_pendingSeek);
+        ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_isSynchronizerSeeking, ", pending = ", !!m_pendingSeek);
 
-        if (m_synchronizerSeeking && !m_pendingSeek) {
-            m_synchronizerSeeking = false;
+        if (m_isSynchronizerSeeking && !m_pendingSeek) {
+            m_isSynchronizerSeeking = false;
             maybeCompleteSeek();
         }
 
@@ -337,7 +336,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
 
     ALWAYS_LOG(LOGIDENTIFIER);
     m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
-    m_playing = true;
+    m_isPlaying = true;
     if (!shouldBePlaying())
         return;
 
@@ -358,7 +357,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<MonotonicTime>&& hostTime)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_playing = false;
+    m_isPlaying = false;
 
     if (hostTime) {
         auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
@@ -470,8 +469,6 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
     MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();
-    if (synchronizerTime < m_lastSeekTime)
-        return m_lastSeekTime;
     return synchronizerTime;
 }
 
@@ -567,10 +564,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         ALWAYS_LOG(LOGIDENTIFIER);
         MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-        m_synchronizerSeeking = synchronizerTime != seekedTime;
-        ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_synchronizerSeeking);
+        m_isSynchronizerSeeking = synchronizerTime != seekedTime;
+        ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
 
-        if (!m_synchronizerSeeking) {
+        if (!m_isSynchronizerSeeking) {
             // In cases where the destination seek time precisely matches the synchronizer's existing time
             // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
             // the seek completed successfully.
@@ -598,7 +595,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
     }
     m_seekState = Seeking;
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_synchronizerSeeking) {
+    if (m_isSynchronizerSeeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "Synchronizer still seeking, bailing out");
         return;
     }
@@ -613,7 +610,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
 {
-    return m_pendingSeek || m_synchronizerSeeking || m_seekState != SeekCompleted;
+    return m_pendingSeek || m_seekState != SeekCompleted;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
@@ -1005,7 +1002,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
-    return m_playing && !seeking() && (m_flushingActiveSourceBuffersDueToVisibilityChange || allRenderersHaveAvailableSamples()) && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
+    return m_isPlaying && !seeking() && (m_flushingActiveSourceBuffersDueToVisibilityChange || allRenderersHaveAvailableSamples()) && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
@@ -1119,7 +1116,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
     }];
 
-    if (m_playing && duration <= currentMediaTime())
+    if (m_isPlaying && duration <= currentMediaTime())
         pauseInternal();
 }
 
