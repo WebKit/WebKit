@@ -3793,6 +3793,8 @@ webkit.org/b/267411 webrtc/receiver-track-should-stay-live-even-if-receiver-is-i
 webkit.org/b/267411 webrtc/release-after-getting-track.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/remoteAudio-never-played.html [ Pass Crash ]
 
+webkit.org/b/267627 [ Debug ] fast/mediastream/media-stream-renders-first-frame.html [ Pass Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
