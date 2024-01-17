@@ -7458,3 +7458,6 @@ webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap
 
 # rdar://120852401
 [ Debug ] ipc/media-player-invalid-test.html [ Skip ]
+
+# At the time of writing this test consumes all available IOSurfaces. If the next test is image-buffer-backend-variants.html, that will fail.
+fast/canvas/2d.context.many.small.html [ Slow Skip ]
