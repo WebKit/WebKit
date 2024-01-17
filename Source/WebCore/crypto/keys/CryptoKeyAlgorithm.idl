@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=WEB_CRYPTO,
     JSGenerateToJSObject
 ] dictionary CryptoKeyAlgorithm {
     required DOMString name;

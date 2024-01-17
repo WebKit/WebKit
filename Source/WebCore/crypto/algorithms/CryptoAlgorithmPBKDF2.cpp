@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmPBKDF2.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -82,5 +80,3 @@ ExceptionOr<size_t> CryptoAlgorithmPBKDF2::getKeyLength(const CryptoAlgorithmPar
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

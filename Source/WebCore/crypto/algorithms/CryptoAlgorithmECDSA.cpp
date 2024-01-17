@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmECDSA.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
@@ -219,5 +217,3 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

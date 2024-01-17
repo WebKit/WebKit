@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKeyOKP.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CommonCryptoDERUtilities.h"
 #include "JsonWebKey.h"
 #include "Logging.h"
@@ -395,5 +393,3 @@ Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

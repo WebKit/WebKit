@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKeyRSAComponents.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 CryptoKeyRSAComponents::CryptoKeyRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent)
@@ -89,5 +87,3 @@ CryptoKeyRSAComponents::CryptoKeyRSAComponents(Vector<uint8_t>&& modulus, Vector
 CryptoKeyRSAComponents::~CryptoKeyRSAComponents() = default;
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

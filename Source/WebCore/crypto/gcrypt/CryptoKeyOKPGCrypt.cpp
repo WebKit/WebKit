@@ -20,8 +20,6 @@
 #include "config.h"
 #include "CryptoKeyOKP.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyPair.h"
 #include "GCryptRFC7748.h"
 #include "GCryptRFC8032.h"
@@ -514,5 +512,3 @@ Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

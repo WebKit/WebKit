@@ -2349,14 +2349,10 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             if (m_client.copyWebCryptoMasterKey)
                 return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
 
-#if ENABLE(WEB_CRYPTO)
             auto masterKey = defaultWebCryptoMasterKey();
             if (!masterKey)
                 return nullptr;
             return API::Data::create(WTFMove(*masterKey));
-#else
-            return API::Data::create(nullptr, 0);
-#endif
         }
 
         void navigationActionDidBecomeDownload(WebKit::WebPageProxy& page, API::NavigationAction& action, WebKit::DownloadProxy& download) override

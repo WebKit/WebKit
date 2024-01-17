@@ -8404,8 +8404,6 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     m_hasInjectedPlugInsScript = true;
 }
 
-#if ENABLE(WEB_CRYPTO)
-
 bool Document::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
     RefPtr page = this->page();
@@ -8417,8 +8415,6 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
     RefPtr page = this->page();
     return page && page->chrome().client().unwrapCryptoKey(wrappedKey, key);
 }
-
-#endif // ENABLE(WEB_CRYPTO)
 
 Element* Document::activeElement()
 {

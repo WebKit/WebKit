@@ -31,8 +31,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmPbkdf2Params final : public CryptoAlgorithmParameters {
@@ -72,5 +70,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(Pbkdf2Params)
-
-#endif // ENABLE(WEB_CRYPTO)

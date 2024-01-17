@@ -31,8 +31,6 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
@@ -77,5 +75,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyAES, CryptoKeyClass::AES)
-
-#endif // ENABLE(WEB_CRYPTO)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKeyRSA.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CommonCryptoDERUtilities.h"
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -414,5 +412,3 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

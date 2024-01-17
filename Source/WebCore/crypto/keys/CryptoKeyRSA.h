@@ -29,8 +29,6 @@
 #include "ExceptionOr.h"
 #include <wtf/Function.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "CommonCryptoUtilities.h"
 
@@ -110,5 +108,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRSA, CryptoKeyClass::RSA)
-
-#endif // ENABLE(WEB_CRYPTO)

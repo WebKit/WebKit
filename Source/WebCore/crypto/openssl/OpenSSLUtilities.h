@@ -33,8 +33,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 const EVP_MD* digestAlgorithm(CryptoAlgorithmIdentifier hashFunction);
@@ -61,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

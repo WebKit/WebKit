@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKey.h"
 #include "ExceptionOr.h"
 #include <wtf/Function.h>
@@ -72,5 +70,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyHMAC, CryptoKeyClass::HMAC)
-
-#endif // ENABLE(WEB_CRYPTO)

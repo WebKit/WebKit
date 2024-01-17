@@ -27,8 +27,6 @@
 
 #include "CryptoAlgorithm.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmPbkdf2Params;
@@ -52,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

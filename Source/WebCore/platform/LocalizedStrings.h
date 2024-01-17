@@ -369,7 +369,7 @@ namespace WebCore {
 
     WEBCORE_EXPORT String useBlockedPlugInContextMenuTitle();
 
-#if ENABLE(WEB_CRYPTO) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);
     String webCryptoMasterKeyKeychainComment();
 #endif

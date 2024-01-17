@@ -37,8 +37,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
@@ -82,5 +80,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

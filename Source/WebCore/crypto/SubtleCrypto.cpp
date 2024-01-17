@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SubtleCrypto.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "ContextDestructionObserverInlines.h"
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -67,7 +65,7 @@ SubtleCrypto::SubtleCrypto(ScriptExecutionContext* context)
 
 SubtleCrypto::~SubtleCrypto() = default;
 
-enum class Operations {
+enum class Operations : uint8_t {
     Encrypt,
     Decrypt,
     Sign,
@@ -1259,6 +1257,4 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
     unwrapAlgorithm->decrypt(*unwrapParams, unwrappingKey, WTFMove(wrappedKey), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContext(), m_workQueue);
 }
 
-}
-
-#endif
+} // namespace WebCore

@@ -28,8 +28,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_CTR.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
 #include <pal/crypto/gcrypt/Handle.h>
@@ -212,5 +210,3 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const Crypt
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)
