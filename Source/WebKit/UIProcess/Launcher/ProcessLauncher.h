@@ -122,6 +122,8 @@ public:
 
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> extensionProcess() const { return m_process; }
+    void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
+    bool isRetryingLaunch() const { return m_isRetryingLaunch; }
 #endif
 
 private:
@@ -146,6 +148,7 @@ private:
 
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEExtensionProcess> m_process;
+    bool m_isRetryingLaunch { false };
 #endif
 
 #if PLATFORM(WIN)
