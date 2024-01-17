@@ -379,7 +379,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             if (visualMarginBoxRect.size() == renderer.size())
                 return;
             renderer.setSize(visualMarginBoxRect.size());
-            auto logicalMarginBoxWidth = renderer.isHorizontalWritingMode() ? visualMarginBoxRect.width() : visualMarginBoxRect.height();
+            // FIXME: See webkit.org/b/266814
+            auto logicalMarginBoxWidth = visualMarginBoxRect.width();
             renderer.setOverridingLogicalWidthLength({ logicalMarginBoxWidth, LengthType::Fixed });
             renderer.setNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
