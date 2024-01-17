@@ -470,7 +470,7 @@ private:
     void platformTerminate();
 
     void setHasSuspendedPageProxy(bool);
-    void setIsInProcessCache(bool);
+    void setIsInProcessCache(bool, CompletionHandler<void()>&&);
     void markIsNoLongerPrewarmed();
 
     void registerURLSchemeAsEmptyDocument(const String&);
@@ -781,7 +781,7 @@ private:
 #endif
 
     bool m_hasSuspendedPageProxy { false };
-    bool m_isSuspending { false };
+    bool m_allowExitOnMemoryPressure { true };
     bool m_isLockdownModeEnabled { false };
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
