@@ -150,6 +150,21 @@ public:
         return nullptr;
     }
 
+    template<typename CallbackType>
+    void enumerateEventListenerTypes(CallbackType callback) const
+    {
+        if (auto* data = eventTargetData())
+            data->eventListenerMap.enumerateEventListenerTypes(callback);
+    }
+
+    template<typename CallbackType>
+    bool containsMatchingEventListener(CallbackType callback) const
+    {
+        if (auto* data = eventTargetData())
+            return data->eventListenerMap.containsMatchingEventListener(callback);
+        return false;
+    }
+
     bool hasEventTargetData() const { return hasEventTargetFlag(EventTargetFlag::HasEventTargetData); }
     bool isNode() const { return hasEventTargetFlag(EventTargetFlag::IsNode); }
 

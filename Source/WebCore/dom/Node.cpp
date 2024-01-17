@@ -2220,25 +2220,35 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
             newDocument.didAddEventListenersOfType(eventType, count);
         });
 
+        unsigned numWheelEventHandlers = 0;
+        unsigned numTouchEventListeners = 0;
+#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+        unsigned numGestureEventListeners = 0;
+#endif
+
+        auto touchEventCategory = EventCategory::TouchRelated;
+#if ENABLE(TOUCH_EVENTS)
+        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents(this))
+            touchEventCategory = EventCategory::ExtendedTouchRelated;
+#endif
+
         auto& eventNames = WebCore::eventNames();
-        unsigned numWheelEventHandlers = eventListeners(eventNames.mousewheelEvent).size() + eventListeners(eventNames.wheelEvent).size();
+        enumerateEventListenerTypes([&](const AtomString& name, unsigned count) {
+            auto typeInfo = eventNames.typeInfoForEvent(name);
+            if (typeInfo.isInCategory(EventCategory::Wheel))
+                numWheelEventHandlers += count;
+            else if (typeInfo.isInCategory(touchEventCategory))
+                numTouchEventListeners += count;
+#if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
+            else if (typeInfo.isInCategory(EventCategory::Gesture))
+                numGestureEventListeners += count;
+#endif
+        });
+
         for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
             oldDocument.didRemoveWheelEventHandler(*this);
             newDocument.didAddWheelEventHandler(*this);
         }
-
-        unsigned numTouchEventListeners = 0;
-#if ENABLE(TOUCH_EVENTS)
-        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents(this)) {
-            for (auto& name : eventNames.extendedTouchRelatedEventNames())
-                numTouchEventListeners += eventListeners(name).size();
-        } else {
-#endif
-            for (auto& name : eventNames.touchRelatedEventNames())
-                numTouchEventListeners += eventListeners(name).size();
-#if ENABLE(TOUCH_EVENTS)
-        }
-#endif
 
         for (unsigned i = 0; i < numTouchEventListeners; ++i) {
             oldDocument.didRemoveTouchEventHandler(*this);
@@ -2250,10 +2260,6 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         }
 
 #if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
-        unsigned numGestureEventListeners = 0;
-        for (auto& name : eventNames.gestureEventNames())
-            numGestureEventListeners += eventListeners(name).size();
-
         for (unsigned i = 0; i < numGestureEventListeners; ++i) {
             oldDocument.removeTouchEventHandler(*this);
             newDocument.addTouchEventHandler(*this);

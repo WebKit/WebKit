@@ -150,15 +150,9 @@ public:''')
     static std::unique_ptr<EventNames> create(Args&&... args)
     {
         return std::unique_ptr<EventNames>(new EventNames(std::forward<Args>(args)...));
-    }''')
-
-        for category in sorted(category_map.keys()):
-            name_count = len(category_map[category])
-            writeln(f'    inline std::array<const AtomString, {name_count}> {lowercase_first_letter(category)}EventNames() const;')
-
-        writeln('')
-        writeln(f'    inline std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
-
+    }
+''')
+        writeln(f'    std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
         writeln('''
 private:
     EventNames();
@@ -176,41 +170,9 @@ inline const EventNames& eventNames()
 inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) const
 {
     return m_typeInfoMap.inlineGet(eventType);
-}''')
+}
 
-        for category in sorted(category_map.keys()):
-            names = category_map[category]
-            name_count = len(category_map[category])
-            writeln('')
-            writeln(f'inline std::array<const AtomString, {name_count}> EventNames::{lowercase_first_letter(category)}EventNames() const')
-            writeln('{')
-            writeln('    return { {')
-            for name in names:
-                conditional = event_names_input[name].get('conditional', None)
-                if conditional:
-                    writeln(f'#if {conditional}')
-                writeln(f'        {name}Event,')
-                if conditional:
-                    writeln(f'#endif')
-            writeln('    } };')
-            writeln('}')
-
-        writeln('')
-
-        writeln(f'inline std::array<const AtomString, {len(event_names_input)}> EventNames::allEventNames() const')
-        writeln('{')
-        writeln('    return { {')
-        for name in sorted(event_names_input.keys()):
-            conditional = event_names_input[name].get('conditional', None)
-            if conditional:
-                writeln(f'#if {conditional}')
-            writeln(f'        {name}Event,')
-            if conditional:
-                writeln(f'#endif')
-        writeln('    } };')
-        writeln('}')
-        writeln('')
-        writeln('} // namespace WebCore')
+} // namespace WebCore''')
 
     with open('EventNames.cpp', 'w') as output_file:
         def writeln(text):
@@ -272,7 +234,20 @@ EventNames::EventNames()''')
             if conditional:
                 writeln('#endif')
         writeln('    })')
-        writeln('''{ }
+        writeln('{ }')
+        writeln('')
+        writeln(f'std::array<const AtomString, {len(event_names_input)}> EventNames::allEventNames() const')
+        writeln('{')
+        writeln('    return { {')
+        for name in sorted(event_names_input.keys()):
+            conditional = event_names_input[name].get('conditional', None)
+            if conditional:
+                writeln(f'#if {conditional}')
+            writeln(f'        {name}Event,')
+            if conditional:
+                writeln(f'#endif')
+        writeln('''    } };
+}
 
 } // namespace WebCore''')
 
