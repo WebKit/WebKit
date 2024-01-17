@@ -30,6 +30,7 @@
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "FontconfigUtilities.h"
 #include "SharedBuffer.h"
 #include "StyleFontSizeFunctions.h"
 #include <cairo-ft.h>
@@ -55,28 +56,11 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatfor
 
 FontCustomPlatformData::~FontCustomPlatformData() = default;
 
-static RefPtr<FcPattern> defaultFontconfigOptions()
-{
-    // Get some generic default settings from fontconfig for web fonts. Strategy
-    // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
-    static FcPattern* pattern = nullptr;
-    static std::once_flag flag;
-    std::call_once(flag, [](FcPattern*) {
-        pattern = FcPatternCreate();
-        FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
-        cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
-        FcDefaultSubstitute(pattern);
-        FcPatternDel(pattern, FC_FAMILY);
-        FcConfigSubstitute(nullptr, pattern, FcMatchFont);
-    }, pattern);
-    return adoptRef(FcPatternDuplicate(pattern));
-}
-
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontCreationContext& fontCreationContext)
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
-    RefPtr<FcPattern> pattern = defaultFontconfigOptions();
+    RefPtr<FcPattern> pattern = fontPatternMatchStrategy();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 
     if (fontCreationContext.fontFaceFeatures()) {

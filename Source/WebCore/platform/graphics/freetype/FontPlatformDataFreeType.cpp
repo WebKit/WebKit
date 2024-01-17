@@ -30,6 +30,7 @@
 #include "FontCache.h"
 #include "FontCacheFreeType.h"
 #include "FontCustomPlatformData.h"
+#include "FontconfigUtilities.h"
 #include "SharedBuffer.h"
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
@@ -324,34 +325,22 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 
 FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
 {
-    static FcPattern* pattern = nullptr;
-    static bool fixedWidth = false;
+    RefPtr<FcPattern> pattern = nullptr;
+    bool fixedWidth = false;
 
     RefPtr<cairo_font_face_t> fontFace;
     if (custom && custom->m_fontFace)
         fontFace = custom->m_fontFace;
     else {
-        // Get some generic default settings from fontconfig for web fonts. Strategy
-        // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
-        // For web fonts, the hint style is overridden in FontCustomPlatformData::FontCustomPlatformData
-        // so Fontconfig will not affect the hint style, but it may disable hinting completely.
-        static std::once_flag flag;
-        std::call_once(flag, [](FcPattern*) {
-            pattern = FcPatternCreate();
-            FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
-            cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
-            FcDefaultSubstitute(pattern);
-            FcPatternDel(pattern, FC_FAMILY);
-            FcConfigSubstitute(nullptr, pattern, FcMatchFont);
-        }, pattern);
+        pattern = fontPatternMatchStrategy();
 
         int spacing;
-        if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
+        if (FcPatternGetInteger(pattern.get(), FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
             fixedWidth = true;
-        fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern));
+        fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern.get()));
     }
 
-    return FontPlatformData(fontFace.get(), adoptRef(pattern), data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
+    return FontPlatformData(fontFace.get(), WTFMove(pattern), data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const

@@ -9,6 +9,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
     platform/graphics/freetype/FontSetCache.cpp
+    platform/graphics/freetype/FontconfigUtilities.cpp
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
     platform/graphics/freetype/RefPtrFontconfig.cpp
     platform/graphics/freetype/SimpleFontDataFreeType.cpp

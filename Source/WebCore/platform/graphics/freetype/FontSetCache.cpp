@@ -24,6 +24,7 @@
 #include "CairoUtilities.h"
 #include "CharacterProperties.h"
 #include "FontCache.h"
+#include "FontconfigUtilities.h"
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ FontSetCache::FontSet::FontSet(RefPtr<FcPattern>&& fontPattern)
 RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDescription, bool preferColoredFont, StringView stringView)
 {
     auto addResult = m_cache.ensure(FontSetCacheKey(fontDescription, preferColoredFont), [&fontDescription, preferColoredFont]() -> std::unique_ptr<FontSetCache::FontSet> {
-        RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
+        RefPtr<FcPattern> pattern = fontPatternMatchStrategy();
         FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
 #ifdef FC_COLOR
         if (preferColoredFont)
@@ -55,9 +56,6 @@ RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDes
         if (!FontCache::configurePatternForFontDescription(pattern.get(), fontDescription))
             return nullptr;
 
-        FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
-        cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
-        FcDefaultSubstitute(pattern.get());
         return makeUnique<FontSetCache::FontSet>(WTFMove(pattern));
     });
 

@@ -30,10 +30,10 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontCacheFreeType.h"
+#include "FontconfigUtilities.h"
 #include FT_SFNT_NAMES_H
 #include FT_TRUETYPE_IDS_H
 #include "RefPtrCairo.h"
-#include "RefPtrFontconfig.h"
 #include "StyleFontSizeFunctions.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -289,13 +289,9 @@ static AliasStrength strengthOfFirstAlias(const FcPattern& original)
 
 static Vector<String> strongAliasesForFamily(const String& family)
 {
-    RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
+    RefPtr<FcPattern> pattern = fontPatternMatchStrategy();
     if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(family.utf8().data())))
         return Vector<String>();
-
-    FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
-    cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
-    FcDefaultSubstitute(pattern.get());
 
     FcUniquePtr<FcObjectSet> familiesOnly(FcObjectSetBuild(FC_FAMILY, nullptr));
     RefPtr<FcPattern> minimal = adoptRef(FcPatternFilter(pattern.get(), familiesOnly.get()));
@@ -365,7 +361,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
     // and font weight (we only match bold/non-bold here).
-    RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
+    RefPtr<FcPattern> pattern = fontPatternMatchStrategy();
     // Never choose unscalable fonts, as they pixelate when displayed at different sizes.
     FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
 #if ENABLE(VARIATION_FONTS)
@@ -388,10 +384,6 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // Fontconfig is used in two stages: (1) configuration and (2) matching. During the
     // configuration step, before any matching occurs, we allow arbitrary family substitutions,
     // since this is an exact matter of respecting the user's font configuration.
-    FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
-    cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern.get());
-    FcDefaultSubstitute(pattern.get());
-
     FcChar8* fontConfigFamilyNameAfterConfiguration;
     FcPatternGetString(pattern.get(), FC_FAMILY, 0, &fontConfigFamilyNameAfterConfiguration);
     String familyNameAfterConfiguration = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterConfiguration));
