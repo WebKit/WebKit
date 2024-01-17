@@ -2330,6 +2330,10 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
             g_object_set(G_OBJECT(element), "limit_buffering_ms", 1000, nullptr);
         }
     }
+    if (isMediaSource() && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstWesterosSink")) {
+        GST_DEBUG_OBJECT(pipeline(), "Setting low-delay mode in westeros sink");
+        g_object_set(element, "low-delay", TRUE, nullptr);
+    }
 #if ENABLE(MEDIA_STREAM)
     if (m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
         GST_DEBUG_OBJECT(pipeline(), "Set 'low_latency' in brcmpcmsink");
