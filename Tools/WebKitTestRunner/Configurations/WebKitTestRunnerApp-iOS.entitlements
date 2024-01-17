@@ -12,5 +12,7 @@
 	<true/>
 	<key>com.apple.private.webkit.adattributiond.testing</key>
 	<true/>
+	<key>com.apple.private.web-browser-engine.host</key>
+	<true/>
 </dict>
 </plist>
