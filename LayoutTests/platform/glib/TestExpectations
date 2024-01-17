@@ -1854,7 +1854,8 @@ webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html 
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 
 # Fails when using two textures.
-webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -2016,9 +2017,10 @@ webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
 webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
-webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Failure ]
-webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Timeout ]
-webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Failure ]
+#webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Timeout ]
+#webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure Timeout Crash ]
 webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash Failure Timeout Pass ]
@@ -3560,7 +3562,7 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStrea
 webkit.org/b/252878 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Failure Pass ]
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/252878 webrtc/multi-video.html [ Failure Pass Timeout ]
-webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout ]
+#webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout ]
 
 # Missing support for UIScriptController.paste()
 fast/forms/input-text-max-length-emojis.html [ Failure ]
@@ -3756,7 +3758,7 @@ webkit.org/b/267411 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/267411 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/addTransceiver-then-addTrack.html [ Failure Crash ]
 webkit.org/b/267411 webrtc/audio-muted-stats.html [ Pass Crash ]
-webkit.org/b/267411 webrtc/audio-peer-connection-g722.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/audio-peer-connection-g722.html [ Failure Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/audio-peer-connection-webaudio.html [ Failure Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/audio-replace-track.html [ Failure Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/audio-samplerate-change.html [ Pass Timeout Crash ]
@@ -3778,6 +3780,18 @@ webkit.org/b/267411 webrtc/multi-audio.html [ Timeout Pass Failure Crash ]
 webkit.org/b/267411 webrtc/multi-video.html [ Failure Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/no-port-zero-in-upd-candidates.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/peer-connection-audio-mute2.html [ Failure Timeout Pass Crash ]
+webkit.org/b/267411 webrtc/canvas-to-peer-connection.html [ Failure Timeout Crash ]
+webkit.org/b/267411 webrtc/peer-connection-audio-mute.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/peer-connection-audio-unmute.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/peer-connection-createMediaStreamDestination.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/peer-connection-remote-audio-mute.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/peer-connection-track-end.html  [ Failure Crash ]
+webkit.org/b/267411 webrtc/peerconnection-page-cache-long.html  [ Timeout Crash ]
+webkit.org/b/267411 webrtc/peerconnection-page-cache.html [ Timeout Crash ]
+webkit.org/b/267411 webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/release-after-getting-track.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/remoteAudio-never-played.html [ Pass Crash ]
 
 # End: Common failures between GTK and WPE.
 
