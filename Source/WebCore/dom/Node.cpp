@@ -1029,6 +1029,8 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors()
             lists->clearChildNodeListCache();
     }
 
+    document().invalidateQuerySelectorAllResults(*this);
+
     if (!document().shouldInvalidateNodeListAndCollectionCaches())
         return;
 
@@ -1048,6 +1050,8 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors()
 void Node::invalidateNodeListAndCollectionCachesInAncestorsForAttribute(const QualifiedName& attrName)
 {
     ASSERT(is<Element>(*this));
+
+    document().invalidateQuerySelectorAllResults(*this);
 
     if (!document().shouldInvalidateNodeListAndCollectionCachesForAttribute(attrName))
         return;

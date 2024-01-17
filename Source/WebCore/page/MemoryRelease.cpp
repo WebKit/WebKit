@@ -121,6 +121,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         return document.get();
     });
     for (auto& document : protectedDocuments) {
+        document->clearQuerySelectorAllResults();
         document->styleScope().releaseMemory();
         document->fontSelector().emptyCaches();
         document->cachedResourceLoader().garbageCollectDocumentResources();

@@ -50,6 +50,8 @@ public:
     Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
 
+    bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
+
 private:
     struct SelectorData {
         const CSSSelector* selector;
@@ -101,6 +103,8 @@ public:
     Element* closest(Element&) const;
     Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
+
+    bool shouldStoreInDocument() const { return m_selectors.shouldStoreInDocument(); }
 
 private:
     CSSSelectorList m_selectorList;

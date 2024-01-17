@@ -61,6 +61,7 @@
 #include "ScriptDisallowedScope.h"
 #include "SelectorQuery.h"
 #include "SlotAssignment.h"
+#include "StaticNodeList.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
 #include <variant>
@@ -997,10 +998,17 @@ ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 
 ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)
 {
-    auto query = protectedDocument()->selectorQueryForString(selectors);
+    auto document = protectedDocument();
+    if (auto results = document->resultForSelectorAll(*this, selectors))
+        return Ref<NodeList> { StaticWrapperNodeList::create(results.releaseNonNull()) };
+    auto query = document->selectorQueryForString(selectors);
     if (query.hasException())
         return query.releaseException();
-    return query.releaseReturnValue().queryAll(*this);
+    auto isCacheable = query.returnValue().shouldStoreInDocument();
+    auto nodeList = query.releaseReturnValue().queryAll(*this);
+    if (isCacheable)
+        document->addResultForSelectorAll(*this, selectors, nodeList);
+    return nodeList;
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualifiedName)

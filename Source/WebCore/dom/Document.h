@@ -59,6 +59,7 @@
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -182,6 +183,7 @@ class MessagePortChannelProvider;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
+class NodeList;
 class Page;
 class PaintWorklet;
 class PaintWorkletGlobalScope;
@@ -257,6 +259,7 @@ struct BoundaryPoint;
 struct ClientOrigin;
 struct FocusOptions;
 struct IntersectionObserverData;
+struct QuerySelectorAllResults;
 struct SecurityPolicyViolationEventInit;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -463,6 +466,11 @@ public:
 
     Element* elementForAccessKey(const String& key);
     void invalidateAccessKeyCache();
+
+    RefPtr<NodeList> resultForSelectorAll(ContainerNode&, const String&);
+    void addResultForSelectorAll(ContainerNode&, const String&, NodeList&);
+    void invalidateQuerySelectorAllResults(Node&);
+    void clearQuerySelectorAllResults();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
 
@@ -2178,6 +2186,8 @@ private:
     bool m_hasViewTransitionPseudoElementTree;
 
     Timer m_loadEventDelayTimer;
+
+    WeakHashMap<Node, std::unique_ptr<QuerySelectorAllResults>, WeakPtrImplWithEventTargetData> m_querySelectorAllResults;
 
     ViewportArguments m_viewportArguments;
 
