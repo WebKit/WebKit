@@ -25,11 +25,12 @@
 #include "config.h"
 #include "VideoTrackGenerator.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
 #include "Exception.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "MediaStreamTrack.h"
+#include "VideoFrame.h"
 #include "WritableStream.h"
 #include "WritableStreamSink.h"
 
