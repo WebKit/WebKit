@@ -1712,3 +1712,5 @@ webkit.org/b/266711 fast/mediastream/microphone-change-while-capturing.html [ Pa
 webkit.org/b/266711 media/modern-media-controls/audio/audio-controls-styles.html [ Failure Crash ]
 webkit.org/b/266711 webrtc/canvas-to-peer-connection.html  [ Failure Timeout Crash ]
 webkit.org/b/266711 webrtc/release-after-getting-track.html [ Pass Crash ]
+
+fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]

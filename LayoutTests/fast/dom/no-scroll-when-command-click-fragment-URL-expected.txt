@@ -1,0 +1,3 @@
+Policy delegate: attempt to load no-scroll-when-command-click-fragment-URL.html with navigation type 'link clicked'
+Link to Fragment
+PASS: Page did not scroll.
