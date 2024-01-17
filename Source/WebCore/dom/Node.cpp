@@ -2334,12 +2334,9 @@ bool Node::addEventListener(const AtomString& eventType, Ref<EventListener>&& li
     return tryAddEventListener(this, eventType, WTFMove(listener), options);
 }
 
-static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
+static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomString& eventType)
 {
-    if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
-        return false;
-
-    Ref document = targetNode->document();
+    Ref document = targetNode.document();
     document->didRemoveEventListenersOfType(eventType);
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
@@ -2347,28 +2344,28 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     auto& eventNames = WebCore::eventNames();
     auto typeInfo = eventNames.typeInfoForEvent(eventType);
     if (typeInfo.isInCategory(EventCategory::Wheel)) {
-        document->didRemoveWheelEventHandler(*targetNode);
+        document->didRemoveWheelEventHandler(targetNode);
         document->invalidateEventListenerRegions();
-    } else if (isTouchRelatedEventType(typeInfo, *targetNode))
-        document->didRemoveTouchEventHandler(*targetNode);
+    } else if (isTouchRelatedEventType(typeInfo, targetNode))
+        document->didRemoveTouchEventHandler(targetNode);
     else if (typeInfo.isInCategory(EventCategory::MouseClickRelated))
-        document->didAddOrRemoveMouseEventHandler(*targetNode);
+        document->didAddOrRemoveMouseEventHandler(targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
+    if (&targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
         if (auto* window = document->domWindow())
             window->decrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (isTouchRelatedEventType(typeInfo, *targetNode))
-        document->removeTouchEventListener(*targetNode);
+    if (isTouchRelatedEventType(typeInfo, targetNode))
+        document->removeTouchEventListener(targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
     if (typeInfo.isInCategory(EventCategory::Gesture))
-        document->removeTouchEventHandler(*targetNode);
+        document->removeTouchEventHandler(targetNode);
 #endif
 
     return true;
@@ -2376,7 +2373,19 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
 
 bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
-    return tryRemoveEventListener(this, eventType, listener, options);
+    if (!EventTarget::removeEventListener(eventType, listener, options))
+        return false;
+    didRemoveEventListenerOfType(*this, eventType);
+    return true;
+}
+
+void Node::removeAllEventListeners()
+{
+    EventTarget::removeAllEventListeners();
+    enumerateEventListenerTypes([&](const AtomString& type, unsigned count) {
+        for (unsigned i = 0; i < count; ++i)
+            didRemoveEventListenerOfType(*this, type);
+    });
 }
 
 Vector<std::unique_ptr<MutationObserverRegistration>>* Node::mutationObserverRegistry()
