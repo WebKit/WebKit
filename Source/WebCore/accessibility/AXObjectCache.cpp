@@ -4167,16 +4167,33 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         return;
     }
 
-    struct UpdatedFields {
-        bool children { false };
-        bool node { false };
-        bool dependentProperties { false };
+    enum class Field : uint8_t {
+        Children = 1 << 0,
+        DependentProperties = 1 << 1,
+        Node = 1 << 2,
     };
-    HashMap<AXID, UpdatedFields> updatedObjects;
+    HashMap<AXID, OptionSet<Field>> updatedObjects;
+    auto updateChildren = [&] (RefPtr<AccessibilityObject> axObject) {
+        auto updatedFields = updatedObjects.get(axObject->objectID());
+        if (!updatedFields.contains(Field::Children)) {
+            updatedFields.add(Field::Children);
+            updatedObjects.set(axObject->objectID(), updatedFields);
+            tree->queueNodeUpdate(*axObject, NodeUpdateOptions::childrenUpdate());
+        }
+    };
+    auto updateDependentProperties = [&] (RefPtr<AccessibilityObject> axObject) {
+        auto updatedFields = updatedObjects.get(axObject->objectID());
+        if (!updatedFields.contains(Field::DependentProperties)) {
+            updatedFields.add(Field::DependentProperties);
+            updatedObjects.set(axObject->objectID(), updatedFields);
+            tree->updateDependentProperties(*axObject);
+        }
+    };
     auto updateNode = [&] (RefPtr<AccessibilityObject> axObject) {
         auto updatedFields = updatedObjects.get(axObject->objectID());
-        if (!updatedFields.node) {
-            updatedObjects.set(axObject->objectID(), UpdatedFields { updatedFields.children, true });
+        if (!updatedFields.contains(Field::Node)) {
+            updatedFields.add(Field::Node);
+            updatedObjects.set(axObject->objectID(), updatedFields);
             tree->queueNodeUpdate(*axObject, NodeUpdateOptions::nodeUpdate());
         }
     };
@@ -4332,12 +4349,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             break;
         case AXLabelChanged: {
             updateNode(notification.first);
-
-            auto updatedFields = updatedObjects.get(notification.first->objectID());
-            if (!updatedFields.dependentProperties) {
-                updatedObjects.set(notification.first->objectID(), UpdatedFields { updatedFields.children, updatedFields.node, true });
-                tree->updateDependentProperties(*notification.first);
-            }
+            updateDependentProperties(notification.first);
             break;
         }
         case AXLanguageChanged:
@@ -4345,14 +4357,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             updateNode(notification.first);
             FALLTHROUGH;
         case AXRowCollapsed:
-        case AXRowExpanded: {
-            auto updatedFields = updatedObjects.get(notification.first->objectID());
-            if (!updatedFields.children) {
-                updatedObjects.set(notification.first->objectID(), UpdatedFields { true, updatedFields.node });
-                tree->queueNodeUpdate(*notification.first, NodeUpdateOptions::childrenUpdate());
-            }
+        case AXRowExpanded:
+            updateChildren(notification.first);
             break;
-        }
         default:
             break;
         }
