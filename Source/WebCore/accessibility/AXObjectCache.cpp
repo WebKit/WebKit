@@ -313,7 +313,11 @@ bool AXObjectCache::isModalElement(Element& element) const
             modalValue = defaultARIA->valueForAttribute(element, aria_modalAttr);
     }
     bool isAriaModal = equalLettersIgnoringASCIICase(modalValue, "true"_s);
-    return (hasDialogRole && isAriaModal) || (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal());
+    if (hasDialogRole && isAriaModal)
+        return true;
+
+    RefPtr dialog = dynamicDowncast<HTMLDialogElement>(element);
+    return dialog && dialog->isModal();
 }
 
 void AXObjectCache::findModalNodes()
@@ -483,11 +487,9 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
         return nullptr;
     
     for (const auto& child : axRenderImage->children()) {
-        if (!is<AccessibilityImageMapLink>(*child))
-            continue;
-
-        if (downcast<AccessibilityImageMapLink>(*child).areaElement() == areaElement)
-            return downcast<AccessibilityImageMapLink>(child.get());
+        auto* imageMapLink = dynamicDowncast<AccessibilityImageMapLink>(*child);
+        if (imageMapLink && imageMapLink->areaElement() == areaElement)
+            return imageMapLink;
     }
     
     return nullptr;
@@ -581,14 +583,14 @@ AccessibilityObject* AXObjectCache::get(Node* node)
 // FIXME: This probably belongs on Node.
 bool nodeHasRole(Node* node, StringView role)
 {
-    if (!node || !is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    auto& element = downcast<Element>(*node);
-    AtomString roleValue = element.attributeWithoutSynchronization(roleAttr);
+    auto roleValue = element->attributeWithoutSynchronization(roleAttr);
     if (roleValue.isNull()) {
-        if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
-            roleValue = defaultARIA->valueForAttribute(element, roleAttr);
+        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
+            roleValue = defaultARIA->valueForAttribute(*element, roleAttr);
     }
     if (role.isNull())
         return roleValue.isEmpty();
@@ -610,17 +612,20 @@ bool nodeHasCellRole(Node* node)
 
 static bool isSimpleImage(const RenderObject& renderer)
 {
-    if (!is<RenderImage>(renderer))
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
+    if (!renderImage)
         return false;
 
     // Exclude ImageButtons because they are treated as buttons, not as images.
-    auto* node = renderer.node();
+    RefPtr node = renderer.node();
     if (is<HTMLInputElement>(node))
         return false;
 
     // ImageMaps are not simple images.
-    if (downcast<RenderImage>(renderer).imageMap()
-        || (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node)->hasAttributeWithoutSynchronization(usemapAttr)))
+    if (renderImage->imageMap())
+        return false;
+
+    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node); imgElement && imgElement->hasAttributeWithoutSynchronization(usemapAttr))
         return false;
 
 #if ENABLE(VIDEO)
@@ -730,8 +735,8 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
 
     if (is<RenderListBox>(renderer))
         return AccessibilityListBox::create(renderer);
-    if (is<RenderMenuList>(renderer))
-        return AccessibilityMenuList::create(downcast<RenderMenuList>(renderer));
+    if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
+        return AccessibilityMenuList::create(renderMenuList);
 
     // standard tables
     if ((is<RenderTable>(renderer) && !renderer->isAnonymous()) || isAccessibilityTable(node))
@@ -747,8 +752,8 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityProgressIndicator::create(renderer);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (is<RenderAttachment>(renderer))
-        return AccessibilityAttachment::create(downcast<RenderAttachment>(renderer));
+    if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(renderer))
+        return AccessibilityAttachment::create(renderAttachment);
 #endif
 
     // input type=range
@@ -808,10 +813,10 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
         return obj;
     
     RefPtr<AccessibilityObject> newObj;
-    if (is<ScrollView>(*widget))
-        newObj = AccessibilityScrollView::create(downcast<ScrollView>(widget));
-    else if (is<Scrollbar>(*widget))
-        newObj = AccessibilityScrollbar::create(downcast<Scrollbar>(widget));
+    if (auto* scrollView = dynamicDowncast<ScrollView>(*widget))
+        newObj = AccessibilityScrollView::create(scrollView);
+    else if (auto* scrollbar = dynamicDowncast<Scrollbar>(*widget))
+        newObj = AccessibilityScrollbar::create(scrollbar);
 
     // Will crash later if we have two objects for the same widget.
     ASSERT(!get(widget));
@@ -841,20 +846,21 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsPartOfRelation isP
     if (!node->parentElement())
         return nullptr;
 
-    bool isOptionElement = is<HTMLOptionElement>(*node);
-    if (isOptionElement || is<HTMLOptGroupElement>(*node)) {
-        auto select = isOptionElement
-            ? downcast<HTMLOptionElement>(*node).ownerSelectElement()
-            : downcast<HTMLOptGroupElement>(*node).ownerSelectElement();
+    auto* optionElement = dynamicDowncast<HTMLOptionElement>(*node);
+    auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(*node);
+    if (optionElement || optGroupElement) {
+        auto select = optionElement
+            ? optionElement->ownerSelectElement()
+            : optGroupElement->ownerSelectElement();
         if (!select)
             return nullptr;
         RefPtr<AccessibilityObject> object;
         if (select->usesMenuList()) {
-            if (!isOptionElement)
+            if (!optionElement)
                 return nullptr;
             if (!select->renderer())
                 return nullptr;
-            object = AccessibilityMenuListOption::create(downcast<HTMLOptionElement>(*node));
+            object = AccessibilityMenuListOption::create(*optionElement);
         } else
             object = AccessibilityListBoxOption::create(downcast<HTMLElement>(*node));
         cacheAndInitializeWrapper(object.get(), node);
@@ -1105,19 +1111,20 @@ void AXObjectCache::remove(Node& node)
         return;
     }
 
-    if (is<Element>(node)) {
-        m_deferredTextFormControlValue.remove(downcast<Element>(node));
+    // We cannot use RefPtr here as node's m_deletionHasBegun is true.
+    if (auto* nodeElement = dynamicDowncast<Element>(node)) {
+        m_deferredTextFormControlValue.remove(*nodeElement);
         m_deferredAttributeChange.removeAllMatching([&node] (const auto& entry) {
             return entry.element == &node;
         });
-        m_modalElements.removeAllMatching([&node] (const auto& element) {
-            return downcast<Element>(&node) == element.get();
+        m_modalElements.removeAllMatching([&nodeElement] (const auto& element) {
+            return nodeElement == element.get();
         });
-        m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(node));
-        m_deferredRecomputeTableIsExposedList.remove(downcast<Element>(node));
-        m_deferredSelectedChildredChangedList.remove(downcast<Element>(node));
-        m_deferredModalChangedList.remove(downcast<Element>(node));
-        m_deferredMenuListChange.remove(downcast<Element>(node));
+        m_deferredRecomputeIsIgnoredList.remove(*nodeElement);
+        m_deferredRecomputeTableIsExposedList.remove(*nodeElement);
+        m_deferredSelectedChildredChangedList.remove(*nodeElement);
+        m_deferredModalChangedList.remove(*nodeElement);
+        m_deferredMenuListChange.remove(*nodeElement);
     }
     m_deferredNodeAddedOrRemovedList.remove(node);
     m_deferredTextChangedList.remove(node);
@@ -1267,8 +1274,8 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
         ASSERT(children.size() == 1 && is<AccessibilityObject>(*children[0]));
         handleChildrenChanged(downcast<AccessibilityObject>(*children[0]));
-    } else if (is<AccessibilityMenuListPopup>(object)) {
-        downcast<AccessibilityMenuListPopup>(object).handleChildrenChanged();
+    } else if (auto* menuListPopup = dynamicDowncast<AccessibilityMenuListPopup>(object)) {
+        menuListPopup->handleChildrenChanged();
         return;
     } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(object))
         deferRecomputeTableCellSlots(*axTable);
@@ -1342,10 +1349,10 @@ void AXObjectCache::handleMenuOpened(Node* node)
 
 void AXObjectCache::handleLiveRegionCreated(Node* node)
 {
-    if (!is<Element>(node) || !node->renderer())
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element || !node->renderer())
         return;
 
-    Element* element = downcast<Element>(node);
     auto liveRegionStatus = element->attributeWithoutSynchronization(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
         const AtomString& ariaRole = element->attributeWithoutSynchronization(roleAttr);
@@ -1364,8 +1371,7 @@ void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
 
     m_deferredNodeAddedOrRemovedList.add(*node);
 
-    if (is<Element>(node)) {
-        auto* changedElement = downcast<Element>(node);
+    if (auto* changedElement = dynamicDowncast<Element>(node)) {
         if (isModalElement(*changedElement))
             deferModalChange(changedElement);
     }
@@ -1440,8 +1446,8 @@ void AXObjectCache::notificationPostTimerFired()
 #if ASSERT_ENABLED
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
-        if (is<AccessibilityRenderObject>(*note.first)) {
-            if (auto* renderer = downcast<AccessibilityRenderObject>(*note.first).renderer())
+        if (auto* renderObject = dynamicDowncast<AccessibilityRenderObject>(*note.first)) {
+            if (auto* renderer = renderObject->renderer())
                 ASSERT(!renderer->view().frameView().layoutContext().layoutState());
         }
 #endif
@@ -1554,15 +1560,16 @@ void AXObjectCache::autofillTypeChanged(Node* node)
 
 void AXObjectCache::handleMenuItemSelected(Node* node)
 {
-    if (!node)
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return;
-    
+
     if (!nodeHasRole(node, "menuitem"_s) && !nodeHasRole(node, "menuitemradio"_s) && !nodeHasRole(node, "menuitemcheckbox"_s))
         return;
-    
-    if (!downcast<Element>(*node).focused() && !equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_selectedAttr), "true"_s))
+
+    if (!element->focused() && !equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_selectedAttr), "true"_s))
         return;
-    
+
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
 }
 
@@ -2986,8 +2993,7 @@ TextMarkerData AXObjectCache::textMarkerDataForCharacterOffset(const CharacterOf
     if (characterOffset.isNull())
         return { };
 
-    if (is<HTMLInputElement>(characterOffset.node)
-        && downcast<HTMLInputElement>(*characterOffset.node).isSecureField())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(characterOffset.node); input && input->isSecureField())
         return { *this, { }, true };
 
     setNodeInUse(characterOffset.node);
@@ -3273,7 +3279,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     if (!node)
         return std::nullopt;
 
-    if (is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isSecureField())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node); input && input->isSecureField())
         return std::nullopt;
 
     // If the visible position has an anchor type referring to a node other than the anchored node, we should
@@ -3293,7 +3299,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
 // This function exists as a performance optimization to avoid a synchronous layout.
 std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
 {
-    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isSecureField())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(textControl); input && input->isSecureField())
         return std::nullopt;
 
     auto* cache = textControl.document().axObjectCache();
@@ -3721,7 +3727,7 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (boxAndOffset.box)
         renderer = const_cast<RenderObject*>(&boxAndOffset.box->renderer());
 
-    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(*renderer)) != boxAndOffset.box)
+    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak) != boxAndOffset.box)
         return IntRect();
 
     return computeLocalCaretRect(*renderer, boxAndOffset);
@@ -3847,8 +3853,10 @@ CharacterOffset AXObjectCache::characterOffsetForIndex(int index, const AXCoreOb
 
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)
 {
-    const Element* result = node->rootEditableElement();
-    const Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
+    const auto* result = node->rootEditableElement();
+    const auto* element = dynamicDowncast<Element>(*node);
+    if (!element)
+        element = node->parentElement();
 
     for (; element; element = element->parentElement()) {
         if (nodeIsTextControl(element))
@@ -4500,7 +4508,7 @@ bool isNodeAriaVisible(Node* node)
         return false;
 
     // If an element is focused, it should not be hidden.
-    if (is<Element>(*node) && downcast<Element>(*node).focused())
+    if (RefPtr element = dynamicDowncast<Element>(*node); element && element->focused())
         return true;
 
     // ARIA Node visibility is controlled by aria-hidden
@@ -4512,8 +4520,8 @@ bool isNodeAriaVisible(Node* node)
     bool requiresAriaHiddenFalse = !node->renderer();
     bool ariaHiddenFalsePresent = false;
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
-        if (is<Element>(*testNode)) {
-            const AtomString& ariaHiddenValue = downcast<Element>(*testNode).attributeWithoutSynchronization(aria_hiddenAttr);
+        if (RefPtr element = dynamicDowncast<Element>(*testNode)) {
+            const auto& ariaHiddenValue = element->attributeWithoutSynchronization(aria_hiddenAttr);
             if (equalLettersIgnoringASCIICase(ariaHiddenValue, "true"_s))
                 return false;
 
