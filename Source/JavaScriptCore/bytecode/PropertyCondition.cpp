@@ -175,6 +175,12 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
         
+        if (structure->typeInfo().overridesPut() && JSObject::mightBeSpecialProperty(structure->vm(), structure->typeInfo().type(), uid())) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because its put() override may treat ", uid(), " property as special non-structure one.\n");
+            return false;
+        }
+
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->get(structure->vm(), concurrency, uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
@@ -186,10 +192,6 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
                 }
                 return false;
             }
-        } else if (structure->typeInfo().overridesPut() && JSObject::mightBeSpecialProperty(structure->vm(), structure->typeInfo().type(), uid())) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because its put() override may treat ", uid(), " property as special non-structure one.\n");
-            return false;
         } else if (structure->hasNonReifiedStaticProperties()) {
             if (auto entry = structure->findPropertyHashEntry(uid())) {
                 if (entry->value->attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue) {
