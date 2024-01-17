@@ -19,6 +19,10 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
 }
 
+[Nested] class Namespace::ClassWithMemberPrecondition {
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+}
+
 [RefCounted] class Namespace::ReturnRefClass {
     double functionCall().member1
     double functionCall().member2

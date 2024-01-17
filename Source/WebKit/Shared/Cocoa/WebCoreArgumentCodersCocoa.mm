@@ -137,20 +137,6 @@ std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMer
     return WebCore::PaymentMerchantSession { WTFMove(*paymentMerchantSession) };
 }
 
-void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCore::PaymentMethod& paymentMethod)
-{
-    encoder << paymentMethod.pkPaymentMethod();
-}
-
-std::optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
-{
-    auto paymentMethod = decoder.decodeWithAllowedClasses<PKPaymentMethod>();
-    if (!paymentMethod)
-        return std::nullopt;
-
-    return WebCore::PaymentMethod { WTFMove(*paymentMethod) };
-}
-
 void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest& request)
 {
     encoder << request.countryCode();

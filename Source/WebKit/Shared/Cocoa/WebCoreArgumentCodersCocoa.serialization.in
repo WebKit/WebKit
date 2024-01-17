@@ -108,6 +108,11 @@ enum class WebCore::ApplePaySessionPaymentRequestShippingType : uint8_t {
     StorePickup,
     ServicePickup,
 };
+
+headers: <pal/cocoa/PassKitSoftLink.h>
+class WebCore::PaymentMethod {
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+}
 #endif
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)

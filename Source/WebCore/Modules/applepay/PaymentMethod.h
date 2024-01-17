@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS PKPaymentMethod;
@@ -46,6 +47,7 @@ public:
     PKPaymentMethod *pkPaymentMethod() const;
 
 private:
+    friend struct IPC::ArgumentCoder<PaymentMethod, void>;
     RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 };
 

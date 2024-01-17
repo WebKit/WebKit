@@ -104,6 +104,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "dataDetectorResults"_s
             },
         } },
+        { "Namespace::ClassWithMemberPrecondition"_s, {
+            {
+                "RetainPtr<PKPaymentMethod>"_s,
+                "m_pkPaymentMethod"_s
+            },
+        } },
         { "Namespace::ReturnRefClass"_s, {
             {
                 "double"_s,

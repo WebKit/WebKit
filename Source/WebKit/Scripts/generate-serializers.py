@@ -52,7 +52,7 @@ import sys
 # OptionalTupleBits - This member stores bits of whether each following member is serialized. Attribute must be immediately before members with OptionalTupleBit.
 # OptionalTupleBit - The name of the bit indicating whether this member is serialized.
 # SupportWKKeyedCoder - For webkit_secure_coding types, in addition to the preferred property list code path, support SupportWKKeyedCoder
-
+# Precondition - Used to fail early from a decoder, for example if a soft linked framework is not present to decode a member
 
 class Template(object):
     def __init__(self, template_type, namespace, name, enum_storage=None):
@@ -746,6 +746,16 @@ def decode_type(type):
         if len(decodable_classes) == 1:
             match = re.search("RetainPtr<(.*)>", member.type)
             assert match
+            for attribute in member.attributes:
+                precondition = re.search(r'Precondition=\'(.*)\'', attribute)
+                if precondition:
+                    condition, = precondition.groups()
+                    result.append('    if (!(' + condition + '))')
+                    result.append('        return std::nullopt;')
+                    break
+                else:
+                    condition = re.search(r'Precondition', attribute)
+                    assert not condition
             result.append('    auto ' + sanitized_variable_name + ' = decoder.decodeWithAllowedClasses<' + match.groups()[0] + '>({ ' + decodable_classes[0] + ' });')
         elif member.is_subclass:
             result.append('    if (type == ' + type.subclass_enum_name() + "::" + member.name + ') {')
