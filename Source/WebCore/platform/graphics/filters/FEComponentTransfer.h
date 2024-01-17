@@ -67,7 +67,7 @@ template<> struct EnumTraits<WebCore::ComponentTransferChannel> {
 
 namespace WebCore {
 
-using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, ComponentTransferFunction>;
+using ComponentTransferFunctions = EnumeratedArray<EnumeratedArrayKey<ComponentTransferChannel, ComponentTransferChannel::Alpha>, ComponentTransferFunction>;
 
 class FEComponentTransfer : public FilterEffect {
 public:

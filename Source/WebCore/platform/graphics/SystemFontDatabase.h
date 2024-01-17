@@ -91,7 +91,7 @@ private:
     const SystemFontShorthandInfo& systemFontShorthandInfo(FontShorthand);
     static SystemFontShorthandInfo platformSystemFontShorthandInfo(FontShorthand);
 
-    using SystemFontShorthandCache = EnumeratedArray<FontShorthand, std::optional<SystemFontShorthandInfo>, FontShorthand::StatusBar>;
+    using SystemFontShorthandCache = EnumeratedArray<EnumeratedArrayKey<FontShorthand, FontShorthand::StatusBar>, std::optional<SystemFontShorthandInfo>>;
     SystemFontShorthandCache m_systemFontShorthandCache;
 };
 

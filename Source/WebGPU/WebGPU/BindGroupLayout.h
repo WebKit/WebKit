@@ -51,7 +51,7 @@ class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGr
     WTF_MAKE_FAST_ALLOCATED;
 public:
     template <typename T>
-    using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
+    using ShaderStageArray = EnumeratedArray<EnumeratedArrayKey<ShaderStage, ShaderStage::Compute>, T>;
     using ArgumentBufferIndices = ShaderStageArray<std::optional<uint32_t>>;
     struct Entry {
         uint32_t binding;

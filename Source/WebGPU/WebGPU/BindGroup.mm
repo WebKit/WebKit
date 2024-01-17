@@ -76,7 +76,7 @@ static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
 }
 
 template <typename T>
-using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
+using ShaderStageArray = EnumeratedArray<EnumeratedArrayKey<ShaderStage, ShaderStage::Compute>, T>;
 
 #if HAVE(COREVIDEO_METAL_SUPPORT)
 

@@ -446,22 +446,22 @@ template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
     }
 };
 
-template<typename Key, typename T, Key lastValue> struct ArgumentCoder<EnumeratedArray<Key, T, lastValue>> {
+template<typename Key, typename T> struct ArgumentCoder<EnumeratedArray<Key, T>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const EnumeratedArray<Key, T, lastValue>& array)
+    static void encode(Encoder& encoder, const EnumeratedArray<Key, T>& array)
     {
         for (auto& item : array)
             encoder << item;
     }
 
     template<typename Decoder>
-    static std::optional<EnumeratedArray<Key, T, lastValue>> decode(Decoder& decoder)
+    static std::optional<EnumeratedArray<Key, T>> decode(Decoder& decoder)
     {
-        auto array = decoder.template decode<typename EnumeratedArray<Key, T, lastValue>::UnderlyingType>();
+        auto array = decoder.template decode<typename EnumeratedArray<Key, T>::UnderlyingType>();
         if (!array)
             return std::nullopt;
 
-        return std::make_optional<EnumeratedArray<Key, T, lastValue>>(WTFMove(*array));
+        return std::make_optional<EnumeratedArray<Key, T>>(WTFMove(*array));
     }
 };
 
