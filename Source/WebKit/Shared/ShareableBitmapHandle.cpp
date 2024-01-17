@@ -45,4 +45,10 @@ void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const
     m_handle.takeOwnershipOfMemory(ledger);
 }
 
+void ShareableBitmapHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& identity, MemoryLedger ledger) const
+{
+    m_handle.setOwnershipOfMemory(identity, ledger);
+}
+
+
 } // namespace WebKit

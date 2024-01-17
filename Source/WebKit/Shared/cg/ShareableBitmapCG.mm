@@ -268,4 +268,12 @@ RefPtr<Image> ShareableBitmap::createImage()
     return nullptr;
 }
 
+void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity& identity)
+{
+    m_ownershipHandle = m_sharedMemory->createHandle(SharedMemory::Protection::ReadWrite);
+    if (!m_ownershipHandle)
+        return;
+    m_ownershipHandle->setOwnershipOfMemory(identity, MemoryLedger::Graphics);
+}
+
 } // namespace WebKit

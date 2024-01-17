@@ -154,8 +154,6 @@ public:
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
 
-    virtual void setOwnershipIdentity(const ProcessIdentity&) { }
-
     const Parameters& parameters() { return m_parameters; }
 
     WEBCORE_EXPORT virtual String debugDescription() const = 0;

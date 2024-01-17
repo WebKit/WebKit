@@ -115,19 +115,21 @@ void RemoteImageBuffer::putPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, We
 void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    std::optional<ShareableBitmap::Handle> handle;
-    [&]() {
+    std::optional<ShareableBitmap::Handle> handle = [&]() -> std::optional<ShareableBitmap::Handle> {
         auto backendSize = m_imageBuffer->backendSize();
         auto logicalSize = m_imageBuffer->logicalSize();
         auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : m_imageBuffer->truncatedLogicalSize();
         auto bitmap = ShareableBitmap::create({ resultSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
-            return;
+            return std::nullopt;
+        auto handle = bitmap->createHandle();
+        if (m_backend->resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->resourceOwner(), MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
-            return;
+            return std::nullopt;
         context->drawImageBuffer(m_imageBuffer.get(), WebCore::FloatRect { { }, resultSize }, WebCore::FloatRect { { }, logicalSize }, { WebCore::CompositeOperator::Copy });
-        handle = bitmap->createHandle();
+        return handle;
     }();
     completionHandler(WTFMove(handle));
 }
@@ -135,20 +137,22 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
 void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    std::optional<ShareableBitmap::Handle> handle;
-    [&]() {
+    std::optional<ShareableBitmap::Handle> handle = [&]() -> std::optional<ShareableBitmap::Handle> {
         auto image = m_imageBuffer->filteredNativeImage(filter);
         if (!image)
-            return;
+            return std::nullopt;
         auto imageSize = image->size();
         auto bitmap = ShareableBitmap::create({ imageSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
-            return;
+            return std::nullopt;
+        auto handle = bitmap->createHandle();
+        if (m_backend->resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->resourceOwner(), MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
-            return;
+            return std::nullopt;
         context->drawNativeImage(*image, WebCore::FloatRect { { }, imageSize }, WebCore::FloatRect { { }, imageSize });
-        handle = bitmap->createHandle();
+        return handle;
     }();
     completionHandler(WTFMove(handle));
 }

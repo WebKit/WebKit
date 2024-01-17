@@ -78,8 +78,9 @@ public:
 
     size_t size() const { return m_size; }
 
-    // Take/Set ownership of the memory for jetsam purposes.
+    // Take ownership of the memory for process memory accounting purposes.
     void takeOwnershipOfMemory(MemoryLedger) const;
+    // Transfer ownership of the memory for process memory accounting purposes.
     void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
