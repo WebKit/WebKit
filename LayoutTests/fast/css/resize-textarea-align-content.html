@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- This test is derived from resize-below-min-size.html -->
+<html>
+<head>
+    <style>
+    body { margin: 0; padding: 0;}
+    #resizable {
+        box-sizing: border-box; /* to make the output width/height predictable */
+        align-content: center;
+        border: 3px solid;
+    }
+    </style>
+</head>
+<body>
+<div style="width:800px; height:800px">
+    <textarea id="resizable">resizable</textarea>
+</div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+function drag(startX, startY, destX, destY) {
+    const actions = new test_driver.Actions()
+        .pointerMove(startX - 6, startY - 7)
+        .pointerDown()
+        .pointerMove(destX - 6, destY - 7)
+        .pointerUp();
+    return actions.send();
+}
+
+async function testDragAndMove(box) {
+    const startX = box.getBoundingClientRect().right;
+    const startY = box.getBoundingClientRect().bottom;
+    await drag(startX, startY, startX - 350, startY - 350);
+}
+
+promise_test(async () => {
+    const box = document.getElementById("resizable");
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "200px";
+    box.style.minHeight = "200px";
+    await testDragAndMove(box);
+    assert_equals(box.style.width, "200px");
+    assert_equals(box.style.height, "200px");
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "15vw";
+    box.style.minHeight = "15vh";
+    await testDragAndMove(box);
+    assert_equals(box.style.width, (0.15 * window.innerWidth) + "px");
+    assert_equals(box.style.height, (0.15 * window.innerHeight) + "px");
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "10%";
+    box.style.minHeight = "10%";
+    await testDragAndMove(box);
+    assert_equals(box.style.width, "80px"); // 10% of container
+    assert_equals(box.style.height, "80px"); // 10% of container
+}, "Test for resizing a textarea control with align-content.");
+</script>
+</body>
+</html>

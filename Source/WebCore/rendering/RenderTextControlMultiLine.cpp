@@ -27,6 +27,7 @@
 #include "LocalFrame.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderStyleSetters.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
@@ -57,6 +58,10 @@ bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitT
 {
     if (!RenderTextControl::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
+
+    const LayoutPoint adjustedPoint(accumulatedOffset + location());
+    if (isPointInOverflowControl(result, locationInContainer.point(), adjustedPoint))
+        return true;
 
     if (result.innerNode() == &textAreaElement() || result.innerNode() == innerTextElement())
         hitInnerTextElement(result, locationInContainer.point(), accumulatedOffset);
