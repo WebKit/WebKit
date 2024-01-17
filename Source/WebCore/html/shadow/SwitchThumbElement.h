@@ -36,7 +36,6 @@ class SwitchThumbElement final : public HTMLDivElement {
 public:
     static Ref<SwitchThumbElement> create(Document&);
 private:
-    static constexpr auto CreateSwitchThumbElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit SwitchThumbElement(Document&);
 };
 

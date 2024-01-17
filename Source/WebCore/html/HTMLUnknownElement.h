@@ -43,7 +43,7 @@ public:
 
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : HTMLElement(tagName, document, CreateHTMLElement | TypeFlag::IsUnknownElement)
+        : HTMLElement(tagName, document, TypeFlag::IsUnknownElement)
     {
     }
 };

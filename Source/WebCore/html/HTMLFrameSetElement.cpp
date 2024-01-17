@@ -51,7 +51,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameSetElement);
 using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, CreateHTMLFrameSetElement)
+    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_totalRows(1)
     , m_totalCols(1)
     , m_border(6)

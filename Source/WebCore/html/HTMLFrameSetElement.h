@@ -54,7 +54,6 @@ public:
     bool isSupportedPropertyName(const AtomString&);
 
 private:
-    static constexpr auto CreateHTMLFrameSetElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLFrameSetElement(const QualifiedName&, Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

@@ -44,7 +44,7 @@ Ref<SwitchTrackElement> SwitchTrackElement::create(Document& document)
 }
 
 SwitchTrackElement::SwitchTrackElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document, CreateSwitchTrackElement)
+    : HTMLDivElement(HTMLNames::divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
