@@ -1952,8 +1952,8 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
 }
 
 #if ENABLE(GPU_PROCESS)
-template <typename ObjectIdentifierType>
-std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
+template <typename T>
+std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
 {
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
@@ -1961,20 +1961,20 @@ std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromPro
     auto number = convertToUint64(jsPropertyValue);
     if (!number)
         return std::nullopt;
-    return ObjectIdentifier<ObjectIdentifierType>(*number);
+    return std::optional<T> { *number };
 }
 
 static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
 {
-    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifierType>(globalObject, jsObject, "identifier"_s, scope);
+    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifier>(globalObject, jsObject, "identifier"_s, scope);
     if (!identifier)
         return false;
 
-    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifierType>(globalObject, jsObject, "pageProxyID"_s, scope);
+    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifier>(globalObject, jsObject, "pageProxyID"_s, scope);
     if (!pageProxyID)
         return false;
 
-    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifierType>(globalObject, jsObject, "pageID"_s, scope);
+    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifier>(globalObject, jsObject, "pageID"_s, scope);
     if (!pageID)
         return false;
 
