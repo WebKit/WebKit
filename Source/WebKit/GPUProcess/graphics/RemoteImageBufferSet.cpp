@@ -61,7 +61,19 @@ RemoteImageBufferSet::RemoteImageBufferSet(RemoteImageBufferSetIdentifier identi
 {
 }
 
-RemoteImageBufferSet::~RemoteImageBufferSet() = default;
+RemoteImageBufferSet::~RemoteImageBufferSet()
+{
+    // Volatile image buffers do not have contexts.
+    if (!m_frontBuffer || m_frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+        return;
+    if (!m_frontBuffer->hasBackend())
+        return;
+    // Unwind the context's state stack before destruction, since calls to restore may not have
+    // been flushed yet, or the web process may have terminated.
+    auto& context = m_frontBuffer->context();
+    while (context.stackSize())
+        context.restore();
+}
 
 void RemoteImageBufferSet::startListeningForIPC()
 {
