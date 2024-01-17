@@ -43,11 +43,17 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, Device& device)
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     : m_device(device)
     , m_renderBundleEncoder(encoder)
+    , m_renderBundlesResources(resources)
+    , m_descriptor(descriptor)
+    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(descriptor.colorFormats, descriptor.colorFormatCount) : Vector<WGPUTextureFormat>())
 {
-    m_renderBundlesResources = resources;
+    if (m_descriptorColorFormats.size())
+        m_descriptor.colorFormats = &m_descriptorColorFormats[0];
+
+    ASSERT(m_renderBundleEncoder || m_renderBundlesResources.count);
 }
 
 RenderBundle::RenderBundle(Device& device)
@@ -57,15 +63,20 @@ RenderBundle::RenderBundle(Device& device)
 
 RenderBundle::~RenderBundle() = default;
 
+bool RenderBundle::isValid() const
+{
+    return m_renderBundleEncoder || m_renderBundlesResources.count;
+}
+
 void RenderBundle::setLabel(String&& label)
 {
     m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label;
 }
 
-void RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) const
+void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder) const
 {
     if (m_renderBundleEncoder)
-        m_renderBundleEncoder->replayCommands(commandEncoder);
+        m_renderBundleEncoder->replayCommands(renderPassEncoder);
 }
 
 void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
@@ -78,6 +89,61 @@ void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
     float twoFloats[2] = { m_minDepth, m_maxDepth };
     for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
         m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, twoFloats, sizeof(float) * 2);
+}
+
+bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor) const
+{
+    if (depthReadOnly && !m_descriptor.depthReadOnly)
+        return false;
+
+    if (stencilReadOnly && !m_descriptor.stencilReadOnly)
+        return false;
+
+    if (m_descriptor.colorFormatCount != descriptor.colorAttachmentCount)
+        return false;
+
+    uint32_t defaultRasterSampleCount = 0;
+    for (size_t i = 0, colorFormatCount = std::max(descriptor.colorAttachmentCount, m_descriptor.colorFormatCount); i < colorFormatCount; ++i) {
+        auto descriptorColorFormat = i < m_descriptor.colorFormatCount ? m_descriptor.colorFormats[i] : WGPUTextureFormat_Undefined;
+        if (i >= descriptor.colorAttachmentCount) {
+            if (descriptorColorFormat == WGPUTextureFormat_Undefined)
+                continue;
+            return false;
+        }
+        const auto& attachment = descriptor.colorAttachments[i];
+        if (!attachment.view) {
+            if (descriptorColorFormat == WGPUTextureFormat_Undefined)
+                continue;
+            return false;
+        }
+        auto& texture = fromAPI(attachment.view);
+        if (descriptorColorFormat != texture.format())
+            return false;
+        defaultRasterSampleCount = texture.sampleCount();
+    }
+
+    if (auto* depthStencil = descriptor.depthStencilAttachment) {
+        if (!depthStencil->view) {
+            if (m_descriptor.depthStencilFormat != WGPUTextureFormat_Undefined)
+                return false;
+        } else {
+            auto& texture = fromAPI(depthStencil->view);
+            if (texture.format() != m_descriptor.depthStencilFormat)
+                return false;
+            defaultRasterSampleCount = texture.sampleCount();
+        }
+    } else if (m_descriptor.depthStencilFormat != WGPUTextureFormat_Undefined)
+        return false;
+
+    if (m_descriptor.sampleCount != defaultRasterSampleCount)
+        return false;
+
+    return true;
+}
+
+bool RenderBundle::validatePipeline(const RenderPipeline*)
+{
+    return true;
 }
 
 } // namespace WebGPU

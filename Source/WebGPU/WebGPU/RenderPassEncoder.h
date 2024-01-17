@@ -53,9 +53,9 @@ class RenderPipeline;
 class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, MTLRenderPassDescriptor* renderPassDescriptor, Device& device)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, parentEncoder, visibilityResultBuffer, renderPassDescriptor, device));
+        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, parentEncoder, visibilityResultBuffer, device));
     }
     static Ref<RenderPassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device)
     {
@@ -88,14 +88,16 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_renderCommandEncoder; }
+    bool colorDepthStencilTargetsMatch(const RenderPipeline&) const;
+    id<MTLRenderCommandEncoder> renderCommandEncoder() const;
+    void makeInvalid();
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, MTLRenderPassDescriptor*, Device&);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, Device&);
     RenderPassEncoder(CommandEncoder&, Device&);
 
     bool validatePopDebugGroup() const;
 
-    void makeInvalid();
     void executePreDrawCommands();
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
@@ -130,7 +132,10 @@ private:
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_allColorAttachments { nil };
     id<MTLTexture> m_depthStencilAttachmentToClear { nil };
-    MTLRenderPassDescriptor* m_renderPassDescriptor { nil };
+    WGPURenderPassDescriptor m_descriptor;
+    Vector<WGPURenderPassColorAttachment> m_descriptorColorAttachments;
+    WGPURenderPassDepthStencilAttachment m_descriptorDepthStencilAttachment;
+    WGPURenderPassTimestampWrites m_descriptorTimestampWrites;
     float m_depthClearValue { 0 };
     uint32_t m_stencilClearValue { 0 };
     bool m_clearDepthAttachment { false };

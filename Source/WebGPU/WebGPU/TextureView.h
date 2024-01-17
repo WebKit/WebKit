@@ -68,6 +68,7 @@ public:
     void setPreviouslyCleared();
     uint32_t width() const;
     uint32_t height() const;
+    uint32_t depthOrArrayLayers() const;
     WGPUTextureUsageFlags usage() const;
     uint32_t sampleCount() const;
     WGPUTextureFormat parentFormat() const;

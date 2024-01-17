@@ -1474,9 +1474,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         return RenderPipeline::createInvalid(*this);
 
     if (!pipelineLayout)
-        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, generatePipelineLayout(bindGroupEntries), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, *this);
+        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, generatePipelineLayout(bindGroupEntries), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, *this);
 
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, const_cast<PipelineLayout&>(*pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, const_cast<PipelineLayout&>(*pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -1487,7 +1487,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor& descriptor, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
@@ -1504,7 +1504,27 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_depthStencilDescriptor(depthStencilDescriptor)
     , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
     , m_pipelineLayout(WTFMove(pipelineLayout))
+    , m_descriptor(descriptor)
+    , m_descriptorDepthStencil(descriptor.depthStencil ? *descriptor.depthStencil : WGPUDepthStencilState())
+    , m_descriptorFragment(descriptor.fragment ? *descriptor.fragment : WGPUFragmentState())
+    , m_descriptorTargets(descriptor.fragment && descriptor.fragment->targetCount ? Vector<WGPUColorTargetState>(descriptor.fragment->targets, descriptor.fragment->targetCount) : Vector<WGPUColorTargetState>())
 {
+    if (descriptor.depthStencil)
+        m_descriptor.depthStencil = &m_descriptorDepthStencil;
+    if (m_descriptorTargets.size())
+        m_descriptorFragment.targets = &m_descriptorTargets[0];
+    if (descriptor.fragment)
+        m_descriptor.fragment = &m_descriptorFragment;
+
+    if (auto* depthStencil = descriptor.depthStencil; depthStencil && depthStencil->stencilWriteMask) {
+        const auto& stencilFront = depthStencil->stencilFront;
+        const auto& stencilBack = depthStencil->stencilBack;
+        const auto& cullMode = descriptor.primitive.cullMode;
+        if (cullMode != WGPUCullMode_Front && (stencilFront.passOp != WGPUStencilOperation_Keep || stencilFront.depthFailOp != WGPUStencilOperation_Keep || stencilFront.failOp != WGPUStencilOperation_Keep))
+            m_writesStencil = true;
+        else if (cullMode != WGPUCullMode_Back && (stencilBack.passOp != WGPUStencilOperation_Keep || stencilBack.depthFailOp != WGPUStencilOperation_Keep || stencilBack.failOp != WGPUStencilOperation_Keep))
+            m_writesStencil = true;
+    }
 }
 
 RenderPipeline::RenderPipeline(Device& device)
@@ -1542,12 +1562,22 @@ id<MTLDepthStencilState> RenderPipeline::depthStencilState() const
     return m_depthStencilState;
 }
 
+bool RenderPipeline::writesDepth() const
+{
+    return m_depthStencilDescriptor.depthWriteEnabled;
+}
+
+bool RenderPipeline::writesStencil() const
+{
+    return m_writesStencil;
+}
+
 bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const
 {
-    if (depthReadOnly && m_depthStencilDescriptor.depthWriteEnabled)
+    if (depthReadOnly && writesDepth())
         return false;
 
-    if (stencilReadOnly && (m_depthStencilDescriptor.frontFaceStencil.writeMask || m_depthStencilDescriptor.backFaceStencil.writeMask))
+    if (stencilReadOnly && writesStencil())
         return false;
 
     return true;
@@ -1558,31 +1588,94 @@ PipelineLayout& RenderPipeline::pipelineLayout() const
     return m_pipelineLayout;
 }
 
-bool RenderPipeline::colorTargetsMatch(MTLRenderPassColorAttachmentDescriptorArray* targetArray, uint32_t arrayLength) const
+bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescriptor& descriptor) const
 {
-    if (arrayLength != m_colorAttachmentCount)
-        return false;
-
-    for (uint32_t i = 0; i < m_colorAttachmentCount; ++i) {
-        const auto& pipelineAttachment = m_renderPipelineDescriptor.colorAttachments[i];
-        const auto& passAttachment = targetArray[i];
-        if (passAttachment.texture.pixelFormat != pipelineAttachment.pixelFormat)
+    if (!m_descriptor.fragment) {
+        if (descriptor.colorAttachmentCount)
             return false;
+    } else {
+        auto& fragment = *m_descriptor.fragment;
+        if (fragment.targetCount != descriptor.colorAttachmentCount)
+            return false;
+
+        for (size_t i = 0; i < fragment.targetCount; ++i) {
+            const auto& attachment = descriptor.colorAttachments[i];
+            if (!attachment.view) {
+                if (m_descriptorTargets[i].format == WGPUTextureFormat_Undefined)
+                    continue;
+                return false;
+            }
+            auto& texture = fromAPI(attachment.view);
+            if (m_descriptorTargets[i].format != texture.format())
+                return false;
+            if (texture.sampleCount() != m_descriptor.multisample.count)
+                return false;
+        }
     }
+
+    if (!m_descriptor.depthStencil) {
+        if (!descriptor.depthStencilAttachment)
+            return true;
+
+        return false;
+    }
+
+    if (auto* depthStencil = descriptor.depthStencilAttachment) {
+        auto& texture = fromAPI(depthStencil->view);
+        if (!depthStencil->view)
+            return false;
+        if (texture.format() != m_descriptor.depthStencil->format)
+            return false;
+        if (texture.sampleCount() != m_descriptor.multisample.count)
+            return false;
+    } else if (m_descriptor.depthStencil->format != WGPUTextureFormat_Undefined)
+        return false;
 
     return true;
 }
 
-bool RenderPipeline::depthAttachmentMatches(MTLRenderPassDepthAttachmentDescriptor* depth) const
+bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescriptor& descriptor) const
 {
-    return m_renderPipelineDescriptor.depthAttachmentPixelFormat == depth.texture.pixelFormat;
-}
+    if (!validateDepthStencilState(descriptor.depthReadOnly, descriptor.stencilReadOnly))
+        return false;
 
-bool RenderPipeline::stencilAttachmentMatches(MTLRenderPassStencilAttachmentDescriptor* stencil) const
-{
-    return m_renderPipelineDescriptor.stencilAttachmentPixelFormat == stencil.texture.pixelFormat;
-}
+    if (descriptor.sampleCount != m_descriptor.multisample.count)
+        return false;
 
+    if (!m_descriptor.fragment) {
+        if (descriptor.colorFormatCount || descriptor.depthStencilFormat != WGPUTextureFormat_Undefined)
+            return false;
+
+        return true;
+    }
+
+    auto& fragment = *m_descriptor.fragment;
+    if (fragment.targetCount != descriptor.colorFormatCount) {
+        for (size_t i = 0; i < descriptor.colorFormatCount; ++i) {
+            auto colorFormat = descriptor.colorFormats[i];
+            if (colorFormat != WGPUTextureFormat_Undefined)
+                return false;
+        }
+    }
+
+    for (size_t i = 0; i < fragment.targetCount; ++i) {
+        auto colorFormat = descriptor.colorFormats[i];
+        if (m_descriptorTargets[i].format != colorFormat)
+            return false;
+    }
+
+    if (!m_descriptor.depthStencil) {
+        if (descriptor.depthStencilFormat == WGPUTextureFormat_Undefined)
+            return true;
+
+        return false;
+    }
+
+    if (descriptor.depthStencilFormat != m_descriptor.depthStencil->format)
+        return false;
+
+    return true;
+}
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

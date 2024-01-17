@@ -37,7 +37,7 @@
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, MTLRenderPassDescriptor* renderPassDescriptor, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
@@ -45,8 +45,18 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_stencilReadOnly(stencilReadOnly)
     , m_parentEncoder(parentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
-    , m_renderPassDescriptor(renderPassDescriptor)
+    , m_descriptor(descriptor)
+    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(descriptor.colorAttachments, descriptor.colorAttachmentCount) : Vector<WGPURenderPassColorAttachment>())
+    , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
+    , m_descriptorTimestampWrites(descriptor.timestampWrites ? *descriptor.timestampWrites : WGPURenderPassTimestampWrites())
 {
+    if (m_descriptorColorAttachments.size())
+        m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
+    if (descriptor.depthStencilAttachment)
+        m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
+    if (descriptor.timestampWrites)
+        m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
+
     m_parentEncoder->lock(true);
 
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
@@ -254,7 +264,6 @@ void RenderPassEncoder::endPass()
     }
 
     m_renderCommandEncoder = nil;
-    m_renderPassDescriptor = nil;
 
     m_parentEncoder->lock(false);
 
@@ -275,8 +284,20 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 
     for (auto& bundle : bundles) {
         auto& renderBundle = bundle.get();
+        if (!renderBundle.isValid()) {
+            makeInvalid();
+            return;
+        }
         renderBundle.updateMinMaxDepths(m_minDepth, m_maxDepth);
+        if (m_device.ptr() != &renderBundle.device() || !renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor)) {
+            makeInvalid();
+            return;
+        }
 
+        if (!renderBundle.validatePipeline(m_pipeline)) {
+            makeInvalid();
+            return;
+        }
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [m_renderCommandEncoder setDepthStencilState:depthStencilState];
@@ -295,8 +316,18 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             [m_renderCommandEncoder executeCommandsInBuffer:indirectCommandBuffer withRange:NSMakeRange(0, indirectCommandBuffer.size)];
         }
 
-        renderBundle.replayCommands(m_renderCommandEncoder);
+        renderBundle.replayCommands(*this);
     }
+}
+
+bool RenderPassEncoder::colorDepthStencilTargetsMatch(const RenderPipeline& pipeline) const
+{
+    return pipeline.colorDepthStencilTargetsMatch(m_descriptor);
+}
+
+id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
+{
+    return m_renderCommandEncoder;
 }
 
 void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
@@ -321,7 +352,6 @@ void RenderPassEncoder::makeInvalid()
 {
     [m_renderCommandEncoder endEncoding];
     m_renderCommandEncoder = nil;
-    m_renderPassDescriptor = nil;
 }
 
 void RenderPassEncoder::popDebugGroup()
@@ -393,16 +423,16 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         return;
     }
 
+    if (!colorDepthStencilTargetsMatch(pipeline)) {
+        makeInvalid();
+        return;
+    }
+
     m_primitiveType = pipeline.primitiveType();
     m_pipeline = &pipeline;
 
     m_vertexDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfVertexDynamicOffsets());
     m_fragmentDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfFragmentDynamicOffsets() + RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
-
-    if (!pipeline.colorTargetsMatch(m_renderPassDescriptor.colorAttachments, m_allColorAttachments.count) || !pipeline.depthAttachmentMatches(m_renderPassDescriptor.depthAttachment) || !pipeline.stencilAttachmentMatches(m_renderPassDescriptor.stencilAttachment)) {
-        makeInvalid();
-        return;
-    }
 
     if (pipeline.renderPipelineState())
         [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];

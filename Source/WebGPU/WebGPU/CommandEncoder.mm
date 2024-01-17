@@ -399,6 +399,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     uint32_t bytesPerSample = 0;
     const auto maxColorAttachmentBytesPerSample = m_device->limits().maxColorAttachmentBytesPerSample;
     uint32_t textureWidth = 0, textureHeight = 0, sampleCount = 0;
+    using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    HashMap<void*, SliceSet> depthSlices;
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
         if (!attachment.view)
@@ -442,7 +444,26 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         }
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
-        mtlAttachment.depthPlane = 0;
+        uint64_t depthSlice = 0;
+        if (attachment.depthSlice) {
+            if (texture.dimension() != WGPUTextureViewDimension_3D)
+                return RenderPassEncoder::createInvalid(*this, m_device);
+            depthSlice = *attachment.depthSlice;
+            if (depthSlice >= texture.depthOrArrayLayers())
+                return RenderPassEncoder::createInvalid(*this, m_device);
+
+            auto* bridgedTexture = (__bridge void*)texture.parentTexture();
+            uint64_t depthAndMipLevel = depthSlice | (static_cast<uint64_t>(texture.baseMipLevel()) << 32);
+            if (auto it = depthSlices.find(bridgedTexture); it != depthSlices.end()) {
+                auto addResult = it->value.add(depthAndMipLevel);
+                if (!addResult.isNewEntry)
+                    return RenderPassEncoder::createInvalid(*this, m_device);
+            } else
+                depthSlices.set(bridgedTexture, SliceSet { depthAndMipLevel });
+        } else if (texture.dimension() == WGPUTextureViewDimension_3D)
+            return RenderPassEncoder::createInvalid(*this, m_device);
+
+        mtlAttachment.depthPlane = depthSlice;
         mtlAttachment.loadAction = loadAction(attachment.loadOp, attachment.storeOp);
         mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp, attachment.loadOp);
 
@@ -610,7 +631,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
-    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, mtlDescriptor, m_device);
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)

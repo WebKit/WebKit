@@ -40,6 +40,7 @@ namespace WebKit::WebGPU {
 
 struct RenderPassColorAttachment {
     WebGPUIdentifier view;
+    std::optional<WebCore::WebGPU::IntegerCoordinate> depthSlice;
     std::optional<WebGPUIdentifier> resolveTarget;
 
     std::optional<Color> clearValue;

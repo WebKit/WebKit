@@ -58,6 +58,7 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .nextInChain = nullptr,
                 .view = m_convertToBackingContext->convertToBacking(colorAttachment->view),
+                .depthSlice = colorAttachment->depthSlice,
                 .resolveTarget = colorAttachment->resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment->resolveTarget) : nullptr,
                 .loadOp = m_convertToBackingContext->convertToBacking(colorAttachment->loadOp),
                 .storeOp = m_convertToBackingContext->convertToBacking(colorAttachment->storeOp),
@@ -67,6 +68,7 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .nextInChain = nullptr,
                 .view = nullptr,
+                .depthSlice = std::nullopt,
                 .resolveTarget = nullptr,
                 .loadOp = WGPULoadOp_Clear,
                 .storeOp = WGPUStoreOp_Discard,

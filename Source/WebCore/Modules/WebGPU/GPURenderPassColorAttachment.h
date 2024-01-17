@@ -41,15 +41,17 @@ struct GPURenderPassColorAttachment {
     {
         ASSERT(view);
         return {
-            view->backing(),
-            resolveTarget ? &resolveTarget->backing() : nullptr,
-            clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,
-            WebCore::convertToBacking(loadOp),
-            WebCore::convertToBacking(storeOp),
+            .view = view->backing(),
+            .depthSlice = depthSlice,
+            .resolveTarget = resolveTarget ? &resolveTarget->backing() : nullptr,
+            .clearValue = clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,
+            .loadOp = WebCore::convertToBacking(loadOp),
+            .storeOp = WebCore::convertToBacking(storeOp),
         };
     }
 
     GPUTextureView* view { nullptr };
+    std::optional<GPUIntegerCoordinate> depthSlice;
     GPUTextureView* resolveTarget { nullptr };
 
     std::optional<GPUColor> clearValue;

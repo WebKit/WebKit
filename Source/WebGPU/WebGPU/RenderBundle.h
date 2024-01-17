@@ -48,15 +48,17 @@ namespace WebGPU {
 class Device;
 
 class RenderBundleEncoder;
+class RenderPassEncoder;
+class RenderPipeline;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, encoder, device));
+        return adoptRef(*new RenderBundle(resources, encoder, descriptor, device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -67,21 +69,25 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_renderBundlesResources != nil; }
+    bool isValid() const;
 
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
 
-    void replayCommands(id<MTLRenderCommandEncoder>) const;
+    void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
+    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&) const;
+    bool validatePipeline(const RenderPipeline*);
 
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, Device&);
     RenderBundle(Device&);
 
     const Ref<Device> m_device;
     RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
+    WGPURenderBundleEncoderDescriptor m_descriptor;
+    Vector<WGPUTextureFormat> m_descriptorColorFormats;
     float m_minDepth { 0.f };
     float m_maxDepth { 1.f };
 };

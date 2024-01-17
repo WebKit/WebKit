@@ -34,12 +34,16 @@
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
+namespace WebGPU {
+class RenderPipeline;
+}
+
 struct WGPURenderBundleEncoderImpl {
 };
 
 @interface RenderBundleICBWithResources : NSObject
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::RenderPipeline*)pipeline NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly, nonatomic) id<MTLIndirectCommandBuffer> indirectCommandBuffer;
@@ -52,6 +56,7 @@ struct WGPURenderBundleEncoderImpl {
 @property (readonly, nonatomic) float depthBiasSlopeScale;
 @property (readonly, nonatomic) float depthBiasClamp;
 @property (readonly, nonatomic) id<MTLBuffer> fragmentDynamicOffsetsBuffer;
+@property (readonly, nonatomic) const WebGPU::RenderPipeline* pipeline;
 
 - (Vector<WebGPU::BindableResources>*)resources;
 @end
@@ -68,9 +73,9 @@ class RenderPipeline;
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, Device& device)
+    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, device));
+        return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, descriptor, device));
     }
     static Ref<RenderBundleEncoder> createInvalid(Device& device)
     {
@@ -96,19 +101,21 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_indirectCommandBuffer; }
-    void replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
+    void replayCommands(RenderPassEncoder&);
 
     static constexpr auto startIndexForFragmentDynamicOffsets = 3;
     static constexpr uint32_t defaultSampleMask = UINT32_MAX;
 
+    bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
+
 private:
-    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
+    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WGPURenderBundleEncoderDescriptor&, Device&);
     RenderBundleEncoder(Device&);
 
     bool validatePopDebugGroup() const;
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
-    void makeInvalid() { m_indirectCommandBuffer = nil; }
+    void makeInvalid();
     void executePreDrawCommands();
     void endCurrentICB();
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
@@ -154,8 +161,10 @@ private:
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
 
-    id<MTLRenderCommandEncoder> m_commandEncoder { nil };
+    RenderPassEncoder* m_renderPassEncoder { nullptr };
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
+    WGPURenderBundleEncoderDescriptor m_descriptor;
+    Vector<WGPUTextureFormat> m_descriptorColorFormats;
     bool m_requiresCommandReplay { false };
     bool m_requiresMetalWorkaround { true };
     uint32_t m_sampleMask { defaultSampleMask };

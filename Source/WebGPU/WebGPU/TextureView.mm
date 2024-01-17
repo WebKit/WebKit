@@ -79,6 +79,11 @@ uint32_t TextureView::height() const
     return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
 }
 
+uint32_t TextureView::depthOrArrayLayers() const
+{
+    return m_parentTexture.physicalMiplevelSpecificTextureExtent(baseMipLevel()).depthOrArrayLayers;
+}
+
 WGPUTextureUsageFlags TextureView::usage() const
 {
     return m_parentTexture.usage();

@@ -38,6 +38,7 @@ class TextureView;
 
 struct RenderPassColorAttachment {
     TextureView& view;
+    std::optional<IntegerCoordinate> depthSlice;
     TextureView* resolveTarget { nullptr };
 
     std::optional<Color> clearValue;
