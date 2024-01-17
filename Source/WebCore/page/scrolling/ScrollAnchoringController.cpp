@@ -86,7 +86,7 @@ void ScrollAnchoringController::invalidateAnchorElement()
     m_anchorElement = nullptr;
     m_lastOffsetForAnchorElement = { };
     m_isQueuedForScrollPositionUpdate = false;
-    frameView().queueScrollableAreaForScrollAnchoringUpdate(m_owningScrollableArea);
+    frameView().dequeueScrollableAreaForScrollAnchoringUpdate(m_owningScrollableArea);
 }
 
 static IntRect boundingRectForScrollableArea(ScrollableArea& scrollableArea)
