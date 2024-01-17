@@ -339,6 +339,19 @@ void ImageLoader::updateFromElementIgnoringPreviousError(RelevantMutation releva
     updateFromElement(relevantMutation);
 }
 
+void ImageLoader::updateFromElementIgnoringPreviousErrorToSameValue()
+{
+    if ((m_image && !m_image->allowsCaching()) || !m_failedLoadURL.isEmpty() || element().document().activeServiceWorker()) {
+        updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+        return;
+    }
+    if (m_hasPendingLoadEvent || !m_pendingURL.isEmpty())
+        return;
+    ASSERT(m_image);
+    m_hasPendingLoadEvent = true;
+    notifyFinished(*m_image, NetworkLoadMetrics { });
+}
+
 static inline void resolvePromises(Vector<RefPtr<DeferredPromise>>& promises)
 {
     ASSERT(!promises.isEmpty());
