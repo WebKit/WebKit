@@ -132,7 +132,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface _SEHostingUpdateCoordinator : NSObject
--(instancetype)init;
 -(instancetype)initFromXPCRepresentation:(xpc_object_t)xpcRepresentation;
 -(xpc_object_t)xpcRepresentation;
 -(void)addHostable:(_SEHostable*)hostable;

@@ -35,6 +35,7 @@ OBJC_CLASS CAContext;
 
 #if USE(EXTENSIONKIT)
 OBJC_CLASS _SEHostable;
+OBJC_CLASS _SEHostingHandle;
 OBJC_CLASS _SEHostingUpdateCoordinator;
 #endif
 
@@ -43,6 +44,12 @@ class MachSendRight;
 }
 
 namespace WebKit {
+
+#if USE(EXTENSIONKIT)
+constexpr auto contextIDKey = "cid";
+constexpr auto processIDKey = "pid";
+constexpr auto machPortKey = "p";
+#endif
 
 using LayerHostingContextID = uint32_t;
 enum class LayerHostingMode : uint8_t;
@@ -107,7 +114,10 @@ public:
 
 #if USE(EXTENSIONKIT)
     OSObjectPtr<xpc_object_t> xpcRepresentation() const;
-    void commit();
+    RetainPtr<_SEHostable> hostable() const { return m_hostable; }
+
+    static RetainPtr<_SEHostingHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
+    static RetainPtr<_SEHostingUpdateCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
 #endif
 
 private:
@@ -119,7 +129,6 @@ private:
     RetainPtr<CAContext> m_context;
 #if USE(EXTENSIONKIT)
     RetainPtr<_SEHostable> m_hostable;
-    RetainPtr<_SEHostingUpdateCoordinator> m_hostingUpdateCoordinator;
 #endif
 };
 
