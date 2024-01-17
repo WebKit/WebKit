@@ -29,6 +29,7 @@
 #include "FELightingSoftwareParallelApplier.h"
 
 #if !(CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE))
+#include "FELightingSoftwareApplierInlines.h"
 #include "ImageBuffer.h"
 #include <wtf/ParallelJobs.h>
 
