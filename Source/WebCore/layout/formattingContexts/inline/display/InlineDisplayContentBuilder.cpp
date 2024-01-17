@@ -105,7 +105,7 @@ static inline void convertBoxGeometryForWritingMode(BoxGeometry& boxGeometry, La
         return;
     }
 
-    // // vertical-lr/rl with inline direction of ltr/rtl.
+    // vertical-lr/rl with inline direction of ltr/rtl.
     auto contentBoxLogicalWidth = boxGeometry.contentBoxWidth();
     boxGeometry.setContentBoxWidth(boxGeometry.contentBoxHeight());
     boxGeometry.setContentBoxHeight(contentBoxLogicalWidth);
@@ -114,38 +114,28 @@ static inline void convertBoxGeometryForWritingMode(BoxGeometry& boxGeometry, La
     boxGeometry.setHorizontalSpaceForScrollbar(boxGeometry.verticalSpaceForScrollbar());
     boxGeometry.setVerticalSpaceForScrollbar(horizontalSpaceForScrollbar);
 
-    auto horizonalMargin = boxGeometry.horizontalMargin();
-    auto horizontalBorder = HorizontalEdges { boxGeometry.borderStart(), boxGeometry.borderEnd() };
-    boxGeometry.setHorizontalMargin({ boxGeometry.marginBefore(), boxGeometry.marginAfter() });
-    boxGeometry.setHorizontalBorder({ boxGeometry.borderBefore(), boxGeometry.borderAfter() });
-    auto horizontalPadding = std::optional<HorizontalEdges> { };
-    if (boxGeometry.verticalPadding()) {
-        if (boxGeometry.horizontalPadding())
-            horizontalPadding = { *boxGeometry.paddingStart(), *boxGeometry.paddingEnd() };
-        boxGeometry.setHorizontalPadding(Layout::HorizontalEdges { *boxGeometry.paddingBefore(), *boxGeometry.paddingAfter() });
+    auto verticalMargin = boxGeometry.verticalMargin();
+    auto verticalBorder = VerticalEdges { boxGeometry.borderBefore(), boxGeometry.borderAfter() };
+    boxGeometry.setVerticalMargin({ boxGeometry.marginBefore(), boxGeometry.marginAfter() });
+    boxGeometry.setVerticalBorder({ boxGeometry.borderBefore(), boxGeometry.borderAfter() });
+    auto verticalPadding = std::optional<VerticalEdges> { };
+    if (boxGeometry.horizontalPadding()) {
+        if (boxGeometry.verticalPadding())
+            verticalPadding = { *boxGeometry.paddingBefore(), *boxGeometry.paddingAfter() };
+        boxGeometry.setVerticalPadding(Layout::VerticalEdges { *boxGeometry.paddingStart(), *boxGeometry.paddingEnd() });
     }
 
     // Flip inline direction now that we have the horizontal decoration resolved.
     if (!isLeftToRightInlineDirection)
         flipHorizontalDecorationValues();
 
-    // Flip vertical decoration depending on whether the block direction is left to right or right to left.
-    if (!isFlippedBlocksWritingMode) {
-        boxGeometry.setVerticalMargin({ horizonalMargin.start, horizonalMargin.end });
-        boxGeometry.setVerticalBorder({ horizontalBorder.left, horizontalBorder.right });
-        auto verticalPadding = std::optional<Layout::VerticalEdges> { };
-        if (horizontalPadding)
-            verticalPadding = { horizontalPadding->left, horizontalPadding->right };
-        boxGeometry.setVerticalPadding(verticalPadding);
-        return;
-    }
-
-    boxGeometry.setVerticalMargin({ horizonalMargin.end, horizonalMargin.start });
-    boxGeometry.setVerticalBorder({ horizontalBorder.right, horizontalBorder.left });
-    auto verticalPadding = std::optional<Layout::VerticalEdges> { };
-    if (horizontalPadding)
-        verticalPadding = { horizontalPadding->right, horizontalPadding->left };
-    boxGeometry.setVerticalPadding(verticalPadding);
+    // Flip horizontal decoration depending on whether the block direction is left to right or right to left.
+    boxGeometry.setHorizontalMargin(!isFlippedBlocksWritingMode ? BoxGeometry::HorizontalMargin { verticalMargin.before, verticalMargin.after } : BoxGeometry::HorizontalMargin { verticalMargin.after, verticalMargin.before });
+    boxGeometry.setHorizontalBorder(!isFlippedBlocksWritingMode ? Layout::HorizontalEdges { verticalBorder.top, verticalBorder.bottom } : Layout::HorizontalEdges { verticalBorder.bottom, verticalBorder.top });
+    auto horizontalPadding = std::optional<Layout::HorizontalEdges> { };
+    if (verticalPadding)
+        horizontalPadding = !isFlippedBlocksWritingMode ? Layout::HorizontalEdges { verticalPadding->top, verticalPadding->bottom } : Layout::HorizontalEdges { verticalPadding->bottom, verticalPadding->top };
+    boxGeometry.setHorizontalPadding(horizontalPadding);
 }
 
 static InlineLayoutPoint flipLogicalPointToVisualForWritingModeWithinLine(const InlineLayoutPoint& logicalPoint, const InlineRect& lineLogicalRect, WritingMode writingMode)
