@@ -2215,12 +2215,12 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         textManipulationController->removeNode(*this);
 
     if (auto* eventTargetData = this->eventTargetData()) {
-        auto& eventNames = WebCore::eventNames();
-        if (!eventTargetData->eventListenerMap.isEmpty()) {
-            for (auto& type : eventTargetData->eventListenerMap.eventTypes())
-                newDocument.addListenerTypeIfNeeded(type);
-        }
+        eventTargetData->eventListenerMap.enumerateEventListenerTypes([&](auto& eventType, unsigned count) {
+            oldDocument.didRemoveEventListenersOfType(eventType, count);
+            newDocument.didAddEventListenersOfType(eventType, count);
+        });
 
+        auto& eventNames = WebCore::eventNames();
         unsigned numWheelEventHandlers = eventListeners(eventNames.mousewheelEvent).size() + eventListeners(eventNames.wheelEvent).size();
         for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
             oldDocument.didRemoveWheelEventHandler(*this);
@@ -2275,29 +2275,14 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         element->didMoveToNewDocument(oldDocument, newDocument);
 }
 
-bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget& target)
+bool isTouchRelatedEventType(const EventTypeInfo& eventType, const EventTarget& target)
 {
-    auto& eventNames = WebCore::eventNames();
 #if ENABLE(TOUCH_EVENTS)
-    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
-        if (eventType == eventNames.mousedownEvent || eventType == eventNames.mousemoveEvent || eventType == eventNames.mouseupEvent)
-            return true;
-    }
+    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target))
+        return eventType.isInCategory(EventCategory::ExtendedTouchRelated);
 #endif
     UNUSED_PARAM(target);
-    return eventType == eventNames.touchstartEvent
-        || eventType == eventNames.touchmoveEvent
-        || eventType == eventNames.touchendEvent
-        || eventType == eventNames.touchcancelEvent
-        || eventType == eventNames.touchforcechangeEvent
-        || eventType == eventNames.pointeroverEvent
-        || eventType == eventNames.pointerenterEvent
-        || eventType == eventNames.pointerdownEvent
-        || eventType == eventNames.pointermoveEvent
-        || eventType == eventNames.pointerupEvent
-        || eventType == eventNames.pointeroutEvent
-        || eventType == eventNames.pointerleaveEvent
-        || eventType == eventNames.pointercancelEvent;
+    return eventType.isInCategory(EventCategory::TouchRelated);
 }
 
 static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
@@ -2305,30 +2290,31 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
 
-    targetNode->document().addListenerTypeIfNeeded(eventType);
+    targetNode->document().didAddEventListenersOfType(eventType);
 
     auto& eventNames = WebCore::eventNames();
-    if (eventNames.isWheelEventType(eventType))
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
+    if (typeInfo.isInCategory(EventCategory::Wheel))
         targetNode->document().didAddWheelEventHandler(*targetNode);
-    else if (isTouchRelatedEventType(eventType, *targetNode))
+    else if (isTouchRelatedEventType(typeInfo, *targetNode))
         targetNode->document().didAddTouchEventHandler(*targetNode);
-    else if (eventNames.isMouseClickRelatedEventType(eventType))
+    else if (typeInfo.isInCategory(EventCategory::MouseClickRelated))
         targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
+    if (targetNode == &targetNode->document() && typeInfo.type() == EventType::scroll) {
         if (auto* window = targetNode->document().domWindow())
             window->incrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (isTouchRelatedEventType(eventType, *targetNode))
+    if (isTouchRelatedEventType(typeInfo, *targetNode))
         targetNode->document().addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventNames.isGestureEventType(eventType))
+    if (typeInfo.isInCategory(EventCategory::Gesture))
         targetNode->document().addTouchEventHandler(*targetNode);
 #endif
 
@@ -2345,30 +2331,33 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
         return false;
 
+    targetNode->document().didRemoveEventListenersOfType(eventType);
+
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
     auto& eventNames = WebCore::eventNames();
-    if (eventNames.isWheelEventType(eventType))
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
+    if (typeInfo.isInCategory(EventCategory::Wheel))
         targetNode->document().didRemoveWheelEventHandler(*targetNode);
-    else if (isTouchRelatedEventType(eventType, *targetNode))
+    else if (isTouchRelatedEventType(typeInfo, *targetNode))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
-    else if (eventNames.isMouseClickRelatedEventType(eventType))
+    else if (typeInfo.isInCategory(EventCategory::MouseClickRelated))
         targetNode->document().didAddOrRemoveMouseEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
+    if (targetNode == &targetNode->document() && typeInfo.type() == EventType::scroll) {
         if (auto* window = targetNode->document().domWindow())
             window->decrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (isTouchRelatedEventType(eventType, *targetNode))
+    if (isTouchRelatedEventType(typeInfo, *targetNode))
         targetNode->document().removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventNames.isGestureEventType(eventType))
+    if (typeInfo.isInCategory(EventCategory::Gesture))
         targetNode->document().removeTouchEventHandler(*targetNode);
 #endif
 
@@ -2542,28 +2531,36 @@ void Node::defaultEventHandler(Event& event)
         return;
     auto& eventType = event.type();
     auto& eventNames = WebCore::eventNames();
-    if (eventType == eventNames.keydownEvent || eventType == eventNames.keypressEvent || eventType == eventNames.keyupEvent) {
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
+    switch (typeInfo.type()) {
+    case EventType::keydown:
+    case EventType::keypress:
+    case EventType::keyup:
         if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
             if (RefPtr frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(*keyboardEvent);
         }
-    } else if (eventType == eventNames.clickEvent) {
+        break;
+    case EventType::click:
         dispatchDOMActivateEvent(event);
+        break;
 #if ENABLE(CONTEXT_MENUS)
-    } else if (eventType == eventNames.contextmenuEvent) {
+    case EventType::contextmenu:
         if (RefPtr frame = document().frame()) {
             if (auto* page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
         }
+        break;
 #endif
-    } else if (eventType == eventNames.textInputEvent) {
+    case EventType::textInput:
         if (RefPtr textEvent = dynamicDowncast<TextEvent>(event)) {
             if (RefPtr frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(*textEvent);
         }
+        break;
 #if ENABLE(PAN_SCROLLING)
-    } else if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && eventType == eventNames.mousedownEvent) {
-        if (mouseEvent->button() == MouseButton::Middle) {
+    case EventType::mousedown:
+        if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Middle) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 
@@ -2576,45 +2573,54 @@ void Node::defaultEventHandler(Event& event)
                 }
             }
         }
+        break;
 #endif
-    } else if (auto* wheelEvent = dynamicDowncast<WheelEvent>(event); wheelEvent && eventNames.isWheelEventType(eventType)) {
-        // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
-        // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
-        Node* startNode = this;
-        while (startNode && !startNode->renderer())
-            startNode = startNode->parentOrShadowHostNode();
+    case EventType::mousewheel:
+    case EventType::wheel:
+        ASSERT(typeInfo.isInCategory(EventCategory::Wheel));
+        if (auto* wheelEvent = dynamicDowncast<WheelEvent>(event); wheelEvent) {
+            // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
+            // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
+            Node* startNode = this;
+            while (startNode && !startNode->renderer())
+                startNode = startNode->parentOrShadowHostNode();
         
-        if (startNode && startNode->renderer()) {
-            if (RefPtr frame = document().frame())
-                frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), *wheelEvent);
+            if (startNode && startNode->renderer()) {
+                if (RefPtr frame = document().frame())
+                    frame->eventHandler().defaultWheelEventHandler(RefPtr { startNode }.get(), *wheelEvent);
+            }
         }
+        break;
+    default:
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    } else if (auto* touchEvent = dynamicDowncast<TouchEvent>(event); touchEvent && isTouchRelatedEventType(eventType, *this)) {
-        // Capture the target node's visibility state before dispatching touchStart.
-        if (auto* element = dynamicDowncast<Element>(*this); element && eventType == eventNames.touchstartEvent) {
+        if (auto* touchEvent = dynamicDowncast<TouchEvent>(event); touchEvent && isTouchRelatedEventType(typeInfo, *this)) {
+            // Capture the target node's visibility state before dispatching touchStart.
+            if (auto* element = dynamicDowncast<Element>(*this); element && typeInfo.type() == EventType::touchstart) {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-            auto& contentChangeObserver = document().contentChangeObserver();
-            if (ContentChangeObserver::isVisuallyHidden(*this))
-                contentChangeObserver.setHiddenTouchTarget(*element);
-            else
-                contentChangeObserver.resetHiddenTouchTarget();
+                auto& contentChangeObserver = document().contentChangeObserver();
+                if (ContentChangeObserver::isVisuallyHidden(*this))
+                    contentChangeObserver.setHiddenTouchTarget(*element);
+                else
+                    contentChangeObserver.resetHiddenTouchTarget();
 #endif
-        }
+            }
 
-        RenderObject* renderer = this->renderer();
-        for (; renderer; renderer = renderer->parent()) {
-            auto* renderBox = dynamicDowncast<RenderBox>(*renderer);
-            if (renderBox && renderBox->canBeScrolledAndHasScrollableArea())
-                break;
-        }
+            RenderObject* renderer = this->renderer();
+            for (; renderer; renderer = renderer->parent()) {
+                auto* renderBox = dynamicDowncast<RenderBox>(*renderer);
+                if (renderBox && renderBox->canBeScrolledAndHasScrollableArea())
+                    break;
+            }
 
-        if (renderer && renderer->node()) {
-            if (RefPtr frame = document().frame()) {
-                RefPtr rendererNode = renderer->node();
-                frame->eventHandler().defaultTouchEventHandler(*rendererNode, *touchEvent);
+            if (renderer && renderer->node()) {
+                if (RefPtr frame = document().frame()) {
+                    RefPtr rendererNode = renderer->node();
+                    frame->eventHandler().defaultTouchEventHandler(*rendererNode, *touchEvent);
+                }
             }
         }
 #endif
+        break;
     }
 }
 
@@ -2630,14 +2636,15 @@ bool Node::willRespondToMouseMoveEvents() const
 #endif
     auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
-        return eventNames.isMouseMoveRelatedEventType(type);
+        return eventNames.typeInfoForEvent(type).isInCategory(EventCategory::MouseMoveRelated);
     });
 }
 
 bool Node::willRespondToTouchEvents() const
 {
+    auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
-        return isTouchRelatedEventType(type, *this);
+        return eventNames.typeInfoForEvent(type).isInCategory(EventCategory::TouchRelated);
     });
 }
 
@@ -2673,7 +2680,7 @@ bool Node::willRespondToMouseClickEventsWithEditability(Editability editability)
 
     auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
-        return eventNames.isMouseClickRelatedEventType(type);
+        return eventNames.typeInfoForEvent(type).isInCategory(EventCategory::MouseClickRelated);
     });
 }
 

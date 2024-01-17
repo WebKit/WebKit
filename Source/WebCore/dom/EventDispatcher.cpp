@@ -145,6 +145,25 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
     return nullptr;
 }
 
+static bool hasRelevantEventListener(Document& document, const Event& event)
+{
+    if (document.hasEventListnersOfType(event.type()))
+        return true;
+
+    auto legacyType = EventTarget::legacyTypeForEvent(event);
+    if (!legacyType.isNull() && document.hasEventListnersOfType(legacyType))
+        return true;
+
+    return false;
+}
+
+static void resetAfterDispatchInShadowTree(Event& event)
+{
+    event.setTarget(nullptr);
+    event.setRelatedTarget(nullptr);
+    // FIXME: We should also clear the event's touch target list.
+}
+
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
@@ -154,10 +173,19 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     Ref protectedNode { node };
     RefPtr protectedView { node.document().view() };
 
+    auto typeInfo = eventNames().typeInfoForEvent(event.type());
+    bool shouldDispatchEventToScripts = hasRelevantEventListener(node.document(), event);
+
+    bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
+    // FIXME: We should also check touch target list.
+    bool hasNoEventListnerOrDefaultEventHandler = !shouldDispatchEventToScripts && !typeInfo.hasDefaultEventHandler() && !node.document().hasConnectedPluginElements();
+    if (hasNoEventListnerOrDefaultEventHandler && !targetOrRelatedTargetIsInShadowTree)
+        return;
+
     EventPath eventPath { node, event };
 
     if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && event.isMouseEvent()
-        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent || event.type() == eventNames().dblclickEvent)) {
+        && (typeInfo.type() == EventType::mousedown || typeInfo.type() == EventType::mouseup || typeInfo.type() == EventType::click || typeInfo.type() == EventType::dblclick)) {
         eventPath.adjustForDisabledFormControl();
     }
 
@@ -170,6 +198,12 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
             shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.target()) || isInShadowTree(eventContext.relatedTarget());
             break;
         }
+    }
+
+    if (hasNoEventListnerOrDefaultEventHandler) {
+        if (shouldClearTargetsAfterDispatch)
+            resetAfterDispatchInShadowTree(event);
+        return;
     }
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
@@ -191,7 +225,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
     }
 
-    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event)) {
+    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event) && shouldDispatchEventToScripts) {
         event.setEventPath(eventPath);
         dispatchEventInDOM(event, eventPath);
     }
@@ -204,7 +238,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal
     // implementation detail and not part of the DOM.
-    if (!event.defaultPrevented() && !event.defaultHandled() && !event.isDefaultEventHandlerIgnored()) {
+    if (typeInfo.hasDefaultEventHandler() && !event.defaultPrevented() && !event.defaultHandled() && !event.isDefaultEventHandlerIgnored()) {
         // FIXME: Not clear why we need to reset the target for the default event handlers.
         // We should research this, and remove this code if possible.
         RefPtr finalTarget = event.target();
@@ -213,11 +247,8 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(WTFMove(finalTarget));
     }
 
-    if (shouldClearTargetsAfterDispatch) {
-        event.setTarget(nullptr);
-        event.setRelatedTarget(nullptr);
-        // FIXME: We should also clear the event's touch target list.
-    }
+    if (shouldClearTargetsAfterDispatch)
+        resetAfterDispatchInShadowTree(event);
 }
 
 template<typename T>

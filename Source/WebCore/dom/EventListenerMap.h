@@ -67,6 +67,13 @@ public:
     const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
     Vector<AtomString> eventTypes() const;
 
+    template <typename CallbackType>
+    void enumerateEventListenerTypes(CallbackType callback)
+    {
+        for (auto& entry : m_entries)
+            callback(entry.first, entry.second.size());
+    }
+
     void removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType);
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     

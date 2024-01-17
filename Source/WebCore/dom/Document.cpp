@@ -5730,38 +5730,73 @@ bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
 void Document::addListenerTypeIfNeeded(const AtomString& eventType)
 {
     auto& eventNames = WebCore::eventNames();
-    if (eventType == eventNames.DOMSubtreeModifiedEvent)
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
+    switch (typeInfo.type()) {
+    case EventType::DOMSubtreeModified:
         addListenerType(ListenerType::DOMSubtreeModified);
-    else if (eventType == eventNames.DOMNodeInsertedEvent)
+        break;
+    case EventType::DOMNodeInserted:
         addListenerType(ListenerType::DOMNodeInserted);
-    else if (eventType == eventNames.DOMNodeRemovedEvent)
+        break;
+    case EventType::DOMNodeRemoved:
         addListenerType(ListenerType::DOMNodeRemoved);
-    else if (eventType == eventNames.DOMNodeRemovedFromDocumentEvent)
+        break;
+    case EventType::DOMNodeRemovedFromDocument:
         addListenerType(ListenerType::DOMNodeRemovedFromDocument);
-    else if (eventType == eventNames.DOMNodeInsertedIntoDocumentEvent)
+        break;
+    case EventType::DOMNodeInsertedIntoDocument:
         addListenerType(ListenerType::DOMNodeInsertedIntoDocument);
-    else if (eventType == eventNames.DOMCharacterDataModifiedEvent)
+        break;
+    case EventType::DOMCharacterDataModified:
         addListenerType(ListenerType::DOMCharacterDataModified);
-    else if (eventType == eventNames.overflowchangedEvent)
+        break;
+    case EventType::overflowchanged:
         addListenerType(ListenerType::OverflowChanged);
-    else if (eventType == eventNames.scrollEvent)
+        break;
+    case EventType::scroll:
         addListenerType(ListenerType::Scroll);
-    else if (eventType == eventNames.webkitmouseforcewillbeginEvent)
+        break;
+    case EventType::webkitmouseforcewillbegin:
         addListenerType(ListenerType::ForceWillBegin);
-    else if (eventType == eventNames.webkitmouseforcechangedEvent)
+        break;
+    case EventType::webkitmouseforcechanged:
         addListenerType(ListenerType::ForceChanged);
-    else if (eventType == eventNames.webkitmouseforcedownEvent)
+        break;
+    case EventType::webkitmouseforcedown:
         addListenerType(ListenerType::ForceDown);
-    else if (eventType == eventNames.webkitmouseforceupEvent)
+        break;
+    case EventType::webkitmouseforceup:
         addListenerType(ListenerType::ForceUp);
-    else if (eventType == eventNames.focusinEvent)
+        break;
+    case EventType::focusin:
         addListenerType(ListenerType::FocusIn);
-    else if (eventType == eventNames.focusoutEvent)
+        break;
+    case EventType::focusout:
         addListenerType(ListenerType::FocusOut);
-    else if (eventNames.isCSSTransitionEventType(eventType))
-        addListenerType(ListenerType::CSSTransition);
-    else if (eventNames.isCSSAnimationEventType(eventType))
-        addListenerType(ListenerType::CSSAnimation);
+        break;
+    default:
+        if (typeInfo.isInCategory(EventCategory::CSSTransition))
+            addListenerType(ListenerType::CSSTransition);
+        else if (typeInfo.isInCategory(EventCategory::CSSAnimation))
+            addListenerType(ListenerType::CSSAnimation);
+    }
+}
+
+void Document::didAddEventListenersOfType(const AtomString& eventType, unsigned count)
+{
+    ASSERT(count);
+    addListenerTypeIfNeeded(eventType);
+    auto result = m_eventListenerCounts.fastAdd(eventType, 0);
+    result.iterator->value += count;
+}
+
+void Document::didRemoveEventListenersOfType(const AtomString& eventType, unsigned count)
+{
+    ASSERT(count);
+    ASSERT(m_eventListenerCounts.contains(eventType));
+    auto it = m_eventListenerCounts.find(eventType);
+    ASSERT(it->value >= count);
+    it->value -= count;
 }
 
 HTMLFrameOwnerElement* Document::ownerElement() const

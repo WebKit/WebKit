@@ -72,39 +72,89 @@ def main():
 #include "ThreadGlobalData.h"
 #include <array>
 #include <functional>
+#include <wtf/OptionSet.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
+enum class EventType : uint16_t {
+    custom = 0,''')
+
+        category_map = {}
+        for name in sorted(event_names_input.keys()):
+            entry = event_names_input[name]
+            for event_category in entry.get('categories', []):
+                category_map.setdefault(event_category, [])
+                category_map[event_category].append(name)
+            conditional = entry.get('conditional', None)
+            if conditional:
+                writeln(f'#if {conditional}')
+            writeln(f'    {name},')
+            if conditional:
+                writeln('#endif')
+
+        writeln('''};
+
+enum class EventCategory : uint16_t {''')
+
+        bit_shift = 0
+        for category in sorted(category_map.keys()):
+            writeln(f'    {category} = 1u << {bit_shift},')
+            bit_shift += 1
+
+        writeln('''};
+
+class EventTypeInfo {
+public:
+    enum class DefaultEventHandler : bool { No, Yes };
+
+    EventTypeInfo()
+        : m_type(EventType::custom)
+    { }
+
+    EventTypeInfo(EventType type, OptionSet<EventCategory> categories, DefaultEventHandler defaultEventHandler)
+        : m_type(type)
+        , m_categories(categories.toRaw())
+        , m_hasDefaultEventHandler(defaultEventHandler == DefaultEventHandler::Yes)
+    { }
+
+    EventType type() const { return static_cast<EventType>(m_type); }
+    bool isInCategory(EventCategory category) const { return OptionSet<EventCategory>::fromRaw(m_categories).contains(category); }
+    bool hasDefaultEventHandler() const { return m_hasDefaultEventHandler; }
+
+private:
+    EventType m_type;
+    uint16_t m_categories : 15 { 0 };
+    uint16_t m_hasDefaultEventHandler : 1 { false };
+};
+
 struct EventNames {
     WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
-
 public:''')
-        type_map = {}
+
         for name in sorted(event_names_input.keys()):
             entry = event_names_input[name]
             conditional = entry.get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
             writeln(f'    const AtomString {name}Event;')
-            for event_type in entry.get('types', []):
-                type_map.setdefault(event_type, [])
-                type_map[event_type].append(name)
             if conditional:
                 writeln('#endif')
 
         writeln('''
+    EventTypeInfo typeInfoForEvent(const AtomString&) const;
+
     template<class... Args>
     static std::unique_ptr<EventNames> create(Args&&... args)
     {
         return std::unique_ptr<EventNames>(new EventNames(std::forward<Args>(args)...));
     }''')
 
-        for event_type in sorted(type_map.keys()):
-            writeln('')
-            writeln(f'    inline bool is{event_type}EventType(const AtomString&) const;')
-            name_count = len(type_map[event_type])
-            writeln(f'    inline std::array<const AtomString, {name_count}> {lowercase_first_letter(event_type)}EventNames() const;')
+        for category in sorted(category_map.keys()):
+            name_count = len(category_map[category])
+            writeln(f'    inline std::array<const AtomString, {name_count}> {lowercase_first_letter(category)}EventNames() const;')
 
         writeln('')
         writeln(f'    inline std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
@@ -112,6 +162,8 @@ public:''')
         writeln('''
 private:
     EventNames();
+
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, EventTypeInfo> m_typeInfoMap;
 };
 
 const EventNames& eventNames();
@@ -119,28 +171,18 @@ const EventNames& eventNames();
 inline const EventNames& eventNames()
 {
     return threadGlobalData().eventNames();
+}
+
+inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) const
+{
+    return m_typeInfoMap.inlineGet(eventType);
 }''')
 
-        for event_type in sorted(type_map.keys()):
-            names = type_map[event_type]
-            name_count = len(type_map[event_type])
+        for category in sorted(category_map.keys()):
+            names = category_map[category]
+            name_count = len(category_map[category])
             writeln('')
-            writeln(f'inline bool EventNames::is{event_type}EventType(const AtomString& type) const')
-            writeln('{')
-            # FIXME: Support conditionals in the first or the last item.
-            writeln(f'    return type == {names[0]}Event')
-            for name in names[1:-1]:
-                conditional = event_names_input[name].get('conditional', None)
-                if conditional:
-                    writeln(f'#if {conditional}')
-                writeln(f'        || type == {name}Event')
-                if conditional:
-                    writeln(f'#endif')
-            if len(names) >= 2:
-                writeln(f'        || type == {names[-1]}Event;')
-            writeln('}')
-            writeln('')
-            writeln(f'inline std::array<const AtomString, {name_count}> EventNames::{lowercase_first_letter(event_type)}EventNames() const')
+            writeln(f'inline std::array<const AtomString, {name_count}> EventNames::{lowercase_first_letter(category)}EventNames() const')
             writeln('{')
             writeln('    return { {')
             for name in names:
@@ -209,7 +251,27 @@ EventNames::EventNames()''')
             delimiter = ','
             if conditional:
                 writeln('#endif')
-
+        writeln(f'    {delimiter} m_typeInfoMap({{')
+        for name in sorted(event_names_input.keys()):
+            entry = event_names_input[name]
+            conditional = entry.get('conditional', None)
+            if conditional:
+                writeln(f'#if {conditional}')
+            write(f'        {{ \"{name}\"_s, {{ EventType::{name}, {{ ')
+            categories = entry.get('categories', [])
+            if categories:
+                for category in categories[:-1]:
+                    write(f'EventCategory::{category}, ')
+                write(f'EventCategory::{categories[-1]} ')
+            write('}, ')
+            if entry.get('defaultEventHandler', False):
+                write('EventTypeInfo::DefaultEventHandler::Yes')
+            else:
+                write('EventTypeInfo::DefaultEventHandler::No')
+            writeln(' } },')
+            if conditional:
+                writeln('#endif')
+        writeln('    })')
         writeln('''{ }
 
 } // namespace WebCore''')

@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT virtual void dispatchEvent(Event&);
     WEBCORE_EXPORT virtual void uncaughtExceptionInEventHandler();
 
+    static const AtomString& legacyTypeForEvent(const Event&);
+
     // Used for legacy "onevent" attributes.
     template<typename JSMaybeErrorEventListener>
     void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
