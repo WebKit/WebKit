@@ -31,10 +31,15 @@ addEventListener("load", async () => {
 
     let characterCountBeforeLongPauseForInlinePredictions = 10;
     for (let character of [..."to whom it may concern"]) {
-        await UIHelper.typeCharacter(character);
-        await UIHelper.ensurePresentationUpdate();
+        console.log(`Typing '${character}'`);
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.typeCharacter(character);
+            await UIHelper.ensurePresentationUpdate();
+        }, input, "keyup");
         if (!--characterCountBeforeLongPauseForInlinePredictions)
             await UIHelper.delayFor(500);
+        else
+            await UIHelper.delayFor(100);
     }
 
     isAutoShifted = await UIHelper.keyboardIsAutomaticallyShifted();
