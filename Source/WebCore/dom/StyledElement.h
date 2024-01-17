@@ -70,7 +70,7 @@ public:
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
 
 protected:
-    StyledElement(const QualifiedName& name, Document& document, ConstructionType type)
+    StyledElement(const QualifiedName& name, Document& document, OptionSet<TypeFlag> type)
         : Element(name, document, type)
     {
     }

@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentFragment);
 
-DocumentFragment::DocumentFragment(Document& document, ConstructionType constructionType)
+DocumentFragment::DocumentFragment(Document& document, OptionSet<TypeFlag> constructionType)
     : ContainerNode(document, constructionType)
 {
 }

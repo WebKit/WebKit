@@ -763,7 +763,7 @@ public:
     CustomStateSet& ensureCustomStateSet();
 
 protected:
-    Element(const QualifiedName&, Document&, ConstructionType);
+    Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;

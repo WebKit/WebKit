@@ -245,7 +245,7 @@ Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
     return adoptRef(*new Element(tagName, document, CreateElement));
 }
 
-Element::Element(const QualifiedName& tagName, Document& document, ConstructionType type)
+Element::Element(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type)
     : ContainerNode(document, type)
     , m_tagName(tagName)
 {
