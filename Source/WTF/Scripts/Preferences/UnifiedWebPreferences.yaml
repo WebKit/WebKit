@@ -552,20 +552,6 @@ AriaReflectionForElementReferencesEnabled:
     WebCore:
       default: true
 
-AriaTextRoleEnabled:
-  type: bool
-  status: preview
-  category: dom
-  humanReadableName: "Non-standard ARIA text role"
-  humanReadableDescription: "Enable support for non-standard ARIA text role"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
   type: bool
