@@ -9472,7 +9472,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(APPLE_PAY)
-    internals().paymentCoordinator = nullptr;
+    resetPaymentCoordinator(resetStateReason);
 #endif
 
 #if USE(SYSTEM_PREVIEW)
@@ -12365,6 +12365,21 @@ void WebPageProxy::setPrivateClickMeasurementAppBundleIDForTesting(const String&
 {
     websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAppBundleIDForTesting(m_websiteDataStore->sessionID(), appBundleIDForTesting), WTFMove(completionHandler));
 }
+
+#if ENABLE(APPLE_PAY)
+
+void WebPageProxy::resetPaymentCoordinator(ResetStateReason resetStateReason)
+{
+    if (!internals().paymentCoordinator)
+        return;
+
+    if (resetStateReason == ResetStateReason::WebProcessExited)
+        internals().paymentCoordinator->webProcessExited();
+
+    internals().paymentCoordinator = nullptr;
+}
+
+#endif // ENABLE(APPLE_PAY)
 
 #if ENABLE(SPEECH_SYNTHESIS)
 

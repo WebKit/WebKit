@@ -2340,7 +2340,7 @@ private:
 
     bool suspendCurrentPageIfPossible(API::Navigation&, RefPtr<WebFrameProxy>&& mainFrame, ProcessSwapRequestedByClient, ShouldDelayClosingUntilFirstLayerFlush);
 
-    enum class ResetStateReason {
+    enum class ResetStateReason : uint8_t {
         PageInvalidated,
         WebProcessExited,
         NavigationSwap,
@@ -2822,6 +2822,10 @@ private:
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     void didAccessWindowProxyPropertyViaOpenerForFrame(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&, WebCore::WindowProxyProperty);
+#endif
+
+#if ENABLE(APPLE_PAY)
+    void resetPaymentCoordinator(ResetStateReason);
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
