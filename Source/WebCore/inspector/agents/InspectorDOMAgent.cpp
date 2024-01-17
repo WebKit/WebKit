@@ -963,13 +963,12 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setNodeValue(Protocol::DOM::Nod
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDOMAgent::getSupportedEventNames()
 {
-    auto eventNames = JSON::ArrayOf<String>::create();
+    auto list = JSON::ArrayOf<String>::create();
 
-#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name""_s);
-    DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
-#undef DOM_EVENT_NAMES_ADD
+    for (auto& event : eventNames().allEventNames())
+        list->addItem(event);
 
-    return eventNames;
+    return list;
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

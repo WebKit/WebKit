@@ -1097,7 +1097,6 @@ dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventListenerMap.cpp
 dom/EventLoop.cpp
-dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp
 dom/EventTargetConcrete.cpp
@@ -3142,6 +3141,7 @@ CSSPropertyParsing.cpp
 CSSValueKeywords.cpp
 ColorData.cpp
 EventFactory.cpp
+EventNames.cpp
 EventTargetFactory.cpp
 HTMLElementFactory.cpp
 HTMLEntityTable.cpp

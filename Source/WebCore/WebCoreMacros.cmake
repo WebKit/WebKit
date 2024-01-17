@@ -189,6 +189,20 @@ macro(GENERATE_EVENT_FACTORY _infile _namespace)
 endmacro()
 
 
+macro(GENERATE_EVENT_NAMES _infile)
+    set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make-event-names.py)
+    set(_outputfiles ${WebCore_DERIVED_SOURCES_DIR}/EventNames.h ${WebCore_DERIVED_SOURCES_DIR}/EventNames.cpp)
+
+    add_custom_command(
+        OUTPUT  ${_outputfiles}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
+        WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${NAMES_GENERATOR} --event-names ${_infile}
+        VERBATIM)
+endmacro()
+
+
 function(GENERATE_DOM_NAMES _namespace _attrs)
     if (ARGN)
         list(GET ARGN 0 _elements)
