@@ -21,10 +21,6 @@ FAIL #target > div 3 assert_equals:
 <div data-offset-x="126">line1<br>line2</div>
 offsetLeft expected 126 but got 42
 PASS #target > div 4
-FAIL #target > div 5 assert_equals:
-<div data-offset-x="35">line1<br>line2</div>
-offsetLeft expected 35 but got 15
-FAIL #target > div 6 assert_equals:
-<div data-offset-x="42">line1<br>line2</div>
-offsetLeft expected 42 but got 22
+PASS #target > div 5
+PASS #target > div 6
 

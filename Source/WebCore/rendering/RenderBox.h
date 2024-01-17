@@ -241,6 +241,9 @@ public:
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
         return m_marginBox.end(styleToUse->writingMode(), styleToUse->direction());
     }
+    LayoutUnit marginBlockStart(const WritingMode& writingMode) const { return m_marginBox.before(writingMode); }
+    LayoutUnit marginInlineStart(const WritingMode& writingMode) const { return m_marginBox.start(writingMode); }
+
     void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setBefore(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
     void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setAfter(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
     void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
