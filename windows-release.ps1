@@ -80,9 +80,10 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
     
     # 1. fix build script to align with bun's compiler requirements
     #    a. replace references to `cl` with `clang-cl` from configure
-    #    b. use -MT instead of -MD to statically link the C runtime
+    #    b. TODO: use -MT instead of -MD to statically link the C runtime
     $ConfigureFile = Get-Content "$ICU_STATIC_ROOT/source/runConfigureICU" -Raw
-    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl") -replace "-MD'", "-MT'") -NoNewline -Encoding UTF8
+    # Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl") -replace "-MD'", "-MT'") -NoNewline -Encoding UTF8
+    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl")) -NoNewline -Encoding UTF8
     # 2. hack remove dllimport from platform.h
     $PlatformFile = Get-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" -Raw
     Set-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" ($PlatformFile -replace "__declspec\(dllimport\)", "")
@@ -135,8 +136,8 @@ Write-Host ":: Configuring WebKit"
 
 $env:PATH = $PathWithPerl
 
-$env:CFLAGS = "/Zi /Z7 /MT"
-$env:CXXFLAGS = "/Zi /Z7 /MT"
+$env:CFLAGS = "/Zi /Z7"
+$env:CXXFLAGS = "/Zi /Z7"
 
 cmake -S . -B $WebKitBuild `
     -DPORT="JSCOnly" `
@@ -158,9 +159,9 @@ cmake -S . -B $WebKitBuild `
     "-DCMAKE_CXX_COMPILER=clang-cl" `
     "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
     "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
-    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" `
     -DENABLE_REMOTE_INSPECTOR=ON `
     -G Ninja
+# TODO: "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" `
 if ($LASTEXITCODE -ne 0) { throw "cmake failed with exit code $LASTEXITCODE" }
 
 # Workaround for what is probably a CMake bug
