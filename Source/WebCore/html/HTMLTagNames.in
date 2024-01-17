@@ -142,3 +142,12 @@ video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedB
 wbr interfaceName=HTMLWBRElement, JSInterfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement
 noscript interfaceName=HTMLElement
+
+annotation-xml interfaceName=HTMLUnknownElement
+color-profile interfaceName=HTMLUnknownElement
+font-face interfaceName=HTMLUnknownElement
+font-face-format interfaceName=HTMLUnknownElement
+font-face-name interfaceName=HTMLUnknownElement
+font-face-src interfaceName=HTMLUnknownElement
+font-face-uri interfaceName=HTMLUnknownElement
+missing-glyph interfaceName=HTMLUnknownElement
