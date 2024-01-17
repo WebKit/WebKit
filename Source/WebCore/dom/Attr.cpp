@@ -44,14 +44,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Attr);
 using namespace HTMLNames;
 
 Attr::Attr(Element& element, const QualifiedName& name)
-    : Node(element.document(), CreateAttr)
+    : Node(element.document(), ATTRIBUTE_NODE, CreateAttr)
     , m_element(element)
     , m_name(name)
 {
 }
 
 Attr::Attr(Document& document, const QualifiedName& name, const AtomString& standaloneValue)
-    : Node(document, CreateAttr)
+    : Node(document, ATTRIBUTE_NODE, CreateAttr)
     , m_name(name)
     , m_standaloneValue(standaloneValue)
 {

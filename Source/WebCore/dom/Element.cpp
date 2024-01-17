@@ -246,7 +246,7 @@ Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 }
 
 Element::Element(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type)
-    : ContainerNode(document, type)
+    : ContainerNode(document, ELEMENT_NODE, type)
     , m_tagName(tagName)
 {
 }
@@ -665,11 +665,6 @@ NamedNodeMap& Element::attributes() const
 
     rareData.setAttributeMap(makeUniqueWithoutRefCountedCheck<NamedNodeMap>(const_cast<Element&>(*this)));
     return *rareData.attributeMap();
-}
-
-Node::NodeType Element::nodeType() const
-{
-    return ELEMENT_NODE;
 }
 
 bool Element::hasAttribute(const QualifiedName& name) const
