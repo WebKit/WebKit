@@ -298,7 +298,10 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
                 [regionLayer setMask:nil];
         }
 
-        if ([container.sublayers objectAtIndex:insertionPoint] != regionLayer) {
+        // Since we insert new layers as we go, insertionPoint is always <= container.sublayers.count.
+        ASSERT(insertionPoint <= container.sublayers.count);
+        bool shouldAppendLayer = insertionPoint == container.sublayers.count;
+        if (shouldAppendLayer || [container.sublayers objectAtIndex:insertionPoint] != regionLayer) {
             [regionLayer removeFromSuperlayer];
             [container insertSublayer:regionLayer.get() atIndex:insertionPoint];
         }
