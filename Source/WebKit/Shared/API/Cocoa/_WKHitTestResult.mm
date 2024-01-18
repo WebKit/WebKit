@@ -65,6 +65,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return URLFromString(_hitTestResult->absoluteLinkURL());
 }
 
+- (BOOL)hasLocalDataForLinkURL
+{
+    return _hitTestResult->hasLocalDataForLinkURL();
+}
+
 - (NSString *)linkLocalDataMIMEType
 {
     return _hitTestResult->linkLocalDataMIMEType();

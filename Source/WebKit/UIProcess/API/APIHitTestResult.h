@@ -83,6 +83,8 @@ public:
 
     const std::optional<WebKit::FrameInfoData>& frameInfo() const { return m_data.frameInfo; }
 
+    bool hasLocalDataForLinkURL() const { return m_data.hasLocalDataForLinkURL; }
+
 private:
     explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)
         : m_data(hitTestResultData)
