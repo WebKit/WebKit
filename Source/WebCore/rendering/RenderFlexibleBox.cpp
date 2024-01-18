@@ -606,7 +606,7 @@ LayoutUnit RenderFlexibleBox::crossAxisExtentForChild(const RenderBox& child) co
     return isHorizontalFlow() ? child.height() : child.width();
 }
 
-LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const RenderBox& child) const
+LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const RenderBox& child)
 {
     if (auto* renderReplaced = dynamicDowncast<RenderReplaced>(child))
         return renderReplaced->intrinsicLogicalHeight();
@@ -631,7 +631,7 @@ void RenderFlexibleBox::clearCachedChildIntrinsicContentLogicalHeight(const Rend
     m_intrinsicContentLogicalHeights.remove(child);
 }
 
-LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(RenderBox& child) const
+LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(RenderBox& child)
 {
     // This should only be called if the logical height is the cross size
     ASSERT(mainAxisIsChildInlineAxis(child));

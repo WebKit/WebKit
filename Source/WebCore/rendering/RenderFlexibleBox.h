@@ -104,7 +104,7 @@ public:
     
     void clearCachedMainSizeForChild(const RenderBox& child);
     
-    LayoutUnit cachedChildIntrinsicContentLogicalHeight(const RenderBox& child) const;
+    LayoutUnit cachedChildIntrinsicContentLogicalHeight(const RenderBox& child);
     void setCachedChildIntrinsicContentLogicalHeight(const RenderBox& child, LayoutUnit);
     void clearCachedChildIntrinsicContentLogicalHeight(const RenderBox& child);
 
@@ -160,7 +160,7 @@ private:
     bool shouldApplyMinSizeAutoForChild(const RenderBox&) const;
     LayoutUnit crossAxisExtentForChild(const RenderBox& child) const;
     LayoutUnit crossAxisIntrinsicExtentForChild(RenderBox& child);
-    LayoutUnit childIntrinsicLogicalHeight(RenderBox& child) const;
+    LayoutUnit childIntrinsicLogicalHeight(RenderBox& child);
     LayoutUnit childIntrinsicLogicalWidth(RenderBox& child);
     LayoutUnit mainAxisExtentForChild(const RenderBox& child) const;
     LayoutUnit mainAxisContentExtentForChildIncludingScrollbar(const RenderBox& child) const;
@@ -265,11 +265,11 @@ private:
 
     // This is used to cache the preferred size for orthogonal flow children so we
     // don't have to relayout to get it
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicSizeAlongMainAxis;
+    SingleThreadWeakHashMap<const RenderBox, LayoutUnit> m_intrinsicSizeAlongMainAxis;
     
     // This is used to cache the intrinsic size on the cross axis to avoid
     // relayouts when stretching.
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_intrinsicContentLogicalHeights;
+    SingleThreadWeakHashMap<const RenderBox, LayoutUnit> m_intrinsicContentLogicalHeights;
 
     // This set is used to keep track of which children we laid out in this
     // current layout iteration. We need it because the ones in this set may
