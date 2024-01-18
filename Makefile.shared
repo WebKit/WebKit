@@ -21,7 +21,7 @@ BUILD_WEBKIT_BASE += --no-use-workspace
 BUILD_GOAL = $(notdir $(CURDIR))
 endif
 
-XCODE_OPTIONS = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_BASE) $(BUILD_WEBKIT_OPTIONS)) $(ARGS)
+XCODE_OPTIONS = $(ARGS)
 XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_ADDITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
 	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
@@ -147,7 +147,8 @@ define invoke_xcode
 		echo; \
 		echo "===== BUILDING $(BUILD_GOAL) ====="; \
 		echo; \
-		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		eval build_webkit_options=(`perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_BASE) $(BUILD_WEBKIT_OPTIONS)`); \
+		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) "$${build_webkit_options[@]}" $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
