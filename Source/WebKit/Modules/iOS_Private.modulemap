@@ -3126,6 +3126,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionWebRequestFilter {
+    header "_WKWebExtensionWebRequestFilter.h"
+    export *
+  }
+
   explicit module _WKWebExtensionWindow {
     header "_WKWebExtensionWindow.h"
     export *
