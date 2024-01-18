@@ -233,7 +233,7 @@ void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
     setNetworkState(MediaPlayer::NetworkState::NetworkError);
 }
 
-void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer&)
+void MediaPlayerPrivateWebM::loadFinished()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_loadFinished = true;
