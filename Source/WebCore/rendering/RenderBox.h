@@ -599,6 +599,7 @@ public:
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
     virtual bool hasRelativeLogicalWidth() const;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     bool hasHorizontalLayoutOverflow() const
     {
