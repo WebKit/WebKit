@@ -60,6 +60,9 @@ public:
     virtual void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
     void backingStoreWillBeEncoded(const RemoteLayerBackingStore&);
 
+    void purgeFrontBufferForTesting(RemoteLayerBackingStore&);
+    void purgeBackBufferForTesting(RemoteLayerBackingStore&);
+
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
@@ -105,7 +108,7 @@ private:
     void volatilityTimerFired();
 
 protected:
-    void sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool)>&&);
+    void sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool)>&&, bool forcePurge = false);
 
     static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
     static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;

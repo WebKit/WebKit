@@ -149,6 +149,8 @@ public:
     void displayAndTrackRepaints();
     void displayOnLoadFinish() { m_displayOnLoadFinish = true; }
     bool shouldDisplayOnLoadFinish() { return m_displayOnLoadFinish; }
+    void dontForceRepaint() { m_forceRepaint = false; }
+    bool shouldForceRepaint() { return m_forceRepaint; }
 
     // UserContent testing.
     void addUserScript(JSStringRef source, bool runAtStart, bool allFrames);
@@ -640,6 +642,7 @@ private:
     bool m_testRepaint { false };
     bool m_testRepaintSweepHorizontally { false };
     bool m_displayOnLoadFinish { false };
+    bool m_forceRepaint { true };
     bool m_isPrinting { false };
     bool m_willSendRequestReturnsNull { false };
     bool m_willSendRequestReturnsNullOnRedirect { false };

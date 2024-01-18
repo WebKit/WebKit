@@ -57,7 +57,7 @@ public:
     // to be drawn (unless drawing will be opaque).
     void prepareBufferForDisplay(const WebCore::Region& dirtyRegion, bool requiresClearedPixels);
 
-    bool makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers);
+    bool makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers, bool forcePurge);
 
 private:
     RemoteImageBufferSet(RemoteImageBufferSetIdentifier, WebCore::RenderingResourceIdentifier, RemoteRenderingBackend&);

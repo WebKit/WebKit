@@ -4314,4 +4314,16 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     return matrix;
 }
 
+void RenderLayerBacking::purgeFrontBufferForTesting()
+{
+    if (m_graphicsLayer)
+        m_graphicsLayer->purgeFrontBufferForTesting();
+}
+
+void RenderLayerBacking::purgeBackBufferForTesting()
+{
+    if (m_graphicsLayer)
+        m_graphicsLayer->purgeBackBufferForTesting();
+}
+
 } // namespace WebCore

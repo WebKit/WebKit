@@ -332,6 +332,9 @@ public:
 
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
+    virtual void purgeFrontBufferForTesting() { }
+    virtual void purgeBackBufferForTesting() { }
+
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 

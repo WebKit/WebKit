@@ -169,6 +169,7 @@ private:
     bool m_dumpPixels { false };
     bool m_forceDumpPixels { false };
     bool m_pixelResultIsPending { false };
+    bool m_forceRepaint { true };
     bool m_shouldDumpResourceLoadStatistics { false };
     bool m_canOpenWindows { true };
     bool m_shouldDumpPrivateClickMeasurement { false };

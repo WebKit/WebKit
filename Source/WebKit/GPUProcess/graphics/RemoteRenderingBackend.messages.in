@@ -43,7 +43,7 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)  -> (Vector<WebKit::ImageBufferSetPrepareBufferForDisplayOutputData> swapBuffersOutput) NotStreamEncodableReply ReplyCanDispatchOutOfOrder
 #endif
 
-    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers)
+    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers, bool forcePurge)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 
 #if USE(GRAPHICS_LAYER_WC)

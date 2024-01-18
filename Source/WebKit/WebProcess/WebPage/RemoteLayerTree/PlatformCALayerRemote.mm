@@ -1089,4 +1089,17 @@ void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const Accelerated
 }
 #endif
 
+void PlatformCALayerRemote::purgeFrontBufferForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        return m_properties.backingStoreOrProperties.store->purgeFrontBufferForTesting();
+}
+
+void PlatformCALayerRemote::purgeBackBufferForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        return m_properties.backingStoreOrProperties.store->purgeBackBufferForTesting();
+}
+
+
 } // namespace WebKit

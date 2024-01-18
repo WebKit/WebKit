@@ -2598,3 +2598,4 @@ webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-nested-clip-path.svg [ Failure ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
+compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ ImageOnlyFailure ]

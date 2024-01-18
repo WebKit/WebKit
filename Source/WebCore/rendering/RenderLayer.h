@@ -865,6 +865,8 @@ public:
 
     WEBCORE_EXPORT void simulateFrequentPaint();
     bool paintingFrequently() const { return m_paintFrequencyTracker.paintingFrequently(); }
+    WEBCORE_EXPORT void purgeFrontBufferForTesting();
+    WEBCORE_EXPORT void purgeBackBufferForTesting();
 
     WEBCORE_EXPORT bool isTransparentRespectingParentFrames() const;
 

@@ -5066,6 +5066,18 @@ void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& ef
 }
 #endif
 
+void GraphicsLayerCA::purgeFrontBufferForTesting()
+{
+    if (primaryLayer())
+        primaryLayer()->purgeFrontBufferForTesting();
+}
+
+void GraphicsLayerCA::purgeBackBufferForTesting()
+{
+    if (primaryLayer())
+        primaryLayer()->purgeBackBufferForTesting();
+}
+
 } // namespace WebCore
 
 #endif

@@ -482,9 +482,16 @@ bool ImageBuffer::setVolatile()
 
 SetNonVolatileResult ImageBuffer::setNonVolatile()
 {
+    auto result = SetNonVolatileResult::Valid;
     if (auto* backend = ensureBackend())
-        return backend->setNonVolatile();
-    return SetNonVolatileResult::Valid;
+        result = backend->setNonVolatile();
+
+    if (m_hasForcedPurgeForTesting) {
+        result = SetNonVolatileResult::Empty;
+        m_hasForcedPurgeForTesting = false;
+    }
+
+    return result;
 }
 
 VolatilityState ImageBuffer::volatilityState() const
@@ -498,6 +505,15 @@ void ImageBuffer::setVolatilityState(VolatilityState volatilityState)
 {
     if (auto* backend = ensureBackend())
         backend->setVolatilityState(volatilityState);
+}
+
+void ImageBuffer::setVolatileAndPurgeForTesting()
+{
+    releaseGraphicsContext();
+    context().clearRect(FloatRect(FloatPoint::zero(), logicalSize()));
+    releaseGraphicsContext();
+    setVolatile();
+    m_hasForcedPurgeForTesting = true;
 }
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()

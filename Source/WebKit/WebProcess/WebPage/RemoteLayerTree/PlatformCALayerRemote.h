@@ -251,6 +251,9 @@ public:
 
     bool containsBitmapOnly() const;
 
+    void purgeFrontBufferForTesting() override;
+    void purgeBackBufferForTesting() override;
+
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);

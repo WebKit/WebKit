@@ -255,11 +255,15 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
     m_frontBufferIsCleared = false;
 }
 
-bool RemoteImageBufferSet::makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers)
+bool RemoteImageBufferSet::makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers, bool forcePurge)
 {
     bool allSucceeded = true;
 
-    auto makeVolatile = [](WebCore::ImageBuffer& imageBuffer) {
+    auto makeVolatile = [&](WebCore::ImageBuffer& imageBuffer) {
+        if (forcePurge) {
+            imageBuffer.setVolatileAndPurgeForTesting();
+            return true;
+        }
         imageBuffer.releaseGraphicsContext();
         return imageBuffer.setVolatile();
     };

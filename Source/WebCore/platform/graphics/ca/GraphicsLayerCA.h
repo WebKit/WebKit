@@ -208,6 +208,9 @@ public:
     WEBCORE_EXPORT void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&) override;
 #endif
 
+    WEBCORE_EXPORT void purgeFrontBufferForTesting() override;
+    WEBCORE_EXPORT void purgeBackBufferForTesting() override;
+
 private:
     bool isGraphicsLayerCA() const override { return true; }
 

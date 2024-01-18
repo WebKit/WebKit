@@ -5791,6 +5791,18 @@ void RenderLayer::simulateFrequentPaint()
     m_paintFrequencyTracker.track(page().lastRenderingUpdateTimestamp());
 }
 
+void RenderLayer::purgeFrontBufferForTesting()
+{
+    if (backing())
+        backing()->purgeFrontBufferForTesting();
+}
+
+void RenderLayer::purgeBackBufferForTesting()
+{
+    if (backing())
+        backing()->purgeBackBufferForTesting();
+}
+
 RenderLayerScrollableArea* RenderLayer::scrollableArea() const
 {
     return m_scrollableArea.get();

@@ -41,7 +41,7 @@ public:
 
     void clearBackingStore() final;
 
-    bool setBufferVolatile(BufferType);
+    bool setBufferVolatile(BufferType, bool forcePurge = false);
 
     std::optional<ImageBufferBackendHandle> frontBufferHandle() const final;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -73,7 +73,7 @@ private:
     };
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
-    bool setBufferVolatile(Buffer&);
+    bool setBufferVolatile(Buffer&, bool forcePurge = false);
 
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
     WebCore::SetNonVolatileResult setFrontBufferNonVolatile();

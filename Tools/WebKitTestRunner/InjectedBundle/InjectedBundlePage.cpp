@@ -757,13 +757,15 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 #endif
 }
 
-void InjectedBundlePage::dump()
+void InjectedBundlePage::dump(bool forceRepaint)
 {
     auto& injectedBundle = InjectedBundle::singleton();
 
-    // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
-    // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
-    WKBundlePageForceRepaint(m_page);
+    if (forceRepaint) {
+        // Force a paint before dumping. This matches DumpRenderTree on Windows. (DumpRenderTree on Mac
+        // does this at a slightly different time.) See <http://webkit.org/b/55469> for details.
+        WKBundlePageForceRepaint(m_page);
+    }
     WKBundlePageFlushPendingEditorStateUpdate(m_page);
 
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
@@ -829,7 +831,7 @@ void InjectedBundlePage::dump()
     }
 
     injectedBundle.outputText(stringBuilder.toString(), InjectedBundle::IsFinalTestOutput::Yes);
-    injectedBundle.done();
+    injectedBundle.done(forceRepaint);
 }
 
 void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
@@ -1690,7 +1692,7 @@ static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
 
     if (auto& bundle = InjectedBundle::singleton(); bundle.isTestRunning()) {
         if (auto currentPage = bundle.page(); currentPage && currentPage->page() == page)
-            currentPage->dump();
+            currentPage->dump(bundle.testRunner()->shouldForceRepaint());
     }
 }
 
@@ -1717,7 +1719,7 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
     auto page = InjectedBundle::singleton().page();
     if (!page) {
-        injectedBundle.done();
+        injectedBundle.done(injectedBundle.testRunner()->shouldForceRepaint());
         return;
     }
 

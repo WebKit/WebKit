@@ -41,7 +41,7 @@ public:
 
     WKBundlePageRef page() const { return m_page; }
 
-    void dump();
+    void dump(bool forceRepaint);
 
     void stopLoading();
 

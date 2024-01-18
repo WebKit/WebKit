@@ -210,6 +210,7 @@ public:
     WEBCORE_EXPORT SetNonVolatileResult setNonVolatile();
     WEBCORE_EXPORT VolatilityState volatilityState() const;
     WEBCORE_EXPORT void setVolatilityState(VolatilityState);
+    WEBCORE_EXPORT void setVolatileAndPurgeForTesting();
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
     // This value increments when the ImageBuffer gets a new backend, which can happen if, for example, the GPU Process exits.
@@ -235,6 +236,7 @@ protected:
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
     unsigned m_backendGeneration { 0 };
+    bool m_hasForcedPurgeForTesting { false };
 };
 
 class SerializedImageBuffer {

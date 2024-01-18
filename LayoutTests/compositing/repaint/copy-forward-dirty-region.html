@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+        }
+        #second {
+            left: 200px;
+        }
+        #inner {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+        async function doTest()
+        {
+            await UIHelper.renderingUpdate();
+            document.getElementById('second').style.backgroundColor = "red";
+            
+            await UIHelper.renderingUpdate();
+            document.getElementById('first').style.backgroundColor = "green";
+
+            await UIHelper.renderingUpdate();
+            document.getElementById('second').style.backgroundColor = "green";
+            document.getElementById('inner').style.backgroundColor = "green";
+            
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="first"><div id="inner"></div></div>
+    <div id="second"></div>
+</body>
+</html>

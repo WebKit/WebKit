@@ -199,6 +199,8 @@ public:
     bool isFullyActive(Document&);
     bool isPaintingFrequently(Element&);
     void incrementFrequentPaintCounter(Element&);
+    void purgeFrontBuffer(Element&);
+    void purgeBackBuffer(Element&);
 
     String address(Node&);
     bool nodeNeedsStyleRecalc(Node&);

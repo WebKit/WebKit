@@ -161,6 +161,9 @@ public:
 
     virtual void dump(WTF::TextStream&) const = 0;
 
+    void purgeFrontBufferForTesting();
+    void purgeBackBufferForTesting();
+
 protected:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 

@@ -409,7 +409,7 @@ void RemoteRenderingBackendProxy::ensurePrepareCompleted()
 }
 #endif
 
-void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& bufferSets, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& bufferSets, CompletionHandler<void(bool)>&& completionHandler, bool forcePurge)
 {
     Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> identifiers;
     for (auto& pair : bufferSets) {
@@ -419,7 +419,7 @@ void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<Remo
     m_currentVolatilityRequest = MarkSurfacesAsVolatileRequestIdentifier::generate();
     m_markAsVolatileRequests.add(m_currentVolatilityRequest, WTFMove(completionHandler));
 
-    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(m_currentVolatilityRequest, identifiers));
+    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(m_currentVolatilityRequest, identifiers, forcePurge));
 }
 
 void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)

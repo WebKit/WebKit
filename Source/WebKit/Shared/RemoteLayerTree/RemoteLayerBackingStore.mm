@@ -607,6 +607,18 @@ Vector<std::unique_ptr<ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::t
     return std::exchange(m_frontBufferFlushers, { });
 }
 
+void RemoteLayerBackingStore::purgeFrontBufferForTesting()
+{
+    if (auto* collection = backingStoreCollection())
+        collection->purgeFrontBufferForTesting(*this);
+}
+
+void RemoteLayerBackingStore::purgeBackBufferForTesting()
+{
+    if (auto* collection = backingStoreCollection())
+        collection->purgeBackBufferForTesting(*this);
+}
+
 TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
 {
     backingStore.dump(ts);

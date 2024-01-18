@@ -122,6 +122,7 @@ interface TestRunner {
     undefined display();
     undefined displayAndTrackRepaints();
     undefined displayOnLoadFinish();
+    undefined dontForceRepaint();
 
     // Failed load condition testing
     undefined forceImmediateCompletion();

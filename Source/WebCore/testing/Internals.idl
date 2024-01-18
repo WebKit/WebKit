@@ -436,6 +436,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     // Must be called on an element whose enclosingLayer() is self-painting.
     boolean isPaintingFrequently(Element element);
     undefined incrementFrequentPaintCounter(Element element);
+    undefined purgeFrontBuffer(Element element);
+    undefined purgeBackBuffer(Element element);
 
     DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);

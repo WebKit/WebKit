@@ -272,9 +272,11 @@ void TestInvocation::dumpResults()
         if (m_pixelResult)
             dumpPixelsAndCompareWithExpected(SnapshotResultType::WebContents, m_repaintRects.get(), m_pixelResult.get());
         else if (m_pixelResultIsPending) {
-            m_gotRepaint = false;
-            WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-            TestController::singleton().runUntil(m_gotRepaint, TestController::noTimeout);
+            if (m_forceRepaint) {
+                m_gotRepaint = false;
+                WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+                TestController::singleton().runUntil(m_gotRepaint, TestController::noTimeout);
+            }
             dumpPixelsAndCompareWithExpected(SnapshotResultType::WebView, m_repaintRects.get());
         }
     }
@@ -344,6 +346,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         }
         m_repaintRects = static_cast<WKArrayRef>(value(messageBodyDictionary, "RepaintRects"));
         m_audioResult = static_cast<WKDataRef>(value(messageBodyDictionary, "AudioResult"));
+        m_forceRepaint = booleanValue(messageBodyDictionary, "ForceRepaint");
         done();
         return;
     }

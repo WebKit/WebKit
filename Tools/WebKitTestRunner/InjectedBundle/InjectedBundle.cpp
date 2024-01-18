@@ -446,7 +446,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone")) {
-        InjectedBundle::page()->dump();
+        InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 
@@ -460,7 +460,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
         if (!topLoadingFrame() && !m_testRunner->shouldWaitUntilDone())
-            InjectedBundle::page()->dump();
+            InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 
@@ -596,7 +596,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     // WKBundleSetDatabaseQuota(m_bundle.get(), 5 * 1024 * 1024);
 }
 
-void InjectedBundle::done()
+void InjectedBundle::done(bool forceRepaint)
 {
     m_state = Stopping;
 
@@ -617,6 +617,7 @@ void InjectedBundle::done()
         setValue(body, "PixelResult", m_pixelResult);
     setValue(body, "RepaintRects", m_repaintRects);
     setValue(body, "AudioResult", m_audioResult);
+    setValue(body, "ForceRepaint", forceRepaint);
 
     WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("Done").get(), body.get());
 

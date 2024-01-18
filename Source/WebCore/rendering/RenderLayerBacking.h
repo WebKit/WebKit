@@ -289,6 +289,9 @@ public:
     WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
     bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
+
+    void purgeFrontBufferForTesting();
+    void purgeBackBufferForTesting();
 private:
     friend class PaintedContentsInfo;
 

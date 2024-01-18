@@ -1383,6 +1383,18 @@ void Internals::incrementFrequentPaintCounter(Element& element)
         element.renderer()->enclosingLayer()->simulateFrequentPaint();
 }
 
+void Internals::purgeFrontBuffer(Element& element)
+{
+    if (element.renderer() && element.renderer()->enclosingLayer())
+        element.renderer()->enclosingLayer()->purgeFrontBufferForTesting();
+}
+
+void Internals::purgeBackBuffer(Element& element)
+{
+    if (element.renderer() && element.renderer()->enclosingLayer())
+        element.renderer()->enclosingLayer()->purgeBackBufferForTesting();
+}
+
 Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const
 {
     bool allowVisitedStyle = true;

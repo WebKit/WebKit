@@ -224,6 +224,41 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
+void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+
+        auto bufferSet = remoteBackingStore->protectedBufferSet();
+        if (bufferSet) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { }, true);
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front, true);
+    }
+}
+
+void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+
+        auto bufferSet = remoteBackingStore->protectedBufferSet();
+        if (bufferSet) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Back, BufferInSetType::SecondaryBack };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { }, true);
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Back, true);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+    }
+}
+
 bool RemoteLayerBackingStoreCollection::markInProcessBackingStoreVolatile(RemoteLayerWithInProcessRenderingBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
 {
     ASSERT(!m_inLayerFlush);
@@ -426,14 +461,14 @@ bool RemoteLayerBackingStoreCollection::collectAllRemoteRenderingBufferIdentifie
 }
 
 
-void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& identifiers, CompletionHandler<void(bool)>&& completionHandler, bool forcePurge)
 {
     auto& remoteRenderingBackend = m_layerTreeContext.ensureRemoteRenderingBackendProxy();
 
     remoteRenderingBackend.markSurfacesVolatile(WTFMove(identifiers), [completionHandler = WTFMove(completionHandler)](bool markedAllVolatile) mutable {
         LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile: marked all volatile " << markedAllVolatile);
         completionHandler(markedAllVolatile);
-    });
+    }, forcePurge);
 }
 
 void RemoteLayerBackingStoreCollection::backingStoreWillBeEncoded(const RemoteLayerBackingStore&)

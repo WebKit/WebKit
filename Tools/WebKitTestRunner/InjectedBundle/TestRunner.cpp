@@ -257,7 +257,7 @@ void TestRunner::notifyDone()
         return;
 
     if (shouldWaitUntilDone() && !injectedBundle.topLoadingFrame())
-        injectedBundle.page()->dump();
+        injectedBundle.page()->dump(m_forceRepaint);
 
     // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
     // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
@@ -273,7 +273,7 @@ void TestRunner::forceImmediateCompletion()
         return;
 
     if (shouldWaitUntilDone() && injectedBundle.page())
-        injectedBundle.page()->dump();
+        injectedBundle.page()->dump(m_forceRepaint);
 
     setWaitUntilDone(false);
 }

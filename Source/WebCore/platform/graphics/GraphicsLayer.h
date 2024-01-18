@@ -684,6 +684,9 @@ public:
     WEBCORE_EXPORT virtual void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&);
 #endif
 
+    virtual void purgeFrontBufferForTesting() { }
+    virtual void purgeBackBufferForTesting() { }
+
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
