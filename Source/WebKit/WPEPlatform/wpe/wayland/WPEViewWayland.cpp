@@ -153,6 +153,8 @@ struct _WPEViewWaylandPrivate {
         std::optional<uint32_t> height;
         WPEViewState state { WPE_VIEW_STATE_NONE };
     } pendingState;
+
+    bool shouldUpdateOpaqueRegion { TRUE };
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewWayland, wpe_view_wayland, WPE_TYPE_VIEW, WPEView)
 
@@ -524,6 +526,20 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
     priv->buffer = buffer;
 
     auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
+
+    if (priv->shouldUpdateOpaqueRegion) {
+        priv->shouldUpdateOpaqueRegion = FALSE;
+        if (wpe_view_is_fullscreen(view)) {
+            WPEDisplayWayland* wlDisplay = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
+            auto* wlCompositor = wpe_display_wayland_get_wl_compositor(wlDisplay);
+            struct wl_region* region = wl_compositor_create_region(wlCompositor);
+            wl_region_add(region, 0, 0, INT32_MAX, INT32_MAX);
+            wl_surface_set_opaque_region(wlSurface, region);
+            wl_region_destroy(region);
+        } else
+            wl_surface_set_opaque_region(wlSurface, nullptr);
+    }
+
     wl_surface_attach(wlSurface, wlBuffer, 0, 0);
     wl_surface_damage(wlSurface, 0, 0, wpe_view_get_width(view), wpe_view_get_height(view));
     priv->frameCallback = wl_surface_frame(wlSurface);
@@ -544,6 +560,7 @@ static gboolean wpeViewWaylandSetFullscreen(WPEView* view, gboolean fullscreen)
     else
         xdg_toplevel_unset_fullscreen(priv->xdgToplevel);
 
+    priv->shouldUpdateOpaqueRegion = TRUE;
     return TRUE;
 }
 
