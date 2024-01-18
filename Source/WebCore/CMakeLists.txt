@@ -1919,13 +1919,7 @@ if (USE_ANGLE_EGL)
         ANGLE::GLES
     )
 elseif (USE_LIBEPOXY)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBEPOXY_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${LIBEPOXY_LIBRARIES}
-    )
-    add_definitions(${LIBEPOXY_DEFINITIONS})
+    list(APPEND WebCore_LIBRARIES Epoxy::Epoxy)
 else ()
     list(APPEND WebCore_LIBRARIES OpenGL::GLES)
 
