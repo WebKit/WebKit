@@ -81,6 +81,14 @@ public:
         DirectTailCall
     };
 
+    enum class Mode : uint8_t {
+        Init,
+        Monomorphic,
+        Polymorphic,
+        Virtual,
+        LinkedDirect,
+    };
+
     static constexpr uintptr_t polymorphicCalleeMask = 1;
     
     static CallType callTypeFor(OpcodeID opcodeID);
@@ -179,22 +187,25 @@ public:
         return isVarargsCallType(static_cast<CallType>(m_callType));
     }
 
-    bool isLinked() const { return stub() || m_calleeOrCodeBlock; }
-    void unlinkImpl(VM&);
+    bool isLinked() const { return mode() != Mode::Init && mode() != Mode::Virtual; }
+    void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock);
 
     enum class UseDataIC : bool { No, Yes };
 
 #if ENABLE(JIT)
 protected:
-    static MacroAssembler::JumpList emitFastPathImpl(CallLinkInfo*, CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
-    static MacroAssembler::JumpList emitDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    static void emitDataICSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR);
-    static MacroAssembler::JumpList emitTailCallDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPathImpl(CallLinkInfo*, CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+
+    static void emitSlowPathImpl(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, MacroAssembler::Label);
+    static void emitDataICSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, bool isTailCall, MacroAssembler::Label);
 
 public:
-    static MacroAssembler::JumpList emitFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    static MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
     static void emitSlowPath(VM&, CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR);
+    static void emitTailCallSlowPath(VM&, CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR, MacroAssembler::Label);
 #endif
 
     void revertCallToStub();
@@ -212,7 +223,6 @@ public:
     CodeLocationLabel<JSInternalPtrTag> doneLocation();
 
     void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
-    void setSlowPathCallDestination(CodePtr<JSEntryPtrTag>);
     void clearCallee();
     JSObject* callee();
 
@@ -232,6 +242,10 @@ public:
     void setStub(JSCell* owner, Ref<PolymorphicCallStubRoutine>&&);
 #endif
     void clearStub();
+
+    void setVirtualCall(VM&, JSCell* owner);
+
+    void revertCall(VM&);
 
     PolymorphicCallStubRoutine* stub() const
     {
@@ -328,13 +342,7 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
     }
 
-    static ptrdiff_t offsetOfSlowPathCallDestination()
-    {
-        return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCallDestination);
-    }
-
 #if ENABLE(JIT)
-    GPRReg calleeGPR() const;
     GPRReg callLinkInfoGPR() const;
 
     static ptrdiff_t offsetOfStub()
@@ -374,34 +382,38 @@ public:
 
     Type type() const { return static_cast<Type>(m_type); }
 
+    Mode mode() const { return static_cast<Mode>(m_mode); }
+
+    JSCell* owner() const { return m_owner; }
+
+    std::tuple<CodeBlock*, BytecodeIndex> retrieveCaller(JSCell* owner);
+
 protected:
-    CallLinkInfo(Type type, UseDataIC useDataIC)
+    CallLinkInfo(Type type, UseDataIC useDataIC, JSCell* owner)
         : CallLinkInfoBase(CallSiteType::CallLinkInfo)
-        , m_hasSeenShouldRepatch(false)
-        , m_hasSeenClosure(false)
-        , m_clearedByGC(false)
-        , m_clearedByVirtual(false)
-        , m_allowStubs(true)
-        , m_callType(None)
         , m_useDataIC(static_cast<unsigned>(useDataIC))
         , m_type(static_cast<unsigned>(type))
+        , m_owner(owner)
     {
         ASSERT(type == this->type());
         ASSERT(useDataIC == this->useDataIC());
     }
 
-    bool m_hasSeenShouldRepatch : 1;
-    bool m_hasSeenClosure : 1;
-    bool m_clearedByGC : 1;
-    bool m_clearedByVirtual : 1;
-    bool m_allowStubs : 1;
-    unsigned m_callType : 4; // CallType
+    void reset(VM&);
+
+    bool m_hasSeenShouldRepatch : 1 { false };
+    bool m_hasSeenClosure : 1 { false };
+    bool m_clearedByGC : 1 { false };
+    bool m_clearedByVirtual : 1 { false };
+    bool m_allowStubs : 1 { true };
+    unsigned m_callType : 4 { CallType::None }; // CallType
     unsigned m_useDataIC : 1; // UseDataIC
     unsigned m_type : 1; // Type
+    unsigned m_mode : 3 { static_cast<unsigned>(Mode::Init) }; // Mode
     uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
+    uint32_t m_slowPathCount { 0 };
 
     CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
-    CodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     union UnionType {
         UnionType()
             : dataIC { nullptr, nullptr }
@@ -423,17 +435,17 @@ protected:
 #if ENABLE(JIT)
     RefPtr<PolymorphicCallStubRoutine> m_stub;
 #endif
-    uint32_t m_slowPathCount { 0 };
+    JSCell* m_owner { nullptr };
 };
 
 class BaselineCallLinkInfo final : public CallLinkInfo {
 public:
     BaselineCallLinkInfo()
-        : CallLinkInfo(Type::Baseline, UseDataIC::Yes)
+        : CallLinkInfo(Type::Baseline, UseDataIC::Yes, nullptr)
     {
     }
 
-    void initialize(VM&, CallType, BytecodeIndex);
+    void initialize(VM&, CodeBlock*, CallType, BytecodeIndex);
 
     void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> doneLocation)
     {
@@ -443,7 +455,6 @@ public:
     CodeOrigin codeOrigin() const { return CodeOrigin { m_bytecodeIndex }; }
 
 #if ENABLE(JIT)
-    static constexpr GPRReg calleeGPR() { return BaselineJITRegisters::Call::calleeGPR; }
     static constexpr GPRReg callLinkInfoGPR() { return BaselineJITRegisters::Call::callLinkInfoGPR; }
 #endif
 
@@ -469,9 +480,8 @@ struct BaselineUnlinkedCallLinkInfo : public JSC::UnlinkedCallLinkInfo {
     BytecodeIndex bytecodeIndex; // Currently, only used by baseline, so this can trivially produce a CodeOrigin.
 
 #if ENABLE(JIT)
-    void setUpCall(CallLinkInfo::CallType, GPRReg) { }
+    void setUpCall(CallLinkInfo::CallType) { }
 #endif
-    void setFrameShuffleData(const CallFrameShuffleData&) { }
 };
 
 #if ENABLE(JIT)
@@ -481,20 +491,19 @@ public:
     friend class CallLinkInfo;
 
     OptimizingCallLinkInfo()
-        : CallLinkInfo(Type::Optimizing, UseDataIC::Yes)
+        : CallLinkInfo(Type::Optimizing, UseDataIC::Yes, nullptr)
     {
     }
 
-    OptimizingCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC)
-        : CallLinkInfo(Type::Optimizing, useDataIC)
+    OptimizingCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner)
+        : CallLinkInfo(Type::Optimizing, useDataIC, owner)
         , m_codeOrigin(codeOrigin)
     {
     }
 
-    void setUpCall(CallType callType, GPRReg calleeGPR)
+    void setUpCall(CallType callType)
     {
         m_callType = callType;
-        m_calleeGPR = calleeGPR;
     }
 
     void setCodeLocations(
@@ -509,7 +518,6 @@ public:
     CodeLocationLabel<JSInternalPtrTag> fastPathStart();
     CodeLocationLabel<JSInternalPtrTag> slowPathStart();
 
-    GPRReg calleeGPR() const { return m_calleeGPR; }
     GPRReg callLinkInfoGPR() const { return m_callLinkInfoGPR; }
     void setCallLinkInfoGPR(GPRReg callLinkInfoGPR) { m_callLinkInfoGPR = callLinkInfoGPR; }
 
@@ -519,44 +527,33 @@ public:
     void setDirectCallTarget(CodeBlock*, CodeLocationLabel<JSEntryPtrTag>);
     void setDirectCallMaxArgumentCountIncludingThis(unsigned);
     unsigned maxArgumentCountIncludingThisForDirectCall() const { return m_maxArgumentCountIncludingThisForDirectCall; }
-    void emitSlowPath(VM&, CCallHelpers&);
 
-    void setFrameShuffleData(const CallFrameShuffleData&);
-
-    const CallFrameShuffleData* frameShuffleData()
-    {
-        return m_frameShuffleData.get();
-    }
+    void setSlowPathCallDestination(CodePtr<JSEntryPtrTag>);
 
     CodeOrigin codeOrigin() const { return m_codeOrigin; }
 
-    void initializeFromDFGUnlinkedCallLinkInfo(VM&, const DFG::UnlinkedCallLinkInfo&);
+    void initializeFromDFGUnlinkedCallLinkInfo(VM&, const DFG::UnlinkedCallLinkInfo&, CodeBlock*);
+
+    static ptrdiff_t offsetOfSlowPathCallDestination()
+    {
+        return OBJECT_OFFSETOF(OptimizingCallLinkInfo, m_slowPathCallDestination);
+    }
 
 private:
     void initializeDirectCallRepatch(CCallHelpers&);
-    MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    void emitSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR);
+    void emitTailCallSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, MacroAssembler::Label);
 
     CodeOrigin m_codeOrigin;
+    CodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     CodeLocationNearCall<JSInternalPtrTag> m_callLocation NO_UNIQUE_ADDRESS;
-    GPRReg m_calleeGPR { InvalidGPRReg };
     GPRReg m_callLinkInfoGPR { InvalidGPRReg };
     unsigned m_maxArgumentCountIncludingThisForDirectCall { 0 };
     CodeLocationLabel<JSInternalPtrTag> m_slowPathStart;
     CodeLocationLabel<JSInternalPtrTag> m_fastPathStart;
-    std::unique_ptr<CallFrameShuffleData> m_frameShuffleData;
 };
-
-inline GPRReg CallLinkInfo::calleeGPR() const
-{
-    switch (type()) {
-    case Type::Baseline:
-        return static_cast<const BaselineCallLinkInfo*>(this)->calleeGPR();
-    case Type::Optimizing:
-        return static_cast<const OptimizingCallLinkInfo*>(this)->calleeGPR();
-    }
-    return InvalidGPRReg;
-}
 
 inline GPRReg CallLinkInfo::callLinkInfoGPR() const
 {

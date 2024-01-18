@@ -27,6 +27,8 @@
 
 namespace JSC {
 
+class CallLinkInfo;
+
 class ErrorInstance : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -52,10 +54,17 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
+    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
-        instance->finishCreation(vm, globalObject, message, cause, appender, type, useCurrentFrame);
+        instance->finishCreation(vm, message, cause, appender, type, useCurrentFrame);
+        return instance;
+    }
+
+    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, JSValue cause, ErrorType errorType, JSCell* owner, CallLinkInfo* callLinkInfo)
+    {
+        ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
+        instance->finishCreation(vm, message, cause, owner, callLinkInfo);
         return instance;
     }
 
@@ -98,7 +107,8 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*, ErrorType);
 
-    void finishCreation(VM&, JSGlobalObject*, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    void finishCreation(VM&, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    void finishCreation(VM&, const String& message, JSValue cause, JSCell* owner, CallLinkInfo*);
     void finishCreation(VM&, String&& message, LineColumn, String&& sourceURL, String&& stackString);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -124,5 +134,7 @@ protected:
     bool m_catchableFromWasm : 1;
 #endif
 };
+
+String appendSourceToErrorMessage(CodeBlock*, BytecodeIndex, const String&, RuntimeType, ErrorInstance::SourceAppender);
 
 } // namespace JSC

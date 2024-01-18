@@ -199,7 +199,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     }
 
     if (oldCodeBlock)
-        oldCodeBlock->unlinkIncomingCalls();
+        oldCodeBlock->unlinkOrUpgradeIncomingCalls(vm, genericCodeBlock);
 
     vm.writeBarrier(this);
 }

@@ -58,7 +58,7 @@ ErrorInstance* createAggregateError(JSGlobalObject* globalObject, VM& vm, Struct
     auto* array = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), errorsList);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto* error = ErrorInstance::create(globalObject, vm, structure, messageString, cause, appender, type, ErrorType::AggregateError, useCurrentFrame);
+    auto* error = ErrorInstance::create(vm, structure, messageString, cause, appender, type, ErrorType::AggregateError, useCurrentFrame);
     error->putDirect(vm, vm.propertyNames->errors, array, static_cast<unsigned>(PropertyAttribute::DontEnum));
     return error;
 }

@@ -436,7 +436,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
-        metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
+        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
     };
 
 #define LINK_FIELD(__field) \
@@ -863,7 +863,7 @@ CodeBlock::~CodeBlock()
     // So, if we don't remove incoming calls, and get destroyed before the
     // CodeBlock(s) that have calls into us, then the CallLinkInfo vector's
     // destructor will try to remove nodes from our (no longer valid) linked list.
-    unlinkIncomingCalls();
+    unlinkOrUpgradeIncomingCalls(vm, nullptr);
     
     // Note that our outgoing calls will be removed from other CodeBlocks'
     // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
@@ -2082,17 +2082,23 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #endif
 }
 
-void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming, bool skipFirstFrame)
+void CodeBlock::linkIncomingCall(JSCell* caller, CallLinkInfoBase* incoming)
 {
     if (caller)
-        noticeIncomingCall(caller, callerFrame, skipFirstFrame);
+        noticeIncomingCall(caller);
     m_incomingCalls.push(incoming);
 }
 
-void CodeBlock::unlinkIncomingCalls()
+void CodeBlock::unlinkOrUpgradeIncomingCalls(VM& vm, CodeBlock* newCodeBlock)
 {
-    while (!m_incomingCalls.isEmpty())
-        m_incomingCalls.begin()->unlink(vm());
+    SentinelLinkedList<CallLinkInfoBase, BasicRawSentinelNode<CallLinkInfoBase>> toBeRemoved;
+    toBeRemoved.takeFrom(m_incomingCalls);
+
+    // Note that upgrade may relink CallLinkInfo into newCodeBlock, and it is possible that |this| and newCodeBlock are the same.
+    // This happens when newCodeBlock is installed by upgrading LLInt to Baseline. In that case, |this|'s m_incomingCalls will
+    // be accumulated correctly.
+    while (!toBeRemoved.isEmpty())
+        toBeRemoved.begin()->unlinkOrUpgrade(vm, this, newCodeBlock);
 }
 
 CodeBlock* CodeBlock::newReplacement()
@@ -2322,11 +2328,9 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool skipFirstFrame)
+void CodeBlock::noticeIncomingCall(JSCell* caller)
 {
     RELEASE_ASSERT(!m_isJettisoned);
-    UNUSED_PARAM(callerFrame);
-    UNUSED_PARAM(skipFirstFrame);
 
     CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(caller);
     
@@ -2383,20 +2387,8 @@ void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool 
     }
 
     // Recursive calls won't be inlined.
-    if (callerFrame) {
-        VM& vm = this->vm();
-        RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-        StackVisitor::visit(vm.topCallFrame, vm, functor, skipFirstFrame);
-
-        if (functor.didRecurse()) {
-            dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
-            m_shouldAlwaysBeInlined = false;
-            return;
-        }
-    }
-    
     if (callerCodeBlock->capabilityLevelState() == DFG::CapabilityLevelNotSet) {
-        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame ? callerFrame->codeOrigin() : CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
+        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
         CRASH();
     }
     

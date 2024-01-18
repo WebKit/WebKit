@@ -43,6 +43,7 @@ class StackFrame {
 public:
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
+    StackFrame(VM&, JSCell* owner, CodeBlock*, BytecodeIndex);
     StackFrame(Wasm::IndexOrName);
     StackFrame() = default;
 

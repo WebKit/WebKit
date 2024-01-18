@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ArityCheckMode.h"
 #include "JSCPtrTag.h"
 #include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
@@ -39,6 +40,8 @@ class CallSlot {
 public:
     JSCell* m_calleeOrExecutable { nullptr };
     uint32_t m_count { 0 };
+    uint8_t m_index { 0 };
+    ArityCheckMode m_arityCheckMode { MustCheckArity };
     CodePtr<JSEntryPtrTag> m_target;
     CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_target is changed.
 
@@ -47,6 +50,7 @@ public:
     static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(CallSlot, m_target); }
     static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(CallSlot, m_codeBlock); }
 };
+static_assert(sizeof(CallSlot) <= 32, "This should be small enough to keep iteration of vector in polymorphic call fast");
 
 class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:
@@ -71,7 +75,7 @@ public:
 
     CallSiteType callSiteType() const { return m_callSiteType; }
 
-    void unlink(VM&);
+    void unlinkOrUpgrade(VM&, CodeBlock*, CodeBlock*);
 
 private:
     CallSiteType m_callSiteType;
