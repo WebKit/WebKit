@@ -149,7 +149,7 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
             }
             case CallLinkInfo::Mode::Monomorphic:
             case CallLinkInfo::Mode::Polymorphic: {
-#if USE(JIT)
+#if ENABLE(JIT)
                 if (kind == CodeForCall && callLinkInfo->allowStubs()) {
                     linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
                     break;
@@ -212,7 +212,7 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
     }
     case CallLinkInfo::Mode::Monomorphic:
     case CallLinkInfo::Mode::Polymorphic: {
-#if USE(JIT)
+#if ENABLE(JIT)
         if (kind == CodeForCall && callLinkInfo->allowStubs()) {
             linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
             break;
