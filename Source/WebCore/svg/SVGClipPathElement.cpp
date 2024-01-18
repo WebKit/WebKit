@@ -152,11 +152,12 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
 
 FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
+    ASSERT(renderer());
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
         if (!document().settings().layerBasedSVGEngineEnabled())
             return std::nullopt;
 
-        if (!child.isTransformed() || !child.hasLayer())
+        if (!(renderer()->isTransformed() || child.isTransformed()) || !child.hasLayer())
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());

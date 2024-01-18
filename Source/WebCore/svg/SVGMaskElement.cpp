@@ -142,11 +142,12 @@ RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& sty
 
 FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
+    ASSERT(renderer());
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
         if (!document().settings().layerBasedSVGEngineEnabled())
             return std::nullopt;
 
-        if (!child.isTransformed() || !child.hasLayer())
+        if (!(renderer()->isTransformed() || child.isTransformed()) || !child.hasLayer())
             return std::nullopt;
 
         ASSERT(child.isSVGLayerAwareRenderer());
