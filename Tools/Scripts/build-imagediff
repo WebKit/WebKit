@@ -55,8 +55,6 @@ if ($showHelp or not $result) {
    exit 1;
 }
 
-setArchitecture("x86_64 arm64") if isAppleMacWebKit();
-
 checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();

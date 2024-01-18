@@ -146,6 +146,7 @@ $ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 checkRequiredSystemConfig();
 setConfiguration();
+shouldBuild32Bit();  # Consume the --32-bit flag if passed and set internal state.
 chdirWebKit();
 
 if ($forceCLoop) {

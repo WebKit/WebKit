@@ -39,8 +39,6 @@ use webkitdirs;
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
-  --32-bit                           Set the default architecture to 32-bit
-  --64-bit                           Set the default architecture to 64-bit
   --[no-]asan                        Enable or disable clang address sanitizer
   --[no-]tsan                        Enable or disable clang thread sanitizer
   --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
@@ -62,7 +60,6 @@ sub printUsage();
 sub updateOrDeleteConfigurationFile($$$);
 
 my $configuration = passedConfiguration();
-my $architecture = passedArchitecture();
 my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
 my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
 my $enableTSAN = checkForArgumentAndRemoveFromARGV("--tsan");
@@ -95,17 +92,6 @@ if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV
     exit 1;
 }
 
-if (!$architecture) {
-    # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--64-bit$/i) {
-            splice(@ARGV, $i, 1);
-            $architecture = 'x86_64';
-        }
-    }
-}
-
 my $baseProductDir = baseProductDir();
 if (isAppleCocoaWebKit() && !isCMakeBuild()) {
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
@@ -119,7 +105,7 @@ if (isAppleCocoaWebKit() && !isCMakeBuild()) {
 }
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel Fuzzilli LibFuzzer LTO TSan UBSan Workspace)) {
+    for my $fileName (qw(ASan Configuration Coverage ForceOptimizationLevel Fuzzilli LibFuzzer LTO TSan UBSan Workspace)) {
         unlink File::Spec->catfile($baseProductDir, $fileName);
     }
     printCurrentSettings();
@@ -156,16 +142,6 @@ if ($configuration) {
     close CONFIGURATION;
 }
 
-if ($architecture) {
-    if ($architecture ne "x86_64") {
-        open ARCHITECTURE, ">", "$baseProductDir/Architecture" or die;
-        print ARCHITECTURE $architecture;
-        close ARCHITECTURE;
-    } else {
-        unlink "$baseProductDir/Architecture";
-    }
-}
-
 updateOrDeleteConfigurationFile("ASan", $enableASAN, $disableASAN);
 updateOrDeleteConfigurationFile("Coverage", $enableCoverage, $disableCoverage);
 updateOrDeleteConfigurationFile("Fuzzilli", $enableFuzzilli, $disableFuzzilli);
@@ -195,7 +171,6 @@ sub printCurrentSettings()
 {
     my $result = "Current settings:";
     $result .= " Configuration:" . configuration();
-    $result .= " Arch:" . architecture() if architecture();
     $result .= " ASan" if asanIsEnabled();
     $result .= " TSan" if tsanIsEnabled();
     $result .= " UBSan" if ubsanIsEnabled();
