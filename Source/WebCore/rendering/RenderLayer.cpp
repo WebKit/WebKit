@@ -2363,7 +2363,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     if (position == PositionType::Fixed) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
-        // so we should always find the ancestor at or before we find the fixed position container.
+        // so we should always find the ancestor at or before we find the fixed position container, if
+        // the container is transformed.
         RenderLayer* fixedPositionContainerLayer = nullptr;
         bool foundAncestor = false;
         for (auto* currLayer = layer->parent(); currLayer; currLayer = currLayer->parent()) {
@@ -2372,7 +2373,11 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
             if (isContainerForPositioned(*currLayer, PositionType::Fixed, layer->establishesTopLayer())) {
                 fixedPositionContainerLayer = currLayer;
-                ASSERT_UNUSED(foundAncestor, foundAncestor);
+                // A layer that has a transform-related property but not a
+                // transform still acts as a fixed-position container.
+                // Accumulating offsets across such layers is allowed.
+                if (currLayer->transform())
+                    ASSERT_UNUSED(foundAncestor, foundAncestor);
                 break;
             }
         }
@@ -2381,9 +2386,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
         if (fixedPositionContainerLayer != ancestorLayer) {
             auto fixedContainerCoords = layer->offsetFromAncestor(fixedPositionContainerLayer);
-            auto ancestorCoords = ancestorLayer->offsetFromAncestor(fixedPositionContainerLayer);
+            auto ancestorCoords = foundAncestor ? ancestorLayer->offsetFromAncestor(fixedPositionContainerLayer) : LayoutSize { };
             location.move(fixedContainerCoords - ancestorCoords);
-            return ancestorLayer;
+            return foundAncestor ? ancestorLayer : fixedPositionContainerLayer;
         }
     }
 
