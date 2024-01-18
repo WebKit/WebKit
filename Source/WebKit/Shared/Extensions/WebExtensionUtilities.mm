@@ -121,7 +121,7 @@ static NSString *constructExpectedMessage(NSString *key, NSString *expected, NSS
     return [NSString stringWithFormat:@"%@ is expected, but %@ was provided", expected, found];
 }
 
-static bool validateSingleObject(NSString *key, NSObject *value, id expectedValueType, NSString **outExceptionString)
+static bool validateSingleObject(NSString *key, NSObject *value, Class expectedValueType, NSString **outExceptionString)
 {
     ASSERT([expectedValueType respondsToSelector:@selector(isSubclassOfClass:)]);
 
@@ -274,6 +274,7 @@ bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sour
             return;
 
         id expectedValueType = keyTypes[key];
+        ASSERT(expectedValueType);
 
         if (!validate(key, value, expectedValueType, &errorString)) {
             *stop = YES;

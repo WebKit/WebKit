@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIHTTPCookieStore.h"
 #include "APIObject.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
@@ -92,12 +93,19 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS NSMenu;
 #endif
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebKit {
 
 class ContextMenuContextData;
 class WebExtension;
 class WebUserContentControllerProxy;
 struct WebExtensionContextParameters;
+struct WebExtensionCookieFilterParameters;
+struct WebExtensionCookieParameters;
+struct WebExtensionCookieStoreParameters;
 struct WebExtensionMenuItemContextParameters;
 
 enum class WebExtensionContextInstallReason : uint8_t {
@@ -120,6 +128,8 @@ public:
     static WebExtensionContext* get(WebExtensionContextIdentifier);
 
     explicit WebExtensionContext(Ref<WebExtension>&&);
+
+    using ErrorString = std::optional<String>;
 
     using PermissionsMap = HashMap<String, WallTime>;
     using PermissionMatchPatternsMap = HashMap<Ref<WebExtensionMatchPattern>, WallTime>;
@@ -226,7 +236,7 @@ public:
     const URL& baseURL() const { return m_baseURL; }
     void setBaseURL(URL&&);
 
-    bool isURLForThisExtension(const URL&);
+    bool isURLForThisExtension(const URL&) const;
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
@@ -389,6 +399,10 @@ public:
     NSArray *corsDisablingPatterns();
     WKWebViewConfiguration *webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
 
+    WebsiteDataStore* websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
+
+    void cookiesDidChange(API::HTTPCookieStore&);
+
     void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
@@ -489,6 +503,8 @@ private:
     void loadRegisteredContentScripts();
     RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> registeredContentScriptsStore();
 
+    void fetchCookies(WebsiteDataStore&, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Vector<WebExtensionCookieParameters>&&, ErrorString)>&&);
+
     // Action APIs
     void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
     void actionSetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, const String& title, CompletionHandler<void(std::optional<String>)>&&);
@@ -514,6 +530,14 @@ private:
     void commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&&);
     void fireCommandEventIfNeeded(const WebExtensionCommand&, WebExtensionTab*);
     void fireCommandChangedEventIfNeeded(const WebExtensionCommand&, const String& oldShortcut);
+
+    // Cookies APIs
+    void cookiesGet(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(const std::optional<WebExtensionCookieParameters>&, ErrorString)>&&);
+    void cookiesGetAll(std::optional<PAL::SessionID>, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Vector<WebExtensionCookieParameters>&&, ErrorString)>&&);
+    void cookiesSet(std::optional<PAL::SessionID>, const WebExtensionCookieParameters&, CompletionHandler<void(const std::optional<WebExtensionCookieParameters>&, ErrorString)>&&);
+    void cookiesRemove(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(const std::optional<WebExtensionCookieParameters>&, ErrorString)>&&);
+    void cookiesGetAllCookieStores(CompletionHandler<void(HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>&&, ErrorString)>&&);
+    void fireCookiesChangedEventIfNeeded();
 
     // DeclarativeNetRequest APIs
     void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(const Vector<String>&)>&&);

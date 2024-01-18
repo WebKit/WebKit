@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -382,7 +382,7 @@ void WebExtensionContext::setBaseURL(URL&& url)
     m_baseURL = URL { makeString(url.protocol(), "://", url.host(), '/') };
 }
 
-bool WebExtensionContext::isURLForThisExtension(const URL& url)
+bool WebExtensionContext::isURLForThisExtension(const URL& url) const
 {
     return protocolHostAndPortAreEqual(baseURL(), url);
 }
@@ -2344,6 +2344,21 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     }
 
     return configuration;
+}
+
+WebsiteDataStore* WebExtensionContext::websiteDataStore(std::optional<PAL::SessionID> sessionID) const
+{
+    RefPtr result = extensionController()->websiteDataStore(sessionID);
+    if (result && !result->isPersistent() && !hasAccessInPrivateBrowsing())
+        return nullptr;
+    return result.get();
+}
+
+void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
+{
+    // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
+
+    fireCookiesChangedEventIfNeeded();
 }
 
 URL WebExtensionContext::backgroundContentURL()

@@ -32,6 +32,7 @@
 
 #import "APIPageConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionControllerConfiguration.h"
 
 static NSString * const persistentCodingKey = @"persistent";
@@ -39,6 +40,7 @@ static NSString * const temporaryCodingKey = @"temporary";
 static NSString * const temporaryDirectoryCodingKey = @"temporaryDirectory";
 static NSString * const identifierCodingKey = @"identifier";
 static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
+static NSString * const defaultWebsiteDataStoreCodingKey = @"defaultWebsiteDataStore";
 
 @implementation _WKWebExtensionControllerConfiguration
 
@@ -81,6 +83,7 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
     [coder encodeObject:self.identifier forKey:identifierCodingKey];
     [coder encodeBool:self.persistent forKey:persistentCodingKey];
     [coder encodeObject:self.webViewConfiguration forKey:webViewConfigurationCodingKey];
+    [coder encodeObject:self.defaultWebsiteDataStore forKey:defaultWebsiteDataStoreCodingKey];
 
     if (!self._temporary)
         return;
@@ -108,6 +111,9 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
         // Remake the directories if needed, since they might have been cleaned up since this was last used.
         FileSystem::makeAllDirectories(temporaryDirectory);
 
+        self.webViewConfiguration = [coder decodeObjectOfClass:WKWebViewConfiguration.class forKey:webViewConfigurationCodingKey];
+        self.defaultWebsiteDataStore = [coder decodeObjectOfClass:WKWebsiteDataStore.class forKey:defaultWebsiteDataStoreCodingKey];
+
         return self;
     }
 
@@ -120,6 +126,7 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
         API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, persistent ? IsPersistent::Yes : IsPersistent::No);
 
     self.webViewConfiguration = [coder decodeObjectOfClass:WKWebViewConfiguration.class forKey:webViewConfigurationCodingKey];
+    self.defaultWebsiteDataStore = [coder decodeObjectOfClass:WKWebsiteDataStore.class forKey:defaultWebsiteDataStoreCodingKey];
 
     return self;
 }
@@ -173,6 +180,16 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 - (void)setWebViewConfiguration:(WKWebViewConfiguration *)configuration
 {
     _webExtensionControllerConfiguration->setWebViewConfiguration(configuration);
+}
+
+- (WKWebsiteDataStore *)defaultWebsiteDataStore
+{
+    return wrapper(_webExtensionControllerConfiguration->defaultWebsiteDataStore());
+}
+
+- (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+{
+    _webExtensionControllerConfiguration->setDefaultWebsiteDataStore(dataStore ? dataStore->_websiteDataStore.get() : nullptr);
 }
 
 - (BOOL)_isTemporary
@@ -251,6 +268,15 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 }
 
 - (void)setWebViewConfiguration:(WKWebViewConfiguration *)webViewConfiguration
+{
+}
+
+- (WKWebsiteDataStore *)defaultWebsiteDataStore
+{
+    return nil;
+}
+
+- (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
 {
 }
 

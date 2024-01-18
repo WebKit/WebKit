@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIHTTPCookieStore.h"
 #include "APIObject.h"
 #include "APIPageConfiguration.h"
 #include "MessageReceiver.h"
@@ -57,6 +58,7 @@ class ContextMenuContextData;
 class WebExtensionContext;
 class WebPageProxy;
 class WebProcessPool;
+class WebsiteDataStore;
 struct WebExtensionControllerParameters;
 
 class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
@@ -78,6 +80,7 @@ public:
     using WebProcessPoolSet = WeakHashSet<WebProcessPool>;
     using WebPageProxySet = WeakHashSet<WebPageProxy>;
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
+    using WebsiteDataStoreSet = WeakHashSet<WebsiteDataStore>;
 
     enum class ForPrivateBrowsing { No, Yes };
 
@@ -101,14 +104,17 @@ public:
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
 
-    WebPageProxySet allPages() const { return m_pages; }
+    const WebPageProxySet& allPages() const { return m_pages; }
+
+    const WebsiteDataStoreSet& allWebsiteDataStores() const { return m_websiteDataStores; }
+    WebsiteDataStore* websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
 
     // Includes both non-private and private browsing content controllers.
-    UserContentControllerProxySet allUserContentControllers() const { return m_allUserContentControllers; }
-    UserContentControllerProxySet allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
-    UserContentControllerProxySet allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allUserContentControllers() const { return m_allUserContentControllers; }
+    const UserContentControllerProxySet& allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
 
-    WebProcessPoolSet allProcessPools() const { return m_processPools; }
+    const WebProcessPoolSet& allProcessPools() const { return m_processPools; }
     WebProcessProxySet allProcesses() const;
 
     RefPtr<WebExtensionContext> extensionContext(const WebExtension&) const;
@@ -116,6 +122,8 @@ public:
 
     const WebExtensionContextSet& extensionContexts() const { return m_extensionContexts; }
     WebExtensionSet extensions() const;
+
+    void cookiesDidChange(API::HTTPCookieStore&);
 
     template<typename T>
     void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
@@ -141,12 +149,36 @@ private:
     void addUserContentController(WebUserContentControllerProxy&, ForPrivateBrowsing);
     void removeUserContentController(WebUserContentControllerProxy&);
 
+    void addWebsiteDataStore(WebsiteDataStore&);
+    void removeWebsiteDataStore(WebsiteDataStore&);
+
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didFinishLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didFailLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
 
     void purgeOldMatchedRules();
+
+    class HTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
+        WTF_MAKE_FAST_ALLOCATED;
+
+    public:
+        explicit HTTPCookieStoreObserver(WebExtensionController& extensionController)
+            : m_extensionController(extensionController)
+        {
+        }
+
+    private:
+        void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
+        {
+            // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
+
+            if (RefPtr extensionController = m_extensionController.get(); extensionController)
+                extensionController->cookiesDidChange(cookieStore);
+        }
+
+        WeakPtr<WebExtensionController> m_extensionController;
+    };
 
     Ref<WebExtensionControllerConfiguration> m_configuration;
     WebExtensionControllerIdentifier m_identifier;
@@ -155,6 +187,7 @@ private:
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WebPageProxySet m_pages;
     WebProcessPoolSet m_processPools;
+    WebsiteDataStoreSet m_websiteDataStores;
     UserContentControllerProxySet m_allUserContentControllers;
     UserContentControllerProxySet m_allNonPrivateUserContentControllers;
     UserContentControllerProxySet m_allPrivateUserContentControllers;
@@ -162,6 +195,7 @@ private:
     bool m_freshlyCreated { true };
 
     std::unique_ptr<WebCore::Timer> m_purgeOldMatchedRulesTimer;
+    std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
 template<typename T>

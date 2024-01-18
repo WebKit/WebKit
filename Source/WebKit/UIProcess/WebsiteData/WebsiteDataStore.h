@@ -479,6 +479,8 @@ public:
 
     void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
 
+    bool operator==(const WebsiteDataStore& other) const { return (m_sessionID == other.sessionID()); }
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

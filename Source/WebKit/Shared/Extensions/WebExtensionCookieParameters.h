@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebExtensionControllerConfiguration.h"
+#pragma once
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include <WebCore/Cookie.h>
+#include <wtf/URL.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersistent persistent)
-    : m_storageDirectory(persistent == IsPersistent::Yes ? createStorageDirectoryPath() : nullString())
-{
-}
+struct WebExtensionCookieParameters {
+    std::optional<PAL::SessionID> sessionIdentifier;
+    WebCore::Cookie cookie;
+};
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory)
-    : m_temporary(true)
-    , m_storageDirectory(!storageDirectory.isEmpty() ? storageDirectory : createTemporaryStorageDirectoryPath())
-{
-}
-
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const WTF::UUID& identifier)
-    : m_identifier(identifier)
-    , m_storageDirectory(createStorageDirectoryPath(identifier))
-{
-}
-
-bool WebExtensionControllerConfiguration::operator==(const WebExtensionControllerConfiguration& other) const
-{
-    return this == &other || (m_identifier == other.m_identifier && m_storageDirectory == other.m_storageDirectory && m_webViewConfiguration == other.m_webViewConfiguration && m_defaultWebsiteDataStore == other.m_defaultWebsiteDataStore);
-}
-
-WebsiteDataStore& WebExtensionControllerConfiguration::defaultWebsiteDataStore() const
-{
-    if (m_defaultWebsiteDataStore)
-        return *m_defaultWebsiteDataStore;
-    return WebsiteDataStore::defaultDataStore();
-}
+struct WebExtensionCookieFilterParameters {
+    std::optional<String> name;
+    std::optional<String> domain;
+    std::optional<String> path;
+    std::optional<bool> secure;
+    std::optional<bool> session;
+};
 
 } // namespace WebKit
 

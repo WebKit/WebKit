@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,13 @@ messages -> WebExtensionContext {
 
     // Commands
     CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands);
+
+    // Cookies
+    CookiesGet(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::optional<WebKit::WebExtensionCookieParameters> cookie, WebKit::WebExtensionContext::ErrorString error);
+    CookiesGetAll(std::optional<PAL::SessionID> sessionID, URL url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (Vector<WebKit::WebExtensionCookieParameters> cookies, WebKit::WebExtensionContext::ErrorString error);
+    CookiesSet(std::optional<PAL::SessionID> sessionID, struct WebKit::WebExtensionCookieParameters cookie) -> (std::optional<WebKit::WebExtensionCookieParameters> cookie, WebKit::WebExtensionContext::ErrorString error);
+    CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::optional<WebKit::WebExtensionCookieParameters> cookie, WebKit::WebExtensionContext::ErrorString error);
+    CookiesGetAllCookieStores() -> (HashMap<PAL::SessionID, Vector<WebKit::WebExtensionTabIdentifier>> cookieStores, WebKit::WebExtensionContext::ErrorString error);
 
     // DeclarativeNetRequest
     DeclarativeNetRequestGetEnabledRulesets() -> (Vector<String> rulesetIdentifiers);

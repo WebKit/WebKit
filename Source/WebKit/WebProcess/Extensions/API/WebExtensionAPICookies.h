@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,9 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
+    using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, String, URL>;
+    static std::optional<ParsedDetails> parseCookieDetails(NSDictionary *details, NSArray *requiredKeys, NSString **outExceptionString);
+
     RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };

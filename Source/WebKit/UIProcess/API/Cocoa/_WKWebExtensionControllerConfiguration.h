@@ -30,6 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKWebViewConfiguration;
+@class WKWebsiteDataStore;
 @class _WKWebExtensionController;
 
 /*!
@@ -75,6 +76,14 @@ NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
 
 /*! @abstract The web view configuration to be used as a basis for configuring web views in extension contexts. */
 @property (nonatomic, null_resettable, copy) WKWebViewConfiguration *webViewConfiguration;
+
+/*!
+ @abstract The default data store for website data and cookie access in extension contexts.
+ @discussion This property sets the primary data store for managing website data, including cookies, which extensions can access,
+ subject to the granted permissions within the extension contexts. Defaults to `WKWebsiteDataStore.defaultDataStore`.
+ @note In addition to this data store, extensions can also access other data stores, such as non-persistent ones, for any open tabs.
+ */
+@property (nonatomic, null_resettable, retain) WKWebsiteDataStore *defaultWebsiteDataStore;
 
 @end
 

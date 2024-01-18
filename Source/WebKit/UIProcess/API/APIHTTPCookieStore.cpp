@@ -78,7 +78,7 @@ void HTTPCookieStore::filterAppBoundCookies(Vector<WebCore::Cookie>&& cookies, C
 #endif
 }
 
-void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+void HTTPCookieStore::cookies(CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
     if (auto* networkProcess = networkProcessIfExists()) {
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(m_sessionID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
