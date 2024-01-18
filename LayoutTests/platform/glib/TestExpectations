@@ -1880,6 +1880,11 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 # Adding transceivers without tracks is broken.
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
 
+# Requires video scaling adaptation.
+webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
+webrtc/video-maxBitrate.html [ Failure ]
+webrtc/video-maxBitrate-vp8.html [ Failure ]
+
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 

@@ -5061,6 +5061,20 @@ PeerConnectionEnabled:
     WebCore:
       default: true
 
+PeerConnectionVideoScalingAdaptationDisabled:
+  type: bool
+  status: embedder
+  humanReadableName: "WebRTC Peer Connection Video Scaling Adaptation"
+  humanReadableDescription: "Disable RTCPeerConnection Video Scaling Adaptation"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 PerElementSpeakerSelectionEnabled:
   type: bool

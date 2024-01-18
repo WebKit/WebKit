@@ -204,6 +204,11 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
+
+        RefPtr context = m_peerConnectionBackend.connection().scriptExecutionContext();
+        if (context && context->settingsValues().peerConnectionVideoScalingAdaptationDisabled)
+            videoSource->disableVideoScaling();
+
         rtcTrack = m_peerConnectionFactory->CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), track.id().utf8().data());
         source = WTFMove(videoSource);
         break;
@@ -375,6 +380,11 @@ std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStr
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
+
+        RefPtr context = m_peerConnectionBackend.connection().scriptExecutionContext();
+        if (context && context->settingsValues().peerConnectionVideoScalingAdaptationDisabled)
+            videoSource->disableVideoScaling();
+
         rtcTrack = m_peerConnectionFactory->CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), track.id().utf8().data());
         source = WTFMove(videoSource);
         break;
