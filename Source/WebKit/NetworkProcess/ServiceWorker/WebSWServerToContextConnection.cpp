@@ -66,7 +66,7 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
             download->contextClosed();
     }
 
-    if (CheckedPtr server = this->server(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
+    if (RefPtr server = this->server(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
         server->removeContextConnection(*this);
 }
 
@@ -97,7 +97,7 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 
 void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    CheckedPtr server = this->server();
+    RefPtr server = this->server();
     if (CheckedPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
@@ -239,7 +239,7 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
 
 void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
 {
-    CheckedPtr server = this->server();
+    RefPtr server = this->server();
     if (!server) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
         return;
@@ -251,19 +251,20 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
         return;
     }
 
-    auto innerCallback = [callback = WTFMove(callback), server = WeakPtr { *server }, origin = worker->origin()](std::optional<WebCore::PageIdentifier>&& pageIdentifier) mutable {
+    auto innerCallback = [callback = WTFMove(callback), weakServer = WeakPtr { *server }, origin = worker->origin()](std::optional<WebCore::PageIdentifier>&& pageIdentifier) mutable {
         if (!pageIdentifier) {
             // FIXME: validate whether we should reject or resolve with null, https://github.com/w3c/ServiceWorker/issues/1639
             callback({ });
             return;
         }
 
+        RefPtr server = weakServer.get();
         if (!server) {
             callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
             return;
         }
 
-        callback(CheckedRef { *server }->topLevelServiceWorkerClientFromPageIdentifier(origin, *pageIdentifier));
+        callback(server->topLevelServiceWorkerClientFromPageIdentifier(origin, *pageIdentifier));
     };
 
     m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
@@ -271,7 +272,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
 
 void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
-    CheckedPtr server = this->server();
+    RefPtr server = this->server();
     RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
     if (!worker)
         return;
@@ -338,7 +339,7 @@ WebCore::ProcessIdentifier WebSWServerToContextConnection::webProcessIdentifier(
 
 void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
-    CheckedPtr server = this->server();
+    RefPtr server = this->server();
     CheckedPtr connection = server ? server->connection(clientIdentifier.processIdentifier()) : nullptr;
     if (!connection) {
         callback({ });

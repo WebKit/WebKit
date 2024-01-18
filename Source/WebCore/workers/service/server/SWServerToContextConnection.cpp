@@ -55,6 +55,11 @@ SWServer* SWServerToContextConnection::server() const
     return m_server.get();
 }
 
+RefPtr<SWServer> SWServerToContextConnection::protectedServer() const
+{
+    return m_server.get();
+}
+
 void SWServerToContextConnection::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
@@ -111,7 +116,7 @@ void SWServerToContextConnection::findClientByVisibleIdentifier(ServiceWorkerIde
 void SWServerToContextConnection::claim(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void(std::optional<ExceptionData>&&)>&& callback)
 {
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
-    CheckedPtr server = worker ? worker->server() : nullptr;
+    RefPtr server = worker ? worker->server() : nullptr;
     callback(server ? server->claim(*worker) : std::nullopt);
 }
 
@@ -138,7 +143,7 @@ void SWServerToContextConnection::terminateWhenPossible()
     m_shouldTerminateWhenPossible = true;
 
     bool hasServiceWorkerWithPendingEvents = false;
-    CheckedRef { *server() }->forEachServiceWorker([&](auto& worker) {
+    protectedServer()->forEachServiceWorker([&](auto& worker) {
         if (worker.isRunning() && worker.registrableDomain() == m_registrableDomain && worker.hasPendingEvents()) {
             hasServiceWorkerWithPendingEvents = true;
             return false;

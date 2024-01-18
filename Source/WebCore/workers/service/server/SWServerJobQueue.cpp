@@ -74,8 +74,8 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
 
     auto& job = firstJob();
 
-    CheckedRef server = m_server;
-    WeakPtr registration = server->getRegistration(m_registrationKey);
+    Ref server = m_server.get();
+    RefPtr registration = server->getRegistration(m_registrationKey);
     if (!registration)
         return;
 
@@ -104,7 +104,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
         auto scriptURLs = newestWorker->importedScriptURLs();
         if (!scriptURLs.isEmpty()) {
             m_workerFetchResult = WTFMove(result);
-            checkedServer()->refreshImportedScripts(job, *registration, scriptURLs, requestingProcessIdentifier);
+            protectedServer()->refreshImportedScripts(job, *registration, scriptURLs, requestingProcessIdentifier);
             return;
         }
 
@@ -115,7 +115,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
         return;
     }
 
-    checkedServer()->updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+    protectedServer()->updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
 }
 
 void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const Vector<std::pair<URL, ScriptBuffer>>& importedScripts, const std::optional<ProcessIdentifier>& requestingProcessIdentifier)
@@ -125,7 +125,7 @@ void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataId
 
     auto& job = firstJob();
 
-    CheckedPtr registration = checkedServer()->getRegistration(m_registrationKey);
+    RefPtr registration = protectedServer()->getRegistration(m_registrationKey);
     if (!registration)
         return;
 
@@ -136,13 +136,13 @@ void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataId
         return;
     }
 
-    checkedServer()->updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, m_workerFetchResult.script, m_workerFetchResult.certificateInfo, m_workerFetchResult.contentSecurityPolicy, m_workerFetchResult.crossOriginEmbedderPolicy, m_workerFetchResult.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+    protectedServer()->updateWorker(job.identifier(), requestingProcessIdentifier, *registration, job.scriptURL, m_workerFetchResult.script, m_workerFetchResult.certificateInfo, m_workerFetchResult.contentSecurityPolicy, m_workerFetchResult.crossOriginEmbedderPolicy, m_workerFetchResult.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
 }
 
 void SWServerJobQueue::scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData& job, SWServerRegistration& registration)
 {
     // Invoke Resolve Job Promise with job and registration.
-    checkedServer()->resolveRegistrationJob(job, registration.data(), ShouldNotifyWhenResolved::No);
+    protectedServer()->resolveRegistrationJob(job, registration.data(), ShouldNotifyWhenResolved::No);
 
     // Invoke Finish Job with job and abort these steps.
     finishCurrentJob();
@@ -155,8 +155,8 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
         return;
 
     // If an uncaught runtime script error occurs during the above step, then:
-    CheckedRef server = m_server;
-    WeakPtr registration = server->getRegistration(m_registrationKey);
+    Ref server = m_server.get();
+    RefPtr registration = server->getRegistration(m_registrationKey);
     ASSERT(registration);
     if (!registration || !registration->preInstallationWorker()) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWServerJobQueue::scriptContextFailedToStart registration is null (%d) or pre installation worker is null", !registration);
@@ -183,7 +183,7 @@ void SWServerJobQueue::scriptContextStarted(const ServiceWorkerJobDataIdentifier
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
 
-    CheckedPtr registration = checkedServer()->getRegistration(m_registrationKey);
+    RefPtr registration = protectedServer()->getRegistration(m_registrationKey);
     ASSERT(registration);
     if (!registration) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWServerJobQueue::scriptContextStarted registration is null");
@@ -197,7 +197,7 @@ void SWServerJobQueue::scriptContextStarted(const ServiceWorkerJobDataIdentifier
 void SWServerJobQueue::install(SWServerRegistration& registration, ServiceWorkerIdentifier installingWorker)
 {
     // The Install algorithm should never be invoked with a null worker.
-    CheckedRef server = m_server;
+    Ref server = m_server.get();
     RefPtr worker = server->workerByID(installingWorker);
     RELEASE_ASSERT(worker);
 
@@ -216,8 +216,8 @@ void SWServerJobQueue::install(SWServerRegistration& registration, ServiceWorker
 // https://w3c.github.io/ServiceWorker/#install (after resolving promise).
 void SWServerJobQueue::didResolveRegistrationPromise()
 {
-    CheckedRef server = m_server;
-    CheckedPtr registration = server->getRegistration(m_registrationKey);
+    Ref server = m_server.get();
+    RefPtr registration = server->getRegistration(m_registrationKey);
     ASSERT(registration);
     ASSERT(registration->installingWorker());
 
@@ -244,7 +244,7 @@ void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jo
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
 
-    WeakPtr registration = worker.registration();
+    RefPtr registration = worker.registration();
     ASSERT(registration);
     ASSERT(registration->installingWorker() == &worker);
 
@@ -315,7 +315,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
     ASSERT(job.type == ServiceWorkerJobType::Register);
     ASSERT(job.registrationOptions);
 
-    CheckedRef server = m_server;
+    Ref server = m_server.get();
     if (!job.isFromServiceWorkerPage && !shouldTreatAsPotentiallyTrustworthy(job.scriptURL) && !server->canHandleScheme(job.scriptURL.protocol()))
         return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Script URL is not potentially trustworthy"_s });
 
@@ -328,7 +328,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
         return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Scope origin does not match the registering client's origin"_s });
 
     // If registration is not null (in our parlance "empty"), then:
-    if (CheckedPtr registration = server->getRegistration(m_registrationKey)) {
+    if (RefPtr registration = server->getRegistration(m_registrationKey)) {
         RefPtr newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.workerType == newestWorker->type() && job.registrationOptions->updateViaCache == registration->updateViaCache()) {
             RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found directly reusable registration %llu for job %s (DONE)", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
@@ -341,7 +341,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
             registration->setUpdateViaCache(job.registrationOptions->updateViaCache);
         RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found registration %llu for job %s but it needs updating", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
     } else {
-        auto newRegistration = makeUnique<SWServerRegistration>(server.get(), m_registrationKey, job.registrationOptions->updateViaCache, job.scopeURL, job.scriptURL, job.serviceWorkerPageIdentifier(), NavigationPreloadState::defaultValue());
+        Ref newRegistration = SWServerRegistration::create(server.get(), m_registrationKey, job.registrationOptions->updateViaCache, job.scopeURL, job.scriptURL, job.serviceWorkerPageIdentifier(), NavigationPreloadState::defaultValue());
         server->addRegistration(WTFMove(newRegistration));
 
         RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: No existing registration for job %s, constructing a new one.", this, job.identifier().loggingString().utf8().data());
@@ -358,8 +358,8 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
         return rejectCurrentJob(ExceptionData { ExceptionCode::SecurityError, "Origin of scope URL does not match the client's origin"_s });
 
     // Let registration be the result of running "Get Registration" algorithm passing job's scope url as the argument.
-    CheckedRef server = m_server;
-    WeakPtr registration = server->getRegistration(m_registrationKey);
+    Ref server = m_server.get();
+    RefPtr registration = server->getRegistration(m_registrationKey);
 
     // If registration is null, then:
     if (!registration) {
@@ -384,8 +384,8 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 {
     // Let registration be the result of running the Get Registration algorithm passing job's scope url as the argument.
-    CheckedRef server = m_server;
-    CheckedPtr registration = server->getRegistration(m_registrationKey);
+    Ref server = m_server.get();
+    RefPtr registration = server->getRegistration(m_registrationKey);
 
     // If registration is null (in our parlance "empty") or registration's uninstalling flag is set, then:
     if (!registration)
@@ -403,7 +403,7 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 
 void SWServerJobQueue::rejectCurrentJob(const ExceptionData& exceptionData)
 {
-    checkedServer()->rejectJob(firstJob(), exceptionData);
+    protectedServer()->rejectJob(firstJob(), exceptionData);
 
     finishCurrentJob();
 }

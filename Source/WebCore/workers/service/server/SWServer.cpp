@@ -69,6 +69,11 @@ SWServer::Connection::~Connection()
         request.callback({ });
 }
 
+Ref<SWServer> SWServer::create(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable isInspectable)
+{
+    return adoptRef(*new SWServer(delegate, WTFMove(originStore), processTerminationDelayEnabled, WTFMove(registrationDatabaseDirectory), sessionID, shouldRunServiceWorkersOnMainThreadForTesting, hasServiceWorkerEntitlement, overrideServiceWorkerRegistrationCountTestingValue, isInspectable));
+}
+
 SWServer::~SWServer()
 {
     // Destroy the remaining connections before the SWServer gets destroyed since they have a raw pointer
@@ -133,13 +138,13 @@ String SWServer::serviceWorkerClientUserAgent(const ClientOrigin& clientOrigin) 
 
 SWServerWorker* SWServer::activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier identifier)
 {
-    CheckedPtr registration = m_registrations.get(identifier);
+    RefPtr registration = m_registrations.get(identifier);
     return registration ? registration->activeWorker() : nullptr;
 }
 
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
-    return m_scopeToRegistrationMap.get(registrationKey).get();
+    return m_scopeToRegistrationMap.get(registrationKey);
 }
 
 void SWServer::registrationStoreImportComplete()
@@ -193,16 +198,16 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, Complet
     auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
     validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, m_scopeToRegistrationMap.contains(data.registration.key), [this, weakThis = WeakPtr { *this }, data = WTFMove(data), completionHandler = WTFMove(completionHandler)] (bool isValid) mutable {
         ASSERT(isMainThread());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return completionHandler();
         if (m_hasServiceWorkerEntitlement || isValid) {
-            auto registration = makeUnique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL, data.serviceWorkerPageIdentifier, WTFMove(data.navigationPreloadState));
+            Ref registration = SWServerRegistration::create(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL, data.serviceWorkerPageIdentifier, WTFMove(data.navigationPreloadState));
             registration->setLastUpdateTime(data.registration.lastUpdateTime);
-            CheckedPtr registrationPtr = registration.get();
-            addRegistration(WTFMove(registration));
+            addRegistration(registration.copyRef());
 
-            Ref worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
-            registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
+            Ref worker = SWServerWorker::create(*this, registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
+            registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
             worker->setState(ServiceWorkerState::Activated);
         }
         completionHandler();
@@ -215,7 +220,7 @@ void SWServer::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerI
         worker->didSaveScriptsToDisk(WTFMove(mainScript), WTFMove(importedScripts));
 }
 
-void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
+void SWServer::addRegistration(Ref<SWServerRegistration>&& registration)
 {
     LOG(ServiceWorker, "Adding registration live for %s", registration->key().loggingString().utf8().data());
 
@@ -223,26 +228,26 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
         m_uniqueRegistrationCount++;
 
     if (registration->serviceWorkerPageIdentifier())
-        m_serviceWorkerPageIdentifierToRegistrationMap.add(*registration->serviceWorkerPageIdentifier(), *registration);
+        m_serviceWorkerPageIdentifierToRegistrationMap.add(*registration->serviceWorkerPageIdentifier(), registration.get());
 
     m_originStore->add(registration->key().topOrigin());
     auto registrationID = registration->identifier();
     ASSERT(!m_scopeToRegistrationMap.contains(registration->key()));
-    m_scopeToRegistrationMap.set(registration->key(), *registration);
+    m_scopeToRegistrationMap.set(registration->key(), registration.get());
     auto addResult1 = m_registrations.add(registrationID, WTFMove(registration));
     ASSERT_UNUSED(addResult1, addResult1.isNewEntry);
 }
 
 void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrationID)
 {
-    std::unique_ptr registration = m_registrations.take(registrationID);
+    RefPtr registration = m_registrations.take(registrationID);
     ASSERT(registration);
 
     if (registration->serviceWorkerPageIdentifier())
         m_serviceWorkerPageIdentifierToRegistrationMap.remove(*registration->serviceWorkerPageIdentifier());
     
     auto it = m_scopeToRegistrationMap.find(registration->key());
-    if (it != m_scopeToRegistrationMap.end() && it->value == registration.get()) {
+    if (it != m_scopeToRegistrationMap.end() && it->value.ptr() == registration.get()) {
         m_scopeToRegistrationMap.remove(it);
         if (!SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host()))
             m_uniqueRegistrationCount--;
@@ -257,13 +262,11 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
 {
-    Vector<CheckedRef<SWServerRegistration>> matchingRegistrations;
+    Vector<Ref<SWServerRegistration>> matchingRegistrations;
     for (auto& item : m_scopeToRegistrationMap) {
         if (item.key.originIsMatching(topOrigin, clientURL)) {
-            auto* registration = item.value.get();
-            ASSERT(registration);
-            if (registration)
-                matchingRegistrations.append(*registration);
+            auto& registration = item.value.get();
+            matchingRegistrations.append(registration);
         }
     }
     // The specification mandates that registrations are returned in the insertion order.
@@ -288,7 +291,7 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
     if (!m_importCompleted) {
         m_clearCompletionCallbacks.append([this, completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(m_importCompleted);
-            CheckedRef { *this }->clearAll(WTFMove(completionHandler));
+            Ref { *this }->clearAll(WTFMove(completionHandler));
         });
         return;
     }
@@ -323,7 +326,7 @@ void SWServer::clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>
     if (!m_importCompleted) {
         m_clearCompletionCallbacks.append([this, matches = WTFMove(matches), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(m_importCompleted);
-            CheckedRef { *this }->clearInternal(WTFMove(matches), WTFMove(completionHandler));
+            Ref { *this }->clearInternal(WTFMove(matches), WTFMove(completionHandler));
         });
         return;
     }
@@ -332,10 +335,10 @@ void SWServer::clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>
         return matches(keyAndValue.key);
     });
 
-    Vector<WeakRef<SWServerRegistration>> registrationsToRemove;
+    Vector<Ref<SWServerRegistration>> registrationsToRemove;
     for (auto& registration : m_registrations.values()) {
         if (matches(registration->key()))
-            registrationsToRemove.append(*registration);
+            registrationsToRemove.append(registration.get());
     }
 
     for (auto& contextDatas : m_pendingContextDatas.values()) {
@@ -361,22 +364,27 @@ void SWServer::clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
 {
-    checkedServer()->scriptFetchFinished(jobDataIdentifier, registrationKey, m_identifier, WTFMove(result));
+    protectedServer()->scriptFetchFinished(jobDataIdentifier, registrationKey, m_identifier, WTFMove(result));
 }
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
-    checkedServer()->didResolveRegistrationPromise(this, key);
+    protectedServer()->didResolveRegistrationPromise(this, key);
+}
+
+RefPtr<SWServerRegistration> SWServer::Connection::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
+{
+    return m_server->doRegistrationMatching(topOrigin, clientURL);
 }
 
 void SWServer::Connection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    checkedServer()->addClientServiceWorkerRegistration(*this, identifier);
+    protectedServer()->addClientServiceWorkerRegistration(*this, identifier);
 }
 
 void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    checkedServer()->removeClientServiceWorkerRegistration(*this, identifier);
+    protectedServer()->removeClientServiceWorkerRegistration(*this, identifier);
 }
 
 SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable inspectable)
@@ -394,21 +402,21 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
     m_registrationStore = m_delegate->createUniqueRegistrationStore(*this);
     if (m_registrationStore) {
         m_registrationStore->importRegistrations([weakThis = WeakPtr { *this }](auto&& result) mutable {
-            CheckedPtr checkedThis = weakThis.get();
-            if (!checkedThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             if (!result) {
-                checkedThis->registrationStoreDatabaseFailedToOpen();
+                protectedThis->registrationStoreDatabaseFailedToOpen();
                 return;
             }
 
             Ref callbackAggregator = CallbackAggregator::create([weakThis = WTFMove(weakThis)]() mutable {
-                if (CheckedPtr checkedThis = weakThis.get())
-                    checkedThis->registrationStoreImportComplete();
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->registrationStoreImportComplete();
             });
             for (auto&& data : WTFMove(result.value()))
-                checkedThis->addRegistrationFromStore(WTFMove(data), [callbackAggregator] { });
+                protectedThis->addRegistrationFromStore(WTFMove(data), [callbackAggregator] { });
         });
     } else
         registrationStoreImportComplete();
@@ -444,7 +452,8 @@ void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, Ser
     }
 
     m_delegate->appBoundDomains([this, weakThis = WeakPtr { *this }, domain = WTFMove(domain), jobTypeAllowed, completionHandler = WTFMove(completionHandler)](HashSet<RegistrableDomain>&& appBoundDomains) mutable {
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         m_hasReceivedAppBoundDomains = true;
         m_appBoundDomains = WTFMove(appBoundDomains);
@@ -458,12 +467,12 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
     ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
     validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), jobData.type, m_scopeToRegistrationMap.contains(jobData.registrationKey()), [weakThis = WeakPtr { *this }, jobData = WTFMove(jobData)] (bool isValid) mutable {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (checkedThis->m_hasServiceWorkerEntitlement || isValid) {
-            auto& jobQueue = *checkedThis->m_jobQueues.ensure(jobData.registrationKey(), [&] {
-                return makeUnique<SWServerJobQueue>(*checkedThis, jobData.registrationKey());
+        if (protectedThis->m_hasServiceWorkerEntitlement || isValid) {
+            auto& jobQueue = *protectedThis->m_jobQueues.ensure(jobData.registrationKey(), [&] {
+                return makeUnique<SWServerJobQueue>(*protectedThis, jobData.registrationKey());
             }).iterator->value;
 
             if (!jobQueue.size()) {
@@ -482,7 +491,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
             if (jobQueue.size() == 1)
                 jobQueue.runNextJob();
         } else
-            checkedThis->rejectJob(jobData, { ExceptionCode::TypeError, "Job rejected for non app-bound domain"_s });
+            protectedThis->rejectJob(jobData, { ExceptionCode::TypeError, "Job rejected for non app-bound domain"_s });
     });
 }
 
@@ -581,8 +590,8 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
         request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
         m_delegate->softUpdate(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](WorkerFetchResult&& result) {
             std::optional<ProcessIdentifier> requestingProcessIdentifier;
-            if (CheckedPtr checkedThis = weakThis.get())
-                checkedThis->scriptFetchFinished(jobDataIdentifier, registrationKey, requestingProcessIdentifier, WTFMove(result));
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->scriptFetchFinished(jobDataIdentifier, registrationKey, requestingProcessIdentifier, WTFMove(result));
         });
         return;
     }
@@ -628,8 +637,8 @@ void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobData
 void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWServerRegistration& registration, const Vector<URL>& urls, const std::optional<ProcessIdentifier>& requestingProcessIdentifier)
 {
     RefreshImportedScriptsHandler::Callback callback = [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey(), rpi = requestingProcessIdentifier](auto&& scripts) {
-        if (CheckedPtr checkedThis = weakThis.get())
-            checkedThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts, rpi);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts, rpi);
     };
     bool shouldRefreshCache = registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || (registration.getNewestWorker() && registration.isStale());
     auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTFMove(callback));
@@ -679,7 +688,7 @@ void SWServer::scriptContextStarted(const std::optional<ServiceWorkerJobDataIden
 void SWServer::terminatePreinstallationWorker(SWServerWorker& worker)
 {
     worker.terminate();
-    CheckedPtr registration = worker.registration();
+    RefPtr registration = worker.registration();
     if (registration && registration->preInstallationWorker() == &worker)
         registration->setPreInstallationWorker(nullptr);
 }
@@ -702,7 +711,7 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
 {
     RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishActivation: Finished activation for service worker %llu", this, worker.identifier().toUInt64());
 
-    if (CheckedPtr registration = worker.registration())
+    if (RefPtr registration = worker.registration())
         registration->didFinishActivation(worker.identifier());
 }
 
@@ -749,7 +758,7 @@ void SWServer::forEachClientForOrigin(const ClientOrigin& origin, const Function
 
 std::optional<ExceptionData> SWServer::claim(SWServerWorker& worker)
 {
-    CheckedPtr registration = worker.registration();
+    RefPtr registration = worker.registration();
     if (!registration || &worker != registration->activeWorker())
         return ExceptionData { ExceptionCode::InvalidStateError, "Service worker is not active"_s };
 
@@ -770,7 +779,7 @@ std::optional<ExceptionData> SWServer::claim(SWServerWorker& worker)
             if (previousIdentifier == registration->identifier())
                 return;
             result.iterator->value = registration->identifier();
-            if (WeakPtr controllingRegistration = m_registrations.get(previousIdentifier))
+            if (RefPtr controllingRegistration = m_registrations.get(previousIdentifier))
                 controllingRegistration->removeClientUsingRegistration(clientData.identifier); // May destroy the registration.
         }
         registration->controlClient(clientData.identifier);
@@ -788,7 +797,7 @@ void SWServer::didResolveRegistrationPromise(Connection* connection, const Servi
 
 void SWServer::addClientServiceWorkerRegistration(Connection& connection, ServiceWorkerRegistrationIdentifier identifier)
 {
-    CheckedPtr registration = m_registrations.get(identifier);
+    RefPtr registration = m_registrations.get(identifier);
     if (!registration) {
         LOG_ERROR("Request to add client-side ServiceWorkerRegistration to non-existent server-side registration");
         return;
@@ -799,7 +808,7 @@ void SWServer::addClientServiceWorkerRegistration(Connection& connection, Servic
 
 void SWServer::removeClientServiceWorkerRegistration(Connection& connection, ServiceWorkerRegistrationIdentifier identifier)
 {
-    if (CheckedPtr registration = m_registrations.get(identifier))
+    if (RefPtr registration = m_registrations.get(identifier))
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
@@ -895,7 +904,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
             return;
     }
 
-    CheckedPtr registration = m_scopeToRegistrationMap.get(data.registration.key).get();
+    RefPtr registration = m_scopeToRegistrationMap.get(data.registration.key);
     Ref worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, String { data.referrerPolicy }, data.workerType, data.serviceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
 
     CheckedPtr connection = worker->contextConnection();
@@ -936,10 +945,10 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
 
     if (worker.isTerminating()) {
         worker.whenTerminated([weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTFMove(callback)]() mutable {
-            CheckedPtr checkedThis = weakThis.get();
-            if (!checkedThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return callback(nullptr);
-            checkedThis->runServiceWorkerIfNecessary(identifier, WTFMove(callback));
+            protectedThis->runServiceWorkerIfNecessary(identifier, WTFMove(callback));
         });
         return;
     }
@@ -1060,24 +1069,24 @@ void SWServer::removeConnection(SWServerConnectionIdentifier connectionIdentifie
     m_connections.remove(connectionIdentifier);
 
     for (auto& registration : m_registrations.values())
-        CheckedRef { *registration }->unregisterServerConnection(connectionIdentifier);
+        Ref { registration }->unregisterServerConnection(connectionIdentifier);
 
     for (auto& jobQueue : m_jobQueues.values())
         CheckedRef { *jobQueue }->cancelJobsFromConnection(connectionIdentifier);
 }
 
-SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
+RefPtr<SWServerRegistration> SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
 {
     ASSERT(isImportCompleted());
-    WeakPtr<SWServerRegistration> selectedRegistration;
+    RefPtr<SWServerRegistration> selectedRegistration;
     for (auto& pair : m_scopeToRegistrationMap) {
         if (!pair.key.isMatching(topOrigin, clientURL))
             continue;
         if (!selectedRegistration || selectedRegistration->key().scopeLength() < pair.key.scopeLength())
-            selectedRegistration = pair.value.get();
+            selectedRegistration = pair.value.ptr();
     }
 
-    return selectedRegistration.get();
+    return selectedRegistration;
 }
 
 SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier identifier)
@@ -1143,7 +1152,7 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     if (!controllingServiceWorkerRegistrationIdentifier)
         return;
 
-    CheckedPtr controllingRegistration = m_registrations.get(*controllingServiceWorkerRegistrationIdentifier);
+    RefPtr controllingRegistration = m_registrations.get(*controllingServiceWorkerRegistrationIdentifier);
     if (!controllingRegistration || !controllingRegistration->activeWorker())
         return;
 
@@ -1192,7 +1201,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
     // If the client that's going away is a service worker page then we need to unregister its service worker.
     bool didUnregister = false;
-    if (WeakPtr registration = m_serviceWorkerPageIdentifierToRegistrationMap.get(clientIdentifier).get()) {
+    if (RefPtr registration = m_serviceWorkerPageIdentifierToRegistrationMap.get(clientIdentifier)) {
         removeFromScopeToRegistrationMap(registration->key());
         if (RefPtr preinstallingServiceWorker = registration->preInstallationWorker()) {
             if (CheckedPtr jobQueue = m_jobQueues.get(registration->key()))
@@ -1246,7 +1255,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     if (registrationIterator == m_clientToControllingRegistration.end())
         return;
 
-    if (WeakPtr registration = m_registrations.get(registrationIterator->value))
+    if (RefPtr registration = m_registrations.get(registrationIterator->value))
         registration->removeClientUsingRegistration(clientIdentifier); // May destroy the registration.
 
     m_clientToControllingRegistration.remove(registrationIterator);
@@ -1311,7 +1320,7 @@ void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registrati
 
 void SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    if (CheckedPtr registration = doRegistrationMatching(topOrigin, clientURL)) {
+    if (RefPtr registration = doRegistrationMatching(topOrigin, clientURL)) {
         if (registration->activeWorker()) {
             callback(registration->data());
             return;
@@ -1322,7 +1331,7 @@ void SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOr
 
 void SWServer::Connection::storeRegistrationsOnDisk(CompletionHandler<void()>&& callback)
 {
-    checkedServer()->storeRegistrationsOnDisk(WTFMove(callback));
+    protectedServer()->storeRegistrationsOnDisk(WTFMove(callback));
 }
 
 void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration& registration)
@@ -1366,13 +1375,13 @@ void SWServer::performGetOriginsWithRegistrationsCallbacks()
 void SWServer::getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&& callback)
 {
     whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback({ });
             return;
         }
         HashSet<ClientOrigin> clientOrigins;
-        for (auto& key : checkedThis->m_scopeToRegistrationMap.keys())
+        for (auto& key : protectedThis->m_scopeToRegistrationMap.keys())
             clientOrigins.add(key.clientOrigin());
         callback(WTFMove(clientOrigins));
     });
@@ -1425,20 +1434,20 @@ void SWServer::createContextConnection(const RegistrableDomain& registrableDomai
 
     m_pendingConnectionDomains.add(registrableDomain);
     m_delegate->createContextConnection(registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, [weakThis = WeakPtr { *this }, registrableDomain, serviceWorkerPageIdentifier] {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         RELEASE_LOG(ServiceWorker, "SWServer::createContextConnection should now have created a connection");
 
-        ASSERT(checkedThis->m_pendingConnectionDomains.contains(registrableDomain));
-        checkedThis->m_pendingConnectionDomains.remove(registrableDomain);
+        ASSERT(protectedThis->m_pendingConnectionDomains.contains(registrableDomain));
+        protectedThis->m_pendingConnectionDomains.remove(registrableDomain);
 
-        if (checkedThis->m_contextConnections.contains(registrableDomain))
+        if (protectedThis->m_contextConnections.contains(registrableDomain))
             return;
 
-        if (checkedThis->needsContextConnectionForRegistrableDomain(registrableDomain))
-            checkedThis->createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
+        if (protectedThis->needsContextConnectionForRegistrableDomain(registrableDomain))
+            protectedThis->createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
     });
 }
 
@@ -1475,15 +1484,15 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
 {
     whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, data = WTFMove(data), notificationPayload = WTFMove(notificationPayload), registrationURL = WTFMove(registrationURL), callback = WTFMove(callback)]() mutable {
         LOG(Push, "ServiceWorker import is complete, can handle push message now");
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback(false, WTFMove(notificationPayload));
             return;
         }
 
         auto origin = SecurityOriginData::fromURL(registrationURL);
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), WTFMove(registrationURL) };
-        CheckedPtr registration = checkedThis->m_scopeToRegistrationMap.get(registrationKey).get();
+        RefPtr registration = protectedThis->m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
             RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true, WTFMove(notificationPayload));
@@ -1498,7 +1507,7 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
         }
 
         RELEASE_LOG(Push, "Firing push event");
-        checkedThis->fireFunctionalEvent(*registration, [worker = worker.releaseNonNull(), weakThis = WTFMove(weakThis), data = WTFMove(data), notificationPayload = WTFMove(notificationPayload), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+        protectedThis->fireFunctionalEvent(*registration, [worker = worker.releaseNonNull(), weakThis = WTFMove(weakThis), data = WTFMove(data), notificationPayload = WTFMove(notificationPayload), callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
                 callback(connectionOrStatus.error() == ShouldSkipEvent::Yes, WTFMove(notificationPayload));
                 return;
@@ -1529,15 +1538,15 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
 void SWServer::processNotificationEvent(NotificationData&& data, NotificationEventType type, CompletionHandler<void(bool)>&& callback)
 {
     whenImportIsCompletedIfNeeded([weakThis = WeakPtr { *this }, data = WTFMove(data), type, callback = WTFMove(callback)]() mutable {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback(false);
             return;
         }
 
         auto origin = SecurityOriginData::fromURL(data.serviceWorkerRegistrationURL);
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), URL { data.serviceWorkerRegistrationURL } };
-        CheckedPtr registration = checkedThis->m_scopeToRegistrationMap.get(registrationKey).get();
+        RefPtr registration = protectedThis->m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
             RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
@@ -1551,7 +1560,7 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
             return;
         }
 
-        checkedThis->fireFunctionalEvent(*registration, [worker = worker.releaseNonNull(), weakThis = WTFMove(weakThis), data = WTFMove(data), type, callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+        protectedThis->fireFunctionalEvent(*registration, [worker = worker.releaseNonNull(), weakThis = WTFMove(weakThis), data = WTFMove(data), type, callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
             if (!connectionOrStatus.has_value()) {
                 callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
                 return;
@@ -1658,29 +1667,29 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     RELEASE_LOG(ServiceWorker, "SWServer::fireFunctionalEvent serviceWorkerID=%llu, state=%hhu", worker->identifier().toUInt64(), enumToUnderlyingType(worker->state()));
 
     worker->whenActivated([weakThis = WeakPtr { *this }, callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback(makeUnexpected(ShouldSkipEvent::No));
             return;
         }
 
         if (!success) {
-            if (CheckedPtr registration = checkedThis->m_registrations.get(registrationIdentifier))
-                checkedThis->softUpdate(*registration);
+            if (RefPtr registration = protectedThis->m_registrations.get(registrationIdentifier))
+                protectedThis->softUpdate(*registration);
             callback(makeUnexpected(ShouldSkipEvent::No));
             return;
         }
 
-        RefPtr worker = checkedThis->workerByID(serviceWorkerIdentifier);
+        RefPtr worker = protectedThis->workerByID(serviceWorkerIdentifier);
         if (!worker) {
             callback(makeUnexpected(ShouldSkipEvent::No));
             return;
         }
 
         if (!worker->contextConnection())
-            checkedThis->createContextConnection(worker->registrableDomain(), worker->serviceWorkerPageIdentifier());
+            protectedThis->createContextConnection(worker->registrableDomain(), worker->serviceWorkerPageIdentifier());
 
-        checkedThis->runServiceWorkerIfNecessary(serviceWorkerIdentifier, [callback = WTFMove(callback)](auto* contextConnection) mutable {
+        protectedThis->runServiceWorkerIfNecessary(serviceWorkerIdentifier, [callback = WTFMove(callback)](auto* contextConnection) mutable {
             if (!contextConnection) {
                 callback(makeUnexpected(ShouldSkipEvent::No));
                 return;
@@ -1720,22 +1729,27 @@ void SWServer::setInspectable(ServiceWorkerIsInspectable inspectable)
         CheckedRef { connection.get() }->setInspectable(inspectable);
 }
 
+SWServerRegistration* SWServer::getRegistration(ServiceWorkerRegistrationIdentifier identifier)
+{
+    return m_registrations.get(identifier);
+}
+
 void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    CheckedPtr registration = checkedServer()->getRegistration(registrationIdentifier);
+    RefPtr registration = protectedServer()->getRegistration(registrationIdentifier);
     if (!registration) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
         return;
     }
 
-    checkedServer()->requestBackgroundFetchPermission({ registration->key().topOrigin(), SecurityOriginData::fromURL(registration->key().scope()) }, [server = WeakPtr { server() }, registrationIdentifier, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)](bool result) mutable {
-        CheckedPtr checkedServer = server.get();
-        if (!checkedServer || !result) {
+    protectedServer()->requestBackgroundFetchPermission({ registration->key().topOrigin(), SecurityOriginData::fromURL(registration->key().scope()) }, [weakServer = WeakPtr { server() }, registrationIdentifier, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)](bool result) mutable {
+        RefPtr server = weakServer.get();
+        if (!server || !result) {
             callback(makeUnexpected(ExceptionData { ExceptionCode::NotAllowedError, "Background fetch permission is denied"_s }));
             return;
         }
 
-        CheckedPtr registration = server->getRegistration(registrationIdentifier);
+        RefPtr registration = server->getRegistration(registrationIdentifier);
         if (!registration) {
             callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
             return;
@@ -1745,7 +1759,7 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
             return;
         }
 
-        checkedServer->backgroundFetchEngine().startBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), WTFMove(callback));
+        server->backgroundFetchEngine().startBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), WTFMove(callback));
     });
 }
 
@@ -1758,56 +1772,56 @@ BackgroundFetchEngine& SWServer::backgroundFetchEngine()
 
 void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, BackgroundFetchEngine::ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    CheckedPtr registration = server().getRegistration(registrationIdentifier);
+    RefPtr registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
         return;
     }
 
-    checkedServer()->backgroundFetchEngine().backgroundFetchInformation(*registration, backgroundFetchIdentifier, WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().backgroundFetchInformation(*registration, backgroundFetchIdentifier, WTFMove(callback));
 }
 
 void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier registrationIdentifier, BackgroundFetchEngine::BackgroundFetchIdentifiersCallback&& callback)
 {
-    CheckedPtr registration = server().getRegistration(registrationIdentifier);
+    RefPtr registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
         callback({ });
         return;
     }
 
-    checkedServer()->backgroundFetchEngine().backgroundFetchIdentifiers(*registration, WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().backgroundFetchIdentifiers(*registration, WTFMove(callback));
 }
 
 void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, BackgroundFetchEngine::AbortBackgroundFetchCallback&& callback)
 {
-    CheckedPtr registration = server().getRegistration(registrationIdentifier);
+    RefPtr registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
         callback(false);
         return;
     }
 
-    checkedServer()->backgroundFetchEngine().abortBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().abortBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(callback));
 }
 
 void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& options, BackgroundFetchEngine::MatchBackgroundFetchCallback&& callback)
 {
-    CheckedPtr registration = server().getRegistration(registrationIdentifier);
+    RefPtr registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
         callback({ });
         return;
     }
 
-    checkedServer()->backgroundFetchEngine().matchBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(options), WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().matchBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(options), WTFMove(callback));
 }
 
 void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseCallback&& callback)
 {
-    checkedServer()->backgroundFetchEngine().retrieveRecordResponse(recordIdentifier, WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().retrieveRecordResponse(recordIdentifier, WTFMove(callback));
 }
 
 void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseBodyCallback&& callback)
 {
-    checkedServer()->backgroundFetchEngine().retrieveRecordResponseBody(recordIdentifier, WTFMove(callback));
+    protectedServer()->backgroundFetchEngine().retrieveRecordResponseBody(recordIdentifier, WTFMove(callback));
 }
 
 } // namespace WebCore

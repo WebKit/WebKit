@@ -56,6 +56,8 @@ public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
     WEBCORE_EXPORT SWServer* server() const;
+    WEBCORE_EXPORT RefPtr<SWServer> protectedServer() const;
+
     SWServerToContextConnectionIdentifier identifier() const { return m_identifier; }
 
     // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).

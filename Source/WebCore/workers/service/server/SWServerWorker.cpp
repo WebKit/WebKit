@@ -69,7 +69,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     auto result = allWorkers().add(identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    ASSERT(checkedServer()->getRegistration(m_registrationKey) == &registration);
+    ASSERT(protectedServer()->getRegistration(m_registrationKey) == &registration);
 }
 
 SWServerWorker::~SWServerWorker()
@@ -83,7 +83,7 @@ SWServerWorker::~SWServerWorker()
     callTerminationCallbacks();
 }
 
-CheckedPtr<SWServer> SWServerWorker::checkedServer() const
+RefPtr<SWServer> SWServerWorker::protectedServer() const
 {
     return m_server.get();
 }
@@ -137,7 +137,7 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
         RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %" PRIu64 " whose context connection does not exist", identifier().toUInt64());
         setState(State::NotRunning);
         callback();
-        checkedServer()->workerContextTerminated(*this);
+        protectedServer()->workerContextTerminated(*this);
         return;
     }
 
@@ -179,13 +179,13 @@ const ClientOrigin& SWServerWorker::origin() const
 
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    return m_server ? checkedServer()->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
+    return m_server ? protectedServer()->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
 }
 
 void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
 {
     ASSERT(m_server);
-    if (CheckedPtr server = m_server.get())
+    if (RefPtr server = m_server.get())
         server->scriptContextFailedToStart(jobDataIdentifier, *this, message);
 }
 
@@ -193,7 +193,7 @@ void SWServerWorker::scriptContextStarted(const std::optional<ServiceWorkerJobDa
 {
     m_shouldSkipHandleFetch = !doesHandleFetch;
     ASSERT(m_server);
-    if (CheckedPtr server = m_server.get())
+    if (RefPtr server = m_server.get())
         server->scriptContextStarted(jobDataIdentifier, *this);
 }
 
@@ -205,7 +205,7 @@ void SWServerWorker::didFinishInstall(const std::optional<ServiceWorkerJobDataId
 
     ASSERT(m_server);
     RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Installing, "State is %hhu", static_cast<uint8_t>(state));
-    if (CheckedPtr server = m_server.get())
+    if (RefPtr server = m_server.get())
         server->didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
 
@@ -217,14 +217,14 @@ void SWServerWorker::didFinishActivation()
 
     ASSERT(m_server);
     RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Activating, "State is %hhu", static_cast<uint8_t>(state));
-    if (CheckedPtr server = m_server.get())
+    if (RefPtr server = m_server.get())
         server->didFinishActivation(*this);
 }
 
 void SWServerWorker::contextTerminated()
 {
     ASSERT(m_server);
-    if (CheckedPtr server = m_server.get())
+    if (RefPtr server = m_server.get())
         server->workerContextTerminated(*this);
 }
 
@@ -233,7 +233,7 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     ASSERT(m_server);
     if (!m_server)
         return { };
-    return checkedServer()->serviceWorkerClientWithOriginByID(origin(), clientId);
+    return protectedServer()->serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
 void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
@@ -243,7 +243,7 @@ void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifie
         return;
     }
 
-    auto internalIdentifier = checkedServer()->clientIdFromVisibleClientId(clientIdentifier);
+    auto internalIdentifier = protectedServer()->clientIdFromVisibleClientId(clientIdentifier);
     if (!internalIdentifier) {
         callback({ });
         return;
@@ -257,7 +257,7 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     ASSERT(m_server);
     if (!m_server)
         return callback({ });
-    return checkedServer()->matchAll(*this, options, WTFMove(callback));
+    return protectedServer()->matchAll(*this, options, WTFMove(callback));
 }
 
 String SWServerWorker::userAgent() const
@@ -265,7 +265,7 @@ String SWServerWorker::userAgent() const
     ASSERT(m_server);
     if (!m_server)
         return { };
-    return checkedServer()->serviceWorkerClientUserAgent(origin());
+    return protectedServer()->serviceWorkerClientUserAgent(origin());
 }
 
 void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::ImportedScript&& script)
@@ -311,7 +311,7 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
         return;
 
     // Do tryClear/tryActivate, as per https://w3c.github.io/ServiceWorker/#wait-until-method.
-    WeakPtr registration = m_registration.get();
+    RefPtr registration = m_registration.get();
     if (!registration)
         return;
 
@@ -339,7 +339,7 @@ void SWServerWorker::setState(ServiceWorkerState state)
     m_data.state = state;
 
     ASSERT(m_registration || state == ServiceWorkerState::Redundant);
-    if (CheckedPtr registration = m_registration.get()) {
+    if (RefPtr registration = m_registration.get()) {
         registration->forEachConnection([&](auto& connection) {
             connection.updateWorkerStateInClient(this->identifier(), state);
         });
@@ -394,7 +394,7 @@ void SWServerWorker::didFailHeartBeatCheck()
 
 WorkerThreadMode SWServerWorker::workerThreadMode() const
 {
-    if ((m_server && checkedServer()->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
+    if ((m_server && protectedServer()->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
         return WorkerThreadMode::UseMainThread;
     return WorkerThreadMode::CreateNewThread;
 }
@@ -421,7 +421,7 @@ void SWServerWorker::setAsInspected(bool isInspected)
 
 bool SWServerWorker::shouldBeTerminated() const
 {
-    return !m_functionalEventCounter && !m_isInspected && m_server && !checkedServer()->hasClientsWithOrigin(origin());
+    return !m_functionalEventCounter && !m_isInspected && m_server && !protectedServer()->hasClientsWithOrigin(origin());
 }
 
 void SWServerWorker::terminateIfPossible()
@@ -440,14 +440,14 @@ void SWServerWorker::terminationIfPossibleTimerFired()
         return;
 
     terminate();
-    checkedServer()->removeContextConnectionIfPossible(registrableDomain());
+    protectedServer()->removeContextConnectionIfPossible(registrableDomain());
 }
 
 bool SWServerWorker::isClientActiveServiceWorker(ScriptExecutionContextIdentifier clientIdentifier) const
 {
     if (!m_server)
         return false;
-    auto registrationIdentifier = checkedServer()->clientIdentifierToControllingRegistration(clientIdentifier);
+    auto registrationIdentifier = protectedServer()->clientIdentifierToControllingRegistration(clientIdentifier);
     return registrationIdentifier == m_data.registrationIdentifier;
 }
 

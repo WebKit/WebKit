@@ -56,7 +56,7 @@ private:
     void updateTimerFired() { updateToStorage([] { }); }
 
     CheckedPtr<NetworkStorageManager> checkedManager() const;
-    CheckedPtr<WebCore::SWServer> checkedServer() const;
+    RefPtr<WebCore::SWServer> protectedServer() const;
 
     WeakPtr<WebCore::SWServer> m_server;
     WeakPtr<NetworkStorageManager> m_manager;

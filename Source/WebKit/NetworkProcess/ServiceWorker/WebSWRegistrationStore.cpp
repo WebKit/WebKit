@@ -44,7 +44,7 @@ CheckedPtr<NetworkStorageManager> WebSWRegistrationStore::checkedManager() const
     return m_manager.get();
 }
 
-CheckedPtr<WebCore::SWServer> WebSWRegistrationStore::checkedServer() const
+RefPtr<WebCore::SWServer> WebSWRegistrationStore::protectedServer() const
 {
     return m_server.get();
 }
@@ -130,7 +130,7 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
 
         auto allScripts = WTFMove(result.value());
         for (auto&& scripts : allScripts)
-            checkedServer()->didSaveWorkerScriptsToDisk(scripts.identifier, WTFMove(scripts.mainScript), WTFMove(scripts.importedScripts));
+            protectedServer()->didSaveWorkerScriptsToDisk(scripts.identifier, WTFMove(scripts.mainScript), WTFMove(scripts.importedScripts));
 
         callback();
     });

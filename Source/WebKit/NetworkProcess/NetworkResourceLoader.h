@@ -310,7 +310,7 @@ private:
     std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
-    std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
+    RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
     MonotonicTime m_workerStart;
     NetworkResourceLoadIdentifier m_resourceLoadID;

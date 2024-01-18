@@ -78,12 +78,12 @@ private:
     void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
     void scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData&, SWServerRegistration&);
 
-    CheckedRef<SWServer> checkedServer() const { return m_server; }
+    Ref<SWServer> protectedServer() const { return m_server.get(); }
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 
     Timer m_jobTimer;
-    CheckedRef<SWServer> m_server;
+    WeakRef<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     WorkerFetchResult m_workerFetchResult;
 };
