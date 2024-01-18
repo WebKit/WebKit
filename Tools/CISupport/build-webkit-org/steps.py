@@ -1498,7 +1498,7 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
         return None
 
     def url_for_identifier(self, identifier):
-        return 'f{COMMITS_INFO_URL}{identifier}'
+        return f'{COMMITS_INFO_URL}{identifier}'
 
     def getResultSummary(self):
         if self.results != SUCCESS:
