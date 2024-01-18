@@ -1959,6 +1959,4 @@ webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.
 
 webkit.org/b/267384 [ Sonoma+ ] fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/267650 [ Sonoma+ x86_64 ] media/media-vp8-webm.html [ ImageOnlyFailure ]
-
 webkit.org/b/267655 [ Monterey Ventura Debug ] scrollingcoordinator/scrolling-tree/scroller-with-proxy-nodes-loses-layer.html [ Crash ]
