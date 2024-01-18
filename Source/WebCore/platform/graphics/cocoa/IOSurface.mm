@@ -75,6 +75,8 @@ static auto surfaceNameToNSString(IOSurface::Name name)
         return @"WKWebView Snapshot (shareable)";
     case IOSurface::Name::ShareableLocalSnapshot:
         return @"WKWebView Snapshot (shareable local)";
+    case IOSurface::Name::ImageBitmap:
+        return @"WebKit ImageBitmap";
     }
 }
 
@@ -695,6 +697,8 @@ IOSurface::Name IOSurface::nameForRenderingPurpose(RenderingPurpose purpose)
 
     case RenderingPurpose::MediaPainting:
         return Name::MediaPainting;
+    case RenderingPurpose::ImageBitmap:
+        return Name::ImageBitmap;
     }
 
     return Name::Default;

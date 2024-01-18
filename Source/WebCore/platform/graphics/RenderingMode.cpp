@@ -42,6 +42,7 @@ TextStream& operator<<(TextStream& ts, RenderingPurpose purpose)
     case RenderingPurpose::ShareableSnapshot: ts << "ShareableSnapshot"; break;
     case RenderingPurpose::ShareableLocalSnapshot: ts << "ShareableLocalSnapshot"; break;
     case RenderingPurpose::MediaPainting: ts << "MediaPainting"; break;
+    case RenderingPurpose::ImageBitmap: ts << "ImageBitmap"; break;
     }
     return ts;
 }

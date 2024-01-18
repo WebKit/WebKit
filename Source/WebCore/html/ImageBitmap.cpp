@@ -67,15 +67,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-static RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
-#else
-static RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
-#endif
-
 Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, const IntSize& size, DestinationColorSpace colorSpace)
 {
-    return create({ createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace) });
+    return create({ createImageBuffer(scriptExecutionContext, size, colorSpace) });
 }
 
 Ref<ImageBitmap> ImageBitmap::create(std::optional<ImageBitmapBacking>&& backingStore)
@@ -83,7 +77,7 @@ Ref<ImageBitmap> ImageBitmap::create(std::optional<ImageBitmapBacking>&& backing
     return adoptRef(*new ImageBitmap(WTFMove(backingStore)));
 }
 
-RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, DestinationColorSpace colorSpace, float resolutionScale)
+RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, DestinationColorSpace colorSpace, float resolutionScale)
 {
     // FIXME: Should avoid converting color space and pixel format of image sources.
     auto imageBufferColorSpace = colorSpace.asRGB();
@@ -95,8 +89,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
 #endif
     }
 
-    auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
-    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, scriptExecutionContext.graphicsClient());
+    return ImageBuffer::create(size, RenderingPurpose::ImageBitmap, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, { }, scriptExecutionContext.graphicsClient());
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmapCompletionHandler&& completionHandler)
@@ -118,11 +111,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         else
             promise.resolve(result.releaseReturnValue());
     });
-}
-
-RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, DestinationColorSpace colorSpace, float resolutionScale)
-{
-    return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace, resolutionScale);
 }
 
 std::optional<ImageBitmapBacking> ImageBitmap::detach()
@@ -258,7 +246,7 @@ Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scr
     // Source rectangle likely doesn't intersect the source image.
     // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
     // Resolve Promise with a blank 1x1 ImageBitmap.
-    auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), bufferRenderingMode, DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), DestinationColorSpace::SRGB());
 
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
@@ -400,7 +388,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRenderer->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, imageForRenderer->colorSpace());
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(*cachedImage)));
         return;
@@ -470,7 +458,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, DestinationColorSpace::SRGB());
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
@@ -514,7 +502,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRender->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, imageForRender->colorSpace());
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, canvas.originClean()));
@@ -584,6 +572,11 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         colorSpace = DestinationColorSpace::SRGB();
 
     // FIXME: Add support for pixel formats to ImageBitmap.
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    constexpr RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
+#else
+    constexpr RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
+#endif
     auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode, *colorSpace, PixelFormat::BGRA8);
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(scriptExecutionContext.securityOrigin(), *video)));
@@ -647,17 +640,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, existingImageBitmap->buffer()->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, existingImageBitmap->buffer()->colorSpace());
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
         return;
     }
 
-    auto imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
-
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    {
+        FloatRect destRect { { }, outputSize };
+        bitmapData->context().drawImageBuffer(*existingImageBitmap->buffer(), destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    }
 
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
     //    value as the origin-clean flag of the bitmap of the image argument.
@@ -819,7 +812,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, image->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, image->colorSpace());
     if (!bitmapData) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
         return;
@@ -867,7 +860,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, toDestinationColorSpace(imageData->colorSpace()));
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
@@ -891,7 +884,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
     //      source rectangle with formatting.
-    auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), toDestinationColorSpace(imageData->colorSpace()));
     if (!tempBitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;

@@ -70,6 +70,7 @@ public:
         Snapshot,
         ShareableSnapshot,
         ShareableLocalSnapshot,
+        ImageBitmap,
     };
 
     enum class Format {
