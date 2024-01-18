@@ -19,7 +19,7 @@
         return null;
     }
 
-    if (!HTMLImageElement.prototype.srcset) {
+    if (!HTMLImageElement.prototype.hasOwnProperty("srcset")) {
         window.addEventListener('DOMContentLoaded', function () {
             var images = document.querySelectorAll('img');
             for (var i = 0; i < images.length; i++) {
