@@ -42,6 +42,8 @@ public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context) { return adoptRef(*new NavigationHistoryEntry(context)); }
+
     const String& url() const { return m_url; };
     const String& key() const { return m_key; };
     const String& id() const { return m_id; };

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Navigation.h"
 
+#include "JSNavigationHistoryEntry.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,11 +37,6 @@ Navigation::Navigation(ScriptExecutionContext* context, LocalDOMWindow& window)
     : ContextDestructionObserver(context)
     , LocalDOMWindowProperty(&window)
 {
-}
-
-static Navigation::Result createNewResult()
-{
-    return { };
 }
 
 Navigation::~Navigation() = default;
@@ -55,29 +51,59 @@ EventTargetInterface Navigation::eventTargetInterface() const
     return NavigationEventTargetInterfaceType;
 }
 
-Navigation::Result Navigation::navigate(const String& /* url */, NavigateOptions&&)
+Navigation::Result Navigation::navigate(const String& /* url */, NavigateOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return createNewResult();
+    // FIXME: keep track of promises to resolve later.
+    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    return result;
 }
 
-Navigation::Result Navigation::reload(ReloadOptions&&)
+Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return createNewResult();
+    // FIXME: keep track of promises to resolve later.
+    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    return result;
 }
 
-Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&)
+Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return createNewResult();
+    // FIXME: keep track of promises to resolve later.
+    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    return result;
 }
 
-Navigation::Result Navigation::back(Options&&)
+Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return createNewResult();
+    // FIXME: keep track of promises to resolve later.
+    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    return result;
 }
 
-Navigation::Result Navigation::forward(Options&&)
+Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return createNewResult();
+    // FIXME: keep track of promises to resolve later.
+    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    auto globalObject = committed->globalObject();
+    Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
+    committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
+    return result;
 }
 
 void Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&&)

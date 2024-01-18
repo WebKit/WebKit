@@ -449,6 +449,9 @@
         "ReturnsOwnPromise": {
             "contextsAllowed": ["operation"]
         },
+        "ReturnsPromisePair": {
+            "contextsAllowed": ["operation"]
+        },
         "ReturnValue": {
             "contextsAllowed": ["argument"]
         },

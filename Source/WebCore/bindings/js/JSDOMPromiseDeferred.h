@@ -382,6 +382,31 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     return promise;
 }
 
+using PromisePairFunction = JSC::EncodedJSValue(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+
+template<typename PromisePairFunctor>
+inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
+{
+    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise);
+    auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise2);
+
+    auto result = functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise), DeferredPromise::create(globalObject, *promise2));
+
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+
+    return result;
+}
+
 using BindingPromiseFunction = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, Ref<DeferredPromise>&&);
 template<BindingPromiseFunction bindingFunction>
 inline void bindingPromiseFunctionAdapter(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise)

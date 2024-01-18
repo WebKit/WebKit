@@ -3318,6 +3318,7 @@ sub GenerateHeader
             push(@functionArguments, "JSC::JSGlobalObject&");
             push(@functionArguments, "JSC::CallFrame&");
             push(@functionArguments, "Ref<DeferredPromise>&&") if $codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{ReturnsOwnPromise};
+            push(@functionArguments, "Ref<DeferredPromise>&&, Ref<DeferredPromise>&&") if $operation->extendedAttributes->{ReturnsPromisePair};
 
             push(@headerContent, "    " . ($operation->isStatic ? "static " : "") . "JSC::JSValue " . $functionImplementationName . "(" . join(", ", @functionArguments) . ");\n");
 
@@ -5825,9 +5826,10 @@ sub GenerateOperationTrampolineDefinition
     my ($outputArray, $interface, $className, $operation, $functionName, $functionBodyName) = @_;
 
     my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
-    my $idlOperationType = $hasPromiseReturnType ? "IDLOperationReturningPromise" : "IDLOperation";
+    my $idlOperationType = $hasPromiseReturnType || $operation->extendedAttributes->{ReturnsPromisePair} ? "IDLOperationReturningPromise" : "IDLOperation";
 
     my $callFunctionName = "call";
+    $callFunctionName .= "ReturningPromisePair" if $operation->extendedAttributes->{ReturnsPromisePair};
     $callFunctionName .= "Static" if $operation->isStatic;
     $callFunctionName .= "ReturningOwnPromise" if $hasPromiseReturnType && $operation->extendedAttributes->{ReturnsOwnPromise};
 
@@ -5846,7 +5848,7 @@ sub GenerateOperationBodyDefinition
     my ($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $functionBodyName, $isOverloaded, $generatingOverloadDispatcher) = @_;
 
     my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
-    my $idlOperationType = $hasPromiseReturnType ? "IDLOperationReturningPromise" : "IDLOperation";
+    my $idlOperationType = $hasPromiseReturnType || $operation->extendedAttributes->{ReturnsPromisePair} ? "IDLOperationReturningPromise" : "IDLOperation";
     my $conditional = $operation->extendedAttributes->{Conditional};
 
     my @signatureArguments = ();
@@ -5854,6 +5856,7 @@ sub GenerateOperationBodyDefinition
     push(@signatureArguments, "JSC::CallFrame* callFrame");
     push(@signatureArguments, "typename ${idlOperationType}<${className}>::ClassParameter castedThis") if !$operation->isStatic;
     push(@signatureArguments, "Ref<DeferredPromise>&& promise") if $hasPromiseReturnType && !$operation->extendedAttributes->{ReturnsOwnPromise};
+    push(@signatureArguments, "Ref<DeferredPromise>&& promise, Ref<DeferredPromise>&& promise2") if $operation->extendedAttributes->{ReturnsPromisePair};
 
     push(@$outputArray, "static inline JSC::EncodedJSValue ${functionBodyName}(" . join(", ", @signatureArguments) . ")\n");
     push(@$outputArray, "{\n");
@@ -5891,6 +5894,7 @@ sub GenerateOperationBodyDefinition
         push(@argumentsToForward, "callFrame");
         push(@argumentsToForward, "castedThis") if !$operation->isStatic;
         push(@argumentsToForward, "WTFMove(promise)") if $hasPromiseReturnType && !$operation->extendedAttributes->{ReturnsOwnPromise};
+        push(@argumentsToForward, "WTFMove(promise), WTFMove(promise2)") if $operation->extendedAttributes->{ReturnsPromisePair};
 
         GenerateOverloadDispatcher($operation, $interface, $functionName, "Body", join(", ", @argumentsToForward));
     } elsif (HasCustomMethod($operation)) {
@@ -5954,7 +5958,7 @@ sub GenerateOperationDefinition
 
     AddToImplIncludesForIDLType($operation->type, $conditional) unless $isCustom or $hasPromiseReturnType;
     AddToImplIncludes("JSDOMOperation.h", $conditional) if !$hasPromiseReturnType;
-    AddToImplIncludes("JSDOMOperationReturningPromise.h", $conditional) if $hasPromiseReturnType;
+    AddToImplIncludes("JSDOMOperationReturningPromise.h", $conditional) if $hasPromiseReturnType || $operation->extendedAttributes->{ReturnsPromisePair};
 
     my $functionName = GetFunctionName($interface, $className, $operation);
     my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name);
@@ -6483,6 +6487,7 @@ sub GenerateParametersCheck
     }
 
     push(@arguments, "WTFMove(promise)") if $operation->type && $codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy};
+    push(@arguments, "WTFMove(promise), WTFMove(promise2)") if $operation->extendedAttributes->{ReturnsPromisePair};
 
     return "$functionName(" . join(", ", @arguments) . ")";
 }
@@ -7544,7 +7549,7 @@ sub NativeToJSValue
 
     # FIXME: Not all promise types require the functor wrapping (some attribute getters actually return a value)
     # but wrapping is a no-op, so fixing this would purely be a stylistic / compile time fix.
-    my $needsFunctorWrapping = $type->name eq "undefined" || $codeGenerator->IsPromiseType($type);
+    my $needsFunctorWrapping = $type->name eq "undefined" || $codeGenerator->IsPromiseType($type) || $context->extendedAttributes->{ReturnsPromisePair};
 
     my @conversionArguments = ();
     push(@conversionArguments, $lexicalGlobalObjectReference) if NativeToJSValueDOMConvertNeedsState($type) || $mayThrowException;

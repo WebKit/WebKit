@@ -27,12 +27,15 @@
 
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
+#include "JSDOMPromise.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigationHistoryEntry.h"
 #include "NavigationTransition.h"
 #include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class Navigation final : public RefCounted<Navigation>, public EventTarget, public ContextDestructionObserver, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Navigation);
@@ -68,9 +71,8 @@ public:
     };
 
     struct Result {
-        bool todo;
-        // NavigationHistoryEntryPromise committed;
-        // NavigationHistoryEntryPromise finished;
+        RefPtr<DOMPromise> committed;
+        RefPtr<DOMPromise> finished;
     };
 
     Vector<Ref<NavigationHistoryEntry>> entries() { return m_entries; };
@@ -80,13 +82,13 @@ public:
     bool canGoBack() const { return m_canGoBack; };
     bool canGoForward() const { return m_canGoForward; };
 
-    Result navigate(const String& url, NavigateOptions&&);
+    Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    Result reload(ReloadOptions&&);
+    Result reload(ReloadOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    Result traverseTo(const String& key, Options&&);
-    Result back(Options&&);
-    Result forward(Options&&);
+    Result traverseTo(const String& key, Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result back(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result forward(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
     void updateCurrentEntry(UpdateCurrentEntryOptions&&);
 

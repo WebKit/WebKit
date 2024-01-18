@@ -1594,8 +1594,45 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
 
 #endif
 
+template<> TestObj::PromisePair convertDictionary<TestObj::PromisePair>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    VM& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    bool isNullOrUndefined = value.isUndefinedOrNull();
+    auto* object = isNullOrUndefined ? nullptr : value.getObject();
+    if (UNLIKELY(!isNullOrUndefined && !object)) {
+        throwTypeError(&lexicalGlobalObject, throwScope);
+        return { };
+    }
+    TestObj::PromisePair result;
+    JSValue promise1Value;
+    if (isNullOrUndefined)
+        promise1Value = jsUndefined();
+    else {
+        promise1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise1"_s));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!promise1Value.isUndefined()) {
+        result.promise1 = convert<IDLPromise<IDLUndefined>>(lexicalGlobalObject, promise1Value);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    JSValue promise2Value;
+    if (isNullOrUndefined)
+        promise2Value = jsUndefined();
+    else {
+        promise2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise2"_s));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!promise2Value.isUndefined()) {
+        result.promise2 = convert<IDLPromise<IDLUndefined>>(lexicalGlobalObject, promise2Value);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    return result;
+}
+
 // Functions
 
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_returnsPromisePair);
 #if ENABLE(TEST_FEATURE)
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_enabledAtRuntimeOperation);
 #endif
@@ -2332,6 +2369,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "_double_leading_underscore_attribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_double_leading_underscore_attribute, setJSTestObj_double_leading_underscore_attribute } },
     { "trailing_underscore_attribute_"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_trailing_underscore_attribute_, setJSTestObj_trailing_underscore_attribute_ } },
     { "search"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_search, setJSTestObj_search } },
+    { "returnsPromisePair"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_returnsPromisePair, 0 } },
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_enabledAtRuntimeOperation, 1 } },
 #else
@@ -5823,6 +5861,21 @@ static inline bool setJSTestObj_searchSetter(JSGlobalObject& lexicalGlobalObject
 JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_search, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObj_searchSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_returnsPromisePairBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, Ref<DeferredPromise>&& promise, Ref<DeferredPromise>&& promise2)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLDictionary<TestObj::PromisePair>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, [&]() -> decltype(auto) { return impl.returnsPromisePair(WTFMove(promise), WTFMove(promise2)); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_returnsPromisePair, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperationReturningPromise<JSTestObj>::callReturningPromisePair<jsTestObjPrototypeFunction_returnsPromisePairBody>(*lexicalGlobalObject, *callFrame, "returnsPromisePair");
 }
 
 #if ENABLE(TEST_FEATURE)

@@ -77,6 +77,11 @@ template<typename T> struct JSConverter<IDLPromise<T>> {
         return promise.promise();
     }
 
+    static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, RefPtr<DOMPromise> promise)
+    {
+        return promise->promise();
+    }
+
     template<template<typename> class U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U<T>& promiseProxy)
     {

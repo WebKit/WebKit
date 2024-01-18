@@ -235,5 +235,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
 
 #endif
 
+template<> TestObj::PromisePair convertDictionary<TestObj::PromisePair>(JSC::JSGlobalObject&, JSC::JSValue);
+
 
 } // namespace WebCore
