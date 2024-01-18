@@ -1899,6 +1899,9 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 # WebGPU
+http/tests/webgpu/webgpu/idl/constructable.html [ Pass ]
+http/tests/webgpu/webgpu/idl/constants/flags.html [ Pass ]
+
 http/tests/webgpu/webgpu/api/operation/compute_pipeline/overrides.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/device/lost.html [ Pass ]
 http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]

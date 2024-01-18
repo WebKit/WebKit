@@ -33,9 +33,9 @@ namespace WebCore {
 
 class GPUOutOfMemoryError : public RefCounted<GPUOutOfMemoryError> {
 public:
-    static Ref<GPUOutOfMemoryError> create()
+    static Ref<GPUOutOfMemoryError> create(String&& message)
     {
-        return adoptRef(*new GPUOutOfMemoryError());
+        return adoptRef(*new GPUOutOfMemoryError(WTFMove(message)));
     }
 
     static Ref<GPUOutOfMemoryError> create(Ref<WebGPU::OutOfMemoryError>&& backing)
@@ -43,11 +43,14 @@ public:
         return adoptRef(*new GPUOutOfMemoryError(WTFMove(backing)));
     }
 
+    const String& message() const { return m_message; }
+
     WebGPU::OutOfMemoryError* backing() { return m_backing.get(); }
     const WebGPU::OutOfMemoryError* backing() const { return m_backing.get(); }
 
 private:
-    GPUOutOfMemoryError()
+    GPUOutOfMemoryError(String&& message)
+        : m_message(WTFMove(message))
     {
     }
 
@@ -56,6 +59,7 @@ private:
     {
     }
 
+    String m_message;
     RefPtr<WebGPU::OutOfMemoryError> m_backing;
 };
 
