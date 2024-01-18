@@ -1308,4 +1308,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean readyToRetrieveComputedRoleOrLabel(Element element);
     DOMString getComputedLabel(Element element);
     DOMString getComputedRole(Element element);
+
+    readonly attribute boolean hasScopeBreakingHasSelectors;
 };

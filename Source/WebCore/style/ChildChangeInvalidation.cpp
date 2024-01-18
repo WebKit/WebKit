@@ -111,6 +111,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 
 void ChildChangeInvalidation::invalidateForChangeOutsideHasScope()
 {
+    // FIXME: This is a performance footgun. Any mutation will trigger a full document traversal.
     if (auto* invalidationRuleSet = parentElement().styleResolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet())
         Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(parentElement(), invalidationRuleSet);
 }

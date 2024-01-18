@@ -1425,6 +1425,8 @@ public:
     String getComputedLabel(Element&) const;
     String getComputedRole(Element&) const;
 
+    bool hasScopeBreakingHasSelectors() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

@@ -7273,4 +7273,10 @@ bool Internals::readyToRetrieveComputedRoleOrLabel(Element& element) const
     return !element.rendererIsNeeded(*computedStyle);
 }
 
+bool Internals::hasScopeBreakingHasSelectors() const
+{
+    contextDocument()->styleScope().flushPendingUpdate();
+    return !!contextDocument()->styleScope().resolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet();
+}
+
 } // namespace WebCore
