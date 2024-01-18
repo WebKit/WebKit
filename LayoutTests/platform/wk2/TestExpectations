@@ -884,3 +884,5 @@ webkit.org/b/262157 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
 
 webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]
+
+webkit.org/b/267715 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-006.html [ Pass Crash ]
