@@ -114,6 +114,14 @@ static bool handleOptionAccessibilityIsolatedTreeMode(Options& options, const ch
 }
 #endif
 
+#if ENABLE(SITE_ISOLATION)
+static bool handleOptionSiteIsolation(Options& options, const char*, const char*)
+{
+    options.features.boolWebPreferenceFeatures.insert_or_assign("IsSiteIsolationEnabled", true);
+    return true;
+}
+#endif
+
 static bool handleOptionAllowedHost(Options& options, const char*, const char* host)
 {
     options.allowedHosts.insert(host);
@@ -214,6 +222,9 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--internal-feature", "Enable internal feature", handleOptionInternalFeature, true));
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     optionList.append(Option("--accessibility-isolated-tree", "Enable accessibility isolated tree mode for tests", handleOptionAccessibilityIsolatedTreeMode));
+#endif
+#if ENABLE(SITE_ISOLATION)
+    optionList.append(Option("--SITE-ISOLATION", "Enable site isolation for tests", handleOptionSiteIsolation));
 #endif
     optionList.append(Option("--webcore-logging", "Enable WebCore log channels", handleOptionWebCoreLogging, true));
     optionList.append(Option("--webkit-logging", "Enable WebKit log channels", handleOptionWebKitLogging, true));

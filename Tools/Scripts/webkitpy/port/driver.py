@@ -581,6 +581,8 @@ class Driver(object):
             cmd.append('--show-window')
         if self._port.get_option('accessibility_isolated_tree'):
             cmd.append('--accessibility-isolated-tree')
+        if self._port.get_option('site-istolation'):
+            cmd.append('--site-isolation')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

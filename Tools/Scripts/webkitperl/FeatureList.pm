@@ -134,6 +134,7 @@ my (
     $serverPreconnectSupport,
     $serviceControlsSupport,
     $shareableResourceSupport,
+    $siteIsolationSupport,
     $smoothScrollingSupport,
     $speechSynthesisSupport,
     $spellcheckSupport,
@@ -397,6 +398,9 @@ my @features = (
 
     { option => "shareable-resource", desc => "Toggle network shareable resources support",
       define => "ENABLE_SHAREABLE_RESOURCE", value => \$shareableResourceSupport },
+
+    { option => "site-isolation", desc => "Toggle site isolation tree support",
+      define => "ENABLE_SITE_ISOLATION_TREE", value => \$siteIsolationSupport },
 
     { option => "smooth-scrolling", desc => "Toggle smooth scrolling",
       define => "ENABLE_SMOOTH_SCROLLING", value => \$smoothScrollingSupport },
