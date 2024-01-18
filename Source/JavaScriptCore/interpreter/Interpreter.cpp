@@ -587,7 +587,7 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
             m_catchMetadataPCForInterpreter = handler->m_targetMetadata;
             m_tryDepthForThrow = handler->m_tryDepth;
         } else {
-#if USE(JSVALUE64) && ENABLE(JIT)
+#if ENABLE(JIT)
             m_nativeCode = Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator).template retagged<ExceptionHandlerPtrTag>().code();
             m_nativeCodeForDispatchAndCatch = handler->m_nativeCode;
 #endif

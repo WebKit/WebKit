@@ -5731,19 +5731,6 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
 
 #endif
 
-void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffer)
-{
-    if (context.procedure && context.procedure->needsPCToOriginMap()) {
-        B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
-        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
-        return;
-    }
-    if (context.pcToCodeOriginMapBuilder) {
-        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(WTFMove(*context.pcToCodeOriginMapBuilder), linkBuffer);
-        return;
-    }
-}
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY_OMGJIT)

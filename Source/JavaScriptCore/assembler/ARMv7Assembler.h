@@ -1125,7 +1125,7 @@ public:
             // Manual ARMv7-A and ARMv7-R edition available on
             // https://static.docs.arm.com/ddi0406/cd/DDI0406C_d_armv7ar_arm.pdf
             m_formatter.oneWordOp5Imm5Reg3Reg3(OP_LDR_imm_T1, imm.getUInt7() >> 2, rn, rt);
-        } else if ((rn == ARMRegisters::sp) && !(rt & 8) && imm.isUInt10())
+        } else if ((rn == ARMRegisters::sp) && !(rt & 8) && imm.isUInt10() && !(imm.getUInt10() % 4))
             m_formatter.oneWordOp5Reg3Imm8(OP_LDR_imm_T2, rt, static_cast<uint8_t>(imm.getUInt10() >> 2));
         else
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDR_imm_T3, rn, rt, imm.getUInt12());
@@ -1141,6 +1141,7 @@ public:
     {
         ASSERT(rn != ARMRegisters::pc); // LDR (literal)
         ASSERT(imm.isUInt7());
+        ASSERT(!(imm.getUInt7() % 4));
         ASSERT(!((rt | rn) & 8));
         m_formatter.oneWordOp5Imm5Reg3Reg3(OP_LDR_imm_T1, imm.getUInt7() >> 2, rn, rt);
     }
@@ -1743,9 +1744,9 @@ public:
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(imm.isUInt12());
 
-        if (!((rt | rn) & 8) && imm.isUInt7())
+        if (!((rt | rn) & 8) && imm.isUInt7() && !(imm.getUInt7() & 0x3))
             m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STR_imm_T1, imm.getUInt7() >> 2, rn, rt);
-        else if ((rn == ARMRegisters::sp) && !(rt & 8) && imm.isUInt10())
+        else if ((rn == ARMRegisters::sp) && !(rt & 8) && imm.isUInt10() && !(imm.getUInt10() & 0x3))
             m_formatter.oneWordOp5Reg3Imm8(OP_STR_imm_T2, rt, static_cast<uint8_t>(imm.getUInt10() >> 2));
         else
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STR_imm_T3, rn, rt, imm.getUInt12());
@@ -1863,7 +1864,7 @@ public:
         ASSERT(rn != ARMRegisters::pc);
         ASSERT(imm.isUInt12());
         
-        if (!((rt | rn) & 8) && imm.isUInt6())
+        if (!((rt | rn) & 8) && imm.isUInt6() && !(imm.getUInt6() & 0x1))
             m_formatter.oneWordOp5Imm5Reg3Reg3(OP_STRH_imm_T1, imm.getUInt6() >> 1, rn, rt);
         else
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_STRH_imm_T2, rn, rt, imm.getUInt12());

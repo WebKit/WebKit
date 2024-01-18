@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WasmTierUpCount.h"
+#pragma once
 
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
-#include "WasmOSREntryData.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "B3Common.h"
+#include "B3Procedure.h"
+#include "CCallHelpers.h"
+#include "JITCompilation.h"
+#include "JITOpaqueByproducts.h"
+#include "PCToCodeOriginMap.h"
+#include "WasmBBQDisassembler.h"
+#include "WasmCompilationMode.h"
+#include "WasmJS.h"
+#include "WasmMemory.h"
+#include "WasmModuleInformation.h"
+#include "WasmTierUpCount.h"
+#include <wtf/Box.h>
+#include <wtf/Expected.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(TierUpCount);
+#if !ENABLE(B3_JIT)
+namespace B3 {
 
-TierUpCount::TierUpCount()
-{
-    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+class Procedure { };
+
 }
+#endif
 
-TierUpCount::~TierUpCount() = default;
+namespace Wasm {
 
-OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
-{
-    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex, WTFMove(stackMap)));
-    return *m_osrEntryData.last().get();
-}
+class BBQDisassembler;
+class MemoryInformation;
+class OptimizingJITCallee;
+class TierUpCount;
 
-OSREntryData& TierUpCount::osrEntryData(uint32_t loopIndex)
-{
-    return *m_osrEntryData[loopIndex];
-}
+struct CompilationContext {
+    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
+    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
+    std::unique_ptr<OpaqueByproducts> wasmEntrypointByproducts;
+    std::unique_ptr<B3::Procedure> procedure;
+    std::unique_ptr<BBQDisassembler> bbqDisassembler;
+    Box<PCToCodeOriginMap> pcToCodeOriginMap;
+    Box<PCToCodeOriginMapBuilder> pcToCodeOriginMapBuilder;
+    Vector<CCallHelpers::Label> catchEntrypoints;
+};
 
-} } // namespace JSC::Wasm
+void computePCToCodeOriginMap(CompilationContext&, LinkBuffer&);
 
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+} // namespace Wasm
+
+} // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)

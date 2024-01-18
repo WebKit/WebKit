@@ -34,6 +34,7 @@
 #include "JITOpaqueByproducts.h"
 #include "PCToCodeOriginMap.h"
 #include "WasmBBQDisassembler.h"
+#include "WasmCompilationContext.h"
 #include "WasmCompilationMode.h"
 #include "WasmJS.h"
 #include "WasmMemory.h"
@@ -48,25 +49,7 @@ namespace JSC {
 
 namespace Wasm {
 
-class BBQDisassembler;
-class MemoryInformation;
-class OptimizingJITCallee;
-class TierUpCount;
-
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<OpaqueByproducts> wasmEntrypointByproducts;
-    std::unique_ptr<B3::Procedure> procedure;
-    std::unique_ptr<BBQDisassembler> bbqDisassembler;
-    Box<PCToCodeOriginMap> pcToCodeOriginMap;
-    Box<PCToCodeOriginMapBuilder> pcToCodeOriginMapBuilder;
-    Vector<CCallHelpers::Label> catchEntrypoints;
-};
-
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext&, OptimizingJITCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr);
-
-void computePCToCodeOriginMap(CompilationContext&, LinkBuffer&);
 
 } } // namespace JSC::Wasm
 

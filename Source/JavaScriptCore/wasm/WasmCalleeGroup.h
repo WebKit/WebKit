@@ -107,7 +107,7 @@ public:
         return m_llintCallees->at(calleeIndex).get();
     }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         // We do not look up without locking because this function is called from this BBQCallee itself.
@@ -125,18 +125,21 @@ public:
         return m_bbqCallees[functionIndex].get();
     }
 
-    OMGCallee* omgCallee(const AbstractLocker&, unsigned functionIndex)
-    {
-        if (m_omgCallees.isEmpty())
-            return nullptr;
-        return m_omgCallees[functionIndex].get();
-    }
-
     void setBBQCallee(const AbstractLocker&, unsigned functionIndex, Ref<BBQCallee>&& callee)
     {
         if (m_bbqCallees.isEmpty())
             m_bbqCallees = FixedVector<RefPtr<BBQCallee>>(m_calleeCount);
         m_bbqCallees[functionIndex] = WTFMove(callee);
+    }
+
+#endif
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    OMGCallee* omgCallee(const AbstractLocker&, unsigned functionIndex)
+    {
+        if (m_omgCallees.isEmpty())
+            return nullptr;
+        return m_omgCallees[functionIndex].get();
     }
 
     void setOMGCallee(const AbstractLocker&, unsigned functionIndex, Ref<OMGCallee>&& callee)
@@ -185,6 +188,8 @@ private:
     MemoryMode m_mode;
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     FixedVector<RefPtr<OMGCallee>> m_omgCallees;
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
     FixedVector<RefPtr<BBQCallee>> m_bbqCallees;
 #endif
     RefPtr<IPIntCallees> m_ipintCallees;

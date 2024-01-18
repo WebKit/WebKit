@@ -203,7 +203,7 @@ private:
 };
 #endif
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
 
 struct WasmCodeOrigin {
     unsigned firstInlineCSI;
@@ -243,23 +243,6 @@ private:
     Vector<Ref<NameSection>, 0> nameSections;
 };
 
-class OMGCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
-public:
-    static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-    {
-        return adoptRef(*new OMGCallee(index, WTFMove(name)));
-    }
-
-    using OptimizingJITCallee::setEntrypoint;
-
-private:
-    OMGCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTFMove(name))
-    {
-    }
-};
-
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
 public:
@@ -289,6 +272,31 @@ private:
     uint32_t m_loopIndex;
 };
 
+#endif // ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+
+class OMGCallee final : public OptimizingJITCallee {
+public:
+    static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    {
+        return adoptRef(*new OMGCallee(index, WTFMove(name)));
+    }
+
+    using OptimizingJITCallee::setEntrypoint;
+
+private:
+    OMGCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTFMove(name))
+    {
+    }
+};
+
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
+
 class BBQCallee final : public OptimizingJITCallee {
     WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
 public:
@@ -309,11 +317,15 @@ public:
     bool didStartCompilingOSREntryCallee() const { return m_didStartCompilingOSREntryCallee; }
     void setDidStartCompilingOSREntryCallee(bool value) { m_didStartCompilingOSREntryCallee = value; }
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     OMGCallee* replacement() { return m_replacement.get(); }
     void setReplacement(Ref<OMGCallee>&& replacement)
     {
         m_replacement = WTFMove(replacement);
     }
+#else
+
+#endif
 
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
@@ -347,7 +359,9 @@ private:
     }
 
     RefPtr<OSREntryCallee> m_osrEntryCallee;
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     RefPtr<OMGCallee> m_replacement;
+#endif
     std::unique_ptr<TierUpCount> m_tierUpCount;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
@@ -381,7 +395,7 @@ public:
 
     IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
     void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
     {
@@ -405,7 +419,7 @@ private:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
     uint32_t m_functionIndex { 0 };
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif
@@ -485,7 +499,7 @@ public:
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
     void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
     {
@@ -525,7 +539,7 @@ private:
     LLIntTierUpCounter m_tierUpCounter;
     FixedVector<JumpTable> m_jumpTables;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif

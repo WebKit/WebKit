@@ -35,6 +35,7 @@
 #include "WasmBBQJIT.h"
 #include "WasmCallee.h"
 #include "WasmCalleeGroup.h"
+#include "WasmCompilationContext.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmTierUpCount.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -158,7 +159,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     bool alreadyDumped = dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     function->entrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)) || (context.procedure && context.procedure->shouldDumpIR()), linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     CodePtr<WasmEntryPtrTag> entrypoint;
@@ -221,7 +222,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
     std::unique_ptr<TierUpCount> tierUp;
-    if (Options::useBBQTierUpChecks() && !isARM_THUMB2())
+    if (Options::useBBQTierUpChecks())
         tierUp = makeUnique<TierUpCount>();
 
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
@@ -302,7 +303,7 @@ void BBQPlan::didCompleteCompilation()
 
             bool alreadyDumped = dumpDisassembly(context, linkBuffer, functionIndex, signature, functionIndexSpace);
             function->entrypoint.compilation = makeUnique<Compilation>(
-                FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)) || (context.procedure && context.procedure->shouldDumpIR()), linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+                FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                 WTFMove(context.wasmEntrypointByproducts));
         }
 

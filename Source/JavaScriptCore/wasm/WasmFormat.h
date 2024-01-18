@@ -729,7 +729,7 @@ struct Entrypoint {
 
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     StackMaps stackmaps;
 #endif
     Vector<UnlinkedHandlerInfo> exceptionHandlers;

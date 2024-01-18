@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(B3_JIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"

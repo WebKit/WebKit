@@ -37,7 +37,7 @@
 
 namespace JSC { namespace Wasm {
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 namespace WasmCallsiteCollectionInternal {
 static constexpr bool verbose = false;
 }
@@ -72,7 +72,7 @@ void CallsiteCollection::addCalleeGroupCallsites(const AbstractLocker& calleeGro
     m_calleeGroupCallsites = WTFMove(callsitesList);
 }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 void CallsiteCollection::updateCallsitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup& calleeGroup, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     UNUSED_PARAM(calleeGroupLocker);

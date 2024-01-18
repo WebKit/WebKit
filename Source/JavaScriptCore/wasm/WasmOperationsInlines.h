@@ -402,8 +402,10 @@ inline bool arrayInitElem(Instance* instance, EncodedJSValue dst, uint32_t dstOf
     if (lastSrcElementIndexChecked > lengthOfElementSegment)
         return false;
 
-    instance->copyElementSegment(*instance->elementAt(srcElementIndex), srcOffset, size, dstObject->reftypeData() + dstOffset);
-    instance->vm().writeBarrier(dstObject);
+    if (size > 0) {
+        instance->copyElementSegment(*instance->elementAt(srcElementIndex), srcOffset, size, dstObject->reftypeData() + dstOffset);
+        instance->vm().writeBarrier(dstObject);
+    }
     return true;
 }
 

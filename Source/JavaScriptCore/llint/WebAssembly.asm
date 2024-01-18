@@ -165,7 +165,7 @@ macro checkSwitchToJIT(increment, action)
 end
 
 macro checkSwitchToJITForPrologue(codeBlockRegister)
-    if WEBASSEMBLY_OMGJIT
+    if WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         5,
         macro()
@@ -242,7 +242,7 @@ macro checkSwitchToJITForLoop()
 end
 
 macro checkSwitchToJITForEpilogue()
-    if WEBASSEMBLY_OMGJIT
+    if WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         10,
         macro ()
@@ -482,7 +482,7 @@ end
 
 # Tier up immediately, while saving full vectors in argument FPRs
 macro wasmPrologueSIMD()
-if WEBASSEMBLY_OMGJIT and not ARMv7
+if (WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT) and not ARMv7
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +24,28 @@
  */
 
 #include "config.h"
-#include "WasmTierUpCount.h"
+#include "WasmCompilationContext.h"
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
-#include "WasmOSREntryData.h"
-#include <wtf/TZoneMallocInlines.h>
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+namespace JSC {
 
-namespace JSC { namespace Wasm {
+namespace Wasm {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(TierUpCount);
-
-TierUpCount::TierUpCount()
+void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffer)
 {
-    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+    if (context.procedure && context.procedure->needsPCToOriginMap()) {
+        B3::PCToOriginMap originMap = context.procedure->releasePCToOriginMap();
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder::WasmCodeOriginMap, WTFMove(originMap)), linkBuffer);
+        return;
+    }
+    if (context.pcToCodeOriginMapBuilder) {
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(WTFMove(*context.pcToCodeOriginMapBuilder), linkBuffer);
+        return;
+    }
 }
 
-TierUpCount::~TierUpCount() = default;
+} // namespace Wasm
+} // namespace JSC
 
-OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
-{
-    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex, WTFMove(stackMap)));
-    return *m_osrEntryData.last().get();
-}
-
-OSREntryData& TierUpCount::osrEntryData(uint32_t loopIndex)
-{
-    return *m_osrEntryData[loopIndex];
-}
-
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif

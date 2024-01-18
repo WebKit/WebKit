@@ -72,13 +72,19 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::LLIntMode:
         func(static_cast<LLIntCallee*>(this));
         break;
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode:
         func(static_cast<BBQCallee*>(this));
         break;
     case CompilationMode::BBQForOSREntryMode:
         func(static_cast<OSREntryCallee*>(this));
         break;
+#else
+    case CompilationMode::BBQMode:
+    case CompilationMode::BBQForOSREntryMode:
+        break;
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     case CompilationMode::OMGMode:
         func(static_cast<OMGCallee*>(this));
         break;
@@ -86,8 +92,6 @@ inline void Callee::runWithDowncast(const Func& func)
         func(static_cast<OSREntryCallee*>(this));
         break;
 #else
-    case CompilationMode::BBQMode:
-    case CompilationMode::BBQForOSREntryMode:
     case CompilationMode::OMGMode:
     case CompilationMode::OMGForOSREntryMode:
         break;
@@ -371,18 +375,6 @@ IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& i
     return indexOrName();
 }
 
-void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)
-{
-    size_t count = unlinkedExceptionHandlers.size();
-    m_exceptionHandlers = FixedVector<HandlerInfo>(count);
-    for (size_t i = 0; i < count; i++) {
-        HandlerInfo& handler = m_exceptionHandlers[i];
-        const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
-        CodeLocationLabel<ExceptionHandlerPtrTag> location = exceptionHandlerLocations[i];
-        handler.initialize(unlinkedHandler, location);
-    }
-}
-
 const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 {
     auto iter = m_stackmaps.find(callSiteIndex);
@@ -397,6 +389,22 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
     RELEASE_ASSERT(iter != m_stackmaps.end());
     return iter->value;
 }
+#endif
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
+void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)
+{
+    size_t count = unlinkedExceptionHandlers.size();
+    m_exceptionHandlers = FixedVector<HandlerInfo>(count);
+    for (size_t i = 0; i < count; i++) {
+        HandlerInfo& handler = m_exceptionHandlers[i];
+        const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
+        CodeLocationLabel<ExceptionHandlerPtrTag> location = exceptionHandlerLocations[i];
+        handler.initialize(unlinkedHandler, location);
+    }
+}
+
 #endif
 
 } } // namespace JSC::Wasm

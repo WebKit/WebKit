@@ -1400,6 +1400,34 @@ public:
         return !immediate.isUInt12();
     }
 
+    // Popcount (could be implemented via VCNT?)
+
+    static bool supportsCountPopulation() { return false; }
+
+    NO_RETURN_DUE_TO_CRASH void countPopulation32(RegisterID, RegisterID)
+    {
+        ASSERT(!supportsCountPopulation());
+        CRASH();
+    }
+
+    NO_RETURN_DUE_TO_CRASH void countPopulation32(RegisterID, RegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsCountPopulation());
+        CRASH();
+    }
+
+    NO_RETURN_DUE_TO_CRASH void countPopulation64(RegisterID, RegisterID)
+    {
+        ASSERT(!supportsCountPopulation());
+        CRASH();
+    }
+
+    NO_RETURN_DUE_TO_CRASH void countPopulation64(RegisterID, RegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsCountPopulation());
+        CRASH();
+    }
+
     // Floating-point operations:
 
     static bool supportsFloatingPoint() { return true; }
