@@ -30,7 +30,6 @@
 #include "CodeBlock.h"
 #include "JSCConfig.h"
 #include "LLIntCLoop.h"
-#include "LLIntEntrypoint.h"
 #include "LLIntPCRanges.h"
 #include "LLIntSlowPaths.h"
 #include "LLIntThunks.h"
@@ -261,7 +260,6 @@ void initialize()
     INITIALIZE_TAG_AND_UNTAG_THUNKS(llint_function_for_construct_arity_check);
 #endif // CPU(ARM64E)
 #endif // ENABLE(C_LOOP)
-    g_jscConfig.defaultCallThunk = defaultCall().code().taggedPtr();
 }
 
 IGNORE_WARNINGS_BEGIN("missing-noreturn")

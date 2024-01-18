@@ -44,7 +44,6 @@
 
 namespace JSC {
 
-class CallLinkInfo;
 #if ENABLE(WEBASSEMBLY)
 namespace Wasm {
 class Callee;
@@ -158,7 +157,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static String stackTraceAsString(VM&, const Vector<StackFrame>&);
 
-        void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max(), JSCell* caller = nullptr, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr);
+        void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max(), JSCell* caller = nullptr);
 
         static JSValue checkVMEntryPermission();
 

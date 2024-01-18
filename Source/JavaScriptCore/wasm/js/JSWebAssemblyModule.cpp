@@ -141,7 +141,7 @@ void JSWebAssemblyModule::clearJSCallICs(VM& vm)
 {
 #if ENABLE(JIT)
     for (auto& callLinkInfo : m_callLinkInfos)
-        callLinkInfo.unlinkOrUpgrade(vm, nullptr, nullptr);
+        callLinkInfo.unlink(vm);
 #else
     UNUSED_PARAM(vm);
 #endif

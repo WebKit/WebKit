@@ -45,12 +45,6 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlo
 {
 }
 
-StackFrame::StackFrame(VM& vm, JSCell* owner, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
-    : m_codeBlock(vm, owner, codeBlock)
-    , m_bytecodeIndex(bytecodeIndex)
-{
-}
-
 StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
     : m_wasmFunctionIndexOrName(indexOrName)
     , m_isWasmFrame(true)
@@ -123,13 +117,6 @@ String StackFrame::functionName(VM& vm) const
     if (m_callee) {
         if (m_callee->isObject())
             name = getCalculatedDisplayName(vm, jsCast<JSObject*>(m_callee.get())).impl();
-
-        return name.isNull() ? emptyString() : name;
-    }
-
-    if (m_codeBlock) {
-        if (auto* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable()))
-            name = executable->ecmaName().impl();
     }
 
     return name.isNull() ? emptyString() : name;

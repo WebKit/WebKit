@@ -588,52 +588,17 @@ LLINT_SLOW_PATH_DECL(stack_check)
     LLINT_RETURN_TWO(pc, callFrame);
 }
 
-extern "C" UGPRPair llint_default_call(CallFrame* calleeFrame, JSCell* globalObjectCell, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair llint_link_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
 {
-    JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(globalObjectCell);
-    VM& vm = globalObject->vm();
-    sanitizeStackForVM(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
-    calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = linkFor(globalObject, owner, calleeFrame, callLinkInfo);
-    ensureStillAliveHere(owner);
-    if (UNLIKELY(scope.exception()))
-        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
-    return encodeResult(callTarget, nullptr);
+    return linkFor(calleeFrame, jsCast<JSGlobalObject*>(globalObject), callLinkInfo);
 }
 
-extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, JSCell* globalObjectCell, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
 {
-    JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(globalObjectCell);
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* calleeAsFunctionCellIgnored;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
-    calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = virtualForWithFunction(globalObject, owner, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
-    ensureStillAliveHere(owner);
-    if (UNLIKELY(scope.exception()))
-        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
-    return encodeResult(callTarget, nullptr);
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
+    return virtualForWithFunction(jsCast<JSGlobalObject*>(globalObject), calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_object)

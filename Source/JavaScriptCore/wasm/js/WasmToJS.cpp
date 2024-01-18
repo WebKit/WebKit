@@ -100,8 +100,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     } else
         jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
 
-    callLinkInfo = OptimizingCallLinkInfo(CodeOrigin(), CallLinkInfo::UseDataIC::No, nullptr);
-    callLinkInfo.setUpCall(CallLinkInfo::Call);
+    callLinkInfo = OptimizingCallLinkInfo(CodeOrigin(), CallLinkInfo::UseDataIC::No);
+    callLinkInfo.setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
 
     // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
     // If parameters or results contain v128, throw a TypeError.
@@ -332,15 +332,14 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
-    // Callee needs to be in regT0 here.
-    jit.move(importJSCellGPRReg, BaselineJITRegisters::Call::calleeGPR);
-    auto [slowPath, dispatchLabel] = CallLinkInfo::emitFastPath(jit, &callLinkInfo, BaselineJITRegisters::Call::calleeGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+    auto slowPath = CallLinkInfo::emitFastPath(jit, &callLinkInfo, importJSCellGPRReg, InvalidGPRReg);
 
     JIT::Jump done = jit.jump();
     slowPath.link(&jit);
     auto slowPathStart = jit.label();
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfGlobalObject()), BaselineJITRegisters::Call::globalObjectGPR);
-    CallLinkInfo::emitSlowPath(vm, jit, &callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+    // Callee needs to be in regT0 here.
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfGlobalObject()), GPRInfo::regT3);
+    callLinkInfo.emitSlowPath(vm, jit);
     done.link(&jit);
     auto doneLocation = jit.label();
 

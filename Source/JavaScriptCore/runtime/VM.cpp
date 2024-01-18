@@ -802,6 +802,15 @@ CodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializatio
     return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_construct_trampoline);
 }
 
+MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTILinkCall()
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return getCTIStub(CommonJITThunkID::LinkCall).template retagged<JSEntryPtrTag>();
+#endif
+    return LLInt::getCodeRef<JSEntryPtrTag>(llint_link_call_trampoline);
+}
+
 MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTIThrowExceptionFromCallSlowPath()
 {
 #if ENABLE(JIT)

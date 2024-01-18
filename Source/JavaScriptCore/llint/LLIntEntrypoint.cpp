@@ -191,15 +191,6 @@ static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
     codeBlock->setJITCode(*jitCode);
 }
 
-MacroAssemblerCodeRef<JSEntryPtrTag> defaultCall()
-{
-#if ENABLE(JIT)
-    if (Options::useJIT())
-        return defaultCallThunk();
-#endif // ENABLE(JIT)
-    return LLInt::getCodeRef<JSEntryPtrTag>(llint_default_call_trampoline);
-}
-
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint()
 {
 #if ENABLE(JIT)

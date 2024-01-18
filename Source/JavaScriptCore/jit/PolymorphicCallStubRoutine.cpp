@@ -38,32 +38,23 @@
 
 namespace JSC {
 
-void PolymorphicCallNode::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
+void PolymorphicCallNode::unlinkImpl(VM& vm)
 {
-    // We first remove itself from the linked-list before unlinking callLinkInfo.
-    // The reason is that callLinkInfo can potentially link PolymorphicCallNode's stub itself, and it may destroy |this| (the other CallLinkInfo
+    // We first remove itself from the linked-list before unlinking m_callLinkInfo.
+    // The reason is that m_callLinkInfo can potentially link PolymorphicCallNode's stub itself, and it may destroy |this| (the other CallLinkInfo
     // does not do it since it is not chained in PolymorphicCallStubRoutine).
     if (isOnList())
         remove();
 
-    if (!m_cleared) {
-        if (!newCodeBlock || !owner()->upgradeIfPossible(vm, oldCodeBlock, newCodeBlock, m_index)) {
-            m_cleared = true;
-            CallLinkInfo* callLinkInfo = owner()->callLinkInfo();
-            dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", callLinkInfo->doneLocation(), ", bc#", callLinkInfo->codeOrigin().bytecodeIndex());
-            callLinkInfo->unlinkOrUpgrade(vm, oldCodeBlock, newCodeBlock);
-        }
+    if (m_callLinkInfo) {
+        dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", m_callLinkInfo->doneLocation(), ", bc#", m_callLinkInfo->codeOrigin().bytecodeIndex());
+        m_callLinkInfo->unlink(vm);
     }
 }
 
-void PolymorphicCallNode::clear()
+void PolymorphicCallNode::clearCallLinkInfo()
 {
-    m_cleared = true;
-}
-
-PolymorphicCallStubRoutine* PolymorphicCallNode::owner()
-{
-    return bitwise_cast<PolymorphicCallStubRoutine*>(this - m_index + m_totalSize);
+    m_callLinkInfo = nullptr;
 }
 
 void PolymorphicCallCase::dump(PrintStream& out) const
@@ -71,64 +62,52 @@ void PolymorphicCallCase::dump(PrintStream& out) const
     out.print("<variant = ", m_variant, ", codeBlock = ", pointerDump(m_codeBlock), ">");
 }
 
-PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<CallSlot, 16>& callSlots, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting, bool isClosureCall)
-    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, code, owner)
-    , ButterflyArray<PolymorphicCallStubRoutine, PolymorphicCallNode, CallSlot>(headerSize, trailingSize)
+PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& info, const Vector<PolymorphicCallCase, 16>& cases, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting)
+    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef, owner)
+    , ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot>(headerSize, trailingSize)
+    , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
-    , m_callLinkInfo(&callLinkInfo)
     , m_notUsingCounting(notUsingCounting)
-    , m_isDataIC(m_callLinkInfo->isDataIC())
-    , m_isClosureCall(isClosureCall)
 {
-    for (unsigned index = 0; index < callSlots.size(); ++index) {
-        auto& slot = trailingSpan()[index];
-        slot = callSlots[index];
-
+    for (unsigned index = 0; index < cases.size(); ++index) {
+        const PolymorphicCallCase& callCase = cases[index];
+        m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
         if (callerFrame && !callerFrame->isNativeCalleeFrame())
-            dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", CallVariant(slot.m_calleeOrExecutable), ", codeBlock = ", pointerDump(slot.m_codeBlock));
-
-        auto& callNode = leadingSpan()[index];
-        callNode.initialize(index, headerSize);
-        if (CodeBlock* codeBlock = slot.m_codeBlock)
-            codeBlock->linkIncomingCall(owner, &callNode);
-
-        vm.writeBarrier(owner, slot.m_calleeOrExecutable);
+            dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()));
+        if (CodeBlock* codeBlock = callCase.codeBlock())
+            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&info));
     }
-
     WTF::storeStoreFence();
-    bool isCodeImmutable = m_isDataIC;
+    constexpr bool isCodeImmutable = false;
     makeGCAware(vm, isCodeImmutable);
 }
 
-bool PolymorphicCallStubRoutine::upgradeIfPossible(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock, uint8_t index)
+PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<PolymorphicCallCase, 16>& cases, const Vector<CallSlot, 16>& callSlots, bool notUsingCounting)
+    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, code, owner)
+    , ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot>(headerSize, trailingSize)
+    , m_variants(cases.size())
+    , m_notUsingCounting(notUsingCounting)
 {
-    // Not DataIC.
-    if (!m_isDataIC)
-        return false;
-
-    // It is possible that we can just upgrade the CallSlot and continue using this PolymorphicCallStubRoutine instead of unlinking CallLinkInfo.
-    auto& callNode = leadingSpan()[index];
-    auto& slot = trailingSpan()[index];
-
-    if (callNode.isOnList())
-        return false;
-
-    if (slot.m_codeBlock != oldCodeBlock)
-        return false;
-
-    auto target = newCodeBlock->jitCode()->addressForCall(slot.m_arityCheckMode);
-    slot.m_codeBlock = newCodeBlock;
-    slot.m_target = target;
-    newCodeBlock->linkIncomingCall(m_callLinkInfo->owner(), &callNode); // This is just relinking. So owner and caller frame can be nullptr.
-    return true;
+    for (unsigned index = 0; index < cases.size(); ++index) {
+        const PolymorphicCallCase& callCase = cases[index];
+        m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
+        if (callerFrame && !callerFrame->isNativeCalleeFrame())
+            dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()));
+        if (CodeBlock* codeBlock = callCase.codeBlock())
+            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&callLinkInfo), /* skipFirstFrame */ true);
+    }
+    for (unsigned index = 0; index < callSlots.size(); ++index)
+        trailingSpan()[index] = callSlots[index];
+    WTF::storeStoreFence();
+    constexpr bool isCodeImmutable = true;
+    makeGCAware(vm, isCodeImmutable);
 }
 
 CallVariantList PolymorphicCallStubRoutine::variants() const
 {
     CallVariantList result;
-    forEachDependentCell([&](JSCell* cell) {
-        result.append(CallVariant(cell));
-    });
+    for (size_t i = 0; i < m_variants.size(); ++i)
+        result.append(CallVariant(m_variants[i].get()));
     return result;
 }
 
@@ -149,23 +128,24 @@ bool PolymorphicCallStubRoutine::hasEdges() const
 CallEdgeList PolymorphicCallStubRoutine::edges() const
 {
     CallEdgeList result;
-    unsigned index = 0;
-    forEachDependentCell([&](JSCell* cell) {
-        unsigned count = 0;
-        if (m_fastCounts)
-            count = m_fastCounts[index];
-        else
-            count = trailingSpan()[index].m_count;
-        result.append(CallEdge(CallVariant(cell), count));
-        ++index;
-    });
+    if (m_fastCounts) {
+        for (size_t i = 0; i < m_variants.size(); ++i)
+            result.append(CallEdge(CallVariant(m_variants[i].get()), m_fastCounts[i]));
+    } else {
+        for (size_t i = 0; i < m_variants.size(); ++i)
+            result.append(CallEdge(CallVariant(m_variants[i].get()), trailingSpan()[i].m_count));
+    }
     return result;
 }
 
-void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo*)
+void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo* info)
 {
-    for (auto& callNode : leadingSpan())
-        callNode.clear();
+    for (Bag<PolymorphicCallNode>::iterator iter = m_callNodes.begin(); !!iter; ++iter) {
+        PolymorphicCallNode& node = **iter;
+        // All nodes should point to info, but okay to be a little paranoid.
+        if (node.hasCallLinkInfo(info))
+            node.clearCallLinkInfo();
+    }
 }
 
 bool PolymorphicCallStubRoutine::visitWeakImpl(VM& vm)
@@ -180,9 +160,8 @@ bool PolymorphicCallStubRoutine::visitWeakImpl(VM& vm)
 template<typename Visitor>
 ALWAYS_INLINE void PolymorphicCallStubRoutine::markRequiredObjectsInternalImpl(Visitor& visitor)
 {
-    forEachDependentCell([&](JSCell* cell) {
-        visitor.appendUnbarriered(cell);
-    });
+    for (auto& variant : m_variants)
+        visitor.append(variant);
 }
 
 void PolymorphicCallStubRoutine::markRequiredObjectsImpl(AbstractSlotVisitor& visitor)
@@ -192,11 +171,6 @@ void PolymorphicCallStubRoutine::markRequiredObjectsImpl(AbstractSlotVisitor& vi
 void PolymorphicCallStubRoutine::markRequiredObjectsImpl(SlotVisitor& visitor)
 {
     markRequiredObjectsInternalImpl(visitor);
-}
-
-void PolymorphicCallStubRoutine::destroy(PolymorphicCallStubRoutine* derived)
-{
-    delete derived;
 }
 
 } // namespace JSC

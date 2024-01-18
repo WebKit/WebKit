@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ErrorInstance.h"
 #include "FrameTracers.h"
 #include "LLIntEntrypoint.h"
 #include "Repatch.h"
@@ -34,50 +33,7 @@
 
 namespace JSC {
 
-inline void* throwNotAFunctionErrorFromCallIC(JSGlobalObject* globalObject, JSCell* owner, JSValue callee, CallLinkInfo* callLinkInfo)
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a function"_s);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    if (UNLIKELY(!errorMessage)) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-
-    // Call IC will throw these errors after throwing away the caller's frame when it is a tail-call.
-    // But we would like to have error information for them from the thrown frame.
-    // This frame information can be reconstructed easily since we have CodeOrigin and owner CodeBlock for CallLinkInfo.
-    auto [codeBlock, bytecodeIndex] = callLinkInfo->retrieveCaller(owner);
-    if (codeBlock)
-        errorMessage = appendSourceToErrorMessage(codeBlock, bytecodeIndex, errorMessage, runtimeTypeForValue(callee), notAFunctionSourceAppender);
-    auto* error = ErrorInstance::create(vm, globalObject->errorStructure(ErrorType::TypeError), errorMessage, JSValue(), ErrorType::TypeError, owner, callLinkInfo);
-    throwException(globalObject, scope, error);
-    return nullptr;
-}
-
-inline void* throwNotAConstructorErrorFromCallIC(JSGlobalObject* globalObject, JSCell* owner, JSValue callee, CallLinkInfo* callLinkInfo)
-{
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto errorMessage = constructErrorMessage(globalObject, callee, "is not a constructor"_s);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    if (UNLIKELY(!errorMessage)) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-    // Call IC will throw these errors after throwing away the caller's frame when it is a tail-call.
-    // But we would like to have error information for them from the thrown frame.
-    // This frame information can be reconstructed easily since we have CodeOrigin and owner CodeBlock for CallLinkInfo.
-    auto [codeBlock, bytecodeIndex] = callLinkInfo->retrieveCaller(owner);
-    if (codeBlock)
-        errorMessage = appendSourceToErrorMessage(codeBlock, bytecodeIndex, errorMessage, runtimeTypeForValue(callee), defaultSourceAppender);
-    auto* error = ErrorInstance::create(vm, globalObject->errorStructure(ErrorType::TypeError), errorMessage, JSValue(), ErrorType::TypeError, owner, callLinkInfo);
-    throwException(globalObject, scope, error);
-    return nullptr;
-}
-
-inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
+inline UGPRPair handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -93,14 +49,23 @@ inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFra
             calleeFrame->setCallee(asObject(callee));
             vm.encodedHostCallReturnValue = callData.native.function(asObject(callee)->globalObject(), calleeFrame);
             DisallowGC disallowGC;
-            if (UNLIKELY(scope.exception()))
-                return nullptr;
-            return LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr();
+            if (UNLIKELY(scope.exception())) {
+                return encodeResult(
+                    vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr(),
+                    reinterpret_cast<void*>(KeepTheFrame));
+            }
+
+            return encodeResult(
+                LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(),
+                reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
 
         calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
         ASSERT(callData.type == CallData::Type::None);
-        RELEASE_AND_RETURN(scope, throwNotAFunctionErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
+        throwException(globalObject, scope, createNotAFunctionError(globalObject, callee));
+        return encodeResult(
+            vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr(),
+            reinterpret_cast<void*>(KeepTheFrame));
     }
 
     ASSERT(callLinkInfo->specializationKind() == CodeForConstruct);
@@ -113,22 +78,31 @@ inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFra
         calleeFrame->setCallee(asObject(callee));
         vm.encodedHostCallReturnValue = constructData.native.function(asObject(callee)->globalObject(), calleeFrame);
         DisallowGC disallowGC;
-        if (UNLIKELY(scope.exception()))
-            return nullptr;
-        return LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr();
+        if (UNLIKELY(scope.exception())) {
+            return encodeResult(
+                vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr(),
+                reinterpret_cast<void*>(KeepTheFrame));
+        }
+
+        return encodeResult(LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), reinterpret_cast<void*>(KeepTheFrame));
     }
 
     calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
     ASSERT(constructData.type == CallData::Type::None);
-    RELEASE_AND_RETURN(scope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
+    throwException(globalObject, scope, createNotAConstructorError(globalObject, callee));
+    return encodeResult(
+        vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr(),
+        reinterpret_cast<void*>(KeepTheFrame));
 }
 
-ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
+ALWAYS_INLINE UGPRPair linkFor(CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo)
 {
+    CallFrame* callFrame = calleeFrame->callerFrame();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     RELEASE_ASSERT(!callLinkInfo->isDirect());
 
@@ -139,33 +113,15 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             RELEASE_ASSERT(!!codePtr);
 
-            switch (callLinkInfo->mode()) {
-            case CallLinkInfo::Mode::Init: {
-                if (!callLinkInfo->seenOnce())
-                    callLinkInfo->setSeen();
-                else
-                    linkMonomorphicCall(vm, owner, *callLinkInfo, nullptr, internalFunction, codePtr);
-                break;
-            }
-            case CallLinkInfo::Mode::Monomorphic:
-            case CallLinkInfo::Mode::Polymorphic: {
-#if ENABLE(JIT)
-                if (kind == CodeForCall && callLinkInfo->allowStubs()) {
-                    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
-                    break;
-                }
-#endif
-                callLinkInfo->setVirtualCall(vm, owner);
-                break;
-            }
-            case CallLinkInfo::Mode::Virtual:
-            case CallLinkInfo::Mode::LinkedDirect:
-                break;
-            }
+            if (!callLinkInfo->seenOnce())
+                callLinkInfo->setSeen();
+            else
+                linkMonomorphicCall(vm, calleeFrame, *callLinkInfo, nullptr, internalFunction, codePtr);
 
-            return codePtr.taggedPtr();
+            void* linkedTarget = codePtr.taggedPtr();
+            return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
-        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, owner, calleeFrame, calleeAsValue, callLinkInfo));
+        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -184,12 +140,19 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
-        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
-            RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
+        auto handleThrowException = [&] () {
+            void* throwTarget = vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr();
+            return encodeResult(throwTarget, reinterpret_cast<void*>(KeepTheFrame));
+        };
+
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            throwException(globalObject, throwScope, createNotAConstructorError(globalObject, callee));
+            return handleThrowException();
+        }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        RETURN_IF_EXCEPTION(throwScope, handleThrowException());
 
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
@@ -202,34 +165,15 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
 
-    switch (callLinkInfo->mode()) {
-    case CallLinkInfo::Mode::Init: {
-        if (!callLinkInfo->seenOnce())
-            callLinkInfo->setSeen();
-        else
-            linkMonomorphicCall(vm, owner, *callLinkInfo, codeBlock, callee, codePtr);
-        break;
-    }
-    case CallLinkInfo::Mode::Monomorphic:
-    case CallLinkInfo::Mode::Polymorphic: {
-#if ENABLE(JIT)
-        if (kind == CodeForCall && callLinkInfo->allowStubs()) {
-            linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
-            break;
-        }
-#endif
-        callLinkInfo->setVirtualCall(vm, owner);
-        break;
-    }
-    case CallLinkInfo::Mode::Virtual:
-    case CallLinkInfo::Mode::LinkedDirect:
-        break;
-    }
+    if (!callLinkInfo->seenOnce())
+        callLinkInfo->setSeen();
+    else
+        linkMonomorphicCall(vm, calleeFrame, *callLinkInfo, codeBlock, callee, codePtr);
 
-    return codePtr.taggedPtr();
+    return encodeResult(codePtr.taggedPtr(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
-ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
+ALWAYS_INLINE UGPRPair virtualForWithFunction(JSGlobalObject* globalObject, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -242,9 +186,9 @@ ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell*
         if (jsDynamicCast<InternalFunction*>(calleeAsValue)) {
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
-            return codePtr.taggedPtr();
+            return encodeResult(codePtr.taggedPtr(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
-        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, owner, calleeFrame, calleeAsValue, callLinkInfo));
+        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -256,17 +200,26 @@ ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell*
     if (!executable->isHostFunction()) {
         FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
 
-        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
-            RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, function, callLinkInfo));
+        auto handleThrowException = [&] () {
+            void* throwTarget = vm.getCTIThrowExceptionFromCallSlowPath().code().taggedPtr();
+            return encodeResult(throwTarget, reinterpret_cast<void*>(KeepTheFrame));
+        };
+
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            throwException(globalObject, throwScope, createNotAConstructorError(globalObject, function));
+            return handleThrowException();
+        }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        RETURN_IF_EXCEPTION(throwScope, handleThrowException());
     }
 
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
-    return executable->entrypointFor(kind, MustCheckArity).taggedPtr();
+    return encodeResult(executable->entrypointFor(
+        kind, MustCheckArity).taggedPtr(),
+        reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
 } // namespace JSC

@@ -77,7 +77,6 @@ MacroAssemblerCodeRef<JSEntryPtrTag> functionForConstructArityCheckThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> evalEntryThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> programEntryThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> moduleProgramEntryThunk();
-MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointThunk(OpcodeSize);
 MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk();

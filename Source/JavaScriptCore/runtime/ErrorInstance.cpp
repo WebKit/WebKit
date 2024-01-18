@@ -70,11 +70,16 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    return create(vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
+    return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
 }
 
-String appendSourceToErrorMessage(CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, const String& message, RuntimeType type, ErrorInstance::SourceAppender appender)
+static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
 {
+    ErrorInstance::SourceAppender appender = exception->sourceAppender();
+    exception->clearSourceAppender();
+    RuntimeType type = exception->runtimeTypeForCause();
+    exception->clearRuntimeTypeForCause();
+
     if (!codeBlock->hasExpressionInfo() || message.isNull())
         return message;
     
@@ -112,7 +117,7 @@ String appendSourceToErrorMessage(CodeBlock* codeBlock, BytecodeIndex bytecodeIn
     return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
 }
 
-void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -120,7 +125,7 @@ void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause,
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
 
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, useCurrentFrame);
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(globalObject, vm, this, useCurrentFrame);
     {
         Locker locker { cellLock() };
         m_stackTrace = WTFMove(stackTrace);
@@ -130,35 +135,12 @@ void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause,
     String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         auto [codeBlock, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
-        if (codeBlock) {
-            ErrorInstance::SourceAppender appender = sourceAppender();
-            clearSourceAppender();
-            RuntimeType type = runtimeTypeForCause();
-            clearRuntimeTypeForCause();
-            messageWithSource = appendSourceToErrorMessage(codeBlock, bytecodeIndex, message, type, appender);
-        }
+        if (codeBlock)
+            messageWithSource = appendSourceToErrorMessage(codeBlock, this, bytecodeIndex, message);
     }
 
     if (!messageWithSource.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(messageWithSource)), static_cast<unsigned>(PropertyAttribute::DontEnum));
-
-    if (!cause.isEmpty())
-        putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
-}
-
-void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause, JSCell* owner, CallLinkInfo* callLinkInfo)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, /* useCurrentFrame */ true, owner, callLinkInfo);
-    {
-        Locker locker { cellLock() };
-        m_stackTrace = WTFMove(stackTrace);
-    }
-    vm.writeBarrier(this);
-    if (!message.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));

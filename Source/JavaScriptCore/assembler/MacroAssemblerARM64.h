@@ -2130,23 +2130,6 @@ public:
         transfer64(src, dest);
     }
 
-    void transfer32(BaseIndex src, BaseIndex dest)
-    {
-        load32(src, getCachedDataTempRegisterIDAndInvalidate());
-        store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    void transfer64(BaseIndex src, BaseIndex dest)
-    {
-        load64(src, getCachedDataTempRegisterIDAndInvalidate());
-        store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    void transferPtr(BaseIndex src, BaseIndex dest)
-    {
-        transfer64(src, dest);
-    }
-
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);

@@ -33,19 +33,19 @@
 
 namespace JSC {
 
-void CallLinkInfoBase::unlinkOrUpgrade(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
+void CallLinkInfoBase::unlink(VM& vm)
 {
     switch (callSiteType()) {
     case CallSiteType::CallLinkInfo:
-        static_cast<CallLinkInfo*>(this)->unlinkOrUpgradeImpl(vm, oldCodeBlock, newCodeBlock);
+        static_cast<CallLinkInfo*>(this)->unlinkImpl(vm);
         break;
 #if ENABLE(JIT)
     case CallSiteType::PolymorphicCallNode:
-        static_cast<PolymorphicCallNode*>(this)->unlinkOrUpgradeImpl(vm, oldCodeBlock, newCodeBlock);
+        static_cast<PolymorphicCallNode*>(this)->unlinkImpl(vm);
         break;
 #endif
     case CallSiteType::CachedCall:
-        static_cast<CachedCall*>(this)->unlinkOrUpgradeImpl(vm, oldCodeBlock, newCodeBlock);
+        static_cast<CachedCall*>(this)->unlinkImpl(vm);
         break;
     }
 }

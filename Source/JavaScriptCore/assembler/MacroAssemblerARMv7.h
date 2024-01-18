@@ -1317,17 +1317,6 @@ public:
         transfer32(src, dest);
     }
 
-    void transfer32(BaseIndex src, BaseIndex dest)
-    {
-        load32(src, dataTempRegister);
-        store32(dataTempRegister, dest);
-    }
-
-    void transferPtr(BaseIndex src, BaseIndex dest)
-    {
-        transfer32(src, dest);
-    }
-
     void storeCond8(RegisterID src, Address addr, RegisterID result)
     {
         ASSERT(!addr.offset);

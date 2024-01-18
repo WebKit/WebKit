@@ -301,49 +301,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunkSIMD()
 }
 #endif // ENABLE(WEBASSEMBLY)
 
-MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JSEntryPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
-        // The return address is on the stack, or in the link register. We will hence
-        // jump to the callee, or save the return address to the call frame while we
-        // make a C++ function call to the appropriate JIT operation.
-
-        // regT0 => callee
-        // regT1 => tag (32bit)
-        // regT2 => CallLinkInfo*
-        // regT3 => JSGlobalObject*
-
-        CCallHelpers jit;
-
-        jit.emitFunctionPrologue();
-        if (maxFrameExtentForSlowPathCall)
-            jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-        jit.setupArguments<decltype(operationDefaultCall)>(GPRInfo::regT3, GPRInfo::regT2);
-        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationDefaultCall)), GPRInfo::nonArgGPR0);
-        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
-        if (maxFrameExtentForSlowPathCall)
-            jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-
-        // This slow call will return the address of one of the following:
-        // 1) Exception throwing thunk.
-        // 2) Host call return value returner thingy.
-        // 3) The function to call.
-        // The second return value GPR will hold a non-zero value for tail calls.
-
-        jit.emitFunctionEpilogue();
-        jit.untagReturnAddress();
-        jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
-
-        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, JSEntryPtrTag, "Default Call thunk"));
-        return;
-    });
-    return codeRef;
-}
-
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
 {
     static LazyNeverDestroyed<MacroAssemblerCodeRef<JSEntryPtrTag>> codeRef;

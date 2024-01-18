@@ -158,7 +158,7 @@ static StringView functionCallBase(StringView sourceText)
     return sourceText.left(idx + 1);
 }
 
-String notAFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String notAFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     ASSERT(type != TypeFunction);
 
@@ -258,23 +258,13 @@ static String invalidPrototypeSourceAppender(const String& originalMessage, Stri
     return "The value of the superclass's prototype property is not an object or null."_s;
 }
 
-String constructErrorMessage(JSGlobalObject* globalObject, JSValue value, const String& message)
-{
-    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    String valueDescription = errorDescriptionForValue(globalObject, value);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!valueDescription)
-        return valueDescription;
-    return tryMakeString(valueDescription, ' ', message);
-}
-
 JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto errorMessage = constructErrorMessage(globalObject, value, message);
-    if (UNLIKELY(scope.exception() || !errorMessage)) {
+    String valueDescription = errorDescriptionForValue(globalObject, value);
+    if (scope.exception() || !valueDescription) {
         // When we see an exception, we're not returning immediately because
         // we're in a CatchScope, i.e. no exceptions are thrown past this scope.
         // We're using a CatchScope because the contract for createError() is
@@ -282,9 +272,13 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
         scope.clearException();
         return createOutOfMemoryError(globalObject);
     }
+    String errorMessage = tryMakeString(valueDescription, ' ', message);
+    if (!errorMessage)
+        return createOutOfMemoryError(globalObject);
     scope.assertNoException();
     JSObject* exception = createTypeError(globalObject, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
+
     return exception;
 }
 

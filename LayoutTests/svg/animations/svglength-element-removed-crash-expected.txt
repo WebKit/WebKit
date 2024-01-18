@@ -1,5 +1,1 @@
-PASS x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10 x = 10
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+PASS x = 10

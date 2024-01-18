@@ -1265,23 +1265,6 @@ public:
         transfer64(src, dest);
     }
 
-    void transfer32(BaseIndex src, BaseIndex dest)
-    {
-        load32(src, scratchRegister());
-        store32(scratchRegister(), dest);
-    }
-
-    void transfer64(BaseIndex src, BaseIndex dest)
-    {
-        load64(src, scratchRegister());
-        store64(scratchRegister(), dest);
-    }
-
-    void transferPtr(BaseIndex src, BaseIndex dest)
-    {
-        transfer64(src, dest);
-    }
-
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         padBeforePatch();

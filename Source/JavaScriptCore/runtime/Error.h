@@ -66,7 +66,7 @@ JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, const String
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String&);
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
 
-std::unique_ptr<Vector<StackFrame>> getStackTrace(VM&, JSObject*, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo = nullptr, CallLinkInfo* = nullptr);
+std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM&, JSObject*, bool useCurrentFrame);
 std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
 bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, LineColumn&, String& sourceURL);
 bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);

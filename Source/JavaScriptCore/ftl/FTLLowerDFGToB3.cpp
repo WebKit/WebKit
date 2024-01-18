@@ -11287,15 +11287,16 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
                 auto* callLinkInfo = state->addCallLinkInfo(nodeSemanticOrigin);
-                callLinkInfo->setUpCall(nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call);
+                callLinkInfo->setUpCall(
+                    nodeOp == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
 
-                auto [slowPath, dispatchLabel] = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, BaselineJITRegisters::Call::callLinkInfoGPR);
+                auto slowPath = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg);
                 CCallHelpers::Jump done = jit.jump();
 
                 slowPath.link(&jit);
                 auto slowPathStart = jit.label();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), BaselineJITRegisters::Call::globalObjectGPR);
-                CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)), GPRInfo::regT3);
+                callLinkInfo->emitSlowPath(*vm, jit);
 
                 done.link(&jit);
 
@@ -11421,7 +11422,7 @@ IGNORE_CLANG_WARNINGS_END
                     shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
                     
                     auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
-                    callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall);
+                    callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
                     callLinkInfo->setExecutableDuringCompilation(executable);
                     if (numAllocatedArgs > numPassedArgs)
                         callLinkInfo->setDirectCallMaxArgumentCountIncludingThis(numAllocatedArgs);
@@ -11431,6 +11432,7 @@ IGNORE_CLANG_WARNINGS_END
                         CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
                     callLinkInfo->emitDirectTailCallFastPath(jit, scopedLambda<void()>([&]{
+                        callLinkInfo->setFrameShuffleData(shuffleData);
                         CallFrameShuffler(jit, shuffleData).prepareForTailCall();
                     }));
                     
@@ -11452,7 +11454,8 @@ IGNORE_CLANG_WARNINGS_END
                 }
                 
                 auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
-                callLinkInfo->setUpCall(isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall);
+                callLinkInfo->setUpCall(
+                    isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
 
                 callLinkInfo->setExecutableDuringCompilation(executable);
                 if (numAllocatedArgs > numPassedArgs)
@@ -11580,18 +11583,21 @@ IGNORE_CLANG_WARNINGS_END
                 shuffleData.setupCalleeSaveRegisters(state->jitCode->calleeSaveRegisters());
 
                 auto* callLinkInfo = state->addCallLinkInfo(codeOrigin);
-                callLinkInfo->setUpCall(CallLinkInfo::TailCall);
+                callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
 
-                auto [slowPath, dispatchLabel] = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
-                    CallFrameShuffler shuffler { jit, shuffleData };
-                    shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
-                    shuffler.prepareForTailCall();
+                auto slowPath = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg, scopedLambda<void()>([&]{
+                    callLinkInfo->setFrameShuffleData(shuffleData);
+                    CallFrameShuffler(jit, shuffleData).prepareForTailCall();
                 }));
 
-                auto slowPathStart = jit.label();
                 slowPath.link(&jit);
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), BaselineJITRegisters::Call::globalObjectGPR);
-                CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
+                auto slowPathStart = jit.label();
+                CallFrameShuffler slowPathShuffler(jit, shuffleData);
+                slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
+                slowPathShuffler.prepareForSlowPath();
+
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
+                callLinkInfo->emitSlowPath(*vm, jit);
 
                 auto doneLocation = jit.label();
                 jit.abortWithReason(JITDidReturnFromTailCall);
@@ -11914,35 +11920,31 @@ IGNORE_CLANG_WARNINGS_END
                 else
                     callType = CallLinkInfo::CallVarargs;
                 
-                callLinkInfo->setUpCall(callType);
+                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
                 ASSERT(!usedRegisters.contains(GPRInfo::regT2, IgnoreVectors)); // Used on the slow path.
 
                 CCallHelpers::JumpList slowPath;
-                CCallHelpers::Label dispatchLabel;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+                    slowPath = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg, scopedLambda<void()>([&]{
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
-                        RegisterSet preserved;
-                        preserved.add(GPRInfo::regT0, IgnoreVectors);
-                        jit.prepareForTailCallSlow(preserved);
+                        jit.prepareForTailCallSlow();
                     }));
                 } else {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg);
+                    slowPath = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg);
                     done = jit.jump();
                 }
                 
                 slowPath.link(&jit);
                 auto slowPathStart = jit.label();
-                // calleeGPR is always regT0. So we do not need to change it here.
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), BaselineJITRegisters::Call::globalObjectGPR);
+
                 if (isTailCall)
-                    CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
-                else
-                    CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+                    jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
+                callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
@@ -12201,32 +12203,29 @@ IGNORE_CLANG_WARNINGS_END
                 else
                     callType = CallLinkInfo::CallVarargs;
                 
-                callLinkInfo->setUpCall(callType);
+                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
                 
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
                 
                 CCallHelpers::JumpList slowPath;
-                CCallHelpers::Label dispatchLabel;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+                    slowPath = CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg, scopedLambda<void()>([&]{
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
-                        RegisterSet preserved;
-                        preserved.add(GPRInfo::regT0, IgnoreVectors);
-                        jit.prepareForTailCallSlow(preserved);
+                        jit.prepareForTailCallSlow();
                     }));
                 } else {
-                    std::tie(slowPath, dispatchLabel) = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg);
+                    slowPath = CallLinkInfo::emitFastPath(jit, callLinkInfo, GPRInfo::regT0, InvalidGPRReg);
                     done = jit.jump();
                 }
                 
                 slowPath.link(&jit);
                 auto slowPathStart = jit.label();
-                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), BaselineJITRegisters::Call::globalObjectGPR);
+
                 if (isTailCall)
-                    CallLinkInfo::emitTailCallSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
-                else
-                    CallLinkInfo::emitSlowPath(*vm, jit, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+                    jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
+                jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(semanticNodeOrigin)), GPRInfo::regT3);
+                callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
@@ -12320,7 +12319,7 @@ IGNORE_CLANG_WARNINGS_END
                     CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
                 
                 auto* callLinkInfo = state->addCallLinkInfo(semanticNodeOrigin);
-                callLinkInfo->setUpCall(CallLinkInfo::Call);
+                callLinkInfo->setUpCall(CallLinkInfo::Call, GPRInfo::regT0);
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), CCallHelpers::stackPointerRegister, GPRInfo::regT1);
                 jit.storePtr(GPRInfo::callFrameRegister, CCallHelpers::Address(GPRInfo::regT1, CallFrame::callerFrameOffset()));

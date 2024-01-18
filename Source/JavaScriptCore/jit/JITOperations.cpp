@@ -37,7 +37,6 @@
 #include "DFGOSREntry.h"
 #include "DFGThunks.h"
 #include "Debugger.h"
-#include "EnsureStillAliveHere.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
 #include "GetterSetter.h"
@@ -2051,79 +2050,82 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* f
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict()));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    sanitizeStackForVM(globalObject->vm());
+    return linkFor(calleeFrame, globalObject, callLinkInfo);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
     VM& vm = globalObject->vm();
     sanitizeStackForVM(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
-    calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = virtualForWithFunction(globalObject, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    CallFrame* callerFrame = calleeFrame->callerFrame();
+    JSCell* owner = callerFrame->codeOwnerCell();
     linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
-    ensureStillAliveHere(owner);
-    if (UNLIKELY(scope.exception()))
-        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-    return static_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
+
+    return result;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
     VM& vm = globalObject->vm();
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* calleeAsFunctionCell;
     NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
-    calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = virtualForWithFunction(globalObject, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
-    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
-    ensureStillAliveHere(owner);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
     if (UNLIKELY(scope.exception()))
         return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-    return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
     VM& vm = globalObject->vm();
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
+    JSCell* calleeAsFunctionCell;
     NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
-    calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = linkFor(globalObject, owner, calleeFrame, callLinkInfo);
-    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
-    ensureStillAliveHere(owner);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
     if (UNLIKELY(scope.exception()))
         return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-    return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
+    JSCell* calleeAsFunctionCellIgnored;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
+    return virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))

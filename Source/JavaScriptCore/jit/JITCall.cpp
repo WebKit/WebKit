@@ -61,94 +61,103 @@ void JIT::emitPutCallResult(const Op& bytecode)
     emitPutVirtualRegister(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), returnValueJSR);
 }
 
+
 template<typename Op>
-void JIT::compileSetupFrame(const Op& bytecode)
+std::enable_if_t<
+    Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
+    && Op::opcodeID != op_tail_call_varargs && Op::opcodeID != op_tail_call_forward_arguments
+, void>
+JIT::compileSetupFrame(const Op& bytecode)
 {
-    constexpr auto opcodeID = Op::opcodeID;
+    unsigned checkpoint = m_bytecodeIndex.checkpoint();
+    int argCountIncludingThis = argumentCountIncludingThisFor(bytecode, checkpoint);
+    int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
 
-    if constexpr (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        VirtualRegister thisValue = bytecode.m_thisValue;
-        VirtualRegister arguments = bytecode.m_arguments;
-        int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
-        int firstVarArgOffset = bytecode.m_firstVarArg;
 
-        {
-            constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Z_JITOperation_GJZZ, 0>();
-            constexpr JSValueRegs argumentsJSR = preferredArgumentJSR<Z_JITOperation_GJZZ, 1>();
-
-            Z_JITOperation_GJZZ sizeOperation;
-            if constexpr (opcodeID == op_tail_call_forward_arguments)
-                sizeOperation = operationSizeFrameForForwardArguments;
-            else
-                sizeOperation = operationSizeFrameForVarargs;
-
-            loadGlobalObject(globalObjectGPR);
-            emitGetVirtualRegister(arguments, argumentsJSR);
-            callOperation(sizeOperation, globalObjectGPR, argumentsJSR, -firstFreeRegister, firstVarArgOffset);
-            move(TrustedImm32(-firstFreeRegister), regT1);
-            emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
+    if constexpr (Op::opcodeID == op_call || Op::opcodeID == op_tail_call || Op::opcodeID == op_iterator_open || Op::opcodeID == op_call_ignore_result) {
+        if (shouldEmitProfiling()) {
+            constexpr JSValueRegs tmpJSR = returnValueJSR;
+            constexpr GPRReg tmpGPR = tmpJSR.payloadGPR();
+            emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), tmpJSR);
+            Jump done = branchIfNotCell(tmpJSR);
+            load32(Address(tmpJSR.payloadGPR(), JSCell::structureIDOffset()), tmpGPR);
+            store32ToMetadata(tmpGPR, bytecode, Op::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
+            done.link(this);
         }
+    }
+
+    addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
+    store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+}
+
+template<typename Op>
+std::enable_if_t<
+    Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
+    || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
+, void>
+JIT::compileSetupFrame(const Op& bytecode)
+{
+    VirtualRegister thisValue = bytecode.m_thisValue;
+    VirtualRegister arguments = bytecode.m_arguments;
+    int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
+    int firstVarArgOffset = bytecode.m_firstVarArg;
+
+    {
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Z_JITOperation_GJZZ, 0>();
+        constexpr JSValueRegs argumentsJSR = preferredArgumentJSR<Z_JITOperation_GJZZ, 1>();
+
+        Z_JITOperation_GJZZ sizeOperation;
+        if (Op::opcodeID == op_tail_call_forward_arguments)
+            sizeOperation = operationSizeFrameForForwardArguments;
+        else
+            sizeOperation = operationSizeFrameForVarargs;
+
+        loadGlobalObject(globalObjectGPR);
+        emitGetVirtualRegister(arguments, argumentsJSR);
+        callOperation(sizeOperation, globalObjectGPR, argumentsJSR, -firstFreeRegister, firstVarArgOffset);
+        move(TrustedImm32(-firstFreeRegister), regT1);
+        emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
+    }
 
 #if USE(JSVALUE64)
-        addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(void*)))), regT1, stackPointerRegister);
+    addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(void*)))), regT1, stackPointerRegister);
 #elif USE(JSVALUE32_64)
-        addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
+    addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
 #endif
 
-        {
-            emitGetVirtualRegister(arguments, jsRegT32);
-            F_JITOperation_GFJZZ setupOperation;
-            if constexpr (opcodeID == op_tail_call_forward_arguments)
-                setupOperation = operationSetupForwardArgumentsFrame;
-            else
-                setupOperation = operationSetupVarargsFrame;
-            loadGlobalObject(regT4);
-            callOperation(setupOperation, regT4, regT1, jsRegT32, firstVarArgOffset, regT0);
-            move(returnValueGPR, regT5);
-        }
-
-        // Profile the argument count.
-        load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
-        move(TrustedImm32(CallLinkInfo::maxProfiledArgumentCountIncludingThisForVarargs), regT0);
-#if CPU(ARM64) || CPU(X86_64)
-        moveConditionally32(Above, regT2, regT0, regT0, regT2, regT2);
-#else
-        auto lower = branch32(BelowOrEqual, regT2, regT0);
-        move(regT0, regT2);
-        lower.link(this);
-#endif
-        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT0);
-        Jump notBiggest = branch32(Above, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()), regT2);
-        store8(regT2, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()));
-        notBiggest.link(this);
-
-        // Initialize 'this'.
-        constexpr JSValueRegs thisJSR = jsRegT10;
-        emitGetVirtualRegister(thisValue, thisJSR);
-        storeValue(thisJSR, Address(regT5, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
-
-        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), regT5, stackPointerRegister);
-    } else {
-        unsigned checkpoint = m_bytecodeIndex.checkpoint();
-        int argCountIncludingThis = argumentCountIncludingThisFor(bytecode, checkpoint);
-        int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
-
-
-        if constexpr (opcodeID == op_call || opcodeID == op_tail_call || opcodeID == op_iterator_open || opcodeID == op_call_ignore_result) {
-            if (shouldEmitProfiling()) {
-                constexpr JSValueRegs tmpJSR = returnValueJSR;
-                constexpr GPRReg tmpGPR = tmpJSR.payloadGPR();
-                emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), tmpJSR);
-                Jump done = branchIfNotCell(tmpJSR);
-                load32(Address(tmpJSR.payloadGPR(), JSCell::structureIDOffset()), tmpGPR);
-                store32ToMetadata(tmpGPR, bytecode, Op::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
-                done.link(this);
-            }
-        }
-
-        addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
-        store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+    {
+        emitGetVirtualRegister(arguments, jsRegT32);
+        F_JITOperation_GFJZZ setupOperation;
+        if (Op::opcodeID == op_tail_call_forward_arguments)
+            setupOperation = operationSetupForwardArgumentsFrame;
+        else
+            setupOperation = operationSetupVarargsFrame;
+        loadGlobalObject(regT4);
+        callOperation(setupOperation, regT4, regT1, jsRegT32, firstVarArgOffset, regT0);
+        move(returnValueGPR, regT5);
     }
+
+    // Profile the argument count.
+    load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
+    move(TrustedImm32(CallLinkInfo::maxProfiledArgumentCountIncludingThisForVarargs), regT0);
+#if CPU(ARM64) || CPU(X86_64)
+    moveConditionally32(Above, regT2, regT0, regT0, regT2, regT2);
+#else
+    auto lower = branch32(BelowOrEqual, regT2, regT0);
+    move(regT0, regT2);
+    lower.link(this);
+#endif
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT0);
+    Jump notBiggest = branch32(Above, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()), regT2);
+    store8(regT2, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()));
+    notBiggest.link(this);
+
+    // Initialize 'this'.
+    constexpr JSValueRegs thisJSR = jsRegT10;
+    emitGetVirtualRegister(thisValue, thisJSR);
+    storeValue(thisJSR, Address(regT5, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+
+    addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), regT5, stackPointerRegister);
 }
 
 template<typename Op>
@@ -203,20 +212,18 @@ bool JIT::compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned)
 template<>
 bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkInfo* callLinkInfo, unsigned callLinkInfoIndex)
 {
-    auto [slowPaths, dispatchLabel] = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+    materializePointerIntoMetadata(bytecode, OpTailCall::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
+    JumpList slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
-        shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
         shuffler.lockGPR(BaselineJITRegisters::Call::callLinkInfoGPR);
         shuffler.lockGPR(BaselineJITRegisters::Call::globalObjectGPR);
-        shuffler.lockGPR(BaselineJITRegisters::Call::callTargetGPR);
         shuffler.prepareForTailCall();
     }));
     addSlowCase(slowPaths);
 
     auto doneLocation = label();
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-    m_callCompilationInfo[callLinkInfoIndex].dispatchLabel = dispatchLabel;
 
     return true;
 }
@@ -262,19 +269,18 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
         return;
     }
 
-    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
-
 #if USE(JSVALUE32_64)
     // We need this on JSVALUE32_64 only as on JSVALUE64 a pointer comparison in the DataIC fast
     // path catches this.
     addSlowCase(branchIfNotCell(BaselineJITRegisters::Call::calleeJSR));
 #endif
 
-    if constexpr (Op::opcodeID == op_tail_call)
+    if constexpr (Op::opcodeID == op_tail_call) {
         compileTailCall(bytecode, callLinkInfo, callLinkInfoIndex);
-    else {
+    } else {
+        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
         if constexpr (Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments) {
-            auto [slowPaths, dispatchLabel] = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+            auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
                 emitRestoreCalleeSaves();
                 prepareForTailCallSlow(RegisterSet {
                     BaselineJITRegisters::Call::calleeJSR.payloadGPR(),
@@ -282,20 +288,19 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
                     BaselineJITRegisters::Call::calleeJSR.tagGPR(),
 #endif
                     BaselineJITRegisters::Call::callLinkInfoGPR,
-                    BaselineJITRegisters::Call::globalObjectGPR,
-                    BaselineJITRegisters::Call::callTargetGPR,
+                    BaselineJITRegisters::Call::globalObjectGPR
                 });
             }));
             addSlowCase(slowPaths);
             auto doneLocation = label();
             m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-            m_callCompilationInfo[callLinkInfoIndex].dispatchLabel = dispatchLabel;
         } else {
-            auto [slowPaths, dispatchLabel] = CallLinkInfo::emitFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
-            addSlowCase(slowPaths);
+            auto slowPaths = CallLinkInfo::emitFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
             auto doneLocation = label();
+            addSlowCase(slowPaths);
+
             m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-            m_callCompilationInfo[callLinkInfoIndex].dispatchLabel = dispatchLabel;
+
             if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next)
                 setFastPathResumePoint();
             resetSP();
@@ -306,20 +311,27 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
 }
 
 template<typename Op>
-void JIT::compileOpCallSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
+void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
 {
-    constexpr OpcodeID opcodeID = Op::opcodeID;
+    OpcodeID opcodeID = Op::opcodeID;
+    auto bytecode = instruction->as<Op>();
     ASSERT(opcodeID != op_call_direct_eval);
     auto* callLinkInfo = m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo;
 
     linkAllSlowCases(iter);
 
-    loadGlobalObject(BaselineJITRegisters::Call::globalObjectGPR);
-    if constexpr (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto dispatchLabel = m_callCompilationInfo[callLinkInfoIndex].dispatchLabel;
-        CallLinkInfo::emitTailCallSlowPath(*m_vm, *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
-    } else
-        CallLinkInfo::emitSlowPath(*m_vm, *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+    loadGlobalObject(regT3);
+    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT2);
+
+    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
+        emitRestoreCalleeSaves();
+
+    CallLinkInfo::emitSlowPath(*m_vm, *this, callLinkInfo, regT2);
+
+    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
+        abortWithReason(JITDidReturnFromTailCall);
+        return;
+    }
 }
 
 void JIT::emit_op_call(const JSInstruction* currentInstruction)
