@@ -2295,7 +2295,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     bineq t1, CellTag, .opCallSlow
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
     btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
-    prepareCall(t2, t3, t4, t1, macro(address)
+    prepareCall(t2, t3, t4, t6, macro(address)
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
         storep t2, address
     end)
@@ -2306,25 +2306,34 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
 
 .notPolymorphic:
     bpneq t0, t3, .opCallSlow
-    prepareCall(t2, t3, t4, t1, macro(address)
+    prepareCall(t2, t3, t4, t6, macro(address)
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
         storep t2, address
     end)
 
 .goPolymorphic:
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+.dispatch:
     invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
 .opCallSlow:
     # 64bit:t0 32bit(t0,t1) is callee
     # t2 is CallLinkInfo*
     # t3 is caller's JSGlobalObject
+    prepareCall(t2, t3, t4, t6, macro(address)
+        storep 0, address
+    end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_slowPathCallDestination[t5], t5
-    loadp CodeBlock[cfr], t3
+    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_owner[t2], t3
     loadp CodeBlock::m_globalObject[t3], t3
-    prepareSlowCall()
-    callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
+    if X86_64_WIN or C_LOOP_WIN
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
+        loadp [t5], t5
+    else
+        leap _g_config, t5
+        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
+    end
+    jmp .dispatch
 end
         
 macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, prepareSlowCall, prologue, dispatchAfterCall)
@@ -2381,7 +2390,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
             bineq t1, CellTag, .opCallSlow
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
             btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
-            prepareCall(t2, t3, t4, t1, macro(address)
+            prepareCall(t2, t3, t4, t6, macro(address)
                 loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
                 storep t2, address
             end)
@@ -2392,25 +2401,34 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
         .notPolymorphic:
             bpneq t0, t3, .opCallSlow
-            prepareCall(t2, t3, t4, t1, macro(address)
+            prepareCall(t2, t3, t4, t6, macro(address)
                 loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
                 storep t2, address
             end)
 
         .goPolymorphic:
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+        .dispatch:
             invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
         .opCallSlow:
             # 64bit:t0 32bit(t0,t1) is callee
             # t2 is CallLinkInfo*
             # t3 is caller's JSGlobalObject
+            prepareCall(t2, t3, t4, t6, macro(address)
+                storep 0, address
+            end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_slowPathCallDestination[t5], t5
-            loadp CodeBlock[cfr], t3
+            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_owner[t2], t3
             loadp CodeBlock::m_globalObject[t3], t3
-            prepareSlowCall()
-            callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
+            if X86_64_WIN or C_LOOP_WIN
+                leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
+                loadp [t5], t5
+            else
+                leap _g_config, t5
+                loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
+            end
+            jmp .dispatch
         .dontUpdateSP:
             jmp _llint_throw_from_slow_path_trampoline
         end)

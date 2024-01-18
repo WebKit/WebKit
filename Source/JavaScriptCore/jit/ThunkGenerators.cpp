@@ -185,87 +185,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Throw exception from call slow path thunk");
 }
 
-static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_EGCli slowPathFunction)
-{
-    jit.emitFunctionPrologue();
-    jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-#if OS(WINDOWS) && CPU(X86_64)
-    // Windows X86_64 needs some space pointed to by arg0 for return types larger than 64 bits.
-    // Other argument values are shift by 1. Use space on the stack for our two return values.
-    // Moving the stack down maxFrameExtentForSlowPathCall bytes gives us room for our 3 arguments
-    // and space for the 16 byte return area.
-    jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    static_assert(GPRInfo::regT2 != GPRInfo::argumentGPR0);
-    static_assert(GPRInfo::regT3 != GPRInfo::argumentGPR0);
-    jit.move(GPRInfo::regT2, GPRInfo::argumentGPR0);
-    jit.move(GPRInfo::regT3, GPRInfo::argumentGPR2);
-    jit.move(GPRInfo::argumentGPR0, GPRInfo::argumentGPR3);
-    jit.addPtr(CCallHelpers::TrustedImm32(32), CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
-    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(slowPathFunction)), GPRInfo::nonArgGPR0);
-    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
-    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::returnValueGPR, 8), GPRInfo::returnValueGPR2);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::returnValueGPR), GPRInfo::returnValueGPR);
-    jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-#else
-    if (maxFrameExtentForSlowPathCall)
-        jit.addPtr(CCallHelpers::TrustedImm32(-maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(slowPathFunction)>(GPRInfo::regT3, GPRInfo::regT2);
-    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(slowPathFunction)), GPRInfo::nonArgGPR0);
-    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
-    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
-    if (maxFrameExtentForSlowPathCall)
-        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-#endif
-
-    // This slow call will return the address of one of the following:
-    // 1) Exception throwing thunk.
-    // 2) Host call return value returner thingy.
-    // 3) The function to call.
-    // The second return value GPR will hold a non-zero value for tail calls.
-
-    emitPointerValidation(jit, GPRInfo::returnValueGPR, JSEntryPtrTag);
-    jit.emitFunctionEpilogue();
-    jit.untagReturnAddress();
-
-    RELEASE_ASSERT(reinterpret_cast<void*>(KeepTheFrame) == reinterpret_cast<void*>(0));
-    CCallHelpers::Jump doNotTrash = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2);
-
-    jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
-    jit.prepareForTailCallSlow(RegisterSet { GPRInfo::returnValueGPR });
-
-    doNotTrash.link(&jit);
-    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
-}
-
-MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM& vm)
-{
-    // The return address is on the stack or in the link register. We will hence
-    // save the return address to the call frame while we make a C++ function call
-    // to perform linking and lazy compilation if necessary. We expect the callee
-    // to be in regT0/regT1 (payload/tag), the CallFrame to have already
-    // been adjusted, and all other registers to be available for use.
-    CCallHelpers jit;
-
-    slowPathFor(jit, vm, operationLinkCall);
-
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Link call slow path thunk");
-}
-
-// For closure optimizations, we only include calls, since if you're using closures for
-// object construction then you're going to lose big time anyway.
-MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM& vm)
-{
-    CCallHelpers jit;
-
-    slowPathFor(jit, vm, operationLinkPolymorphicCall);
-
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Link polymorphic call slow path thunk");
-}
-
 // FIXME: We should distinguish between a megamorphic virtual call vs. a slow
 // path virtual call so that we can enable fast tail calls for megamorphic
 // virtual calls by using the shuffler.
@@ -277,12 +196,15 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     // jump to the callee, or save the return address to the call frame while we
     // make a C++ function call to the appropriate JIT operation.
 
+    // regT0 => callee
+    // regT1 => tag (32bit)
+    // regT2 => CallLinkInfo*
+    // regT3 => JSGlobalObject*
+
     CCallHelpers jit;
 
-    bool isTailCall = mode == CallMode::Tail;
-
     CCallHelpers::JumpList slowCase;
-    
+
     // This is a slow path execution, and regT2 contains the CallLinkInfo. Count the
     // slow path execution for the profiler.
     jit.add32(
@@ -291,9 +213,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
 
     // FIXME: we should have a story for eliminating these checks. In many cases,
     // the DFG knows that the value is definitely a cell, or definitely a function.
-    
+
 #if USE(JSVALUE64)
-    if (isTailCall) {
+    if (mode == CallMode::Tail) {
         // Tail calls could have clobbered the GPRInfo::notCellMaskRegister because they
         // restore callee saved registers before getthing here. So, let's materialize
         // the NotCellMask in a temp register and use the temp instead.
@@ -304,7 +226,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     slowCase.append(jit.branchIfNotCell(GPRInfo::regT1));
 #endif
     auto notJSFunction = jit.branchIfNotFunction(GPRInfo::regT0);
-    
+
     // Now we know we have a JSFunction.
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT0);
@@ -315,7 +237,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
         CCallHelpers::Address(GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind)),
         GPRInfo::regT4);
     slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
-    
+
     // Now we know that we have a CodeBlock, and we're committed to making a fast call.
 
     auto isNative = jit.branchIfNotType(GPRInfo::regT0, FunctionExecutableType);
@@ -328,10 +250,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     auto dispatchLabel = jit.label();
     isNative.link(&jit);
     emitPointerValidation(jit, GPRInfo::regT4, JSEntryPtrTag);
-    if (isTailCall) {
-        jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
-        jit.prepareForTailCallSlow(RegisterSet { GPRInfo::regT4 });
-    }
     jit.farJump(GPRInfo::regT4, JSEntryPtrTag);
 
     // NullSetterFunctionType does not get the fast path support. But it is OK since using NullSetterFunctionType is extremely rare.
@@ -343,13 +261,30 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
 
     // Here we don't know anything, so revert to the full slow path.
     slowCase.link(&jit);
-    slowPathFor(jit, vm, operationVirtualCall);
+
+    jit.emitFunctionPrologue();
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
+    jit.setupArguments<decltype(operationVirtualCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationVirtualCall)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+
+    // This slow call will return the address of one of the following:
+    // 1) Exception throwing thunk.
+    // 2) Host call return value returner thingy.
+    // 3) The function to call.
+    // The second return value GPR will hold a non-zero value for tail calls.
+
+    emitPointerValidation(jit, GPRInfo::returnValueGPR, JSEntryPtrTag);
+    jit.emitFunctionEpilogue();
+    jit.untagReturnAddress();
+    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::VirtualThunk);
-    return FINALIZE_THUNK(
-        patchBuffer, JITThunkPtrTag,
-        "Virtual %s slow path thunk",
-        mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Virtual %s thunk", mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
@@ -446,13 +381,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     jit.emitFunctionPrologue();
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    if (isTailCall) {
-        jit.setupArguments<decltype(operationLinkPolymorphicCallForTailCall)>(GPRInfo::regT3, GPRInfo::regT2);
-        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationLinkPolymorphicCallForTailCall)), GPRInfo::nonArgGPR0);
-    } else {
-        jit.setupArguments<decltype(operationLinkPolymorphicCallForRegularCall)>(GPRInfo::regT3, GPRInfo::regT2);
-        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationLinkPolymorphicCallForRegularCall)), GPRInfo::nonArgGPR0);
-    }
+    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     if (maxFrameExtentForSlowPathCall)
@@ -494,6 +424,37 @@ MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForRegularCallForClosure(V
 MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForTailCallForClosure(VM& vm)
 {
     return polymorphicThunkFor(vm, CallMode::Tail, ClosureMode::Yes);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&)
+{
+    // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
+    // The return address is on the stack, or in the link register. We will hence
+    // jump to the callee, or save the return address to the call frame while we
+    // make a C++ function call to the appropriate JIT operation.
+
+    // regT0 => callee
+    // regT1 => tag (32bit)
+    // regT2 => CallLinkInfo*
+    // regT3 => JSGlobalObject*
+
+    CCallHelpers jit;
+
+    jit.emitFunctionPrologue();
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
+    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    if (maxFrameExtentForSlowPathCall)
+        jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+
+    jit.emitFunctionEpilogue();
+    jit.untagReturnAddress();
+    jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Polymorphic repatch thunk");
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };

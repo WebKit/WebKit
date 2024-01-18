@@ -687,7 +687,6 @@ public:
     NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
-    MacroAssemblerCodeRef<JSEntryPtrTag> getCTILinkCall();
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
 

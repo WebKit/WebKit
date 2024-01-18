@@ -713,7 +713,6 @@ void SpeculativeJIT::emitCall(Node* node)
 
     GPRReg calleeGPR = InvalidGPRReg;
     GPRReg callLinkInfoGPR = InvalidGPRReg;
-    GPRReg globalObjectGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
     ExecutableBase* executable = nullptr;
@@ -841,31 +840,33 @@ void SpeculativeJIT::emitCall(Node* node)
         }
 
         if (isTail) {
+            std::optional<GPRTemporary> calleeDestination;
+            if (!isDirect) {
+                calleeDestination.emplace(this, GPRInfo::regT0);
+                calleeDestination->gpr(); // Allocate GPRInfo::regT0
+            }
             Edge calleeEdge = m_graph.child(node, 0);
             JSValueOperand callee(this, calleeEdge);
             calleeGPR = callee.gpr();
-
-            // callLinkInfoGPR/globalObjectGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
-            // with saved callee-save. Also, it should not be the same to calleeGPR and regT0 since both will
-            // be used later differently.
-            // We also do not keep GPRTemporary (it is immediately destroyed) because
-            // 1. We do not want to keep the register locked in the following sequence of the Call.
-            // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
             if (!isDirect) {
+                move(callee.gpr(), GPRInfo::regT0);
+                calleeGPR = GPRInfo::regT0;
+
+                // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
+                // with saved callee-save. Also, it should not be the same to regT0 since both will
+                // be used later differently.
+                // We also do not keep GPRTemporary (it is immediately destroyed) because
+                // 1. We do not want to keep the register locked in the following sequence of the Call.
+                // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
                 std::optional<GPRTemporary> callLinkInfoTemp;
                 std::optional<GPRTemporary> globalObjectTemp;
                 if (m_graph.m_plan.isUnlinked()) {
                     callLinkInfoTemp.emplace(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
                     callLinkInfoGPR = callLinkInfoTemp->gpr();
                 }
-                // Regardless of whether we are using DataIC, we need globalObjectGPR.
-                if (node->op() == TailCall) {
-                    globalObjectTemp.emplace(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, callLinkInfoGPR));
-                    globalObjectGPR = globalObjectTemp->gpr();
-                }
-            }
-            if (!isDirect)
+                calleeDestination = std::nullopt;
                 callee.use();
+            }
 
             shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
             shuffleData.numLocals = m_graph.frameRegisterCount();
@@ -908,9 +909,18 @@ void SpeculativeJIT::emitCall(Node* node)
     GPRReg evalScopeGPR = InvalidGPRReg;
     GPRReg evalThisValueGPR = InvalidGPRReg;
     if (!isTail || isVarargs || isForwardVarargs) {
+        std::optional<GPRTemporary> calleeDestination;
+        if (!isDirect) {
+            calleeDestination.emplace(this, GPRInfo::regT0);
+            calleeDestination->gpr(); // Allocate GPRInfo::regT0
+        }
         Edge calleeEdge = m_graph.child(node, 0);
         JSValueOperand callee(this, calleeEdge);
         calleeGPR = callee.gpr();
+        if (!isDirect) {
+            move(callee.gpr(), GPRInfo::regT0);
+            calleeGPR = GPRInfo::regT0;
+        }
 
         std::optional<SpeculateCellOperand> scope;
         std::optional<JSValueOperand> thisValue;
@@ -924,7 +934,7 @@ void SpeculativeJIT::emitCall(Node* node)
         }
 
         // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
-        // with saved callee-save. Also, it should not be the same to calleeGPR and regT0 since both will
+        // with saved callee-save. Also, it should not be the same to regT0 since both will
         // be used later differently.
         // We also do not keep GPRTemporary (it is immediately destroyed) because
         // 1. We do not want to keep the register locked in the following sequence of the Call.
@@ -933,6 +943,7 @@ void SpeculativeJIT::emitCall(Node* node)
             GPRTemporary callLinkInfoTemp(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
             callLinkInfoGPR = callLinkInfoTemp.gpr();
         }
+        calleeDestination = std::nullopt;
 
         callee.use();
         if (scope)
@@ -967,7 +978,7 @@ void SpeculativeJIT::emitCall(Node* node)
     };
     
     std::visit([&](auto* callLinkInfo) {
-        callLinkInfo->setUpCall(callType, calleeGPR);
+        callLinkInfo->setUpCall(callType);
     }, callLinkInfo);
 
     if (node->op() == CallDirectEval) {
@@ -1018,8 +1029,8 @@ void SpeculativeJIT::emitCall(Node* node)
             emitStoreCallSiteIndex(callSite);
 
             linkedCallLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&]{
-                linkedCallLinkInfo->setFrameShuffleData(shuffleData);
-                CallFrameShuffler(*this, shuffleData).prepareForTailCall();
+                CallFrameShuffler shuffler { *this, shuffleData };
+                shuffler.prepareForTailCall();
             }));
             Label slowPath = label();
             
@@ -1059,46 +1070,37 @@ void SpeculativeJIT::emitCall(Node* node)
     emitStoreCallSiteIndex(callSite);
     
     JumpList slowCases;
+    Label dispatchLabel;
     std::optional<Jump> done;
     if (m_graph.m_plan.isUnlinked())
         loadLinkableConstant(callLinkInfoConstant, callLinkInfoGPR);
     if (isTail) {
-        slowCases = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, calleeGPR, callLinkInfoGPR, scopedLambda<void()>([&, callLinkInfo = callLinkInfo]{
+        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, GPRInfo::regT0, callLinkInfoGPR, scopedLambda<void()>([&] {
             if (node->op() == TailCall) {
-                std::visit([&](auto* callLinkInfo) {
-                    callLinkInfo->setFrameShuffleData(shuffleData);
-                }, callLinkInfo);
-                CallFrameShuffler(*this, shuffleData).prepareForTailCall();
+                CallFrameShuffler shuffler { *this, shuffleData };
+                shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
+                shuffler.prepareForTailCall();
             } else {
                 emitRestoreCalleeSaves();
                 RegisterSet preserved;
                 if (callLinkInfoGPR != InvalidGPRReg)
                     preserved.add(callLinkInfoGPR, IgnoreVectors);
+                preserved.add(GPRInfo::regT0, IgnoreVectors);
                 prepareForTailCallSlow(WTFMove(preserved));
             }
         }));
     } else {
-        slowCases = CallLinkInfo::emitFastPath(*this, callLinkInfo, calleeGPR, callLinkInfoGPR);
+        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitFastPath(*this, callLinkInfo, GPRInfo::regT0, callLinkInfoGPR);
         done = jump();
     }
 
     slowCases.link(this);
     auto slowPathStart = label();
-
-    if (node->op() == TailCall) {
-        loadLinkableConstant(LinkableConstant::globalObject(*this, node), globalObjectGPR);
-        shuffleData.registers[GPRInfo::regT3] = ValueRecovery::inGPR(globalObjectGPR, DataFormatJS);
-        CallFrameShuffler callFrameShuffler(*this, shuffleData);
-        callFrameShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
-        callFrameShuffler.prepareForSlowPath();
-    } else {
-        move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
-        loadLinkableConstant(LinkableConstant::globalObject(*this, node), GPRInfo::regT3); // JSGlobalObject needs to be in regT3
-        if (isTail)
-            emitRestoreCalleeSaves(); // This needs to happen after we moved calleeGPR to regT0
-    }
-
-    CallLinkInfo::emitSlowPath(vm(), *this, callLinkInfo, callLinkInfoGPR);
+    loadLinkableConstant(LinkableConstant::globalObject(*this, node), BaselineJITRegisters::Call::globalObjectGPR); // JSGlobalObject needs to be in regT3
+    if (isTail)
+        CallLinkInfo::emitTailCallSlowPath(vm(), *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
+    else
+        CallLinkInfo::emitSlowPath(vm(), *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
 
     if (done)
         done->link(this);

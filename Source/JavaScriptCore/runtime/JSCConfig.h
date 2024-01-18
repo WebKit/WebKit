@@ -90,6 +90,7 @@ struct Config {
     uintptr_t startOfFixedWritableMemoryPool;
     uintptr_t startOfStructureHeap;
     uintptr_t sizeOfStructureHeap;
+    void* defaultCallThunk;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
@@ -135,6 +136,7 @@ extern "C" JS_EXPORT_PRIVATE WTF::Config g_wtfConfigForLLInt;
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
 constexpr size_t offsetOfJSCConfigStartOfStructureHeap = offsetof(JSC::Config, startOfStructureHeap);
+constexpr size_t offsetOfJSCConfigDefaultCallThunk = offsetof(JSC::Config, defaultCallThunk);
 
 ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
 {
