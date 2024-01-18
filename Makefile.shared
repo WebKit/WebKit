@@ -41,11 +41,11 @@ endif
 ifneq (,$(ARCHS))
 	ifneq (,$(OVERRIDE_ARCHS))
 		ifneq (default,$(OVERRIDE_ARCHS))
-			BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architectures="$(OVERRIDE_ARCHS)"
+			BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architecture="$(OVERRIDE_ARCHS)"
 		endif
 		OVERRIDE_ARCHS =
 	else
-		BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architectures="$(ARCHS)"
+		BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architecture="$(ARCHS)"
 	endif
 endif
 

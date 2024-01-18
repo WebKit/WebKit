@@ -614,7 +614,7 @@ sub determineXcodeDestination
         $destination .= 'platform=visionOS Simulator';
     } else {
         $destination .= 'platform=macOS';
-        $destination .= ',arch=' . $architectures[0];
+        $destination .= ',arch=' . $architectures[0] if !$generic;
         $destination .= ',variant=Mac Catalyst' if willUseMacCatalystSDK();
     }
         
