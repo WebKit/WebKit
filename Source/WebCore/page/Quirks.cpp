@@ -496,11 +496,10 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         return false;
 
     case ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
-        if (is<Node>(target)) {
-            for (const auto* node = downcast<Node>(target); node; node = node->parentNode()) {
-                if (is<Element>(node) && const_cast<Element&>(downcast<Element>(*node)).classList().contains("lm-DockPanel-tabBar"_s))
-                    return true;
-            }
+        for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
+            // This uses auto* instead of RefPtr as otherwise GCC does not compile.
+            if (auto* element = dynamicDowncast<Element>(*node); element && const_cast<Element&>(*element).classList().contains("lm-DockPanel-tabBar"_s))
+                return true;
         }
         return false;
 
@@ -519,18 +518,21 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
         return false;
 
-    if (isAmazon() && is<Element>(target)) {
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        return false;
+
+    if (isAmazon()) {
         // When panning on an Amazon product image, we're either touching on the #magnifierLens element
         // or its previous sibling.
-        auto& element = downcast<Element>(*target);
-        if (element.getIdAttribute() == "magnifierLens"_s)
+        if (element->getIdAttribute() == "magnifierLens"_s)
             return true;
-        if (auto* sibling = element.nextElementSibling())
+        if (auto* sibling = element->nextElementSibling())
             return sibling->getIdAttribute() == "magnifierLens"_s;
     }
 
-    if (isDomain("soundcloud.com"_s) && is<Element>(target))
-        return downcast<Element>(*target).classList().contains("sceneLayer"_s);
+    if (isDomain("soundcloud.com"_s))
+        return element->classList().contains("sceneLayer"_s);
 
     return false;
 }
@@ -544,7 +546,7 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
     if (isGoogleMaps()) {
-        if (is<Element>(target) && downcast<Element>(target)->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon"_s)
+        if (RefPtr element = dynamicDowncast<Element>(target); element && element->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon"_s)
             return Event::IsCancelable::Yes;
         return { };
     }
@@ -564,9 +566,9 @@ bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) con
     auto host = m_document->topDocument().url().host();
 
     if (equalLettersIgnoringASCIICase(host, "www.youtube.com"_s)) {
-        if (is<Element>(target)) {
+        if (RefPtr element = dynamicDowncast<Element>(target)) {
             unsigned depth = 3;
-            for (auto* element = downcast<Element>(target); element && depth; element = element->parentElement(), --depth) {
+            for (; element && depth; element = element->parentElement(), --depth) {
                 if (element->localName() == "paper-item"_s && element->classList().contains("yt-dropdown-menu"_s))
                     return true;
             }
@@ -591,8 +593,8 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
     if (!needsQuirks())
         return false;
 
-    if (is<Element>(target) && touchEventType == eventNames().touchendEvent && equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "sites.google.com"_s)) {
-        auto& classList = downcast<Element>(*target).classList();
+    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent && equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "sites.google.com"_s)) {
+        auto& classList = element->classList();
         return classList.contains("DPvwYc"_s) && classList.contains("sm8sCf"_s);
     }
 
@@ -947,9 +949,8 @@ bool Quirks::shouldBypassBackForwardCache() const
     // Note that this does not check for docs.google.com host because of hosted G Suite apps.
     static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
     auto* firstChildInBody = m_document->body() ? m_document->body()->firstChild() : nullptr;
-    if (is<HTMLDivElement>(firstChildInBody)) {
-        auto& div = downcast<HTMLDivElement>(*firstChildInBody);
-        if (div.hasClass() && div.classNames().contains(googleDocsOverlayDivClass))
+    if (RefPtr div = dynamicDowncast<HTMLDivElement>(firstChildInBody)) {
+        if (div->hasClass() && div->classNames().contains(googleDocsOverlayDivClass))
             return true;
     }
 
@@ -977,9 +978,8 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
         if (is<LocalDOMWindow>(eventTarget))
             return true;
 
-        if (is<Node>(eventTarget)) {
-            auto& node = downcast<Node>(eventTarget);
-            return is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node;
+        if (RefPtr node = dynamicDowncast<Node>(eventTarget)) {
+            return is<Document>(*node) || node->document().documentElement() == node || node->document().body() == node;
         }
         return false;
     };
@@ -1289,10 +1289,9 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             auto proxy = proxyOrException.releaseReturnValue();
 
             auto* abstractFrame = proxy->frame();
-            if (abstractFrame && is<LocalFrame>(*abstractFrame)) {
-                auto& frame = downcast<LocalFrame>(*abstractFrame);
+            if (auto* frame = dynamicDowncast<LocalFrame>(abstractFrame)) {
                 auto world = ScriptController::createWorld("kinjaComQuirkWorld"_s, ScriptController::WorldType::User);
-                frame.addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
+                frame->addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
                 return Quirks::StorageAccessResult::ShouldCancelEvent;
             }
         }

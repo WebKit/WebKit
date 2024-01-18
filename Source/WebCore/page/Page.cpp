@@ -1184,9 +1184,9 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
         return { };
 
     auto rootEditableElement = [](Node& node) -> Element* {
-        if (is<HTMLTextFormControlElement>(node)) {
-            if (downcast<HTMLTextFormControlElement>(node).isInnerTextElementEditable())
-                return &downcast<Element>(node);
+        if (RefPtr element = dynamicDowncast<HTMLTextFormControlElement>(node)) {
+            if (element->isInnerTextElementEditable())
+                return &uncheckedDowncast<Element>(node);
         } else if (is<Element>(node) && node.hasEditableStyle())
             return node.rootEditableElement();
         return nullptr;

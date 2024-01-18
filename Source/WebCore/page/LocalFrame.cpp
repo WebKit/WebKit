@@ -500,7 +500,10 @@ String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, El
     RefPtr<Node> n;
     for (n = NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(*n)) {
         // We hit another form element or the start of the form - bail out
-        if (is<HTMLFormElement>(*n) || (is<Element>(*n) && downcast<Element>(*n).isValidatedFormListedElement()))
+        if (is<HTMLFormElement>(*n))
+            break;
+
+        if (RefPtr element = dynamicDowncast<Element>(*n); element && element->isValidatedFormListedElement())
             break;
 
         if (n->hasTagName(tdTag) && !startingTableCell)
@@ -1023,7 +1026,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
 
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
-    if (is<SVGDocument>(*document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
+    if (RefPtr svgDocument = dynamicDowncast<SVGDocument>(*document); svgDocument && !svgDocument->zoomAndPanEnabled())
         return;
 
     std::optional<ScrollPosition> scrollPositionAfterZoomed;
@@ -1229,9 +1232,11 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
         return window->frame();
 
     auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
-    if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
+    if (!jsNode)
         return nullptr;
-    return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
+
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(jsNode->wrapped());
+    return frameOwner ? dynamicDowncast<LocalFrame>(frameOwner->contentFrame()) : nullptr;
 }
 
 CheckedRef<EventHandler> LocalFrame::checkedEventHandler()

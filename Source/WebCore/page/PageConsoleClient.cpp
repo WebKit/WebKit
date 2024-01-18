@@ -340,24 +340,22 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                         }
                     };
 
-                    if (is<HTMLImageElement>(node))
-                        snapshotImageElement(downcast<HTMLImageElement>(*node));
-                    else if (is<HTMLPictureElement>(node)) {
-                        if (auto* firstImage = childrenOfType<HTMLImageElement>(downcast<HTMLPictureElement>(*node)).first())
+                    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node))
+                        snapshotImageElement(*imgElement);
+                    else if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(node)) {
+                        if (RefPtr firstImage = childrenOfType<HTMLImageElement>(*pictureElement).first())
                             snapshotImageElement(*firstImage);
                     }
 #if ENABLE(VIDEO)
-                    else if (is<HTMLVideoElement>(node)) {
-                        auto& videoElement = downcast<HTMLVideoElement>(*node);
-                        unsigned videoWidth = videoElement.videoWidth();
-                        unsigned videoHeight = videoElement.videoHeight();
+                    else if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(node)) {
+                        unsigned videoWidth = videoElement->videoWidth();
+                        unsigned videoHeight = videoElement->videoHeight();
                         snapshot = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-                        videoElement.paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
+                        videoElement->paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
                     }
 #endif
-                    else if (is<HTMLCanvasElement>(node)) {
-                        auto& canvasElement = downcast<HTMLCanvasElement>(*node);
-                        if (auto* canvasRenderingContext = canvasElement.renderingContext()) {
+                    else if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node)) {
+                        if (auto* canvasRenderingContext = canvasElement->renderingContext()) {
                             if (auto result = InspectorCanvas::getContentAsDataURL(*canvasRenderingContext))
                                 dataURL = result.value();
                         }

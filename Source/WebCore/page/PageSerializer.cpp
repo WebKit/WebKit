@@ -142,21 +142,21 @@ void PageSerializer::SerializerMarkupAccumulator::appendStartTag(StringBuilder& 
 
 void PageSerializer::SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
-    if (!is<HTMLFrameOwnerElement>(element))
+    RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(element);
+    if (!frameOwner)
         return;
 
-    const HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
-    auto* frame = dynamicDowncast<LocalFrame>(frameOwner.contentFrame());
+    auto* frame = dynamicDowncast<LocalFrame>(frameOwner->contentFrame());
     if (!frame)
         return;
 
-    URL url = frame->document()->url();
+    auto url = frame->document()->url();
     if (url.isValid() && !url.protocolIsAbout())
         return;
 
     // We need to give a fake location to blank frames so they can be referenced by the serialized frame.
     url = m_serializer.urlForBlankFrame(frame);
-    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(frameOwner), AtomString { url.string() }), namespaces);
+    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(*frameOwner), AtomString { url.string() }), namespaces);
 }
 
 void PageSerializer::SerializerMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& element)
@@ -209,23 +209,21 @@ void PageSerializer::serializeFrame(LocalFrame* frame)
         if (!element)
             continue;
         // We have to process in-line style as it might contain some resources (typically background images).
-        if (is<StyledElement>(*element))
-            retrieveResourcesForProperties(downcast<StyledElement>(*element).inlineStyle(), document);
+        if (RefPtr styledElement = dynamicDowncast<StyledElement>(*element))
+            retrieveResourcesForProperties(styledElement->inlineStyle(), document);
 
-        if (is<HTMLImageElement>(*element)) {
-            Ref imageElement = downcast<HTMLImageElement>(element.releaseNonNull());
-            URL url = document->completeURL(imageElement->attributeWithoutSynchronization(HTMLNames::srcAttr));
-            CachedImage* cachedImage = imageElement->cachedImage();
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(*element)) {
+            auto url = document->completeURL(imageElement->attributeWithoutSynchronization(HTMLNames::srcAttr));
+            auto* cachedImage = imageElement->cachedImage();
             addImageToResources(cachedImage, imageElement->renderer(), url);
-        } else if (is<HTMLLinkElement>(element)) {
-            Ref linkElement = downcast<HTMLLinkElement>(element.releaseNonNull());
+        } else if (RefPtr linkElement = dynamicDowncast<HTMLLinkElement>(*element)) {
             if (RefPtr sheet = linkElement->sheet()) {
-                URL url = document->completeURL(linkElement->attributeWithoutSynchronization(HTMLNames::hrefAttr));
+                auto url = document->completeURL(linkElement->attributeWithoutSynchronization(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet.get(), url);
                 ASSERT(m_resourceURLs.contains(url));
             }
-        } else if (is<HTMLStyleElement>(element)) {
-            if (RefPtr sheet = downcast<HTMLStyleElement>(*element).sheet())
+        } else if (RefPtr styleElement = dynamicDowncast<HTMLStyleElement>(*element)) {
+            if (RefPtr sheet = styleElement->sheet())
                 serializeCSSStyleSheet(sheet.get(), URL());
         }
     }
@@ -251,17 +249,16 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         }
         Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.
-        if (is<CSSImportRule>(*rule)) {
-            CSSImportRule& importRule = downcast<CSSImportRule>(*rule);
-            URL importURL = document->completeURL(importRule.href());
+        if (RefPtr importRule = dynamicDowncast<CSSImportRule>(*rule)) {
+            auto importURL = document->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
-            serializeCSSStyleSheet(importRule.styleSheet(), importURL);
+            serializeCSSStyleSheet(importRule->styleSheet(), importURL);
         } else if (is<CSSFontFaceRule>(*rule)) {
             // FIXME: Add support for font face rule. It is not clear to me at this point if the actual otf/eot file can
             // be retrieved from the CSSFontFaceRule object.
-        } else if (is<CSSStyleRule>(*rule))
-            retrieveResourcesForRule(downcast<CSSStyleRule>(*rule).styleRule(), document);
+        } else if (RefPtr styleRule = dynamicDowncast<CSSStyleRule>(*rule))
+            retrieveResourcesForRule(styleRule->styleRule(), document);
     }
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {
@@ -308,11 +305,11 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
     // that make use of images. We iterate to make sure we include any other
     // image properties there might be.
     for (auto property : *styleDeclaration) {
-        auto cssValue = property.value();
-        if (!is<CSSImageValue>(*cssValue))
+        RefPtr cssValue = dynamicDowncast<CSSImageValue>(property.value());
+        if (!cssValue)
             continue;
 
-        auto* image = downcast<CSSImageValue>(*cssValue).cachedImage();
+        auto* image = cssValue->cachedImage();
         if (!image)
             continue;
 

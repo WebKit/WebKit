@@ -78,11 +78,11 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
         if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
             return false;
 
-        if (!is<Element>(node))
+        RefPtr element = dynamicDowncast<Element>(node);
+        if (!element)
             continue;
 
-        auto& element = downcast<Element>(node);
-        auto styleable = Styleable::fromElement(element);
+        auto styleable = Styleable::fromElement(*element);
 
         // Skip nodes with animations as the sample may get an odd color if the animation is in-progress.
         if (styleable.hasRunningTransitions())
@@ -96,11 +96,11 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
 
         // Skip `<canvas>` but only if they've been drawn into. Guess this by seeing if there's already
         // a `CanvasRenderingContext`, which is only created by JavaScript.
-        if (is<HTMLCanvasElement>(element) && downcast<HTMLCanvasElement>(element).renderingContext())
+        if (RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(*element); canvas && canvas->renderingContext())
             return false;
 
         // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
-        if (is<HTMLIFrameElement>(element))
+        if (is<HTMLIFrameElement>(*element))
             return false;
     }
 
