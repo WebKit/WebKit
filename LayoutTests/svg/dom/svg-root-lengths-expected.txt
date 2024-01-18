@@ -3,10 +3,7 @@ This tests the behavior of root SVG length value resolution
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
- PASS successfullyParsed is true
-
-TEST COMPLETE
-Initial/default values:
+ Initial/default values:
 PASS svg.width.baseVal.value is 200
 PASS svg.height.baseVal.value is 200
 
@@ -21,4 +18,7 @@ PASS svg.height.baseVal.value is 50
 viewBox has no effect on top level length resolution.
 PASS svg.width.baseVal.value is 200
 PASS svg.height.baseVal.value is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
