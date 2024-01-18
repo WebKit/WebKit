@@ -32,7 +32,6 @@
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"
 #include "CustomEffectCallback.h"
-#include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimelinesController.h"
 #include "EventNames.h"
@@ -46,6 +45,7 @@
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "StyleOriginatedAnimation.h"
 #include "WebAnimationTypes.h"
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

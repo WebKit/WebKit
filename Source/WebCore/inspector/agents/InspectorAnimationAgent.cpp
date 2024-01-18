@@ -34,7 +34,6 @@
 #include "CSSTransition.h"
 #include "CSSValue.h"
 #include "ComputedStyleExtractor.h"
-#include "DeclarativeAnimation.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
@@ -49,6 +48,7 @@
 #include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"
+#include "StyleOriginatedAnimation.h"
 #include "Styleable.h"
 #include "TimingFunction.h"
 #include "WebAnimation.h"
@@ -118,7 +118,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
     const auto& blendingKeyframes = keyframeEffect.blendingKeyframes();
     const auto& parsedKeyframes = keyframeEffect.parsedKeyframes();
 
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(keyframeEffect.animation())) {
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(keyframeEffect.animation())) {
         auto* target = keyframeEffect.target();
         auto* renderer = keyframeEffect.renderer();
 
@@ -141,7 +141,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
             if (!timingFunction)
                 timingFunction = blendingKeyframe.timingFunction();
             if (!timingFunction)
-                timingFunction = declarativeAnimation->backingAnimation().timingFunction();
+                timingFunction = styleOriginatedAnimation->backingAnimation().timingFunction();
             if (timingFunction)
                 keyframePayload->setEasing(timingFunction->cssText());
 
@@ -351,7 +351,7 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking()
 
     m_instrumentingAgents.setTrackingAnimationAgent(this);
 
-    ASSERT(m_trackedDeclarativeAnimationData.isEmpty());
+    ASSERT(m_trackedStyleOriginatedAnimationData.isEmpty());
 
     m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
 
@@ -365,7 +365,7 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
 
     m_instrumentingAgents.setTrackingAnimationAgent(nullptr);
 
-    m_trackedDeclarativeAnimationData.clear();
+    m_trackedStyleOriginatedAnimationData.clear();
 
     m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
 
@@ -382,11 +382,11 @@ static bool isDelayed(const ComputedEffectTiming& computedTiming)
 void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, const ComputedEffectTiming& computedTiming)
 {
     auto* animation = keyframeEffect.animation();
-    if (!is<DeclarativeAnimation>(animation))
+    if (!is<StyleOriginatedAnimation>(animation))
         return;
 
-    auto ensureResult = m_trackedDeclarativeAnimationData.ensure(downcast<DeclarativeAnimation>(animation), [&] () -> UniqueRef<TrackedDeclarativeAnimationData> {
-        return makeUniqueRef<TrackedDeclarativeAnimationData>(TrackedDeclarativeAnimationData { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming });
+    auto ensureResult = m_trackedStyleOriginatedAnimationData.ensure(downcast<StyleOriginatedAnimation>(animation), [&] () -> UniqueRef<TrackedStyleOriginatedAnimationData> {
+        return makeUniqueRef<TrackedStyleOriginatedAnimationData>(TrackedStyleOriginatedAnimationData { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming });
     });
     auto& trackingData = ensureResult.iterator->value.get();
 
@@ -456,8 +456,8 @@ void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
 
 void InspectorAnimationAgent::didSetWebAnimationEffect(WebAnimation& animation)
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation))
-        stopTrackingDeclarativeAnimation(*declarativeAnimation);
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation))
+        stopTrackingStyleOriginatedAnimation(*styleOriginatedAnimation);
 
     didChangeWebAnimationEffectTiming(animation);
     didChangeWebAnimationEffectTarget(animation);
@@ -508,8 +508,8 @@ void InspectorAnimationAgent::animationBindingTimerFired()
 
 void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation))
-        stopTrackingDeclarativeAnimation(*declarativeAnimation);
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation))
+        stopTrackingStyleOriginatedAnimation(*styleOriginatedAnimation);
 
     // The `animationId` may be empty if Animation is tracking but not enabled.
     auto animationId = findAnimationId(animation);
@@ -616,9 +616,9 @@ void InspectorAnimationAgent::reset()
         m_animationDestroyedTimer.stop();
 }
 
-void InspectorAnimationAgent::stopTrackingDeclarativeAnimation(DeclarativeAnimation& animation)
+void InspectorAnimationAgent::stopTrackingStyleOriginatedAnimation(StyleOriginatedAnimation& animation)
 {
-    auto data = m_trackedDeclarativeAnimationData.take(&animation);
+    auto data = m_trackedStyleOriginatedAnimationData.take(&animation);
     if (!data)
         return;
 

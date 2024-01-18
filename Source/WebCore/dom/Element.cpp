@@ -3940,7 +3940,7 @@ void Element::removeFromTopLayer()
     if (CheckedPtr renderer = this->renderer()) {
         if (CheckedPtr backdrop = renderer->backdropRenderer().get()) {
             if (auto styleable = Styleable::fromRenderer(*backdrop))
-                styleable->cancelDeclarativeAnimations();
+                styleable->cancelStyleOriginatedAnimations();
         }
     }
 

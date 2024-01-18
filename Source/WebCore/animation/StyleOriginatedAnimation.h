@@ -36,16 +36,16 @@
 namespace WebCore {
 
 class Animation;
-class DeclarativeAnimationEvent;
+class StyleOriginatedAnimationEvent;
 class Element;
 class RenderStyle;
 
-class DeclarativeAnimation : public WebAnimation {
-    WTF_MAKE_ISO_ALLOCATED(DeclarativeAnimation);
+class StyleOriginatedAnimation : public WebAnimation {
+    WTF_MAKE_ISO_ALLOCATED(StyleOriginatedAnimation);
 public:
-    ~DeclarativeAnimation();
+    ~StyleOriginatedAnimation();
 
-    bool isDeclarativeAnimation() const final { return true; }
+    bool isStyleOriginatedAnimation() const final { return true; }
 
     const std::optional<const Styleable> owningElement() const;
     const Animation& backingAnimation() const { return m_backingAnimation; }
@@ -72,11 +72,11 @@ public:
     void flushPendingStyleChanges() const;
 
 protected:
-    DeclarativeAnimation(const Styleable&, const Animation&);
+    StyleOriginatedAnimation(const Styleable&, const Animation&);
 
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
-    virtual Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) = 0;
+    virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) = 0;
 
     enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
     ShouldFireEvents shouldFireDOMEvents() const;
@@ -102,4 +102,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(DeclarativeAnimation, isDeclarativeAnimation())
+SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(StyleOriginatedAnimation, isStyleOriginatedAnimation())

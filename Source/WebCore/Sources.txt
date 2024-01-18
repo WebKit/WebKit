@@ -571,8 +571,6 @@ animation/CSSTransition.cpp
 animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
-animation/DeclarativeAnimation.cpp
-animation/DeclarativeAnimationEvent.cpp
 animation/DocumentTimeline.cpp
 animation/DocumentTimelinesController.cpp
 animation/ElementAnimationRareData.cpp
@@ -581,6 +579,8 @@ animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
 animation/KeyframeInterpolation.cpp
 animation/ScrollTimeline.cpp
+animation/StyleOriginatedAnimation.cpp
+animation/StyleOriginatedAnimationEvent.cpp
 animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp

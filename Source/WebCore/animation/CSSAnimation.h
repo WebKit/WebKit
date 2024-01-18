@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DeclarativeAnimation.h"
+#include "StyleOriginatedAnimation.h"
 #include "Styleable.h"
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -35,7 +35,7 @@ namespace WebCore {
 class Animation;
 class RenderStyle;
 
-class CSSAnimation final : public DeclarativeAnimation {
+class CSSAnimation final : public StyleOriginatedAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
 public:
     static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
@@ -54,7 +54,7 @@ private:
     CSSAnimation(const Styleable&, const Animation&);
 
     void syncPropertiesWithBackingAnimation() final;
-    Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
+    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
 
     ExceptionOr<void> bindingsPlay() final;
     ExceptionOr<void> bindingsPause() final;

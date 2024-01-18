@@ -149,7 +149,7 @@ public:
 
     std::optional<unsigned> transformFunctionListPrefix() const override;
 
-    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
+    void computeStyleOriginatedAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const BlendingKeyframes& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableCSSProperty>& animatedProperties();
     bool animatesProperty(const AnimatableCSSProperty&) const;

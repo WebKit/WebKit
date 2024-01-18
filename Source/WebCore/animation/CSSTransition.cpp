@@ -50,7 +50,7 @@ Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const A
 }
 
 CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
-    : DeclarativeAnimation(styleable, backingAnimation)
+    : StyleOriginatedAnimation(styleable, backingAnimation)
     , m_property(property)
     , m_generationTime(generationTime)
     , m_timelineTimeAtCreation(styleable.element.document().timeline().currentTime())
@@ -63,16 +63,16 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
 
 void CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
-    DeclarativeAnimation::resolve(targetStyle, resolutionContext, startTime);
+    StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
 }
 
 void CSSTransition::animationDidFinish()
 {
-    DeclarativeAnimation::animationDidFinish();
+    StyleOriginatedAnimation::animationDidFinish();
 
     if (auto owningElement = this->owningElement())
-        owningElement->removeDeclarativeAnimationFromListsForOwningElement(*this);
+        owningElement->removeStyleOriginatedAnimationFromListsForOwningElement(*this);
 }
 
 void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
@@ -95,7 +95,7 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-Ref<DeclarativeAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
+Ref<StyleOriginatedAnimationEvent> CSSTransition::createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId pseudoId)
 {
     return CSSTransitionEvent::create(eventType, this, scheduledTime, elapsedTime, pseudoId, transitionProperty());
 }
