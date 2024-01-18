@@ -64,10 +64,6 @@
 #  When features are declared with "defaultsOverridable: true", platform user
 #  defaults may override a default value at runtime, using the preference
 #  name prefixed with "WebKitDebug".
-#
-# FIXME: Currently, default values are unchecked. We should audit and refactor
-# features so that their defaults agree with their status's definition, and use
-# the generator to enforce this in the future.
 
 AVFoundationEnabled:
   type: bool
