@@ -31,6 +31,7 @@
 #include "FELighting.h"
 #include "FELightingSoftwareApplierInlines.h"
 #include "Filter.h"
+#include <wtf/ParallelJobs.h>
 
 namespace WebCore {
 
@@ -99,7 +100,81 @@ void FELightingSoftwareApplier::setPixel(int offset, const LightingData& data, c
     setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, data.pixels->item(offset + cAlphaChannelOffset));
 }
 
-void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
+// This appears to read from and write to the same pixel buffer, but it only reads the alpha channel, and writes the non-alpha channels.
+void FELightingSoftwareApplier::applyPlatformPaint(const LightingData& data, const LightSource::PaintingData& paintingData, int startY, int endY)
+{
+    // Make sure startY is > 0 since we read from the previous row in the loop.
+    ASSERT(startY);
+    ASSERT(endY > startY);
+
+    for (int y = startY; y < endY; ++y) {
+        int rowStartOffset = y * data.widthMultipliedByPixelSize;
+        int previousRowStart = rowStartOffset - data.widthMultipliedByPixelSize;
+        int nextRowStart = rowStartOffset + data.widthMultipliedByPixelSize;
+
+        // alphaWindow is a local cache of alpha values.
+        // Fill the two right columns putting the left edge value in the center column.
+        // For each pixel, we shift each row left then fill the right column.
+        AlphaWindow alphaWindow;
+        alphaWindow.setTop(data.pixels->item(previousRowStart + cAlphaChannelOffset));
+        alphaWindow.setTopRight(data.pixels->item(previousRowStart + cPixelSize + cAlphaChannelOffset));
+
+        alphaWindow.setCenter(data.pixels->item(rowStartOffset + cAlphaChannelOffset));
+        alphaWindow.setRight(data.pixels->item(rowStartOffset + cPixelSize + cAlphaChannelOffset));
+
+        alphaWindow.setBottom(data.pixels->item(nextRowStart + cAlphaChannelOffset));
+        alphaWindow.setBottomRight(data.pixels->item(nextRowStart + cPixelSize + cAlphaChannelOffset));
+
+        int offset = rowStartOffset + cPixelSize;
+        for (int x = 1; x < data.width - 1; ++x, offset += cPixelSize) {
+            alphaWindow.shift();
+            setPixelInternal(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, data.interiorNormal(offset, alphaWindow), alphaWindow.center());
+        }
+    }
+}
+
+void FELightingSoftwareApplier::applyPlatformWorker(ApplyParameters* parameters)
+{
+    applyPlatformPaint(parameters->data, parameters->paintingData, parameters->yStart, parameters->yEnd);
+}
+
+void FELightingSoftwareApplier::applyPlatformParallel(const LightingData& data, const LightSource::PaintingData& paintingData)
+{
+    unsigned rowsToProcess = data.height - 2;
+    unsigned maxNumThreads = rowsToProcess / 8;
+    unsigned optimalThreadNumber = std::min<unsigned>(((data.width - 2) * rowsToProcess) / minimalRectDimension, maxNumThreads);
+
+    if (optimalThreadNumber > 1) {
+        // Initialize parallel jobs
+        ParallelJobs<ApplyParameters> parallelJobs(&applyPlatformWorker, optimalThreadNumber);
+
+        // Fill the parameter array
+        int job = parallelJobs.numberOfJobs();
+        if (job > 1) {
+            // Split the job into "yStep"-sized jobs but there a few jobs that need to be slightly larger since
+            // yStep * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int yStep = rowsToProcess / job;
+            const int jobsWithExtra = rowsToProcess % job;
+
+            int yStart = 1;
+            for (--job; job >= 0; --job) {
+                ApplyParameters& params = parallelJobs.parameter(job);
+                params.data = data;
+                params.paintingData = paintingData;
+                params.yStart = yStart;
+                yStart += job < jobsWithExtra ? yStep + 1 : yStep;
+                params.yEnd = yStart;
+            }
+            parallelJobs.execute();
+            return;
+        }
+        // Fallback to single threaded mode.
+    }
+
+    applyPlatformPaint(data, paintingData, 1, data.height - 1);
+}
+
+void FELightingSoftwareApplier::applyPlatform(const LightingData& data)
 {
     LightSource::PaintingData paintingData;
 
