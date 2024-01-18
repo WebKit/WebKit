@@ -977,6 +977,7 @@ public:
     struct Entry {
         String selector;
         Ref<NodeList> nodeList;
+        AtomString classNameToMatch;
     };
 
     Vector<Entry, maxSize> entries;
@@ -997,7 +998,7 @@ RefPtr<NodeList> Document::resultForSelectorAll(ContainerNode& context, const St
     return nullptr;
 }
 
-void Document::addResultForSelectorAll(ContainerNode& context, const String& selectorString, NodeList& nodeList)
+void Document::addResultForSelectorAll(ContainerNode& context, const String& selectorString, NodeList& nodeList, const AtomString& classNameToMatch)
 {
     auto result = m_querySelectorAllResults.ensure(context, [&]() {
         context.setHasValidQuerySelectorAllResults(true);
@@ -1006,7 +1007,7 @@ void Document::addResultForSelectorAll(ContainerNode& context, const String& sel
     auto& entries = result.iterator->value->entries;
     if (entries.size() >= QuerySelectorAllResults::maxSize)
         entries.remove(weakRandomNumber<uint32_t>() % entries.size());
-    entries.append({ selectorString, nodeList });
+    entries.append({ selectorString, nodeList, classNameToMatch });
 }
 
 void Document::invalidateQuerySelectorAllResults(Node& startingNode)
@@ -1018,6 +1019,33 @@ void Document::invalidateQuerySelectorAllResults(Node& startingNode)
             continue;
         m_querySelectorAllResults.remove(*currentNode);
         currentNode->setHasValidQuerySelectorAllResults(false);
+    }
+}
+
+void Document::invalidateQuerySelectorAllResultsForClassAttributeChange(Node& startingNode, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+{
+    if (m_querySelectorAllResults.isEmptyIgnoringNullReferences())
+        return;
+    for (RefPtr<Node> currentNode = &startingNode; currentNode; currentNode = currentNode->parentNode()) {
+        if (!currentNode->hasValidQuerySelectorAllResults())
+            continue;
+        auto it = m_querySelectorAllResults.find(*currentNode);
+        ASSERT(it != m_querySelectorAllResults.end());
+        if (it == m_querySelectorAllResults.end())
+            continue;
+        auto& entries = it->value->entries;
+        unsigned index = 0;
+        while (index < entries.size()) {
+            auto& entry = entries[index];
+            if (!entry.classNameToMatch.isNull() && oldClasses.contains(entry.classNameToMatch) != newClasses.contains(entry.classNameToMatch))
+                entries.remove(index);
+            else
+                ++index;
+        }
+        if (!entries.size()) {
+            m_querySelectorAllResults.remove(it);
+            currentNode->setHasValidQuerySelectorAllResults(false);
+        }
     }
 }
 

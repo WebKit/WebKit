@@ -402,6 +402,15 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Co
     }
 }
 
+AtomString SelectorDataList::classNameToMatch() const
+{
+    if (m_matchType != MatchType::ClassNameMatch)
+        return nullAtom();
+    ASSERT(m_selectors.size() == 1);
+    ASSERT(isSingleClassNameSelector(*m_selectors.first().selector));
+    return m_selectors.first().selector->value();
+}
+
 template<typename OutputType>
 ALWAYS_INLINE void SelectorDataList::executeSingleAttributeExactSelectorData(const ContainerNode& rootNode, const SelectorData& selectorData, OutputType& output) const
 {

@@ -216,6 +216,7 @@ class SelectorQueryCache;
 class SerializedScriptValue;
 class Settings;
 class SleepDisabler;
+class SpaceSplitString;
 class SpeechRecognition;
 class StorageConnection;
 class StringCallback;
@@ -468,8 +469,9 @@ public:
     void invalidateAccessKeyCache();
 
     RefPtr<NodeList> resultForSelectorAll(ContainerNode&, const String&);
-    void addResultForSelectorAll(ContainerNode&, const String&, NodeList&);
+    void addResultForSelectorAll(ContainerNode&, const String&, NodeList&, const AtomString& classNameToMatch);
     void invalidateQuerySelectorAllResults(Node&);
+    void invalidateQuerySelectorAllResultsForClassAttributeChange(Node&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
     void clearQuerySelectorAllResults();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
