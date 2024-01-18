@@ -1413,7 +1413,7 @@ void VideoFullscreenInterfaceAVKit::preparedToReturnToStandby()
     if (!m_returningToStandby)
         return;
 
-    clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture, true);
+    returnToStandby();
 }
 
 void VideoFullscreenInterfaceAVKit::finalizeSetup()
@@ -1586,17 +1586,16 @@ void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError
 
 void VideoFullscreenInterfaceAVKit::returnToStandby()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_returningToStandby = false;
 
     auto model = videoPresentationModel();
     if (model)
         model->returnVideoView();
 
-    [m_window setHidden:YES];
-    [[m_playerViewController view] setHidden:YES];
-
-    if (model)
-        model->didSetupFullscreen();
+    // Continue processing exit picture-in-picture now that
+    // it is safe to do so:
+    didStopPictureInPicture();
 }
 
 NO_RETURN_DUE_TO_ASSERT void VideoFullscreenInterfaceAVKit::watchdogTimerFired()
