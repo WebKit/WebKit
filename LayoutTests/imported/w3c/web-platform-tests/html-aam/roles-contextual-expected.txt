@@ -14,12 +14,14 @@ x
 x
 x
 x
+x
 
 PASS el-a
 PASS el-aside-in-section-with-name
 PASS el-aside-in-section-with-role
 PASS el-aside-ancestorbodymain
 PASS el-footer-ancestorbody
+PASS el-footer-ancestormain
 PASS el-header-ancestorbody
 PASS el-header-ancestormain
 PASS el-section
