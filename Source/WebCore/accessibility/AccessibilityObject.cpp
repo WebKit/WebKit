@@ -495,7 +495,7 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 AccessibilityObject* AccessibilityObject::displayContentsParent() const
 {
     auto* parentNode = node() ? node()->parentNode() : nullptr;
-    if (!is<Element>(parentNode) || !downcast<Element>(parentNode)->hasDisplayContents())
+    if (RefPtr element = dynamicDowncast<Element>(parentNode); !element || !element->hasDisplayContents())
         return nullptr;
 
     auto* cache = axObjectCache();
@@ -630,11 +630,11 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     if (!newChild)
         return;
 
-    ASSERT(is<AccessibilityObject>(newChild));
-    if (!is<AccessibilityObject>(newChild))
+    auto* child = dynamicDowncast<AccessibilityObject>(*newChild);
+    ASSERT(child);
+    if (!child)
         return;
 
-    auto* child = downcast<AccessibilityObject>(newChild);
     // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
     // or its visibility has changed. In the latter case, this child may have a stale child cached.
     // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
@@ -674,10 +674,11 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
             auto childAncestorFlags = child->computeAncestorFlags();
             for (auto grandchildCoreObject : child->children()) {
                 if (grandchildCoreObject) {
-                    ASSERT(is<AccessibilityObject>(grandchildCoreObject));
-                    if (!is<AccessibilityObject>(grandchildCoreObject))
+                    ASSERT(is<AccessibilityObject>(*grandchildCoreObject));
+                    RefPtr grandchild = dynamicDowncast<AccessibilityObject>(*grandchildCoreObject);
+                    if (!grandchild)
                         continue;
-                    auto* grandchild = downcast<AccessibilityObject>(grandchildCoreObject.get());
+
                     // Even though `child` is ignored, we still need to set ancestry flags based on it.
                     grandchild->initializeAncestorFlags(childAncestorFlags);
                     grandchild->addAncestorFlags(thisAncestorFlags);
@@ -1436,11 +1437,12 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
         pointResult = result.localPoint();
 
         // done if hit something other than a widget
-        if (!is<RenderWidget>(*renderer))
+        auto* renderWidget = dynamicDowncast<RenderWidget>(*renderer);
+        if (!renderWidget)
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        auto* widget = renderWidget->widget();
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             break;
@@ -1450,6 +1452,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
 
         renderView = document->renderView();
 #if PLATFORM(MAC)
+        // FIXME: Can this be removed? This seems like a redundant assignment.
         frameView = downcast<LocalFrameView>(widget);
 #endif
     }
@@ -1715,11 +1718,11 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
 Vector<RetainPtr<id>> AccessibilityObject::modelElementChildren()
 {
-    Node* node = this->node();
-    if (!is<HTMLModelElement>(node))
+    RefPtr model = dynamicDowncast<HTMLModelElement>(node());
+    if (!model)
         return { };
-    
-    return downcast<HTMLModelElement>(node)->accessibilityChildren();
+
+    return model->accessibilityChildren();
 }
 #endif
 
@@ -2207,8 +2210,8 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
         }
 
         // Now see if this item also has rows hiding inside of it.
-        if (is<AccessibilityObject>(*child))
-            downcast<AccessibilityObject>(*child).ariaTreeRows(rows, ancestors);
+        if (auto* accessibilityObject = dynamicDowncast<AccessibilityObject>(*child))
+            accessibilityObject->ariaTreeRows(rows, ancestors);
     }
 
     // Now go through the aria-owns elements.
@@ -2231,8 +2234,8 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
         }
 
         // Now see if this item also has rows hiding inside of it.
-        if (is<AccessibilityObject>(*child))
-            downcast<AccessibilityObject>(*child).ariaTreeRows(rows, ancestors);
+        if (auto* accessibilityObject = dynamicDowncast<AccessibilityObject>(*child))
+            accessibilityObject->ariaTreeRows(rows, ancestors);
     }
 
     ancestors.removeLast();
@@ -2466,8 +2469,8 @@ bool AccessibilityObject::ignoredFromModalPresence() const
 
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
-    Node* node = this->node();
-    return is<Element>(node) && downcast<Element>(*node).hasTagName(tagName);
+    RefPtr element = dynamicDowncast<Element>(node());
+    return element && element->hasTagName(tagName);
 }
 
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
@@ -2510,12 +2513,13 @@ int AccessibilityObject::getIntegralAttribute(const QualifiedName& attributeName
 bool AccessibilityObject::replaceTextInRange(const String& replacementString, const CharacterRange& range)
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
-    if (is<Document>(node())) {
-        if (auto bodyObject = axObjectCache()->getOrCreate(downcast<Document>(node())->body()))
+    if (RefPtr document = dynamicDowncast<Document>(node())) {
+        if (auto bodyObject = axObjectCache()->getOrCreate(document->body()))
             return bodyObject->replaceTextInRange(replacementString, range);
         return false;
     }
-    
+
+    // FIXME: This checks node() is an Element, but below we assume that means renderer()->node() is an element.
     if (!renderer() || !is<Element>(node()))
         return false;
 
@@ -2530,12 +2534,12 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
         return true;
     }
     
-    if (is<HTMLInputElement>(element)) {
-        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.location, range.length, emptyString());
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
+        input->setRangeText(replacementString, range.location, range.length, emptyString());
         return true;
     }
-    if (is<HTMLTextAreaElement>(element)) {
-        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.location, range.length, emptyString());
+    if (RefPtr textarea = dynamicDowncast<HTMLTextAreaElement>(element)) {
+        textarea->setRangeText(replacementString, range.location, range.length, emptyString());
         return true;
     }
 
@@ -2546,12 +2550,15 @@ bool AccessibilityObject::insertText(const String& text)
 {
     AXTRACE(makeString("AccessibilityObject::insertText text = ", text));
 
-    if (!renderer() || !is<Element>(node()))
+    if (!renderer())
         return false;
 
-    auto& element = downcast<Element>(*node());
+    RefPtr element = dynamicDowncast<Element>(node());
+    if (!element)
+        return false;
+
     // Only try to insert text if the field is in editing mode (excluding secure fields, which we do still want to try to insert into).
-    if (!isSecureField() && !element.shouldUseInputMethod())
+    if (!isSecureField() && !element->shouldUseInputMethod())
         return false;
 
     // Use Editor::insertText to mimic typing into the field.
@@ -2841,9 +2848,11 @@ String AccessibilityObject::subrolePlatformString() const
 
 String AccessibilityObject::embeddedImageDescription() const
 {
-    if (!is<RenderImage>(renderer()))
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
+    if (!renderImage)
         return { };
-    return downcast<RenderImage>(renderer())->accessibilityDescription();
+
+    return renderImage->accessibilityDescription();
 }
 
 // ARIA spec: User agents must not expose the aria-roledescription property if the element to which aria-roledescription is applied does not have a valid WAI-ARIA role or does not have an implicit WAI-ARIA role semantic.
@@ -3007,12 +3016,9 @@ bool AccessibilityObject::isValueAutofillAvailable() const
 {
     if (!isNativeTextControl())
         return false;
-    
-    Node* node = this->node();
-    if (!is<HTMLInputElement>(node))
-        return false;
-    
-    return downcast<HTMLInputElement>(*node).isAutoFillAvailable() || downcast<HTMLInputElement>(*node).autoFillButtonType() != AutoFillButtonType::None;
+
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node());
+    return input && (input->isAutoFillAvailable() || input->autoFillButtonType() != AutoFillButtonType::None);
 }
 
 AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
@@ -3426,8 +3432,8 @@ double AccessibilityObject::loadingProgress() const
 
 bool AccessibilityObject::isExpanded() const
 {
-    if (is<HTMLDetailsElement>(node()))
-        return downcast<HTMLDetailsElement>(node())->hasAttribute(openAttr);
+    if (RefPtr details = dynamicDowncast<HTMLDetailsElement>(node()))
+        return details->hasAttribute(openAttr);
     
     // Summary element should use its details parent's expanded status.
     if (isSummary()) {
@@ -3910,7 +3916,8 @@ AccessibilityRole AccessibilityObject::buttonRoleType() const
 
 bool AccessibilityObject::isFileUploadButton() const
 {
-    return is<HTMLInputElement>(node()) && downcast<HTMLInputElement>(*node()).isFileUpload();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node());
+    return input && input->isFileUpload();
 }
 
 bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
@@ -4046,11 +4053,10 @@ bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cach
 
 Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
 {
-    RefPtr node = this->node();
-    if (!node || !node->isElementNode())
+    RefPtr element = dynamicDowncast<Element>(node());
+    if (!element)
         return { };
 
-    Ref element = downcast<Element>(node.releaseNonNull());
     if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
         if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
             if (RefPtr reflectedElement = element->getElementAttribute(attribute)) {
@@ -4070,7 +4076,7 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
         if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
-            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
+            return WTF::map(defaultARIA->elementsForAttribute(*element, attribute), [](RefPtr<Element> element) -> Ref<Element> {
                 return *element;
             });
         }
@@ -4163,8 +4169,8 @@ bool AccessibilityObject::isContainedBySecureField() const
     if (ariaRoleAttribute() != AccessibilityRole::Unknown)
         return false;
 
-    Element* element = node->shadowHost();
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isSecureField();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node->shadowHost());
+    return input && input->isSecureField();
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows()

@@ -1191,15 +1191,15 @@ bool AccessibilityNodeObject::toggleDetailsAncestor()
     return false;
 }
 
-static bool isNodeActionElement(Node* node)
+static RefPtr<Element> nodeActionElement(Node& node)
 {
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*node)) {
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node)) {
         if (!input->isDisabledFormControl() && (input->isRadioButton() || input->isCheckbox() || input->isTextButton() || input->isFileUpload() || input->isImageButton()))
-            return true;
-    } else if (node->hasTagName(buttonTag) || node->hasTagName(selectTag))
-        return true;
+            return input;
+    } else if (node.hasTagName(buttonTag) || node.hasTagName(selectTag))
+        return &downcast<Element>(node);
 
-    return false;
+    return nullptr;
 }
 
 static Element* nativeActionElement(Node* start)
@@ -1212,8 +1212,8 @@ static Element* nativeActionElement(Node* start)
     // It solves the problem when authors put role="button" on a group and leave the actual button inside the group.
 
     for (Node* child = start->firstChild(); child; child = child->nextSibling()) {
-        if (isNodeActionElement(child))
-            return downcast<Element>(child);
+        if (RefPtr element = nodeActionElement(*child))
+            return element.get();
 
         if (Element* subChild = nativeActionElement(child))
             return subChild;
@@ -1227,8 +1227,8 @@ Element* AccessibilityNodeObject::actionElement() const
     if (!node)
         return nullptr;
 
-    if (isNodeActionElement(node))
-        return downcast<Element>(node);
+    if (RefPtr element = nodeActionElement(*node))
+        return element.get();
 
     if (AccessibilityObject::isARIAInput(ariaRoleAttribute()))
         return downcast<Element>(node);
@@ -2156,13 +2156,12 @@ URL AccessibilityNodeObject::url() const
 
 unsigned AccessibilityNodeObject::hierarchicalLevel() const
 {
-    Node* node = this->node();
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node());
+    if (!element)
         return 0;
 
-    auto& element = downcast<Element>(*node);
-    if (!element.attributeWithoutSynchronization(aria_levelAttr).isEmpty())
-        return element.getIntegralAttribute(aria_levelAttr);
+    if (!element->attributeWithoutSynchronization(aria_levelAttr).isEmpty())
+        return element->getIntegralAttribute(aria_levelAttr);
 
     // Only tree item will calculate its level through the DOM currently.
     if (roleValue() != AccessibilityRole::TreeItem)
@@ -2184,10 +2183,9 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 
 void AccessibilityNodeObject::setIsExpanded(bool expand)
 {
-    if (is<HTMLDetailsElement>(node())) {
-        auto& details = downcast<HTMLDetailsElement>(*node());
-        if (expand != details.hasAttribute(openAttr))
-            details.toggleOpen();
+    if (RefPtr details = dynamicDowncast<HTMLDetailsElement>(node())) {
+        if (expand != details->hasAttribute(openAttr))
+            details->toggleOpen();
     }
 }
 
@@ -2237,7 +2235,7 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
     if (is<AccessibilityList>(*obj))
         return false;
 
-    if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposable())
+    if (auto* table = dynamicDowncast<AccessibilityTable>(*obj); table && table->isExposable())
         return false;
 
     if (obj->isTree() || obj->isCanvas())
@@ -2270,8 +2268,8 @@ static void appendNameToStringBuilder(StringBuilder& builder, const String& text
 String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     Node* node = this->node();
-    if (is<Text>(node))
-        return downcast<Text>(*node).wholeText();
+    if (RefPtr text = dynamicDowncast<Text>(node))
+        return text->wholeText();
 
     bool isAriaVisible = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
         return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false"_s);
@@ -2299,16 +2297,16 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
         if (!shouldUseAccessibilityObjectInnerText(child.get(), mode))
             continue;
 
-        if (is<AccessibilityNodeObject>(*child)) {
+        if (auto* accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(*child)) {
             // We should ignore the child if it's labeled by this node.
             // This could happen when this node labels multiple child nodes and we didn't
             // skip in the above ignoredChildNode check.
-            auto labeledByElements = downcast<AccessibilityNodeObject>(*child).ariaLabeledByElements();
+            auto labeledByElements = accessibilityNodeObject->ariaLabeledByElements();
             if (labeledByElements.containsIf([&](auto& element) { return element.ptr() == node; }))
                 continue;
 
             Vector<AccessibilityText> textOrder;
-            downcast<AccessibilityNodeObject>(*child).alternativeText(textOrder);
+            accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
                 appendNameToStringBuilder(builder, textOrder[0].text);
                 continue;
