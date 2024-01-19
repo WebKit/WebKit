@@ -539,7 +539,11 @@ Packing RewriteGlobalVariables::packingForType(const Type* type)
 void RewriteGlobalVariables::collectGlobals()
 {
     Vector<std::tuple<AST::Variable*, unsigned>> bufferLengths;
-    for (auto& declaration : m_callGraph.ast().declarations()) {
+    // we can't use a range-based for loop here since we might create new structs
+    // and insert them into the declarations vector
+    auto size = m_callGraph.ast().declarations().size();
+    for (unsigned i = 0; i < size; ++i) {
+        auto& declaration = m_callGraph.ast().declarations()[i];
         if (!is<AST::Variable>(declaration))
             continue;
         auto& globalVar = downcast<AST::Variable>(declaration);
