@@ -146,6 +146,7 @@ namespace JSC {
 
     struct CallCompilationInfo {
         MacroAssembler::Label doneLocation;
+        MacroAssembler::Label dispatchLabel;
         BaselineUnlinkedCallLinkInfo* unlinkedCallLinkInfo;
     };
 
@@ -276,16 +277,7 @@ namespace JSC {
         void compileOpCallSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
 
         template<typename Op>
-        std::enable_if_t<
-            Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
-            && Op::opcodeID != op_tail_call_varargs && Op::opcodeID != op_tail_call_forward_arguments
-        , void> compileSetupFrame(const Op&);
-
-        template<typename Op>
-        std::enable_if_t<
-            Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
-            || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
-        , void> compileSetupFrame(const Op&);
+        void compileSetupFrame(const Op&);
 
         template<typename Op>
         bool compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned callLinkInfoIndex);

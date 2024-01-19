@@ -70,23 +70,14 @@ struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
 };
 
 struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {
-    void setUpCall(CallLinkInfo::CallType callType, GPRReg calleeGPR)
+    void setUpCall(CallLinkInfo::CallType callType)
     {
         this->callType = callType;
-        this->calleeGPR = calleeGPR;
-    }
-
-    void setFrameShuffleData(const CallFrameShuffleData& shuffleData)
-    {
-        m_frameShuffleData = makeUnique<CallFrameShuffleData>(shuffleData);
-        m_frameShuffleData->shrinkToFit();
     }
 
     CodeOrigin codeOrigin;
     CallLinkInfo::CallType callType { CallLinkInfo::CallType::None };
     GPRReg callLinkInfoGPR { InvalidGPRReg };
-    GPRReg calleeGPR { InvalidGPRReg };
-    std::unique_ptr<CallFrameShuffleData> m_frameShuffleData;
 };
 
 class LinkerIR {

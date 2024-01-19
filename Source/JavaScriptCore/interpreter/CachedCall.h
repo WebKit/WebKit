@@ -105,11 +105,19 @@ public:
     void appendArgument(JSValue v) { m_arguments.append(v); }
     bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
 
-    void unlinkImpl(VM&)
+    void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
     {
-        m_addressForCall = nullptr;
         if (isOnList())
             remove();
+
+        if (newCodeBlock && m_protoCallFrame.codeBlock() == oldCodeBlock) {
+            newCodeBlock->m_shouldAlwaysBeInlined = false;
+            m_addressForCall = newCodeBlock->jitCode()->addressForCall();
+            m_protoCallFrame.setCodeBlock(newCodeBlock);
+            newCodeBlock->linkIncomingCall(nullptr, this);
+            return;
+        }
+        m_addressForCall = nullptr;
     }
 
     void relink()

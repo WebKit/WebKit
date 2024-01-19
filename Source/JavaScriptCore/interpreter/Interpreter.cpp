@@ -35,6 +35,7 @@
 #include "ArgList.h"
 #include "BatchedTransitionOptimizer.h"
 #include "Bytecodes.h"
+#include "CallLinkInfo.h"
 #include "CatchScope.h"
 #include "CheckpointOSRExitSideState.h"
 #include "CodeBlock.h"
@@ -400,13 +401,13 @@ bool Interpreter::isOpcode(Opcode opcode)
 
 class GetStackTraceFunctor {
 public:
-    GetStackTraceFunctor(VM& vm, JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t capacity)
+    GetStackTraceFunctor(VM& vm, JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t frameCountInResults)
         : m_vm(vm)
         , m_owner(owner)
         , m_results(results)
         , m_framesToSkip(framesToSkip)
+        , m_frameCountInResults(frameCountInResults)
     {
-        m_results.grow(capacity);
     }
 
     IterationStatus operator()(StackVisitor& visitor) const
@@ -446,11 +447,11 @@ private:
     VM& m_vm;
     JSCell* m_owner;
     Vector<StackFrame>& m_results;
-    mutable size_t m_frameCountInResults { 0 };
     mutable size_t m_framesToSkip;
+    mutable size_t m_frameCountInResults;
 };
 
-void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize, JSCell* caller)
+void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize, JSCell* caller, JSCell* ownerOfCallLinkInfo, CallLinkInfo* callLinkInfo)
 {
     DisallowGC disallowGC;
     VM& vm = this->vm();
@@ -460,6 +461,46 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
     size_t skippedFrames = 0;
     size_t visitedFrames = 0;
+
+    auto isImplementationVisibilityPrivate = [&](CodeBlock* codeBlock) {
+        if (auto* executable = codeBlock->ownerExecutable())
+            return executable->implementationVisibility() != ImplementationVisibility::Public;
+        return false;
+    };
+
+    // This is OK since we never cause GC inside it (see DisallowGC).
+    Vector<std::tuple<CodeBlock*, BytecodeIndex>, 16> reconstructedFrames;
+    auto countFrame = [&](CodeBlock* codeBlock, BytecodeIndex bytecodeIndex) {
+        if (skippedFrames < framesToSkip) {
+            skippedFrames++;
+            return IterationStatus::Continue;
+        }
+        if (isImplementationVisibilityPrivate(codeBlock))
+            return IterationStatus::Continue;
+
+        reconstructedFrames.append(std::tuple { codeBlock, bytecodeIndex });
+        if (++visitedFrames < maxStackSize)
+            return IterationStatus::Continue;
+
+        return IterationStatus::Done;
+    };
+
+    if (!caller && ownerOfCallLinkInfo && callLinkInfo && callLinkInfo->isTailCall()) {
+        // Reconstruct the top frame from CallLinkInfo*
+        CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(ownerOfCallLinkInfo);
+        if (codeBlock) {
+            CodeOrigin codeOrigin = callLinkInfo->codeOrigin();
+            if (codeOrigin.inlineCallFrame()) {
+                for (auto currentCodeOrigin = &codeOrigin; currentCodeOrigin && currentCodeOrigin->inlineCallFrame(); currentCodeOrigin = currentCodeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
+                    if (countFrame(baselineCodeBlockForInlineCallFrame(currentCodeOrigin->inlineCallFrame()), currentCodeOrigin->bytecodeIndex()) == IterationStatus::Done)
+                        break;
+                }
+            } else
+                countFrame(codeBlock, codeOrigin.bytecodeIndex());
+        }
+    }
+
+    size_t skippedFramesInReconstructedFrames = skippedFrames;
     bool foundCaller = !caller;
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
         if (skippedFrames < framesToSkip) {
@@ -485,7 +526,12 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     if (!visitedFrames)
         return;
 
-    GetStackTraceFunctor functor(vm, owner, results, skippedFrames, visitedFrames);
+    results.grow(visitedFrames);
+    unsigned index = 0;
+    for (auto [codeBlock, bytecodeIndex] : reconstructedFrames)
+        results[index++] = StackFrame(vm, owner, codeBlock, bytecodeIndex);
+
+    GetStackTraceFunctor functor(vm, owner, results, skippedFrames - skippedFramesInReconstructedFrames, reconstructedFrames.size());
     StackVisitor::visit(callFrame, vm, functor);
     ASSERT(functor.frameCountInResults() == results.size());
 }
@@ -1295,7 +1341,7 @@ CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction*
     newCodeBlock->m_shouldAlwaysBeInlined = false;
 
     cachedCall.m_addressForCall = newCodeBlock->jitCode()->addressForCall();
-    newCodeBlock->linkIncomingCall(nullptr, nullptr, &cachedCall);
+    newCodeBlock->linkIncomingCall(nullptr, &cachedCall);
     return newCodeBlock;
 }
 
