@@ -1790,4 +1790,22 @@ TEST(SiteIsolation, ProcessDisplayNames)
 }
 #endif
 
+TEST(SiteIsolation, NavigateOpener)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/webkit2"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    [opened.webView evaluateJavaScript:@"opener.location = '/webkit2'" completionHandler:nil];
+    [opener.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(opened.webView.get()._webProcessIdentifier, opener.webView.get()._webProcessIdentifier);
+    checkFrameTreesInProcesses(opener.webView.get(), { { "https://webkit.org"_s } });
+    checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
+}
+
+// FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
+
 }

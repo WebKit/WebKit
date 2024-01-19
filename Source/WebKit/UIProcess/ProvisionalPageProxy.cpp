@@ -111,8 +111,6 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     }
 
     initializeWebPage(websitePolicies);
-
-    m_page->inspectorController().didCreateProvisionalPage(*this);
 }
 
 ProvisionalPageProxy::~ProvisionalPageProxy()
@@ -198,36 +196,44 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     m_drawingArea = m_page->pageClient().createDrawingAreaProxy(m_process.copyRef());
 
     bool sendPageCreationParameters { true };
+    bool registerWithInspectorController { true };
     auto parameters = m_page->creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
 
     if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled()) {
+        // FIXME: <rdar://121241026> This is not elegant and not robust. It needs to be.
         RegistrableDomain navigationDomain(m_request.url());
         RefPtr openerFrame = m_page->openerFrame();
-        if (RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr) {
+        RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr;
+        if (openerFrame) {
             parameters.openerFrameIdentifier = openerFrame->frameID();
             parameters.mainFrameIdentifier = m_page->mainFrame()->frameID();
-
-            if (auto existingRemotePageProxy = m_page->takeRemotePageProxyInOpenerProcessIfDomainEquals(navigationDomain)) {
-                ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
-                m_webPageID = existingRemotePageProxy->pageID();
-                m_mainFrame = existingRemotePageProxy->page()->mainFrame();
-                m_messageReceiverRegistration.stopReceivingMessages();
-                m_messageReceiverRegistration.transferMessageReceivingFrom(existingRemotePageProxy->messageReceiverRegistration(), *this);
-                LocalFrameCreationParameters localFrameCreationParameters {
-                    std::nullopt
-                };
-                m_process->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
-                sendPageCreationParameters = false;
-            } else if (RefPtr existingRemotePageProxy = openerPage->remotePageProxyForRegistrableDomain(navigationDomain)) {
-                ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
-                openerPage->addOpenedRemotePageProxy(m_page->identifier(), existingRemotePageProxy.releaseNonNull());
-                m_needsCookieAccessAddedInNetworkProcess = true;
-            } else {
-                auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
-                remotePageProxy->injectPageIntoNewProcess();
-                openerPage->addOpenedRemotePageProxy(m_page->identifier(), WTFMove(remotePageProxy));
-            }
         }
+        auto existingRemotePageProxy = m_page->takeRemotePageProxyInOpenerProcessIfDomainEquals(navigationDomain);
+        if (!existingRemotePageProxy) {
+            if ((existingRemotePageProxy = m_page->takeOpenedRemotePageProxyIfDomainEquals(navigationDomain)))
+                registerWithInspectorController = false; // FIXME: <rdar://121240770> This is a hack. There seems to be a bug in our interaction with WebPageInspectorController.
+        }
+        if (existingRemotePageProxy) {
+            ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
+            m_webPageID = existingRemotePageProxy->pageID();
+            m_mainFrame = existingRemotePageProxy->page()->mainFrame();
+            m_messageReceiverRegistration.stopReceivingMessages();
+            m_messageReceiverRegistration.transferMessageReceivingFrom(existingRemotePageProxy->messageReceiverRegistration(), *this);
+            LocalFrameCreationParameters localFrameCreationParameters {
+                std::nullopt
+            };
+            m_process->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
+            sendPageCreationParameters = false;
+        } else if (RefPtr existingRemotePageProxy = openerPage ? openerPage->remotePageProxyForRegistrableDomain(navigationDomain) : nullptr) {
+            ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
+            openerPage->addOpenedRemotePageProxy(m_page->identifier(), existingRemotePageProxy.releaseNonNull());
+            m_needsCookieAccessAddedInNetworkProcess = true;
+        } else if (openerPage) {
+            auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
+            remotePageProxy->injectPageIntoNewProcess();
+            openerPage->addOpenedRemotePageProxy(m_page->identifier(), WTFMove(remotePageProxy));
+        }
+        m_needsDidStartProvisionalLoad = false;
     }
 
     parameters.isProcessSwap = true;
@@ -238,6 +244,9 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
     if (m_page->isLayerTreeFrozenDueToSwipeAnimation())
         send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
+
+    if (registerWithInspectorController)
+        m_page->inspectorController().didCreateProvisionalPage(*this);
 }
 
 void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
@@ -368,11 +377,8 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     if (m_isServerRedirect)
         return;
 
-    // When this is true, we are reusing the main WebFrameProxy and its frame state will be updated in didStartProvisionalLoadForFrameShared.
-    bool isCrossSiteWindowOpen = m_page->openerFrame() && (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled());
-
     // Clients expect the Page's main frame's expectedURL to be the provisional one when a provisional load is started.
-    if (auto* pageMainFrame = m_page->mainFrame(); pageMainFrame && !isCrossSiteWindowOpen)
+    if (auto* pageMainFrame = m_page->mainFrame(); pageMainFrame && m_needsDidStartProvisionalLoad)
         pageMainFrame->didStartProvisionalLoad(url);
 
     m_page->didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData);

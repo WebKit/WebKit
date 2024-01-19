@@ -199,6 +199,7 @@ private:
     bool m_wasCommitted { false };
     bool m_isProcessSwappingOnNavigationResponse { false };
     bool m_needsCookieAccessAddedInNetworkProcess { false };
+    bool m_needsDidStartProvisionalLoad { true };
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 

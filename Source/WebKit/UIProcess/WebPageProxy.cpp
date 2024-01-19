@@ -1233,6 +1233,9 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     ASSERT(!m_isClosed);
     WEBPAGEPROXY_RELEASE_LOG(Loading, "swapToProvisionalPage: newWebPageID=%" PRIu64, provisionalPage->webPageID().toUInt64());
 
+    for (auto& openedPage : internals().m_openedPages)
+        openedPage.internals().remotePageProxyState.remotePageProxyInOpenerProcess = nullptr;
+
     m_process = provisionalPage->process();
     internals().webPageID = provisionalPage->webPageID();
     pageClient().didChangeWebPageID();
@@ -13133,6 +13136,20 @@ RefPtr<RemotePageProxy> WebPageProxy::takeRemotePageProxyInOpenerProcessIfDomain
 void WebPageProxy::removeOpenedRemotePageProxy(WebPageProxyIdentifier pageID)
 {
     internals().remotePageProxyState.openedRemotePageProxies.remove(pageID);
+}
+
+RefPtr<RemotePageProxy> WebPageProxy::takeOpenedRemotePageProxyIfDomainEquals(const WebCore::RegistrableDomain& domain)
+{
+    auto& map = internals().remotePageProxyState.openedRemotePageProxies;
+    // FIXME: <rdar://121240859> Use better data structures so we don't need to iterate the whole map.
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        Ref remotePageProxy = it->value;
+        if (remotePageProxy->domain() == domain) {
+            map.remove(it);
+            return { WTFMove(remotePageProxy) };
+        }
+    }
+    return nullptr;
 }
 
 void WebPageProxy::addOpenedRemotePageProxy(WebPageProxyIdentifier pageID, Ref<RemotePageProxy>&& page)
