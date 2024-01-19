@@ -481,9 +481,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 // Define the opcode dispatch mechanism when using an ASM loop:
 //
 
-// We're disabling this for now because of a suspected linker issue.
-#define OFFLINE_ASM_USE_ALT_ENTRY 0
-
 #if COMPILER(CLANG)
 
 // We need an OFFLINE_ASM_BEGIN_SPACER because we'll be declaring every OFFLINE_ASM_GLOBAL_LABEL
@@ -512,7 +509,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 // These are for building an interpreter from generated assembly code:
 
-#if OFFLINE_ASM_USE_ALT_ENTRY
+#if ENABLE(OFFLINE_ASM_ALT_ENTRY)
 #define OFFLINE_ASM_BEGIN   asm ( \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B) \
     OFFLINE_ASM_BEGIN_SPACER
@@ -582,7 +579,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define OFFLINE_ASM_ALIGN4B ".balign 4\n"
 #define OFFLINE_ASM_NOALIGN ""
 
-#if OFFLINE_ASM_USE_ALT_ENTRY
+#if ENABLE(OFFLINE_ASM_ALT_ENTRY)
 #define OFFLINE_ASM_GLOBAL_LABEL(label) \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B)
 #define OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(label) \
@@ -592,9 +589,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B)
 #define OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(label) \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_NOALIGN)
-#endif // USE_ALT_ENTRY
+#endif // ENABLE(OFFLINE_ASM_ALT_ENTRY)
 
-#if COMPILER(CLANG) && OFFLINE_ASM_USE_ALT_ENTRY
+#if COMPILER(CLANG) && ENABLE(OFFLINE_ASM_ALT_ENTRY)
 #define OFFLINE_ASM_ALT_GLOBAL_LABEL(label) OFFLINE_ASM_GLOBAL_LABEL(label)
 #else
 #define OFFLINE_ASM_ALT_GLOBAL_LABEL(label)
