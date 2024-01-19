@@ -36,12 +36,6 @@ WEBCORE_EXPORT String topPrivatelyControlledDomain(const String& domain);
 WEBCORE_EXPORT void setTopPrivatelyControlledDomain(const String& domain, const String& topPrivatelyControlledDomain);
 String decodeHostName(const String& domain);
 
-inline bool isDomainForTesting(const String& domain)
-{
-    // These domains do not have a real TLD and have to be special cased by implementaitons.
-    return domain.endsWithIgnoringASCIICase("web-platform.test"_s);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(PUBLIC_SUFFIX_LIST)

@@ -87,7 +87,7 @@ String topPrivatelyControlledDomain(const String& domain)
         return String::fromUTF8(baseDomain);
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN)) {
-        if (isDomainForTesting(domain))
+        if (domain.endsWithIgnoringASCIICase("web-platform.test"_s))
             return permissiveTopPrivateDomain(domain.substring(position));
         return String();
     }
