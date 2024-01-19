@@ -6549,6 +6549,9 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
 - (BOOL)hasText
 {
+    if (_isFocusingElementWithKeyboard || _page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
+        return _focusedElementInformation.hasPlainText;
+
     auto& editorState = _page->editorState();
     return editorState.hasPostLayoutData() && editorState.postLayoutData->hasPlainText;
 }
