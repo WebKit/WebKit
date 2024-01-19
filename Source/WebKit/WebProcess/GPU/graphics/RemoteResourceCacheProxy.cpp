@@ -110,6 +110,12 @@ inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNa
     // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
     if (!platformImage) {
         bitmap = ShareableBitmap::createFromImageDraw(image);
+
+        // If createGraphicsContext() failed because the image colorSpace is not
+        // supported for output, fallback to SRGB.
+        if (!bitmap)
+            bitmap = ShareableBitmap::createFromImageDraw(image, DestinationColorSpace::SRGB());
+
         if (bitmap)
             platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
     }
