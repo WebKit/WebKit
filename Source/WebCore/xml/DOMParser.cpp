@@ -19,8 +19,10 @@
 #include "config.h"
 #include "DOMParser.h"
 
-#include "DOMImplementation.h"
+#include "HTMLDocument.h"
+#include "SVGDocument.h"
 #include "SecurityOriginPolicy.h"
+#include "XMLDocument.h"
 
 namespace WebCore {
 
@@ -39,9 +41,19 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
 
 ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
 {
-    if (contentType != "text/html"_s && contentType != "text/xml"_s && contentType != "application/xml"_s && contentType != "application/xhtml+xml"_s && contentType != "image/svg+xml"_s)
+    RefPtr<Document> document;
+    if (contentType == "text/html"_s)
+        document = HTMLDocument::create(nullptr, m_settings, URL { });
+    else if (contentType == "application/xhtml+xml"_s)
+        document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
+    else if (contentType == "image/svg+xml"_s)
+        document = SVGDocument::create(nullptr, m_settings, URL { });
+    else if (contentType == "text/xml"_s || contentType == "application/xml"_s) {
+        document = XMLDocument::create(nullptr, m_settings, URL { });
+        document->overrideMIMEType(contentType);
+    } else
         return Exception { ExceptionCode::TypeError };
-    Ref document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
+
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
     document->setMarkupUnsafe(string, { });
@@ -49,7 +61,7 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
         document->setURL(m_contextDocument->url());
         document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
     }
-    return document;
+    return document.releaseNonNull();
 }
 
 } // namespace WebCore
