@@ -764,3 +764,12 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
     const year = parts.find(part => part.type === 'year')
     shouldBe(year.value, "2021")
 }
+
+shouldThrow(() => {
+    Function.prototype.__defineGetter__('prototype', function () {
+        this.call(0x1234);
+    });
+    
+    const dateTimeFormat = new Intl.DateTimeFormat();
+    1 instanceof dateTimeFormat.format;
+}, TypeError)

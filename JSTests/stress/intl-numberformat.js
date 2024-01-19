@@ -523,3 +523,12 @@ shouldThrow(() => {
         minimumFractionDigits: 100
     });
 }, RangeError);
+
+shouldThrow(() => {
+    Function.prototype.__defineGetter__('prototype', function () {
+        this.call(0x1234);
+    });
+    
+    const numberFormat = new Intl.NumberFormat();
+    1 instanceof numberFormat.format;
+}, TypeError)
