@@ -144,6 +144,10 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         uint32_t bipBopRemain = m_bipBopBuffer.size() - bipBopStart;
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
 
+        // We might have stopped producing data. Break out of the loop earlier if that happens.
+        if (!m_caps)
+            break;
+
         ASSERT(m_streamFormat);
         const auto& info = m_streamFormat->getInfo();
         GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_allocate(nullptr, bipBopCount * m_streamFormat->bytesPerFrame(), nullptr));
