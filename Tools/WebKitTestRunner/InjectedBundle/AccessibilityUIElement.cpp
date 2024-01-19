@@ -78,6 +78,7 @@ bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
 bool AccessibilityUIElement::hasTextEntryTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
+bool AccessibilityUIElement::isSwitch() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { return nullptr; }

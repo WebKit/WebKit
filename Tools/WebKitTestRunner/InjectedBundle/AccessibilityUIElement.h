@@ -386,6 +386,7 @@ public:
     RefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned index);
     void assistiveTechnologySimulatedFocus();
     bool isSearchField() const;
+    bool isSwitch() const;
     bool isTextArea() const;
 
     bool scrollPageUp();

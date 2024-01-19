@@ -2814,6 +2814,14 @@ static RenderObject* rendererForView(WAKView* view)
     return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Mark }) != nullptr;
 }
 
+- (BOOL)_accessibilityIsSwitch
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->isSwitch();
+}
+
 - (NSArray<NSString *> *)accessibilitySpeechHint
 {
     if (![self _prepareAccessibilityCall])

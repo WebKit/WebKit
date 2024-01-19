@@ -299,6 +299,7 @@ interface AccessibilityUIElement {
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     undefined assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
+    readonly attribute boolean isSwitch;
     readonly attribute boolean isTextArea;
     readonly attribute boolean isMarkAnnotation;
     readonly attribute boolean supportsExpanded;
