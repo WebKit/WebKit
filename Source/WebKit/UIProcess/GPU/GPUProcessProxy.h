@@ -71,6 +71,7 @@ class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;
 public:
+    static void keepProcessAliveTemporarily();
     static Ref<GPUProcessProxy> getOrCreate();
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();

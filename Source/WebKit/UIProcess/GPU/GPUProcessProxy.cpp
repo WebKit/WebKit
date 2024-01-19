@@ -103,6 +103,27 @@ static WeakPtr<GPUProcessProxy>& singleton()
     return singleton;
 }
 
+static RefPtr<GPUProcessProxy>& keptAliveGPUProcessProxy()
+{
+    static MainThreadNeverDestroyed<RefPtr<GPUProcessProxy>> keptAliveGPUProcessProxy;
+    return keptAliveGPUProcessProxy.get();
+}
+
+void GPUProcessProxy::keepProcessAliveTemporarily()
+{
+    ASSERT(isMainRunLoop());
+    static constexpr auto durationToKeepGPUProcessAliveAfterDestruction = 1_min;
+
+    if (!singleton())
+        return;
+
+    keptAliveGPUProcessProxy() = singleton().get();
+    static NeverDestroyed<RunLoop::Timer> releaseGPUProcessTimer(RunLoop::main(), [] {
+        keptAliveGPUProcessProxy() = nullptr;
+    });
+    releaseGPUProcessTimer.get().startOneShot(durationToKeepGPUProcessAliveAfterDestruction);
+}
+
 Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
 {
     ASSERT(RunLoop::isMain());
@@ -110,7 +131,7 @@ Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
         ASSERT(existingGPUProcess->state() != State::Terminated);
         return *existingGPUProcess;
     }
-    auto gpuProcess = adoptRef(*new GPUProcessProxy);
+    Ref gpuProcess = adoptRef(*new GPUProcessProxy);
     singleton() = gpuProcess;
     return gpuProcess;
 }
@@ -512,6 +533,8 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 
 #endif
 
+    if (keptAliveGPUProcessProxy() == this)
+        keptAliveGPUProcessProxy() = nullptr;
     if (singleton() == this)
         singleton() = nullptr;
 

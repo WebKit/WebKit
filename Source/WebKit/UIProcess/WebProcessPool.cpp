@@ -328,6 +328,15 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
 WebProcessPool::~WebProcessPool()
 {
+#if ENABLE(GPU_PROCESS)
+    // Some apps keep destroying and reconstructing new WebProcessPool objects whenever
+    // they create new web views (rdar://121128159). To avoid relaunching the GPUProcess
+    // unnecessarily in this case, we keep the GPUProcess running for a minute after the
+    // last WebProcessPool object gets destroyed.
+    if (m_gpuProcess && GPUProcessProxy::singletonIfCreated() == m_gpuProcess.get())
+        GPUProcessProxy::keepProcessAliveTemporarily();
+#endif
+
     checkedWebProcessCache()->clear();
 
     bool removed = processPools().removeFirst(*this);

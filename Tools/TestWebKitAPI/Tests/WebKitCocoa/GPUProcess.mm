@@ -897,4 +897,34 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
 
+#if ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+TEST(GPUProcess, ReuseBetweenProcessPools)
+{
+    auto loadBlankViewAndWaitForGPUProcess = []() -> pid_t {
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+        while (![webView.get().configuration.processPool _gpuProcessIdentifier])
+            TestWebKitAPI::Util::spinRunLoop();
+        return [webView.get().configuration.processPool _gpuProcessIdentifier];
+    };
+
+    pid_t firstGPUProcessPID = 0;
+    @autoreleasepool {
+        firstGPUProcessPID = loadBlankViewAndWaitForGPUProcess();
+    }
+
+    TestWebKitAPI::Util::runFor(0.1_s);
+
+    pid_t secondGPUProcessPID = 0;
+    @autoreleasepool {
+        secondGPUProcessPID = loadBlankViewAndWaitForGPUProcess();
+    }
+
+    EXPECT_EQ(firstGPUProcessPID, secondGPUProcessPID);
+}
+#endif // ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+
 } // namespace TestWebKitAPI
