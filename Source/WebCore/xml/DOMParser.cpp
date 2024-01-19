@@ -41,15 +41,18 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
 
 ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
 {
+    URL url = { };
+    if (m_contextDocument)
+        url = m_contextDocument->url();
     RefPtr<Document> document;
     if (contentType == "text/html"_s)
-        document = HTMLDocument::create(nullptr, m_settings, URL { });
+        document = HTMLDocument::create(nullptr, m_settings, url);
     else if (contentType == "application/xhtml+xml"_s)
-        document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
+        document = XMLDocument::createXHTML(nullptr, m_settings, url);
     else if (contentType == "image/svg+xml"_s)
-        document = SVGDocument::create(nullptr, m_settings, URL { });
+        document = SVGDocument::create(nullptr, m_settings, url);
     else if (contentType == "text/xml"_s || contentType == "application/xml"_s) {
-        document = XMLDocument::create(nullptr, m_settings, URL { });
+        document = XMLDocument::create(nullptr, m_settings, url);
         document->overrideMIMEType(contentType);
     } else
         return Exception { ExceptionCode::TypeError };
@@ -57,10 +60,8 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
     document->setMarkupUnsafe(string, { });
-    if (m_contextDocument) {
-        document->setURL(m_contextDocument->url());
+    if (m_contextDocument)
         document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
-    }
     return document.releaseNonNull();
 }
 
