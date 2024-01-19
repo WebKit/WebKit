@@ -189,7 +189,14 @@ void AttributeValidator::visit(AST::Variable& variable)
         if (is<AST::BindingAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@binding attribute must only be applied to resource variables");
-            auto bindingValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@binding attribute must only be applied to resource variables");
+                continue;
+            }
+
+            auto bindingValue = constantValue->integerValue();
             if (bindingValue < 0)
                 error(attribute.span(), "@binding value must be non-negative");
             else
@@ -200,7 +207,13 @@ void AttributeValidator::visit(AST::Variable& variable)
         if (is<AST::GroupAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@group attribute must only be applied to resource variables");
-            auto groupValue = downcast<AST::GroupAttribute>(attribute).group().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = downcast<AST::GroupAttribute>(attribute).group().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@group attribute must only be applied to resource variables");
+                continue;
+            }
+            auto groupValue = constantValue->integerValue();
             if (groupValue < 0)
                 error(attribute.span(), "@group value must be non-negative");
             else
@@ -212,7 +225,13 @@ void AttributeValidator::visit(AST::Variable& variable)
             auto& idExpression = downcast<AST::IdAttribute>(attribute).value();
             if (variable.flavor() != AST::VariableFlavor::Override || !satisfies(variable.storeType(), Constraints::Scalar))
                 error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
-            auto idValue = idExpression.constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = idExpression.constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
+                continue;
+            }
+            auto idValue = constantValue->integerValue();
             if (idValue < 0)
                 error(attribute.span(), "@id value must be non-negative");
             else {
@@ -298,7 +317,13 @@ void AttributeValidator::visit(AST::StructureMember& member)
         if (is<AST::SizeAttribute>(attribute)) {
             // FIXME: check that the member type must have creation-fixed footprint.
             m_hasSizeOrAlignmentAttributes = true;
-            auto sizeValue = downcast<AST::SizeAttribute>(attribute).size().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
+            auto& constantValue = downcast<AST::SizeAttribute>(attribute).size().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@size constant value is not found");
+                continue;
+            }
+            auto sizeValue = constantValue->integerValue();
             if (sizeValue < 0)
                 error(attribute.span(), "@size value must be non-negative");
             else if (sizeValue < member.type().inferredType()->size())
@@ -309,7 +334,13 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
         if (is<AST::AlignAttribute>(attribute)) {
             m_hasSizeOrAlignmentAttributes = true;
-            auto alignmentValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22align%22
+            auto constantValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@align constant value does not exist");
+                continue;
+            }
+            auto alignmentValue = constantValue->integerValue();
             auto isPowerOf2 = !(alignmentValue & (alignmentValue - 1));
             if (alignmentValue < 0)
                 error(attribute.span(), "@align value must be non-negative");
@@ -373,7 +404,13 @@ bool AttributeValidator::parseLocation(AST::Function* function, std::optional<un
     if (!isNumeric && !isNumericVector)
         error(attribute.span(), "@location must only be applied to declarations of numeric scalar or numeric vector type");
 
-    auto locationValue = downcast<AST::LocationAttribute>(attribute).location().constantValue()->integerValue();
+    auto& constantValue = downcast<AST::LocationAttribute>(attribute).location().constantValue();
+    // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
+    if (!constantValue) {
+        error(attribute.span(), "@location constant value is missing");
+        return false;
+    }
+    auto locationValue = constantValue->integerValue();
     if (locationValue < 0)
         error(attribute.span(), "@location value must be non-negative");
     else
