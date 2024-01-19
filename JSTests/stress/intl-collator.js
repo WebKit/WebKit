@@ -411,3 +411,12 @@ shouldThrow(() => Intl.Collator.prototype.resolvedOptions.call(5), TypeError);
 }
 
 shouldBe(new Intl.Collator('de-u-kn-false-kf-upper-co-phonebk-hc-h12').resolvedOptions().locale, 'de-u-co-phonebk-kf-upper-kn-false');
+
+shouldThrow(() => {
+    Function.prototype.__defineGetter__('prototype', function () {
+        this.call(0x1234);
+    });
+    
+    const collator = new Intl.Collator();
+    1 instanceof collator.compare;
+}, TypeError);
