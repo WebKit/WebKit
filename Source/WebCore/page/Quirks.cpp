@@ -957,7 +957,8 @@ bool Quirks::shouldBypassBackForwardCache() const
     return false;
 }
 
-// bungalow.com rdar://61658940
+// bungalow.com: rdar://61658940
+// sfusd.edu: rdar://116292738
 bool Quirks::shouldBypassAsyncScriptDeferring() const
 {
     if (!needsQuirks())
@@ -966,7 +967,8 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
     if (!m_shouldBypassAsyncScriptDeferring) {
         auto domain = RegistrableDomain { m_document->topDocument().url() };
         // Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).
-        m_shouldBypassAsyncScriptDeferring = (domain == "bungalow.com"_s);
+        // Deferring the google maps script on sfusd.edu may get the page in a bad state (rdar://116292738).
+        m_shouldBypassAsyncScriptDeferring = domain == "bungalow.com"_s || domain == "sfusd.edu"_s;
     }
     return *m_shouldBypassAsyncScriptDeferring;
 }
