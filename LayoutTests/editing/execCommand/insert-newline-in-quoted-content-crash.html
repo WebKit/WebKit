@@ -1,10 +1,14 @@
 <script>
-   if (window.testRunner)
+  if (window.testRunner) {
      testRunner.dumpAsText();
+     testRunner.waitUntilDone();
+  }
   onload = async () => {
     visualViewport.onresize = () => {
       document.execCommand('InsertNewlineInQuotedContent');
       document.write("Test passes if it does not crash.");
+      if (window.testRunner)
+        testRunner.notifyDone();
     };
     document.body.appendChild(document.createElement('object'));
     document.body.appendChild(document.createElement('div'));
