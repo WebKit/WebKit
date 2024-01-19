@@ -167,6 +167,11 @@ AXTextMarker::operator CharacterOffset() const
     return result;
 }
 
+bool AXTextMarker::hasSameObjectAndOffset(const AXTextMarker& other) const
+{
+    return offset() == other.offset() && objectID() == other.objectID() && treeID() == other.treeID();
+}
+
 static Node* nodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, int characterCount)
 {
     // Use this function to include the replaced node itself in the range we are creating.
@@ -422,6 +427,49 @@ static RefPtr<AXIsolatedObject> findObjectWithRuns(AXIsolatedObject& start, AXDi
         break;
     }
     return nullptr;
+}
+
+unsigned AXTextMarker::offsetFromRoot() const
+{
+    RELEASE_ASSERT(!isMainThread());
+
+    if (!isValid())
+        return 0;
+    RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
+    if (RefPtr root = tree ? tree->rootNode() : nullptr) {
+        AXTextMarker rootMarker { root->treeID(), root->objectID(), 0 };
+        unsigned offset = 0;
+        auto current = rootMarker.toTextLeafMarker();
+        while (current.isValid() && !hasSameObjectAndOffset(current)) {
+            current = current.findMarker(AXDirection::Next);
+            offset++;
+        }
+        // If this assert fails, it means we couldn't navigate from root to `this`, which should never happen.
+        RELEASE_ASSERT(hasSameObjectAndOffset(current));
+        return offset;
+    }
+    return 0;
+}
+
+AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset) const
+{
+    RELEASE_ASSERT(!isMainThread());
+
+    if (!isValid())
+        return { };
+    if (!isInTextLeaf())
+        return toTextLeafMarker().nextMarkerFromOffset(offset);
+
+    auto marker = *this;
+    while (offset) {
+        if (auto newMarker = marker.findMarker(AXDirection::Next))
+            marker = WTFMove(newMarker);
+        else
+            break;
+
+        --offset;
+    }
+    return marker;
 }
 
 String AXTextMarkerRange::toString() const

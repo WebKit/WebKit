@@ -1,0 +1,18 @@
+This verifies that textMarkerForIndex and indexForTextMarker are working correctly.
+
+Original marker string: x
+Index is: 3
+New marker string: x
+Original marker string: 'line break'
+Index is: 5
+New marker string: 'line break'
+Original marker string: b
+Index is: 9
+New marker string: b
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text
+
+foobar

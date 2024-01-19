@@ -273,7 +273,7 @@ public:
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    static bool useAccessibilityThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
+    static bool useAXThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
 #endif
 
     const Element* rootAXEditableElement(const Node*);

@@ -31,6 +31,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AXIsolatedObject.h"
 #import "AXLogger.h"
 #import "AXObjectCache.h"
 #import "AXTextMarker.h"
@@ -3237,7 +3238,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXLineTextMarkerRangeForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarker inputMarker { textMarker };
             return inputMarker.lineRange(LineRangeType::Current).platformData().bridgingAutorelease();
         }
@@ -3271,11 +3272,31 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:AXTextMarkerIsNullAttribute])
         return [NSNumber numberWithBool:AXTextMarker(textMarker).isNull()];
 
-    if ([attribute isEqualToString:AXIndexForTextMarkerAttribute])
+    if ([attribute isEqualToString:AXIndexForTextMarkerAttribute]) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        if (AXObjectCache::useAXThreadTextApis())
+            return [NSNumber numberWithUnsignedInt:AXTextMarker { textMarker }.offsetFromRoot()];
+#endif
         return [NSNumber numberWithInteger:[self _indexForTextMarker:textMarker]];
+    }
 
-    if ([attribute isEqualToString:AXTextMarkerForIndexAttribute])
+    if ([attribute isEqualToString:AXTextMarkerForIndexAttribute]) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        if (AXObjectCache::useAXThreadTextApis()) {
+            long index = [number longValue];
+            if (index < 0)
+                return nil;
+
+            RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(backingObject->treeID()));
+            if (RefPtr root = tree ? tree->rootNode() : nullptr) {
+                AXTextMarker rootMarker { root->treeID(), root->objectID(), 0 };
+                return rootMarker.nextMarkerFromOffset(static_cast<unsigned>(index)).platformData().bridgingAutorelease();
+            }
+            return nil;
+        }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
         return (id)[self _textMarkerForIndex:[number integerValue]];
+    }
 
     if ([attribute isEqualToString:AXUIElementForTextMarkerAttribute]) {
         AXTextMarker marker { textMarker };
@@ -3328,7 +3349,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXStringForTextMarkerRangeAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarkerRange range = { textMarkerRange };
             return range.toString();
         }
@@ -3449,7 +3470,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXNextTextMarkerForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarker inputMarker { textMarker };
             return inputMarker.findMarker(AXDirection::Next).platformData().bridgingAutorelease();
         }
@@ -3468,9 +3489,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXPreviousTextMarkerForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarker inputMarker { textMarker };
-            return inputMarker.findMarker(AXDirection::Next).platformData().bridgingAutorelease();
+            return inputMarker.findMarker(AXDirection::Previous).platformData().bridgingAutorelease();
         }
 #endif
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([textMarker = retainPtr(textMarker), protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
@@ -3511,7 +3532,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXNextLineEndTextMarkerForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarker inputMarker { textMarker };
             return inputMarker.findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End).platformData().bridgingAutorelease();
         }
@@ -3521,7 +3542,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXPreviousLineStartTextMarkerForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarker inputMarker { textMarker };
             return inputMarker.findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start).platformData().bridgingAutorelease();
         }
@@ -3552,7 +3573,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXLengthForTextMarkerRangeAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        if (AXObjectCache::useAccessibilityThreadTextApis()) {
+        if (AXObjectCache::useAXThreadTextApis()) {
             AXTextMarkerRange range = { textMarkerRange };
             return @(range.toString().length());
         }

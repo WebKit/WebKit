@@ -1,0 +1,74 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" tabindex="0">
+
+<div contenteditable="true">
+<div tabindex="0" id="text1">text</div>
+<br>
+foobar
+</div>
+
+<script>
+var output = "This verifies that textMarkerForIndex and indexForTextMarker are working correctly.\n\n";
+
+if (window.accessibilityController) {
+    var text = accessibilityController.accessibleElementById("text1");
+    // Get the actual text node.
+    text = text.childAtIndex(0);
+
+    var previous, current;
+    var textMarkerRange = text.textMarkerRangeForElement(text);
+    var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    var result = forward(3, previous, startMarker, text);
+    previous = result.previous;
+    current = result.current;
+    verifyMarkerIndex(previous, current, text);
+
+    // BR
+    result = forward(2, previous, current, text);
+    previous = result.previous;
+    current = result.current;
+    verifyMarkerIndex(previous, current, text);
+
+    // Move to the "b" in foobar.
+    result = forward(4, previous, current, text);
+    previous = result.previous;
+    current = result.current;
+    verifyMarkerIndex(previous, current, text);
+
+    debug(output);
+}
+function forward(count, previousMarker, currentMarker, obj) {
+    for (var i = 0; i < count; i++) {
+        previousMarker = currentMarker;
+        currentMarker = obj.nextTextMarker(currentMarker);
+    }
+    return {
+        previous: previousMarker,
+        current: currentMarker
+    };
+}
+function replaceLinebreakInString(str) {
+    var newline = '\n';
+    str = str.replace(newline, "'line break'");
+    return str;
+}
+
+function verifyMarkerIndex(previousMarker, textMarker, obj) {
+    var markerRange = obj.textMarkerRangeForMarkers(previousMarker, textMarker);
+    var originalString = replaceLinebreakInString(obj.stringForTextMarkerRange(markerRange));
+    output += `Original marker string: ${originalString}\n`;
+
+    var index = obj.indexForTextMarker(textMarker);
+    var newMarker = obj.textMarkerForIndex(index);
+    markerRange = obj.textMarkerRangeForMarkers(previousMarker, newMarker);
+    var newString = replaceLinebreakInString(obj.stringForTextMarkerRange(markerRange));
+    output += `Index is: ${index}\nNew marker string: ${newString}\n`;
+}
+</script>
+</body>
+</html>

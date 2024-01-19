@@ -136,6 +136,7 @@ public:
     operator VisiblePosition() const;
     operator CharacterOffset() const;
     std::optional<BoundaryPoint> boundaryPoint() const;
+    bool hasSameObjectAndOffset(const AXTextMarker&) const;
 
 #if PLATFORM(COCOA)
     RetainPtr<PlatformTextMarkerData> platformData() const;
@@ -169,7 +170,9 @@ public:
     // Creates a range for the line this marker points to.
     AXTextMarkerRange lineRange(LineRangeType) const;
     // Given a character offset relative to this marker, find the next marker the offset points to.
-    AXTextMarker nextMarkerFromOffset(size_t) const;
+    AXTextMarker nextMarkerFromOffset(unsigned) const;
+    // Returns the number of intermediate text markers between this and the root.
+    unsigned offsetFromRoot() const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
