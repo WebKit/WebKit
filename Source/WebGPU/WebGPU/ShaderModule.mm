@@ -214,6 +214,8 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
             if (newRange.location == NSNotFound)
                 break;
             NSRange endRange = [nsWgsl rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
+            if (endRange.location == NSNotFound)
+                break;
             auto startIndex = newRange.location + newRange.length;
             NSString* overrideName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
             [overrideNames addObject:overrideName];
@@ -233,6 +235,8 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
                     break;
 
                 NSRange endRange = [nsWgsl rangeOfString:@"(" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
+                if (endRange.location == NSNotFound)
+                    break;
                 auto startIndex = newRange.location + newRange.length;
                 NSString* functionName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
                 currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
