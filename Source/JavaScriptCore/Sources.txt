@@ -236,6 +236,7 @@ bytecode/ExitFlag.cpp
 bytecode/ExitKind.cpp
 bytecode/ExitingInlineKind.cpp
 bytecode/ExitingJITType.cpp
+bytecode/ExpressionInfo.cpp
 bytecode/FullCodeOrigin.cpp
 bytecode/FunctionCodeBlock.cpp
 bytecode/GetByStatus.cpp

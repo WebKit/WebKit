@@ -676,7 +676,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ExitKind.h
     bytecode/ExitingInlineKind.h
     bytecode/ExitingJITType.h
-    bytecode/ExpressionRangeInfo.h
+    bytecode/ExpressionInfo.h
+    bytecode/ExpressionInfoInlines.h
     bytecode/HandlerInfo.h
     bytecode/ICStatusMap.h
     bytecode/InlineCallFrame.h

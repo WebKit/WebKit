@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -454,6 +454,29 @@ protected:
 
 private:
     constexpr static ptrdiff_t s_invalidOffset = std::numeric_limits<ptrdiff_t>::max();
+};
+
+template<typename T, typename Source = SourceType<T>>
+class CachedArray : public VariableLengthObject<Source*> {
+public:
+    void encode(Encoder& encoder, const Source* array, unsigned size)
+    {
+        if (!size)
+            return;
+        T* dst = this->template allocate<T>(encoder, size);
+        for (unsigned i = 0; i < size; ++i)
+            ::JSC::encode(encoder, dst[i], array[i]);
+    }
+
+    template<typename... Args>
+    void decode(Decoder& decoder, Source* array, unsigned size, Args... args) const
+    {
+        if (!size)
+            return;
+        const T* buffer = this->template buffer<T>();
+        for (unsigned i = 0; i < size; ++i)
+            ::JSC::decode(decoder, buffer[i], array[i], args...);
+    }
 };
 
 template<typename T, typename Source = SourceType<T>>
@@ -939,7 +962,6 @@ public:
         m_exceptionHandlers.encode(encoder, rareData.m_exceptionHandlers);
         m_unlinkedSwitchJumpTables.encode(encoder, rareData.m_unlinkedSwitchJumpTables);
         m_unlinkedStringSwitchJumpTables.encode(encoder, rareData.m_unlinkedStringSwitchJumpTables);
-        m_expressionInfoFatPositions.encode(encoder, rareData.m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.encode(encoder, rareData.m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
         m_bitVectors.encode(encoder, rareData.m_bitVectors);
@@ -954,7 +976,6 @@ public:
         m_exceptionHandlers.decode(decoder, rareData->m_exceptionHandlers);
         m_unlinkedSwitchJumpTables.decode(decoder, rareData->m_unlinkedSwitchJumpTables);
         m_unlinkedStringSwitchJumpTables.decode(decoder, rareData->m_unlinkedStringSwitchJumpTables);
-        m_expressionInfoFatPositions.decode(decoder, rareData->m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.decode(decoder, rareData->m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
         m_bitVectors.decode(decoder, rareData->m_bitVectors);
@@ -968,13 +989,36 @@ private:
     CachedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
     CachedVector<CachedSimpleJumpTable> m_unlinkedSwitchJumpTables;
     CachedVector<CachedStringJumpTable> m_unlinkedStringSwitchJumpTables;
-    CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     CachedVector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     CachedVector<CachedBitVector> m_bitVectors;
     CachedVector<CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash>> m_constantIdentifierSets;
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_privateBrandRequirement : 1;
+};
+
+class CachedExpressionInfo : public CachedObject<ExpressionInfo> {
+public:
+    void encode(Encoder& encoder, const ExpressionInfo& info)
+    {
+        m_numberOfChapters = info.m_numberOfChapters;
+        m_numberOfEncodedInfo = info.m_numberOfEncodedInfo;
+        m_numberOfEncodedInfoExtensions = info.m_numberOfEncodedInfoExtensions;
+        m_storage.encode(encoder, info.payload(), info.payloadSize());
+    }
+
+    MallocPtr<ExpressionInfo> decode(Decoder& decoder) const
+    {
+        auto info = ExpressionInfo::createUninitialized(m_numberOfChapters, m_numberOfEncodedInfo, m_numberOfEncodedInfoExtensions);
+        m_storage.decode(decoder, info->payload(), info->payloadSize());
+        return info;
+    }
+
+private:
+    unsigned m_numberOfChapters;
+    unsigned m_numberOfEncodedInfo;
+    unsigned m_numberOfEncodedInfoExtensions;
+    CachedArray<unsigned> m_storage;
 };
 
 typedef CachedHashMap<CachedRefPtr<CachedUniquedStringImpl, UniquedStringImpl, WTF::PackedPtrTraits<UniquedStringImpl>>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> CachedPrivateNameEnvironment;
@@ -1094,29 +1138,6 @@ public:
 
 private:
     CachedPtr<CachedCompactTDZEnvironment> m_environment;
-};
-
-template<typename T, typename Source = SourceType<T>>
-class CachedArray : public VariableLengthObject<Source*> {
-public:
-    void encode(Encoder& encoder, const Source* array, unsigned size)
-    {
-        if (!size)
-            return;
-        T* dst = this->template allocate<T>(encoder, size);
-        for (unsigned i = 0; i < size; ++i)
-            ::JSC::encode(encoder, dst[i], array[i]);
-    }
-
-    template<typename... Args>
-    void decode(Decoder& decoder, Source* array, unsigned size, Args... args) const
-    {
-        if (!size)
-            return;
-        const T* buffer = this->template buffer<T>();
-        for (unsigned i = 0; i < size; ++i)
-            ::JSC::decode(decoder, buffer[i], array[i], args...);
-    }
 };
 
 class CachedScopedArgumentsTable : public CachedObject<ScopedArgumentsTable> {
@@ -1966,7 +1987,7 @@ private:
     CachedVector<JSInstructionStream::Offset> m_jumpTargets;
     CachedVector<CachedJSValue> m_constantRegisters;
     CachedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
-    CachedVector<ExpressionRangeInfo> m_expressionInfo;
+    CachedPtr<CachedExpressionInfo> m_expressionInfo;
     CachedHashMap<JSInstructionStream::Offset, int> m_outOfLineJumpTargets;
 
     CachedVector<CachedIdentifier> m_identifiers;
@@ -2170,7 +2191,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, Unli
 {
     m_constantRegisters.decode(decoder, codeBlock.m_constantRegisters, &codeBlock);
     m_constantsSourceCodeRepresentation.decode(decoder, codeBlock.m_constantsSourceCodeRepresentation);
-    m_expressionInfo.decode(decoder, codeBlock.m_expressionInfo);
+    codeBlock.m_expressionInfo = m_expressionInfo->decode(decoder);
     m_outOfLineJumpTargets.decode(decoder, codeBlock.m_outOfLineJumpTargets);
     m_jumpTargets.decode(decoder, codeBlock.m_jumpTargets);
     m_identifiers.decode(decoder, codeBlock.m_identifiers);
@@ -2352,7 +2373,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_instructions.encode(encoder, codeBlock.m_instructions.get());
     m_constantRegisters.encode(encoder, codeBlock.m_constantRegisters);
     m_constantsSourceCodeRepresentation.encode(encoder, codeBlock.m_constantsSourceCodeRepresentation);
-    m_expressionInfo.encode(encoder, codeBlock.m_expressionInfo);
+    m_expressionInfo.encode(encoder, codeBlock.m_expressionInfo.get());
     m_jumpTargets.encode(encoder, codeBlock.m_jumpTargets);
     m_outOfLineJumpTargets.encode(encoder, codeBlock.m_outOfLineJumpTargets);
 

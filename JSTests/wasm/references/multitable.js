@@ -285,7 +285,7 @@ import Builder from '../Builder.js';
             .Function("ret42", { params: [], ret: "i32" })
               .I32Const(42)
             .End()
-          .End().WebAssembly().get())), Error, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance')")
+          .End().WebAssembly().get())), Error, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -303,7 +303,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
             .Function("ret42", { params: [], ret: "i32" })
               .I32Const(42)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 42: Table 0 must have type 'Funcref' to have an element section (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 42: Table 0 must have type 'Funcref' to have an element section (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -317,7 +317,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .I32Const(0)
               .TableGet(2)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table index 2 is invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table index 2 is invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -332,7 +332,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .RefNull("externref")
               .TableSet(2)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table index 2 is invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table index 2 is invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -345,7 +345,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
             .Function("fun", { params: [], ret: "void" })
               .CallIndirect(0, 2)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 4: call_indirect's table index 2 invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 4: call_indirect's table index 2 invalid, limit is 2, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -358,7 +358,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
             .Function("fun", { params: [], ret: "void" })
               .CallIndirect(0,0)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 4: call_indirect is only valid when a table has type funcref, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 4: call_indirect is only valid when a table has type funcref, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -372,7 +372,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .RefNull("funcref")
               .TableGet(0)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.get index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.get index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
@@ -388,7 +388,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .RefNull("funcref")
               .TableSet(0)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set index to type Funcref expected I32, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder())
           .Type().End()
@@ -403,7 +403,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
               .GetLocal(0)
               .TableSet(1)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set value to type Externref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't validate: table.set value to type Externref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module")
 
 if (!$vm.isMemoryLimited()) {
     function tableInsanity(num, b) {

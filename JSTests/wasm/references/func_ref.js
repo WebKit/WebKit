@@ -239,7 +239,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
        .Global().Funcref("imp", "ref", "immutable").End()
   .End()
   .Function().End()
-  .Code().End().WebAssembly().get()), { imp: { ref: function() { return "hi" } } }), Error, "imported global imp:ref must be a wasm exported function or null (evaluating 'new WebAssembly.Instance')");
+  .Code().End().WebAssembly().get()), { imp: { ref: function() { return "hi" } } }), Error, "imported global imp:ref must be a wasm exported function or null (evaluating 'new WebAssembly.Instance");
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
@@ -248,7 +248,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     .Function("h", { params: ["externref"], ret: "funcref" })
       .GetLocal(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
+  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
@@ -262,7 +262,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .I32Const(0)
       .TableSet(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
+  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
 
 // Tables
 {

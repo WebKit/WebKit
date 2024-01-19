@@ -29,7 +29,6 @@
 #include "ConstructAbility.h"
 #include "ConstructorKind.h"
 #include "ExecutableInfo.h"
-#include "ExpressionRangeInfo.h"
 #include "Identifier.h"
 #include "ImplementationVisibility.h"
 #include "InlineAttribute.h"

@@ -112,6 +112,7 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     if (thisObject->hasRareData())
         extraMemory += thisObject->m_rareData->sizeInBytes(locker);
 
+    extraMemory += thisObject->m_expressionInfo->byteSize();
     extraMemory += thisObject->m_jumpTargets.byteSize();
     extraMemory += thisObject->m_identifiers.byteSize();
     extraMemory += thisObject->m_constantRegisters.byteSize();
@@ -139,7 +140,6 @@ size_t UnlinkedCodeBlock::RareData::sizeInBytes(const AbstractLocker&) const
     size += m_exceptionHandlers.byteSize();
     size += m_unlinkedSwitchJumpTables.byteSize();
     size += m_unlinkedStringSwitchJumpTables.byteSize();
-    size += m_expressionInfoFatPositions.byteSize();
     size += m_typeProfilerInfoMap.capacity() * sizeof(decltype(m_typeProfilerInfoMap)::KeyValuePairType);
     size += m_opProfileControlFlowBytecodeOffsets.byteSize();
     size += m_bitVectors.byteSize();
@@ -152,34 +152,16 @@ size_t UnlinkedCodeBlock::RareData::sizeInBytes(const AbstractLocker&) const
 
 LineColumn UnlinkedCodeBlock::lineColumnForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    ASSERT(bytecodeIndex.offset() < instructions().size());
-    unsigned divot { 0 };
-    unsigned startOffset { 0 };
-    unsigned endOffset { 0 };
-    LineColumn lineColumn;
-    expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, lineColumn);
-    return lineColumn;
+    return m_expressionInfo->lineColumnForInstPC(bytecodeIndex.offset());
 }
 
-inline LineColumn UnlinkedCodeBlock::getLineAndColumn(const ExpressionRangeInfo& info) const
+ExpressionInfo::Entry UnlinkedCodeBlock::expressionInfoForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    switch (info.mode) {
-    case ExpressionRangeInfo::FatLineMode:
-        return info.decodeFatLineMode();
-    case ExpressionRangeInfo::FatColumnMode:
-        return info.decodeFatColumnMode();
-    case ExpressionRangeInfo::FatLineAndColumnMode: {
-        unsigned fatIndex = info.position;
-        ExpressionRangeInfo::FatPosition& fatPos = m_rareData->m_expressionInfoFatPositions[fatIndex];
-        return fatPos.lineColumn;
-    }
-    } // switch
-    ASSERT_NOT_REACHED();
-    return { };
+    return m_expressionInfo->entryForInstPC(bytecodeIndex.offset());
 }
 
 #ifndef NDEBUG
-static void dumpLineColumnEntry(size_t index, const JSInstructionStream& instructionStream, unsigned instructionOffset, LineColumn lineColumn)
+static void dumpExpressionInfoDetails(size_t index, const JSInstructionStream& instructionStream, unsigned instructionOffset, LineColumn lineColumn, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     const auto instruction = instructionStream.at(instructionOffset);
     const char* event = "";
@@ -194,56 +176,22 @@ static void dumpLineColumnEntry(size_t index, const JSInstructionStream& instruc
         case WillExecuteExpression: event = " WillExecuteExpression"; break;
         }
     }
-    dataLogF("  [%zu] pc %u @ line %u col %u : %s%s\n", index, instructionOffset, lineColumn.line, lineColumn.column, instruction->name(), event);
+    dataLogF("  [%zu] pc %u @ line %u col %u divot %u startOffset %u endOffset %u : %s%s\n", index, instructionOffset, lineColumn.line, lineColumn.column, divot, startOffset, endOffset, instruction->name(), event);
 }
 
-void UnlinkedCodeBlock::dumpExpressionRangeInfo()
+void UnlinkedCodeBlock::dumpExpressionInfo()
 {
-    FixedVector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    size_t index = 0;
+    dataLogF("UnlinkedCodeBlock %p expressionInfo[] {\n", this);
 
-    size_t size = m_expressionInfo.size();
-    dataLogF("UnlinkedCodeBlock %p expressionRangeInfo[%zu] {\n", this, size);
-    for (size_t i = 0; i < size; i++) {
-        ExpressionRangeInfo& info = expressionInfo[i];
-        dumpLineColumnEntry(i, instructions(), info.instructionOffset, getLineAndColumn(info));
+    ExpressionInfo::Decoder decoder(*m_expressionInfo);
+    while (decoder.decode() != IterationStatus::Done) {
+        dumpExpressionInfoDetails(index, instructions(), decoder.instPC(), decoder.lineColumn(), decoder.divot(), decoder.startOffset(), decoder.endOffset());
+        index++;
     }
     dataLog("}\n");
 }
 #endif
-
-void UnlinkedCodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, LineColumn& lineColumn) const
-{
-    ASSERT(bytecodeIndex.offset() < instructions().size());
-
-    if (!m_expressionInfo.size()) {
-        startOffset = 0;
-        endOffset = 0;
-        divot = 0;
-        lineColumn = { };
-        return;
-    }
-
-    const FixedVector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
-
-    int low = 0;
-    int high = expressionInfo.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (expressionInfo[mid].instructionOffset <= bytecodeIndex.offset())
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low)
-        low = 1;
-
-    const ExpressionRangeInfo& info = expressionInfo[low - 1];
-    startOffset = info.startOffset;
-    endOffset = info.endOffset;
-    divot = info.divotPoint;
-    lineColumn = getLineAndColumn(info);
-}
 
 bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
 {

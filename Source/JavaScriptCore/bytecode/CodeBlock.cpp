@@ -2049,12 +2049,13 @@ LineColumn CodeBlock::lineColumnForBytecodeIndex(BytecodeIndex bytecodeIndex) co
     return lineColumn;
 }
 
-void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, LineColumn& lineColumn) const
+ExpressionInfo::Entry CodeBlock::expressionInfoForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
-    m_unlinkedCode->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, lineColumn);
-    divot += sourceOffset();
-    lineColumn.column += lineColumn.line ? 1 : firstLineColumnOffset();
-    lineColumn.line += ownerExecutable()->firstLine();
+    auto entry = m_unlinkedCode->expressionInfoForBytecodeIndex(bytecodeIndex);
+    entry.divot += sourceOffset();
+    entry.lineColumn.column += entry.lineColumn.line ? 1 : firstLineColumnOffset();
+    entry.lineColumn.line += ownerExecutable()->firstLine();
+    return entry;
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column)

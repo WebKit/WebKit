@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -110,6 +110,7 @@ public:
 
     unsigned size() const;
     unsigned capacity() const;
+    size_t byteSize() const;
     bool isEmpty() const;
 
     void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
@@ -283,6 +284,12 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 inline unsigned HashMap<T, U, V, W, X, Y>::capacity() const
 { 
     return m_impl.capacity(); 
+}
+
+template<typename T, typename U, typename V, typename W, typename X, typename Y>
+inline size_t HashMap<T, U, V, W, X, Y>::byteSize() const
+{
+    return m_impl.byteSize();
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y>

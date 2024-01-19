@@ -77,16 +77,10 @@ String appendSourceToErrorMessage(CodeBlock* codeBlock, BytecodeIndex bytecodeIn
 {
     if (!codeBlock->hasExpressionInfo() || message.isNull())
         return message;
-    
-    unsigned startOffset = 0;
-    unsigned endOffset = 0;
-    unsigned divotPoint = 0;
-    LineColumn lineColumn;
 
-    codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, lineColumn);
-    
-    int expressionStart = divotPoint - startOffset;
-    int expressionStop = divotPoint + endOffset;
+    auto info = codeBlock->expressionInfoForBytecodeIndex(bytecodeIndex);
+    int expressionStart = info.divot - info.startOffset;
+    int expressionStop = info.divot + info.endOffset;
 
     StringView sourceString = codeBlock->source().provider()->source();
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
