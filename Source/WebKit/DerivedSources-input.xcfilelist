@@ -512,6 +512,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITabs.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITest.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigation.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigationEvent.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebRequest.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebRequestEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWindows.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWindowsEvent.idl

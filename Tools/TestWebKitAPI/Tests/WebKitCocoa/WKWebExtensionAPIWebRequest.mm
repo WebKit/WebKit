@@ -31,6 +31,28 @@
 
 namespace TestWebKitAPI {
 
+static auto *webRequestManifest = @{ @"manifest_version": @3, @"permissions": @[ @"webRequest" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+
+TEST(WKWebExtensionAPIWebRequest, EventListenerTest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function listener() { browser.test.notifyFail('This listener should not have been called') }",
+        @"browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(listener), 'Should not have listener')",
+
+        // Test
+        @"browser.webRequest.onCompleted.addListener(listener)",
+        @"browser.test.assertTrue(browser.webRequest.onCompleted.hasListener(listener), 'Should have listener')",
+        @"browser.webRequest.onCompleted.removeListener(listener)",
+        @"browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(listener), 'Should not have listener')",
+
+        // Finish
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIWebRequest, Initialization)
 {
     NSString *error;

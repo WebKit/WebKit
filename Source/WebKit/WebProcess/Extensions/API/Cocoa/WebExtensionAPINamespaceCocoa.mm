@@ -234,6 +234,16 @@ WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation()
     return *m_webNavigation;
 }
 
+WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest
+
+    if (!m_webRequest)
+        m_webRequest = WebExtensionAPIWebRequest::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_webRequest;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

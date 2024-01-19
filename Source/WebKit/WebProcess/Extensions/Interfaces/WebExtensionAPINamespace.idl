@@ -66,6 +66,8 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebRequest webRequest;
+
     [Dynamic] readonly attribute WebExtensionAPITest test;
 
 };

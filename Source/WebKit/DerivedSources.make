@@ -825,9 +825,10 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIStorageArea \
     WebExtensionAPITabs \
     WebExtensionAPITest \
-    WebExtensionAPIWebRequestEvent \
     WebExtensionAPIWebNavigation \
     WebExtensionAPIWebNavigationEvent \
+    WebExtensionAPIWebRequest \
+    WebExtensionAPIWebRequestEvent \
     WebExtensionAPIWindows \
     WebExtensionAPIWindowsEvent \
 #

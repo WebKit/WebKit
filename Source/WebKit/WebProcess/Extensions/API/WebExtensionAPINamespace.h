@@ -45,6 +45,7 @@
 #include "WebExtensionAPITabs.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
+#include "WebExtensionAPIWebRequest.h"
 #include "WebExtensionAPIWindows.h"
 
 namespace WebKit {
@@ -79,6 +80,7 @@ public:
     WebExtensionAPITest& test();
     WebExtensionAPIWindows& windows();
     WebExtensionAPIWebNavigation& webNavigation();
+    WebExtensionAPIWebRequest& webRequest();
 #endif
 
 private:
@@ -99,6 +101,7 @@ private:
     RefPtr<WebExtensionAPITest> m_test;
     RefPtr<WebExtensionAPIWindows> m_windows;
     RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
+    RefPtr<WebExtensionAPIWebRequest> m_webRequest;
 };
 
 } // namespace WebKit

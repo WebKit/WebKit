@@ -26,10 +26,18 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,
-] interface WebExtensionAPIWebRequestEvent {
+    NeedsPageWithCallbackHandler,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPIWebRequest {
 
-    [NeedsPage, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter, [Optional] any extraInfoSpec);
-    [NeedsPage] void removeListener([CallbackHandler] function listener);
-    boolean hasListener([CallbackHandler] function listener);
+    readonly attribute WebExtensionAPIWebRequestEvent onBeforeRequest;
+    readonly attribute WebExtensionAPIWebRequestEvent onBeforeSendHeaders;
+    readonly attribute WebExtensionAPIWebRequestEvent onSendHeaders;
+    readonly attribute WebExtensionAPIWebRequestEvent onHeadersReceived;
+    readonly attribute WebExtensionAPIWebRequestEvent onAuthRequired;
+    readonly attribute WebExtensionAPIWebRequestEvent onBeforeRedirect;
+    readonly attribute WebExtensionAPIWebRequestEvent onResponseStarted;
+    readonly attribute WebExtensionAPIWebRequestEvent onCompleted;
+    readonly attribute WebExtensionAPIWebRequestEvent onErrorOccurred;
 
 };
