@@ -119,7 +119,9 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     // 12.1.7 DateTime Format Functions (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-formatdatetime
 
-    IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    IntlDateTimeFormat* format = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    if (UNLIKELY(!format))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
     double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);

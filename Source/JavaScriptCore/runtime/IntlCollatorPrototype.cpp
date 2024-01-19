@@ -83,7 +83,9 @@ JSC_DEFINE_HOST_FUNCTION(intlCollatorFuncCompare, (JSGlobalObject* globalObject,
     // 10.3.4 Collator Compare Functions (ECMA-402 2.0)
     // 1. Let collator be the this value.
     // 2. Assert: Type(collator) is Object and collator has an [[initializedCollator]] internal slot whose value is true.
-    IntlCollator* collator = jsCast<IntlCollator*>(callFrame->thisValue());
+    IntlCollator* collator = jsDynamicCast<IntlCollator*>(callFrame->thisValue());
+    if (UNLIKELY(!collator))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.compare called on value that's not a Collator"_s));
 
     // 3. If x is not provided, let x be undefined.
     // 4. If y is not provided, let y be undefined.

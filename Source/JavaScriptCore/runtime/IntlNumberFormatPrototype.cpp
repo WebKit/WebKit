@@ -99,7 +99,9 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatFuncFormat, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* numberFormat = jsCast<IntlNumberFormat*>(callFrame->thisValue());
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not a NumberFormat"_s));
 
     auto value = toIntlMathematicalValue(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
