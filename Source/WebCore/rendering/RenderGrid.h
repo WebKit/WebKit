@@ -128,6 +128,7 @@ public:
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     LayoutUnit masonryContentSize() const;
+    Vector<LayoutRect> gridItemsLayoutRects();
 private:
     friend class GridTrackSizingAlgorithm;
     friend class GridMasonryLayout;
