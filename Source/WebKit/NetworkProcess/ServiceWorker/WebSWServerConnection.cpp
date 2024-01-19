@@ -91,8 +91,10 @@ WebSWServerConnection::~WebSWServerConnection()
 {
     if (CheckedPtr session = this->session())
         session->unregisterSWServerConnection(*this);
-    for (const auto& keyValue : m_clientOrigins)
-        protectedServer()->unregisterServiceWorkerClient(keyValue.value, keyValue.key);
+    for (const auto& keyValue : m_clientOrigins) {
+        // Unable to protect the server as it may have started destruction.
+        server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
+    }
     for (auto& completionHandler : m_unregisterJobs.values())
         completionHandler(false);
 }
