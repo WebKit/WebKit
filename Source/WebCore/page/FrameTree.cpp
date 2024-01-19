@@ -516,10 +516,8 @@ Frame* FrameTree::deepLastChild() const
 
 Frame& FrameTree::top() const
 {
-    auto* frame = &m_thisFrame;
-    for (auto* parent = &m_thisFrame; parent; parent = parent->tree().parent())
-        frame = parent;
-    return *frame;
+    ASSERT(m_thisFrame.isMainFrame() || m_thisFrame.tree().parent());
+    return m_thisFrame.mainFrame();
 }
 
 unsigned FrameTree::depth() const
