@@ -134,7 +134,7 @@ public:
         return m_buffer;
     }
 
-    size_t memoryCost() final
+    size_t memoryCost() const final
     {
         return m_buffer->memoryCost();
     }

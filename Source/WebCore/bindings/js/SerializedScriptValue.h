@@ -63,7 +63,7 @@ class OffscreenCanvas;
 #endif
 class IDBValue;
 class MessagePort;
-class ImageBitmapBacking;
+class DetachedImageBitmap;
 class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
 
@@ -133,7 +133,7 @@ private:
 #endif
         );
 
-    SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
+    SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&&
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
         , Vector<RefPtr<OffscreenCanvas>>&& = { }
@@ -169,7 +169,7 @@ private:
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
 #endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
-        Vector<std::optional<ImageBitmapBacking>> backingStores { };
+        Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
         Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases { };

@@ -308,7 +308,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             auto buffer = allocateImageBuffer();
             if (!buffer)
                 return { RefPtr<ImageBitmap> { nullptr } };
-            return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
+            return { ImageBitmap::create(buffer.releaseNonNull(), originClean()) };
         }
 
         if (!buffer())
@@ -329,8 +329,9 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             downcast<ImageBitmapRenderingContext>(*m_context).transferFromImageBitmap(nullptr);
         }
         clearCopiedImage();
-
-        return { ImageBitmap::create(ImageBitmapBacking(WTFMove(bitmap), originClean() ? SerializationState::OriginClean : SerializationState())) };
+        if (!bitmap)
+            return { RefPtr<ImageBitmap> { nullptr } };
+        return { ImageBitmap::create(bitmap.releaseNonNull(), originClean(), false, false) };
     }
 
 #if ENABLE(WEBGL)
@@ -338,13 +339,12 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         // FIXME: We're supposed to create an ImageBitmap using the backing
         // store from this canvas (or its context), but for now we'll just
         // create a new bitmap and paint into it.
-
-        auto imageBitmap = ImageBitmap::create(allocateImageBuffer());
-        if (!imageBitmap->buffer())
+        auto buffer = allocateImageBuffer();
+        if (!buffer)
             return { RefPtr<ImageBitmap> { nullptr } };
 
         auto* gc3d = webGLContext->graphicsContextGL();
-        gc3d->drawSurfaceBufferToImageBuffer(GraphicsContextGL::SurfaceBuffer::DrawingBuffer, *imageBitmap->buffer());
+        gc3d->drawSurfaceBufferToImageBuffer(GraphicsContextGL::SurfaceBuffer::DrawingBuffer, *buffer);
 
         // FIXME: The transfer algorithm requires that the canvas effectively
         // creates a new backing store. Since we're not doing that yet, we
@@ -355,8 +355,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         gc3d->clearColor(0, 0, 0, 0);
         gc3d->clear(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT);
         gc3d->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-
-        return { WTFMove(imageBitmap) };
+        return { ImageBitmap::create(buffer.releaseNonNull(), originClean()) };
     }
 #endif
 
