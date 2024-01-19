@@ -349,6 +349,10 @@
 #include "MathMLNames.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamTrack.h"
+#endif
+
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
 #endif
@@ -904,6 +908,12 @@ void Document::commonTeardown()
     m_timeline = nullptr;
     m_associatedFormControls.clear();
     m_didAssociateFormControlsTimer.stop();
+
+#if ENABLE(MEDIA_STREAM)
+    auto captureSources = std::exchange(m_captureSources, { });
+    for (auto& source : captureSources)
+        source->endImmediatly();
+#endif
 
 #if ENABLE(WEB_RTC)
     if (RefPtr rtcNetworkManager = std::exchange(m_rtcNetworkManager, nullptr))
@@ -2182,7 +2192,7 @@ void Document::visibilityStateChanged()
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
     if (auto mediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists()) {
         if (!mediaSessionManager->isInterrupted())
-            MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
+            updateCaptureAccordingToMutedState();
     }
 #endif
 
@@ -4993,6 +5003,16 @@ void Document::noteUserInteractionWithMediaElement()
     updateIsPlayingMedia();
 }
 
+#if ENABLE(MEDIA_STREAM)
+MediaProducerMediaStateFlags Document::computeCaptureState() const
+{
+    MediaProducerMediaStateFlags state;
+    for (auto& source : m_captureSources)
+        state.add(MediaStreamTrack::captureState(source.get()));
+    return state;
+}
+#endif // ENABLE(MEDIA_STREAM)
+
 void Document::updateIsPlayingMedia()
 {
     ASSERT(!m_audioProducers.hasNullReferences());
@@ -5001,7 +5021,7 @@ void Document::updateIsPlayingMedia()
         state.add(audioProducer.mediaState());
 
 #if ENABLE(MEDIA_STREAM)
-    state.add(MediaStreamTrack::captureState(*this));
+    state.add(computeCaptureState());
     if (m_activeSpeechRecognition)
         state.add(MediaProducerMediaState::HasActiveAudioCaptureDevice);
 
@@ -5039,9 +5059,75 @@ void Document::pageMutedStateDidChange()
         audioProducer.pageMutedStateDidChange();
 
 #if ENABLE(MEDIA_STREAM)
-    MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
+    updateCaptureAccordingToMutedState();
 #endif
 }
+
+#if ENABLE(MEDIA_STREAM)
+static void updateCaptureSourceToPageMutedState(Document& document, Page& page, RealtimeMediaSource& source)
+{
+    ASSERT(source.isCaptureSource());
+
+    switch (source.deviceType()) {
+    case CaptureDevice::DeviceType::Microphone:
+#if PLATFORM(IOS_FAMILY)
+        if (document.settings().manageCaptureStatusBarInGPUProcessEnabled() && !document.settings().interruptAudioOnPageVisibilityChangeEnabled())
+            source.setIsInBackground(document.hidden());
+#endif
+        source.setMuted(page.mutedState().contains(MediaProducerMutedState::AudioCaptureIsMuted) || (document.hidden() && document.settings().interruptAudioOnPageVisibilityChangeEnabled()));
+        break;
+    case CaptureDevice::DeviceType::Camera:
+        source.setMuted(page.mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted) || (document.hidden() && document.settings().interruptVideoOnPageVisibilityChangeEnabled()));
+        break;
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        source.setMuted(page.mutedState().contains(MediaProducerMutedState::ScreenCaptureIsMuted));
+        break;
+    case CaptureDevice::DeviceType::SystemAudio:
+    case CaptureDevice::DeviceType::Speaker:
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void Document::addCaptureSource(Ref<RealtimeMediaSource>&& source)
+{
+    ASSERT(!source->isEnded());
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    updateCaptureSourceToPageMutedState(*this, *page, source.get());
+    source->registerOwnerCallback([document = WeakPtr { *this }](auto& source, bool isNewClonedSource) {
+        RefPtr protectedDocument = document.get();
+        if (!protectedDocument || protectedDocument->m_isUpdatingCaptureAccordingToMutedState)
+            return;
+        if (source.isEnded())
+            protectedDocument->m_captureSources.remove(source);
+        else if (isNewClonedSource)
+            protectedDocument->m_captureSources.add(source);
+        protectedDocument->updateIsPlayingMedia();
+    });
+
+    m_captureSources.add(WTFMove(source));
+}
+
+void Document::updateCaptureAccordingToMutedState()
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    m_isUpdatingCaptureAccordingToMutedState = true;
+    for (auto& source : m_captureSources)
+        updateCaptureSourceToPageMutedState(*this, *page, source.get());
+    m_isUpdatingCaptureAccordingToMutedState = false;
+
+    updateIsPlayingMedia();
+}
+#endif // ENABLE(MEDIA_STREAM)
 
 static bool isNodeInSubtree(Node& node, Node& container, Document::NodeRemoval nodeRemoval)
 {
@@ -8917,10 +9003,38 @@ void Document::orientationChanged(IntDegrees orientation)
 }
 
 #if ENABLE(MEDIA_STREAM)
+static bool isSourceMatchingMediaCaptureKind(const RealtimeMediaSource& source, MediaProducerMediaCaptureKind kind)
+{
+    switch (kind) {
+    case MediaProducerMediaCaptureKind::Microphone:
+        return source.deviceType() == CaptureDevice::DeviceType::Microphone;
+    case MediaProducerMediaCaptureKind::Camera:
+        return source.deviceType() == CaptureDevice::DeviceType::Camera;
+    case MediaProducerMediaCaptureKind::Display: {
+        auto deviceType = source.deviceType();
+        return deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window;
+    }
+    case MediaProducerMediaCaptureKind::SystemAudio:
+        return source.deviceType() == CaptureDevice::DeviceType::SystemAudio;
+    case MediaProducerMediaCaptureKind::EveryKind:
+        return true;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
 
 void Document::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
-    MediaStreamTrack::endCapture(*this, kind);
+    bool didEndCapture = false;
+    auto captureSources = m_captureSources;
+    for (auto& source : captureSources) {
+        if (isSourceMatchingMediaCaptureKind(source.get(), kind)) {
+            source->endImmediatly();
+            didEndCapture = true;
+        }
+    }
+    if (didEndCapture)
+        updateIsPlayingMedia();
 }
 
 void Document::mediaStreamCaptureStateChanged()
@@ -8935,7 +9049,25 @@ void Document::mediaStreamCaptureStateChanged()
     });
 }
 
-#endif
+void Document::updateVideoCaptureStateForMicrophoneInterruption(bool isMicrophoneInterrupted)
+{
+    RELEASE_LOG_INFO(WebRTC, "Document::updateVideoCaptureStateForMicrophoneInterruption %d", isMicrophoneInterrupted);
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    for (auto& document : allDocuments()) {
+        Ref protectedDocument = document.get();
+        if (page.get() != document->page())
+            continue;
+        for (auto& captureSource : document->m_captureSources) {
+            if (!captureSource->isEnded() && captureSource->deviceType() == CaptureDevice::DeviceType::Camera)
+                captureSource->setMuted(isMicrophoneInterrupted);
+        }
+    }
+}
+#endif // ENABLE(MEDIA_STREAM)
 
 const AtomString& Document::bgColor() const
 {

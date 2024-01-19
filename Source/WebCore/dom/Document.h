@@ -194,6 +194,7 @@ class QualifiedName;
 class Quirks;
 class RTCNetworkManager;
 class Range;
+class RealtimeMediaSource;
 class Region;
 class RenderTreeBuilder;
 class RenderView;
@@ -1650,6 +1651,8 @@ public:
     void stopMediaCapture(MediaProducerMediaCaptureKind);
     void mediaStreamCaptureStateChanged();
     size_t activeMediaElementsWithMediaStreamCount() const { return m_activeMediaElementsWithMediaStreamCount; }
+    void addCaptureSource(Ref<RealtimeMediaSource>&&);
+    void updateVideoCaptureStateForMicrophoneInterruption(bool);
 #endif
 
 // FIXME: Find a better place for this functionality.
@@ -2014,6 +2017,11 @@ private:
 
     bool isObservingContentVisibilityTargets() const;
 
+#if ENABLE(MEDIA_STREAM)
+    void updateCaptureAccordingToMutedState();
+    MediaProducerMediaStateFlags computeCaptureState() const;
+#endif
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;
@@ -2343,6 +2351,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     String m_idHashSalt;
     size_t m_activeMediaElementsWithMediaStreamCount { 0 };
+    HashSet<Ref<RealtimeMediaSource>> m_captureSources;
+    bool m_isUpdatingCaptureAccordingToMutedState { false };
 #endif
 
     struct PendingScrollEventTargetList;

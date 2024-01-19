@@ -277,6 +277,9 @@ public:
 
     virtual double facingModeFitnessScoreAdjustment() const { return 0; }
 
+    using OwnerCallback = std::function<void(RealtimeMediaSource&, bool isNewClonedSource)>;
+    void registerOwnerCallback(OwnerCallback&&);
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
 
@@ -317,6 +320,8 @@ protected:
     void setPersistentId(const String&);
 
     bool hasSeveralVideoFrameObserversWithAdaptors() const { return m_videoFrameObserversWithAdaptors > 1; }
+
+    OwnerCallback m_registerOwnerCallback;
 
 private:
     virtual void startProducingData() { }
