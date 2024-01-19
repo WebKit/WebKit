@@ -1669,6 +1669,8 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     if (!node)
         return std::nullopt;
 
+    updateLayoutIgnorePendingStylesheets();
+
     auto* renderer = node->renderer();
     if (!renderer)
         return std::nullopt;
