@@ -2756,3 +2756,8 @@ webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Failure Pa
 
 # Trusted Types aren't implemented yet
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
+
+# testRunner.dontForceRepaint
+compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
+compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
+compositing/repaint/copy-forward-dirty-region.html [ Skip ]
