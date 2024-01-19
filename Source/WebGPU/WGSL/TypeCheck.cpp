@@ -423,14 +423,15 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         variable.m_addressSpace = addressSpace;
         variable.m_accessMode = accessMode;
         result = m_types.referenceType(addressSpace, result, accessMode);
-        if (auto* maybeTypeName = variable.maybeTypeName()) {
-            auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
-                maybeTypeName->span(),
-                *maybeTypeName
-            );
-            referenceType.m_inferredType = result;
-            variable.m_referenceType = &referenceType;
-        }
+        auto* typeName = variable.maybeTypeName();
+        if (!typeName)
+            typeName = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(result->toString()));
+        auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
+            typeName->span(),
+            *typeName
+        );
+        referenceType.m_inferredType = result;
+        variable.m_referenceType = &referenceType;
     }
 
     introduceValue(variable.name(), result, value ? std::optional<ConstantValue>(*value) : std::nullopt);
