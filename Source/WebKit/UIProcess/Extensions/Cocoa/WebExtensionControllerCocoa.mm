@@ -191,6 +191,12 @@ void WebExtensionController::addProcessPool(WebProcessPool& processPool)
     if (!m_processPools.add(processPool))
         return;
 
+    for (auto& urlScheme : WebExtensionMatchPattern::extensionSchemes()) {
+        processPool.registerURLSchemeAsSecure(urlScheme);
+        processPool.registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
+        processPool.setDomainRelaxationForbiddenForURLScheme(urlScheme);
+    }
+
     processPool.addMessageReceiver(Messages::WebExtensionController::messageReceiverName(), m_identifier, *this);
 
     for (auto& context : m_extensionContexts)

@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebProcessPool.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -46,6 +47,12 @@ using namespace WebCore;
 
 static constexpr ASCIILiteral allURLsPattern = "<all_urls>"_s;
 static constexpr ASCIILiteral allHostsAndSchemesPattern = "*://*/*"_s;
+
+WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::extensionSchemes()
+{
+    static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "webkit-extension"_s };
+    return schemes;
+}
 
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
@@ -70,6 +77,7 @@ void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
     auto canonicalScheme = URLParser::maybeCanonicalizeScheme(String(urlScheme));
     ASSERT(canonicalScheme);
 
+    extensionSchemes().addVoid(canonicalScheme.value());
     validSchemes().addVoid(canonicalScheme.value());
     supportedSchemes().addVoid(canonicalScheme.value());
 }

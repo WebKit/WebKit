@@ -134,6 +134,7 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
