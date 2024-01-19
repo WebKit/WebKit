@@ -26,41 +26,37 @@
 
 namespace WebCore {
 
-inline DOMParser::DOMParser(Document& contextDocument)
-    : m_contextDocument(contextDocument)
-    , m_settings(contextDocument.settings())
+inline DOMParser::DOMParser()
 {
 }
 
 DOMParser::~DOMParser() = default;
 
-Ref<DOMParser> DOMParser::create(Document& contextDocument)
+Ref<DOMParser> DOMParser::create()
 {
-    return adoptRef(*new DOMParser(contextDocument));
+    return adoptRef(*new DOMParser());
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(Document& contextDocument, const String& string, const String& contentType)
 {
+    auto url = contextDocument.url();
+    auto& settings = contextDocument.settings();
     RefPtr<Document> document;
     if (contentType == "text/html"_s)
-        document = HTMLDocument::create(nullptr, m_settings, URL { });
+        document = HTMLDocument::create(nullptr, settings, url);
     else if (contentType == "application/xhtml+xml"_s)
-        document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
+        document = XMLDocument::createXHTML(nullptr, settings, url);
     else if (contentType == "image/svg+xml"_s)
-        document = SVGDocument::create(nullptr, m_settings, URL { });
+        document = SVGDocument::create(nullptr, settings, url);
     else if (contentType == "text/xml"_s || contentType == "application/xml"_s) {
-        document = XMLDocument::create(nullptr, m_settings, URL { });
+        document = XMLDocument::create(nullptr, settings, url);
         document->overrideMIMEType(contentType);
     } else
         return Exception { ExceptionCode::TypeError };
 
-    if (m_contextDocument)
-        document->setContextDocument(*m_contextDocument.get());
+    document->setContextDocument(contextDocument);
     document->setMarkupUnsafe(string, { });
-    if (m_contextDocument) {
-        document->setURL(m_contextDocument->url());
-        document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
-    }
+    document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document.releaseNonNull();
 }
 

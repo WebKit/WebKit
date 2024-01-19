@@ -29,16 +29,13 @@ class Settings;
 
 class DOMParser : public RefCounted<DOMParser> {
 public:
-    static Ref<DOMParser> create(Document& contextDocument);
+    static Ref<DOMParser> create();
     ~DOMParser();
 
-    ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(Document&, const String&, const String&);
 
 private:
-    explicit DOMParser(Document& contextDocument);
-
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
-    const Ref<const Settings> m_settings;
+    explicit DOMParser();
 };
 
 }

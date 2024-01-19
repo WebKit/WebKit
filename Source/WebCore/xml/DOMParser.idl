@@ -20,7 +20,7 @@
 [
     Exposed=Window
 ] interface DOMParser {
-    [CallWith=CurrentDocument] constructor();
+    constructor();
 
-    [NewObject] Document parseFromString(DOMString string, DOMString contentType);
+    [NewObject, CallWith=CurrentDocument] Document parseFromString(DOMString string, DOMString contentType);
 };
