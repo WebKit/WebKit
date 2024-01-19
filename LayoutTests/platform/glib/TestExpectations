@@ -1031,7 +1031,8 @@ webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
 webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 media/video-seek-to-current-time.html [ Failure ]
 
-webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
@@ -1882,8 +1883,9 @@ webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creat
 
 # Requires video scaling adaptation.
 webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
-webrtc/video-maxBitrate.html [ Failure ]
-webrtc/video-maxBitrate-vp8.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webrtc/video-maxBitrate.html [ Failure ]
+#webrtc/video-maxBitrate-vp8.html [ Failure ]
 
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
@@ -1918,7 +1920,8 @@ webrtc/video-rotation-black.html [ Crash Failure Pass Timeout ]
 # No AudioSession category handling in WPE/GTK ports.
 fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 
-webkit.org/b/261329 webrtc/video-clone-track.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/261329 webrtc/video-clone-track.html [ Failure ]
 
 webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
@@ -2033,7 +2036,8 @@ webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Fail
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
-webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/177533 webrtc/video-interruption.html
@@ -3668,8 +3672,9 @@ webkit.org/b/261024 svg/custom/circle-move-invalidation.svg [ Failure ImageOnlyF
 webkit.org/b/261024 svg/custom/mouse-move-on-svg-container.xhtml [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/261024 svg/custom/mouse-move-on-svg-root.xhtml [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/261024 svg/text/small-fonts-in-html5.html [ Failure ImageOnlyFailure Pass ]
-webkit.org/b/261024 webrtc/video-maxFramerate.html [ Pass Timeout ]
-webkit.org/b/261024 webrtc/video-replace-muted-track.html [ Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/261024 webrtc/video-maxFramerate.html [ Pass Timeout ]
+#webkit.org/b/261024 webrtc/video-replace-muted-track.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
 
@@ -3797,6 +3802,21 @@ webkit.org/b/267411 webrtc/peerconnection-page-cache.html [ Timeout Crash ]
 webkit.org/b/267411 webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/release-after-getting-track.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/remoteAudio-never-played.html [ Pass Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-createAnswer.html [ Pass Crash ]
+webkit.org/b/267411 http/wpt/mediarecorder/mimeType.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/utf8-sdp.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-addTrack.html [ Failure Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-autoplay.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-clone-track.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/video-getParameters.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/video-maxBitrate-vp8.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/video-maxBitrate.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/video-maxFramerate.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-mute-vp8.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-mute.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-receivers.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/video-remote-mute.html [ Failure Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-replace-muted-track.html [ Pass Timeout Crash ]
 
 # End: Common failures between GTK and WPE.
 
