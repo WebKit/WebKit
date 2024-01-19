@@ -34,14 +34,14 @@ namespace WebKit {
 
 class PDFPluginPasswordField : public PDFPluginTextAnnotation {
 public:
-    static Ref<PDFPluginPasswordField> create(PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginPasswordField> create(PDFPluginBase*);
     virtual ~PDFPluginPasswordField();
 
     void updateGeometry() override;
 
 private:
-    PDFPluginPasswordField(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
-        : PDFPluginTextAnnotation(0, pdfLayerController, plugin)
+    PDFPluginPasswordField(PDFPluginBase* plugin)
+        : PDFPluginTextAnnotation(0, plugin)
     {
     }
 

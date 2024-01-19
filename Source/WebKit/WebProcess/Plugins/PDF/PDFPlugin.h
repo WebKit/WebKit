@@ -84,10 +84,9 @@ public:
     static Ref<PDFPlugin> create(WebCore::HTMLPlugInElement&);
     virtual ~PDFPlugin() = default;
 
-    void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
     void paintControlForLayerInContext(CALayer *, CGContextRef);
-    void setActiveAnnotation(PDFAnnotation *);
+    void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
 
     void notifyContentScaleFactorChanged(CGFloat scaleFactor);
     void notifyDisplayModeChanged(int);
@@ -109,10 +108,11 @@ public:
     void performWebSearch(NSString *);
     void performSpotlightSearch(NSString *);
 
-    void focusNextAnnotation();
-    void focusPreviousAnnotation();
+    CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
+    void focusNextAnnotation() final;
+    void focusPreviousAnnotation() final;
 
-    void attemptToUnlockPDF(const String& password);
+    void attemptToUnlockPDF(const String& password) final;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
@@ -138,6 +138,9 @@ public:
     WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
 
+    CGFloat scaleFactor() const override;
+    CGSize contentSizeRespectingZoom() const final;
+
 private:
     explicit PDFPlugin(WebCore::HTMLPlugInElement&);
     bool isLegacyPDFPlugin() const override { return true; }
@@ -162,7 +165,6 @@ private:
 
     void installPDFDocument() override;
 
-    CGFloat scaleFactor() const override;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const override { return m_pdfDocument; }
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
@@ -210,15 +212,11 @@ private:
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
 
-    bool supportsForms();
-
     void updatePageAndDeviceScaleFactors();
 
     void createPasswordEntryForm();
 
     NSData *liveData() const;
-
-    bool m_pdfDocumentWasMutated { false };
 
     RetainPtr<CALayer> m_containerLayer;
     RetainPtr<CALayer> m_contentLayer;
@@ -228,9 +226,7 @@ private:
     RetainPtr<PDFLayerController> m_pdfLayerController;
     RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
     
-    RefPtr<PDFPluginAnnotation> m_activeAnnotation;
     RefPtr<PDFPluginPasswordField> m_passwordField;
-    RefPtr<WebCore::Element> m_annotationContainer;
 
     std::optional<WebMouseEvent> m_lastMouseEvent;
 

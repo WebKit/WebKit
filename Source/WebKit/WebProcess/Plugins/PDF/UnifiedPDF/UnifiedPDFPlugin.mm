@@ -364,6 +364,11 @@ CGFloat UnifiedPDFPlugin::scaleFactor() const
     return m_scaleFactor;
 }
 
+CGSize UnifiedPDFPlugin::contentSizeRespectingZoom() const
+{
+    return { };
+}
+
 float UnifiedPDFPlugin::deviceScaleFactor() const
 {
     return PDFPluginBase::deviceScaleFactor();
@@ -1063,6 +1068,27 @@ void UnifiedPDFPlugin::openWithPreview(CompletionHandler<void(const String&, Fra
 }
 
 #endif // ENABLE(PDF_HUD)
+
+CGRect UnifiedPDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+{
+    return { };
+}
+
+void UnifiedPDFPlugin::focusNextAnnotation()
+{
+}
+
+void UnifiedPDFPlugin::focusPreviousAnnotation()
+{
+}
+
+void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
+{
+}
+
+void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
+{
+}
 
 bool UnifiedPDFPlugin::isTaggedPDF() const
 {

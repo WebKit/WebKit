@@ -47,12 +47,12 @@ class PDFPlugin;
 
 class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation> {
 public:
-    static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFPluginBase*);
     virtual ~PDFPluginAnnotation();
 
     WebCore::Element* element() const { return m_element.get(); }
     PDFAnnotation *annotation() const { return m_annotation.get(); }
-    PDFPlugin* plugin() const { return m_plugin; }
+    PDFPluginBase* plugin() const { return m_plugin.get(); }
 
     virtual void updateGeometry();
     virtual void commit();
@@ -60,16 +60,14 @@ public:
     void attach(WebCore::Element*);
 
 protected:
-    PDFPluginAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+    PDFPluginAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
         : m_annotation(annotation)
         , m_eventListener(PDFPluginAnnotationEventListener::create(this))
-        , m_pdfLayerController(pdfLayerController)
         , m_plugin(plugin)
     {
     }
 
     WebCore::Element* parent() const { return m_parent.get(); }
-    PDFLayerController *pdfLayerController() const { return m_pdfLayerController; }
     WebCore::EventListener* eventListener() const { return m_eventListener.get(); }
 
     virtual bool handleEvent(WebCore::Event&);
@@ -106,8 +104,7 @@ private:
 
     RefPtr<PDFPluginAnnotationEventListener> m_eventListener;
 
-    PDFLayerController *m_pdfLayerController;
-    PDFPlugin* m_plugin;
+    RefPtr<PDFPluginBase> m_plugin;
 };
 
 } // namespace WebKit

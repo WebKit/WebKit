@@ -1343,7 +1343,7 @@ void PDFPlugin::createPasswordEntryForm()
     if (!supportsForms())
         return;
 
-    auto passwordField = PDFPluginPasswordField::create(m_pdfLayerController.get(), this);
+    auto passwordField = PDFPluginPasswordField::create(this);
     m_passwordField = passwordField.ptr();
     passwordField->attach(m_annotationContainer.get());
 }
@@ -1901,7 +1901,7 @@ void PDFPlugin::clickedLink(NSURL *url)
     frame->loader().changeLocation(coreURL, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
-void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
+void PDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
 {
     if (!supportsForms())
         return;
@@ -1917,17 +1917,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-        auto activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
+        auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
         m_activeAnnotation = activeAnnotation.get();
         activeAnnotation->attach(m_annotationContainer.get());
     } else
         m_activeAnnotation = nullptr;
-}
-
-bool PDFPlugin::supportsForms()
-{
-    // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
-    return isFullFramePlugin();
 }
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
@@ -2133,6 +2127,11 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
     return true;
 }
 
+CGRect PDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+{
+    return [m_pdfLayerController boundsForAnnotation:annotation.get()];
+}
+
 void PDFPlugin::focusNextAnnotation()
 {
     [m_pdfLayerController activateNextAnnotation:false];
@@ -2285,6 +2284,11 @@ WebCore::FloatRect PDFPlugin::rectForSelectionInRootView(PDFSelection *selection
     rectInView.origin = convertFromPDFViewToRootView(IntPoint(rectInView.origin));
 
     return rectInView;
+}
+
+CGSize PDFPlugin::contentSizeRespectingZoom() const
+{
+    return [m_pdfLayerController contentSizeRespectingZoom];
 }
 
 CGFloat PDFPlugin::scaleFactor() const

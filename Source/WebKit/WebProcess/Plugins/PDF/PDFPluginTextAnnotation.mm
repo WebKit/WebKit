@@ -68,9 +68,9 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
     return String();
 }
 
-Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
-    return adoptRef(*new PDFPluginTextAnnotation(annotation, pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginTextAnnotation(annotation, plugin));
 }
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
@@ -112,7 +112,7 @@ void PDFPluginTextAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * pdfLayerController().contentScaleFactor, CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * plugin()->scaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginTextAnnotation::commit()

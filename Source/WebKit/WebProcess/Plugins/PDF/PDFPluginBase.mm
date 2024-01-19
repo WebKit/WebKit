@@ -608,6 +608,12 @@ void PDFPluginBase::notifyCursorChanged(WebCore::PlatformCursorType cursorType)
     m_frame->protectedPage()->send(Messages::WebPageProxy::SetCursor(WebCore::Cursor::fromType(cursorType)));
 }
 
+bool PDFPluginBase::supportsForms()
+{
+    // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
+    return isFullFramePlugin();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDF_PLUGIN)

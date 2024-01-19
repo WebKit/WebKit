@@ -44,6 +44,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
 
@@ -60,6 +61,7 @@ enum class PlatformCursorType : uint8_t;
 
 namespace WebKit {
 
+class PDFPluginAnnotation;
 class PluginView;
 class ShareableBitmap;
 class WebFrame;
@@ -102,6 +104,7 @@ public:
     virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
 
     virtual CGFloat scaleFactor() const = 0;
+    virtual CGSize contentSizeRespectingZoom() const = 0;
 
     bool isLocked() const;
 
@@ -177,12 +180,24 @@ public:
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 
+    WebCore::ScrollPosition scrollPosition() const final;
+
+    virtual void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) = 0;
+    void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
+
+    virtual CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;
+    virtual void focusNextAnnotation() = 0;
+    virtual void focusPreviousAnnotation() = 0;
+
+    virtual void attemptToUnlockPDF(const String& password) = 0;
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
     WebCore::Page* page() const;
 
     virtual void teardown();
+
+    bool supportsForms();
 
     void createPDFDocument();
     virtual void installPDFDocument() = 0;
@@ -212,7 +227,6 @@ protected:
     void setScrollOffset(const WebCore::ScrollOffset&) final;
     bool isActive() const final;
     bool isScrollCornerVisible() const final { return false; }
-    WebCore::ScrollPosition scrollPosition() const final;
     WebCore::ScrollPosition minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;
     WebCore::IntSize visibleSize() const final { return m_size; }
@@ -274,6 +288,13 @@ protected:
     bool m_isBeingDestroyed { false };
     bool m_hasBeenDestroyed { false };
     bool m_didRunScripts { false };
+
+#if PLATFORM(MAC)
+    RefPtr<PDFPluginAnnotation> m_activeAnnotation;
+#endif
+    RefPtr<WebCore::Element> m_annotationContainer;
+    bool m_pdfDocumentWasMutated { false };
+
 };
 
 } // namespace WebKit

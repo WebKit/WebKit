@@ -28,9 +28,8 @@
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
-#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
-#import "PDFPlugin.h"
+#import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
 #import <Quartz/Quartz.h>
@@ -48,16 +47,18 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/Page.h>
 
+#import "PDFKitSoftLink.h"
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
     if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
-        return PDFPluginTextAnnotation::create(annotation, pdfLayerController, plugin);
+        return PDFPluginTextAnnotation::create(annotation, plugin);
     if ([annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()])
-        return PDFPluginChoiceAnnotation::create(annotation, pdfLayerController, plugin);
+        return PDFPluginChoiceAnnotation::create(annotation, plugin);
 
     return nullptr;
 }
@@ -103,13 +104,13 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
 void PDFPluginAnnotation::updateGeometry()
 {
-    IntSize documentSize(m_pdfLayerController.contentSizeRespectingZoom);
-    NSRect annotationRect = NSRectFromCGRect([m_pdfLayerController boundsForAnnotation:m_annotation.get()]);
+    IntSize documentSize(m_plugin->contentSizeRespectingZoom());
+    NSRect annotationRect = NSRectFromCGRect(m_plugin->boundsForAnnotation(m_annotation));
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSUnitType::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSUnitType::CSS_PX);
-    IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
+    IntPoint scrollPosition(m_plugin->scrollPosition());
     styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSUnitType::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSUnitType::CSS_PX);
 }

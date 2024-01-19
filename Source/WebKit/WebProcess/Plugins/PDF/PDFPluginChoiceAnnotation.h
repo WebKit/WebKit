@@ -39,14 +39,14 @@ namespace WebKit {
 
 class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
 public:
-    static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFPluginBase*);
 
     void updateGeometry() override;
     void commit() override;
 
 private:
-    PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
-        : PDFPluginAnnotation(annotation, pdfLayerController, plugin)
+    PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
+        : PDFPluginAnnotation(annotation, plugin)
     {
     }
 

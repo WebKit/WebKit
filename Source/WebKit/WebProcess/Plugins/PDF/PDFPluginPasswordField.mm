@@ -41,9 +41,9 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFPluginBase* plugin)
 {
-    return adoptRef(*new PDFPluginPasswordField(pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginPasswordField(plugin));
 }
 
 PDFPluginPasswordField::~PDFPluginPasswordField()
