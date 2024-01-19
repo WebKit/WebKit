@@ -2060,6 +2060,8 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     if (!node)
         return std::nullopt;
 
+    updateLayoutIgnorePendingStylesheets();
+
     CheckedPtr renderer = node->renderer();
     if (!renderer)
         return std::nullopt;
