@@ -2238,6 +2238,7 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
         return m_useGPUProcessForDOMRendering;
     case RenderingPurpose::MediaPainting:
         return m_useGPUProcessForMedia;
+    case RenderingPurpose::ImageBitmap:
     case RenderingPurpose::ShareableLocalSnapshot:
     case RenderingPurpose::Unspecified:
         return false;

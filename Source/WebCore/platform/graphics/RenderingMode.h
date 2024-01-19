@@ -41,6 +41,7 @@ enum class RenderingPurpose : uint8_t {
     ShareableSnapshot,
     ShareableLocalSnapshot,
     MediaPainting,
+    ImageBitmap,
 };
 
 enum class RenderingMode : bool { Unaccelerated, Accelerated };

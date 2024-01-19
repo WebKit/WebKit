@@ -71,6 +71,9 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     }
 
 #if HAVE(IOSURFACE)
+    if (purpose == RenderingPurpose::ImageBitmap)
+        options.add(ImageBufferOptions::Accelerated);
+
     if (options.contains(ImageBufferOptions::Accelerated) && ProcessCapabilities::canUseAcceleratedBuffers()) {
         ImageBufferCreationContext creationContext;
         if (graphicsClient)
