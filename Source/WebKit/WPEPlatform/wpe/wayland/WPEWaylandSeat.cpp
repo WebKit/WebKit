@@ -62,7 +62,7 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
             return;
 
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_pointer.view = WPE_VIEW(view);
+        seat.m_pointer.view.reset(WPE_VIEW(view));
         seat.m_pointer.x = wl_fixed_to_double(x);
         seat.m_pointer.y = wl_fixed_to_double(y);
         seat.m_pointer.modifiers = 0;
@@ -290,7 +290,7 @@ const struct wl_keyboard_listener WaylandSeat::s_keyboardListener = {
             return;
 
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_keyboard.view = WPE_VIEW(view);
+        seat.m_keyboard.view.reset(WPE_VIEW(view));
         seat.m_keyboard.repeat.key = 0;
 
         wpe_view_focus_in(seat.m_keyboard.view.get());
@@ -305,7 +305,7 @@ const struct wl_keyboard_listener WaylandSeat::s_keyboardListener = {
         if (seat.m_keyboard.repeat.source)
             g_source_set_ready_time(seat.m_keyboard.repeat.source.get(), -1);
 
-        GRefPtr<WPEView> view = seat.m_keyboard.view;
+        GRefPtr<WPEView> view = seat.m_keyboard.view.get();
         seat.m_keyboard.view = nullptr;
         seat.m_keyboard.repeat.key = 0;
         seat.m_keyboard.repeat.deadline = { };
@@ -366,7 +366,7 @@ const struct wl_touch_listener WaylandSeat::s_touchListener = {
             return;
 
         auto& seat = *static_cast<WaylandSeat*>(data);
-        seat.m_touch.view = WPE_VIEW(view);
+        seat.m_touch.view.reset(WPE_VIEW(view));
 
         auto addResult = seat.m_touch.points.add(id, std::pair<double, double>(wl_fixed_to_double(x), wl_fixed_to_double(y)));
         auto* event = wpe_event_touch_new(WPE_EVENT_TOUCH_DOWN, seat.m_touch.view.get(), seat.m_touch.source, time, seat.modifiers(),

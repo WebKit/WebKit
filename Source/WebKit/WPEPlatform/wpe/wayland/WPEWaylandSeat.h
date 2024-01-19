@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GWeakPtr.h>
 
 namespace WPE {
 
@@ -66,7 +67,7 @@ private:
     struct {
         struct wl_pointer* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_MOUSE };
-        GRefPtr<WPEView> view;
+        GWeakPtr<WPEView> view;
         double x { 0 };
         double y { 0 };
         uint32_t modifiers { 0 };
@@ -87,7 +88,7 @@ private:
     struct {
         struct wl_keyboard* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_KEYBOARD };
-        GRefPtr<WPEView> view;
+        GWeakPtr<WPEView> view;
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
 
@@ -110,7 +111,7 @@ private:
     struct {
         struct wl_touch* object { nullptr };
         WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
-        GRefPtr<WPEView> view;
+        GWeakPtr<WPEView> view;
         HashMap<int32_t, std::pair<double, double>> points;
     } m_touch;
 };

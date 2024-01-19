@@ -120,6 +120,23 @@ TEST(WTF_GWeakPtr, Move)
         GWeakPtr<GObject> weak(obj);
         EXPECT_EQ(obj, weak.get());
         EXPECT_TRUE(weak);
+        GWeakPtr<GObject> weak2(WTFMove(weak));
+        EXPECT_NULL(weak.get());
+        EXPECT_FALSE(weak);
+        EXPECT_EQ(obj, weak2.get());
+        EXPECT_TRUE(weak2);
+        EXPECT_EQ(obj->ref_count, 1);
+        g_clear_object(&obj);
+        EXPECT_NULL(weak2.get());
+        EXPECT_FALSE(weak2);
+    }
+    EXPECT_NULL(obj);
+
+    {
+        obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        GWeakPtr<GObject> weak(obj);
+        EXPECT_EQ(obj, weak.get());
+        EXPECT_TRUE(weak);
         GWeakPtr<GObject> weak2 = WTFMove(weak);
         EXPECT_NULL(weak.get());
         EXPECT_FALSE(weak);
