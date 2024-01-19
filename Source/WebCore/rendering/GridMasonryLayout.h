@@ -67,10 +67,6 @@ private:
     inline GridTrackSizingDirection gridAxisDirection() const;
 
     bool hasDefiniteGridAxisPosition(const RenderBox& child, GridTrackSizingDirection masonryDirection) const;
-    static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
-    {
-        return !(masonryDirection == GridTrackSizingDirection::ForRows ? area.rows.startLine() : area.columns.startLine());
-    }
     GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan gridAxisSpanFromArea(const GridArea&) const;
     bool hasEnoughSpaceAtPosition(unsigned startingPosition, unsigned spanLength) const;
