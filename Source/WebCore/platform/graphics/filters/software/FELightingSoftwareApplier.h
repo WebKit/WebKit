@@ -41,7 +41,7 @@ class FELightingSoftwareApplier : public FilterEffectConcreteApplier<FELighting>
     WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FELighting>;
 
-protected:
+private:
     using Base::Base;
 
     static constexpr int minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
@@ -118,11 +118,21 @@ protected:
         inline IntSize bottomRightNormal(int offset) const;
     };
 
+    struct ApplyParameters {
+        LightingData data;
+        LightSource::PaintingData paintingData;
+        int yStart;
+        int yEnd;
+    };
+
     static void setPixelInternal(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normal2DVector, float alpha);
     static void setPixel(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normal2DVector);
 
-    virtual void applyPlatformParallel(const LightingData&, const LightSource::PaintingData&) const = 0;
-    void applyPlatform(const LightingData&) const;
+    static void applyPlatformPaint(const LightingData&, const LightSource::PaintingData&, int startY, int endY);
+    static void applyPlatformWorker(ApplyParameters*);
+    static void applyPlatformParallel(const LightingData&, const LightSource::PaintingData&);
+    static void applyPlatform(const LightingData&);
+
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 };
 
