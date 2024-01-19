@@ -183,7 +183,7 @@ private:
     bool isIntrinsicSizedGridArea(const RenderBox&, GridAxis) const;
     void computeGridContainerIntrinsicSizes();
 
-    // Helper methods for step 4. Strech flexible tracks.
+    // Helper methods for step 4. Stretch flexible tracks.
     typedef HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> TrackIndexSet;
     double computeFlexFactorUnitSize(const Vector<GridTrack>& tracks, double flexFactorSum, LayoutUnit& leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible = nullptr) const;
     void computeFlexSizedTracksGrowth(double flexFraction, Vector<LayoutUnit>& increments, LayoutUnit& totalGrowth) const;
@@ -191,7 +191,7 @@ private:
 
     // Track sizing algorithm steps. Note that the "Maximize Tracks" step is done
     // entirely inside the strategies, that's why we don't need an additional
-    // method at thise level.
+    // method at this level.
     void initializeTrackSizes();
     void resolveIntrinsicTrackSizes();
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
@@ -259,7 +259,7 @@ private:
     SingleThreadWeakHashSet<RenderGrid> m_rowSubgridsWithBaselineAlignedItems;
 
     // This is a RAII class used to ensure that the track sizing algorithm is
-    // executed as it is suppossed to be, i.e., first resolve columns and then
+    // executed as it is supposed to be, i.e., first resolve columns and then
     // rows. Only if required a second iteration is run following the same order,
     // first columns and then rows.
     class StateMachine {
