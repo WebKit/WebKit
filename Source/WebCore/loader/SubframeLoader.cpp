@@ -382,7 +382,6 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
     if (!renderer)
         return false;
 
-    IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     auto* pluginDocument = dynamicDowncast<PluginDocument>(document);
     bool loadManually = pluginDocument && !m_containsPlugins && pluginDocument->shouldLoadPluginManually();
 
@@ -391,7 +390,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
 
     WeakPtr weakRenderer { *renderer };
 
-    auto widget = m_frame.loader().client().createPlugin(contentSize, pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+    auto widget = m_frame.loader().client().createPlugin(pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     // The call to createPlugin *may* cause this renderer to disappear from underneath.
     if (!weakRenderer)

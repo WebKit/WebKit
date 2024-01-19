@@ -479,7 +479,7 @@ void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& paramete
 
 void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
 {
-    m_page->backForwardGoToItemShared(m_process.copyRef(), identifier, WTFMove(completionHandler));
+    m_page->backForwardGoToItemShared(identifier, WTFMove(completionHandler));
 }
 
 void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionPolicyParameters&& parameters, CompletionHandler<void(PolicyDecision&&)>&& reply)

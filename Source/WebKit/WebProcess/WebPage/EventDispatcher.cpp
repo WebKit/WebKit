@@ -274,7 +274,7 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 
     bool handled = false;
     if (webPage->mainFrame())
-        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin).wasHandled();
+        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps).wasHandled();
 
     if (processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
         sendDidReceiveEvent(pageID, wheelEvent.type(), handled);

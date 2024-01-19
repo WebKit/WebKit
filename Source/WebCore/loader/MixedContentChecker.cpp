@@ -119,7 +119,7 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
 
     if (allowed) {
         document->setFoundMixedContent(SecurityContext::MixedContentType::Active);
-        frame.loader().client().didRunInsecureContent(securityOrigin, url);
+        frame.loader().client().didRunInsecureContent(securityOrigin);
     }
 
     return allowed;
