@@ -43,6 +43,10 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#import "DynamicContentScalingBifurcatedImageBuffer.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -238,5 +242,17 @@ void RemoteLayerTreeContext::gpuProcessConnectionWasDestroyed()
 {
     m_backingStoreCollection->gpuProcessConnectionWasDestroyed();
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+
+DynamicContentScalingResourceCache RemoteLayerTreeContext::ensureDynamicContentScalingResourceCache()
+{
+    if (!m_dynamicContentScalingResourceCache)
+        m_dynamicContentScalingResourceCache = DynamicContentScalingResourceCache::create();
+    return m_dynamicContentScalingResourceCache;
+}
+
+#endif
+
 
 } // namespace WebKit
