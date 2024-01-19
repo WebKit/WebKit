@@ -182,40 +182,6 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLayerBackingStoreProperties& result)
-{
-    if (!decoder.decode(result.m_isOpaque))
-        return false;
-
-    if (!decoder.decode(result.m_type))
-        return false;
-
-    if (!decoder.decode(result.m_bufferHandle))
-        return false;
-
-    if (!decoder.decode(result.m_frontBufferInfo))
-        return false;
-
-    if (!decoder.decode(result.m_backBufferInfo))
-        return false;
-
-    if (!decoder.decode(result.m_secondaryBackBufferInfo))
-        return false;
-
-    if (!decoder.decode(result.m_contentsRenderingResourceIdentifier))
-        return false;
-
-    if (!decoder.decode(result.m_paintedRect))
-        return false;
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (!decoder.decode(result.m_displayListBufferHandle))
-        return false;
-#endif
-
-    return true;
-}
-
 void RemoteLayerBackingStoreProperties::dump(TextStream& ts) const
 {
     auto dumpBuffer = [&](const char* name, const std::optional<BufferAndBackendInfo>& bufferInfo) {
@@ -484,15 +450,15 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
         },
         [&] (MachSendRight& machSendRight) {
             switch (contentsType) {
-            case RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface: {
+            case LayerContentsType::IOSurface: {
                 auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
                 contents = surface ? surface->asLayerContents() : nil;
                 break;
             }
-            case RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort:
+            case LayerContentsType::CAMachPort:
                 contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
                 break;
-            case RemoteLayerBackingStoreProperties::LayerContentsType::CachedIOSurface:
+            case LayerContentsType::CachedIOSurface:
                 auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
                 contents = surface ? surface->asCAIOSurfaceLayerContents() : nil;
                 break;

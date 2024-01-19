@@ -208,7 +208,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         // Once that setting is made unnecessary, remove this entire conditional as well.
         if (type() == PlatformCALayer::Type::RemoteCustom
             && !downcast<PlatformCALayerRemoteCustom>(*this).hasVideo()) {
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort);
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, LayerContentsType::CAMachPort);
             didCommit();
             return;
         }

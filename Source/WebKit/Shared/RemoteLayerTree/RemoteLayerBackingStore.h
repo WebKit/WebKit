@@ -64,6 +64,12 @@ enum class BackingStoreNeedsDisplayReason : uint8_t {
     HasDirtyRegion,
 };
 
+enum class LayerContentsType : uint8_t {
+    IOSurface,
+    CAMachPort,
+    CachedIOSurface,
+};
+
 class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
@@ -202,9 +208,6 @@ public:
     RemoteLayerBackingStoreProperties() = default;
     RemoteLayerBackingStoreProperties(RemoteLayerBackingStoreProperties&&) = default;
 
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
-
-    enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
     void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayDynamicContentScalingDisplayListsIntoBackingStore);
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
@@ -218,6 +221,7 @@ public:
     void dump(WTF::TextStream&) const;
 
 private:
+    friend struct IPC::ArgumentCoder<RemoteLayerBackingStoreProperties, void>;
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
     RetainPtr<id> m_contentsBuffer;
 

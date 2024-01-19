@@ -69,22 +69,22 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     clearLayers();
 }
 
-RemoteLayerBackingStoreProperties::LayerContentsType RemoteLayerTreeHost::layerContentsType() const
+LayerContentsType RemoteLayerTreeHost::layerContentsType() const
 {
     // If a surface will be referenced by multiple layers (as in the tile debug indicator), CAMachPort cannot be used.
     if (m_drawingArea->hasDebugIndicator())
-        return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
+        return LayerContentsType::IOSurface;
 
     // If e.g. SceneKit will be doing an in-process snapshot of the layer tree, CAMachPort cannot be used: rdar://problem/47481972
     if (m_drawingArea->page().windowKind() == WindowKind::InProcessSnapshotting)
-        return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
+        return LayerContentsType::IOSurface;
 
     if (PAL::canLoad_QuartzCore_CAIOSurfaceCreate())
-        return RemoteLayerBackingStoreProperties::LayerContentsType::CachedIOSurface;
+        return LayerContentsType::CachedIOSurface;
 #if HAVE(MACH_PORT_CALAYER_CONTENTS)
-    return RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort;
+    return LayerContentsType::CAMachPort;
 #else
-    return RemoteLayerBackingStoreProperties::LayerContentsType::IOSurface;
+    return LayerContentsType::IOSurface;
 #endif
 }
 

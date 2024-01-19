@@ -84,6 +84,28 @@ enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
     NeedsNoDisplay
 };
 
+headers: "RemoteLayerBackingStore.h"
+enum class WebKit::LayerContentsType : uint8_t {
+  IOSurface
+  CAMachPort
+  CachedIOSurface
+};
+
+header: "RemoteLayerBackingStore.h"
+[CustomEncoder, CustomHeader, LegacyPopulateFromEmptyConstructor, Nested] class WebKit::RemoteLayerBackingStoreProperties {
+    bool m_isOpaque;
+    WebKit::RemoteLayerBackingStore::Type m_type;
+    std::optional<WebKit::ImageBufferBackendHandle> m_bufferHandle;
+    std::optional<WebKit::BufferAndBackendInfo> m_frontBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> m_backBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> m_secondaryBackBufferInfo;
+    std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
+    std::optional<WebCore::IntRect> m_paintedRect;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebKit::ImageBufferBackendHandle> m_displayListBufferHandle;
+#endif
+};
+
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
     WebCore::PlatformLayerIdentifier m_rootLayerID;
