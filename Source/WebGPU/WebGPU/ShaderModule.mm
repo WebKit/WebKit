@@ -277,6 +277,8 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
             return MTLDataTypeHalf;
         case WGSL::Types::Primitive::F32:
             return MTLDataTypeFloat;
+        case WGSL::Types::Primitive::Bool:
+            return MTLDataTypeBool;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -290,6 +292,8 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
             return MTLDataTypeHalf2;
         case WGSL::Types::Primitive::F32:
             return MTLDataTypeFloat2;
+        case WGSL::Types::Primitive::Bool:
+            return MTLDataTypeBool2;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -303,6 +307,8 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
             return MTLDataTypeHalf3;
         case WGSL::Types::Primitive::F32:
             return MTLDataTypeFloat3;
+        case WGSL::Types::Primitive::Bool:
+            return MTLDataTypeBool3;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -316,6 +322,8 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
             return MTLDataTypeHalf4;
         case WGSL::Types::Primitive::F32:
             return MTLDataTypeFloat4;
+        case WGSL::Types::Primitive::Bool:
+            return MTLDataTypeBool4;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

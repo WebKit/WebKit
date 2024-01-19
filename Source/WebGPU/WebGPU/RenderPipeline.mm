@@ -1118,21 +1118,25 @@ static bool textureFormatAllowedForRetunType(WGPUTextureFormat format, MTLDataTy
 static uint32_t componentsForDataType(MTLDataType dataType)
 {
     switch (dataType) {
+    case MTLDataTypeBool:
     case MTLDataTypeInt:
     case MTLDataTypeUInt:
     case MTLDataTypeHalf:
     case MTLDataTypeFloat:
         return 1;
+    case MTLDataTypeBool2:
     case MTLDataTypeInt2:
     case MTLDataTypeUInt2:
     case MTLDataTypeHalf2:
     case MTLDataTypeFloat2:
         return 2;
+    case MTLDataTypeBool3:
     case MTLDataTypeInt3:
     case MTLDataTypeUInt3:
     case MTLDataTypeHalf3:
     case MTLDataTypeFloat3:
         return 3;
+    case MTLDataTypeBool4:
     case MTLDataTypeInt4:
     case MTLDataTypeUInt4:
     case MTLDataTypeHalf4:
