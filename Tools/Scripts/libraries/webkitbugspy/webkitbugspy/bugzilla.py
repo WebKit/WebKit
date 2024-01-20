@@ -466,17 +466,11 @@ class Tracker(GenericTracker):
 
         return result
 
-    def issues_to_ids(self, issues):
-        if not isinstance(issues, (list, tuple)):
-            raise TypeError('Input should be a list of Issue objects.')
-        issue_ids = []
-        for i in issues:
-            issue_id = i.link
-            if isinstance(i.tracker, Tracker):
-                issue_ids.append(i.id)
-            else:
-                raise TypeError('Cannot relate issues of different types.')
-        return issue_ids
+    def related_issue_id(self, issue):
+        if isinstance(issue.tracker, Tracker):
+            return issue.id
+        else:
+            raise TypeError('Cannot relate issues of different types.')
 
     def relate(self, issue, depends_on=None, blocks=None, regressed_by=None, regressions=None, **relations):
         if relations:
@@ -485,13 +479,13 @@ class Tracker(GenericTracker):
         update_dict = dict()
         update_dict['ids'] = [issue.id]
         if depends_on:
-            update_dict['depends_on'] = {'add': self.issues_to_ids(depends_on)}
+            update_dict['depends_on'] = {'add': [self.related_issue_id(depends_on)]}
         if blocks:
-            update_dict['blocks'] = {'add': self.issues_to_ids(blocks)}
+            update_dict['blocks'] = {'add': [self.related_issue_id(blocks)]}
         if regressed_by:
-            update_dict['regressed_by'] = {'add': self.issues_to_ids(regressed_by)}
+            update_dict['regressed_by'] = {'add': [self.related_issue_id(regressed_by)]}
         if regressions:
-            update_dict['regressions'] = {'add': self.issues_to_ids(regressions)}
+            update_dict['regressions'] = {'add': [self.related_issue_id(regressions)]}
 
         response = None
         try:
@@ -512,13 +506,13 @@ class Tracker(GenericTracker):
             self.populate(issue, 'related')
         else:
             if depends_on:
-                issue._related['depends_on'] += depends_on
+                issue._related['depends_on'].append(depends_on)
             if blocks:
-                issue._related['blocks'] += blocks
+                issue._related['blocks'].append(blocks)
             if regressed_by:
-                issue._related['regressed_by'] += regressed_by
+                issue._related['regressed_by'].append(regressed_by)
             if regressions:
-                issue._related['regressions'] += regressions
+                issue._related['regressions'].append(regressions)
         return issue
 
     @property

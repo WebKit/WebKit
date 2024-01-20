@@ -600,7 +600,7 @@ What component in 'WebKit' should the bug be associated with?:
             issue = tracker.issue(1)
 
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
-            issue.relate(depends_on=[tracker.issue(2)])
+            issue.relate(depends_on=tracker.issue(2))
             self.assertEqual(issue.related['depends_on'], [tracker.issue(2)])
             self.assertEqual(issue.related['blocks'], [])
 
@@ -613,7 +613,7 @@ What component in 'WebKit' should the bug be associated with?:
             issue = tracker.issue(1)
 
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
-            issue.relate(depends_on=[tracker.issue(2)], blocks=[tracker.issue(3)])
+            issue.relate(depends_on=tracker.issue(2), blocks=tracker.issue(3))
             self.assertEqual(issue.related['depends_on'], [tracker.issue(2)])
             self.assertEqual(issue.related['blocks'], [tracker.issue(3)])
 
@@ -628,7 +628,7 @@ What component in 'WebKit' should the bug be associated with?:
 
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
             with self.assertRaises(TypeError) as c:
-                issue.relate(fake_relation=[0])
+                issue.relate(fake_relation=0)
             self.assertEqual('\'fake_relation\' is an invalid relation', str(c.exception))
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
 
@@ -637,14 +637,14 @@ What component in 'WebKit' should the bug be associated with?:
                 BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
                 BUGS_EXAMPLE_COM_PASSWORD='password',
         ), users=mocks.USERS, issues=mocks.ISSUES):
-            bugzilla_tracker = bugzilla.Tracker(self.URL)
+            tracker = bugzilla.Tracker(self.URL)
 
-            issue = bugzilla_tracker.issue(1)
+            issue = tracker.issue(1)
 
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
             with self.assertRaises(AttributeError) as c:
-                issue.relate(blocks=[0])
-            self.assertEqual('\'int\' object has no attribute \'link\'', str(c.exception))
+                issue.relate(blocks=17)
+            self.assertEqual('\'int\' object has no attribute \'tracker\'', str(c.exception))
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
 
     def test_relate_fail_radar(self):
@@ -659,6 +659,6 @@ What component in 'WebKit' should the bug be associated with?:
 
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
             with self.assertRaises(TypeError) as c:
-                issue.relate(blocks=[radar_tracker.issue(1)])
+                issue.relate(blocks=radar_tracker.issue(1))
             self.assertEqual('Cannot relate issues of different types.', str(c.exception))
             self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
