@@ -319,8 +319,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if USE(EXTENSIONKIT)
     if (!_visibilityPropagationInteractionForGPUProcess && !_visibilityPropagationInteractionForGPUProcess) {
         SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
-        if ([_page->process().extensionProcess().get() respondsToSelector:selector])
-            _visibilityPropagationInteractionForGPUProcess = [_page->process().extensionProcess() performSelector:selector];
+        if ([gpuProcess->extensionProcess().get() respondsToSelector:selector])
+            _visibilityPropagationInteractionForGPUProcess = [gpuProcess->extensionProcess() performSelector:selector];
         if (_visibilityPropagationInteractionForGPUProcess) {
             _visibilityPropagationViewForGPUProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
             [_visibilityPropagationViewForGPUProcess addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
