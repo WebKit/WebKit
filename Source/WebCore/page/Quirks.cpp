@@ -1701,4 +1701,17 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
     return *m_needsDisableDOMPasteAccessQuirk;
 }
 
+// oracle.com rdar://117673533
+bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    if (isDomain("oracle.com"_s))
+        return true;
+#endif
+    return false;
+}
+
 }
