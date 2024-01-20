@@ -1,4 +1,5 @@
-<script src="../../resources/js-test-pre.js"></script>
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -38,13 +39,12 @@ Test that the matched declaration cache handles explicitly inherited properties 
 <script>
 function test(e, p) {
     var testDiv = document.getElementById(e);
-    var cssValue = window.getComputedStyle(testDiv).getPropertyCSSValue(p);
-    return cssValue.cssText;
+    return getComputedStyle(testDiv).marginLeft;
 }
-shouldBeEqualToString("test('test1a', 'margin-left')", "0px");
-shouldBeEqualToString("test('test1b', 'margin-left')", "0px");
-shouldBeEqualToString("test('test2a', 'margin-left')", "5px");
-shouldBeEqualToString("test('test2b', 'margin-left')", "5px");
-shouldBeEqualToString("test('test3a', 'margin-left')", "10px");
-shouldBeEqualToString("test('test3b', 'margin-left')", "10px");
+shouldBeEqualToString("test('test1a')", "0px");
+shouldBeEqualToString("test('test1b')", "0px");
+shouldBeEqualToString("test('test2a')", "5px");
+shouldBeEqualToString("test('test2b')", "5px");
+shouldBeEqualToString("test('test3a')", "10px");
+shouldBeEqualToString("test('test3b')", "10px");
 </script>
