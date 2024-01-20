@@ -12759,6 +12759,16 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     [self changeSelectionWithTouchAt:point withSelectionTouch:touch baseIsStart:boundaryIsStart withFlags:flags];
 }
 
+- (void)updateSelectionWithExtentPoint:(CGPoint)point boundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
+{
+    [self updateSelectionWithExtentPoint:point withBoundary:granularity completionHandler:completionHandler];
+}
+
+- (void)selectTextInGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
+{
+    [self selectTextWithGranularity:granularity atPoint:point completionHandler:completionHandler];
+}
+
 - (void)moveSelectionAtBoundary:(UITextGranularity)granularity inStorageDirection:(UITextStorageDirection)direction completionHandler:(void (^)(void))completionHandler
 {
     [self moveSelectionAtBoundary:granularity inDirection:direction completionHandler:completionHandler];

@@ -47,6 +47,12 @@
 #import <WebKitAdditions/ServiceExtensionsAdditions.h>
 #endif
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION) && SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
+@interface WebSEKeyEntry (Staging_121227027)
+@property (nonatomic, readonly) WebSEKeyPressState state;
+@end
+#endif
+
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
@@ -558,7 +564,14 @@ static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
     if (!(self = [super init]))
         return nil;
 
-    _type = webEventType(event.type);
+    _type = webEventType([&]() -> WebSEKeyPressState {
+#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
+        static bool supportsStateProperty = [event.class instancesRespondToSelector:@selector(state)];
+        if (supportsStateProperty)
+            return event.state;
+#endif
+        return event.type;
+    }());
     _timestamp = static_cast<CFTimeInterval>(event.timestamp);
     _keyboardFlags = 0;
     if (isChangingKeyModifiers(event))
