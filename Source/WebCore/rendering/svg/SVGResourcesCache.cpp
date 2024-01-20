@@ -40,7 +40,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
         RELEASE_ASSERT_NOT_REACHED();
 #endif
 
-    ASSERT(!m_cache.contains(&renderer));
+    ASSERT(!m_cache.contains(renderer));
 
     // Build a list of all resources associated with the passed RenderObject
     auto newResources = SVGResources::buildCachedResources(renderer, style);
@@ -48,7 +48,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
         return;
 
     // Put object in cache.
-    SVGResources& resources = *m_cache.add(&renderer, WTFMove(newResources)).iterator->value;
+    SVGResources& resources = *m_cache.add(renderer, WTFMove(newResources)).iterator->value;
 
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
     SVGResourcesCycleSolver::resolveCycles(renderer, resources);
@@ -69,7 +69,7 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         RELEASE_ASSERT_NOT_REACHED();
 #endif
 
-    std::unique_ptr<SVGResources> resources = m_cache.take(&renderer);
+    auto resources = m_cache.take(renderer);
     if (!resources)
         return;
 
@@ -94,7 +94,7 @@ static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement&
 
 SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement& renderer)
 {
-    return resourcesCacheFromRenderer(renderer).m_cache.get(&renderer);
+    return resourcesCacheFromRenderer(renderer).m_cache.get(renderer);
 }
 
 static bool hasPaintResourceRequiringRemovalOnClientLayoutChange(LegacyRenderSVGResource* resource)

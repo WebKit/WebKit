@@ -535,7 +535,7 @@ void RenderFragmentedFlow::setFragmentRangeForBox(const RenderBox& box, RenderFr
 {
     ASSERT(hasFragments());
     ASSERT(startFragment && endFragment && startFragment->fragmentedFlow() == this && endFragment->fragmentedFlow() == this);
-    auto result = m_fragmentRangeMap.set(&box, RenderFragmentContainerRange(startFragment, endFragment));
+    auto result = m_fragmentRangeMap.set(box, RenderFragmentContainerRange(startFragment, endFragment));
     if (result.isNewEntry)
         return;
 

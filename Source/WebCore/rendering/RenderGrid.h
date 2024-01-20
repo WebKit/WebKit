@@ -274,7 +274,7 @@ private:
 
     mutable GridMasonryLayout m_masonryLayout;
 
-    typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
+    using OutOfFlowPositionsMap = HashMap<SingleThreadWeakRef<const RenderBox>, std::optional<size_t>>;
     OutOfFlowPositionsMap m_outOfFlowItemColumn;
     OutOfFlowPositionsMap m_outOfFlowItemRow;
 

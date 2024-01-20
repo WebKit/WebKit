@@ -105,6 +105,7 @@ void RenderTableCell::willBeRemovedFromTree(IsInternalMove isInternalMove)
         return;
     RenderTableSection* section = this->section();
     table()->invalidateCollapsedBorders();
+    section->removeCachedCollapsedBorders(*this);
     section->setNeedsCellRecalc();
 }
 

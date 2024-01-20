@@ -35,13 +35,12 @@ class RenderObject;
 class VerticalPositionCache {
     WTF_MAKE_NONCOPYABLE(VerticalPositionCache);
 public:
-    VerticalPositionCache()
-    { }
+    VerticalPositionCache() = default;
     
-    bool get(RenderObject* renderer, FontBaseline baselineType, LayoutUnit& result) const
+    bool get(RenderObject& renderer, FontBaseline baselineType, LayoutUnit& result) const
     {
-        const HashMap<RenderObject*, LayoutUnit>& mapToCheck = baselineType == AlphabeticBaseline ? m_alphabeticPositions : m_ideographicPositions;
-        const HashMap<RenderObject*, LayoutUnit>::const_iterator it = mapToCheck.find(renderer);
+        auto& mapToCheck = baselineType == AlphabeticBaseline ? m_alphabeticPositions : m_ideographicPositions;
+        auto it = mapToCheck.find(renderer);
         if (it == mapToCheck.end())
             return false;
 
@@ -49,7 +48,7 @@ public:
         return true;
     }
     
-    void set(RenderObject* renderer, FontBaseline baselineType, LayoutUnit position)
+    void set(RenderObject& renderer, FontBaseline baselineType, LayoutUnit position)
     {
         if (baselineType == AlphabeticBaseline)
             m_alphabeticPositions.set(renderer, position);
@@ -58,8 +57,8 @@ public:
     }
 
 private:
-    HashMap<RenderObject*, LayoutUnit> m_alphabeticPositions;
-    HashMap<RenderObject*, LayoutUnit> m_ideographicPositions;
+    HashMap<SingleThreadWeakRef<RenderObject>, LayoutUnit> m_alphabeticPositions;
+    HashMap<SingleThreadWeakRef<RenderObject>, LayoutUnit> m_ideographicPositions;
 };
 
 } // namespace WebCore

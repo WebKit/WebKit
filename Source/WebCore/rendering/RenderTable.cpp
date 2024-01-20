@@ -988,7 +988,7 @@ void RenderTable::updateColumnCache() const
         m_columnRenderers.append(columnRenderer);
         // FIXME: We should look to compute the effective column index successively from previous values instead of
         // calling colToEffCol(), which is in O(numEffCols()). Although it's unlikely that this is a hot function.
-        m_effectiveColumnIndexMap.add(columnRenderer, colToEffCol(columnIndex));
+        m_effectiveColumnIndexMap.add(*columnRenderer, colToEffCol(columnIndex));
         columnIndex += columnRenderer->span();
     }
     m_columnRenderersValid = true;

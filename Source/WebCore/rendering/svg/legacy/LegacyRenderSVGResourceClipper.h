@@ -96,7 +96,7 @@ private:
     void calculateClipContentRepaintRect(RepaintRectCalculation);
 
     EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_clipBoundaries;
-    HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipperMap;
+    HashMap<SingleThreadWeakRef<const RenderObject>, std::unique_ptr<ClipperData>> m_clipperMap;
 };
 
 }

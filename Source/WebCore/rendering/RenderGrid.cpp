@@ -2158,7 +2158,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
     if (startIsAuto)
         start = borderEdge;
     else {
-        outOfFlowItemLine.set(&child, startLine);
+        outOfFlowItemLine.set(child, startLine);
         start = positions[startLine];
     }
     if (endIsAuto)

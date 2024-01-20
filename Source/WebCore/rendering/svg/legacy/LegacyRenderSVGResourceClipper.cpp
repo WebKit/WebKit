@@ -67,7 +67,7 @@ void LegacyRenderSVGResourceClipper::removeAllClientsFromCacheIfNeeded(bool mark
 
 void LegacyRenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_clipperMap.remove(&client);
+    m_clipperMap.remove(client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -177,14 +177,14 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
     if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom)) {
-        auto it = m_clipperMap.find(&renderer);
+        auto it = m_clipperMap.find(renderer);
         if (it != m_clipperMap.end())
             it->value->imageBuffer = nullptr;
 
         return true;
     }
 
-    auto& clipperData = *m_clipperMap.ensure(&renderer, [&]() {
+    auto& clipperData = *m_clipperMap.ensure(renderer, [&]() {
         return makeUnique<ClipperData>();
     }).iterator->value;
 
@@ -339,7 +339,7 @@ FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject
 {
     // Resource was not layouted yet. Give back the boundingBox of the object.
     if (selfNeedsLayout()) {
-        m_clipperMap.ensure(&object, [&]() { // For selfNeedsClientInvalidation().
+        m_clipperMap.ensure(object, [&]() { // For selfNeedsClientInvalidation().
             return makeUnique<ClipperData>();
         });
         return object.objectBoundingBox();

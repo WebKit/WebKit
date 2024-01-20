@@ -2163,18 +2163,18 @@ RenderObject::RareDataMap& RenderObject::rareDataMap()
 const RenderObject::RenderObjectRareData& RenderObject::rareData() const
 {
     ASSERT(hasRareData());
-    return *rareDataMap().get(this);
+    return *rareDataMap().get(*this);
 }
 
 RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 {
     m_stateBitfields.setFlag(StateFlag::HasRareData);
-    return *rareDataMap().ensure(this, [] { return makeUnique<RenderObjectRareData>(); }).iterator->value;
+    return *rareDataMap().ensure(*this, [] { return makeUnique<RenderObjectRareData>(); }).iterator->value;
 }
 
 void RenderObject::removeRareData()
 {
-    rareDataMap().remove(this);
+    rareDataMap().remove(*this);
     m_stateBitfields.clearFlag(StateFlag::HasRareData);
 }
 

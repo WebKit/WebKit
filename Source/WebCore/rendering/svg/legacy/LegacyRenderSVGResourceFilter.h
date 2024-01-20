@@ -78,13 +78,14 @@ public:
 
     RenderSVGResourceType resourceType() const override { return FilterResourceType; }
 
-    FloatRect drawingRegion(RenderObject*) const;
+    FloatRect drawingRegion(RenderObject&) const;
+
 private:
     void element() const = delete;
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
 
-    HashMap<RenderObject*, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);

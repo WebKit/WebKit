@@ -1292,7 +1292,7 @@ private:
     RenderObjectRareData& ensureRareData();
     void removeRareData();
     
-    typedef HashMap<const RenderObject*, std::unique_ptr<RenderObjectRareData>> RareDataMap;
+    using RareDataMap = HashMap<SingleThreadWeakRef<const RenderObject>, std::unique_ptr<RenderObjectRareData>>;
 
     static RareDataMap& rareDataMap();
 

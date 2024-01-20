@@ -802,7 +802,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
     bool isRenderInline = renderer->isRenderInline();
     if (isRenderInline && !firstLine) {
         LayoutUnit cachedPosition;
-        if (verticalPositionCache.get(renderer, baselineType(), cachedPosition))
+        if (verticalPositionCache.get(*renderer, baselineType(), cachedPosition))
             return cachedPosition;
     }
 
@@ -851,7 +851,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
 
     // Store the cached value.
     if (isRenderInline && !firstLine)
-        verticalPositionCache.set(renderer, baselineType(), verticalPosition);
+        verticalPositionCache.set(*renderer, baselineType(), verticalPosition);
 
     return verticalPosition;
 }

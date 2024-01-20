@@ -52,7 +52,7 @@ void LegacyRenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markF
 
 void LegacyRenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_masker.remove(&client);
+    m_masker.remove(client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -62,11 +62,11 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
 
-    bool missingMaskerData = !m_masker.contains(&renderer);
+    bool missingMaskerData = !m_masker.contains(renderer);
     if (missingMaskerData)
-        m_masker.set(&renderer, makeUnique<MaskerData>());
+        m_masker.set(renderer, makeUnique<MaskerData>());
 
-    MaskerData* maskerData = m_masker.get(&renderer);
+    MaskerData* maskerData = m_masker.get(renderer);
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 

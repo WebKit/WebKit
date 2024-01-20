@@ -66,7 +66,7 @@ private:
     void calculateMaskContentRepaintRect(RepaintRectCalculation);
 
     EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_maskContentBoundaries;
-    HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_masker;
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<MaskerData>> m_masker;
 };
 
 } // namespace WebCore

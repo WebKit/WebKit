@@ -47,10 +47,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderWidget);
 
-static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
+static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
 {
-    static HashMap<const Widget*, RenderWidget*>* staticWidgetRendererMap = new HashMap<const Widget*, RenderWidget*>;
-    return *staticWidgetRendererMap;
+    static NeverDestroyed<HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
+    return staticWidgetRendererMap;
 }
 
 unsigned WidgetHierarchyUpdatesSuspensionScope::s_widgetHierarchyUpdateSuspendCount = 0;
@@ -70,7 +70,7 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
         for (auto& entry : map) {
             auto& child = *entry.key;
             auto* currentParent = child.parent();
-            auto* newParent = entry.value;
+            CheckedPtr newParent = entry.value.get();
             if (newParent != currentParent) {
                 if (currentParent)
                     currentParent->removeChild(child);
@@ -178,12 +178,12 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
     if (m_widget) {
         moveWidgetToParentSoon(*m_widget, nullptr);
         view().frameView().willRemoveWidgetFromRenderTree(*m_widget);
-        widgetRendererMap().remove(m_widget.get());
+        widgetRendererMap().remove(*m_widget);
         m_widget = nullptr;
     }
     m_widget = widget;
     if (m_widget) {
-        widgetRendererMap().add(m_widget.get(), this);
+        widgetRendererMap().add(*m_widget, *this);
         view().frameView().didAddWidgetToRenderTree(*m_widget);
         // If we've already received a layout, apply the calculated space to the
         // widget immediately, but we have to have really been fully constructed.

@@ -57,7 +57,7 @@ void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool mark
 
 void LegacyRenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_patternMap.remove(&client);
+    m_patternMap.remove(client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
@@ -79,7 +79,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
 {
     ASSERT(!m_shouldCollectPatternAttributes);
 
-    PatternData* currentData = m_patternMap.get(&renderer);
+    PatternData* currentData = m_patternMap.get(renderer);
     if (currentData && currentData->pattern)
         return currentData;
 
@@ -134,7 +134,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCache(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(&renderer, WTFMove(patternData)).iterator->value.get();
+    return m_patternMap.set(renderer, WTFMove(patternData)).iterator->value.get();
 }
 
 bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
