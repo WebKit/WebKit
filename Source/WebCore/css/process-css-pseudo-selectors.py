@@ -81,10 +81,6 @@ class InputValidator:
             if not name.startswith('-'):
                 return True
 
-            # FIXME: Remove this case with `:-khtml-drag` alias.
-            if name.startswith('-khtml-'):
-                return True
-
             return name.startswith('-apple-') or name.startswith('-internal-') or name.startswith('-webkit-')
 
         for pseudo_name, pseudo_data in input_data[pseudo_type].items():
