@@ -1,12 +1,10 @@
 <!doctype html>
 <html class="reftest-wait">
+<script src="../../../resources/ui-helper.js"></script>
 <input type=checkbox switch disabled onclick=falseEnd()>
 <script>
 window.onload = () => {
-    window.eventSender.mouseMoveTo(10, 10);
-    window.eventSender.mouseDown();
-    window.eventSender.mouseMoveTo(50, 10);
-    window.eventSender.mouseUp();
+    UIHelper.dragFromPointToPoint(10, 10, 50, 50, 0);
     setTimeout(() => document.documentElement.removeAttribute("class"), 50);
 }
 function falseEnd() {
