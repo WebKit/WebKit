@@ -42,12 +42,10 @@
             "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
             "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
-        "-internal-html-document": {},
-        "-webkit-animating-full-screen-transition": {
-            "comment": "For UA stylesheet use.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
+        "-internal-animating-full-screen-transition": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
         },
+        "-internal-html-document": {},
         "-webkit-any": {
             "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",

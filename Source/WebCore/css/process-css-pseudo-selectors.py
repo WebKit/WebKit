@@ -57,7 +57,7 @@ KNOWN_KEY_TYPES = {
 # - an `-internal-` prefix for things only meant to be styled in the user agent stylesheet
 # - an `-apple-` prefix only exposed to certain Apple clients (there is a settings-flag requirement for using this prefix)
 WEBKIT_PREFIX_COUNTS_DO_NOT_INCREASE = {
-    'pseudo-classes': 10,
+    'pseudo-classes': 9,
     'pseudo-elements': 59,
 }
 
