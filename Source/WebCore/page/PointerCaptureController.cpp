@@ -350,10 +350,12 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
 
     MouseButton newButton = mouseEvent.button();
     MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerHasNotChanged;
-    MouseButton button = [newButton, previousMouseButton, type = pointerEventType(type)] {
-        if (newButton == previousMouseButton)
-            return PointerEvent::buttonForType(type);
-        return PointerEvent::typeIsUpOrDown(type) ? newButton : MouseButton::PointerHasNotChanged;
+    MouseButton button = [&] {
+        if (!PointerEvent::typeIsUpOrDown(pointerEventType(type))) {
+            if (newButton == previousMouseButton || !pointerIsPressed)
+                return MouseButton::PointerHasNotChanged;
+        }
+        return newButton;
     }();
 
     // https://w3c.github.io/pointerevents/#chorded-button-interactions
