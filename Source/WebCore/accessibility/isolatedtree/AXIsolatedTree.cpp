@@ -532,6 +532,15 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::AccessKey:
             propertyMap.set(AXPropertyName::AccessKey, axObject.accessKey().isolatedCopy());
             break;
+        case AXPropertyName::AccessibilityText: {
+            Vector<AccessibilityText> texts;
+            axObject.accessibilityText(texts);
+            auto axTextValue = texts.map([] (const auto& text) -> AccessibilityText {
+                return { text.text.isolatedCopy(), text.textSource };
+            });
+            propertyMap.set(AXPropertyName::AccessibilityText, axTextValue);
+            break;
+        }
         case AXPropertyName::ARIATreeRows: {
             AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
             axObject.ariaTreeRows(ariaTreeRows);
@@ -1009,14 +1018,13 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
-    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.controlForLabelElement() : nullptr) {
-        // If a label has been removed from the AX tree, the control associated it may need to change
-        // its title UI element. Use callOnMainThread to spin the runloop before re-computing this,
-        // as we need to wait for the backing DOM element to actually be destroyed to compute the
-        // correct title UI element.
-        callOnMainThread([correspondingControl, protectedThis = Ref { *this }] {
-            protectedThis->updateNode(*correspondingControl);
-        });
+    if (axObject.isLabel()) {
+        // Update the labeled objects since one of their labels was removed.
+        auto labeledObjects = axObject.labelForObjects();
+        for (auto& labeledObject : labeledObjects) {
+            // The label/title of an isolated object is computed based on its AccessibilityText propperty, thus update it.
+            queueNodeUpdate(*labeledObject, { AXPropertyName::AccessibilityText });
+        }
     }
 
     m_unresolvedPendingAppends.remove(axObject.objectID());

@@ -1071,13 +1071,12 @@ void AXObjectCache::remove(AXID axID)
     if (!object)
         return;
 
-    removeRelations(axID);
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
         tree->removeNode(*object);
 #endif
 
+    removeRelations(axID);
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
 
     m_idsInUse.remove(axID);
@@ -2667,6 +2666,8 @@ void AXObjectCache::updateLabeledBy(Element* element)
 
 void AXObjectCache::dirtyIsolatedTreeRelations()
 {
+    AXTRACE("AXObjectCache::dirtyIsolatedTreeRelations"_s);
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
         tree->relationsNeedUpdate(true);
@@ -4784,6 +4785,8 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::removeRelations(AXID axID)
 {
+    AXTRACE("AXObjectCache::removeRelations"_s + " for axID " + axID.loggingString());
+
     auto it = m_relations.find(axID);
     if (it == m_relations.end())
         return;
@@ -4804,7 +4807,8 @@ void AXObjectCache::removeRelations(AXID axID)
 
 void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType)
 {
-    AXTRACE("AXObjectCache::removeRelations"_s);
+    AXTRACE("AXObjectCache::removeRelations"_s + " for " + origin.debugDescription());
+    AXLOG(relationType);
 
     auto* object = get(&origin);
     if (!object)
