@@ -113,7 +113,6 @@ void ScrollAnchoringController::notifyChildHadSuppressingStyleChange()
 bool ScrollAnchoringController::isInScrollAnchoringAncestorChain(const RenderObject& object)
 {
     RefPtr iterElement = m_anchorElement.get();
-
     while (iterElement) {
         if (auto* renderer = iterElement->renderer()) {
             LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::isInScrollAnchoringAncestorChain() checking for : " <<object << " current Element: " << *iterElement);
@@ -122,7 +121,7 @@ bool ScrollAnchoringController::isInScrollAnchoringAncestorChain(const RenderObj
         }
         if (iterElement && elementIsScrollableArea(*iterElement, m_owningScrollableArea))
             break;
-        iterElement = iterElement->parentElement();
+        iterElement = iterElement->parentElementInComposedTree();
     }
     return false;
 }
