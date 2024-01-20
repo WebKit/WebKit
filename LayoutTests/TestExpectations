@@ -1977,7 +1977,6 @@ webkit.org/b/137883 transitions/cubic-bezier-overflow-svg-length.html [ Pass Fai
 webkit.org/b/137883 transitions/cubic-bezier-overflow-transform.html [ Pass Failure ]
 webkit.org/b/137883 transitions/delay.html [ Pass Failure ]
 webkit.org/b/137883 transitions/equivalent-background-image-no-transition.html [ Pass Failure ]
-webkit.org/b/137883 transitions/flex-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-transform-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-zero-duration.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupted-accelerated-transition.html [ Pass Failure ]

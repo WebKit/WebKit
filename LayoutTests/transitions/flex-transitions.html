@@ -1,11 +1,12 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
 <head>
 <style>
 .flexbox {
-    display: -webkit-flexbox;
+    display: flex;
     width: 100px;
     height: 100px;
+    margin-bottom: 10px;
 }
 .flexbox :nth-child(1) {
     background-color: blue;
@@ -14,52 +15,60 @@
     background-color: green;
 }
 .flexbox div {
-    -webkit-transition-property: -webkit-flex;
-    -webkit-transition-duration: 1s;
-    -webkit-transition-timing-function: linear;
+    transition-property: flex;
+    transition-duration: 1s;
+    transition-timing-function: linear;
 }
 
 #flex-row div {
-    flex: 1 0 0px;
+    flex: 100 0 0px;
 }
+
 .final #row1 {
-    flex: 3 0 0px;
+    flex: 300 0 0px;
 }
 
 #flex-column {
     flex-direction: column;
 }
+
 #flex-column div {
-    flex: 1 0 0px;
+    flex: 100 0 0px;
 }
+
 .final #column1 {
-    flex: 0 0 20px;
+    flex: 0 0 200px;
 }
 
 #flex-negative div {
-    flex: 1 1 50px;
+    flex: 100 100 50px;
 }
+
 .final #negative1 {
-    flex: 1 100px;
+    flex: 100 100 100px;
 }
 
 #flex-no-flex div {
-    -webkit-flex: 1 0 0px;
-}
-.final #no-flex1 {
-    -webkit-flex: 0 0 0px;
+    flex: 100 0 0px;
 }
 
+.final #no-flex1 {
+    flex: 0 0 0px;
+}
 </style>
   <script src="resources/transition-test-helpers.js"></script>
   <script type="text/javascript">
 
-    const expectedValues = [
+const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
-      [0.5, 'row1', 'flex', [2, 0, 0], .5],
-      [0.5, 'column1', 'flex', [.5, 0, 10], 3],
-      [0.5, 'negative1', 'flex', [1, .5, 75], 3],
-      [0.5, 'no-flex1', 'flex', [.5, 0, 0], .4],
+      [0.2, 'row1',      'flex', [140, 0,     0], 10],
+      [0.2, 'column1',   'flex', [80,  0,    40], 10],
+      [0.2, 'negative1', 'flex', [100, 100,  60], 10],
+      [0.2, 'no-flex1',  'flex', [80,  0,     0], 10],
+      [0.8, 'row1',      'flex', [260, 0,     0], 10],
+      [0.8, 'column1',   'flex', [20,  0,   160], 10],
+      [0.8, 'negative1', 'flex', [100, 100,  90], 10],
+      [0.8, 'no-flex1',  'flex', [20,  0,     0], 10],
     ];
 
     function setupTest()
@@ -67,7 +76,7 @@
       document.body.className = 'final';
     }
   
-    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+    runTransitionTest(expectedValues, setupTest);
   </script>
 </head>
 <body>
