@@ -166,9 +166,9 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderSVGTextPath& textPath, SVGTe
         m_textPathStartOffset = startOffset.valueAsPercentage() * m_textPathLength;
     else {
         m_textPathStartOffset = startOffset.valueInSpecifiedUnits();
-        if (auto* tragetElement = textPath.targetElement()) {
+        if (auto* targetElement = textPath.targetElement()) {
             // FIXME: A value of zero is valid. Need to differentiate this case from being unspecified.
-            if (float pathLength = tragetElement->pathLength())
+            if (float pathLength = targetElement->pathLength())
                 m_textPathStartOffset *= m_textPathLength / pathLength;
         }
     }
