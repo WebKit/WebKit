@@ -277,14 +277,14 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
 
     [[webView configuration].userContentController _addUserScriptImmediately:userScript.get()];
 
-    EXPECT_WK_STREQ([delegate waitForAlert], "global code@webkit-masked-url://hidden/:1:17");
+    EXPECT_WK_STREQ([delegate waitForAlert], "global code@webkit-masked-url://hidden/:1:8");
 
     scriptURL = [NSURL URLWithString:@"https://example.com/foo.js"];
     userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"alert((new Error).stack)" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:scriptURL contentWorld:nil deferRunningUntilNotification:NO]);
 
     [[webView configuration].userContentController _addUserScriptImmediately:userScript.get()];
 
-    EXPECT_WK_STREQ([delegate waitForAlert], "global code@https://example.com/foo.js:1:17");
+    EXPECT_WK_STREQ([delegate waitForAlert], "global code@https://example.com/foo.js:1:8");
 }
 
 TEST(WebKit, ConfigurationWebViewToCloneSessionStorageFrom)

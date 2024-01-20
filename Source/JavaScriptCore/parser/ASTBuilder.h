@@ -362,10 +362,10 @@ public:
         return node;
     }
 
-    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& end)
+    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         NewExprNode* node = new (m_parserArena) NewExprNode(location, expr);
-        setExceptionLocation(node, start, end, end);
+        setExceptionLocation(node, start, divot, end);
         return node;
     }
 

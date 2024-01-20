@@ -203,7 +203,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     JSTokenLocation end;
     end.line = 1;
     end.lineStartOffset = source.startOffset();
-    end.startOffset = source.startOffset() + strlen("(") + asyncOffset;
+    end.startOffset = source.startOffset() + strlen("(");
     end.endOffset = std::numeric_limits<unsigned>::max();
 
     FunctionMetadataNode metadata(
