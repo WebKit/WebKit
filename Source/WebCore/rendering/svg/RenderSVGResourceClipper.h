@@ -40,7 +40,7 @@ public:
     inline SVGClipPathElement& clipPathElement() const;
 
     SVGGraphicsElement* shouldApplyPathClipping() const;
-    void applyPathClipping(GraphicsContext&, const FloatRect& objectBoundingBox, SVGGraphicsElement&);
+    void applyPathClipping(GraphicsContext&, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement&);
     void applyMaskClipping(PaintInfo&, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox);
 
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation);

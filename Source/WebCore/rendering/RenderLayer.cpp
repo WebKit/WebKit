@@ -3108,7 +3108,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
             if (!coordinateSystemOriginTranslation.isZero())
                 context.translate(coordinateSystemOriginTranslation);
 
-            svgClipper->applyPathClipping(context, svgReferenceBox, *graphicsElement);
+            svgClipper->applyPathClipping(context, renderer(), svgReferenceBox, *graphicsElement);
 
             if (!coordinateSystemOriginTranslation.isZero())
                 context.translate(-coordinateSystemOriginTranslation);

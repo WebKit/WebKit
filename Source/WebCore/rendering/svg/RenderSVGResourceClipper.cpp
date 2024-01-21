@@ -96,7 +96,7 @@ SVGGraphicsElement* RenderSVGResourceClipper::shouldApplyPathClipping() const
     return clipPathElement().shouldApplyPathClipping();
 }
 
-void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)
+void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const FloatRect& objectBoundingBox, SVGGraphicsElement& graphicsElement)
 {
     ASSERT(hasLayer());
     ASSERT(layer()->isSelfPaintingLayer());
@@ -113,6 +113,9 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         clipPathTransform.translate(objectBoundingBox.location());
         clipPathTransform.scale(objectBoundingBox.size());
+    } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
+        clipPathTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+        clipPathTransform.scale(targetRenderer.style().effectiveZoom());
     }
     if (layer()->isTransformed())
         clipPathTransform.multiply(layer()->transform()->toAffineTransform());
@@ -159,7 +162,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
         contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
         contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
-        contentTransform.scale(style().effectiveZoom());
+        contentTransform.scale(targetRenderer.style().effectiveZoom());
     }
 
     // Figure out if we need to push a transparency layer to render our mask.
