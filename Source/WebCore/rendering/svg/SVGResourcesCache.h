@@ -23,6 +23,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
