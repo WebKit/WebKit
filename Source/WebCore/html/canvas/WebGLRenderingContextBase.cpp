@@ -471,7 +471,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     : GPUBasedCanvasRenderingContext(canvas)
     , m_generatedImageCache(4)
     , m_attributes(WTFMove(attributes))
-    , m_creationAttributes(attributes)
+    , m_creationAttributes(m_attributes)
     , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
 {
 }
