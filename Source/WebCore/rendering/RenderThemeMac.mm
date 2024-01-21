@@ -661,8 +661,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         // FIXME: Remove this fallback when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
         case CSSValueAppleSystemTertiaryFill:
             if (localAppearance.usingDarkAppearance())
-                return { SRGBA<uint8_t> { 255, 255, 255, 13 }, Color::Flags::Semantic };
-            return { SRGBA<uint8_t> { 0, 0, 0, 13 }, Color::Flags::Semantic };
+                return { SRGBA<uint8_t> { 255, 255, 255, 12 }, Color::Flags::Semantic };
+            return { SRGBA<uint8_t> { 0, 0, 0, 12 }, Color::Flags::Semantic };
 
         case CSSValueBackground:
             // Use platform-independent value returned by base class.
