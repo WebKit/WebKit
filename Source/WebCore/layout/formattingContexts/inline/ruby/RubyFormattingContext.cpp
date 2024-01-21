@@ -366,7 +366,7 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     return annotationBoxLogicalGeometry.contentBoxSize();
 }
 
-void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox& lineBox, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext& inlineFormattingContext)
+void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox& lineBox, InlineLevelBox& rubyBaseInlineBox, MaximumLayoutBoundsStretchMap& descendantRubySet, const InlineFormattingContext& inlineFormattingContext)
 {
     auto& rubyBaseLayoutBox = rubyBaseInlineBox.layoutBox();
     ASSERT(rubyBaseLayoutBox.isRubyBase());
@@ -380,8 +380,8 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
                     ASSERT_NOT_REACHED();
                     break;
                 }
-                auto ancestorLayoutBounds = ancestorInlineBox->layoutBounds();
-                ancestorInlineBox->setLayoutBounds({ std::max(ancestorLayoutBounds.ascent, layoutBounds.ascent), std::max(ancestorLayoutBounds.descent, layoutBounds.descent) });
+                auto previousDescendantLayoutBounds = descendantRubySet.get(ancestorInlineBox);
+                descendantRubySet.set(ancestorInlineBox, InlineLevelBox::AscentAndDescent { std::max(previousDescendantLayoutBounds.ascent, layoutBounds.ascent), std::max(previousDescendantLayoutBounds.descent, layoutBounds.descent) });
                 break;
             }
         }
@@ -390,7 +390,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     auto layoutBounds = rubyBaseInlineBox.layoutBounds();
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox || !hasInterlinearAnnotation(rubyBaseLayoutBox)) {
-        // Make sure decendant rubies with annotations are propagated.
+        // Make sure descendant rubies with annotations are propagated.
         stretchAncestorRubyBaseIfApplicable(layoutBounds);
         return;
     }
@@ -403,17 +403,35 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     else
         under = annotationBoxLogicalHeight;
 
+    // FIXME: The spec says annotation should not stretch the line unless line-height is not normal and annotation does not fit (i.e. line is sized too small for the annotation)
+    // Legacy ruby behaves slightly differently by stretching the line box as needed.
+    auto isFirstFormattedLine = !lineBox.lineIndex();
+    auto descendantLayoutBounds = descendantRubySet.get(&rubyBaseInlineBox);
+    auto ascent = std::max(rubyBaseInlineBox.ascent(), descendantLayoutBounds.ascent);
+    auto descent = std::max(rubyBaseInlineBox.descent(), descendantLayoutBounds.descent);
+
     if (rubyBaseInlineBox.isPreferredLineHeightFontMetricsBased()) {
-        layoutBounds.ascent += over;
-        layoutBounds.descent += under;
+        auto extraSpaceForAnnotation = InlineLayoutUnit { };
+        if (!isFirstFormattedLine) {
+            // Note that annotation may leak into the half leading space (gap between lines).
+            auto lineGap = rubyBaseLayoutBox.style().metricsOfPrimaryFont().lineSpacing();
+            extraSpaceForAnnotation = std::max(0.f, (lineGap - (ascent + descent)) / 2);
+        }
+        auto ascentWithAnnotation = (ascent + over) - extraSpaceForAnnotation;
+        auto descentWithAnnotation = (descent + under) - extraSpaceForAnnotation;
+
+        layoutBounds.ascent = std::max(ascentWithAnnotation, layoutBounds.ascent);
+        layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
     } else {
-        // FIXME: Missing fallback font handling for annotation content.
-        auto& fontMetrics = rubyBaseLayoutBox.style().metricsOfPrimaryFont();
-        auto ascent = fontMetrics.floatAscent(lineBox.baselineType()) + over;
-        auto descent = fontMetrics.floatDescent(lineBox.baselineType()) + under;
-        if (layoutBounds.height() < ascent + descent)
-            layoutBounds = { ascent, descent };
+        auto ascentWithAnnotation = ascent + over;
+        auto descentWithAnnotation = descent + under;
+        // line-height may produce enough space for annotation.
+        if (layoutBounds.height() < ascentWithAnnotation + descentWithAnnotation) {
+            layoutBounds.ascent = std::max(ascentWithAnnotation, layoutBounds.ascent);
+            layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
+        }
     }
+
     rubyBaseInlineBox.setLayoutBounds(layoutBounds);
     stretchAncestorRubyBaseIfApplicable(layoutBounds);
 }
@@ -422,14 +440,15 @@ void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(LineBox& l
 {
     // In order to ensure consistent spacing of lines, documents with ruby typically ensure that the line-height is
     // large enough to accommodate ruby between lines of text. Therefore, ordinarily, ruby annotation containers and ruby annotation
-    // boxes do not contribute to the measured height of a line’s inline contents;
+    // boxes do not contribute to the measured height of a line's inline contents;
     // line-height calculations are performed using only the ruby base container, exactly as if it were a normal inline.
     // However, if the line-height specified on the ruby container is less than the distance between the top of the top ruby annotation
     // container and the bottom of the bottom ruby annotation container, then additional leading is added on the appropriate side(s).
+    MaximumLayoutBoundsStretchMap descentRubySet;
     for (auto& inlineLevelBox : makeReversedRange(lineBox.nonRootInlineLevelBoxes())) {
         if (!inlineLevelBox.isInlineBox() || !inlineLevelBox.layoutBox().isRubyBase())
             continue;
-        adjustLayoutBoundsAndStretchAncestorRubyBase(lineBox, inlineLevelBox, inlineFormattingContext);
+        adjustLayoutBoundsAndStretchAncestorRubyBase(lineBox, inlineLevelBox, descentRubySet, inlineFormattingContext);
     }
 }
 
