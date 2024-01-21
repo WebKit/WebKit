@@ -1962,8 +1962,6 @@ webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.
 
 webkit.org/b/267384 [ Sonoma+ ] fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/267655 [ Monterey Ventura Debug ] scrollingcoordinator/scrolling-tree/scroller-with-proxy-nodes-loses-layer.html [ Crash ]
-
 webkit.org/b/267670 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/267778 [ Sonoma+ Release ] fast/forms/listbox-padding-clip-selected.html [  Pass ImageOnlyFailure ]
