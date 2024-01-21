@@ -34,21 +34,29 @@ div#attachment-container {
     width: 338px;
 #endif
     gap: 0;
-    background-color: -apple-system-quaternary-fill;
 #else
     --icon-margin: 14px;
     gap: 4px;
     --information-margin-end: 24px;
     width: 266px;
-    background-color: -apple-system-tertiary-fill;
 #endif
     min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
-    display: flex;
+    background-color: canvas;
     border-radius: 8px;
     font: caption;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
+}
+
+div#attachment-background {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    background-color: -apple-system-quaternary-fill;
+#else
+    background-color: -apple-system-tertiary-fill;
+#endif
+    border-radius: 8px;
+    display: flex;
 }
 
 div#attachment-preview-area {
