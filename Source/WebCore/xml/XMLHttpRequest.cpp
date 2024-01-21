@@ -25,6 +25,7 @@
 
 #include "Blob.h"
 #include "CachedResourceRequestInitiatorTypes.h"
+#include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"

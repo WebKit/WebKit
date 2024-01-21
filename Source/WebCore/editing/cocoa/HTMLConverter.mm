@@ -1160,7 +1160,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     if (!fileWrapper && dataSource) {
         if (auto resource = dataSource->subresource(url)) {
             auto& mimeType = resource->mimeType();
-            if (!usePlaceholder || mimeType != "text/html"_s) {
+            if (!usePlaceholder || mimeType != textHTMLContentTypeAtom()) {
                 fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().makeContiguous()->createNSData().get()]);
                 [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
             } else

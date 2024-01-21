@@ -106,7 +106,7 @@ PasteboardCustomData StaticPasteboard::takeCustomData()
 
 void StaticPasteboard::writeMarkup(const String& markup)
 {
-    m_customData.writeString("text/html"_s, markup);
+    m_customData.writeString(textHTMLContentTypeAtom(), markup);
 }
 
 void StaticPasteboard::writePlainText(const String& text, SmartReplaceOption)

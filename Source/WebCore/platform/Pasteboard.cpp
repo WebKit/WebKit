@@ -36,7 +36,7 @@ namespace WebCore {
 
 bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
 {
-    return type == textPlainContentTypeAtom() || type == "text/html"_s || type == "text/uri-list"_s;
+    return type == textPlainContentTypeAtom() || type == textHTMLContentTypeAtom() || type == "text/uri-list"_s;
 }
 
 bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlString)

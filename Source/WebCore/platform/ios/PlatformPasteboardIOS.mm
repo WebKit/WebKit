@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "ColorCocoa.h"
+#import "CommonAtomStrings.h"
 #import "Image.h"
 #import "NSURLUtilities.h"
 #import "Pasteboard.h"
@@ -358,10 +359,10 @@ int64_t PlatformPasteboard::changeCount() const
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (domType == "text/plain"_s)
+    if (domType == textPlainContentTypeAtom())
         return kUTTypePlainText;
 
-    if (domType == "text/html"_s)
+    if (domType == textHTMLContentTypeAtom())
         return kUTTypeHTML;
 
     if (domType == "text/uri-list"_s)

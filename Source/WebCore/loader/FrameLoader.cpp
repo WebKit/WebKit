@@ -416,7 +416,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     Ref frame = m_frame.get();
     Ref loader = m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData());
     loader->attachToFrame(frame);
-    loader->setResponse(ResourceResponse(URL(), "text/html"_s, 0, String()));
+    loader->setResponse(ResourceResponse(URL(), textHTMLContentTypeAtom(), 0, String()));
     loader->setCommitted(true);
     setDocumentLoader(WTFMove(loader));
 
@@ -1561,7 +1561,7 @@ SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
     ASSERT(!srcdoc.isNull());
     CString encodedSrcdoc = srcdoc.string().utf8();
 
-    ResourceResponse response(URL(), "text/html"_s, encodedSrcdoc.length(), "UTF-8"_s);
+    ResourceResponse response(URL(), textHTMLContentTypeAtom(), encodedSrcdoc.length(), "UTF-8"_s);
     return SubstituteData(SharedBuffer::create(encodedSrcdoc.data(), encodedSrcdoc.length()), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
 }
 

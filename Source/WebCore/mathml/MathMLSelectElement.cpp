@@ -76,12 +76,12 @@ bool MathMLSelectElement::isMathMLEncoding(const AtomString& value)
 
 bool MathMLSelectElement::isSVGEncoding(const AtomString& value)
 {
-    return value == "image/svg+xml"_s || value == "SVG1.1"_s;
+    return value == imageSVGContentTypeAtom() || value == "SVG1.1"_s;
 }
 
 bool MathMLSelectElement::isHTMLEncoding(const AtomString& value)
 {
-    return value == "application/xhtml+xml"_s || value == "text/html"_s;
+    return value == applicationXHTMLContentTypeAtom() || value == textHTMLContentTypeAtom();
 }
 
 bool MathMLSelectElement::childShouldCreateRenderer(const Node& child) const
