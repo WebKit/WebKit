@@ -909,7 +909,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.lineSnap != second.lineSnap
         || first.lineAlign != second.lineAlign
         || first.hangingPunctuation != second.hangingPunctuation
-        || first.effectiveSkippedContent != second.effectiveSkippedContent
+        || first.effectiveContentVisibility != second.effectiveContentVisibility
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
@@ -2083,7 +2083,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // effectiveTouchActions
         // eventListenerRegionTypes
         // effectiveInert
-        // effectiveSkippedContent
+        // effectiveContentVisibility
         // strokeColor
         // visitedLinkStrokeColor
         // hasSetStrokeColor

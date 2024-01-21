@@ -375,7 +375,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
 #endif
 
         //  We need the parent to know if we have skipped content or content-visibility root.
-        if (renderer.style().skippedContentReason().has_value() && !renderer.parent())
+        if (renderer.style().hasSkippedContent() && !renderer.parent())
             return false;
         return true;
     }();
@@ -1588,7 +1588,7 @@ void RenderLayer::updateDescendantDependentFlags()
 
     if (m_visibleContentStatusDirty) {
         //  We need the parent to know if we have skipped content or content-visibility root.
-        if (renderer().style().skippedContentReason().has_value() && !renderer().parent())
+        if (renderer().style().hasSkippedContent() && !renderer().parent())
             return;
         m_hasVisibleContent = computeHasVisibleContent();
         m_visibleContentStatusDirty = false;
@@ -5516,7 +5516,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     // likely be folded along with the rest.
     if (oldStyle) {
         bool visibilityChanged = oldStyle->visibility() != renderer().style().visibility();
-        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->skippedContentReason() != renderer().style().skippedContentReason() || visibilityChanged) {
+        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->effectiveContentVisibility() != renderer().style().effectiveContentVisibility() || visibilityChanged) {
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
                 dirtyZOrderLists();

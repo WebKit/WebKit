@@ -2727,7 +2727,7 @@ String RenderObject::debugDescription() const
 
 bool RenderObject::isSkippedContent() const
 {
-    return parent() && parent()->style().skippedContentReason().has_value();
+    return parent() && parent()->style().hasSkippedContent();
 }
 
 bool RenderObject::isSkippedContentForLayout() const

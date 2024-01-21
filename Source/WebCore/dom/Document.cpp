@@ -2587,7 +2587,7 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
 
         if (frameView && renderView()) {
             if (context && layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
-                if (context->renderer() && context->renderer()->style().skippedContentReason().has_value())
+                if (context->renderer() && context->renderer()->style().hasSkippedContent())
                     context->renderer()->setNeedsLayout();
                 else
                     context = nullptr;

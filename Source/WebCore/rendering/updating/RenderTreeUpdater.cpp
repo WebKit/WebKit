@@ -403,7 +403,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
-        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->skippedContentReason().has_value())
+        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->hasSkippedContent())
             return true;
         return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     }();
@@ -443,7 +443,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().skippedContentReason().has_value());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().hasSkippedContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();

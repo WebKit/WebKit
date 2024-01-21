@@ -851,8 +851,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility changes.
-        bool wasVisible = m_style.visibility() == Visibility::Visible && !m_style.skippedContentReason().has_value();
-        bool willBeVisible = newStyle.visibility() == Visibility::Visible && !newStyle.skippedContentReason().has_value();
+        bool wasVisible = m_style.visibility() == Visibility::Visible && !m_style.hasSkippedContent();
+        bool willBeVisible = newStyle.visibility() == Visibility::Visible && !newStyle.hasSkippedContent();
         if (wasVisible != willBeVisible) {
             if (CheckedPtr layer = enclosingLayer()) {
                 if (willBeVisible)
