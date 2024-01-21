@@ -898,8 +898,7 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldDisableSleep() const
 
 bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const
 {
-    notImplemented();
-    return false;
+    return m_shouldCheckHardwareSupport;
 }
 
 void RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer()
@@ -1209,6 +1208,12 @@ void RemoteMediaPlayerProxy::playerContentBoxRectChanged(const WebCore::LayoutRe
 
     if (m_player)
         m_player->playerContentBoxRectChanged(contentRect);
+}
+
+void RemoteMediaPlayerProxy::setShouldCheckHardwareSupport(bool value)
+{
+    m_player->setShouldCheckHardwareSupport(value);
+    m_shouldCheckHardwareSupport = value;
 }
 
 #if !RELEASE_LOG_DISABLED

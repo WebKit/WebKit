@@ -1862,7 +1862,7 @@ bool MediaPlayerPrivateAVFoundationObjC::trackIsPlayable(AVAssetTrack* track) co
     if (!player)
         return false;
 
-    if (player->shouldCheckHardwareSupport() && !assetTrackMeetsHardwareDecodeRequirements(track, player->mediaContentTypesRequiringHardwareSupport()))
+    if (shouldCheckHardwareSupport() && !assetTrackMeetsHardwareDecodeRequirements(track, player->mediaContentTypesRequiringHardwareSupport()))
         return false;
 
     auto description = retainPtr((__bridge CMFormatDescriptionRef)track.formatDescriptions.firstObject);

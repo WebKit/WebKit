@@ -656,7 +656,7 @@ public:
     bool contentMIMETypeWasInferredFromExtension() const { return m_contentMIMETypeWasInferredFromExtension; }
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
-    bool shouldCheckHardwareSupport() const;
+    void setShouldCheckHardwareSupport(bool);
 
     const std::optional<Vector<String>>& allowedMediaContainerTypes() const;
     const std::optional<Vector<String>>& allowedMediaCodecTypes() const;

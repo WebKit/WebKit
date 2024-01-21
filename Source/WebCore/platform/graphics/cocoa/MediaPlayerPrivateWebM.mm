@@ -67,6 +67,7 @@
 #pragma mark - Soft Linking
 
 #import "CoreVideoSoftLink.h"
+#import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -1163,6 +1164,12 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
     for (auto videoTrackInfo : segment.videoTracks) {
         if (videoTrackInfo.track) {
             auto track = static_pointer_cast<VideoTrackPrivateWebM>(videoTrackInfo.track);
+#if PLATFORM(IOS_FAMILY)
+            if (shouldCheckHardwareSupport() && (videoTrackInfo.description->codec() == "vp8"_s || (videoTrackInfo.description->codec() == "vp9"_s && !(canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9))))) {
+                m_errored = true;
+                return;
+            }
+#endif
             addTrackBuffer(track->id(), WTFMove(videoTrackInfo.description));
 
             track->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {

@@ -1024,6 +1024,7 @@ media/media-can-play-webm.html [ Failure ]
 media/media-vp8-webm-error.html [ Failure ]
 media/media-vp8-webm.html [ Skip ]
 media/track/media-audio-track.html [ Failure ]
+media/media-sources-selection.html [ ImageOnlyFailure ]
 
 # VP9/VP8 are not supported on WK1 and turned off by default
 media/media-source/media-source-webm-configuration-change.html [ Failure ]

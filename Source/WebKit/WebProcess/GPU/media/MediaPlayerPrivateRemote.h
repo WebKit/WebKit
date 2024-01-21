@@ -429,6 +429,8 @@ private:
 
     void setShouldDisableHDR(bool) final;
 
+    void setShouldCheckHardwareSupport(bool) final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif

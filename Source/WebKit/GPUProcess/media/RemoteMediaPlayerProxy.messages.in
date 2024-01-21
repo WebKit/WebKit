@@ -142,6 +142,8 @@ messages -> RemoteMediaPlayerProxy {
     SetShouldDisableHDR(bool shouldDisable)
 
     RequestHostingContextID() -> (uint32_t contextID)
+
+    SetShouldCheckHardwareSupport(bool value)
 }
 
 #endif
