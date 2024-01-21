@@ -296,26 +296,39 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
         // We need to make sure that there's an [InlineBoxStart] for every inline box that's present on the current line.
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level.
         auto& firstInlineItem = m_inlineItemList[needsLayoutRange.startIndex()];
-        // Let's treat these spanning inline items as opaque bidi content. They should not change the bidi levels on adjacent content.
-        auto bidiLevelForOpaqueInlineItem = InlineItem::opaqueBidiLevel;
         // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
         // unless the inline box closing is forced over to the current line.
         // e.g.
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
-        auto firstInlineItemIsLineSpanning = firstInlineItem.isInlineBoxEnd();
-        if (!firstInlineItemIsLineSpanning && isRootLayoutBox(firstInlineItem.layoutBox().parent()))
-            return;
-        Vector<const Box*> spanningLayoutBoxList;
-        if (firstInlineItemIsLineSpanning)
-            spanningLayoutBoxList.append(&firstInlineItem.layoutBox());
+        auto& firstLayoutBox = firstInlineItem.layoutBox();
+        auto hasLeadingInlineBoxEnd = firstInlineItem.isInlineBoxEnd();
+
+        if (!hasLeadingInlineBoxEnd) {
+            if (isRootLayoutBox(firstLayoutBox.parent()))
+                return;
+
+            if (isRootLayoutBox(firstLayoutBox.parent().parent())) {
+                // In many cases the entire content is wrapped inside a single inline box.
+                // e.g. <div><span>wall of text with<br>single, line spanning inline box...</span></div>
+                ASSERT(firstLayoutBox.parent().isInlineBox());
+                m_lineSpanningInlineBoxes.append({ firstLayoutBox.parent(), InlineItem::Type::InlineBoxStart, InlineItem::opaqueBidiLevel });
+                return;
+            }
+        }
+
+        Vector<const Box*, 2> spanningLayoutBoxList;
+        if (hasLeadingInlineBoxEnd)
+            spanningLayoutBoxList.append(&firstLayoutBox);
+
         auto* ancestor = &firstInlineItem.layoutBox().parent();
         while (!isRootLayoutBox(*ancestor)) {
             spanningLayoutBoxList.append(ancestor);
             ancestor = &ancestor->parent();
         }
+        // Let's treat these spanning inline items as opaque bidi content. They should not change the bidi levels on adjacent content.
         for (auto* spanningInlineBox : makeReversedRange(spanningLayoutBoxList))
-            m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart, bidiLevelForOpaqueInlineItem });
+            m_lineSpanningInlineBoxes.append({ *spanningInlineBox, InlineItem::Type::InlineBoxStart, InlineItem::opaqueBidiLevel });
     };
     createLineSpanningInlineBoxes();
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLine());

@@ -44,7 +44,7 @@ Line::Line(const InlineFormattingContext& inlineFormattingContext)
 {
 }
 
-void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine)
+void Line::initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine)
 {
     m_isFirstFormattedLine = isFirstFormattedLine;
     m_inlineBoxListWithClonedDecorationEnd.clear();
