@@ -48,7 +48,7 @@ void LazyProperty<OwnerType, ElementType>::initLater(const Func&)
     // may be used for things. We address this problem by indirecting through a global const
     // variable. The "theFunc" variable is guaranteed to be native-aligned, i.e. at least a
     // multiple of 4.
-    static const FuncType theFunc = &callFunc<Func>;
+    static constexpr FuncType theFunc = &callFunc<Func>;
     m_pointer = lazyTag | bitwise_cast<uintptr_t>(&theFunc);
 }
 
