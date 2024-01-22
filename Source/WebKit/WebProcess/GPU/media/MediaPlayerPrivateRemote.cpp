@@ -1577,6 +1577,11 @@ RefPtr<TextTrackPrivateRemote> MediaPlayerPrivateRemote::textTrackPrivateRemote(
 }
 #endif
 
+void MediaPlayerPrivateRemote::setShouldCheckHardwareSupport(bool value)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetShouldCheckHardwareSupport(value), m_id);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -1264,12 +1264,6 @@ const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTyp
     return m_player.get()->mediaContentTypesRequiringHardwareSupport();
 }
 
-bool MediaPlayerPrivateMediaSourceAVFObjC::shouldCheckHardwareSupport() const
-{
-    auto player = m_player.get();
-    return player && player->shouldCheckHardwareSupport();
-}
-
 void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
 {
     updateDisplayLayerAndDecompressionSession();

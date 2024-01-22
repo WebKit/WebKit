@@ -1027,6 +1027,7 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
 media/media-can-play-webm.html [ Failure ]
 media/media-vp8-webm-error.html [ Failure ]
 media/track/media-audio-track.html [ Failure ]
+media/media-sources-selection.html [ ImageOnlyFailure ]
 
 # VP9/VP8 are not supported on WK1 and turned off by default
 media/media-source/media-source-webm-configuration-change.html [ Failure ]

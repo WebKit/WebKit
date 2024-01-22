@@ -260,6 +260,8 @@ media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 
 platform/ipad/fast/forms [ Skip ]
 
+media/media-sources-selection.html [ ImageOnlyFailure ] # Sources selection on iOS will select a different source.
+
 # Codecs not supported
 media/media-can-play-ogg.html [ WontFix ]
 media/media-can-play-flac-audio.html  [ WontFix ]

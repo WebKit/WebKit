@@ -351,8 +351,12 @@ public:
 
     virtual void isLoopingChanged() { }
 
+    virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
+    bool shouldCheckHardwareSupport() const { return m_shouldCheckHardwareSupport; }
+
 protected:
     mutable PlatformTimeRanges m_seekable;
+    bool m_shouldCheckHardwareSupport { false };
 };
 
 }

@@ -645,6 +645,8 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     }
 
     if (m_private) {
+        m_private->setShouldCheckHardwareSupport(client().mediaPlayerShouldCheckHardwareSupport());
+
 #if ENABLE(MEDIA_SOURCE)
         if (RefPtr mediaSource = m_mediaSource.get())
             m_private->load(m_url, m_contentMIMETypeWasInferredFromExtension ? ContentType() : m_contentType, *mediaSource);
@@ -1757,11 +1759,6 @@ const Vector<ContentType>& MediaPlayer::mediaContentTypesRequiringHardwareSuppor
     return client().mediaContentTypesRequiringHardwareSupport();
 }
 
-bool MediaPlayer::shouldCheckHardwareSupport() const
-{
-    return client().mediaPlayerShouldCheckHardwareSupport();
-}
-
 const std::optional<Vector<String>>& MediaPlayer::allowedMediaContainerTypes() const
 {
     return client().allowedMediaContainerTypes();
@@ -1915,6 +1912,11 @@ bool MediaPlayer::pauseAtHostTime(const MonotonicTime& hostTime)
     // media player does not support it.
     ASSERT(supportsPauseAtHostTime());
     return m_private->pauseAtHostTime(hostTime);
+}
+
+void MediaPlayer::setShouldCheckHardwareSupport(bool value)
+{
+    m_private->setShouldCheckHardwareSupport(value);
 }
 
 #if !RELEASE_LOG_DISABLED
