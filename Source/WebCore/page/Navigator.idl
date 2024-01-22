@@ -23,7 +23,7 @@
     Exposed=Window
 ] interface Navigator {
     // Non-standard.
-    [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;
+    [Conditional=NAVIGATOR_STANDALONE, DisabledByQuirk=shouldDisableNavigatorStandalone] readonly attribute boolean standalone;
 
     readonly attribute unsigned long long hardwareConcurrency;
 };
