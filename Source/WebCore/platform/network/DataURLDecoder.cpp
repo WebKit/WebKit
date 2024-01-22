@@ -150,13 +150,6 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     );
 }
 
-static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
-{
-    PAL::TextEncoding encodingFromCharset(task.result.charset);
-    auto& encoding = encodingFromCharset.isValid() ? encodingFromCharset : PAL::UTF8Encoding();
-    return PAL::decodeURLEscapeSequencesAsData(task.encodedData, encoding);
-}
-
 static std::optional<Result> decodeSynchronously(DecodeTask& task)
 {
     if (!task.process())
@@ -169,7 +162,7 @@ static std::optional<Result> decodeSynchronously(DecodeTask& task)
             return std::nullopt;
         task.result.data = WTFMove(*decodedData);
     } else
-        task.result.data = decodeEscaped(task);
+        task.result.data = PAL::decodeURLEscapeSequencesAsData(task.encodedData);
 
     task.result.data.shrinkToFit();
     return WTFMove(task.result);
