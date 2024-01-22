@@ -278,7 +278,7 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
 }
 
-void TimerBase::stop()
+void TimerBase::stopSlowCase()
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
 

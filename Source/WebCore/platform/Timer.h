@@ -63,8 +63,8 @@ public:
     void startRepeating(Seconds repeatInterval) { start(repeatInterval, repeatInterval); }
     void startOneShot(Seconds delay) { start(delay, 0_s); }
 
-    WEBCORE_EXPORT void stop();
-    bool isActive() const;
+    inline void stop();
+    inline bool isActive() const;
 
     MonotonicTime nextFireTime() const { return m_heapItem ? m_heapItem->time : MonotonicTime { }; }
     WEBCORE_EXPORT Seconds nextFireInterval() const;
@@ -86,6 +86,8 @@ public:
 
 private:
     virtual void fired() = 0;
+
+    WEBCORE_EXPORT void stopSlowCase();
 
     void checkConsistency() const;
     void checkHeapIndex() const;
@@ -152,6 +154,12 @@ private:
     
     Function<void()> m_function;
 };
+
+inline void TimerBase::stop()
+{
+    if (m_heapItem)
+        stopSlowCase();
+}
 
 inline bool TimerBase::isActive() const
 {
