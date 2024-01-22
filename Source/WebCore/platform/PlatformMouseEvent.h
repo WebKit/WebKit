@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include "PlatformEvent.h"
+#include "PointerEventTypeNames.h"
 #include "PointerID.h"
 #include <wtf/UUID.h>
 #include <wtf/WindowsExtras.h>
@@ -104,7 +105,7 @@ protected:
     IntPoint m_movementDelta;
     double m_force { 0 };
     PointerID m_pointerId { mousePointerID };
-    String m_pointerType { "mouse"_s };
+    String m_pointerType { mousePointerEventType() };
     int m_clickCount { 0 };
     unsigned m_modifierFlags { 0 };
     unsigned short m_buttons { 0 };
