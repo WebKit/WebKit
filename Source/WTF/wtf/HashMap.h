@@ -167,6 +167,8 @@ public:
     void clear();
 
     MappedTakeType take(const KeyType&); // efficient combination of get with remove
+    MappedTakeType take(iterator);
+    MappedTakeType takeFirst();
 
     // An alternate version of find() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion. HashTranslator
@@ -537,12 +539,23 @@ inline void HashMap<T, U, V, W, X, Y>::clear()
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
 auto HashMap<T, U, V, W, MappedTraits, Y>::take(const KeyType& key) -> MappedTakeType
 {
-    iterator it = find(key);
+    return take(find(key));
+}
+
+template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
+auto HashMap<T, U, V, W, MappedTraits, Y>::take(iterator it) -> MappedTakeType
+{
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());
     auto value = MappedTraits::take(WTFMove(it->value));
     remove(it);
     return value;
+}
+
+template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
+auto HashMap<T, U, V, W, MappedTraits, Y>::takeFirst() -> MappedTakeType
+{
+    return take(begin());
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y>

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WorkerOrWorkletGlobalScope;
 
-class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider {
+class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope&);
@@ -48,7 +48,7 @@ private:
     void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) final;
     void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) final;
 
-    WorkerOrWorkletGlobalScope& m_scope;
+    WeakRef<WorkerOrWorkletGlobalScope> m_scope;
 
     uint64_t m_lastCallbackIdentifier { 0 };
     HashMap<uint64_t, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>> m_takeAllMessagesCallbacks;

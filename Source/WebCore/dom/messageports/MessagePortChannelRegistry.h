@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class MessagePortChannelRegistry : public CanMakeCheckedPtr {
+class MessagePortChannelRegistry : public CanMakeWeakPtr<MessagePortChannelRegistry>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT MessagePortChannelRegistry();
 

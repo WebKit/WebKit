@@ -31,28 +31,31 @@
 #include "WorkerGlobalScope.h"
 #include "WorkletGlobalScope.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static MessagePortChannelProvider* globalProvider;
+static WeakPtr<MessagePortChannelProvider>& globalProvider()
+{
+    static MainThreadNeverDestroyed<WeakPtr<MessagePortChannelProvider>> globalProvider;
+    return globalProvider;
+}
 
 MessagePortChannelProvider& MessagePortChannelProvider::singleton()
 {
     ASSERT(isMainThread());
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        if (!globalProvider)
-            globalProvider = new MessagePortChannelProviderImpl;
-    });
-
+    auto& globalProvider = WebCore::globalProvider();
+    if (!globalProvider)
+        globalProvider = new MessagePortChannelProviderImpl;
     return *globalProvider;
 }
 
 void MessagePortChannelProvider::setSharedProvider(MessagePortChannelProvider& provider)
 {
     RELEASE_ASSERT(isMainThread());
+    auto& globalProvider = WebCore::globalProvider();
     RELEASE_ASSERT(!globalProvider);
-    globalProvider = &provider;
+    globalProvider = provider;
 }
 
 MessagePortChannelProvider& MessagePortChannelProvider::fromContext(ScriptExecutionContext& context)
