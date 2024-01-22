@@ -28,6 +28,7 @@
 #include "BufferAndBackendInfo.h"
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
+#include "RemoteImageBufferSetIdentifier.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PlatformCALayer.h>
@@ -41,7 +42,6 @@ OBJC_CLASS CALayer;
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
 class NativeImage;
-class ThreadSafeImageBufferFlusher;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 struct PlatformCALayerDelegatedContents;
 struct PlatformCALayerDelegatedContentsFinishedEvent;
@@ -53,6 +53,7 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
 class RemoteLayerTreeNode;
 class RemoteLayerTreeHost;
+class ThreadSafeImageBufferSetFlusher;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 struct PlatformCALayerRemoteDelegatedContents;
 
@@ -121,7 +122,7 @@ public:
     virtual void prepareToDisplay() = 0;
     virtual void createContextAndPaintContents() = 0;
 
-    virtual Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() = 0;
+    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher() = 0;
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
@@ -145,7 +146,7 @@ public:
 
     virtual void encodeBufferAndBackendInfos(IPC::Encoder&) const = 0;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> takePendingFlushers();
 
     enum class BufferType {
         Front,
@@ -164,6 +165,7 @@ public:
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     virtual std::optional<ImageBufferBackendHandle> displayListHandle() const  { return std::nullopt; }
 #endif
+    virtual std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() const { return std::nullopt; }
 
     virtual void dump(WTF::TextStream&) const = 0;
 
@@ -192,7 +194,7 @@ protected:
     std::optional<ImageBufferBackendHandle> m_contentsBufferHandle;
     std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_frontBufferFlushers;
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> m_frontBufferFlushers;
 
     WebCore::RepaintRectList m_paintingRects;
 
@@ -220,10 +222,15 @@ public:
 
     void dump(WTF::TextStream&) const;
 
+    std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() { return m_bufferSet; }
+    void setBackendHandle(BufferSetBackendHandle&);
+
 private:
     friend struct IPC::ArgumentCoder<RemoteLayerBackingStoreProperties, void>;
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
     RetainPtr<id> m_contentsBuffer;
+
+    std::optional<RemoteImageBufferSetIdentifier> m_bufferSet;
 
     std::optional<BufferAndBackendInfo> m_frontBufferInfo;
     std::optional<BufferAndBackendInfo> m_backBufferInfo;

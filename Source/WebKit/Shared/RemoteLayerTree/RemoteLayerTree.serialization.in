@@ -96,6 +96,7 @@ header: "RemoteLayerBackingStore.h"
     bool m_isOpaque;
     WebKit::RemoteLayerBackingStore::Type m_type;
     std::optional<WebKit::ImageBufferBackendHandle> m_bufferHandle;
+    std::optional<WebKit::RemoteImageBufferSetIdentifier> m_bufferSet;
     std::optional<WebKit::BufferAndBackendInfo> m_frontBufferInfo;
     std::optional<WebKit::BufferAndBackendInfo> m_backBufferInfo;
     std::optional<WebKit::BufferAndBackendInfo> m_secondaryBackBufferInfo;

@@ -194,15 +194,20 @@ void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(IPC::Connection& conne
     state.pendingLayerTreeTransactionID = transactionID;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions)
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions, HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&& handlesMap)
 {
     Vector<MachSendRight> sendRights;
     for (auto& transaction : transactions) {
         // commitLayerTreeTransaction consumes the incoming buffers, so we need to grab them first.
         for (auto& [layerID, properties] : transaction.first.changedLayerProperties()) {
-            const auto* backingStoreProperties = properties->backingStoreOrProperties.properties.get();
+            auto* backingStoreProperties = properties->backingStoreOrProperties.properties.get();
             if (!backingStoreProperties)
                 continue;
+            if (backingStoreProperties->bufferSetIdentifier()) {
+                auto iter = handlesMap.find(*backingStoreProperties->bufferSetIdentifier());
+                if (iter != handlesMap.end())
+                    backingStoreProperties->setBackendHandle(*iter->value);
+            }
             if (const auto& backendHandle = backingStoreProperties->bufferHandle()) {
                 if (const auto* sendRight = std::get_if<MachSendRight>(&backendHandle.value()))
                     sendRights.append(*sendRight);

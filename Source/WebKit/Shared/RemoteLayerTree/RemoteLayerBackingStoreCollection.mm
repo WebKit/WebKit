@@ -93,19 +93,14 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
     }
 
     if (prepareBuffersData.size()) {
-        remoteRenderingBackend.prepareImageBufferSetsForDisplay(WTFMove(prepareBuffersData), [backingStoreList = WTFMove(backingStoreList)](Vector<RemoteRenderingBackendProxy::SwapBuffersResult>&& swapResult) {
-            RELEASE_ASSERT(swapResult.size() == backingStoreList.size() || swapResult.isEmpty());
-            for (unsigned i = 0; i < swapResult.size(); ++i) {
-                auto& backingStoreSwapResult = swapResult[i];
-                auto& backingStore = backingStoreList[i];
-                if (!backingStore)
-                    continue;
-                if (backingStoreSwapResult.displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
-                    backingStore->setNeedsDisplay();
-                backingStore->setBufferCacheIdentifiers(WTFMove(backingStoreSwapResult.cacheIdentifiers));
-                backingStore->setBackendHandle(WTFMove(backingStoreSwapResult.backendHandle));
-            }
-        });
+        auto swapResult = remoteRenderingBackend.prepareImageBufferSetsForDisplay(WTFMove(prepareBuffersData));
+        RELEASE_ASSERT(swapResult.size() == backingStoreList.size() || swapResult.isEmpty());
+        for (unsigned i = 0; i < swapResult.size(); ++i) {
+            auto& backingStoreSwapResult = swapResult[i];
+            auto& backingStore = backingStoreList[i];
+            if (backingStoreSwapResult == SwapBuffersDisplayRequirement::NeedsFullDisplay)
+                backingStore->setNeedsDisplay();
+        }
     }
 }
 
@@ -154,11 +149,11 @@ void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTrans
     transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
 }
 
-Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackingStoreCollection::didFlushLayers(RemoteLayerTreeTransaction& transaction)
+Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStoreCollection::didFlushLayers(RemoteLayerTreeTransaction& transaction)
 {
     bool needToScheduleVolatilityTimer = false;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> flushers;
     for (auto& layer : transaction.changedLayers()) {
         if (layer->properties().changedProperties & LayerChange::BackingStoreChanged) {
             needToScheduleVolatilityTimer = true;
@@ -470,11 +465,5 @@ void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair
         completionHandler(markedAllVolatile);
     }, forcePurge);
 }
-
-void RemoteLayerBackingStoreCollection::backingStoreWillBeEncoded(const RemoteLayerBackingStore&)
-{
-    m_layerTreeContext.ensureRemoteRenderingBackendProxy().ensurePrepareCompleted();
-}
-
 
 } // namespace WebKit

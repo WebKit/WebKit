@@ -6868,6 +6868,7 @@
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb.in; sourceTree = "<group>"; };
 		A7A3D552289395E2008D683D /* WebWorkerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebWorkerClient.cpp; sourceTree = "<group>"; };
 		A7A3D553289395E2008D683D /* WebWorkerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWorkerClient.h; sourceTree = "<group>"; };
+		A7B94DE32B5D9DBB0058780B /* RemoteImageBufferSetProxy.messages.in */ = {isa = PBXFileReference; explicitFileType = text; path = RemoteImageBufferSetProxy.messages.in; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
 		A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityAssertion.cpp; sourceTree = "<group>"; };
 		A7E1503A2B1D6F030000E921 /* RemoteImageBuffer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteImageBuffer.messages.in; sourceTree = "<group>"; };
@@ -11925,6 +11926,7 @@
 				7BE66B942A388C200059B6F2 /* RemoteImageBufferProxy.messages.in */,
 				A78A5FE52B0EE4C3005036D3 /* RemoteImageBufferSetProxy.cpp */,
 				A78A5FE62B0EE4C3005036D3 /* RemoteImageBufferSetProxy.h */,
+				A7B94DE32B5D9DBB0058780B /* RemoteImageBufferSetProxy.messages.in */,
 				5506409D2407160900AAE045 /* RemoteRenderingBackendProxy.cpp */,
 				5506409E2407160900AAE045 /* RemoteRenderingBackendProxy.h */,
 				550640A0240719E100AAE045 /* RemoteRenderingBackendProxy.messages.in */,

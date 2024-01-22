@@ -40,7 +40,11 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     ReleaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier)
 
 #if PLATFORM(COCOA)
-    PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)  -> (Vector<WebKit::ImageBufferSetPrepareBufferForDisplayOutputData> swapBuffersOutput) NotStreamEncodableReply ReplyCanDispatchOutOfOrder
+    // These messages also result in the 'DidPrepareForDisplay' message being
+    // returned on the RemoteImageBufferSetProxy message receiver (one for each
+    // inputData)
+    PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, WebKit::RenderingUpdateID renderingUpdateID)
+    PrepareImageBufferSetsForDisplaySync(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, WebKit::RenderingUpdateID renderingUpdateID)  -> (Vector<WebKit::SwapBuffersDisplayRequirement> displayRequirements) Synchronous
 #endif
 
     MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers, bool forcePurge)
