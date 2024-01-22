@@ -49,7 +49,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
         if (rootBox().style().lineBoxContain() != RenderStyle::initialLineBoxContain())
             return false;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        if (!layoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
+        if (!layoutState().inStandardsMode() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
             return false;
         if (rootInlineBox.hasTextEmphasis())
             return false;
