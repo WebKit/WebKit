@@ -94,10 +94,10 @@ inline void InlineLevelBox::setTextEmphasis(std::pair<InlineLayoutUnit, InlineLa
     if (!textEmphasis.first && !textEmphasis.second)
         return;
     if (textEmphasis.first) {
-        m_annotation = Annotation { textEmphasis.first, 0.f };
+        m_textEmphasis = TextEmphasis { textEmphasis.first, 0.f };
         return;
     }
-    m_annotation = Annotation { 0.f, textEmphasis.second };
+    m_textEmphasis = TextEmphasis { 0.f, textEmphasis.second };
 }
 
 }

@@ -87,9 +87,9 @@ public:
     TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
-    bool hasAnnotation() const { return (hasContent() || isAtomicInlineLevelBox()) && m_annotation.has_value(); };
-    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() ? std::optional { m_annotation->above } : std::nullopt; }
-    std::optional<InlineLayoutUnit> annotationBelow() const { return hasAnnotation() ? std::optional { m_annotation->below } : std::nullopt; }
+    bool hasTextEmphasis() const { return (hasContent() || isAtomicInlineLevelBox()) && m_textEmphasis.has_value(); };
+    std::optional<InlineLayoutUnit> textEmphasisAbove() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->above } : std::nullopt; }
+    std::optional<InlineLayoutUnit> textEmphasisBelow() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->below } : std::nullopt; }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -174,11 +174,11 @@ private:
     };
     Style m_style;
 
-    struct Annotation {
+    struct TextEmphasis {
         InlineLayoutUnit above;
         InlineLayoutUnit below;
     };
-    std::optional<Annotation> m_annotation;
+    std::optional<TextEmphasis> m_textEmphasis;
 };
 
 inline void InlineLevelBox::setHasContent()
