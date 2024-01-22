@@ -116,37 +116,6 @@ class RadarModel(object):
             self.name = user.name
             self.email = user.email
 
-    class Milestone(object):
-        def __init__(
-            self, name,
-            isClosed=False,
-            isRestricted=False, restrictedAccessGroups=None,
-            isProtected=False, protectedAccessGroups=None,
-            isCategoryRequired=False, categories=None,
-            isEventRequired=False, events=None,
-            isTentpoleRequired=False, tentpoles=None,
-        ):
-            self.name = name
-            self.isClosed = isClosed
-            self.isRestricted = isRestricted
-            self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
-            self.isProtected = isProtected
-            self.protectedAccessGroups = [RadarModel.RadarGroup(name) for name in protectedAccessGroups or []]
-
-            self._isCategoryRequired = isCategoryRequired
-            self._categories = [RadarModel.Category(category) for category in (categories or [])]
-
-            self._isEventRequired = isEventRequired
-            self._events = [RadarModel.Event(event) for event in (events or [])]
-
-            self._isTentpoleRequired = isTentpoleRequired
-            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
-
-
-    class Category(object):
-        def __init__(self, name):
-            self.name = name
-
     class Event(object):
         def __init__(self, name):
             self.name = name
@@ -201,12 +170,12 @@ class RadarModel(object):
             self.CCMembership(Radar.transform_user(watcher)) for watcher in issue.get('watchers', [])
         ])
 
-        self.milestone = self.Milestone(issue.get('milestone', '?'))
+        self.milestone = Radar.Milestone(issue.get('milestone', '?'))
         if self.client.parent.milestones:
             self.milestone = self.client.parent.milestones.get(self.milestone.name, self.milestone)
 
         category = issue.get('category')
-        self.category = RadarModel.Category(category) if category else None
+        self.category = Radar.Category(category) if category else None
         event = issue.get('event')
         self.event = RadarModel.Event(event) if event else None
         tentpole = issue.get('tentpole')
@@ -497,6 +466,36 @@ class Radar(Base, ContextStack):
     class RetryPolicy(object):
         pass
 
+    class Milestone(object):
+        def __init__(
+            self, name,
+            isClosed=False,
+            isRestricted=False, restrictedAccessGroups=None,
+            isProtected=False, protectedAccessGroups=None,
+            isCategoryRequired=False, categories=None,
+            isEventRequired=False, events=None,
+            isTentpoleRequired=False, tentpoles=None,
+        ):
+            self.name = name['name'] if isinstance(name, dict) else name
+            self.isClosed = isClosed
+            self.isRestricted = isRestricted
+            self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
+            self.isProtected = isProtected
+            self.protectedAccessGroups = [RadarModel.RadarGroup(name) for name in protectedAccessGroups or []]
+
+            self._isCategoryRequired = isCategoryRequired
+            self._categories = [Radar.Category(category) for category in (categories or [])]
+
+            self._isEventRequired = isEventRequired
+            self._events = [RadarModel.Event(event) for event in (events or [])]
+
+            self._isTentpoleRequired = isTentpoleRequired
+            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
+
+    class Category(object):
+        def __init__(self, name):
+            self.name = name['name'] if isinstance(name, dict) else name
+
     @classmethod
     def transform_user(cls, user):
         return User(
@@ -523,7 +522,7 @@ class Radar(Base, ContextStack):
             self.add(issue)
         self.milestones = {}
         for kwargs in milestones or []:
-            ms = RadarModel.Milestone(**kwargs)
+            ms = Radar.Milestone(**kwargs)
             self.milestones[ms.name] = ms
 
         self.AppleDirectoryQuery = AppleDirectoryQuery(self)
