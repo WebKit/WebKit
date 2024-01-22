@@ -33,7 +33,7 @@ namespace WebCore {
 
 std::unique_ptr<CalcExpressionNode> CSSCalcNegateNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
 {
-    auto childNode = m_child->createCalcExpression(conversionData);
+    auto childNode = protectedChild()->createCalcExpression(conversionData);
     return makeUnique<CalcExpressionNegation>(WTFMove(childNode));
 }
 

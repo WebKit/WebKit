@@ -56,7 +56,7 @@ private:
     bool parseCalcValue(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
 
     CalculationCategory m_destinationCategory;
-    const CSSCalcSymbolTable& m_symbolTable;
+    SingleThreadWeakRef<const CSSCalcSymbolTable> m_symbolTable;
 };
 
 }
