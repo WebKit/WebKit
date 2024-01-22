@@ -385,6 +385,21 @@ CSSDocumentation = {
         "syntax": "<single-animation-play-state>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/animation-play-state"
     },
+    "animation-range": {
+        "description": "The animation-range CSS shorthand property is used to set the start and end of an animation's attachment range along its timeline, i.e. where along the timeline an animation will start and end.",
+        "syntax": "[ <'animation-range-start'> <'animation-range-end'>? ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/animation-range"
+    },
+    "animation-range-end": {
+        "description": "The animation-range-end CSS property is used to set the end of an animation's attachment range along its timeline, i.e. where along the timeline an animation will end.",
+        "syntax": "[ normal | <length-percentage> | <timeline-range-name> <length-percentage>? ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/animation-range-end"
+    },
+    "animation-range-start": {
+        "description": "The animation-range-start CSS property is used to set the start of an animation's attachment range along its timeline, i.e. where along the timeline an animation will start.",
+        "syntax": "[ normal | <length-percentage> | <timeline-range-name> <length-percentage>? ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/animation-range-start"
+    },
     "animation-timeline": {
         "description": "Specifies the names of one or more @scroll-timeline at-rules to describe the element's scroll animations.",
         "syntax": "<single-animation-timeline>#",
@@ -482,6 +497,10 @@ CSSDocumentation = {
         "description": "Specifies the size of the background images.",
         "syntax": "<bg-size>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/background-size"
+    },
+    "base-palette": {
+        "description": "The base-palette CSS descriptor is used to specify the name or index of a pre-defined palette to be used for creating a new palette. If the specified base-palette does not exist, then the palette defined at index 0 will be used.",
+        "syntax": "light | dark | <integer [0,\u221e]>"
     },
     "behavior": {
         "description": "IE only. Used to extend behaviors of the browser."
@@ -981,28 +1000,43 @@ CSSDocumentation = {
     },
     "contain-intrinsic-block-size": {
         "description": "Block size of an element when the element is subject to size containment.",
-        "syntax": "none | <length> | auto <length>",
+        "syntax": "auto? [ none | <length> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-block-size"
     },
     "contain-intrinsic-height": {
         "description": "Height of an element when the element is subject to size containment.",
-        "syntax": "none | <length> | auto <length>",
+        "syntax": "auto? [ none | <length> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-height"
     },
     "contain-intrinsic-inline-size": {
         "description": "Inline size of an element when the element is subject to size containment.",
-        "syntax": "none | <length> | auto <length>",
+        "syntax": "auto? [ none | <length> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-inline-size"
     },
     "contain-intrinsic-size": {
         "description": "Size of an element when the element is subject to size containment.",
-        "syntax": "[ none | <length> | auto <length> ]{1,2}",
+        "syntax": "[ auto? [ none | <length> ] ]{1,2}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-size"
     },
     "contain-intrinsic-width": {
         "description": "Width of an element when the element is subject to size containment.",
-        "syntax": "none | <length> | auto <length>",
+        "syntax": "auto? [ none | <length> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-width"
+    },
+    "container": {
+        "description": "The container shorthand CSS property establishes the element as a query container and specifies the name or name for the containment context used in a container query.",
+        "syntax": "<'container-name'> [ / <'container-type'> ]?",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/container"
+    },
+    "container-name": {
+        "description": "The container-name CSS property specifies a list of query container names used by the @container at-rule in a container query.",
+        "syntax": "none | <custom-ident>+",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/container-name"
+    },
+    "container-type": {
+        "description": "The container-type CSS property is used to define the type of containment used in a container query.",
+        "syntax": "normal | size | inline-size",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/container-type"
     },
     "content": {
         "description": "Determines which page-based occurrence of a given element is applied to a counter or string value.",
@@ -1154,6 +1188,11 @@ CSSDocumentation = {
         "syntax": "auto | none",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-optical-sizing"
     },
+    "font-palette": {
+        "description": "The font-palette CSS property allows specifying one of the many palettes contained in a font that a user agent should use for the font. Users can also override the values in a palette or create a new palette by using the @font-palette-values at-rule.",
+        "syntax": "normal | light | dark | <palette-identifier>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-palette"
+    },
     "font-size": {
         "description": "Indicates the desired height of glyphs from the font. For scalable fonts, the font-size is a scale factor applied to the EM unit of the font. (Note that certain glyphs may bleed outside their EM box.) For non-scalable fonts, the font-size is converted into absolute units and matched against the declared font-size of the font, using the same absolute coordinate space for both of the matched values.",
         "syntax": "<absolute-size> | <relative-size> | <length-percentage>",
@@ -1185,19 +1224,19 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
     },
     "font-synthesis-small-caps": {
-        "description": "Controls whether user agents are allowed to synthesize small-caps font faces when a font family lacks small-caps faces.",
-        "syntax": "none | auto",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+        "description": "The font-synthesis-small-caps CSS property lets you specify whether or not the browser may synthesize small-caps typeface when it is missing in a font family. Small-caps glyphs typically use the form of uppercase letters but are reduced to the size of lowercase letters.",
+        "syntax": "auto | none",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis-small-caps"
     },
     "font-synthesis-style": {
-        "description": "Controls whether user agents are allowed to synthesize oblique font faces when a font family lacks italic faces.",
-        "syntax": "none | auto",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+        "description": "The font-synthesis-style CSS property lets you specify whether or not the browser may synthesize the oblique typeface when it is missing in a font family.",
+        "syntax": "auto | none",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis-style"
     },
     "font-synthesis-weight": {
-        "description": "Controls whether user agents are allowed to synthesize bold font faces when a font family lacks bold faces.",
-        "syntax": "none | auto",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+        "description": "The font-synthesis-weight CSS property lets you specify whether or not the browser may synthesize the bold typeface when it is missing in a font family.",
+        "syntax": "auto | none",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis-weight"
     },
     "font-variant": {
         "description": "Specifies variant representations of the font",
@@ -1218,6 +1257,11 @@ CSSDocumentation = {
         "description": "Allows control of glyph substitute and positioning in East Asian text.",
         "syntax": "normal | [ <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant-east-asian"
+    },
+    "font-variant-emoji": {
+        "description": "The font-variant-emoji CSS property specifies the default presentation style for displaying emojis.",
+        "syntax": "normal | text | emoji | unicode",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant-emoji"
     },
     "font-variant-ligatures": {
         "description": "Specifies control over which ligatures are enabled or disabled. A value of 'normal' implies that the defaults set by the font are used.",
@@ -1363,6 +1407,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/hyphenate-character"
     },
     "hyphenate-limit-chars": {
+        "description": "The hyphenate-limit-chars CSS property specifies the minimum word length to allow hyphenation of words as well as the minimum number of characters before and after the hyphen.",
         "syntax": "[ auto | <integer> ]{1,3}"
     },
     "hyphens": {
@@ -1842,12 +1887,12 @@ CSSDocumentation = {
     },
     "offset-path": {
         "description": "The offset-path CSS property specifies the offset path where the element gets positioned. The exact element\u2019s position on the offset path is determined by the offset-distance property. An offset path is either a specified path with one or multiple sub-paths or the geometry of a not-styled basic shape. Each shape or path must define an initial position for the computed value of \"0\" for offset-distance and an initial direction which specifies the rotation of the object to the initial position.\n\nIn this specification, a direction (or rotation) of 0 degrees is equivalent to the direction of the positive x-axis in the object\u2019s local coordinate system. In other words, a rotation of 0 degree points to the right side of the UA if the object and its ancestors have no transformation applied.",
-        "syntax": "none | ray( [ <angle> && <size> && contain? ] ) | <path()> | <url> | [ <basic-shape> || <geometry-box> ]",
+        "syntax": "none | <offset-path> || <coord-box>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/offset-path"
     },
     "offset-position": {
         "description": "Specifies the initial position of the offset path. If position is specified with static, offset-position would be ignored.",
-        "syntax": "auto | <position>",
+        "syntax": "normal | auto | <position>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/offset-position"
     },
     "offset-rotate": {
@@ -1916,8 +1961,7 @@ CSSDocumentation = {
     },
     "overflow-clip-box": {
         "description": "The overflow-clip-box CSS property specifies relative to which box the clipping happens when there is an overflow. It is short hand for the overflow-clip-box-inline and overflow-clip-box-block properties.",
-        "syntax": "padding-box | content-box",
-        "url": "https://developer.mozilla.org/docs/Mozilla/Gecko/Chrome/CSS/overflow-clip-box"
+        "syntax": "padding-box | content-box"
     },
     "overflow-clip-margin": {
         "description": "The overflow-clip-margin CSS property determines how far outside its bounds an element with overflow: clip may be painted before being clipped.",
@@ -1943,6 +1987,10 @@ CSSDocumentation = {
         "description": "Specifies the handling of overflow in the vertical direction.",
         "syntax": "visible | hidden | clip | scroll | auto",
         "url": "https://developer.mozilla.org/docs/Web/CSS/overflow-y"
+    },
+    "override-colors": {
+        "description": "The override-colors CSS descriptor is used to override colors in the chosen base-palette for a color font.",
+        "syntax": "[ <integer [0,\u221e]> <absolute-color-base> ]#"
     },
     "overscroll-behavior": {
         "description": "The overscroll-behavior CSS property is shorthand for the overscroll-behavior-x and overscroll-behavior-y properties, which allow you to control the browser's scroll overflow behavior \u2014 what happens when the boundary of a scrolling area is reached.",
@@ -2028,6 +2076,11 @@ CSSDocumentation = {
         "syntax": "<length> | <percentage>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-top"
     },
+    "page": {
+        "description": "The page CSS property is used to specify the named page, a specific type of page defined by the @page at-rule.",
+        "syntax": "auto | <custom-ident>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/page"
+    },
     "page-break-after": {
         "description": "Defines rules for page breaks after an element.",
         "syntax": "auto | always | avoid | left | right | recto | verso",
@@ -2042,6 +2095,10 @@ CSSDocumentation = {
         "description": "Defines rules for page breaks inside an element.",
         "syntax": "auto | avoid",
         "url": "https://developer.mozilla.org/docs/Web/CSS/page-break-inside"
+    },
+    "page-orientation": {
+        "description": "The page-orientation CSS descriptor for the @page at-rule controls the rotation of a printed page. It handles the flow of content across pages when the orientation of a page is changed. This behavior differs from the size descriptor in that a user can define the direction in which to rotate the page.",
+        "syntax": "upright | rotate-left | rotate-right "
     },
     "paint-order": {
         "description": "Controls the order that the three paint operations that shapes and text are rendered with: their fill, their stroke and any markers they might have.",
@@ -2268,23 +2325,19 @@ CSSDocumentation = {
     },
     "scroll-snap-coordinate": {
         "description": "Defines the x and y coordinate within the element which will align with the nearest ancestor scroll container's snap-destination for the respective axis.",
-        "syntax": "none | <position>#",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-coordinate"
+        "syntax": "none | <position>#"
     },
     "scroll-snap-destination": {
         "description": "Define the x and y coordinate within the scroll container's visual viewport which element snap points will align with.",
-        "syntax": "<position>",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-destination"
+        "syntax": "<position>"
     },
     "scroll-snap-points-x": {
         "description": "Defines the positioning of snap points along the x axis of the scroll container it is applied to.",
-        "syntax": "none | repeat( <length-percentage> )",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-points-x"
+        "syntax": "none | repeat( <length-percentage> )"
     },
     "scroll-snap-points-y": {
         "description": "Defines the positioning of snap points along the y axis of the scroll container it is applied to.",
-        "syntax": "none | repeat( <length-percentage> )",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-points-y"
+        "syntax": "none | repeat( <length-percentage> )"
     },
     "scroll-snap-stop": {
         "description": "The scroll-snap-stop CSS property defines whether the scroll container is allowed to \"pass over\" possible snap positions.",
@@ -2298,27 +2351,25 @@ CSSDocumentation = {
     },
     "scroll-snap-type-x": {
         "description": "The scroll-snap-type-x CSS property defines how strictly snap points are enforced on the horizontal axis of the scroll container in case there is one.\n\nSpecifying any precise animations or physics used to enforce those snap points is not covered by this property but instead left up to the user agent.",
-        "syntax": "none | mandatory | proximity",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-type-x"
+        "syntax": "none | mandatory | proximity"
     },
     "scroll-snap-type-y": {
         "description": "The scroll-snap-type-y CSS property defines how strictly snap points are enforced on the vertical axis of the scroll container in case there is one.\n\nSpecifying any precise animations or physics used to enforce those snap points is not covered by this property but instead left up to the user agent.",
-        "syntax": "none | mandatory | proximity",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-type-y"
+        "syntax": "none | mandatory | proximity"
     },
     "scroll-timeline": {
         "description": "Defines a name that can be used to identify the source element of a scroll timeline, along with the scrollbar axis that should provide the timeline.",
-        "syntax": "<scroll-timeline-name> || <scroll-timeline-axis>",
+        "syntax": "[ <'scroll-timeline-name'> <'scroll-timeline-axis'>? ]#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline"
     },
     "scroll-timeline-axis": {
         "description": "Specifies the scrollbar that will be used to provide the timeline for a scroll-timeline animation",
-        "syntax": "block | inline | vertical | horizontal",
+        "syntax": "[ block | inline | x | y ]#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-axis"
     },
     "scroll-timeline-name": {
         "description": "Defines a name that can be used to identify an element as the source of a scroll-timeline.",
-        "syntax": "none | <custom-ident>",
+        "syntax": "none | <dashed-ident>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-name"
     },
     "scrollbar-3dlight-color": {
@@ -2580,6 +2631,16 @@ CSSDocumentation = {
         "syntax": "auto | from-font | [ under || [ left | right ] ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-underline-position"
     },
+    "text-wrap": {
+        "description": "The text-wrap CSS property controls how text inside an element is wrapped.",
+        "syntax": "wrap | nowrap | balance | stable | pretty",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/text-wrap"
+    },
+    "timeline-scope": {
+        "description": "The timeline-scope CSS property modifies the scope of a named animation timeline.",
+        "syntax": "none | <dashed-ident>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/timeline-scope"
+    },
     "top": {
         "description": "Specifies how far an absolutely positioned box's top margin edge is offset below the top edge of the box's 'containing block'.",
         "syntax": "<length> | <percentage> | auto",
@@ -2663,6 +2724,31 @@ CSSDocumentation = {
         "syntax": "baseline | sub | super | text-top | text-bottom | middle | top | bottom | <percentage> | <length>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/vertical-align"
     },
+    "view-timeline": {
+        "description": "The view-timeline CSS shorthand property is used to define a named view progress timeline, which is progressed through based on the change in visibility of an element (known as the subject) inside a scrollable element (scroller). view-timeline is set on the subject.",
+        "syntax": "[ <'view-timeline-name'> <'view-timeline-axis'>? ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/view-timeline"
+    },
+    "view-timeline-axis": {
+        "description": "The view-timeline-axis CSS property is used to specify the scrollbar direction that will be used to provide the timeline for a named view progress timeline animation, which is progressed through based on the change in visibility of an element (known as the subject) inside a scrollable element (scroller). view-timeline-axis is set on the subject. See CSS scroll-driven animations for more details.",
+        "syntax": "[ block | inline | x | y ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/view-timeline-axis"
+    },
+    "view-timeline-inset": {
+        "description": "The view-timeline-inset CSS property is used to specify one or two values representing an adjustment to the position of the scrollport (see Scroll container for more details) in which the subject element of a named view progress timeline animation is deemed to be visible. Put another way, this allows you to specify start and/or end inset (or outset) values that offset the position of the timeline.",
+        "syntax": "[ [ auto | <length-percentage> ]{1,2} ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/view-timeline-inset"
+    },
+    "view-timeline-name": {
+        "description": "The view-timeline-name CSS property is used to define the name of a named view progress timeline, which is progressed through based on the change in visibility of an element (known as the subject) inside a scrollable element (scroller). view-timeline is set on the subject.",
+        "syntax": "none | <dashed-ident>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/view-timeline-name"
+    },
+    "view-transition-name": {
+        "description": "The view-transition-name CSS property provides the selected element with a distinct identifying name (a custom-ident) and causes it to participate in a separate view transition from the root view transition \u2014 or no view transition if the none value is specified.",
+        "syntax": "none | <custom-ident>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/view-transition-name"
+    },
     "viewport-fit": {
         "description": "The border-block-style CSS property defines the style of the logical block borders of an element, which maps to a physical border style depending on the element's writing mode, directionality, and text orientation.",
         "syntax": "auto | contain | cover"
@@ -2674,8 +2760,16 @@ CSSDocumentation = {
     },
     "white-space": {
         "description": "Specifies how whitespace is handled in an element.",
-        "syntax": "normal | pre | nowrap | pre-wrap | pre-line | break-spaces",
+        "syntax": "normal | pre | nowrap | pre-wrap | pre-line | break-spaces | [ <'white-space-collapse'> || <'text-wrap'> || <'white-space-trim'> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/white-space"
+    },
+    "white-space-collapse": {
+        "description": "The white-space-collapse CSS property controls how white space inside an element is collapsed.",
+        "syntax": "collapse | discard | preserve | preserve-breaks | preserve-spaces | break-spaces",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/white-space-collapse"
+    },
+    "white-space-trim": {
+        "syntax": "none | discard-before || discard-after || discard-inner"
     },
     "widows": {
         "description": "Specifies the minimum number of line boxes of a block container that must be left in a fragment after a break.",
