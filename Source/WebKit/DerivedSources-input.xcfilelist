@@ -258,6 +258,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionFrameParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionWindow.serialization.in

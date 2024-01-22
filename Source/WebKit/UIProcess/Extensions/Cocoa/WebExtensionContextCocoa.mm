@@ -39,6 +39,7 @@
 #import "ContextMenuContextData.h"
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
+#import "PageLoadStateObserver.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
@@ -55,6 +56,7 @@
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyIdentifier.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
@@ -84,6 +86,8 @@ static NSString * const backgroundContentEventListenersVersionKey = @"Background
 static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
 static NSString * const lastLoadedDeclarativeNetRequestHashStateKey = @"LastLoadedDeclarativeNetRequestHash";
+
+static NSString * const sessionStorageAllowedInContentScriptsKey = @"SessionStorageAllowedInContentScripts";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr NSInteger currentBackgroundContentListenerStateVersion = 3;
@@ -229,6 +233,8 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
     [m_state setObject:(NSString *)m_baseURL.string() forKey:lastSeenBaseURLStateKey];
+
+    m_isSessionStorageAllowedInContentScripts = boolForKey(m_state.get(), sessionStorageAllowedInContentScriptsKey, false);
 
     writeStateToStorage();
 
@@ -385,6 +391,22 @@ void WebExtensionContext::setBaseURL(URL&& url)
 bool WebExtensionContext::isURLForThisExtension(const URL& url) const
 {
     return protocolHostAndPortAreEqual(baseURL(), url);
+}
+
+bool WebExtensionContext::extensionCanAccessWebPage(WebPageProxyIdentifier webPageProxyIdentifier, ErrorString errorString)
+{
+    RefPtr page = WebProcessProxy::webPage(webPageProxyIdentifier);
+    if (page && isURLForThisExtension(URL { page->pageLoadState().activeURL() }))
+        return true;
+
+    RefPtr tab = getTab(webPageProxyIdentifier);
+    if (!tab || !tab->extensionHasPermission()) {
+        if (errorString)
+            errorString = "access not allowed"_s;
+        return false;
+    }
+
+    return true;
 }
 
 void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
@@ -3190,6 +3212,20 @@ RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> WebExtensionContext::regi
     if (!m_registeredContentScriptsStorage)
         m_registeredContentScriptsStorage = [[_WKWebExtensionRegisteredScriptsSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
     return m_registeredContentScriptsStorage;
+}
+
+void WebExtensionContext::setSessionStorageAllowedInContentScripts(bool allowed)
+{
+    m_isSessionStorageAllowedInContentScripts = allowed;
+
+    [m_state setObject:@(allowed) forKey:sessionStorageAllowedInContentScriptsKey];
+
+    writeStateToStorage();
+
+    if (!isLoaded())
+        return;
+
+    extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(allowed), identifier());
 }
 
 } // namespace WebKit

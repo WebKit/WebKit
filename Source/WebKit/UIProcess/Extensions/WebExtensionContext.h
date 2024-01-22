@@ -237,6 +237,7 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
+    bool extensionCanAccessWebPage(WebPageProxyIdentifier, ErrorString);
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
@@ -503,6 +504,10 @@ private:
     void loadRegisteredContentScripts();
     RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> registeredContentScriptsStore();
 
+    // Storage
+    void setSessionStorageAllowedInContentScripts(bool);
+    bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
+
     void fetchCookies(WebsiteDataStore&, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Vector<WebExtensionCookieParameters>&&, ErrorString)>&&);
 
     // Action APIs
@@ -607,6 +612,14 @@ private:
     void scriptingGetRegisteredScripts(const Vector<String>&, CompletionHandler<void(Vector<WebExtensionRegisteredScriptParameters> scripts)>&&);
     void scriptingUnregisterContentScripts(const Vector<String>&, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&&);
     bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, InjectedContentVector&, NSString *callingAPIName, NSString **errorMessage);
+
+    // Storage APIs
+    void storageGet(WebPageProxyIdentifier, WebExtensionStorageType, const IPC::DataReference&, CompletionHandler<void(std::optional<IPC::DataReference>, ErrorString)>&&);
+    void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionStorageType, const Vector<String>& keys, CompletionHandler<void(std::optional<size_t>, ErrorString)>&&);
+    void storageSet(WebPageProxyIdentifier, WebExtensionStorageType, const IPC::DataReference&, CompletionHandler<void(ErrorString)>&&);
+    void storageRemove(WebPageProxyIdentifier, WebExtensionStorageType, const Vector<String>& keys, CompletionHandler<void(ErrorString)>&&);
+    void storageClear(WebPageProxyIdentifier, WebExtensionStorageType, CompletionHandler<void(ErrorString)>&&);
+    void storageSetAccessLevel(WebPageProxyIdentifier, WebExtensionStorageType, WebExtensionStorageAccessLevel, CompletionHandler<void(ErrorString)>&&);
 
     // Tabs APIs
     void tabsCreate(WebPageProxyIdentifier, const WebExtensionTabParameters&, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
@@ -752,6 +765,8 @@ private:
 
     MenuItemMap m_menuItems;
     MenuItemVector m_mainMenuItems;
+
+    bool m_isSessionStorageAllowedInContentScripts { false };
 };
 
 template<typename T>

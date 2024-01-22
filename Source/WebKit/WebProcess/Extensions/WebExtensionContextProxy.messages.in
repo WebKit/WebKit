@@ -60,6 +60,9 @@ messages -> WebExtensionContextProxy {
     DispatchRuntimeInstalledEvent(WebKit::WebExtensionContext::InstallReason installReason, String previousVersion)
     DispatchRuntimeStartupEvent()
 
+    // Storage
+    SetStorageAccessLevel(bool allowedInContentScripts)
+
     // Tabs Events
     DispatchTabsCreatedEvent(WebKit::WebExtensionTabParameters tabParameters)
     DispatchTabsUpdatedEvent(WebKit::WebExtensionTabParameters tabParameters, WebKit::WebExtensionTabParameters changedParameters)

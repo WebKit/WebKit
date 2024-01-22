@@ -31,10 +31,9 @@
 #include "JSWebExtensionWrappable.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionStorageType.h"
 
 namespace WebKit {
-
-enum class StorageType { Local, Session, Sync };
 
 class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorageArea, storageArea);
@@ -43,19 +42,16 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
-    void get(id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getBytesInUse(id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void set(NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void remove(id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void clear(Ref<WebExtensionCallbackHandler>&&);
+    void get(WebPage*, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getBytesInUse(WebPage*, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void set(WebPage*, NSDictionary *items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void remove(WebPage*, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void clear(WebPage*, Ref<WebExtensionCallbackHandler>&&);
+
+    double quotaBytes();
 
     // Exposed only by storage.session.
-    void setAccessLevel(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-
-    WebExtensionAPIEvent& onChanged();
-
-    // Exposed by both storage.local and storage.sync.
-    double quotaBytes();
+    void setAccessLevel(WebPage*, NSDictionary * , Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     // Exposed only by storage.sync.
     double quotaBytesPerItem();
@@ -63,14 +59,16 @@ public:
     NSUInteger maxWriteOperationsPerHour();
     NSUInteger maxWriteOperationsPerMinute();
 
+    WebExtensionAPIEvent& onChanged();
+
 private:
-    explicit WebExtensionAPIStorageArea(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, StorageType type)
+    explicit WebExtensionAPIStorageArea(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionStorageType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
         , m_type(type)
     {
     }
 
-    StorageType m_type;
+    WebExtensionStorageType m_type { WebExtensionStorageType::Local };
     RefPtr<WebExtensionAPIEvent> m_onChanged;
 #endif
 };

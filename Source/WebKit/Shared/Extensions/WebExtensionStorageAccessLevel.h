@@ -23,14 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPIStorage {
+#pragma once
 
-    readonly attribute WebExtensionAPIStorageArea local;
-    [Dynamic] readonly attribute WebExtensionAPIStorageArea session;
-    readonly attribute WebExtensionAPIStorageArea sync;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    readonly attribute WebExtensionAPIEvent onChanged;
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+
+enum class WebExtensionStorageAccessLevel : uint8_t {
+    TrustedContexts,
+    TrustedAndUntrustedContexts,
 };
+
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionStorageAccessLevel> {
+    using values = EnumValues<
+        WebKit::WebExtensionStorageAccessLevel,
+        WebKit::WebExtensionStorageAccessLevel::TrustedContexts,
+        WebKit::WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts
+    >;
+};
+
+template<> struct DefaultHash<WebKit::WebExtensionStorageAccessLevel> : IntHash<WebKit::WebExtensionStorageAccessLevel> { };
+template<> struct HashTraits<WebKit::WebExtensionStorageAccessLevel> : StrongEnumHashTraits<WebKit::WebExtensionStorageAccessLevel> { };
+
+} // namespace WTF
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

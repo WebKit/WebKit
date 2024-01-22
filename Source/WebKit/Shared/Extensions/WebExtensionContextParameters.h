@@ -45,8 +45,9 @@ struct WebExtensionContextParameters {
     Ref<API::Data> localizationJSON;
     Ref<API::Data> manifestJSON;
 
-    double manifestVersion;
-    bool testingMode;
+    double manifestVersion { 0 };
+    bool testingMode { false };
+    bool isSessionStorageAllowedInContentScripts { false };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
     Vector<WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;

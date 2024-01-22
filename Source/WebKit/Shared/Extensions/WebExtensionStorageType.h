@@ -23,14 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPIStorage {
+#pragma once
 
-    readonly attribute WebExtensionAPIStorageArea local;
-    [Dynamic] readonly attribute WebExtensionAPIStorageArea session;
-    readonly attribute WebExtensionAPIStorageArea sync;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    readonly attribute WebExtensionAPIEvent onChanged;
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+
+enum class WebExtensionStorageType : uint8_t {
+    Local,
+    Session,
+    Sync,
 };
+
+inline String toAPIPrefixString(WebExtensionStorageType storageType)
+{
+    switch (storageType) {
+    case WebExtensionStorageType::Local:
+        return "browser.local"_s;
+    case WebExtensionStorageType::Session:
+        return "browser.session"_s;
+    case WebExtensionStorageType::Sync:
+        return "browser.sync"_s;
+    }
+}
+
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebExtensionStorageType> {
+    using values = EnumValues<
+        WebKit::WebExtensionStorageType,
+        WebKit::WebExtensionStorageType::Local,
+        WebKit::WebExtensionStorageType::Session,
+        WebKit::WebExtensionStorageType::Sync
+    >;
+};
+
+template<> struct DefaultHash<WebKit::WebExtensionStorageType> : IntHash<WebKit::WebExtensionStorageType> { };
+template<> struct HashTraits<WebKit::WebExtensionStorageType> : StrongEnumHashTraits<WebKit::WebExtensionStorageType> { };
+
+} // namespace WTF
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

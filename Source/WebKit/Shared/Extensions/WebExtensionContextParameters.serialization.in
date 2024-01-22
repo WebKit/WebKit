@@ -33,6 +33,7 @@ struct WebKit::WebExtensionContextParameters {
 
     double manifestVersion;
     bool testingMode;
+    bool isSessionStorageAllowedInContentScripts;
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;

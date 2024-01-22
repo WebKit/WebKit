@@ -36,12 +36,22 @@
 
 namespace WebKit {
 
+bool WebExtensionAPIStorage::isPropertyAllowed(ASCIILiteral propertyName, WebPage*)
+{
+    if (propertyName == "session"_s)
+        return extensionContext().isSessionStorageAllowedInContentScripts() || isForMainWorld();
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/local
 
     if (!m_local)
-        m_local = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), StorageType::Local);
+        m_local = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Local);
+
     return *m_local;
 }
 
@@ -50,7 +60,8 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
 
     if (!m_session)
-        m_session = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), StorageType::Session);
+        m_session = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Session);
+
     return *m_session;
 }
 
@@ -59,7 +70,8 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
 
     if (!m_sync)
-        m_sync = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), StorageType::Sync);
+        m_sync = WebExtensionAPIStorageArea::create(forMainWorld(), runtime(), extensionContext(), WebExtensionStorageType::Sync);
+
     return *m_sync;
 }
 
@@ -69,6 +81,7 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
 
     if (!m_onChanged)
         m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::StorageOnChanged);
+
     return *m_onChanged;
 }
 

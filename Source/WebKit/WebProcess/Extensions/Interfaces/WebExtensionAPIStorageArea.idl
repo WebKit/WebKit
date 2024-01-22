@@ -26,19 +26,19 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
+    NeedsPageWithCallbackHandler,
 ] interface WebExtensionAPIStorageArea {
 
-    [RaisesException] void get([Optional, NSObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getBytesInUse([Optional, NSObject, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [RaisesException] void get([Optional, NSObject, DOMString] any items, [Optional, CallbackHandler] function callback);
+    [RaisesException] void getBytesInUse([Optional, NSObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
     [RaisesException] void set([NSDictionary] any items, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any keys, [Optional, CallbackHandler] function callback);
-    void clear([Optional, CallbackHandler] function callback);
+    [NeedsPage] void clear([Optional, CallbackHandler] function callback);
 
-    [MainWorldOnly, RaisesException, Dynamic] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, MainWorldOnly] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
 
     readonly attribute WebExtensionAPIEvent onChanged;
 
-    // Exposed by both storage.local and storage.sync.
     [ImplementedAs=quotaBytes] readonly attribute double QUOTA_BYTES;
 
     // Properties exposed by storage.sync.

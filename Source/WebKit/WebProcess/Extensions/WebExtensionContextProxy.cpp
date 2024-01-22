@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,6 +113,11 @@ void WebExtensionContextProxy::addTabPageIdentifier(WebCore::PageIdentifier page
 {
     if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
         addTabPage(*page, tabIdentifier, windowIdentifier);
+}
+
+void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScripts)
+{
+    m_isSessionStorageAllowedInContentScripts = allowedInContentScripts;
 }
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)

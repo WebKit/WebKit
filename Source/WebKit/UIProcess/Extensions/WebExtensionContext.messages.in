@@ -107,6 +107,14 @@ messages -> WebExtensionContext {
     ScriptingGetRegisteredScripts(Vector<String> scriptIDs) -> (Vector<WebKit::WebExtensionRegisteredScriptParameters> scripts);
     ScriptingUnregisterContentScripts(Vector<String> scriptIDs) -> (WebKit::WebExtensionDynamicScripts::Error error);
 
+    // Storage APIs
+    StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType, IPC::DataReference data) -> (std::optional<IPC::DataReference> data, WebKit::WebExtensionContext::ErrorString error);
+    StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType, Vector<String> keys) -> (std::optional<size_t> size, WebKit::WebExtensionContext::ErrorString error);
+    StorageSet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType, IPC::DataReference dataReference) -> (WebKit::WebExtensionContext::ErrorString error);
+    StorageRemove(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType, Vector<String> keys) -> (WebKit::WebExtensionContext::ErrorString error);
+    StorageClear(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType) -> (WebKit::WebExtensionContext::ErrorString error);
+    StorageSetAccessLevel(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionStorageType storageType, WebKit::WebExtensionStorageAccessLevel accessLevel) -> (WebKit::WebExtensionContext::ErrorString error);
+
     // Tabs APIs
     TabsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
     TabsUpdate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);

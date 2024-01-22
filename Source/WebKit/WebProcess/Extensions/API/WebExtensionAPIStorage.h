@@ -41,6 +41,8 @@ class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensi
 
 public:
 #if PLATFORM(COCOA)
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+
     WebExtensionAPIStorageArea& local();
     WebExtensionAPIStorageArea& session();
     WebExtensionAPIStorageArea& sync();

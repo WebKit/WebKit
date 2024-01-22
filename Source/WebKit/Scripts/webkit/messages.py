@@ -472,6 +472,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WebExtensionRegisteredScriptParameters',
         'WebKit::WebExtensionScriptInjectionParameters',
         'WebKit::WebExtensionScriptInjectionResultParameters',
+        'WebKit::WebExtensionStorageAccessLevel',
+        'WebKit::WebExtensionStorageType',
         'WebKit::WebExtensionTab::ImageFormat',
         'WebKit::WebExtensionTabParameters',
         'WebKit::WebExtensionTabQueryParameters',

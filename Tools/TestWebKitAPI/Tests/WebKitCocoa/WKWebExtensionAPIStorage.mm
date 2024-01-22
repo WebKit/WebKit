@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
 
 namespace TestWebKitAPI {
@@ -46,30 +47,145 @@ static auto *storageManifest = @{
         @"type": @"module",
         @"persistent": @NO,
     },
+
+    @"content_scripts": @[ @{
+        @"js": @[ @"content.js" ],
+        @"matches": @[ @"*://localhost/*" ],
+    } ],
 };
 
 TEST(WKWebExtensionAPIStorage, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertThrows(() => browser.storage.local.get({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.get(Date.now()), /an invalid parameter was passed/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.get({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.get(Date.now()), /'items' value is invalid, because an object or a string or an array of strings or null is expected, but a number was provided/i)",
 
+        @"browser.test.assertThrows(() => browser?.storage?.local?.getBytesInUse({}), /'keys' value is invalid, because a string or an array of strings or null is expected, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.getBytesInUse([1]), /'keys' value is invalid, because a string or an array of strings or null is expected, but an array of other values was provided/i)",
 
-        @"browser.test.assertThrows(() => browser.storage.local.getBytesInUse({}), /'keys' value is invalid, because a string or an array of strings or null is expected, but an object was provided/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.getBytesInUse([1]), /'keys' value is invalid, because a string or an array of strings or null is expected, but an array of other values was provided/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.set(), /A required argument is missing/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.set([]), /'items' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.set({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
 
-        @"browser.test.assertThrows(() => browser.storage.local.set(), /A required argument is missing/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.set([]), /'items' value is invalid, because an object is expected/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.set({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.remove(), /A required argument is missing/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.remove({}), /'keys' value is invalid, because a string or an array of strings is expected, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.remove([1]), /'keys' value is invalid, because a string or an array of strings is expected, but an array of other values was provided/i)",
 
-        @"browser.test.assertThrows(() => browser.storage.local.remove(), /A required argument is missing/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.remove({}), /'keys' value is invalid, because a string or an array of strings is expected, but an object was provided/i)",
-        @"browser.test.assertThrows(() => browser.storage.local.remove([1]), /'keys' value is invalid, because a string or an array of strings is expected, but an array of other values was provided/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.session?.setAccessLevel('INVALID_ACCESS_LEVEL'), /'accessOptions' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.session?.setAccessLevel({ 'accessLevel': 'INVALID_ACCESS_LEVEL' }), /'accessLevel' value is invalid, because it must specify either 'TRUSTED_CONTEXTS' or 'TRUSTED_AND_UNTRUSTED_CONTEXTS'/i)",
 
         @"browser.test.notifyPass()"
     ]);
 
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIStorage, UndefinedProperties)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser?.storage?.local?.setAccessLevel, undefined)",
+        @"browser.test.assertEq(browser?.storage?.sync?.setAccessLevel, undefined)",
+
+        @"browser.test.assertEq(browser?.storage?.local?.QUOTA_BYTES_PER_ITEM, undefined)",
+        @"browser.test.assertEq(browser?.storage?.session?.QUOTA_BYTES_PER_ITEM, undefined)",
+
+        @"browser.test.assertEq(browser?.storage?.local?.MAX_ITEMS, undefined)",
+        @"browser.test.assertEq(browser?.storage?.session?.MAX_ITEMS, undefined)",
+
+        @"browser.test.assertEq(browser?.storage?.local?.MAX_WRITE_OPERATIONS_PER_HOUR, undefined)",
+        @"browser.test.assertEq(browser?.storage?.session?.MAX_WRITE_OPERATIONS_PER_HOUR, undefined)",
+
+        @"browser.test.assertEq(browser?.storage?.local?.MAX_WRITE_OPERATIONS_PER_MINUTE, undefined)",
+        @"browser.test.assertEq(browser?.storage?.session?.MAX_WRITE_OPERATIONS_PER_MINUTE, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedContexts)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
+
+        @"  const tabs = await browser?.tabs?.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
+
+        @"  await browser?.storage?.session?.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })",
+
+        @"  const response = await browser.test.assertSafeResolve(() => browser?.tabs?.sendMessage(tabId, { content: 'Access level set' }))",
+        @"  browser.test.assertEq(response?.content, undefined)",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message?.content, 'Access level set', 'Should receive the correct message content')",
+
+        @"  sendResponse({ content: browser?.storage?.session })",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:storageManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
+
+        @"  const tabs = await browser?.tabs?.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
+
+        @"  await browser?.storage?.session?.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' })",
+
+        @"  const response = await browser.test.assertSafeResolve(() => browser?.tabs?.sendMessage(tabId, { content: 'Access level set' }))",
+        @"  browser.test.assertEq(response?.content, 'object')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message?.content, 'Access level set', 'Should receive the correct message content')",
+
+        @"  sendResponse({ content: typeof browser?.storage?.session })",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:storageManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
 }
 
 } // namespace TestWebKitAPI

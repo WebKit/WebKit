@@ -578,6 +578,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in \
 	Shared/Extensions/WebExtensionMenuItem.serialization.in \
 	Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in \
+	Shared/Extensions/WebExtensionStorage.serialization.in \
 	Shared/Extensions/WebExtensionTab.serialization.in \
 	Shared/Extensions/WebExtensionWindow.serialization.in \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
