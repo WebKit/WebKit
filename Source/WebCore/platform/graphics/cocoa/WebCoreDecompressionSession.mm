@@ -404,6 +404,7 @@ void WebCoreDecompressionSession::finishCurrentDecodingAndReportError(OSStatus s
 
     --m_framesBeingDecoded;
     m_isDecodingSample = false;
+    m_lastDecodingError = noErr;
     ensureOnMainThread([protectedThis = Ref { *this }, this, status] {
         assertIsMainThread();
         if (!m_errorListener)
