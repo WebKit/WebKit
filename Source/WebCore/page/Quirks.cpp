@@ -127,6 +127,15 @@ bool Quirks::isDomain(const String& domainString) const
     return RegistrableDomain(m_document->topDocument().url()).string() == domainString;
 }
 
+// vote.gov https://bugs.webkit.org/show_bug.cgi?id=267779
+bool Quirks::needsAnchorElementsToBeMouseFocusable() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("vote.gov"_s);
+}
+
 // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
 bool Quirks::needsFormControlToBeMouseFocusable() const
 {
