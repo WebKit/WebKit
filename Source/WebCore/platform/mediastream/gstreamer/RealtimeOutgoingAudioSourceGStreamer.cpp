@@ -126,7 +126,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto preEncoderSinkPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "sink"));
     if (!gst_pad_is_linked(preEncoderSinkPad.get())) {
-        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), m_preEncoderQueue.get(), nullptr)) {
+        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_liveSync.get(), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), m_preEncoderQueue.get(), nullptr)) {
             GST_ERROR_OBJECT(m_bin.get(), "Unable to link outgoing source to pre-encoder queue");
             return false;
         }
@@ -204,6 +204,15 @@ void RealtimeOutgoingAudioSourceGStreamer::linkOutgoingSource()
 void RealtimeOutgoingAudioSourceGStreamer::setParameters(GUniquePtr<GstStructure>&& parameters)
 {
     m_parameters = WTFMove(parameters);
+}
+
+void RealtimeOutgoingAudioSourceGStreamer::teardown()
+{
+    RealtimeOutgoingMediaSourceGStreamer::teardown();
+    m_audioconvert.clear();
+    m_audioresample.clear();
+    m_inputCaps.clear();
+    m_inputCaps.clear();
 }
 
 #undef GST_CAT_DEFAULT

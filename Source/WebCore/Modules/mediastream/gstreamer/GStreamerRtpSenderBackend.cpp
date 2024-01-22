@@ -118,6 +118,16 @@ void GStreamerRtpSenderBackend::stopSource()
     });
 }
 
+void GStreamerRtpSenderBackend::tearDown()
+{
+    WTF::switchOn(m_source, [](Ref<RealtimeOutgoingVideoSourceGStreamer>& source) {
+        source->teardown();
+    }, [](Ref<RealtimeOutgoingAudioSourceGStreamer>& source) {
+        source->teardown();
+    }, [&](std::nullptr_t&) {
+    });
+}
+
 bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTrack* track)
 {
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Replacing sender track with track %p", track);

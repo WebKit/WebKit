@@ -26,6 +26,7 @@
 #include "GStreamerPeerConnectionBackend.h"
 #include "GStreamerRtpSenderBackend.h"
 #include "GStreamerStatsCollector.h"
+#include "GStreamerWebRTCCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "RTCRtpReceiver.h"
 
@@ -36,9 +37,11 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/WTFGType.h>
 
 namespace WebCore {
 
+class GStreamerIncomingTrackProcessor;
 class GStreamerRtpReceiverBackend;
 class GStreamerRtpTransceiverBackend;
 class MediaStreamTrack;
@@ -46,7 +49,7 @@ class RTCSessionDescription;
 class RealtimeOutgoingMediaSourceGStreamer;
 class UniqueSSRCGenerator;
 
-class GStreamerMediaEndpoint : public ThreadSafeRefCounted<GStreamerMediaEndpoint, WTF::DestructionThread::Main>
+class GStreamerMediaEndpoint : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerMediaEndpoint, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -64,6 +67,7 @@ public:
     void doCreateAnswer();
 
     void getStats(GstPad*, const GstStructure*, Ref<DeferredPromise>&&);
+    void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&);
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
 
@@ -103,11 +107,14 @@ public:
     void createSessionDescriptionFailed(RTCSdpType, GUniquePtr<GError>&&);
 
     GstElement* pipeline() const { return m_pipeline.get(); }
+    GstElement* webrtcBin() const { return m_webrtcBin.get(); }
     bool handleMessage(GstMessage*);
 
 #if !RELEASE_LOG_DISABLED
     void processStats(const GValue*);
 #endif
+
+    void connectIncomingTrack(WebRTCTrackData&);
 
 protected:
 #if !RELEASE_LOG_DISABLED
@@ -141,10 +148,8 @@ private:
 
     MediaStream& mediaStreamFromRTCStream(String mediaStreamId);
 
-    String addRemoteStream(GstPad*);
+    void connectPad(GstPad*);
     void removeRemoteStream(GstPad*);
-
-    void startRemoteStream(GstPad*, const String&);
 
     int pickAvailablePayloadType();
 
@@ -199,6 +204,8 @@ private:
     HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
 
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
+
+    Vector<RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
 };
 
 } // namespace WebCore

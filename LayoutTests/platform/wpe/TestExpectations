@@ -888,13 +888,11 @@ webkit.org/b/252878 perf/append-text-nodes-without-renderers.html [ Failure Pass
 webkit.org/b/252878 svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 webanimations/accelerated-animation-tiled-while-running.html [ Pass Timeout ]
 webkit.org/b/252878 webaudio/audioworklet-addModule-failure.html [ Pass Timeout ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/252878 webrtc/audio-peer-connection-g722.html [ Failure Pass Timeout ]
-#webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Pass Timeout ]
+webkit.org/b/252878 webrtc/audio-peer-connection-g722.html [ Failure Pass Timeout ]
+webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Crash Failure Pass Timeout ]
 
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Failure Pass Timeout ]
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Failure Pass Timeout ]
 
 webkit.org/b/265290 webrtc/datachannel/basic.html [ Pass Crash ]
 webkit.org/b/265290 webrtc/datachannel/binary.html [ Pass Crash ]
@@ -916,8 +914,7 @@ webkit.org/b/257624 fast/scrolling/scrolling-inside-scrolled-overflowarea.html [
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Failure Pass ]
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-element.html [ Failure Pass ]
 webkit.org/b/257624 http/tests/workers/service/postmessage-after-terminate.https.html [ Crash Pass ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Failure Pass ]
+webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Failure Pass ]
 webkit.org/b/257624 imported/blink/compositing/squashing/attempting-to-squash-into-compositing-container.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ ImageOnlyFailure Pass ]
@@ -938,12 +935,8 @@ webkit.org/b/257624 webaudio/suspend-context-while-interrupted.html [ Pass Timeo
 webkit.org/b/257624 webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 webkit.org/b/257624 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/257624 webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Timeout ]
+webkit.org/b/257624 webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Timeout ]
 webkit.org/b/257624 webrtc/video-h264.html [ Crash Pass Timeout ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/257624 webrtc/video-mute.html [ Pass Timeout ]
-#webkit.org/b/257624 webrtc/video-mute-vp8.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
@@ -1478,8 +1471,6 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside-invalid-circle-000.
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/constants/001.html?wss [ Pass Timeout ]
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass Timeout ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ Pass ImageOnlyFailure ]
 imported/mozilla/svg/dynamic-small-object-scaled-up-02.svg [ Pass ImageOnlyFailure ]

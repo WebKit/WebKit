@@ -31,6 +31,7 @@ public:
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
     void setParameters(GUniquePtr<GstStructure>&&) final;
+    void teardown() final;
 
 protected:
     explicit RealtimeOutgoingAudioSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);

@@ -34,7 +34,7 @@ public:
 
     GstElement* bin() { return m_bin.get(); }
 
-    virtual void configureForInputCaps(const GRefPtr<GstCaps>&) { createParser(); }
+    virtual void setUpstreamBin(const GRefPtr<GstElement>&);
 
     int registerClient(GRefPtr<GstElement>&&);
     void unregisterClient(int);
@@ -42,12 +42,14 @@ public:
     void handleUpstreamEvent(GRefPtr<GstEvent>&&, int clientId);
     bool handleUpstreamQuery(GstQuery*, int clientId);
 
+    void tearDown();
+
+    void setIsUpstreamDecoding(bool isUpstreamDecoding) { m_isUpstreamDecoding = isUpstreamDecoding; };
+
 protected:
     RealtimeIncomingSourceGStreamer(const CaptureDevice&);
 
-    void createParser();
-
-    GRefPtr<GstElement> m_valve;
+    GRefPtr<GstElement> m_upstreamBin;
     GRefPtr<GstElement> m_tee;
 
 private:
@@ -58,9 +60,14 @@ private:
 
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
 
+    void unregisterClientLocked(int);
+
     GRefPtr<GstElement> m_bin;
     GQuark m_clientQuark { 0 };
-    HashMap<int, GRefPtr<GstElement>> m_clients;
+    Lock m_clientLock;
+    HashMap<int, GRefPtr<GstElement>> m_clients WTF_GUARDED_BY_LOCK(m_clientLock);
+    bool m_isStarted { true };
+    bool m_isUpstreamDecoding { false };
 };
 
 } // namespace WebCore

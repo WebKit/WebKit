@@ -114,6 +114,8 @@ private:
     void setReconfiguring(bool isReconfiguring) { m_isReconfiguring = isReconfiguring; }
     bool isReconfiguring() const { return m_isReconfiguring; }
 
+    void tearDown();
+
     Ref<GStreamerMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };

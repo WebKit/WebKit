@@ -53,7 +53,7 @@ public:
     GRefPtr<GstElement> bin() const { return m_bin; }
 
     virtual bool setPayloadType(const GRefPtr<GstCaps>&) { return false; }
-    virtual void teardown() { }
+    virtual void teardown();
 
     GUniquePtr<GstStructure> parameters();
     virtual void fillEncodingParameters(const GUniquePtr<GstStructure>&) { }
@@ -77,6 +77,7 @@ protected:
     std::optional<RealtimeMediaSourceSettings> m_initialSettings;
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_outgoingSource;
+    GRefPtr<GstElement> m_liveSync;
     GRefPtr<GstElement> m_inputSelector;
     GRefPtr<GstPad> m_fallbackPad;
     GRefPtr<GstElement> m_valve;

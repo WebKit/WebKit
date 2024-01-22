@@ -95,7 +95,13 @@ void RealtimeOutgoingVideoSourceGStreamer::updateStats(GstBuffer*)
 
 void RealtimeOutgoingVideoSourceGStreamer::teardown()
 {
+    RealtimeOutgoingMediaSourceGStreamer::teardown();
+    m_videoConvert.clear();
+    m_videoFlip.clear();
+    m_videoRate.clear();
+    m_frameRateCapsFilter.clear();
     stopUpdatingStats();
+    m_stats.reset();
 }
 
 bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& caps)
@@ -167,7 +173,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto encoderSinkPad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "sink"));
     if (!gst_pad_is_linked(encoderSinkPad.get())) {
-        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_videoFlip.get(), nullptr)) {
+        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_liveSync.get(), m_videoFlip.get(), nullptr)) {
             GST_ERROR_OBJECT(m_bin.get(), "Unable to link outgoing source to videoflip");
             return false;
         }

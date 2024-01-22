@@ -153,6 +153,11 @@ ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vect
     return { };
 }
 
+void GStreamerRtpTransceiverBackend::tearDown()
+{
+    m_rtcTransceiver.clear();
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

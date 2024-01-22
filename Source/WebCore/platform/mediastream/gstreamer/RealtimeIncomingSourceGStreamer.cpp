@@ -23,6 +23,7 @@
 #include "RealtimeIncomingSourceGStreamer.h"
 
 #include "GStreamerCommon.h"
+#include "NotImplemented.h"
 #include <gst/app/gstappsink.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,53 +40,24 @@ RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(const CaptureDe
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_media_debug, "webkitwebrtcincoming", 0, "WebKit WebRTC incoming media");
     });
     m_bin = gst_bin_new(nullptr);
-    m_valve = gst_element_factory_make("valve", nullptr);
-    m_tee = gst_element_factory_make("tee", nullptr);
-    g_object_set(m_tee.get(), "allow-not-linked", TRUE, nullptr);
-
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), m_tee.get(), nullptr);
-
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(m_valve.get(), "sink"));
-    gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
 }
 
-void RealtimeIncomingSourceGStreamer::createParser()
+void RealtimeIncomingSourceGStreamer::setUpstreamBin(const GRefPtr<GstElement>& bin)
 {
-    GST_DEBUG_OBJECT(bin(), "Creating parser for incoming RTP packets. Decoding will be performed by the client");
-    auto* parsebin = makeGStreamerElement("parsebin", nullptr);
-    g_signal_connect(parsebin, "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer) {
-        auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
-        auto classifiers = elementClass.split('/');
-        if (!classifiers.contains("Depayloader"_s))
-            return;
-
-        configureVideoRTPDepayloader(element);
-    }), nullptr);
-
-    g_signal_connect_swapped(parsebin, "pad-added", G_CALLBACK(+[](RealtimeIncomingSourceGStreamer* source, GstPad* pad) {
-        auto sinkPad = adoptGRef(gst_element_get_static_pad(source->m_tee.get(), "sink"));
-        gst_pad_link(pad, sinkPad.get());
-
-        gst_bin_sync_children_states(GST_BIN_CAST(source->bin()));
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(source->bin()), GST_DEBUG_GRAPH_SHOW_ALL, GST_OBJECT_NAME(source->bin()));
-    }), this);
-
-    gst_bin_add(GST_BIN_CAST(m_bin.get()), parsebin);
-    gst_element_link(m_valve.get(), parsebin);
+    m_upstreamBin = bin;
+    m_tee = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_upstreamBin.get()), "tee"));
 }
 
 void RealtimeIncomingSourceGStreamer::startProducingData()
 {
     GST_DEBUG_OBJECT(bin(), "Starting data flow");
-    if (m_valve)
-        g_object_set(m_valve.get(), "drop", FALSE, nullptr);
+    m_isStarted = true;
 }
 
 void RealtimeIncomingSourceGStreamer::stopProducingData()
 {
     GST_DEBUG_OBJECT(bin(), "Stopping data flow");
-    if (m_valve)
-        g_object_set(m_valve.get(), "drop", TRUE, nullptr);
+    m_isStarted = false;
 }
 
 const RealtimeMediaSourceCapabilities& RealtimeIncomingSourceGStreamer::capabilities()
@@ -95,6 +67,7 @@ const RealtimeMediaSourceCapabilities& RealtimeIncomingSourceGStreamer::capabili
 
 int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc)
 {
+    Locker lock { m_clientLock };
     static Atomic<int> counter = 1;
     auto clientId = counter.exchangeAdd(1);
 
@@ -105,7 +78,7 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
     if (!m_clientQuark)
         m_clientQuark = g_quark_from_static_string("client-id");
     g_object_set_qdata(G_OBJECT(sink), m_clientQuark, GINT_TO_POINTER(clientId));
-    GST_DEBUG_OBJECT(m_bin.get(), "Client %" GST_PTR_FORMAT " associated to new sink %" GST_PTR_FORMAT, appsrc.get(), sink);
+    GST_DEBUG_OBJECT(m_bin.get(), "Client %" GST_PTR_FORMAT " with id %d associated to new sink %" GST_PTR_FORMAT, appsrc.get(), clientId, sink);
     m_clients.add(clientId, WTFMove(appsrc));
 
     static GstAppSinkCallbacks callbacks = {
@@ -195,6 +168,10 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
     gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, RealtimeIncomingSourceGStreamer* self) -> GstPadProbeReturn {
+        auto query = GST_QUERY_CAST(info->data);
+        if (self->isIncomingVideoSource() && self->m_isUpstreamDecoding && GST_QUERY_TYPE(query) == GST_QUERY_ALLOCATION)
+            gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, NULL);
+
         auto sink = adoptGRef(gst_pad_get_parent_element(pad));
         int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink.get()), self->m_clientQuark));
         if (!clientId)
@@ -202,16 +179,31 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
 
         auto appsrc = self->m_clients.get(clientId);
         auto srcSrcPad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
-        if (gst_pad_peer_query(srcSrcPad.get(), GST_QUERY_CAST(info->data)))
+        if (gst_pad_peer_query(srcSrcPad.get(), query))
             return GST_PAD_PROBE_HANDLED;
 
         return GST_PAD_PROBE_OK;
     }), this, nullptr);
 
+    auto padName = makeString("src_"_s, clientId);
+    auto teeSrcPad = adoptGRef(gst_element_request_pad_simple(m_tee.get(), padName.ascii().data()));
+
+    GUniquePtr<char> name(gst_pad_get_name(teeSrcPad.get()));
+    auto ghostSrcPad = gst_ghost_pad_new(name.get(), teeSrcPad.get());
+    gst_element_add_pad(m_upstreamBin.get(), ghostSrcPad);
+
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), queue, sink, nullptr);
-    gst_element_link_many(m_tee.get(), queue, sink, nullptr);
+    gst_element_link(queue, sink);
+
+    auto queueSinkPad = adoptGRef(gst_element_get_static_pad(queue, "sink"));
+    auto ghostSinkPadName = makeString("sink-"_s, clientId);
+    auto ghostSinkPad = gst_ghost_pad_new(ghostSinkPadName.ascii().data(), queueSinkPad.get());
+    gst_element_add_pad(m_bin.get(), ghostSinkPad);
+
+    gst_pad_link(ghostSrcPad, ghostSinkPad);
     gst_element_sync_state_with_parent(queue);
     gst_element_sync_state_with_parent(sink);
+    gst_element_sync_state_with_parent(m_bin.get());
 
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, GST_OBJECT_NAME(m_bin.get()));
     return clientId;
@@ -219,19 +211,39 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
 
 void RealtimeIncomingSourceGStreamer::unregisterClient(int clientId)
 {
-    GST_DEBUG_OBJECT(m_bin.get(), "Unregistering client %d", clientId);
-    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-", clientId).ascii().data()));
-    auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("queue-", clientId).ascii().data()));
-    auto queueSinkPad = adoptGRef(gst_element_get_static_pad(queue.get(), "sink"));
-    auto teeSrcPad = adoptGRef(gst_pad_get_peer(queueSinkPad.get()));
+    Locker lock { m_clientLock };
+    unregisterClientLocked(clientId);
+}
 
+void RealtimeIncomingSourceGStreamer::unregisterClientLocked(int clientId)
+{
+    GST_DEBUG_OBJECT(m_bin.get(), "Unregistering client %d", clientId);
+    auto name = makeString("sink-", clientId);
+    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), name.ascii().data()));
+    auto queue = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("queue-", clientId).ascii().data()));
+
+    auto ghostSinkPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), name.ascii().data()));
+    auto padName = makeString("src_"_s, clientId);
+    auto teeSrcPad = adoptGRef(gst_element_get_static_pad(m_tee.get(), padName.ascii().data()));
+
+    gst_element_set_locked_state(m_upstreamBin.get(), TRUE);
     gst_element_set_locked_state(m_bin.get(), TRUE);
     gst_element_set_state(queue.get(), GST_STATE_NULL);
     gst_element_set_state(sink.get(), GST_STATE_NULL);
-    gst_element_unlink_many(m_tee.get(), queue.get(), sink.get(), nullptr);
-    gst_bin_remove_many(GST_BIN_CAST(m_bin.get()), queue.get(), sink.get(), nullptr);
+    gst_pad_unlink(teeSrcPad.get(), ghostSinkPad.get());
+    gst_element_unlink(queue.get(), sink.get());
+
+    auto ghostSrcPad = adoptGRef(gst_element_get_static_pad(m_upstreamBin.get(), padName.ascii().data()));
+    gst_ghost_pad_set_target(GST_GHOST_PAD_CAST(ghostSrcPad.get()), nullptr);
+    gst_element_remove_pad(m_upstreamBin.get(), ghostSrcPad.get());
     gst_element_release_request_pad(m_tee.get(), teeSrcPad.get());
+
+    gst_ghost_pad_set_target(GST_GHOST_PAD_CAST(ghostSinkPad.get()), nullptr);
+    gst_element_remove_pad(m_bin.get(), ghostSinkPad.get());
+
+    gst_bin_remove_many(GST_BIN_CAST(m_bin.get()), queue.get(), sink.get(), nullptr);
     gst_element_set_locked_state(m_bin.get(), FALSE);
+    gst_element_set_locked_state(m_upstreamBin.get(), FALSE);
     m_clients.remove(clientId);
 }
 
@@ -245,9 +257,15 @@ void RealtimeIncomingSourceGStreamer::handleUpstreamEvent(GRefPtr<GstEvent>&& ev
 
 bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query, int clientId)
 {
+    GST_DEBUG_OBJECT(m_bin.get(), "Handling %" GST_PTR_FORMAT, query);
     auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-", clientId).ascii().data()));
     auto pad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
     return gst_pad_peer_query(pad.get(), query);
+}
+
+void RealtimeIncomingSourceGStreamer::tearDown()
+{
+    notImplemented();
 }
 
 #undef GST_CAT_DEFAULT
