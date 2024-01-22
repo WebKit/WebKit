@@ -323,8 +323,7 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
 
     auto type = parsePseudoElementString(name);
     if (!type) {
-        // FIXME: Investigate removing -apple- as it's non-standard.
-        if (name.startsWithIgnoringASCIICase("-webkit-"_s) || name.startsWithIgnoringASCIICase("-apple-"_s))
+        if (name.startsWithIgnoringASCIICase("-webkit-"_s))
             return PseudoElement::WebKitCustom;
         return type;
     }
@@ -333,6 +332,10 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
     case PseudoElement::WebKitCustom:
         if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
             return std::nullopt;
+#if ENABLE(SERVICE_CONTROLS)
+        if (!context.imageControlsEnabled && equalLettersIgnoringASCIICase(name, "-apple-attachment-controls-container"_s))
+            return std::nullopt;
+#endif
         break;
     case PseudoElement::Highlight:
         if (!context.highlightAPIEnabled)

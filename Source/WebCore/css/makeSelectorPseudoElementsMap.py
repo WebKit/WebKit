@@ -31,16 +31,9 @@ import subprocess
 def enumerablePseudoType(stringPseudoType):
     output = ['CSSSelector::PseudoElement::']
 
-    if stringPseudoType.endswith('('):
-        stringPseudoType = stringPseudoType[:-1]
-
     webkitPrefix = '-webkit-'
     if (stringPseudoType.startswith(webkitPrefix)):
         stringPseudoType = stringPseudoType[len(webkitPrefix):]
-
-    khtmlPrefix = '-khtml-'
-    if (stringPseudoType.startswith(khtmlPrefix)):
-        stringPseudoType = stringPseudoType[len(khtmlPrefix):]
 
     substring_start = 0
     next_dash_position = stringPseudoType.find('-')
