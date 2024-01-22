@@ -36,7 +36,7 @@ namespace WebCore {
     
 RefPtr<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& context)
 {
-    auto object = context.graphicsContextGL()->createQuery();
+    auto object = context.protectedGraphicsContextGL()->createQuery();
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLQuery { context, object });

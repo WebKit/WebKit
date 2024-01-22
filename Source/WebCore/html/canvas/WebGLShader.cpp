@@ -37,7 +37,7 @@ namespace WebCore {
 
 RefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& context, GCGLenum type)
 {
-    auto object = context.graphicsContextGL()->createShader(type);
+    auto object = context.protectedGraphicsContextGL()->createShader(type);
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLShader(context, object, type));

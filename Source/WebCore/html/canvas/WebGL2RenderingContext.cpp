@@ -2546,7 +2546,7 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
         setBoundVertexArrayObject(locker, m_defaultVertexArrayObject.get());
     }
 
-    arrayObject->deleteObject(locker, graphicsContextGL());
+    arrayObject->deleteObject(locker, protectedGraphicsContextGL().get());
 }
 
 GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayObject)

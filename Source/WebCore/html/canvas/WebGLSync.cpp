@@ -37,7 +37,7 @@ namespace WebCore {
 
 RefPtr<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& context)
 {
-    auto object = context.graphicsContextGL()->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0);
+    auto object = context.protectedGraphicsContextGL()->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0);
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLSync { context, object });
@@ -69,7 +69,7 @@ void WebGLSync::updateCache(WebGLRenderingContextBase& context)
         return;
 
     m_allowCacheUpdate = false;
-    m_syncStatus = context.graphicsContextGL()->getSynci(m_sync, GraphicsContextGL::SYNC_STATUS);
+    m_syncStatus = context.protectedGraphicsContextGL()->getSynci(m_sync, GraphicsContextGL::SYNC_STATUS);
     if (m_syncStatus == GraphicsContextGL::UNSIGNALED)
         scheduleAllowCacheUpdate(context);
 }

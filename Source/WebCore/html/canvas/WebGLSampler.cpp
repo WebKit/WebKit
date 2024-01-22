@@ -36,7 +36,7 @@ namespace WebCore {
 
 RefPtr<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& context)
 {
-    auto object = context.graphicsContextGL()->createSampler();
+    auto object = context.protectedGraphicsContextGL()->createSampler();
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLSampler { context, object });

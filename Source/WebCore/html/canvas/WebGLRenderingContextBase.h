@@ -424,6 +424,8 @@ public:
     WEBCORE_EXPORT void simulateEventForTesting(SimulatedEventForTesting);
 
     GraphicsContextGL* graphicsContextGL() const { return m_context.get(); }
+    RefPtr<GraphicsContextGL> protectedGraphicsContextGL() const { return m_context; }
+
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
     void reshape(int width, int height) override;

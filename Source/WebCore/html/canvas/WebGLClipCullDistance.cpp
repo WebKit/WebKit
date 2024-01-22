@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLClipCullDistance);
 WebGLClipCullDistance::WebGLClipCullDistance(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLClipCullDistance)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_clip_cull_distance"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_clip_cull_distance"_s);
 }
 
 WebGLClipCullDistance::~WebGLClipCullDistance() = default;

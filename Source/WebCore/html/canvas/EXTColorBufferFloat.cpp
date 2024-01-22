@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferFloat);
 EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTColorBufferFloat)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_float"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_float"_s);
 
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.

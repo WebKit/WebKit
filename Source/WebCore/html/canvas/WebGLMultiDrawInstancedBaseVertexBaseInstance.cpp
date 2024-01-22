@@ -39,7 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLMultiDrawInstancedBaseVertexBaseInstance)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
 
     // Spec requires WEBGL_multi_draw to be turned on implicitly here.
     // Enable it both in the backend and in WebKit.
@@ -79,7 +79,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
-        context.graphicsContextGL()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) });
+        context.protectedGraphicsContextGL()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) });
     }
 
     context.markContextChangedAndNotifyCanvasObserver();
@@ -111,7 +111,7 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
-        context.graphicsContextGL()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, baseVerticesList.data() + baseVerticesOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) }, type);
+        context.protectedGraphicsContextGL()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, baseVerticesList.data() + baseVerticesOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) }, type);
     }
 
     context.markContextChangedAndNotifyCanvasObserver();
