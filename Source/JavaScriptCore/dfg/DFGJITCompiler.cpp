@@ -600,7 +600,7 @@ std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> JITCompiler::ad
     return std::tuple { stubInfo, StructureStubInfoIndex(0) };
 }
 
-std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin)
+std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin, bool isDirect)
 {
     if (m_graph.m_plan.isUnlinked()) {
         void* unlinkedCallLinkInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedCallLinkInfos.size()));
@@ -609,7 +609,7 @@ std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::
         LinkerIR::Constant callLinkInfoIndex = addToConstantPool(LinkerIR::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);
         return std::tuple { callLinkInfo, LinkableConstant(callLinkInfoIndex) };
     }
-    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, CallLinkInfo::UseDataIC::No, m_graph.m_codeBlock);
+    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, isDirect ? CallLinkInfo::UseDataIC::No : CallLinkInfo::UseDataIC::Yes, m_graph.m_codeBlock);
     return std::tuple { callLinkInfo, LinkableConstant::nonCellPointer(*this, callLinkInfo) };
 }
 

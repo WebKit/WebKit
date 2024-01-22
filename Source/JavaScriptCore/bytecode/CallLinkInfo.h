@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BaselineJITRegisters.h"
+#include "CallFrame.h"
 #include "CallFrameShuffleData.h"
 #include "CallLinkInfoBase.h"
 #include "CallMode.h"
@@ -194,16 +195,16 @@ public:
 
 #if ENABLE(JIT)
 protected:
-    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPathImpl(CallLinkInfo*, CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
-    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPathImpl(CallLinkInfo*, CCallHelpers&, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitDataICFastPath(CCallHelpers&, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallDataICFastPath(CCallHelpers&, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
 
     static void emitSlowPathImpl(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, MacroAssembler::Label);
     static void emitDataICSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, bool isTailCall, MacroAssembler::Label);
 
 public:
-    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    static std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
     static void emitSlowPath(VM&, CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR);
     static void emitTailCallSlowPath(VM&, CCallHelpers&, CompileTimeCallLinkInfo, GPRReg callLinkInfoGPR, MacroAssembler::Label);
 #endif
@@ -239,11 +240,11 @@ public:
     ExecutableBase* executable();
     
 #if ENABLE(JIT)
-    void setStub(JSCell* owner, Ref<PolymorphicCallStubRoutine>&&);
+    void setStub(Ref<PolymorphicCallStubRoutine>&&);
 #endif
     void clearStub();
 
-    void setVirtualCall(VM&, JSCell* owner);
+    void setVirtualCall(VM&);
 
     void revertCall(VM&);
 
@@ -385,6 +386,10 @@ public:
     Mode mode() const { return static_cast<Mode>(m_mode); }
 
     JSCell* owner() const { return m_owner; }
+
+    JSCell* ownerForSlowPath(CallFrame* calleeFrame);
+
+    JSGlobalObject* globalObjectForSlowPath(JSCell* owner);
 
     std::tuple<CodeBlock*, BytecodeIndex> retrieveCaller(JSCell* owner);
 
@@ -541,8 +546,8 @@ public:
 
 private:
     void initializeDirectCallRepatch(CCallHelpers&);
-    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
-    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitFastPath(CCallHelpers&, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    std::tuple<MacroAssembler::JumpList, MacroAssembler::Label> emitTailCallFastPath(CCallHelpers&, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
     void emitSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR);
     void emitTailCallSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR, MacroAssembler::Label);
 
@@ -581,6 +586,18 @@ inline CodeOrigin CallLinkInfo::codeOrigin() const
 #endif
     }
     return { };
+}
+
+inline JSCell* CallLinkInfo::ownerForSlowPath(CallFrame* calleeFrame)
+{
+    if (m_owner)
+        return m_owner;
+
+    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
+    // However, in that case, each IC's data side will have CallLinkInfo.
+    // At that time, they should have appropriate owner. So this is a hack only for now.
+    // This should always works since IC only performs regular-calls and it never does tail-calls.
+    return calleeFrame->callerFrame()->codeOwnerCell();
 }
 
 } // namespace JSC

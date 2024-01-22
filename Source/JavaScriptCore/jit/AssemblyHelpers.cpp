@@ -1114,9 +1114,8 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
 #endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 }
 
-void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
+void AssemblyHelpers::emitVirtualCall(VM& vm, CallLinkInfo* info)
 {
-    move(TrustedImmPtr(globalObject), GPRInfo::regT3);
     move(TrustedImmPtr(info), GPRInfo::regT2);
     emitVirtualCallWithoutMovingGlobalObject(vm, GPRInfo::regT2, info->callMode());
 }

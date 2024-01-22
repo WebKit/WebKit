@@ -170,7 +170,8 @@ inline void JIT::emitJumpSlowToHotForCheckpoint(Jump jump)
 
     auto iter = m_checkpointLabels.find(m_bytecodeIndex);
     ASSERT(iter != m_checkpointLabels.end());
-    jump.linkTo(iter->value, this);
+    if (jump.isSet())
+        jump.linkTo(iter->value, this);
 }
 
 inline void JIT::setFastPathResumePoint()

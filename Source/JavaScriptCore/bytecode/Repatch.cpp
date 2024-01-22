@@ -1764,18 +1764,16 @@ void linkDirectCall(
         calleeCodeBlock->linkIncomingCall(callerCodeBlock, &callLinkInfo);
 }
 
-void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
+void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CallVariant newVariant)
 {
     RELEASE_ASSERT(callLinkInfo.allowStubs());
-
-    VM& vm = globalObject->vm();
 
     // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
     // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.
     DeferGCForAWhile deferGCForAWhile(vm);
     
     if (!newVariant) {
-        callLinkInfo.setVirtualCall(vm, owner);
+        callLinkInfo.setVirtualCall(vm);
         return;
     }
 
@@ -1826,7 +1824,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
 
     // We use list.size() instead of callSlots.size() because we respect CallVariant size for now.
     if (list.size() > maxPolymorphicCallVariantListSize) {
-        callLinkInfo.setVirtualCall(vm, owner);
+        callLinkInfo.setVirtualCall(vm);
         return;
     }
 
@@ -1841,7 +1839,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
             // If we cannot handle a callee, because we don't have a CodeBlock,
             // assume that it's better for this whole thing to be a virtual call.
             if (!codeBlock) {
-                callLinkInfo.setVirtualCall(vm, owner);
+                callLinkInfo.setVirtualCall(vm);
                 return;
             }
         }
@@ -1910,7 +1908,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
 
         // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
         // that it's no longer on stack.
-        callLinkInfo.setStub(owner, WTFMove(stubRoutine));
+        callLinkInfo.setStub(WTFMove(stubRoutine));
 
         // The call link info no longer has a call cache apart from the jump to the polymorphic call
         // stub.
@@ -2008,7 +2006,6 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
     slowPath.link(&jit);
     binarySwitch.fallThrough().link(&jit);
     jit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
-    jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
     if (isTailCall)
         jit.nearTailCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
     else {
@@ -2018,7 +2015,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
 
     LinkBuffer patchBuffer(jit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
-        callLinkInfo.setVirtualCall(vm, owner);
+        callLinkInfo.setVirtualCall(vm);
         return;
     }
     
@@ -2037,7 +2034,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame*
 
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.
-    callLinkInfo.setStub(owner, WTFMove(stubRoutine));
+    callLinkInfo.setStub(WTFMove(stubRoutine));
     
     // The call link info no longer has a call cache apart from the jump to the polymorphic call
     // stub.

@@ -199,7 +199,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     // regT0 => callee
     // regT1 => tag (32bit)
     // regT2 => CallLinkInfo*
-    // regT3 => JSGlobalObject*
 
     CCallHelpers jit;
 
@@ -265,7 +264,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     jit.emitFunctionPrologue();
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(operationVirtualCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.setupArguments<decltype(operationVirtualCall)>(GPRInfo::regT2);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationVirtualCall)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -313,7 +312,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     // regT0 => callee
     // regT1 => tag (32bit)
     // regT2 => CallLinkInfo*
-    // regT3 => JSGlobalObject*
 
     CCallHelpers jit;
 
@@ -381,7 +379,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkFor(VM&, CallMode m
     jit.emitFunctionPrologue();
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT2);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -436,14 +434,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicRepatchThunk(VM&)
     // regT0 => callee
     // regT1 => tag (32bit)
     // regT2 => CallLinkInfo*
-    // regT3 => JSGlobalObject*
 
     CCallHelpers jit;
 
     jit.emitFunctionPrologue();
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT3, GPRInfo::regT2);
+    jit.setupArguments<decltype(operationPolymorphicCall)>(GPRInfo::regT2);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationPolymorphicCall)), GPRInfo::nonArgGPR0);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     if (maxFrameExtentForSlowPathCall)

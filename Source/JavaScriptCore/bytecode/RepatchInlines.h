@@ -77,9 +77,8 @@ inline void* throwNotAConstructorErrorFromCallIC(JSGlobalObject* globalObject, J
     return nullptr;
 }
 
-inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
+inline void* handleHostCall(VM& vm, JSCell* owner, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
 {
-    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     calleeFrame->setCodeBlock(nullptr);
@@ -98,6 +97,7 @@ inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFra
             return LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr();
         }
 
+        auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
         calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
         ASSERT(callData.type == CallData::Type::None);
         RELEASE_AND_RETURN(scope, throwNotAFunctionErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
@@ -118,14 +118,14 @@ inline void* handleHostCall(JSGlobalObject* globalObject, JSCell* owner, CallFra
         return LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr();
     }
 
+    auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
     calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
     ASSERT(constructData.type == CallData::Type::None);
     RELEASE_AND_RETURN(scope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
 }
 
-ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
+ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
-    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
@@ -151,11 +151,11 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
             case CallLinkInfo::Mode::Polymorphic: {
 #if ENABLE(JIT)
                 if (kind == CodeForCall && callLinkInfo->allowStubs()) {
-                    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
+                    linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(internalFunction));
                     break;
                 }
 #endif
-                callLinkInfo->setVirtualCall(vm, owner);
+                callLinkInfo->setVirtualCall(vm);
                 break;
             }
             case CallLinkInfo::Mode::Virtual:
@@ -165,7 +165,7 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
 
             return codePtr.taggedPtr();
         }
-        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, owner, calleeFrame, calleeAsValue, callLinkInfo));
+        RELEASE_AND_RETURN(throwScope, handleHostCall(vm, owner, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -184,8 +184,11 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
-        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
+            calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
             RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, callee, callLinkInfo));
+        }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
@@ -214,11 +217,11 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
     case CallLinkInfo::Mode::Polymorphic: {
 #if ENABLE(JIT)
         if (kind == CodeForCall && callLinkInfo->allowStubs()) {
-            linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
+            linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(callee));
             break;
         }
 #endif
-        callLinkInfo->setVirtualCall(vm, owner);
+        callLinkInfo->setVirtualCall(vm);
         break;
     }
     case CallLinkInfo::Mode::Virtual:
@@ -229,9 +232,8 @@ ALWAYS_INLINE void* linkFor(JSGlobalObject* globalObject, JSCell* owner, CallFra
     return codePtr.taggedPtr();
 }
 
-ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
+ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
 {
-    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
@@ -244,7 +246,7 @@ ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell*
             ASSERT(!!codePtr);
             return codePtr.taggedPtr();
         }
-        RELEASE_AND_RETURN(throwScope, handleHostCall(globalObject, owner, calleeFrame, calleeAsValue, callLinkInfo));
+        RELEASE_AND_RETURN(throwScope, handleHostCall(vm, owner, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -256,8 +258,11 @@ ALWAYS_INLINE void* virtualForWithFunction(JSGlobalObject* globalObject, JSCell*
     if (!executable->isHostFunction()) {
         FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
 
-        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);
+            calleeFrame->setCallee(globalObject->partiallyInitializedFrameCallee());
             RELEASE_AND_RETURN(throwScope, throwNotAConstructorErrorFromCallIC(globalObject, owner, function, callLinkInfo));
+        }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);

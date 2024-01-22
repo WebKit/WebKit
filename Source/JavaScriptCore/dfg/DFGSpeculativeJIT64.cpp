@@ -713,6 +713,7 @@ void SpeculativeJIT::emitCall(Node* node)
 
     GPRReg calleeGPR = InvalidGPRReg;
     GPRReg callLinkInfoGPR = InvalidGPRReg;
+    GPRReg callTargetGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
     ExecutableBase* executable = nullptr;
@@ -725,7 +726,7 @@ void SpeculativeJIT::emitCall(Node* node)
     unsigned numPassedArgs = 0;
     unsigned numAllocatedArgs = 0;
 
-    auto [ callLinkInfo, callLinkInfoConstant ] = addCallLinkInfo(m_currentNode->origin.semantic);
+    auto [callLinkInfo, callLinkInfoConstant] = addCallLinkInfo(m_currentNode->origin.semantic, isDirect);
 
     // Gotta load the arguments somehow. Varargs is trickier.
     if (isVarargs || isForwardVarargs) {
@@ -841,30 +842,25 @@ void SpeculativeJIT::emitCall(Node* node)
 
         if (isTail) {
             std::optional<GPRTemporary> calleeDestination;
+            std::optional<GPRTemporary> callLinkInfoTemp;
+            std::optional<GPRTemporary> callTarget;
             if (!isDirect) {
-                calleeDestination.emplace(this, GPRInfo::regT0);
+                calleeDestination.emplace(this, BaselineJITRegisters::Call::calleeGPR);
+                callLinkInfoTemp.emplace(this, BaselineJITRegisters::Call::callLinkInfoGPR);
+                callTarget.emplace(this, BaselineJITRegisters::Call::callTargetGPR);
                 calleeDestination->gpr(); // Allocate GPRInfo::regT0
+                callLinkInfoGPR = callLinkInfoTemp->gpr(); // Allocate GPRInfo::regT2
+                callTargetGPR = callTarget->gpr(); // Allocate GPRInfo::regT5
             }
             Edge calleeEdge = m_graph.child(node, 0);
             JSValueOperand callee(this, calleeEdge);
             calleeGPR = callee.gpr();
             if (!isDirect) {
-                move(callee.gpr(), GPRInfo::regT0);
-                calleeGPR = GPRInfo::regT0;
-
-                // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
-                // with saved callee-save. Also, it should not be the same to regT0 since both will
-                // be used later differently.
-                // We also do not keep GPRTemporary (it is immediately destroyed) because
-                // 1. We do not want to keep the register locked in the following sequence of the Call.
-                // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
-                std::optional<GPRTemporary> callLinkInfoTemp;
-                std::optional<GPRTemporary> globalObjectTemp;
-                if (m_graph.m_plan.isUnlinked()) {
-                    callLinkInfoTemp.emplace(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
-                    callLinkInfoGPR = callLinkInfoTemp->gpr();
-                }
+                move(callee.gpr(), BaselineJITRegisters::Call::calleeGPR);
+                calleeGPR = BaselineJITRegisters::Call::calleeGPR;
                 calleeDestination = std::nullopt;
+                callLinkInfoTemp = std::nullopt;
+                callTarget = std::nullopt;
                 callee.use();
             }
 
@@ -886,8 +882,10 @@ void SpeculativeJIT::emitCall(Node* node)
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
 
-            if (m_graph.m_plan.isUnlinked())
+            if (callLinkInfoGPR != InvalidGPRReg)
                 shuffleData.registers[callLinkInfoGPR] = ValueRecovery::inGPR(callLinkInfoGPR, DataFormatJS);
+            if (callTargetGPR != InvalidGPRReg)
+                shuffleData.registers[callTargetGPR] = ValueRecovery::inGPR(callTargetGPR, DataFormatJS);
             shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
         } else {
             store32(TrustedImm32(numPassedArgs), calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
@@ -910,16 +908,22 @@ void SpeculativeJIT::emitCall(Node* node)
     GPRReg evalThisValueGPR = InvalidGPRReg;
     if (!isTail || isVarargs || isForwardVarargs) {
         std::optional<GPRTemporary> calleeDestination;
+        std::optional<GPRTemporary> callLinkInfoTemp;
+        std::optional<GPRTemporary> callTarget;
         if (!isDirect) {
-            calleeDestination.emplace(this, GPRInfo::regT0);
+            calleeDestination.emplace(this, BaselineJITRegisters::Call::calleeGPR);
+            callLinkInfoTemp.emplace(this, BaselineJITRegisters::Call::callLinkInfoGPR);
+            callTarget.emplace(this, BaselineJITRegisters::Call::callTargetGPR);
             calleeDestination->gpr(); // Allocate GPRInfo::regT0
+            callLinkInfoGPR = callLinkInfoTemp->gpr(); // Allocate GPRInfo::regT2
+            callTargetGPR = callTarget->gpr(); // Allocate GPRInfo::regT5
         }
         Edge calleeEdge = m_graph.child(node, 0);
         JSValueOperand callee(this, calleeEdge);
         calleeGPR = callee.gpr();
         if (!isDirect) {
-            move(callee.gpr(), GPRInfo::regT0);
-            calleeGPR = GPRInfo::regT0;
+            move(callee.gpr(), BaselineJITRegisters::Call::calleeGPR);
+            calleeGPR = BaselineJITRegisters::Call::calleeGPR;
         }
 
         std::optional<SpeculateCellOperand> scope;
@@ -933,17 +937,9 @@ void SpeculativeJIT::emitCall(Node* node)
             evalThisValueGPR = thisValue->gpr();
         }
 
-        // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
-        // with saved callee-save. Also, it should not be the same to regT0 since both will
-        // be used later differently.
-        // We also do not keep GPRTemporary (it is immediately destroyed) because
-        // 1. We do not want to keep the register locked in the following sequence of the Call.
-        // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
-        if (m_graph.m_plan.isUnlinked()) {
-            GPRTemporary callLinkInfoTemp(this, selectScratchGPR(calleeGPR, GPRInfo::regT0, GPRInfo::regT3));
-            callLinkInfoGPR = callLinkInfoTemp.gpr();
-        }
         calleeDestination = std::nullopt;
+        callLinkInfoTemp = std::nullopt;
+        callTarget = std::nullopt;
 
         callee.use();
         if (scope)
@@ -1007,7 +1003,6 @@ void SpeculativeJIT::emitCall(Node* node)
         // This is the part where we meant to make a normal call. Oops.
         addPtr(TrustedImm32(requiredBytes), stackPointerRegister);
         load64(calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
-        loadLinkableConstant(LinkableConstant::globalObject(*this, node), GPRInfo::regT3);
         loadLinkableConstant(callLinkInfoConstant, GPRInfo::regT2);
         emitVirtualCallWithoutMovingGlobalObject(vm(), GPRInfo::regT2, CallMode::Regular);
         
@@ -1071,11 +1066,10 @@ void SpeculativeJIT::emitCall(Node* node)
     
     JumpList slowCases;
     Label dispatchLabel;
-    std::optional<Jump> done;
     if (m_graph.m_plan.isUnlinked())
         loadLinkableConstant(callLinkInfoConstant, callLinkInfoGPR);
     if (isTail) {
-        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, GPRInfo::regT0, callLinkInfoGPR, scopedLambda<void()>([&] {
+        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, callLinkInfoGPR, scopedLambda<void()>([&] {
             if (node->op() == TailCall) {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
@@ -1085,25 +1079,17 @@ void SpeculativeJIT::emitCall(Node* node)
                 RegisterSet preserved;
                 if (callLinkInfoGPR != InvalidGPRReg)
                     preserved.add(callLinkInfoGPR, IgnoreVectors);
-                preserved.add(GPRInfo::regT0, IgnoreVectors);
+                if (callTargetGPR != InvalidGPRReg)
+                    preserved.add(callTargetGPR, IgnoreVectors);
+                preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
                 prepareForTailCallSlow(WTFMove(preserved));
             }
         }));
-    } else {
-        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitFastPath(*this, callLinkInfo, GPRInfo::regT0, callLinkInfoGPR);
-        done = jump();
-    }
+    } else
+        std::tie(slowCases, dispatchLabel) = CallLinkInfo::emitFastPath(*this, callLinkInfo, callLinkInfoGPR);
 
-    slowCases.link(this);
+    ASSERT(slowCases.empty());
     auto slowPathStart = label();
-    loadLinkableConstant(LinkableConstant::globalObject(*this, node), BaselineJITRegisters::Call::globalObjectGPR); // JSGlobalObject needs to be in regT3
-    if (isTail)
-        CallLinkInfo::emitTailCallSlowPath(vm(), *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR, dispatchLabel);
-    else
-        CallLinkInfo::emitSlowPath(vm(), *this, callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
-
-    if (done)
-        done->link(this);
     auto doneLocation = label();
 
     if (isTail)
