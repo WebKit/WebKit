@@ -455,11 +455,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                        gl::SamplerFormat format,
                                        gl::Texture **textureOut);
     void updateColorMasks();
-    void updateMissingOutputsMask();
     void updateBlendFuncsAndEquations();
-    void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
-    void updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples);
-    void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
 
     void handleError(VkResult errorCode,
                      const char *file,
@@ -1115,6 +1111,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                         float farPlane);
     void updateFrontFace();
     void updateDepthRange(float nearPlane, float farPlane);
+    void updateMissingOutputsMask();
+    void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
     void updateFlipViewportDrawFramebuffer(const gl::State &glState);
     void updateFlipViewportReadFramebuffer(const gl::State &glState);
     void updateSurfaceRotationDrawFramebuffer(const gl::State &glState,

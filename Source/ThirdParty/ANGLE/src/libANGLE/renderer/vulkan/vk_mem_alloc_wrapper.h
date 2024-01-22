@@ -21,37 +21,14 @@ VK_DEFINE_HANDLE(VmaVirtualBlock)
 namespace vma
 {
 typedef VkFlags VirtualBlockCreateFlags;
-#if ANGLE_VMA_VERSION < 3000000
-typedef enum VirtualBlockCreateFlagBits
-{
-    GENERAL = 0x00000000,
-    LINEAR  = 0x00000001,
-    BUDDY   = 0x00000002
-} VirtualBlockCreateFlagBits;
-#else
 typedef enum VirtualBlockCreateFlagBits
 {
     GENERAL = 0x00000000,
     LINEAR  = 0x00000001,
 } VirtualBlockCreateFlagBits;
-#endif
 
 typedef struct StatInfo
 {
-#if ANGLE_VMA_VERSION < 3000000
-    // Number of VkDeviceMemory Vulkan memory blocks allocated.
-    uint32_t blockCount;
-    // Number of VmaAllocation allocation objects allocated.
-    uint32_t allocationCount;
-    // Number of free ranges of memory between allocations.
-    uint32_t unusedRangeCount;
-    // Total number of bytes occupied by all allocations.
-    VkDeviceSize usedBytes;
-    // Total number of bytes occupied by unused ranges.
-    VkDeviceSize unusedBytes;
-    VkDeviceSize allocationSizeMin, allocationSizeAvg, allocationSizeMax;
-    VkDeviceSize unusedRangeSizeMin, unusedRangeSizeAvg, unusedRangeSizeMax;
-#else
     struct BasicInfo
     {
         // Number of VkDeviceMemory Vulkan memory blocks allocated.
@@ -71,7 +48,6 @@ typedef struct StatInfo
     VkDeviceSize unusedRangeSizeMin;
     /// Largest empty range size. 0 if there are 0 empty ranges.
     VkDeviceSize unusedRangeSizeMax;
-#endif
 } StatInfo;
 
 VkResult InitAllocator(VkPhysicalDevice physicalDevice,
@@ -85,9 +61,6 @@ void DestroyAllocator(VmaAllocator allocator);
 
 VkResult CreatePool(VmaAllocator allocator,
                     uint32_t memoryTypeIndex,
-#if ANGLE_VMA_VERSION < 3000000
-                    bool buddyAlgorithm,
-#endif  // ANGLE_VMA_VERSION < 3000000
                     VkDeviceSize blockSize,
                     VmaPool *pPool);
 void DestroyPool(VmaAllocator allocator, VmaPool pool);

@@ -196,6 +196,7 @@ angle_end2end_tests_sources = [
   "gl_tests/gles1/PalettedTextureTest.cpp",
   "gl_tests/gles1/PointParameterTest.cpp",
   "gl_tests/gles1/PointSpriteTest.cpp",
+  "gl_tests/gles1/QueryTest.cpp",
   "gl_tests/gles1/ShadeModelTest.cpp",
   "gl_tests/gles1/TextureEnvTest.cpp",
   "gl_tests/gles1/TextureParameterTest.cpp",

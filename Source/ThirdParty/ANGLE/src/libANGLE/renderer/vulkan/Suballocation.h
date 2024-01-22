@@ -362,9 +362,7 @@ ANGLE_INLINE void BufferSuballocation::init(BufferBlock *block,
 {
     ASSERT(!valid());
     ASSERT(block != nullptr);
-#if ANGLE_VMA_VERSION >= 3000000
     ASSERT(allocation != VK_NULL_HANDLE);
-#endif  // ANGLE_VMA_VERSION >= 3000000
     ASSERT(offset != VK_WHOLE_SIZE);
     mBufferBlock = block;
     mAllocation  = allocation;

@@ -684,8 +684,6 @@
 // New failures on MacBook Pro 2019 macOS 13.2.1
 8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_vertex = FAIL
 8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_vertex = FAIL
-8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_fragment = FAIL
-8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_vertex = FAIL
 
 // Test failures introduced by Apple's changes (anglebug.com/5505)
 6467 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_color = FAIL
@@ -736,7 +734,6 @@
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.linear_linear = FAIL
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.nearest_linear = FAIL
 7451 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL
-7838 MAC METAL INTEL : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 /////////////////////////////////////
 

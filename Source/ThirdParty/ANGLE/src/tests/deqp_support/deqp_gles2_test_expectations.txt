@@ -289,11 +289,6 @@
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.filtering.nearest_mipmap_nearest_linear* = FAIL
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.wrap.* = FAIL
 7451 MAC METAL INTEL : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
-7838 MAC METAL INTEL : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
-
-// New failures on MacBook Pro 2019 macOS 13.2.1
-8091 MAC METAL AMD : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_fragment = FAIL
-8091 MAC METAL AMD : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_vertex = FAIL
 
 // Test bug - fails in ASAN.
 6678 ASAN : dEQP-GLES2.functional.negative_api.texture.compressedtexsubimage2d* = SKIP

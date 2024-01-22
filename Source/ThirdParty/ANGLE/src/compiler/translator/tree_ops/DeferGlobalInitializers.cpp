@@ -38,7 +38,7 @@ void GetDeferredInitializers(TIntermDeclaration *declaration,
                              bool initializeUninitializedGlobals,
                              bool canUseLoopsToInitialize,
                              bool highPrecisionSupported,
-                             bool forceDeferGlobalInitializers,
+                             bool forceDeferNonConstGlobalInitializers,
                              TIntermSequence *deferredInitializersOut,
                              std::vector<const TVariable *> *variablesToReplaceOut,
                              TSymbolTable *symbolTable)
@@ -55,7 +55,7 @@ void GetDeferredInitializers(TIntermDeclaration *declaration,
         TIntermTyped *expression = init->getRight();
 
         if (expression->getQualifier() != EvqConst || !expression->hasConstantValue() ||
-            forceDeferGlobalInitializers)
+            (forceDeferNonConstGlobalInitializers && symbolNode->getQualifier() != EvqConst))
         {
             // For variables which are not constant, defer their real initialization until
             // after we initialize uniforms.
@@ -135,7 +135,7 @@ bool DeferGlobalInitializers(TCompiler *compiler,
                              bool initializeUninitializedGlobals,
                              bool canUseLoopsToInitialize,
                              bool highPrecisionSupported,
-                             bool forceDeferGlobalInitializers,
+                             bool forceDeferNonConstGlobalInitializers,
                              TSymbolTable *symbolTable)
 {
     TIntermSequence deferredInitializers;
@@ -150,7 +150,7 @@ bool DeferGlobalInitializers(TCompiler *compiler,
         {
             GetDeferredInitializers(declaration, initializeUninitializedGlobals,
                                     canUseLoopsToInitialize, highPrecisionSupported,
-                                    forceDeferGlobalInitializers, &deferredInitializers,
+                                    forceDeferNonConstGlobalInitializers, &deferredInitializers,
                                     &variablesToReplace, symbolTable);
         }
     }

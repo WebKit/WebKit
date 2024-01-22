@@ -429,6 +429,69 @@ def _CheckCommentBeforeTestInTestFiles(input_api, output_api):
     return []
 
 
+def _CheckWildcardInTestExpectationFiles(input_api, output_api):
+    """Require wildcard as API tag (i.e. in foo.bar/*) in expectations when no additional feature is
+    enabled."""
+
+    def expectation_files(f):
+        return input_api.FilterSourceFile(
+            f, files_to_check=[r'^src/tests/angle_end2end_tests_expectations.txt$'])
+
+    expectation_pattern = re.compile(r'^.*:\s*[a-zA-Z0-9._*]+\/([^ ]*)\s*=.*$')
+
+    expectations_without_wildcard = []
+    for f in input_api.AffectedSourceFiles(expectation_files):
+        diff = f.GenerateScmDiff()
+        for line in diff.splitlines():
+            # Only look at new lines
+            if not line.startswith('+'):
+                continue
+
+            match = re.match(expectation_pattern, line[1:].strip())
+            if match is None:
+                continue
+
+            tag = match.group(1)
+
+            # The tag is in the following general form:
+            #
+            #     FRONTENDAPI_BACKENDAPI[_FEATURE]*
+            #
+            # Any part of the above may be a wildcard.  Warn about usage of FRONTEND_BACKENDAPI as
+            # the tag.  Instead, the backend should be specified before the : and `*` used as the
+            # tag.  If any additional tags are present, it's a specific expectation that should
+            # remain specific (and not wildcarded).  NoFixture is an exception as X_Y_NoFixture is
+            # the generic form of the tags of tests that don't use the fixture.
+
+            sections = [section for section in tag.split('_') if section != 'NoFixture']
+
+            # Allow '*_...', or 'FRONTENDAPI_*_...'.
+            if '*' in sections[0] or (len(sections) > 1 and '*' in sections[1]):
+                continue
+
+            # Warn if no additional tags are present
+            if len(sections) == 2:
+                expectations_without_wildcard.append(line[1:])
+
+    if expectations_without_wildcard:
+        return [
+            output_api.PresubmitError(
+                'Use wildcard in API tags (after /) in angle_end2end_tests_expectations.txt.',
+                items=expectations_without_wildcard,
+                long_text="""ANGLE prefers end2end expections to use the following form:
+
+1234 MAC OPENGL : Foo.Bar/* = SKIP
+
+instead of:
+
+1234 MAC OPENGL : Foo.Bar/ES2_OpenGL = SKIP
+1234 MAC OPENGL : Foo.Bar/ES3_OpenGL = SKIP
+
+Expectatations that are specific (such as Foo.Bar/ES2_OpenGL_SomeFeature) are allowed.""")
+        ]
+    return []
+
+
 def _CheckShaderVersionInShaderLangHeader(input_api, output_api):
     """Requires an update to ANGLE_SH_VERSION when ShaderLang.h or ShaderVars.h change."""
 
@@ -493,6 +556,7 @@ def CheckChangeOnUpload(input_api, output_api):
     results.extend(_CheckTabsInSourceFiles(input_api, output_api))
     results.extend(_CheckNonAsciiInSourceFiles(input_api, output_api))
     results.extend(_CheckCommentBeforeTestInTestFiles(input_api, output_api))
+    results.extend(_CheckWildcardInTestExpectationFiles(input_api, output_api))
     results.extend(_CheckShaderVersionInShaderLangHeader(input_api, output_api))
     results.extend(_CheckCodeGeneration(input_api, output_api))
     results.extend(_CheckChangeHasBugField(input_api, output_api))

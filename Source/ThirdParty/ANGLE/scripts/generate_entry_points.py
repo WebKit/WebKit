@@ -501,6 +501,28 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
 }}
 """
 
+TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
+{return_type} EGLAPIENTRY EGL_{name}({params})
+{{
+    {preamble}
+    Thread *thread = egl::GetCurrentThread();
+    {return_type} returnValue;
+
+    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+
+    {packed_gl_enum_conversions}
+
+    ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+
+    returnValue = {name}(thread{comma_if_needed}{internal_params});
+
+    ANGLE_CAPTURE_EGL({name}, true, {egl_capture_params}, returnValue);
+
+    {epilog}
+    return returnValue;
+}}
+"""
+
 TEMPLATE_CL_ENTRY_POINT_NO_RETURN = """\
 void CL_API_CALL cl{name}({params})
 {{
@@ -1584,6 +1606,11 @@ def is_context_private_state_command(api, name):
         [fnmatch.fnmatchcase(name, entry) for entry in CONTEXT_PRIVATE_WILDCARDS])
 
 
+def is_lockless_egl_entry_point(cmd_name):
+    if cmd_name in ["eglGetError"]:
+        return True
+    return False
+
 def get_validation_expression(api, cmd_name, entry_point_name, internal_params):
     name = strip_api_prefix(cmd_name)
     private_params = ["context->getPrivateState()", "context->getMutableErrorSetForValidation()"]
@@ -1844,7 +1871,10 @@ def get_def_template(api, cmd_name, return_type, has_errcode_ret):
         return TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_ERROR
     else:
         if api == apis.EGL:
-            return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN
+            if is_lockless_egl_entry_point(cmd_name):
+                return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS
+            else:
+                return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN
         elif api == apis.CL:
             if has_errcode_ret:
                 return TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET
