@@ -371,7 +371,7 @@ size_t PacketDurationParser::framesInPacket(SharedBuffer& packet)
             return 0; // Invalid mode.
 
         uint32_t blockSize = 0;
-        if (!(m_vorbisModeInfo->mModeFlags & (1 << modeIndex)))
+        if (!(m_vorbisModeInfo->mModeFlags & (1ULL << modeIndex)))
             blockSize = m_vorbisModeInfo->mShortBlockSize;
         else
             blockSize = m_vorbisModeInfo->mLongBlockSize;
@@ -381,7 +381,6 @@ size_t PacketDurationParser::framesInPacket(SharedBuffer& packet)
         m_lastVorbisBlockSize = blockSize;
 
         return framesOfOutput;
-        break;
         }
 #endif
     default:
