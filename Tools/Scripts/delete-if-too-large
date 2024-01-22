@@ -48,7 +48,7 @@ def main():
 
         if directorySize >= tenGigabytesInKiloBytes:
             print(f'{directory} is {directorySize}K in size. Deleting') 
-            subprocess.call(['rm','-rf', directoryPath])
+            subprocess.call(['sudo', 'rm','-rf', directoryPath])
             print(f'Deleted {directory}')
         else:
             print(f'{directory} is {directorySize}K in size. Doing nothing') 
