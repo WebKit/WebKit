@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -258,9 +258,9 @@ void RenderListBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-int RenderListBox::size() const
+unsigned RenderListBox::size() const
 {
-    int specifiedSize = selectElement().size();
+    unsigned specifiedSize = selectElement().size();
     if (specifiedSize >= 1)
         return specifiedSize;
 
