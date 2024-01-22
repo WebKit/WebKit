@@ -1085,6 +1085,10 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             elementType = resolve(*array.maybeElementType());
+            if (isBottom(elementType)) {
+                inferred(m_types.bottomType());
+                return;
+            }
 
             auto elementCountType = infer(*array.maybeElementCount());
             if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
