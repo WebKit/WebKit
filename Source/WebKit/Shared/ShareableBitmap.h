@@ -132,6 +132,7 @@ public:
     static RefPtr<ShareableBitmap> createFromImagePixels(WebCore::NativeImage&);
 #endif
     static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&);
+    static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
 
     // Create a shareable bitmap from a handle.
     static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
