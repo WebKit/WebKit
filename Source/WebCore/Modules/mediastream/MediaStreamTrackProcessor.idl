@@ -37,4 +37,5 @@
     Conditional=MEDIA_STREAM&WEB_CODECS
 ] dictionary MediaStreamTrackProcessorInit {
     required MediaStreamTrack track;
+    [EnforceRange] unsigned short maxBufferSize;
 };
