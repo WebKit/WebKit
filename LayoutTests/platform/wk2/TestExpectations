@@ -84,6 +84,7 @@ platform/mac/fast/text/justified-text-rect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess and is WebKitLegacy only.
+http/tests/security/appcache-switching-private-browsing.html [ Skip ]
 http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
@@ -165,6 +166,8 @@ webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
 webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Failure ]
+
+http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
 
 # DatabaseProcess cannot open some of these database filenames (DRT can open the exact same database filenames)
 webkit.org/b/154681 storage/indexeddb/database-odd-names.html

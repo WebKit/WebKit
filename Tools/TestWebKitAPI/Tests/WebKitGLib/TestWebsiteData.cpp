@@ -53,6 +53,20 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/appcache")) {
+        static const char* appcacheHTML = "<html manifest=appcache.manifest><body></body></html>";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, appcacheHTML, strlen(appcacheHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/appcache.manifest")) {
+        static const char* appcacheManifest = "CACHE MANIFEST\nCACHE:\nappcache/foo.txt\n";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, appcacheManifest, strlen(appcacheManifest));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/appcache/foo.txt")) {
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, "foo", 3);
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/sessionstorage")) {
         static const char* sessionStorageHTML = "<html><body onload=\"sessionStorage.foo = 'bar';\"></body></html>";
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, sessionStorageHTML, strlen(sessionStorageHTML));
@@ -195,6 +209,15 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->assertFileIsCreated(indexedDBDirectory.get());
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 
+    test->loadURI(kServer->getURIForPath("/appcache").data());
+    test->waitUntilLoadFinished();
+    GUniquePtr<char> applicationCacheDirectory(g_build_filename(Test::dataDirectory(), "applications", nullptr));
+#if !ENABLE(2022_GLIB_API)
+    g_assert_cmpstr(applicationCacheDirectory.get(), ==, webkit_website_data_manager_get_offline_application_cache_directory(test->m_manager));
+#endif
+    GUniquePtr<char> applicationCacheDatabase(g_build_filename(applicationCacheDirectory.get(), "ApplicationCache.db", nullptr));
+    test->assertFileIsCreated(applicationCacheDatabase.get());
+
     GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), nullptr));
 #if !ENABLE(2022_GLIB_API)
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(test->m_manager));
@@ -258,6 +281,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(test->m_manager), !=, webkit_website_data_manager_get_local_storage_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(test->m_manager), !=, webkit_website_data_manager_get_indexeddb_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_disk_cache_directory(defaultManager));
+    g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_offline_application_cache_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_hsts_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_hsts_cache_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(test->m_manager), !=, webkit_website_data_manager_get_itp_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager), !=, webkit_website_data_manager_get_service_worker_registrations_directory(defaultManager));
@@ -267,14 +291,16 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 #if !ENABLE(2022_GLIB_API)
     // Any specific configuration provided takes precedence over base dirs.
     indexedDBDirectory.reset(g_build_filename(Test::dataDirectory(), "mycustomindexeddb", nullptr));
+    applicationCacheDirectory.reset(g_build_filename(Test::dataDirectory(), "mycustomappcache", nullptr));
     GRefPtr<WebKitWebsiteDataManager> baseDataManager = adoptGRef(webkit_website_data_manager_new(
         "base-data-directory", Test::dataDirectory(), "base-cache-directory", Test::dataDirectory(),
-        "indexeddb-directory", indexedDBDirectory.get(),
+        "indexeddb-directory", indexedDBDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(),
         "origin-storage-ratio", 1.0, "total-storage-ratio", 1.0,
         nullptr));
     g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(baseDataManager.get()));
 
     g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(baseDataManager.get()), ==, indexedDBDirectory.get());
+    g_assert_cmpstr(webkit_website_data_manager_get_offline_application_cache_directory(baseDataManager.get()), ==, applicationCacheDirectory.get());
     // The result should be the same as previous manager.
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_itp_directory(baseDataManager.get()), ==, itpDirectory.get());
@@ -333,6 +359,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     g_assert_null(webkit_website_data_manager_get_local_storage_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_disk_cache_directory(manager.get()));
+    g_assert_null(webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_indexeddb_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_hsts_cache_directory(manager.get()));
     g_assert_null(webkit_website_data_manager_get_itp_directory(manager.get()));
@@ -595,6 +622,39 @@ static void testWebsiteDataDatabases(WebsiteDataTest* test, gconstpointer)
     static const WebKitWebsiteDataTypes cacheAndDatabaseTypes = static_cast<WebKitWebsiteDataTypes>(databaseTypes | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndDatabaseTypes, 0);
     dataList = test->fetch(cacheAndDatabaseTypes);
+    g_assert_null(dataList);
+}
+
+static void testWebsiteDataAppcache(WebsiteDataTest* test, gconstpointer)
+{
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+    g_assert_null(dataList);
+
+    test->loadURI(kServer->getURIForPath("/appcache").data());
+    test->waitUntilLoadFinished();
+
+    test->wait(1);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+    g_assert_nonnull(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert_nonnull(data);
+    WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+    webkit_security_origin_unref(origin);
+    g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+    // Appcache size is unknown.
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE), ==, 0);
+
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+    g_assert_null(dataList);
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes cacheAndAppcacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    test->clear(cacheAndAppcacheTypes, 0);
+    dataList = test->fetch(cacheAndAppcacheTypes);
     g_assert_null(dataList);
 }
 
@@ -919,6 +979,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "cache", testWebsiteDataCache);
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
+    WebsiteDataTest::add("WebKitWebsiteData", "appcache", testWebsiteDataAppcache);
     WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);
 #if SOUP_CHECK_VERSION(2, 67, 91)
     WebsiteDataTest::add("WebKitWebsiteData", "hsts", testWebsiteDataHsts);

@@ -1683,7 +1683,10 @@
             F_OFD_SETLKWTIMEOUT))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-    (deny system-fcntl (appcache-fcntl-commands))
+    (with-filter (require-not (state-flag "AppCacheDisabled"))
+        (allow system-fcntl (appcache-fcntl-commands)))
+    (with-filter (state-flag "AppCacheDisabled")
+        (deny system-fcntl (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
@@ -1906,6 +1909,8 @@
     (allow syscall-unix (syscall-unix-downlevels)))
 (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+(with-filter (require-not (state-flag "AppCacheDisabled"))
+     (allow syscall-unix (syscall-appcache)))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)

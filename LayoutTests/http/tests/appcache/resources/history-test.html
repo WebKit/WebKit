@@ -1,0 +1,23 @@
+<html manifest="history-test.manifest">
+<body>
+<p>Test whether window.history.back() is supported in application cache.</p>
+
+<script>
+
+if (document.cookie) {
+    document.write("<p>PASS: Returning to the original page.</p>");
+    if (window.testRunner)
+        testRunner.notifyDone();
+} else {
+    document.write("<p>START: Redirecting to other page.</p>");
+    document.cookie = 'cookie1=testcookie';
+
+    // Give time to the history manager to cache this page.
+    setTimeout(function () {
+        window.location.assign("/navigation/resources/go-back.html");
+    }, 200);
+}
+
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ Tests that Window properties do not get GC'd before their Window.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS frameWindow.applicationCache.foo is 1
 PASS frameWindow.history.foo is 1
 PASS frameWindow.location.foo is 1
 PASS frameWindow.locationbar.foo is 1
@@ -14,6 +15,7 @@ PASS frameWindow.scrollbars.foo is 1
 PASS frameWindow.statusbar.foo is 1
 PASS frameWindow.toolbar.foo is 1
 
+PASS frameWindow.applicationCache.foo is 1
 PASS frameWindow.history.foo is 1
 PASS frameWindow.location.foo is 1
 PASS frameWindow.locationbar.foo is 1
@@ -25,6 +27,7 @@ PASS frameWindow.scrollbars.foo is 1
 PASS frameWindow.statusbar.foo is 1
 PASS frameWindow.toolbar.foo is 1
 
+PASS frameWindow.applicationCache.foo is 1
 PASS frameWindow.history.foo is 1
 PASS frameWindow.location.foo is 1
 PASS frameWindow.locationbar.foo is 1

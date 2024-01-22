@@ -1472,18 +1472,22 @@ bool Quirks::allowLayeredFullscreenVideos() const
 // mail.google.com rdar://97351877
 bool Quirks::shouldEnableApplicationCacheQuirk() const
 {
+    bool shouldEnableBySetting = m_document && m_document->settings().offlineWebApplicationCacheEnabled();
 #if PLATFORM(IOS_FAMILY)
     if (!needsQuirks())
-        return false;
+        return shouldEnableBySetting;
 
     if (!m_shouldEnableApplicationCacheQuirk) {
         auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-        m_shouldEnableApplicationCacheQuirk = domain.endsWith("mail.google.com"_s);
+        if (domain.endsWith("mail.google.com"_s))
+            m_shouldEnableApplicationCacheQuirk = true;
+        else
+            m_shouldEnableApplicationCacheQuirk = shouldEnableBySetting;
     }
 
     return m_shouldEnableApplicationCacheQuirk.value();
 #else
-    return false;
+    return shouldEnableBySetting;
 #endif
 }
 

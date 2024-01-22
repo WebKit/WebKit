@@ -157,6 +157,16 @@ bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->loadsImagesAutomatically();
 }
 
+void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef, bool offlineWebApplicationCacheEnabled)
+{
+    toImpl(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);
+}
+
+bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->offlineWebApplicationCacheEnabled();
+}
+
 void WKPreferencesSetLocalStorageEnabled(WKPreferencesRef preferencesRef, bool localStorageEnabled)
 {
     toImpl(preferencesRef)->setLocalStorageEnabled(localStorageEnabled);
@@ -2042,15 +2052,6 @@ void WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesR
 }
 
 bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef)
-{
-    return false;
-}
-
-void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef)
 {
     return false;
 }

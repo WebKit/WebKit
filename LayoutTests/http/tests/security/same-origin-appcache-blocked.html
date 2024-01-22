@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+var frames = 1;
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.waitUntilDone();
+	internals.settings.setStorageBlockingPolicy('BlockAll');
+}
+window.onmessage = function(message) {
+	--frames;
+	if (frames <= 0 && window.testRunner) {
+		internals.settings.setStorageBlockingPolicy('AllowAll');
+		testRunner.notifyDone();
+	}
+}
+</script>
+</head>
+<body>
+<p>This iframe should not have a cache:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/same-origin-iframe-for-appcache-blocked.html"></iframe>
+</body>
+</html>

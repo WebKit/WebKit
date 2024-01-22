@@ -1849,6 +1849,8 @@ webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass T
 
 webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pass Failure ]
 
+webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+
 # Remove this once <rdar://problem/66734187> hits the bots
 [ Monterey+ ] fast/text/locale-shaping.html [ Pass ImageOnlyFailure ]
 

@@ -47,6 +47,11 @@ PASS !!w.statusbar is true
 PASS w.statusbar.visible is false
 PASS !!w.toolbar is true
 PASS w.toolbar.visible is false
+PASS !!w.applicationCache is true
+PASS w.applicationCache.status is ApplicationCache.UNCACHED
+PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.abort() did not throw exception.
 PASS !!w.visualViewport is true
 PASS w.visualViewport.offsetLeft is 0
 PASS w.visualViewport.offsetTop is 0
@@ -116,6 +121,11 @@ PASS !!w.statusbar is true
 PASS w.statusbar.visible is false
 PASS !!w.toolbar is true
 PASS w.toolbar.visible is false
+PASS !!w.applicationCache is true
+PASS w.applicationCache.status is ApplicationCache.UNCACHED
+PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
+PASS w.applicationCache.abort() did not throw exception.
 PASS !!w.visualViewport is true
 PASS w.visualViewport.offsetLeft is 0
 PASS w.visualViewport.offsetTop is 0

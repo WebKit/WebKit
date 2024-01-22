@@ -282,6 +282,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
 }
 
+- (BOOL)_offlineApplicationCacheIsEnabled
+{
+    return _preferences->offlineWebApplicationCacheEnabled();
+}
+
+- (void)_setOfflineApplicationCacheIsEnabled:(BOOL)offlineApplicationCacheIsEnabled
+{
+    _preferences->setOfflineWebApplicationCacheEnabled(offlineApplicationCacheIsEnabled);
+}
+
 - (BOOL)_fullScreenEnabled
 {
     return _preferences->fullScreenEnabled();
@@ -1777,15 +1787,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 - (void)_setDisplayListDrawingEnabled:(BOOL)displayListDrawingEnabled
-{
-}
-
-- (BOOL)_offlineApplicationCacheIsEnabled
-{
-    return NO;
-}
-
-- (void)_setOfflineApplicationCacheIsEnabled:(BOOL)offlineApplicationCacheIsEnabled
 {
 }
 
