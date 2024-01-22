@@ -786,7 +786,7 @@ void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Documen
         return;
     }
 
-    if (auto document = downcast<WorkletGlobalScope>(this)->responsibleDocument())
+    if (auto document = downcast<WorkletGlobalScope>(*this).responsibleDocument())
         callback(*document);
 }
 

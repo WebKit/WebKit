@@ -218,6 +218,20 @@ auto HTMLLabelElement::insertedIntoAncestor(InsertionType insertionType, Contain
     return result;
 }
 
+void HTMLLabelElement::updateLabel(TreeScope& scope, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue)
+{
+    if (!isConnected())
+        return;
+
+    if (oldForAttributeValue == newForAttributeValue)
+        return;
+
+    if (!oldForAttributeValue.isEmpty())
+        scope.removeLabel(oldForAttributeValue, *this);
+    if (!newForAttributeValue.isEmpty())
+        scope.addLabel(newForAttributeValue, *this);
+}
+
 void HTMLLabelElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (oldParentOfRemovedTree.isInTreeScope() && removalType.treeScopeChanged) {

@@ -280,7 +280,6 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
         if (RefPtr frame = downcast<Document>(*m_context).frame())
             RELEASE_AND_RETURN(scope, frame->script().evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {
-        ASSERT(is<WorkerOrWorkletGlobalScope>(*m_context));
         if (auto* script = downcast<WorkerOrWorkletGlobalScope>(*m_context).script())
             RELEASE_AND_RETURN(scope, script->evaluateModule(*moduleRecord, awaitedValue, resumeMode));
     }

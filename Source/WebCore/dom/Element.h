@@ -783,8 +783,6 @@ protected:
     FormAssociatedCustomElement& formAssociatedCustomElementUnsafe() const;
     void ensureFormAssociatedCustomElement();
 
-    void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
-
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
 
 private:

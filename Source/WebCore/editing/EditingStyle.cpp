@@ -254,12 +254,13 @@ public:
         auto change = changeInStyle(style);
         if (change != TextDecorationChange::None)
             return change == TextDecorationChange::Add;
-        auto styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+        RefPtr styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (!styleValue)
             styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine);
         if (!m_primitiveValue)
             return false;
-        return is<CSSValueList>(styleValue) && downcast<CSSValueList>(*styleValue).hasValue(*m_primitiveValue);
+        RefPtr valueList = dynamicDowncast<CSSValueList>(WTFMove(styleValue));
+        return valueList && valueList->hasValue(*m_primitiveValue);
     }
 
 private:
@@ -273,10 +274,10 @@ private:
 
 static bool fontWeightValueIsBold(CSSValue& fontWeight)
 {
-    if (!is<CSSPrimitiveValue>(fontWeight))
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(fontWeight);
+    if (!primitiveValue)
         return false;
 
-    Ref primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
     auto valueID = primitiveValue->valueID();
 
     if (isCSSWideKeyword(valueID))
@@ -697,12 +698,12 @@ void EditingStyle::overrideTypingStyleAt(const EditingStyle& style, const Positi
     if (!m_mutableStyle)
         m_mutableStyle = MutableStyleProperties::create();
 
-    Ref<CSSPrimitiveValue> underline = CSSPrimitiveValue::create(CSSValueUnderline);
-    Ref<CSSPrimitiveValue> lineThrough = CSSPrimitiveValue::create(CSSValueLineThrough);
-    RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    Ref underline = CSSPrimitiveValue::create(CSSValueUnderline);
+    Ref lineThrough = CSSPrimitiveValue::create(CSSValueLineThrough);
+    RefPtr value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     CSSValueListBuilder valueList;
-    if (is<CSSValueList>(value)) {
-        valueList = downcast<CSSValueList>(*value).copyValues();
+    if (auto* list = dynamicDowncast<CSSValueList>(value.get())) {
+        valueList = list->copyValues();
         applyTextDecorationChangeToValueList(valueList, underlineChange, WTFMove(underline));
         applyTextDecorationChangeToValueList(valueList, strikeThroughChange, WTFMove(lineThrough));
     } else {
@@ -1091,11 +1092,10 @@ bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node& node) const
     if (shouldAddUnderline || shouldAddLineThrough) {
         bool hasUnderline = false;
         bool hasLineThrough = false;
-        if (RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyTextDecorationLine)) {
-            if (value->isValueList()) {
-                const CSSValueList& valueList = downcast<CSSValueList>(*value);
-                hasUnderline = valueList.hasValue(CSSValueUnderline);
-                hasLineThrough = valueList.hasValue(CSSValueLineThrough);
+        if (RefPtr value = computedStyle.propertyValue(CSSPropertyTextDecorationLine)) {
+            if (auto* valueList = dynamicDowncast<CSSValueList>(*value)) {
+                hasUnderline = valueList->hasValue(CSSValueUnderline);
+                hasLineThrough = valueList->hasValue(CSSValueLineThrough);
             }
         }
         if ((shouldAddUnderline && !hasUnderline) || (shouldAddLineThrough && !hasLineThrough))
@@ -1286,8 +1286,8 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
 
     // When not annotating for interchange, we only preserve inline style declarations.
     for (RefPtr node = &context; node && !node->isDocumentNode(); node = node->parentNode()) {
-        if (is<StyledElement>(*node) && !isMailBlockquote(*node))
-            wrappingStyle->mergeInlineAndImplicitStyleOfElement(downcast<StyledElement>(*node), DoNotOverrideValues, EditingPropertiesInEffect, standardFontFamilySerializationMode);
+        if (auto* element = dynamicDowncast<StyledElement>(*node); element && !isMailBlockquote(*element))
+            wrappingStyle->mergeInlineAndImplicitStyleOfElement(*element, DoNotOverrideValues, EditingPropertiesInEffect, standardFontFamilySerializationMode);
     }
 
     return wrappingStyle;
@@ -1317,15 +1317,16 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
         auto value = m_mutableStyle->getPropertyCSSValue(property.id());
 
         // text decorations never override values.
-        if ((property.id() == CSSPropertyTextDecorationLine || property.id() == CSSPropertyWebkitTextDecorationsInEffect)
-            && is<CSSValueList>(*property.value()) && value) {
-            if (is<CSSValueList>(*value)) {
-                auto newValue = downcast<CSSValueList>(*value).copyValues();
-                mergeTextDecorationValues(newValue, downcast<CSSValueList>(*property.value()));
-                m_mutableStyle->setProperty(property.id(), CSSValueList::createSpaceSeparated(WTFMove(newValue)), property.isImportant());
-                continue;
+        if ((property.id() == CSSPropertyTextDecorationLine || property.id() == CSSPropertyWebkitTextDecorationsInEffect) && value) {
+            if (auto* propertyValueList = dynamicDowncast<CSSValueList>(*property.value())) {
+                if (auto* valueList = dynamicDowncast<CSSValueList>(*value)) {
+                    auto newValue = valueList->copyValues();
+                    mergeTextDecorationValues(newValue, *propertyValueList);
+                    m_mutableStyle->setProperty(property.id(), CSSValueList::createSpaceSeparated(WTFMove(newValue)), property.isImportant());
+                    continue;
+                }
+                value = nullptr; // text-decoration: none is equivalent to not having the property.
             }
-            value = nullptr; // text-decoration: none is equivalent to not having the property.
         }
 
         if (mode == OverrideValues || (mode == DoNotOverrideValues && !value))
@@ -1360,14 +1361,13 @@ void EditingStyle::mergeStyleFromRules(StyledElement& element)
 
 static String loneFontFamilyName(const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value).stringValue();
-    if (!is<CSSValueList>(value) || downcast<CSSValueList>(value).length() != 1)
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+        return primitiveValue->stringValue();
+    auto* list = dynamicDowncast<CSSValueList>(value);
+    if (!list || list->length() != 1)
         return { };
-    auto& item = *downcast<CSSValueList>(value).item(0);
-    if (!is<CSSPrimitiveValue>(item))
-        return { };
-    return downcast<CSSPrimitiveValue>(item).stringValue();
+    auto* item = dynamicDowncast<CSSPrimitiveValue>(*downcast<CSSValueList>(value).item(0));
+    return item ? item->stringValue() : String();
 }
 
 void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element, StandardFontFamilySerializationMode standardFontFamilySerializationMode)
@@ -1391,9 +1391,10 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement& element, S
                     shouldRemoveFontFamily = true;
                 continue;
             }
-            if (!is<CSSPrimitiveValue>(value))
+            auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+            if (!primitiveValue)
                 continue;
-            if (downcast<CSSPrimitiveValue>(value).isPercentage()) {
+            if (primitiveValue->isPercentage()) {
                 if (auto computedPropertyValue = computedStyle.propertyValue(property.id()))
                     fromComputedStyle->addParsedProperty(CSSProperty(property.id(), WTFMove(computedPropertyValue)));
             }
@@ -1548,11 +1549,10 @@ bool EditingStyle::isFloating()
 
 int EditingStyle::legacyFontSize(Document& document) const
 {
-    RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);
-    if (!is<CSSPrimitiveValue>(cssValue))
+    RefPtr cssValue = dynamicDowncast<CSSPrimitiveValue>(m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize));
+    if (!cssValue)
         return 0;
-    return legacyFontSizeFromCSSValue(document, downcast<CSSPrimitiveValue>(cssValue.get()),
-        m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
+    return legacyFontSizeFromCSSValue(document, cssValue.get(), m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
 }
 
 bool EditingStyle::hasStyle(CSSPropertyID propertyID, const String& value)
@@ -1571,8 +1571,7 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     // Move it to the next deep equivalent position to avoid removing the style from this node. 
     // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead. 
     // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold. 
-    RefPtr positionNode = position.containerNode();
-    if (selection.isRange() && is<Text>(positionNode) && static_cast<unsigned>(position.computeOffsetInContainerNode()) == downcast<Text>(*positionNode).length())
+    if (RefPtr text = dynamicDowncast<Text>(position.containerNode()); text && selection.isRange() && static_cast<unsigned>(position.computeOffsetInContainerNode()) == text->length())
         position = nextVisuallyDistinctCandidate(position);
 
     RefPtr element = position.anchorElementAncestor();
@@ -1760,13 +1759,13 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     bool shouldAddUnderline = style->underlineChange() == TextDecorationChange::Add;
     bool shouldAddStrikeThrough = style->strikeThroughChange() == TextDecorationChange::Add;
     if (shouldAddUnderline || shouldAddStrikeThrough) {
-        RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyWebkitTextDecorationsInEffect);
+        RefPtr value = computedStyle.propertyValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (!is<CSSValueList>(value))
             value = computedStyle.propertyValue(CSSPropertyTextDecorationLine);
 
         CSSValueListBuilder valueList;
-        if (is<CSSValueList>(value))
-            valueList = downcast<CSSValueList>(*value).copyValues();
+        if (auto* list = dynamicDowncast<CSSValueList>(value.get()))
+            valueList = list->copyValues();
 
         bool hasUnderline = contains(valueList, CSSValueUnderline);
         bool hasLineThrough = contains(valueList, CSSValueLineThrough);
@@ -1842,9 +1841,8 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
 
     // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
     // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
-    auto textDecoration = style.getPropertyCSSValue(CSSPropertyTextDecorationLine);
-    if (is<CSSValueList>(textDecoration)) {
-        auto newTextDecoration = downcast<CSSValueList>(*textDecoration).copyValues();
+    if (RefPtr textDecoration = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertyTextDecorationLine))) {
+        auto newTextDecoration = textDecoration->copyValues();
         if (removeAll(newTextDecoration, CSSValueUnderline))
             m_applyUnderline = true;
         if (removeAll(newTextDecoration, CSSValueLineThrough))
@@ -1879,10 +1877,10 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     style.removeProperty(CSSPropertyFontFamily);
 
     if (RefPtr<CSSValue> fontSize = style.getPropertyCSSValue(CSSPropertyFontSize)) {
-        if (!is<CSSPrimitiveValue>(*fontSize))
+        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*fontSize);
+        if (!primitiveValue)
             style.removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
-        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, downcast<CSSPrimitiveValue>(fontSize.get()),
-                shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
+        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, primitiveValue, shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
             m_applyFontSize = AtomString::number(legacyFontSize);
             style.removeProperty(CSSPropertyFontSize);
         }
@@ -1891,11 +1889,12 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
 
 static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValue* refTextDecoration)
 {
-    auto textDecoration = style.getPropertyCSSValue(propertyID);
-    if (!is<CSSValueList>(textDecoration) || !is<CSSValueList>(refTextDecoration))
+    RefPtr textDecoration = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(propertyID));
+    auto* refTextDecorationList = dynamicDowncast<CSSValueList>(refTextDecoration);
+    if (!textDecoration || !refTextDecorationList)
         return;
-    auto newTextDecoration = downcast<CSSValueList>(*textDecoration).copyValues();
-    for (auto& value : downcast<CSSValueList>(*refTextDecoration))
+    auto newTextDecoration = textDecoration->copyValues();
+    for (auto& value : *refTextDecorationList)
         removeAll(newTextDecoration, value);
     setTextDecorationProperty(style, CSSValueList::createSpaceSeparated(WTFMove(newTextDecoration)), propertyID);
 }

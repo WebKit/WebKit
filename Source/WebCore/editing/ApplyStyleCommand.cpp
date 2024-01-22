@@ -67,10 +67,8 @@ static String& styleSpanClassString()
 
 bool isLegacyAppleStyleSpan(const Node* node)
 {
-    if (!is<HTMLSpanElement>(node))
-        return false;
-
-    return downcast<HTMLSpanElement>(*node).attributeWithoutSynchronization(classAttr) == styleSpanClassString();
+    auto* spanElement = dynamicDowncast<HTMLSpanElement>(node);
+    return spanElement && spanElement->attributeWithoutSynchronization(classAttr) == styleSpanClassString();
 }
 
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
@@ -91,24 +89,20 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, Sho
 
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element& element)
 {
-    if (!is<HTMLSpanElement>(element))
-        return false;
-    return hasNoAttributeOrOnlyStyleAttribute(downcast<HTMLSpanElement>(element), AllowNonEmptyStyleAttribute);
+    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, AllowNonEmptyStyleAttribute);
 }
 
 static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Element& element)
 {
-    if (!is<HTMLSpanElement>(element))
-        return false;
-    return hasNoAttributeOrOnlyStyleAttribute(downcast<HTMLSpanElement>(element), StyleAttributeShouldBeEmpty);
+    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, StyleAttributeShouldBeEmpty);
 }
 
 bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    if (!is<HTMLFontElement>(element))
-        return false;
-
-    return hasNoAttributeOrOnlyStyleAttribute(downcast<HTMLFontElement>(*element), shouldStyleAttributeBeEmpty);
+    auto* fontElement = dynamicDowncast<HTMLFontElement>(element);
+    return fontElement && hasNoAttributeOrOnlyStyleAttribute(*fontElement, shouldStyleAttributeBeEmpty);
 }
 
 static Ref<HTMLElement> createFontElement(Document& document)
@@ -261,10 +255,10 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
                     block = newBlock;
             }
             ASSERT(!block || is<Element>(*block));
-            if (is<HTMLElement>(block)) {
-                removeCSSStyle(style, downcast<HTMLElement>(*block));
+            if (auto* htmlBlock = dynamicDowncast<HTMLElement>(block.get())) {
+                removeCSSStyle(style, *htmlBlock);
                 if (!m_removeOnly)
-                    addBlockStyle(styleChange, downcast<HTMLElement>(*block));
+                    addBlockStyle(styleChange, *htmlBlock);
             }
 
             if (nextParagraphStart.isOrphan())
@@ -389,14 +383,14 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         RELEASE_ASSERT(node);
 
         RefPtr<HTMLElement> element;
-        if (is<HTMLElement>(*node)) {
+        if (auto* htmlElement = dynamicDowncast<HTMLElement>(*node)) {
             // Only work on fully selected nodes.
-            if (!nodeFullySelected(downcast<HTMLElement>(*node), start, end)) {
+            if (!nodeFullySelected(*htmlElement, start, end)) {
                 if (!node->isConnected())
                     break;
                 continue;
             }
-            element = &downcast<HTMLElement>(*node);
+            element = htmlElement;
         } else if (is<Text>(*node) && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
@@ -437,8 +431,12 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 static ContainerNode* dummySpanAncestorForNode(Node* node)
 {
     RefPtr<Node> currentNode = node;
-    while (currentNode && (!is<Element>(*currentNode) || !isStyleSpanOrSpanWithOnlyStyleAttribute(downcast<Element>(*currentNode))))
+    while (currentNode) {
+        auto* element = dynamicDowncast<Element>(*currentNode);
+        if (element && isStyleSpanOrSpanWithOnlyStyleAttribute(*element))
+            break;
         currentNode = currentNode->parentNode();
+    }
     return currentNode ? currentNode->parentNode() : nullptr;
 }
 
@@ -520,11 +518,11 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 
     for (RefPtr<Node> ancestor = node->parentNode(), parent; ancestor != block && ancestor != unsplitAncestor; ancestor = parent) {
         parent = ancestor->parentNode();
-        if (!is<StyledElement>(*ancestor))
+        auto* element = dynamicDowncast<StyledElement>(*ancestor);
+        if (!element)
             continue;
 
-        StyledElement& element = downcast<StyledElement>(*ancestor);
-        int unicodeBidi = valueID(ComputedStyleExtractor(&element).propertyValue(CSSPropertyUnicodeBidi).get());
+        int unicodeBidi = valueID(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi).get());
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -532,17 +530,17 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         // and all matching style rules in order to determine how to best set the unicode-bidi property to 'normal'.
         // For now, it assumes that if the 'dir' attribute is present, then removing it will suffice, and
         // otherwise it sets the property in the inline style declaration.
-        if (element.hasAttributeWithoutSynchronization(dirAttr)) {
+        if (element->hasAttributeWithoutSynchronization(dirAttr)) {
             // FIXME: If this is a BDO element, we should probably just remove it if it has no
             // other attributes, like we (should) do with B and I elements.
-            removeNodeAttribute(element, dirAttr);
+            removeNodeAttribute(*element, dirAttr);
         } else {
-            auto inlineStyle = copyStyleOrCreateEmpty(element.inlineStyle());
+            auto inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
-            setNodeAttribute(element, styleAttr, inlineStyle->asTextAtom());
-            if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
-                removeNodePreservingChildren(element);
+            setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom());
+            if (isSpanWithoutAttributesOrUnstyledStyleSpan(*element))
+                removeNodePreservingChildren(*element);
         }
     }
 }
@@ -783,20 +781,21 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
         if (!node->renderer() || !node->hasEditableStyle())
             continue;
         
-        if (!node->hasRichlyEditableStyle() && is<HTMLElement>(*node)) {
-            // This is a plaintext-only region. Only proceed if it's fully selected.
-            // pastEndNode is the node after the last fully selected node, so if it's inside node then
-            // node isn't fully selected.
-            if (pastEndNode && pastEndNode->isDescendantOf(*node))
-                break;
-            // Add to this element's inline style and skip over its contents.
-            auto element = downcast<HTMLElement>(node.releaseNonNull());
-            RefPtr inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
-            if (RefPtr otherStyle = style.style())
-                inlineStyle->mergeAndOverrideOnConflict(*otherStyle);
-            setNodeAttribute(element, styleAttr, inlineStyle->asTextAtom());
-            next = NodeTraversal::nextSkippingChildren(element);
-            continue;
+        if (!node->hasRichlyEditableStyle()) {
+            if (auto* element = dynamicDowncast<HTMLElement>(*node)) {
+                // This is a plaintext-only region. Only proceed if it's fully selected.
+                // pastEndNode is the node after the last fully selected node, so if it's inside node then
+                // node isn't fully selected.
+                if (pastEndNode && pastEndNode->isDescendantOf(*node))
+                    break;
+                // Add to this element's inline style and skip over its contents.
+                RefPtr inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+                if (RefPtr otherStyle = style.style())
+                    inlineStyle->mergeAndOverrideOnConflict(*otherStyle);
+                setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom());
+                next = NodeTraversal::nextSkippingChildren(*element);
+                continue;
+            }
         }
         
         if (isBlock(*node))
@@ -879,13 +878,14 @@ void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle& style,
         } else
             next = NodeTraversal::next(*node);
 
-        if (!is<HTMLElement>(*node))
+        auto* htmlElement = dynamicDowncast<HTMLElement>(*node);
+        if (!htmlElement)
             continue;
 
         RefPtr<Node> previousSibling = node->previousSibling();
         RefPtr<Node> nextSibling = node->nextSibling();
         RefPtr<ContainerNode> parent = node->parentNode();
-        removeInlineStyleFromElement(style, downcast<HTMLElement>(*node), InlineStyleRemovalMode::Always);
+        removeInlineStyleFromElement(style, *htmlElement, InlineStyleRemovalMode::Always);
         if (!node->isConnected()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
             if (runStart == node)
@@ -1011,22 +1011,25 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node& node, EditingStyle* sty
         return;
 
     RefPtr newInlineStyle = style;
-    if (is<HTMLElement>(node) && downcast<HTMLElement>(node).inlineStyle()) {
+    if (auto* htmlElement = dynamicDowncast<HTMLElement>(node); htmlElement && htmlElement->inlineStyle()) {
         newInlineStyle = style->copy();
-        newInlineStyle->mergeInlineStyleOfElement(downcast<HTMLElement>(node), EditingStyle::OverrideValues);
+        newInlineStyle->mergeInlineStyleOfElement(*htmlElement, EditingStyle::OverrideValues);
     }
 
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
     // FIXME: applyInlineStyleToRange should be used here instead.
-    if ((node.renderer()->isRenderBlockFlow() || node.hasChildNodes()) && is<HTMLElement>(node)) {
-        setNodeAttribute(downcast<HTMLElement>(node), styleAttr, newInlineStyle->style()->asTextAtom());
-        return;
+    if (node.renderer()->isRenderBlockFlow() || node.hasChildNodes()) {
+        if (auto* htmlElement = dynamicDowncast<HTMLElement>(node)) {
+            setNodeAttribute(*htmlElement, styleAttr, newInlineStyle->style()->asTextAtom());
+            return;
+        }
     }
 
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        if (is<RenderText>(*node.renderer()) && downcast<RenderText>(*node.renderer()).containsOnlyCollapsibleWhitespace())
+        auto* textRenderer = dynamicDowncast<RenderText>(*node.renderer());
+        if (textRenderer && textRenderer->containsOnlyCollapsibleWhitespace())
             return;
         if (node.renderer()->isBR() && !node.renderer()->style().preserveNewline())
             return;
@@ -1054,14 +1057,14 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle& style, Node*
         collectChildNodes(*current, currentChildren);
 
         RefPtr<StyledElement> styledElement;
-        if (is<StyledElement>(*current) && isStyledInlineElementToRemove(downcast<Element>(current.get()))) {
-            styledElement = downcast<StyledElement>(current.get());
+        if (RefPtr currentElement = dynamicDowncast<StyledElement>(*current); currentElement && isStyledInlineElementToRemove(currentElement.get())) {
+            styledElement = WTFMove(currentElement);
             elementsToPushDown.append(*styledElement);
         }
 
         auto styleToPushDown = EditingStyle::create();
-        if (is<HTMLElement>(*current))
-            removeInlineStyleFromElement(style, downcast<HTMLElement>(*current), InlineStyleRemovalMode::IfNeeded, styleToPushDown.ptr());
+        if (auto* htmlElement = dynamicDowncast<HTMLElement>(*current))
+            removeInlineStyleFromElement(style, *htmlElement, InlineStyleRemovalMode::IfNeeded, styleToPushDown.ptr());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
@@ -1103,7 +1106,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     // Move it to the next deep quivalent position to avoid removing the style from this node.
     // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
     RefPtr pushDownStartContainer { pushDownStart.containerNode() };
-    if (is<Text>(pushDownStartContainer) && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == downcast<Text>(*pushDownStartContainer).length())
+    if (auto* text = dynamicDowncast<Text>(pushDownStartContainer.get()); text && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == text->length())
         pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     // If pushDownEnd is at the start of a text node, then this node is not fully selected.
     // Move it to the previous deep equivalent position to avoid removing the style from this node.
@@ -1132,26 +1135,25 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
         } else
             next = NodeTraversal::next(*node);
 
-        if (is<HTMLElement>(*node) && nodeFullySelected(downcast<HTMLElement>(*node), start, end)) {
-            Ref<HTMLElement> element = downcast<HTMLElement>(*node);
-            RefPtr<Node> prev = NodeTraversal::previousPostOrder(element);
-            RefPtr<Node> next = NodeTraversal::next(element);
+        if (RefPtr element = dynamicDowncast<HTMLElement>(*node); element && nodeFullySelected(*element, start, end)) {
+            RefPtr<Node> prev = NodeTraversal::previousPostOrder(*element);
+            RefPtr<Node> next = NodeTraversal::next(*element);
             RefPtr<EditingStyle> styleToPushDown;
             RefPtr<Node> childNode;
-            if (isStyledInlineElementToRemove(element.ptr())) {
+            if (isStyledInlineElementToRemove(element.get())) {
                 styleToPushDown = EditingStyle::create();
                 childNode = element->firstChild();
             }
 
-            removeInlineStyleFromElement(style, element, InlineStyleRemovalMode::IfNeeded, styleToPushDown.get());
+            removeInlineStyleFromElement(style, *element, InlineStyleRemovalMode::IfNeeded, styleToPushDown.get());
             if (!element->isConnected()) {
-                if (s.deprecatedNode() == element.ptr()) {
+                if (s.deprecatedNode() == element.get()) {
                     // Since elem must have been fully selected, and it is at the start
                     // of the selection, it is clear we can set the new s offset to 0.
                     ASSERT(s.anchorType() == Position::PositionIsBeforeAnchor || s.anchorType() == Position::PositionIsBeforeChildren || s.offsetInContainerNode() <= 0);
                     s = firstPositionInOrBeforeNode(next.get());
                 }
-                if (e.deprecatedNode() == element.ptr()) {
+                if (e.deprecatedNode() == element.get()) {
                     // Since elem must have been fully selected, and it is at the end
                     // of the selection, it is clear we can set the new e offset to
                     // the max range offset of prev.
@@ -1245,10 +1247,8 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
 
 bool ApplyStyleCommand::shouldSplitTextElement(Element* element, EditingStyle& style)
 {
-    if (!is<HTMLElement>(element))
-        return false;
-
-    return shouldRemoveInlineStyleFromElement(style, downcast<HTMLElement>(*element));
+    auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+    return htmlElement && shouldRemoveInlineStyleFromElement(style, *htmlElement);
 }
 
 bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
@@ -1355,11 +1355,11 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     if (nextSibling && nextSibling->hasEditableStyle() && areIdenticalElements(element, *nextSibling))
         mergeIdenticalElements(element, downcast<Element>(*nextSibling));
 
-    if (is<Element>(previousSibling) && previousSibling->hasEditableStyle()) {
+    if (auto* previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
         RefPtr mergedElement { previousSibling->nextSibling() };
         ASSERT(mergedElement);
         if (mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))
-            mergeIdenticalElements(downcast<Element>(*previousSibling), downcast<Element>(*mergedElement));
+            mergeIdenticalElements(*previousSiblingElement, downcast<Element>(*mergedElement));
     }
 
     // FIXME: We should probably call updateStartEnd if the start or end was in the node
@@ -1423,12 +1423,11 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
     RefPtr<HTMLFontElement> fontContainer;
     RefPtr<HTMLElement> styleContainer;
     while (startNode == endNode) {
-        if (is<HTMLElement>(*startNode)) {
-            auto& container = downcast<HTMLElement>(*startNode);
-            if (is<HTMLFontElement>(container))
-                fontContainer = &downcast<HTMLFontElement>(container);
-            if (is<HTMLSpanElement>(container) || (!is<HTMLSpanElement>(styleContainer) && container.hasChildNodes()))
-                styleContainer = &container;
+        if (auto* container = dynamicDowncast<HTMLElement>(*startNode)) {
+            if (auto* fontElement = dynamicDowncast<HTMLFontElement>(*container))
+                fontContainer = fontElement;
+            if (is<HTMLSpanElement>(*container) || (!is<HTMLSpanElement>(styleContainer) && container->hasChildNodes()))
+                styleContainer = container;
         }
         auto* startNodeFirstChild = startNode->firstChild();
         if (!startNodeFirstChild)

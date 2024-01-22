@@ -590,8 +590,9 @@ RefPtr<HTMLElement> enclosingList(Node* node)
     RefPtr root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     for (RefPtr ancestor = node->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (is<HTMLUListElement>(*ancestor) || is<HTMLOListElement>(*ancestor))
-            return downcast<HTMLElement>(ancestor.releaseNonNull());
+        auto* htmlElement = dynamicDowncast<HTMLElement>(*ancestor);
+        if (htmlElement && (is<HTMLUListElement>(*htmlElement) || is<HTMLOListElement>(*htmlElement)))
+            return htmlElement;
         if (ancestor == root)
             return nullptr;
     }
@@ -864,9 +865,10 @@ void updatePositionForNodeRemoval(Position& position, Node& node)
 
 bool isMailBlockquote(const Node& node)
 {
-    if (!node.hasTagName(blockquoteTag))
+    auto* htmlElement = dynamicDowncast<HTMLElement>(node);
+    if (!htmlElement || !htmlElement->hasTagName(blockquoteTag))
         return false;
-    return downcast<HTMLElement>(node).attributeWithoutSynchronization(typeAttr) == "cite"_s;
+    return htmlElement->attributeWithoutSynchronization(typeAttr) == "cite"_s;
 }
 
 int caretMinOffset(const Node& node)
@@ -1104,24 +1106,31 @@ Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selec
 }
 
 // FIXME: Should this be deprecated like deprecatedEnclosingBlockFlowElement is?
+static Element* elementIfBlockFlow(Node& node)
+{
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
+        return nullptr;
+    auto* renderer = element->renderer();
+    return renderer && renderer->isRenderBlockFlow() ? element : nullptr;
+}
+
 bool isBlockFlowElement(const Node& node)
 {
-    RefPtr element = dynamicDowncast<Element>(node);
-    if (!element)
-        return false;
-    auto* renderer = element->renderer();
-    return renderer && renderer->isRenderBlockFlow();
+    return elementIfBlockFlow(const_cast<Node&>(node));
 }
 
 Element* deprecatedEnclosingBlockFlowElement(Node* node)
 {
     if (!node)
         return nullptr;
-    if (isBlockFlowElement(*node))
-        return downcast<Element>(node);
+    if (auto* element = elementIfBlockFlow(*node))
+        return element;
     while ((node = node->parentNode())) {
-        if (isBlockFlowElement(*node) || is<HTMLBodyElement>(*node))
-            return downcast<Element>(node);
+        if (auto* element = elementIfBlockFlow(*node))
+            return element;
+        if (auto* body = dynamicDowncast<HTMLBodyElement>(*node))
+            return body;
     }
     return nullptr;
 }
@@ -1141,8 +1150,11 @@ RenderBlock* rendererForCaretPainting(const Node* node)
         return nullptr;
 
     // If caretNode is a block and caret is inside it, then caret should be painted by that block.
-    bool paintedByBlock = is<RenderBlockFlow>(*renderer) && caretRendersInsideNode(*node);
-    return paintedByBlock ? downcast<RenderBlock>(renderer) : renderer->containingBlock();
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*renderer)) {
+        if (caretRendersInsideNode(*node))
+            return blockFlow;
+    }
+    return renderer->containingBlock();
 }
 
 LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caretPosition, RenderBlock*& caretPainter)

@@ -297,7 +297,7 @@ bool CSSValue::equals(const CSSValue& other) const
         return visitDerived([&](auto& typedThis) {
             using ValueType = std::remove_reference_t<decltype(typedThis)>;
             static_assert(!std::is_same_v<decltype(&ValueType::equals), decltype(&CSSValue::equals)>);
-            return typedThis.equals(downcast<ValueType>(other));
+            return typedThis.equals(uncheckedDowncast<ValueType>(other));
         });
     }
     if (auto* thisList = dynamicDowncast<CSSValueList>(*this))

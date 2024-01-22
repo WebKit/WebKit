@@ -127,13 +127,12 @@ void BreakBlockquoteCommand::doApply()
     auto startNode = pos.protectedDeprecatedNode();
     ASSERT(startNode);
     // Split at pos if in the middle of a text node.
-    if (is<Text>(*startNode)) {
-        Ref textNode = downcast<Text>(*startNode);
+    if (RefPtr textNode = dynamicDowncast<Text>(*startNode)) {
         if (static_cast<unsigned>(pos.deprecatedEditingOffset()) >= textNode->length()) {
             if (RefPtr nextNode = NodeTraversal::next(*startNode))
                 startNode = WTFMove(nextNode);
         } else if (pos.deprecatedEditingOffset() > 0)
-            splitTextNode(textNode, pos.deprecatedEditingOffset());
+            splitTextNode(*textNode, pos.deprecatedEditingOffset());
     } else if (pos.deprecatedEditingOffset() > 0) {
         if (RefPtr child = startNode->traverseToChildAt(pos.deprecatedEditingOffset()))
             startNode = WTFMove(child);
@@ -170,8 +169,10 @@ void BreakBlockquoteCommand::doApply()
             // find the first one so that we know where to start numbering.
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
-            if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
-                setNodeAttribute(clonedChild, startAttr, AtomString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
+            if (listChildNode) {
+                if (auto* listItemRenderer = dynamicDowncast<RenderListItem>(listChildNode->renderer()))
+                    setNodeAttribute(clonedChild, startAttr, AtomString::number(listItemRenderer->value()));
+            }
         }
             
         appendNode(clonedChild.copyRef(), clonedAncestor.releaseNonNull());

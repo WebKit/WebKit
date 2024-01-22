@@ -2284,7 +2284,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 bool isTouchRelatedEventType(const EventTypeInfo& eventType, const EventTarget& target)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target))
+    if (auto* node = dynamicDowncast<Node>(target); node && node->document().quirks().shouldDispatchSimulatedMouseEvents(&target))
         return eventType.isInCategory(EventCategory::ExtendedTouchRelated);
 #endif
     UNUSED_PARAM(target);
