@@ -708,8 +708,9 @@ public:
     void invalidateEventListenerRegions();
 
     bool hasDisplayContents() const;
-    void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
-    void clearDisplayContentsStyle();
+    bool hasDisplayNone() const;
+    void storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle>);
+    void clearDisplayContentsOrNoneStyle();
 
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);

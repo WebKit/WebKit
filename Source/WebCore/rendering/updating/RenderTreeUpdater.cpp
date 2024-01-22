@@ -422,19 +422,22 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     }
 
     bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;
-    if (hasDisplayContents)
-        element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
+    bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle) && !shouldCreateRenderer(element, renderTreePosition().parent());
+    bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
+    if (hasDisplayContentsOrNone)
+        element.storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
     else
-        element.clearDisplayContentsStyle();
+        element.clearDisplayContentsOrNoneStyle();
 
-    if (!hasDisplayContents) {
+    if (!hasDisplayContentsOrNone) {
         if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
             element.clearLastRememberedLogicalWidth();
         if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
             element.clearLastRememberedLogicalHeight();
     }
+
     auto scopeExit = makeScopeExit([&] {
-        if (!hasDisplayContents) {
+        if (!hasDisplayContentsOrNone) {
             auto* box = element.renderBox();
             if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->isSkippedContentRoot())
                 m_document.observeForContainIntrinsicSize(element);

@@ -2471,28 +2471,34 @@ bool Element::hasDisplayContents() const
 {
     if (!hasRareData())
         return false;
-
-    auto* style = elementRareData()->displayContentsStyle();
-    ASSERT(!style || style->display() == DisplayType::Contents);
-    return !!style;
+    auto* style = elementRareData()->displayContentsOrNoneStyle();
+    return style && style->display() == DisplayType::Contents;
 }
 
-void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
+bool Element::hasDisplayNone() const
 {
-    // This is used by RenderTreeBuilder to store the style for Elements with display:contents.
+    if (!hasRareData())
+        return false;
+    auto* style = elementRareData()->displayContentsOrNoneStyle();
+    return style && style->display() == DisplayType::None;
+}
+
+void Element::storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle> style)
+{
+    // This is used by RenderTreeBuilder to store the style for Elements with display:{contents|none}.
     // Normally style is held in renderers but display:contents doesn't generate one.
     // This is kept distinct from ElementRareData::computedStyle() which can update outside style resolution.
     // This way renderOrDisplayContentsStyle() always returns consistent styles matching the rendering state.
-    ASSERT(style && style->display() == DisplayType::Contents);
+    ASSERT(style && (style->display() == DisplayType::Contents || style->display() == DisplayType::None));
     ASSERT(!renderer() || isPseudoElement());
-    ensureElementRareData().setDisplayContentsStyle(WTFMove(style));
+    ensureElementRareData().setDisplayContentsOrNoneStyle(WTFMove(style));
 }
 
-void Element::clearDisplayContentsStyle()
+void Element::clearDisplayContentsOrNoneStyle()
 {
     if (!hasRareData())
         return;
-    elementRareData()->setDisplayContentsStyle(nullptr);
+    elementRareData()->setDisplayContentsOrNoneStyle(nullptr);
 }
 
 // Returns true is the given attribute is an event handler.
@@ -3982,6 +3988,9 @@ const RenderStyle* Element::existingComputedStyle() const
             return style;
     }
 
+    if (hasDisplayNone())
+        return elementRareData()->displayContentsOrNoneStyle();
+
     return renderOrDisplayContentsStyle();
 }
 
@@ -3998,12 +4007,8 @@ const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) cons
         return nullptr;
     }
 
-    if (hasRareData()) {
-        if (auto* style = elementRareData()->displayContentsStyle()) {
-            ASSERT(style->display() == DisplayType::Contents);
-            return style;
-        }
-    }
+    if (hasDisplayContents())
+        return elementRareData()->displayContentsOrNoneStyle();
 
     return renderStyle();
 }
@@ -4967,7 +4972,7 @@ void Element::resetComputedStyle()
     };
     reset(*this);
     for (Ref child : descendantsOfType<Element>(*this)) {
-        if (!child->hasRareData() || !child->elementRareData()->computedStyle() || child->hasDisplayContents())
+        if (!child->hasRareData() || !child->elementRareData()->computedStyle() || child->hasDisplayContents() || child->hasDisplayNone())
             continue;
         reset(child);
     }
