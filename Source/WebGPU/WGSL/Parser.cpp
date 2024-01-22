@@ -802,6 +802,9 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
             break;
     }
 
+    if (members.isEmpty())
+        FAIL(makeString("structures must have at least one member"));
+
     CONSUME_TYPE(BraceRight);
 
     RETURN_ARENA_NODE(Structure, WTFMove(name), WTFMove(members), WTFMove(attributes), AST::StructureRole::UserDefined);
