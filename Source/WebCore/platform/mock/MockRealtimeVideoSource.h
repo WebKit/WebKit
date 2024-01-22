@@ -112,6 +112,9 @@ private:
     bool mockWindow() const { return mockDisplayType(CaptureDevice::DeviceType::Window); }
     bool mockDisplayType(CaptureDevice::DeviceType) const;
 
+    void startApplyingConstraints() final;
+    void endApplyingConstraints() final;
+
     class DrawingState {
     public:
         explicit DrawingState(float baseFontSize)
@@ -167,6 +170,7 @@ private:
     Lock m_imageBufferLock;
     std::optional<PhotoCapabilities> m_photoCapabilities;
     std::optional<PhotoSettings> m_photoSettings;
+    bool m_beingConfigured { false };
 };
 
 } // namespace WebCore
