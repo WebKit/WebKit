@@ -3816,7 +3816,9 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -e         Evaluate argument as script code\n");
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
+#if ENABLE(FUZZILLI)
     fprintf(stderr, "  --reprl    Enables REPRL mode (used by the Fuzzilli fuzzer)\n");
+#endif
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -m         Execute as a module\n");
 #if OS(UNIX)
