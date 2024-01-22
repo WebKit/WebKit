@@ -40,7 +40,7 @@ public:
     RegularExpression(const RegularExpression&);
     RegularExpression& operator=(const RegularExpression&);
 
-    int match(StringView, int startFrom = 0, int* matchLength = nullptr) const;
+    int match(StringView, unsigned startFrom = 0, int* matchLength = nullptr) const;
     int searchRev(StringView) const;
 
     int matchedLength() const;
