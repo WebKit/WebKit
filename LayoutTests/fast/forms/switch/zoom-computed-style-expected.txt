@@ -1,0 +1,5 @@
+PASS getComputedStyle(control).zoom is "1"
+PASS getComputedStyle(controlZoom).zoom is "5"
+PASS getComputedStyle(control).width is getComputedStyle(controlZoom).width
+PASS getComputedStyle(control).height is getComputedStyle(controlZoom).height
+

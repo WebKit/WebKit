@@ -1,0 +1,11 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<input type=checkbox switch>
+<input type=checkbox switch style=zoom:5>
+<script>
+const [control, controlZoom] = document.querySelectorAll("input");
+
+shouldBeEqualToString("getComputedStyle(control).zoom", "1");
+shouldBeEqualToString("getComputedStyle(controlZoom).zoom", "5");
+shouldBe("getComputedStyle(control).width", "getComputedStyle(controlZoom).width");
+shouldBe("getComputedStyle(control).height", "getComputedStyle(controlZoom).height");
+</script>
