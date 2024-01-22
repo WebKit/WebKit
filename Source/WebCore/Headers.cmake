@@ -2296,6 +2296,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
+    rendering/GlyphDisplayListCacheRemoval.h
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h

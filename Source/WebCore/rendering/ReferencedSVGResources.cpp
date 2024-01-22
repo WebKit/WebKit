@@ -30,6 +30,7 @@
 #include "FilterOperations.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "PathOperation.h"
+#include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"

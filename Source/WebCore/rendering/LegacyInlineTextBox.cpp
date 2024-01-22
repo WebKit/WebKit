@@ -32,6 +32,7 @@
 #include "ElementRuleCollector.h"
 #include "EventRegion.h"
 #include "FloatRoundedRect.h"
+#include "GlyphDisplayListCache.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
@@ -61,7 +62,6 @@
 #include "TextBoxSelectableRange.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
-#include "TextPainter.h"
 #include <stdio.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -86,7 +86,8 @@ LegacyInlineTextBox::~LegacyInlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
-    TextPainter::removeGlyphDisplayList(*this);
+    if (isInGlyphDisplayListCache())
+        removeBoxFromGlyphDisplayListCache(*this);
 }
 
 bool LegacyInlineTextBox::hasTextContent() const
