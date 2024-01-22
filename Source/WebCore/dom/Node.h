@@ -611,7 +611,6 @@ protected:
         NeedsUpdateQueryContainerDependentStyle = 1 << 8,
 #if ENABLE(FULLSCREEN_API)
         IsFullscreen = 1 << 9,
-        IsIFrameFullscreen = 1 << 10,
 #endif
         HasInvalidRenderer = 1 << 10,
     };
