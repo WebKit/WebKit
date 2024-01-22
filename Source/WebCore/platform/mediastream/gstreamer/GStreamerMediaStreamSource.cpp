@@ -120,11 +120,13 @@ private:
 
 static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc*);
 
+#if USE(GSTREAMER_WEBRTC)
 struct InternalSourcePadProbeData {
     ThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer> incomingSource;
     int clientId;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(InternalSourcePadProbeData)
+#endif
 
 class InternalSource final : public MediaStreamTrackPrivate::Observer,
     public RealtimeMediaSource::Observer,
