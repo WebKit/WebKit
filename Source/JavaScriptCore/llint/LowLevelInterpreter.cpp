@@ -331,6 +331,14 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     CLoopRegister metadataTable;
     CLoopDoubleRegister d0, d1;
 
+    UNUSED_VARIABLE(t0);
+    UNUSED_VARIABLE(t1);
+    UNUSED_VARIABLE(t2);
+    UNUSED_VARIABLE(t3);
+    UNUSED_VARIABLE(t5);
+    UNUSED_VARIABLE(t6);
+    UNUSED_VARIABLE(t7);
+
     struct StackPointerScope {
         StackPointerScope(CLoopStack& stack)
             : m_stack(stack)
