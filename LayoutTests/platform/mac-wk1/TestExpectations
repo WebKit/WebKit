@@ -1195,6 +1195,7 @@ http/wpt/shared-workers [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
 
 # No service worker implementation for WK1
+http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cache-storage [ Skip ]
 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Skip ]
 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Skip ]
@@ -1454,6 +1455,7 @@ imported/w3c/web-platform-tests/fetch/metadata/unload.https.sub.html [ Skip ]
 ########################################
 
 # These tests are WebKit2-only
+http/tests/contentfiltering/load-substitute-data-from-appcache.html
 fast/dom/Window/child-window-focus.html
 
 # Testing the system language declaratively only makes sense in WK2, because it's implemented in WebKitTestRunner by launching a new WebContent process.

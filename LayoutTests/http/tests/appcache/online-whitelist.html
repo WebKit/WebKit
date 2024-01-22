@@ -1,0 +1,77 @@
+<html manifest="resources/online-allowlist.manifest">
+<body>
+<p>Test online allowlist functionality. Should say PASS:</p>
+
+<div id="result"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+var hadError = false;
+
+function canLoad(url)
+{
+    try {
+        var req = new XMLHttpRequest();
+        req.open("GET", url, false);
+        req.send("");
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function load(url)
+{
+    try {
+        var req = new XMLHttpRequest();
+        req.open("GET", url, false);
+        req.send("");
+        return req.responseText;
+    } catch (ex) {
+        alert("Unexpected error loading " + url + ": " + ex);
+        hadError = true;
+    }
+}
+
+function test()
+{
+    if (load("resources/online-allowlist.py?cached") != load("resources/online-allowlist.py?cached")) {
+        log("FAIL: Explicit entry didn't override online allowlist.");
+        hadError = true;
+    }
+
+    if (load("resources/online-allowlist.py?uncached") == load("resources/online-allowlist.py?uncached")) {
+        log("FAIL: Online allowlist resource wasn't reloaded from network.");
+        hadError = true;
+    }
+
+    if (load("resources/online-allowlist.py?uncachedxxx") == load("resources/online-allowlist.py?uncachedxxx")) {
+        log("FAIL: Online allowlist resource wasn't reloaded from network (prefix matching).");
+        hadError = true;
+    }
+
+    if (canLoad("resources/online-allowlist.py?foobar")) {
+        log("FAIL: Uncached resource was successfully loaded.");
+        hadError = true;
+    }
+
+    log(hadError ? "FAIL" : "PASS");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+applicationCache.addEventListener('cached', test, false);
+applicationCache.addEventListener('noupdate', test, false);
+
+</script>
+</body>
+</html>

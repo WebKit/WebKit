@@ -433,6 +433,15 @@ html/track/VideoTrackList.idl:    attribute EventListener onchange;
 html/track/VideoTrackList.idl:    attribute EventListener onaddtrack;
 html/track/VideoTrackList.idl:    attribute EventListener onremovetrack;
 
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onchecking;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onerror;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onnoupdate;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener ondownloading;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onprogress;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onupdateready;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener oncached;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onobsolete;
+
 page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;

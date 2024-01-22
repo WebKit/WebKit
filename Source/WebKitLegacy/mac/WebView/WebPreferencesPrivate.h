@@ -117,6 +117,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, getter=domTimersThrottlingEnabled) BOOL DOMTimersThrottlingEnabled;
 @property (nonatomic) BOOL webArchiveDebugModeEnabled;
 @property (nonatomic) BOOL localFileContentSniffingEnabled;
+@property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
 @property (nonatomic) BOOL databasesEnabled;
 @property (nonatomic) BOOL localStorageEnabled;
 @property (nonatomic, getter=isWebSecurityEnabled) BOOL webSecurityEnabled;
@@ -355,7 +356,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL lineHeightUnitsEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @property (nonatomic) BOOL serverTimingEnabled;
-@property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

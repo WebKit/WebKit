@@ -116,6 +116,7 @@ const TestFeatures& TestOptions::defaults()
             { "ModernMediaControlsEnabled", true },
             { "NeedsSiteSpecificQuirks", false },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "OfflineWebApplicationCacheEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PeerConnectionVideoScalingAdaptationDisabled", true },
             { "PDFJSViewerEnabled", false },

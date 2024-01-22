@@ -66,6 +66,8 @@ bool defaultAppleMailPaginationQuirkEnabled();
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif
 
+bool defaultOfflineWebApplicationCacheEnabled();
+
 #if ENABLE(MEDIA_STREAM)
 bool defaultCaptureAudioInGPUProcessEnabled();
 bool defaultCaptureAudioInUIProcessEnabled();

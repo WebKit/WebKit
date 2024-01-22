@@ -90,6 +90,7 @@ const TestFeatures& TestOptions::defaults()
             { "MediaPreloadingEnabled", true },
             { "MockScrollbarsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
+            { "OfflineWebApplicationCacheEnabled", true },
             { "PeerConnectionVideoScalingAdaptationDisabled", true },
             { "PushAPIEnabled", true },
             { "ReferrerPolicyAttributeEnabled", true },

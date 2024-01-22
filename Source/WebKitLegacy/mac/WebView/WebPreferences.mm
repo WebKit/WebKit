@@ -1146,6 +1146,16 @@ public:
     [self _setBoolValue:flag forKey:WebKitLocalFileContentSniffingEnabledPreferenceKey];
 }
 
+- (BOOL)offlineWebApplicationCacheEnabled
+{
+    return [self _boolValueForKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
+}
+
+- (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
+}
+
 - (BOOL)zoomsTextOnly
 {
     return [self _boolValueForKey:WebKitZoomsTextOnlyPreferenceKey];
@@ -3325,15 +3335,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setServerTimingEnabled:(BOOL)flag
-{
-}
-
-- (BOOL)offlineWebApplicationCacheEnabled
-{
-    return NO;
-}
-
-- (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
 {
 }
 
