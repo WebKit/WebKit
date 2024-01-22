@@ -37,6 +37,7 @@
 #import "JSGlobalObject.h"
 #import "JSInternalPromise.h"
 #import "JSModuleLoader.h"
+#import "JSRetainPtr.h"
 #import "JSScriptInternal.h"
 #import "JSValueInternal.h"
 #import "JSVirtualMachineInternal.h"
@@ -261,11 +262,11 @@
 
 - (NSString *)name
 {
-    JSStringRef name = JSGlobalContextCopyName(m_context);
+    auto name = adopt(JSGlobalContextCopyName(m_context));
     if (!name)
         return nil;
 
-    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name)).bridgingAutorelease();
+    return adoptCF(JSStringCopyCFString(kCFAllocatorDefault, name.get())).bridgingAutorelease();
 }
 
 - (void)setName:(NSString *)name
