@@ -51,6 +51,7 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
+    AtomString classNameToMatch() const;
 
 private:
     struct SelectorData {
@@ -107,6 +108,7 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_selectors.shouldStoreInDocument(); }
+    AtomString classNameToMatch() const { return m_selectors.classNameToMatch(); }
 
 private:
     CSSSelectorList m_selectorList;

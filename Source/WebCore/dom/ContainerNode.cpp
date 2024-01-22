@@ -1007,9 +1007,10 @@ ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selecto
     if (query.hasException())
         return query.releaseException();
     auto isCacheable = query.returnValue().shouldStoreInDocument();
+    auto classNameToMatch = query.returnValue().classNameToMatch();
     auto nodeList = query.releaseReturnValue().queryAll(*this);
     if (isCacheable)
-        document->addResultForSelectorAll(*this, selectors, nodeList);
+        document->addResultForSelectorAll(*this, selectors, nodeList, classNameToMatch);
     return nodeList;
 }
 

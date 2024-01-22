@@ -1051,8 +1051,6 @@ void Node::invalidateNodeListAndCollectionCachesInAncestorsForAttribute(const Qu
 {
     ASSERT(is<Element>(*this));
 
-    document().invalidateQuerySelectorAllResults(*this);
-
     if (!document().shouldInvalidateNodeListAndCollectionCachesForAttribute(attrName))
         return;
 
