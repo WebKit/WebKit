@@ -70,7 +70,7 @@ static const AtomString& imageControlsButtonIdentifier()
 
 bool hasImageControls(const HTMLElement& element)
 {
-    auto shadowRoot = element.shadowRoot();
+    RefPtr shadowRoot = element.shadowRoot();
     if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
         return false;
 
@@ -86,22 +86,14 @@ static RefPtr<HTMLElement> imageControlsHost(const Node& node)
     return hasImageControls(*host) ? host : nullptr;
 }
 
-bool isImageControlsButtonElement(const Node& node)
+bool isImageControlsButtonElement(const Element& element)
 {
-    auto host = imageControlsHost(node);
-    if (!host)
-        return false;
-
-    auto* element = dynamicDowncast<Element>(node);
-    if (!element)
-        return false;
-
-    return element->getIdAttribute() == imageControlsButtonIdentifier();
+    return imageControlsHost(element) && element.getIdAttribute() == imageControlsButtonIdentifier();
 }
 
 bool isInsideImageControls(const Node& node)
 {
-    auto host = imageControlsHost(node);
+    RefPtr host = imageControlsHost(node);
     if (!host)
         return false;
 
@@ -112,17 +104,17 @@ void createImageControls(HTMLElement& element)
 {
     Ref document = element.document();
     Ref shadowRoot = element.ensureUserAgentShadowRoot();
-    auto controlLayer = HTMLDivElement::create(document.get());
+    Ref controlLayer = HTMLDivElement::create(document.get());
     controlLayer->setIdAttribute(imageControlsElementIdentifier());
     controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
     shadowRoot->appendChild(controlLayer);
     
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet)));
-    auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTFMove(style));
     
-    auto button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);
+    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
@@ -159,13 +151,12 @@ bool handleEvent(HTMLElement& element, Event& event)
     if (!mouseEvent)
         return false;
     
-    RefPtr node = dynamicDowncast<Node>(mouseEvent->target());
-    if (!node)
+    RefPtr target = dynamicDowncast<Element>(mouseEvent->target());
+    if (!target)
         return false;
 
-    if (ImageControlsMac::isImageControlsButtonElement(*node)) {
-        Ref element = downcast<Element>(node.releaseNonNull());
-        auto* renderer = element->renderer();
+    if (ImageControlsMac::isImageControlsButtonElement(*target)) {
+        CheckedPtr renderer = target->renderer();
         if (!renderer)
             return false;
 
@@ -175,12 +166,12 @@ bool handleEvent(HTMLElement& element, Event& event)
 
         auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
 
-        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(element->shadowHost())) {
+        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(target->shadowHost())) {
             RefPtr image = imageFromImageElementNode(*shadowHost);
             if (!image)
                 return false;
             page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);
-        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(element->shadowHost()))
+        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(target->shadowHost()))
             page->chrome().client().handlePDFServiceClick(point, *shadowHost);
 
         event.setDefaultHandled();
@@ -209,7 +200,7 @@ void updateImageControls(HTMLElement& element)
     if (!element.document().settings().imageControlsEnabled())
         return;
 
-    element.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
         RefPtr protectedElement = weakElement.get();
         if (!protectedElement)
             return;
@@ -232,7 +223,7 @@ void tryCreateImageControls(HTMLElement& element)
 
 void destroyImageControls(HTMLElement& element)
 {
-    auto shadowRoot = element.userAgentShadowRoot();
+    RefPtr shadowRoot = element.userAgentShadowRoot();
     if (!shadowRoot)
         return;
 
@@ -248,9 +239,9 @@ void destroyImageControls(HTMLElement& element)
     if (!renderObject)
         return;
 
-    if (auto* renderImage = dynamicDowncast<RenderImage>(*renderObject))
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*renderObject))
         renderImage->setHasShadowControls(false);
-    else if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
+    else if (CheckedPtr renderAttachment = dynamicDowncast<RenderAttachment>(*renderObject))
         renderAttachment->setHasShadowControls(false);
 }
 
