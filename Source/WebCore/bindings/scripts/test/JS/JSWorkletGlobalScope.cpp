@@ -114,6 +114,11 @@ JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<Wor
 {
 }
 
+Ref<WorkletGlobalScope> JSWorkletGlobalScope::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, WorkletGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 #if ASSERT_ENABLED

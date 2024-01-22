@@ -234,7 +234,7 @@ JSC_DEFINE_HOST_FUNCTION(addAbortAlgorithmToSignal, (JSGlobalObject* globalObjec
     auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
     Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
 
-    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(abortSignal->wrapped(), WTFMove(abortAlgorithm));
+    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(abortSignal->protectedWrapped().get(), WTFMove(abortAlgorithm));
     return JSValue::encode(JSC::jsNumber(algorithmIdentifier));
 }
 
@@ -247,7 +247,7 @@ JSC_DEFINE_HOST_FUNCTION(removeAbortAlgorithmFromSignal, (JSGlobalObject*, CallF
     if (UNLIKELY(!abortSignal))
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
-    AbortSignal::removeAbortAlgorithmFromSignal(abortSignal->wrapped(), callFrame->uncheckedArgument(1).asUInt32());
+    AbortSignal::removeAbortAlgorithmFromSignal(abortSignal->protectedWrapped().get(), callFrame->uncheckedArgument(1).asUInt32());
     return JSValue::encode(JSC::jsUndefined());
 }
 
@@ -270,7 +270,7 @@ JSC_DEFINE_HOST_FUNCTION(signalAbort, (JSGlobalObject*, CallFrame* callFrame))
 
     auto* abortSignal = jsDynamicCast<JSAbortSignal*>(callFrame->uncheckedArgument(0));
     if (UNLIKELY(abortSignal))
-        abortSignal->wrapped().signalAbort(callFrame->uncheckedArgument(1));
+        abortSignal->protectedWrapped()->signalAbort(callFrame->uncheckedArgument(1));
     return JSValue::encode(JSC::jsUndefined());
 }
 

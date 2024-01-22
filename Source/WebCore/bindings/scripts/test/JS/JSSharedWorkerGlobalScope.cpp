@@ -120,6 +120,11 @@ JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structur
 {
 }
 
+Ref<SharedWorkerGlobalScope> JSSharedWorkerGlobalScope::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, SharedWorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 #if ASSERT_ENABLED

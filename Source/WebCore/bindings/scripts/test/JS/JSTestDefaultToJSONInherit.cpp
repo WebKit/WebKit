@@ -151,6 +151,11 @@ JSTestDefaultToJSONInherit::JSTestDefaultToJSONInherit(Structure* structure, JSD
 {
 }
 
+Ref<TestDefaultToJSONInherit> JSTestDefaultToJSONInherit::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONInherit>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestDefaultToJSONInherit::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

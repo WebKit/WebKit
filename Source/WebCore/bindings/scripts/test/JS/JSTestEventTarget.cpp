@@ -135,6 +135,11 @@ JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject& gl
 {
 }
 
+Ref<TestEventTarget> JSTestEventTarget::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestEventTarget>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestEventTarget::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

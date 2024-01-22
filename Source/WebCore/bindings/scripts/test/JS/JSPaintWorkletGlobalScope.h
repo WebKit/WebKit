@@ -59,6 +59,9 @@ public:
     {
         return static_cast<PaintWorkletGlobalScope&>(Base::wrapped());
     }
+
+    Ref<PaintWorkletGlobalScope> protectedWrapped() const;
+
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:

@@ -62,6 +62,9 @@ public:
     {
         return static_cast<WorkerGlobalScope&>(Base::wrapped());
     }
+
+    Ref<WorkerGlobalScope> protectedWrapped() const;
+
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:

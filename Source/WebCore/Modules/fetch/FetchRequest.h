@@ -101,6 +101,8 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
+    Ref<AbortSignal> protectedSignal() const { return m_signal; }
+
     ResourceRequest m_request;
     URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;

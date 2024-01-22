@@ -152,6 +152,11 @@ JSExposedStar::JSExposedStar(Structure* structure, JSDOMGlobalObject& globalObje
 {
 }
 
+Ref<ExposedStar> JSExposedStar::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, ExposedStar>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSExposedStar::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -3332,7 +3332,8 @@ sub GenerateHeader
             push(@headerContent, "    $interfaceName& wrapped() const\n");
             push(@headerContent, "    {\n");
             push(@headerContent, "        return static_cast<$interfaceName&>(Base::wrapped());\n");
-            push(@headerContent, "    }\n");
+            push(@headerContent, "    }\n\n");
+            push(@headerContent, "    Ref<$interfaceName> protectedWrapped() const;\n\n");
         }
     }
 
@@ -4878,6 +4879,13 @@ sub GenerateImplementation
         push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl)\n");
         push(@implContent, "    : $parentClassName(structure, globalObject, WTFMove(impl))\n");
         push(@implContent, "{\n");
+        push(@implContent, "}\n\n");
+    }
+
+    if (NeedsImplementationClass($interface) && $hasParent) {
+        push(@implContent, "Ref<$interfaceName> ${className}::protectedWrapped() const\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return wrapped();\n");
         push(@implContent, "}\n\n");
     }
 

@@ -580,6 +580,11 @@ JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject
 {
 }
 
+Ref<TestDOMJIT> JSTestDOMJIT::protectedWrapped() const
+{
+    return wrapped();
+}
+
 JSObject* JSTestDOMJIT::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     auto* structure = JSTestDOMJITPrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject));

@@ -236,6 +236,11 @@ JSTestPromiseRejectionEvent::JSTestPromiseRejectionEvent(Structure* structure, J
 {
 }
 
+Ref<TestPromiseRejectionEvent> JSTestPromiseRejectionEvent::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestPromiseRejectionEvent>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestPromiseRejectionEvent::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

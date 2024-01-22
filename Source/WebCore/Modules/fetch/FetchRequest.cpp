@@ -194,7 +194,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 
     if (init.signal) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->signalFollow(*signal);
+            protectedSignal()->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
@@ -231,14 +231,14 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 
     if (init.signal && !init.signal.isUndefined()) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->signalFollow(*signal);
+            protectedSignal()->signalFollow(*signal);
         else if (!init.signal.isNull()) {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
         }
 
     } else
-        m_signal->signalFollow(input.m_signal.get());
+        protectedSignal()->signalFollow(input.m_signal.get());
 
     if (init.hasMembers()) {
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
@@ -351,7 +351,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
     clone->suspendIfNeeded();
     clone->cloneBody(*this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
-    clone->m_signal->signalFollow(m_signal);
+    clone->protectedSignal()->signalFollow(m_signal);
     return clone;
 }
 

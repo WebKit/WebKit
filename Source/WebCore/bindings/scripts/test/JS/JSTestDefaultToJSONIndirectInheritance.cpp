@@ -121,6 +121,11 @@ JSTestDefaultToJSONIndirectInheritance::JSTestDefaultToJSONIndirectInheritance(S
 {
 }
 
+Ref<TestDefaultToJSONIndirectInheritance> JSTestDefaultToJSONIndirectInheritance::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONIndirectInheritance>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestDefaultToJSONIndirectInheritance::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

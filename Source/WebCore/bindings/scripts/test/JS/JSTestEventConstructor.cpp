@@ -240,6 +240,11 @@ JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobal
 {
 }
 
+Ref<TestEventConstructor> JSTestEventConstructor::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestEventConstructor>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
