@@ -87,6 +87,7 @@ public:
 
     void start(GRefPtr<GstCaps>&&, std::optional<const GstSegment*>&& = { });
     bool isStarted() const { return m_playing.loadRelaxed(); }
+    void reset();
 
     bool pushSample(GRefPtr<GstSample>&&);
     bool pushBuffer(GRefPtr<GstBuffer>&&);

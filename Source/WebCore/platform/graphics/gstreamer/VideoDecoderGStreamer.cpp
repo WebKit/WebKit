@@ -281,6 +281,8 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
 
     // FIXME: Maybe configure segment here, could be useful for reverse playback.
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(buffer.get(), m_inputCaps.get(), nullptr, nullptr)));
+    if (result)
+        m_harness->processOutputBuffers();
     m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
         if (!weakThis)
             return;
@@ -288,9 +290,7 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
         if (weakThis->m_isClosed)
             return;
 
-        if (result)
-            m_harness->processOutputBuffers();
-        else
+        if (!result)
             m_outputCallback(makeUnexpected("Decode error"_s));
 
         callback({ });
@@ -305,7 +305,7 @@ void GStreamerInternalVideoDecoder::flush(Function<void()>&& callback)
         return;
     }
 
-    m_harness->flushBuffers();
+    m_harness->reset();
     m_postTaskCallback(WTFMove(callback));
 }
 

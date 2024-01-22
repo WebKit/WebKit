@@ -1197,11 +1197,7 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
-
-http/tests/webcodecs/h264-reordering.html [ Failure ]
-http/tests/webcodecs/hevc-reordering.html [ Failure ]
-http/wpt/webcodecs/hevc-decoder-annexb.https.any.html [ Failure ]
-http/wpt/webcodecs/hevc-decoder-annexb.https.any.worker.html [ Failure ]
+http/wpt/webcodecs/encoder-task-failing.html [ Pass ]
 
 # This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
