@@ -327,6 +327,8 @@ static NSString *overrideBundleIdentifier(id, SEL)
                 dynamic_objc_cast<NSString>(uiContext.contextBefore),
                 dynamic_objc_cast<NSString>(uiContext.selectedText),
                 dynamic_objc_cast<NSString>(uiContext.contextAfter),
+                dynamic_objc_cast<NSString>(uiContext.markedText),
+                uiContext.selectedRangeInMarkedText,
             };
             done = true;
         }];
@@ -334,7 +336,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
     {
         [self.textInputContentView requestAutocorrectionContextWithCompletionHandler:[&](UIWKAutocorrectionContext *context) {
-            result = { context.contextBeforeSelection, context.selectedText, context.contextAfterSelection };
+            result = { context.contextBeforeSelection, context.selectedText, context.contextAfterSelection, context.markedText, context.rangeInMarkedText };
             done = true;
         }];
     }

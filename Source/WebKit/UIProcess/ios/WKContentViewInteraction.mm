@@ -12888,9 +12888,10 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             context.markedText.string = webContext.markedText;
             context.selectedText.string = webContext.selectedText;
             context.contextAfter.string = webContext.contextAfter;
+            NSRange selectedRangeInMarkedText = webContext.selectedRangeInMarkedText;
             context.selectedRangeInMarkedText = {
-                .location = webContext.markedTextRange.location,
-                .length = webContext.markedTextRange.length,
+                .location = selectedRangeInMarkedText.location,
+                .length = selectedRangeInMarkedText.length
             };
             break;
         }
@@ -14751,7 +14752,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [correction setSelectedText:nsStringNilIfEmpty(webCorrection.selectedText)];
     [correction setMarkedText:nsStringNilIfEmpty(webCorrection.markedText)];
     [correction setContextAfterSelection:nsStringNilIfEmpty(webCorrection.contextAfter)];
-    [correction setRangeInMarkedText:webCorrection.markedTextRange];
+    [correction setRangeInMarkedText:webCorrection.selectedRangeInMarkedText];
     return correction.autorelease();
 }
 

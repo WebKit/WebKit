@@ -2709,7 +2709,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     String markedText;
     String selectedText;
     String contextAfter;
-    EditingRange markedTextRange;
+    EditingRange selectedRangeInMarkedText;
 
     VisiblePosition startPosition = frame->selection().selection().start();
     VisiblePosition endPosition = frame->selection().selection().end();
@@ -2725,8 +2725,8 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
         auto markedTextAfter = plainTextForContext(makeSimpleRange(endPosition, compositionRange->end));
         markedText = markedTextBefore + selectedText + markedTextAfter;
         if (!markedText.isEmpty()) {
-            markedTextRange.location = markedTextBefore.length();
-            markedTextRange.length = selectedText.length();
+            selectedRangeInMarkedText.location = markedTextBefore.length();
+            selectedRangeInMarkedText.length = selectedText.length();
         }
     } else {
         auto firstPositionInEditableContent = startOfEditableContent(startPosition);
@@ -2768,7 +2768,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     correction.markedText = WTFMove(markedText);
     correction.selectedText = WTFMove(selectedText);
     correction.contextAfter = WTFMove(contextAfter);
-    correction.markedTextRange = WTFMove(markedTextRange);
+    correction.selectedRangeInMarkedText = WTFMove(selectedRangeInMarkedText);
     return correction;
 }
 
