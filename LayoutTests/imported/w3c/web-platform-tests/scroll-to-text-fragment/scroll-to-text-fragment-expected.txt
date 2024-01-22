@@ -34,7 +34,7 @@ PASS Test navigation with fragment: Multiple match text directive disambiguated 
 PASS Test navigation with fragment: Multiple match text directive disambiguated by suffix should match the suffixed text.
 PASS Test navigation with fragment: Multiple match text directive disambiguated by prefix and suffix should match the text with the given context.
 PASS Test navigation with fragment: Text directive should match when context terms are separated by node boundaries.
-FAIL Test navigation with fragment: Text directive should match text within shadow DOM. assert_equals: Expected #:~:text=shadow%20text (Text directive should match text within shadow DOM) to scroll to shadow. expected "shadow" but got "top"
+PASS Test navigation with fragment: Text directive should match text within shadow DOM.
 PASS Test navigation with fragment: Text directive should not scroll to hidden text.
 PASS Test navigation with fragment: Text directive should not scroll to display none text.
 FAIL Test navigation with fragment: Text directive should horizontally scroll into view. assert_true: expected true got false
