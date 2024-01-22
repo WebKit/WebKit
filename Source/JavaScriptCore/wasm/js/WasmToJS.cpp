@@ -334,14 +334,19 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     // Callee needs to be in regT0 here.
     jit.move(importJSCellGPRReg, BaselineJITRegisters::Call::calleeGPR);
-    auto [slowPath, dispatchLabel] = CallLinkInfo::emitFastPath(jit, &callLinkInfo, BaselineJITRegisters::Call::calleeGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
+#if USE(JSVALUE32_64)
+    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
+    auto [slowPath, dispatchLabel] = CallLinkInfo::emitFastPath(jit, &callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
 
-    JIT::Jump done = jit.jump();
-    slowPath.link(&jit);
     auto slowPathStart = jit.label();
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfGlobalObject()), BaselineJITRegisters::Call::globalObjectGPR);
-    CallLinkInfo::emitSlowPath(vm, jit, &callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
-    done.link(&jit);
+    if (!slowPath.empty()) {
+        JIT::Jump done = jit.jump();
+        slowPath.link(&jit);
+        slowPathStart = jit.label();
+        CallLinkInfo::emitSlowPath(vm, jit, &callLinkInfo, BaselineJITRegisters::Call::callLinkInfoGPR);
+        done.link(&jit);
+    }
     auto doneLocation = jit.label();
 
     if (signature.returnCount() == 1) {

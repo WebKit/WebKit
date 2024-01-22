@@ -1880,7 +1880,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
-    void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
+    void emitVirtualCall(VM&, CallLinkInfo*);
     void emitVirtualCallWithoutMovingGlobalObject(VM&, GPRReg callLinkInfoGPR, CallMode);
     
     void makeSpaceOnStackForCCall();

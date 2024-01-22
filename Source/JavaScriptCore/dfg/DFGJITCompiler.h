@@ -394,7 +394,7 @@ public:
     }
 
     std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> addStructureStubInfo();
-    std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin);
+    std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin, bool isDirect);
     LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 
     void appendExceptionHandlingOSRExit(SpeculativeJIT*, ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());

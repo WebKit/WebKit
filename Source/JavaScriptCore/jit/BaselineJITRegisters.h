@@ -38,7 +38,6 @@ namespace Call {
     static constexpr JSValueRegs calleeJSR { JSRInfo::jsRegT10 };
     static constexpr GPRReg calleeGPR { GPRInfo::regT0 };
     static constexpr GPRReg callLinkInfoGPR { GPRInfo::regT2 };
-    static constexpr GPRReg globalObjectGPR { GPRInfo::regT3 };
     static constexpr GPRReg callTargetGPR { GPRInfo::regT5 };
 }
 

@@ -196,8 +196,6 @@ void JIT::privateCompileMainPass()
     auto& instructions = m_unlinkedCodeBlock->instructions();
     unsigned instructionCount = m_unlinkedCodeBlock->instructions().size();
 
-    m_callLinkInfoIndex = 0;
-
     BytecodeIndex startBytecodeIndex(0);
 
     m_bytecodeCountHavingSlowCase = 0;
@@ -473,8 +471,6 @@ void JIT::privateCompileMainPass()
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
 
-    RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
-
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
     m_bytecodeIndex = BytecodeIndex();
@@ -503,7 +499,6 @@ void JIT::privateCompileSlowCases()
     m_delByValIndex = 0;
     m_instanceOfIndex = 0;
     m_privateBrandAccessIndex = 0;
-    m_callLinkInfoIndex = 0;
 
     unsigned bytecodeCountHavingSlowCase = 0;
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
@@ -539,15 +534,7 @@ void JIT::privateCompileSlowCases()
 
         switch (currentInstruction->opcodeID()) {
         DEFINE_SLOWCASE_OP(op_add)
-        DEFINE_SLOWCASE_OP(op_call)
-        DEFINE_SLOWCASE_OP(op_call_ignore_result)
-        DEFINE_SLOWCASE_OP(op_tail_call)
         DEFINE_SLOWCASE_OP(op_call_direct_eval)
-        DEFINE_SLOWCASE_OP(op_call_varargs)
-        DEFINE_SLOWCASE_OP(op_tail_call_varargs)
-        DEFINE_SLOWCASE_OP(op_tail_call_forward_arguments)
-        DEFINE_SLOWCASE_OP(op_construct_varargs)
-        DEFINE_SLOWCASE_OP(op_construct)
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
         DEFINE_SLOWCASE_OP(op_in_by_id)
@@ -658,7 +645,6 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_privateBrandAccessIndex == m_privateBrandAccesses.size());
-    RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.

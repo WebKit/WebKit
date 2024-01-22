@@ -2051,27 +2051,19 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* f
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict()));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
     calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = virtualForWithFunction(globalObject, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+    JSCell* calleeAsFunctionCell;
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
     if (UNLIKELY(scope.exception()))
         return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+    linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
     // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
     ensureStillAliveHere(owner);
     if (UNLIKELY(scope.exception()))
@@ -2079,24 +2071,16 @@ JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* cal
     return static_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
     calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = virtualForWithFunction(globalObject, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+    JSCell* calleeAsFunctionCell;
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
     // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
     ensureStillAliveHere(owner);
     if (UNLIKELY(scope.exception()))
@@ -2104,23 +2088,15 @@ JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame* calleeF
     return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    JSCell* owner = callLinkInfo->owner();
-    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
-    // However, in that case, each IC's data side will have CallLinkInfo.
-    // At that time, they should have appropriate owner. So this is a hack only for now.
-    // This should always works since IC only performs regular-calls and it never does tail-calls.
-    if (!owner) {
-        CallFrame* callerFrame = calleeFrame->callerFrame();
-        owner = callerFrame->codeOwnerCell();
-    }
     calleeFrame->setCodeBlock(nullptr);
-    void* callTarget = linkFor(globalObject, owner, calleeFrame, callLinkInfo);
+    void* callTarget = linkFor(vm, owner, calleeFrame, callLinkInfo);
     // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
     ensureStillAliveHere(owner);
     if (UNLIKELY(scope.exception()))

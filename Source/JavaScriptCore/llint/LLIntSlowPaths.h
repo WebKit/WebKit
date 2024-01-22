@@ -38,8 +38,8 @@ namespace LLInt {
 
 extern "C" UGPRPair llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_default_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" UGPRPair llint_virtual_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" UGPRPair llint_virtual_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" void llint_write_barrier_slow(CallFrame*, JSCell*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \

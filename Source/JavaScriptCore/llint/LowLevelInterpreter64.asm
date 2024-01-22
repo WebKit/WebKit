@@ -2572,8 +2572,6 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
         storep t2, address
     end)
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
-    loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
     jmp .goPolymorphic
 
@@ -2592,13 +2590,10 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
 .opCallSlow:
     # 64bit:t0 32bit(t0,t1) is callee
     # t2 is CallLinkInfo*
-    # t3 is caller's JSGlobalObject
     prepareCall(t2, t3, t4, t1, macro(address)
         storep 0, address
     end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_owner[t2], t3
-    loadp CodeBlock::m_globalObject[t3], t3
     if X86_64_WIN or C_LOOP_WIN
         leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
         loadp [t5], t5
@@ -2666,8 +2661,6 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
                 loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
                 storep t2, address
             end)
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
-            loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
             jmp .goPolymorphic
 
@@ -2686,13 +2679,10 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
         .opCallSlow:
             # 64bit:t0 32bit(t0,t1) is callee
             # t2 is CallLinkInfo*
-            # t3 is caller's JSGlobalObject
             prepareCall(t2, t3, t4, t1, macro(address)
                 storep 0, address
             end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_owner[t2], t3
-            loadp CodeBlock::m_globalObject[t3], t3
             if X86_64_WIN or C_LOOP_WIN
                 leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
                 loadp [t5], t5

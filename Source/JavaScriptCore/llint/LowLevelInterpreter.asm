@@ -2506,15 +2506,11 @@ end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 macro linkFor(function)
     functionPrologue()
-    loadp JSGlobalObject::m_vm[t3], t1
-    storep cfr, VM::topCallFrame[t1]
-    move t2, a2
-    move t3, a1
+    move t2, a1
     move cfr, a0
-    cCall3(function)
+    cCall2(function)
     functionEpilogue()
     untagReturnAddress sp
     btpnz r1, .throw
@@ -2526,7 +2522,6 @@ end
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, slowCase)
     addi 1, CallLinkInfo::m_slowPathCount[t2]
     if JSVALUE64
@@ -2540,7 +2535,7 @@ macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internal
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t5], t5
 .isExecutable:
     loadp offsetOfJITCodeWithArityCheck[t5], t4
-    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, t3 needs to be unmodified.
+    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, needs to be unmodified.
     move t4, t1
     move 0, t0
     bbneq JSCell::m_type[t5], FunctionExecutableType, .callCode
@@ -2555,14 +2550,12 @@ end
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_default_call_trampoline, macro ()
     linkFor(_llint_default_call)
 end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_call_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
 .slowCase:
@@ -2571,7 +2564,6 @@ end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_construct_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, FunctionExecutable::m_codeBlockForConstruct, _llint_internal_function_construct_trampoline, .slowCase)
 .slowCase:
@@ -2580,7 +2572,6 @@ end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_tail_call_trampoline, macro ()
     virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
 .slowCase:

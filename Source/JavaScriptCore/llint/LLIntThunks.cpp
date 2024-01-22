@@ -314,14 +314,13 @@ MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk()
         // regT0 => callee
         // regT1 => tag (32bit)
         // regT2 => CallLinkInfo*
-        // regT3 => JSGlobalObject*
 
         CCallHelpers jit;
 
         jit.emitFunctionPrologue();
         if (maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-        jit.setupArguments<decltype(operationDefaultCall)>(GPRInfo::regT3, GPRInfo::regT2);
+        jit.setupArguments<decltype(operationDefaultCall)>(GPRInfo::regT2);
         jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationDefaultCall)), GPRInfo::nonArgGPR0);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
         if (maxFrameExtentForSlowPathCall)
