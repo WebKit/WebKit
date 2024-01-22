@@ -164,7 +164,6 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     if (linkedBefore(dyld_fall_2021_os_versions, DYLD_IOS_VERSION_15_0, DYLD_MACOSX_VERSION_12_00)) {
         disableBehavior(SDKAlignedBehavior::NullOriginForNonSpecialSchemedURLs);
         disableBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
-        disableBehavior(SDKAlignedBehavior::ApplicationCacheDisabledByDefault);
         disableBehavior(SDKAlignedBehavior::NoExpandoIndexedPropertiesOnWindow);
         disableBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
     }

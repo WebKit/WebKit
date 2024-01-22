@@ -667,7 +667,6 @@ js/throw-large-string-oom.html [ Skip ] # Pass Timeout
 # http
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-http/tests/appcache [ Skip ]
 http/tests/blink/sendbeacon [ Skip ]
 
 http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
@@ -959,7 +958,6 @@ http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/misc/window-dot-stop.html [ Failure ]
-http/tests/ssl/upgrade-origin-usage.html [ Failure ]
 http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
 http/tests/workers/service/service-worker-cache-api.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-body.https.html [ Failure ]

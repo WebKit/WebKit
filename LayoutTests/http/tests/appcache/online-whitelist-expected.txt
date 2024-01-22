@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-Test online allowlist functionality. Should say PASS:
-
-PASS
-

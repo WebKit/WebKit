@@ -52,7 +52,6 @@ TEST(WebKit, WKPreferencesDefaults)
     static const char* expectedCursiveFontFamily = "Comic Sans MS";
     static const char* expectedFantasyFontFamily = "Impact";
     static const char* expectedPictographFontFamily = "Times";
-    bool expectedApplicationCacheEnabled = true;
 #elif WK_HAVE_C_SPI
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
@@ -61,7 +60,6 @@ TEST(WebKit, WKPreferencesDefaults)
     static const char* expectedCursiveFontFamily = "Apple Chancery";
     static const char* expectedFantasyFontFamily = "Papyrus";
     static const char* expectedPictographFontFamily = "Apple Color Emoji";
-    bool expectedApplicationCacheEnabled = false;
 #elif PLATFORM(IOS_FAMILY)
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
@@ -70,14 +68,12 @@ TEST(WebKit, WKPreferencesDefaults)
     static const char* expectedCursiveFontFamily = "Snell Roundhand";
     static const char* expectedFantasyFontFamily = "Papyrus";
     static const char* expectedPictographFontFamily = "AppleColorEmoji";
-    bool expectedApplicationCacheEnabled = false;
 #endif
 
     WKPreferencesRef preference = WKPreferencesCreate();
 
     EXPECT_TRUE(WKPreferencesGetJavaScriptEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLoadsImagesAutomatically(preference));
-    EXPECT_EQ(expectedApplicationCacheEnabled, WKPreferencesGetOfflineWebApplicationCacheEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetLocalStorageEnabled(preference));
     EXPECT_TRUE(WKPreferencesGetPluginsEnabled(preference));
     EXPECT_FALSE(WKPreferencesGetShouldPrintBackgrounds(preference));

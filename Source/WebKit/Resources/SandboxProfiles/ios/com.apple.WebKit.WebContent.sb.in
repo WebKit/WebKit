@@ -1218,10 +1218,7 @@
             F_OFD_SETLKWTIMEOUT))
             
 #if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (require-not (state-flag "AppCacheDisabled"))
-        (allow system-fcntl (appcache-fcntl-commands)))
-    (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands)))
+    (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif

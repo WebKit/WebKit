@@ -1,6 +1,0 @@
-CACHE MANIFEST
-# Note that we use a filename that ends in .txt instead of .manifest so that this manifest
-# is served with a Content-Type that is not text/cached-manifest.
-FALLBACK:
-/non-existent-file-outside-manifest-path.html simple.txt
-non-existent-file-under-manifest-path.html simple.txt
