@@ -627,6 +627,14 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Err
 
 void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *, Error)>&& completionHandler)
 {
+    bool delegateIsUnavailable = !isValid() || !m_respondsToCaptureVisibleWebpage;
+    WKWebView *mainWebView = delegateIsUnavailable ? this->mainWebView() : nil;
+
+    if (delegateIsUnavailable && !mainWebView) {
+        completionHandler(nil, toErrorString(@"tabs.captureVisibleTab()", nil, @"capture is unavailable for this tab"));
+        return;
+    }
+
     auto internalCompletionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](CocoaImage *image, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for captureVisibleWebpage: %{private}@", error);
@@ -638,13 +646,7 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(CocoaImage *,
         completionHandler(image, std::nullopt);
     });
 
-    if (!isValid() || !m_respondsToCaptureVisibleWebpage) {
-        auto *mainWebView = this->mainWebView();
-        if (!mainWebView) {
-            completionHandler(nil, toErrorString(@"tabs.captureVisibleTab()", nil, @"capture is unavailable for this tab"));
-            return;
-        }
-
+    if (delegateIsUnavailable) {
         NSRect snapshotRect = mainWebView.bounds;
 #if PLATFORM(MAC)
         snapshotRect.size.height -= mainWebView._topContentInset;
