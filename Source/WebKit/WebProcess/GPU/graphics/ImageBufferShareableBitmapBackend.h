@@ -59,7 +59,7 @@ public:
     static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ShareableBitmap::Handle);
 
     ImageBufferShareableBitmapBackend(const Parameters&, Ref<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
@@ -70,6 +70,7 @@ public:
 #if USE(CAIRO)
     RefPtr<cairo_surface_t> createCairoSurface() final;
 #endif
+    void transferToNewContext(const WebCore::ImageBufferCreationContext&) final;
 
     RefPtr<WebCore::NativeImage> copyNativeImage() final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() final;

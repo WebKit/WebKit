@@ -111,4 +111,8 @@ RefPtr<Image> ShareableBitmap::createImage()
     return BitmapImage::create(WTFMove(surface));
 }
 
+void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)
+{
+}
+
 } // namespace WebKit
