@@ -27,6 +27,22 @@ fast/events/ios [ Pass ]
 fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
+fast/forms/switch [ Pass ]
+
+# More work required for these tests to run on iOS
+fast/forms/switch/click-animation-disabled.html [ Skip ]
+fast/forms/switch/click-animation-interrupted-document-removed.html [ Skip ]
+fast/forms/switch/click-animation-interrupted-type-change.html [ Skip ]
+fast/forms/switch/click-animation-interrupted.html [ Skip ]
+fast/forms/switch/click-animation-preventdefault.html [ Skip ]
+fast/forms/switch/click-animation-redundant-checked.html [ Skip ]
+fast/forms/switch/click-animation-redundant-disabled.html [ Skip ]
+fast/forms/switch/click-animation-twice-fast.html [ Skip ]
+fast/forms/switch/click-animation-twice.html [ Skip ]
+fast/forms/switch/click-animation.html [ Skip ]
+fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Skip ]
+fast/forms/switch/pointer-tracking-there-and-back-again.html [ Skip ]
+fast/forms/switch/pointer-tracking.html [ Skip ]
 
 # These tests fail or are flaky in non-internal iOS 14 simulator
 fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]

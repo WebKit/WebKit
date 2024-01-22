@@ -1,0 +1,20 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<input type=checkbox switch>
+<script>
+const control = document.querySelector("input");
+
+control.style.display = "none";
+shouldBeEqualToString("getComputedStyle(control).display", "none");
+
+control.style.display = "inline";
+shouldBeEqualToString("getComputedStyle(control).display", "inline-grid");
+
+control.style.display = "table";
+shouldBeEqualToString("getComputedStyle(control).display", "grid");
+
+control.style.display = "block";
+shouldBeEqualToString("getComputedStyle(control).display", "grid");
+
+control.style.display = "inline-grid";
+shouldBeEqualToString("getComputedStyle(control).display", "inline-grid");
+</script>

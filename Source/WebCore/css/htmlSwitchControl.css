@@ -26,12 +26,11 @@
 
 input[type="checkbox"][switch] {
     margin: initial;
-    display: inline-grid;
+    display: initial;
 }
 
 input[type="checkbox"][switch]::thumb, input[type="checkbox"][switch]::track {
     appearance: inherit !important;
-    grid-area: 1/1;
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY

@@ -1,0 +1,6 @@
+PASS getComputedStyle(control).display is "none"
+PASS getComputedStyle(control).display is "inline-grid"
+PASS getComputedStyle(control).display is "grid"
+PASS getComputedStyle(control).display is "grid"
+PASS getComputedStyle(control).display is "inline-grid"
+
