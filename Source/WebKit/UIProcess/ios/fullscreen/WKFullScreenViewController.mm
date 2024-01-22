@@ -392,6 +392,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(VISION)
 
+- (UIEdgeInsets)additionalSafeAreaInsets
+{
+    // When the status bar hides, the resulting changes to safeAreaInsets cause
+    // fullscreen content to jump up and down in response.
+
+    // Do not add additional insets if the status bar is not hidden.
+    if (!self.view.window.windowScene.statusBarManager.statusBarHidden)
+        return UIEdgeInsetsZero;
+
+    // Additionally, hiding the status bar does not reduce safeAreaInsets when
+    // the status bar resides within a larger safe area inset (e.g., due to the
+    // camera area).
+    if (self.view.window.safeAreaInsets.top > 0)
+        return UIEdgeInsetsZero;
+
+    // Otherwise, provide what is effectively a constant safeAreaInset.top by adding
+    // an additional safeAreaInset at the top equal to the status bar height.
+    return UIEdgeInsetsMake(_nonZeroStatusBarHeight, 0, 0, 0);
+}
+
 - (void)setPrefersStatusBarHidden:(BOOL)value
 {
     ASSERT(_valid);
