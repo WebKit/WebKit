@@ -349,7 +349,7 @@ inline void insertIntoBoundedVector(VectorType& vector, size_t size, const Eleme
 WTF_EXPORT_PRIVATE bool isCompilationThread();
 
 template<typename Func>
-bool isStatelessLambda()
+constexpr bool isStatelessLambda()
 {
     return std::is_empty<Func>::value;
 }

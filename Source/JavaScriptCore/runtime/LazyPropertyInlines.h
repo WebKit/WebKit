@@ -42,7 +42,7 @@ template<typename OwnerType, typename ElementType>
 template<typename Func>
 void LazyProperty<OwnerType, ElementType>::initLater(const Func&)
 {
-    RELEASE_ASSERT(isStatelessLambda<Func>());
+    static_assert(isStatelessLambda<Func>());
     // Logically we just want to stuff the function pointer into m_pointer, but then we'd be sad
     // because a function pointer is not guaranteed to be a multiple of anything. The tag bits
     // may be used for things. We address this problem by indirecting through a global const
