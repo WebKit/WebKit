@@ -84,7 +84,7 @@ std::unique_ptr<DynamicContentScalingImageBufferBackend> DynamicContentScalingIm
 
 DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext, WebCore::RenderingMode renderingMode)
     : ImageBufferCGBackend { parameters }
-    , m_resourceCache(bridge_id_cast(adoptCF(RECGCommandsCacheCreate(nullptr))))
+    , m_resourceCache(creationContext.dynamicContentScalingResourceCache)
     , m_renderingMode(renderingMode)
 {
 }

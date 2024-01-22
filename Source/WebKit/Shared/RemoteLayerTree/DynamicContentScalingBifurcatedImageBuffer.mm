@@ -29,6 +29,7 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #import "DynamicContentScalingImageBufferBackend.h"
+#import <CoreRE/RECGCommandsContext.h>
 #import <WebCore/BifurcatedGraphicsContext.h>
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <wtf/MachSendRight.h>
