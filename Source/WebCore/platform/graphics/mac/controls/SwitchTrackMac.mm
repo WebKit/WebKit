@@ -149,6 +149,8 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
 
 void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
+    GraphicsContextStateSaver stateSaver(context);
+
     auto isOn = owningPart().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
@@ -169,6 +171,12 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     if (isVertical)
         inflatedTrackRect.setSize(inflatedTrackRect.size().transposedSize());
 
+    if (style.zoomFactor != 1) {
+        inflatedTrackRect.scale(1 / style.zoomFactor);
+        trackRect.scale(1 / style.zoomFactor);
+        context.scale(style.zoomFactor);
+    }
+
     auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
     auto maskImage = trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
@@ -178,8 +186,6 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     auto createTrackImage = [&](bool isOn) {
         return trackImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isRTL, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
     };
-
-    GraphicsContextStateSaver stateSaver(context);
 
     RefPtr<ImageBuffer> trackImage;
     if (progress == 0.0f || progress == 1.0f) {
