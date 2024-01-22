@@ -73,7 +73,8 @@ void WCScene::initialize(WCSceneContext& context)
 {
     // The creation of the TextureMapper needs an active OpenGL context.
     m_context = &context;
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return;
     m_textureMapper = m_context->createTextureMapper();
 }
 
@@ -85,7 +86,8 @@ WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier, bool usesOffsc
 
 WCScene::~WCScene()
 {
-    m_context->makeContextCurrent();
+    if (!m_context->makeContextCurrent())
+        return;
     m_textureMapper = nullptr;
 }
 

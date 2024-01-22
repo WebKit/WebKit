@@ -42,6 +42,8 @@ WCSceneContext::~WCSceneContext() = default;
 
 bool WCSceneContext::makeContextCurrent()
 {
+    if (!m_glContext)
+        return false;
     return m_glContext->makeContextCurrent();
 }
 
