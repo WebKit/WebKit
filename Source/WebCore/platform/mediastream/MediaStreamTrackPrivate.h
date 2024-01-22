@@ -42,6 +42,8 @@ class MediaStreamTrackPrivateSourceObserver;
 class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
 
+struct MediaStreamTrackDataHolder;
+
 class MediaStreamTrackPrivate final
     : public RefCounted<MediaStreamTrackPrivate>
     , public CanMakeWeakPtr<MediaStreamTrackPrivate>
@@ -63,6 +65,7 @@ public:
         virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
     };
 
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
@@ -141,8 +144,11 @@ public:
     void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
     void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
 
+    UniqueRef<MediaStreamTrackDataHolder> toDataHolder();
+
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);
+    MediaStreamTrackPrivate(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
 
     void initialize();
 

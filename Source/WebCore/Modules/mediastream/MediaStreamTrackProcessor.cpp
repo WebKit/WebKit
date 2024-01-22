@@ -111,9 +111,7 @@ MediaStreamTrackProcessor::VideoFrameObserverWrapper::VideoFrameObserverWrapper(
 
 void MediaStreamTrackProcessor::VideoFrameObserverWrapper::initialize(ScriptExecutionContextIdentifier identifier, MediaStreamTrackProcessor& processor, Ref<RealtimeMediaSource>&& source)
 {
-    callOnMainThread([protectedThis = Ref { *this }, identifier, processor = WeakPtr { processor }, source = WTFMove(source)] () mutable {
-        protectedThis->m_observer = makeUnique<VideoFrameObserver>(identifier, WTFMove(processor), WTFMove(source));
-    });
+    m_observer = makeUnique<VideoFrameObserver>(identifier, WeakPtr { processor }, WTFMove(source));
 }
 
 void MediaStreamTrackProcessor::VideoFrameObserverWrapper::start()
@@ -128,7 +126,7 @@ MediaStreamTrackProcessor::VideoFrameObserver::VideoFrameObserver(ScriptExecutio
     , m_processor(WTFMove(processor))
     , m_realtimeVideoSource(WTFMove(source))
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 }
 
 void MediaStreamTrackProcessor::VideoFrameObserver::start()
@@ -167,7 +165,7 @@ void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFra
         m_metadata = metadata;
     }
     ScriptExecutionContext::postTaskTo(m_contextIdentifier, [processor = m_processor] (auto&) mutable {
-        if (auto protectedProcessor = processor.get())
+        if (RefPtr protectedProcessor = processor.get())
             protectedProcessor->tryEnqueueingVideoFrame();
     });
 }
@@ -213,10 +211,8 @@ void MediaStreamTrackProcessor::Source::enqueue(WebCodecsVideoFrame& frame, Scri
 
     Ref protectedThis { *this };
 
-    if (!m_isCancelled)
-        controller().enqueue(toJS(globalObject, globalObject, frame));
-
-    pullFinished();
+    if (!m_isCancelled && controller().enqueue(toJS(globalObject, globalObject, frame)))
+        pullFinished();
 }
 
 void MediaStreamTrackProcessor::Source::doStart()

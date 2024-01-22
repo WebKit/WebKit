@@ -2166,6 +2166,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/MediaSettingsRange.h
     platform/mediastream/MediaStreamPrivate.h
     platform/mediastream/MediaStreamRequest.h
+    platform/mediastream/MediaStreamTrackDataHolder.h
     platform/mediastream/MediaStreamTrackPrivate.h
     platform/mediastream/MeteringMode.h
     platform/mediastream/PhotoCapabilities.h

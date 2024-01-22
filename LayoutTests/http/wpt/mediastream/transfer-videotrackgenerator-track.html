@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transfer MediaStreamTrack to dedicated worker</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id=video autoplay controls playsInline></video>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+promise_test(async test => {
+    const worker = await createWorker(`
+        function makeOffscreenCanvasVideoFrame(width, height) {
+            let canvas = new OffscreenCanvas(width, height);
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+            ctx.fillRect(0, 0, width, height);
+            return new VideoFrame(canvas, { timestamp: 1 });
+        }
+        var generator = new VideoTrackGenerator();
+
+        const writer = generator.writable.getWriter();
+        var width = 100;
+        var height = 100;
+        setInterval(() => {
+            writer.write(makeOffscreenCanvasVideoFrame(width, height));
+        }, 100);
+        self.onmessage = async (event) => {
+            if (event.data === "mute")
+               generator.muted = true;
+            else if (event.data === "unmute")
+               generator.muted = false;
+            else if (event.data === "track")
+                self.postMessage({ track : generator.track }, [generator.track]);
+            else if (event.data === "increaseSize") {
+                width = 200;
+                height = 200;
+            } else if (event.data === "decreaseSize") {
+                width = 100;
+                height = 100;
+            }
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+
+    worker.postMessage("track");
+    const track = await new Promise(resolve => worker.onmessage = e => resolve(e.data.track));
+    video.srcObject = new MediaStream([track]);
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+
+    assert_equals(video.videoWidth, 100, "video width 1");
+    assert_equals(video.videoHeight, 100, "video height1");
+    assert_equals(track.getSettings().width, 100, "track width 1");
+    assert_equals(track.getSettings().height, 100, "track height 1");
+    assert_equals(track.getCapabilities().width.max, 100, "track capabilities width 1");
+    assert_equals(track.getCapabilities().height.max, 100, "track capabilities height 1");
+
+    worker.postMessage("mute");
+    await new Promise(resolve => track.onmute = resolve);
+
+    worker.postMessage("unmute");
+    await new Promise(resolve => track.onunmute = resolve);
+
+    worker.postMessage("increaseSize");
+
+    let counter = 0;
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++counter < 100 && video.videoWidth !== 200);
+
+    assert_equals(video.videoWidth, 200, "video width 2");
+    assert_equals(video.videoHeight, 200, "video height 2");
+
+    counter = 0;
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++counter < 100 && track.getSettings().width !== 200);
+
+    assert_equals(track.getSettings().width, 200, "track width 2");
+    assert_equals(track.getSettings().height, 200, "track height 2");
+    assert_equals(track.getCapabilities().width.max, 200, "track capabilities width 2");
+    assert_equals(track.getCapabilities().height.max, 200, "track capabilities height 2");
+
+    worker.postMessage("decreaseSize");
+
+    counter = 0;
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++counter < 100 && video.videoWidth !== 100);
+
+    assert_equals(video.videoWidth, 100, "video width 3");
+    assert_equals(video.videoHeight, 100, "video height 3");
+
+    counter = 0;
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++counter < 100 && track.getSettings().width !== 200);
+
+    assert_equals(track.getSettings().width, 100, "track width 3");
+    assert_equals(track.getSettings().height, 100, "track height 3");
+    assert_equals(track.getCapabilities().width.max, 200, "track capabilities width 3");
+    assert_equals(track.getCapabilities().height.max, 200, "track capabilities height 3");
+}, "Transfer VideoTrackGenerator from dedicated worker and play it");
+
+</script>
+</body>
+</html>

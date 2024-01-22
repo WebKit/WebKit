@@ -37,6 +37,10 @@
 #include <wtf/Gigacage.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamTrackDataHolder.h"
+#endif
+
 #if ENABLE(WEB_CODECS)
 #include "WebCodecsAudioData.h"
 #include "WebCodecsAudioInternalData.h"
@@ -131,6 +135,9 @@ private:
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
+#endif
         );
 
     SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&&
@@ -152,6 +159,9 @@ private:
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
+#endif
         );
 
     size_t computeMemoryCost() const;
@@ -167,6 +177,9 @@ private:
         Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
+#endif
+#if ENABLE(MEDIA_STREAM)
+        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };
 #endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
         Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };

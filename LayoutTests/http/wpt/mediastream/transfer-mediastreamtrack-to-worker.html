@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transfer MediaStreamTrack to dedicated worker</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const processor = new MediaStreamTrackProcessor({ track: event.data.track });
+            const data = await processor.readable.getReader().read();
+            self.postMessage(data);
+            data.value.close();
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const track = stream.getVideoTracks()[0];
+    worker.postMessage({ track }, [track]);
+
+    const result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_false(result.done);
+
+    test.add_cleanup(() => result.value.close());
+    assert_equals(result.value.codedWidth, 640);
+    assert_equals(result.value.codedHeight, 480);
+}, "Transfer MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const track = event.data.track;
+            track.onmute = () => self.postMessage("muted");
+            track.onunmute = () => self.postMessage("unmuted");
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const track = stream.getAudioTracks()[0];
+    worker.postMessage({ track }, [track]);
+
+    if (!window.internals)
+        return;
+
+    internals.setPageMuted("capturedevices");
+    let result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_equals(result, "muted");
+
+    internals.setPageMuted("");
+    result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_equals(result, "unmuted");
+}, "Transferred audio track get muted/unmuted according page state");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const track = event.data.track;
+            track.onmute = () => self.postMessage("muted");
+            track.onunmute = () => self.postMessage("unmuted");
+        }
+   `);
+    test.add_cleanup(() => worker.terminate());
+    const track = stream.getVideoTracks()[0];
+    worker.postMessage({ track }, [track]);
+
+    if (!window.internals)
+        return;
+
+    internals.setPageMuted("capturedevices");
+    let result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_equals(result, "muted");
+
+    internals.setPageMuted("");
+    result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    assert_equals(result, "unmuted");
+}, "Transferred video track get muted/unmuted according page state");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const worker = await createWorker(`
+        var audioTrack, videoTrack;
+        self.onmessage = async (event) => {
+            if (event.data.type === "tracks") {
+                audioTrack = event.data.audioTrack
+                videoTrack = event.data.videoTrack;
+            } else if (event.data.type === "stopAudioTrack")
+                audioTrack.stop();
+            else if (event.data.type === "stopVideoTrack")
+                videoTrack.stop();
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const audioTrack = stream.getAudioTracks()[0];
+    const videoTrack = stream.getVideoTracks()[0];
+    worker.postMessage({ type : "tracks", audioTrack, videoTrack }, [audioTrack, videoTrack]);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    if (!window.internals)
+        return;
+
+    assert_equals(internals.pageMediaState(), "HasActiveAudioCaptureDevice,HasActiveVideoCaptureDevice");
+
+    let audioCounter = 0;
+    worker.postMessage({ type : "stopAudioTrack" });
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++audioCounter < 40 && internals.pageMediaState() !== "HasActiveVideoCaptureDevice")
+    assert_equals(internals.pageMediaState(), "HasActiveVideoCaptureDevice");
+
+    let videoCounter = 0;
+    worker.postMessage({ type : "stopVideoTrack" });
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++videoCounter < 40 && internals.pageMediaState() !== "IsNotPlaying")
+    assert_equals(internals.pageMediaState(), "IsNotPlaying");
+}, "Page state gets updated when transferred tracks get stopped");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const worker = await createWorker(`
+        var audioTrack, videoTrack;
+        self.onmessage = async (event) => {
+            if (event.data.type === "tracks") {
+                audioTrack = event.data.audioTrack.clone()
+                event.data.audioTrack.stop();
+                videoTrack = event.data.videoTrack.clone();
+                event.data.videoTrack.stop();
+            } else if (event.data.type === "stopAudioTrack")
+                audioTrack.stop();
+            else if (event.data.type === "stopVideoTrack")
+                videoTrack.stop();
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const audioTrack = stream.getAudioTracks()[0];
+    const videoTrack = stream.getVideoTracks()[0];
+    worker.postMessage({ type : "tracks", audioTrack, videoTrack }, [audioTrack, videoTrack]);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    if (!window.internals)
+        return;
+
+    assert_equals(internals.pageMediaState(), "HasActiveAudioCaptureDevice,HasActiveVideoCaptureDevice");
+
+    let audioCounter = 0;
+    worker.postMessage({ type : "stopAudioTrack" });
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++audioCounter < 40 && internals.pageMediaState() !== "HasActiveVideoCaptureDevice")
+    assert_equals(internals.pageMediaState(), "HasActiveVideoCaptureDevice");
+
+    let videoCounter = 0;
+    worker.postMessage({ type : "stopVideoTrack" });
+    do {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    } while (++videoCounter < 40 && internals.pageMediaState() !== "IsNotPlaying")
+    assert_equals(internals.pageMediaState(), "IsNotPlaying");
+}, "Page state gets updated when clones of transferred tracks get stopped");
+</script>
+</body>
+</html>

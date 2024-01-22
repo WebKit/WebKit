@@ -2442,6 +2442,7 @@ platform/mediastream/CaptureDeviceManager.cpp
 platform/mediastream/MediaConstraints.cpp
 platform/mediastream/MediaEndpointConfiguration.cpp
 platform/mediastream/MediaStreamPrivate.cpp
+platform/mediastream/MediaStreamTrackDataHolder.cpp
 platform/mediastream/MediaStreamTrackPrivate.cpp
 platform/mediastream/RTCIceCandidateDescriptor.cpp
 platform/mediastream/RTCSessionDescriptionDescriptor.cpp

@@ -24,5 +24,5 @@ PASS VideoTrackGenerator must be primary interface of new VideoTrackGenerator()
 PASS Stringification of new VideoTrackGenerator()
 PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "writable" with the proper type
 PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "muted" with the proper type
-FAIL VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "track" with the proper type Right hand side of instanceof is not an object
+PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "track" with the proper type
 

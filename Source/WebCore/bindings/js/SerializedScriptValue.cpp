@@ -54,6 +54,7 @@
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSImageBitmap.h"
 #include "JSImageData.h"
+#include "JSMediaStreamTrack.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "JSRTCCertificate.h"
@@ -227,6 +228,9 @@ enum SerializationTag {
     WebCodecsEncodedAudioChunkTag = 58,
     WebCodecsAudioDataTag = 59,
 #endif
+#if ENABLE(MEDIA_STREAM)
+    MediaStreamTrackTag = 60,
+#endif
     ErrorTag = 255
 };
 
@@ -325,6 +329,9 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     case WebCodecsVideoFrameTag:
     case WebCodecsEncodedAudioChunkTag:
     case WebCodecsAudioDataTag:
+#endif
+#if ENABLE(MEDIA_STREAM)
+    case MediaStreamTrackTag:
 #endif
         break;
     }
@@ -616,6 +623,7 @@ static_assert(TerminatorTag > MAX_ARRAY_INDEX);
  *    | RTCDataChannelTransferTag <identifier:uint32_t>
  *    | DOMExceptionTag <message:String> <name:String>
  *    | WebCodecsEncodedVideoChunkTag <identifier:uint32_t>
+ *    | MediaStreamTrackTag <identifier:uint32_t>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -832,6 +840,9 @@ public:
             Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
+#if ENABLE(MEDIA_STREAM)
+            Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
+#endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
@@ -853,6 +864,9 @@ public:
             serializedVideoFrames,
             serializedAudioChunks,
             serializedAudioData,
+#endif
+#if ENABLE(MEDIA_STREAM)
+            serializedMediaStreamTracks,
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
@@ -896,6 +910,9 @@ private:
             Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
+#if ENABLE(MEDIA_STREAM)
+            Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
+#endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
@@ -920,6 +937,9 @@ private:
         , m_serializedVideoFrames(serializedVideoFrames)
         , m_serializedAudioChunks(serializedAudioChunks)
         , m_serializedAudioData(serializedAudioData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , m_serializedMediaStreamTracks(serializedMediaStreamTracks)
 #endif
         , m_forStorage(forStorage)
     {
@@ -1478,6 +1498,21 @@ private:
         return true;
     }
 #endif
+#if ENABLE(MEDIA_STREAM)
+    void dumpMediaStreamTrack(JSObject* obj)
+    {
+        Ref track = jsCast<JSMediaStreamTrack*>(obj)->wrapped();
+
+        auto index = m_serializedMediaStreamTracks.find(track.ptr());
+        if (index == notFound) {
+            index = m_serializedMediaStreamTracks.size();
+            m_serializedMediaStreamTracks.append(WTFMove(track));
+        }
+
+        write(MediaStreamTrackTag);
+        write(static_cast<uint32_t>(index));
+    }
+#endif
 
     void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
     {
@@ -1743,6 +1778,9 @@ private:
                 Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> dummyAudioChunks;
                 Vector<RefPtr<WebCodecsAudioData>> dummyAudioData;
 #endif
+#if ENABLE(MEDIA_STREAM)
+                Vector<RefPtr<MediaStreamTrack>> dummyMediaStreamTracks;
+#endif
 #if ENABLE(WEBASSEMBLY)
                 WasmModuleArray dummyModules;
                 WasmMemoryHandleArray dummyMemoryHandles;
@@ -1766,6 +1804,9 @@ private:
                     dummyVideoFrames,
                     dummyAudioChunks,
                     dummyAudioData,
+#endif
+#if ENABLE(MEDIA_STREAM)
+                    dummyMediaStreamTracks,
 #endif
 #if ENABLE(WEBASSEMBLY)
                     dummyModules,
@@ -1881,6 +1922,14 @@ private:
                 if (m_forStorage == SerializationForStorage::Yes)
                     return false;
                 return dumpWebCodecsAudioData(obj);
+            }
+#endif
+#if ENABLE(MEDIA_STREAM)
+            if (obj->inherits<JSMediaStreamTrack>()) {
+                if (m_forStorage == SerializationForStorage::Yes)
+                    return false;
+                dumpMediaStreamTrack(obj);
+                return true;
             }
 #endif
 
@@ -2388,6 +2437,9 @@ private:
     Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& m_serializedAudioChunks;
     Vector<RefPtr<WebCodecsAudioData>>& m_serializedAudioData;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    Vector<RefPtr<MediaStreamTrack>>& m_serializedMediaStreamTracks;
+#endif
     SerializationForStorage m_forStorage;
 };
 
@@ -2694,6 +2746,9 @@ public:
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+#endif
         )
     {
         if (!buffer.size())
@@ -2716,6 +2771,9 @@ public:
             , WTFMove(serializedVideoFrames)
             , WTFMove(serializedAudioChunks)
             , WTFMove(serializedAudioData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+            , WTFMove(serializedMediaStreamTracks)
 #endif
             );
         if (!deserializer.isValid())
@@ -2779,6 +2837,9 @@ private:
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
+#endif
         )
         : CloneBase(lexicalGlobalObject)
         , m_globalObject(globalObject)
@@ -2816,6 +2877,10 @@ private:
         , m_serializedAudioData(WTFMove(serializedAudioData))
         , m_audioData(m_serializedAudioData.size())
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , m_serializedMediaStreamTracks(WTFMove(serializedMediaStreamTracks))
+        , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
+#endif
     {
         if (!read(m_version))
             m_version = 0xFFFFFFFF;
@@ -2839,6 +2904,9 @@ private:
         , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames = { }
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -2879,6 +2947,10 @@ private:
         , m_audioChunks(m_serializedAudioChunks.size())
         , m_serializedAudioData(WTFMove(serializedAudioData))
         , m_audioData(m_serializedAudioData.size())
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , m_serializedMediaStreamTracks(WTFMove(serializedMediaStreamTracks))
+        , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
 #endif
     {
         if (!read(m_version))
@@ -4117,6 +4189,23 @@ private:
     }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    JSValue readMediaStreamTrack()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_serializedMediaStreamTracks.size()) {
+            fail();
+            return JSValue();
+        }
+
+        if (!m_mediaStreamTracks[index])
+            m_mediaStreamTracks[index] = MediaStreamTrack::create(*executionContext(m_lexicalGlobalObject), makeUniqueRefFromNonNullUniquePtr(std::exchange(m_serializedMediaStreamTracks.at(index), { })));
+
+        return getJSValue(m_mediaStreamTracks[index].get());
+    }
+#endif
+
     JSValue readImageBitmap()
     {
         uint8_t rawFlags;
@@ -4728,6 +4817,10 @@ private:
         case WebCodecsAudioDataTag:
             return readWebCodecsAudioData();
 #endif
+#if ENABLE(MEDIA_STREAM)
+        case MediaStreamTrackTag:
+            return readMediaStreamTrack();
+#endif
         case DOMExceptionTag:
             return readDOMException();
 
@@ -4785,6 +4878,10 @@ private:
     Vector<RefPtr<WebCodecsEncodedAudioChunk>> m_audioChunks;
     Vector<WebCodecsAudioInternalData> m_serializedAudioData;
     Vector<RefPtr<WebCodecsAudioData>> m_audioData;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> m_serializedMediaStreamTracks;
+    Vector<RefPtr<MediaStreamTrack>> m_mediaStreamTracks;
 #endif
 
     String blobFilePathForBlobURL(const String& blobURL)
@@ -5014,6 +5111,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
     , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
     , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
+#if ENABLE(MEDIA_STREAM)
+    , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+#endif
         )
     : m_internals {
         .data = WTFMove(buffer)
@@ -5026,6 +5126,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
         , .serializedAudioChunks = WTFMove(serializedAudioChunks)
         , .serializedVideoFrames = WTFMove(serializedVideoFrames)
         , .serializedAudioData = WTFMove(serializedAudioData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , .serializedMediaStreamTracks = WTFMove(serializedMediaStreamTracks)
 #endif
     }
 {
@@ -5051,6 +5154,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+#endif
         )
     : m_internals {
         .data = WTFMove(buffer)
@@ -5063,6 +5169,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , .serializedAudioChunks = WTFMove(serializedAudioChunks)
         , .serializedVideoFrames = WTFMove(serializedVideoFrames)
         , .serializedAudioData = WTFMove(serializedAudioData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , .serializedMediaStreamTracks = WTFMove(serializedMediaStreamTracks)
 #endif
         , .sharedBufferContentsArray = WTFMove(sharedBufferContentsArray)
         , .detachedImageBitmaps = WTFMove(detachedImageBitmaps)
@@ -5255,6 +5364,18 @@ static bool canDetachRTCDataChannels(const Vector<Ref<RTCDataChannel>>& channels
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+static bool canDetachMediaStreamTracks(const Vector<Ref<MediaStreamTrack>>& tracks)
+{
+    HashSet<MediaStreamTrack*> visited;
+    for (auto& track : tracks) {
+        if (!visited.add(track.ptr()))
+            return false;
+    }
+    return true;
+}
+#endif
+
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::JSGlobalObject& globalObject, JSC::JSValue value, SerializationForStorage forStorage, SerializationErrorMode throwExceptions, SerializationContext serializationContext)
 {
     Vector<RefPtr<MessagePort>> dummyPorts;
@@ -5284,6 +5405,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<Ref<WebCodecsVideoFrame>> transferredVideoFrames;
     Vector<Ref<WebCodecsAudioData>> transferredAudioData;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    Vector<Ref<MediaStreamTrack>> transferredMediaStreamTracks;
+#endif
+
     HashSet<JSC::JSObject*> uniqueTransferables;
     for (auto& transferable : transferList) {
         if (!uniqueTransferables.add(transferable.get()).isNewEntry)
@@ -5345,6 +5470,16 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
             continue;
         }
 #endif
+
+#if ENABLE(MEDIA_STREAM)
+        if (auto track = JSMediaStreamTrack::toWrapped(vm, transferable.get())) {
+            if (track->isDetached())
+                return Exception { ExceptionCode::DataCloneError };
+            transferredMediaStreamTracks.append(*track);
+            continue;
+        }
+#endif
+
         return Exception { ExceptionCode::DataCloneError };
     }
 
@@ -5356,6 +5491,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(WEB_RTC)
     if (!canDetachRTCDataChannels(dataChannels))
+        return Exception { ExceptionCode::DataCloneError };
+#endif
+#if ENABLE(MEDIA_STREAM)
+    if (!canDetachMediaStreamTracks(transferredMediaStreamTracks))
         return Exception { ExceptionCode::DataCloneError };
 #endif
 
@@ -5376,6 +5515,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
     Vector<RefPtr<WebCodecsAudioData>> serializedAudioData;
 #endif
+#if ENABLE(MEDIA_STREAM)
+    Vector<RefPtr<MediaStreamTrack>> serializedMediaStreamTracks;
+#endif
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         offscreenCanvases,
@@ -5390,6 +5532,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         serializedVideoFrames,
         serializedAudioChunks,
         serializedAudioData,
+#endif
+#if ENABLE(MEDIA_STREAM)
+        serializedMediaStreamTracks,
 #endif
 #if ENABLE(WEBASSEMBLY)
         wasmModules,
@@ -5430,6 +5575,13 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     for (auto& audioData : transferredAudioData)
         audioData->close();
 #endif
+#if ENABLE(MEDIA_STREAM)
+    auto serializedMediaStreamTrackStorages = map(serializedMediaStreamTracks, [](auto& track) -> std::unique_ptr<MediaStreamTrackDataHolder> {
+        return track->detach().moveToUniquePtr();
+    });
+    for (auto& track : transferredMediaStreamTracks)
+        track->stopTrack();
+#endif
 
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(detachedImageBitmaps)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -5449,6 +5601,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
                 , WTFMove(serializedVideoFrameData)
                 , WTFMove(serializedAudioChunks)
                 , WTFMove(serializedAudioInternalData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+                , WTFMove(serializedMediaStreamTrackStorages)
 #endif
                 ));
 }
@@ -5518,6 +5673,9 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
         , WTFMove(m_internals.serializedVideoFrames)
         , WTFMove(m_internals.serializedAudioChunks)
         , WTFMove(m_internals.serializedAudioData)
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , WTFMove(m_internals.serializedMediaStreamTracks)
 #endif
         );
     if (didFail)
