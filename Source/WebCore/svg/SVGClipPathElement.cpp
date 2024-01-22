@@ -74,6 +74,14 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            if (CheckedPtr renderer = this->renderer())
+                renderer->repaintClientsOfReferencedSVGResources();
+            return;
+        }
+#endif
+
         updateSVGRendererForElementChange();
         return;
     }
@@ -87,6 +95,14 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 
     if (change.source == ChildChange::Source::Parser)
         return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr renderer = this->renderer())
+            renderer->repaintClientsOfReferencedSVGResources();
+        return;
+    }
+#endif
 
     updateSVGRendererForElementChange();
 }

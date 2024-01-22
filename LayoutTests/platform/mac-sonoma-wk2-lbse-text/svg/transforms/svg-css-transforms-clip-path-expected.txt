@@ -1,0 +1,98 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x582
+  RenderBlock {html} at (0,0) size 800x582
+    RenderBody {body} at (8,8) size 784x566
+      RenderBlock {div} at (10,10) size 220x545.63
+        RenderBlock {h2} at (0,19.91) size 220x28
+          RenderText {#text} at (0,0) size 155x28
+            text run at (0,0) width 155: "SVG CSS scale"
+        RenderBlock {h2} at (0,287.72) size 220x28
+          RenderText {#text} at (0,0) size 105x28
+            text run at (0,0) width 105: "SVG scale"
+      RenderText {#text} at (240,0) size 4x18
+        text run at (240,0) width 4: " "
+      RenderBlock {div} at (254,10) size 220x545.63
+        RenderBlock {h2} at (0,19.91) size 220x28
+          RenderText {#text} at (0,0) size 214x28
+            text run at (0,0) width 214: "SVG CSS compound"
+        RenderBlock {h2} at (0,287.72) size 220x28
+          RenderText {#text} at (0,0) size 164x28
+            text run at (0,0) width 164: "SVG compound"
+      RenderText {#text} at (0,0) size 0x0
+layer at (28,85.81) size 200x200
+  RenderBlock (relative positioned) {div} at (10,67.81) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (29,87) size 198x198
+  RenderSVGRoot {svg} at (1,1) size 198x198
+layer at (29,86.81) size 198x198
+  RenderSVGViewportContainer at (0,0) size 198x198
+layer at (19,76.81) size 40x40 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGHiddenContainer {defs} at (-10,-10) size 40x40
+layer at (19,76.81) size 40x40 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+layer at (19,76.81) size 40x40 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGResourceClipper {clipPath} at (0,0) size 40x40
+layer at (19,76.81) size 40x40 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (19,76.81) size 40x40 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+layer at (39,96.81) size 200x200 backgroundClip at (29,86.81) size 198x198 clip at (29,86.81) size 198x198
+  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+layer at (28,353.63) size 200x200
+  RenderBlock (relative positioned) {div} at (10,335.63) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (29,355) size 198x198
+  RenderSVGRoot {svg} at (1,1) size 198x198
+layer at (29,354.63) size 198x198
+  RenderSVGViewportContainer at (0,0) size 198x198
+layer at (19,344.63) size 40x40 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGHiddenContainer {defs} at (-10,-10) size 40x40
+layer at (19,344.63) size 40x40 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+layer at (19,344.63) size 40x40 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGResourceClipper {clipPath} at (0,0) size 40x40
+layer at (19,344.63) size 40x40 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (19,344.63) size 40x40 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
+layer at (39,364.63) size 200x200 backgroundClip at (29,354.63) size 198x198 clip at (29,354.63) size 198x198
+  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+layer at (272,85.81) size 200x200
+  RenderBlock (relative positioned) {div} at (10,67.81) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (273,87) size 198x198
+  RenderSVGRoot {svg} at (1,1) size 198x198
+layer at (273,86.81) size 198x198
+  RenderSVGViewportContainer at (0,0) size 198x198
+layer at (274,87.81) size 40x40
+  RenderSVGHiddenContainer {defs} at (1,1) size 40x40
+layer at (274,87.81) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+layer at (274,87.81) size 40x40
+  RenderSVGResourceClipper {clipPath} at (0,0) size 40x40
+layer at (274,87.81) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (274,87.81) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+layer at (283,96.81) size 200x200 backgroundClip at (273,86.81) size 198x198 clip at (273,86.81) size 198x198
+  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+layer at (272,353.63) size 200x200
+  RenderBlock (relative positioned) {div} at (10,335.63) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (273,355) size 198x198
+  RenderSVGRoot {svg} at (1,1) size 198x198
+layer at (273,354.63) size 198x198
+  RenderSVGViewportContainer at (0,0) size 198x198
+layer at (274,355.63) size 40x40
+  RenderSVGHiddenContainer {defs} at (1,1) size 40x40
+layer at (274,355.63) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+layer at (274,355.63) size 40x40
+  RenderSVGResourceClipper {clipPath} at (0,0) size 40x40
+layer at (274,355.63) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (274,355.63) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+layer at (283,364.63) size 200x200 backgroundClip at (273,354.63) size 198x198 clip at (273,354.63) size 198x198
+  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]

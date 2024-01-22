@@ -60,8 +60,39 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSVGResourceElementClient);
 
 void CSSSVGResourceElementClient::resourceChanged(SVGElement&)
 {
-    if (!m_clientRenderer.renderTreeBeingDestroyed())
-        m_clientRenderer.repaint();
+    if (m_clientRenderer.renderTreeBeingDestroyed())
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    auto useUpdateLayerPositionsLogic = [&]() -> std::optional<CheckedPtr<RenderLayer>> {
+        auto& document = m_clientRenderer.document();
+        if (!document.settings().layerBasedSVGEngineEnabled())
+            return std::nullopt;
+
+        // Don't attempt to update anything during layout - the post-layout phase will invoke RenderLayer::updateLayerPosition(), if necessary.
+        if (document.view()->layoutContext().isInLayout())
+            return std::nullopt;
+
+        // If no layers are available, always use the renderer based repaint() logic.
+        if (!m_clientRenderer.hasLayer())
+            return std::nullopt;
+
+        // Use the cheaper update mechanism for all SVG renderers -- in proper subtrees, that do not need layout themselves.
+        if (!m_clientRenderer.isSVGLayerAwareRenderer() || m_clientRenderer.needsLayout())
+            return std::nullopt;
+
+        return std::make_optional(downcast<RenderLayerModelObject>(m_clientRenderer).checkedLayer());
+    };
+
+    // LBSE: Instead of repainting the current boundaries, utilize RenderLayer::updateLayerPositionsAfterStyleChange() to repaint
+    // the old and the new repaint boundaries, if they differ -- instead of just the new boundaries.
+    if (auto layer = useUpdateLayerPositionsLogic()) {
+        (*layer.value()).updateLayerPositionsAfterStyleChange();
+        return;
+    }
+#endif
+
+    m_clientRenderer.repaint();
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReferencedSVGResources);

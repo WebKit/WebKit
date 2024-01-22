@@ -991,6 +991,18 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
     else
         m_enclosingPaginationLayer = nullptr;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled()) {
+        if (!is<RenderSVGRoot>(renderer())) {
+            ASSERT(!renderer().isFixedPositioned());
+            m_repaintStatus = RepaintStatus::NeedsFullRepaint;
+        }
+
+        // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
+        ASSERT_IMPLIES(is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer()), !m_scrollableArea);
+    }
+#endif
+
     auto repaintIfNecessary = [&](bool checkForRepaint) {
         if (!m_hasVisibleContent || !isSelfPaintingLayer()) {
             clearRepaintRects();
@@ -1065,17 +1077,6 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             setNeedsPostLayoutCompositingUpdate();
         }
     }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer().isSVGLayerAwareRenderer() && renderer().document().settings().layerBasedSVGEngineEnabled()) {
-        if (!is<RenderSVGRoot>(renderer()))
-            ASSERT(!renderer().isFixedPositioned());
-
-        // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
-        if (is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer()))
-            ASSERT(!m_scrollableArea);
-    }
-#endif
 
     if (isComposited())
         backing()->updateAfterLayout(flags.contains(ContainingClippingLayerChangedSize), flags.contains(NeedsFullRepaintInBacking));

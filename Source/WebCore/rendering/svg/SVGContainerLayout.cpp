@@ -7,7 +7,7 @@
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
  * Copyright (C) 2020 Apple Inc. All rights reserved.
- * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021, 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +34,7 @@
 #include "RenderChildIterator.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
+#include "RenderSVGResourceGradient.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
@@ -75,19 +76,20 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
             if (child.isAnonymous()) {
                 ASSERT(is<RenderSVGViewportContainer>(child));
                 needsLayout = true;
-            } else if (auto* element = dynamicDowncast<SVGElement>(*child.node())) {
+            } else if (auto* element = dynamicDowncast<SVGElement>(*child.node()); element && element->hasRelativeLengths()) {
                 // When containerNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
-                if (element->hasRelativeLengths()) {
-                    // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
-                    if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(child))
-                        shape->setNeedsShapeUpdate();
-                    else if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(child)) {
-                        svgText->setNeedsTextMetricsUpdate();
-                        svgText->setNeedsPositioningValuesUpdate();
-                    }
 
+                // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
+                if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(child)) {
+                    shape->setNeedsShapeUpdate();
                     needsLayout = true;
-                }
+                } else if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(child)) {
+                    svgText->setNeedsTextMetricsUpdate();
+                    svgText->setNeedsPositioningValuesUpdate();
+                    needsLayout = true;
+                } else if (CheckedPtr resource = dynamicDowncast<RenderSVGResourceGradient>(child))
+                    resource->invalidateGradient();
+                // FIXME: [LBSE] Add pattern support.
             }
         }
 
