@@ -135,7 +135,7 @@ bool Quirks::needsFormControlToBeMouseFocusable() const
     if (!needsQuirks())
         return false;
 
-    return isDomain("ceac.state.gov"_s);
+    return m_document->topDocument().url().host() == "ceac.state.gov"_s;
 #else
     return false;
 #endif
