@@ -1878,8 +1878,8 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
 
 # Requires video scaling adaptation.
-webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
 # Uncomment when webkit.org/b/267411 is fixed
+#webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
 #webrtc/video-maxBitrate.html [ Failure ]
 #webrtc/video-maxBitrate-vp8.html [ Failure ]
 
@@ -1910,7 +1910,8 @@ fast/mediastream/get-user-media-constraints.html [ Failure ]
 fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 fast/mediastream/video-rotation.html [ Skip ]
-webrtc/video-rotation-no-cvo.html [ Failure Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webrtc/video-rotation-no-cvo.html [ Failure Timeout ]
 webrtc/video-rotation-black.html [ Crash Failure Pass Timeout ]
 
 # No AudioSession category handling in WPE/GTK ports.
@@ -1990,7 +1991,8 @@ webkit.org/b/235885 webrtc/libwebrtc/release-while-getting-stats.html [ Skip ]
 webrtc/video-replace-track.html [ Pass Failure Timeout Crash ]
 
 # GStreamerRtpSenderBackend::setMediaStreamIds() unimplemented.
-webkit.org/b/235885 webrtc/video.html [ Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 webrtc/video.html [ Failure ]
 
 # webrtcbin emits no ICE candidate stats for a PeerConnection managing only one data-channel.
 webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
@@ -1999,7 +2001,7 @@ webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote
 # Pending investigation.
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure ]
+#webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
@@ -2025,7 +2027,7 @@ webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
 #webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Failure ]
 #webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Timeout ]
 #webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
-webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
+#webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure Timeout Crash ]
 webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash Failure Timeout Pass ]
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
@@ -2034,8 +2036,8 @@ webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-auto
 webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
-webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
-webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
+#webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
+#webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/177533 webrtc/video-interruption.html
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/229346 webkit.org/b/235885 webrtc/multi-audio.html [ Timeout Pass Failure ]
@@ -2091,7 +2093,8 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonec
 webkit.org/b/235885 webrtc/dtmf-gc.html [ Skip ]
 
 webkit.org/b/235885 webrtc/video-h264.html [ Slow ]
-webkit.org/b/235885 webrtc/vp9.html [ Slow Failure ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/235885 webrtc/vp9.html [ Slow Failure ]
 
 # Also skipped on mac, timing out because relying on MediaStream::onactive event which is not exposed.
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
@@ -3671,7 +3674,7 @@ webkit.org/b/261024 svg/text/small-fonts-in-html5.html [ Failure ImageOnlyFailur
 # Uncomment when webkit.org/b/267411 is fixed
 #webkit.org/b/261024 webrtc/video-maxFramerate.html [ Pass Timeout ]
 #webkit.org/b/261024 webrtc/video-replace-muted-track.html [ Pass Timeout ]
-webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout ]
+#webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/video-disabled-black.html [ Crash Pass ]
 
 # Initial css/compositing test import
@@ -3813,6 +3816,19 @@ webkit.org/b/267411 webrtc/video-mute.html [ Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/video-receivers.html [ Pass Crash ]
 webkit.org/b/267411 webrtc/video-remote-mute.html [ Failure Pass Timeout Crash ]
 webkit.org/b/267411 webrtc/video-replace-muted-track.html [ Pass Timeout Crash ]
+webkit.org/b/267411 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/libwebrtc/release-while-creating-offer.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/video-replace-track-to-null.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-rotation-no-cvo.html [ Failure Timeout Crash ]
+webkit.org/b/267411 webrtc/video-rotation.html [ Failure Timeout Crash ]
+webkit.org/b/267411 webrtc/video-stats.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/video-unmute.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/video-with-data-channel.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/video.html [ Failure Crash ]
+webkit.org/b/267411 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Crash ]
+webkit.org/b/267411 webrtc/vp9-profile2.html [ Pass Crash ]
+webkit.org/b/267411 webrtc/vp9.html [ Failure Pass Timeout Crash ]
 
 # End: Common failures between GTK and WPE.
 

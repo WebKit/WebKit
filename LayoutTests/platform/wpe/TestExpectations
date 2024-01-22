@@ -1544,7 +1544,8 @@ webkit.org/b/261024 js/cached-window-properties.html [ Pass Timeout ]
 webkit.org/b/261024 svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml [ Failure Missing Pass ]
 webkit.org/b/261024 svg/hixie/mixed/010.xml [ Failure Missing Pass ]
 webkit.org/b/261024 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass Timeout ]
-webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
+# Uncomment when webkit.org/b/267411 is fixed
+#webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
