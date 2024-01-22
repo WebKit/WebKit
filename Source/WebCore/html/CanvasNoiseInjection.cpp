@@ -185,23 +185,24 @@ static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int i
     return tightestBoundingColors;
 }
 
-void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer, NoiseInjectionHashSalt salt)
+void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer, NoiseInjectionHashSalt salt, CanvasNoiseInjectionPostProcessArea postProcessArea)
 {
-    ASSERT(salt);
 
-    if (m_postProcessDirtyRect.isEmpty())
+    if (m_postProcessDirtyRect.isEmpty() && postProcessArea == CanvasNoiseInjectionPostProcessArea::DirtyRect)
         return;
 
     if (!imageBuffer)
         return;
 
+    auto dirtyRect = postProcessArea == CanvasNoiseInjectionPostProcessArea::DirtyRect ? m_postProcessDirtyRect : IntRect(IntPoint::zero(), imageBuffer->truncatedLogicalSize());
+
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace() };
-    auto pixelBuffer = imageBuffer->getPixelBuffer(format, m_postProcessDirtyRect);
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, dirtyRect);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;
 
     if (postProcessPixelBufferResults(*pixelBuffer, salt)) {
-        imageBuffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), m_postProcessDirtyRect.size() }, m_postProcessDirtyRect.location());
+        imageBuffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), dirtyRect.size() }, dirtyRect.location());
         m_postProcessDirtyRect = { };
     }
 }
@@ -247,12 +248,15 @@ static void adjustNeighborColorBounds(std::array<int, 4>& neighborColor1, const 
 
 bool CanvasNoiseInjection::postProcessPixelBufferResults(PixelBuffer& pixelBuffer, NoiseInjectionHashSalt salt) const
 {
-    ASSERT(salt);
     ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8);
 
     constexpr int bytesPerPixel = 4;
     std::span<uint8_t> bytes = std::span(pixelBuffer.bytes(), pixelBuffer.sizeInBytes());
     bool wasPixelBufferModified { false };
+
+    // Salt value 0 is used for testing.
+    if (!salt)
+        return true;
 
     for (size_t i = 0; i < bytes.size_bytes(); i += bytesPerPixel) {
         auto& redChannel = bytes[i];
