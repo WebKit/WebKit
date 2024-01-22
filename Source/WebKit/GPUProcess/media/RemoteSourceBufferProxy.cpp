@@ -41,6 +41,8 @@
 #include <WebCore/VideoTrackPrivate.h>
 #include <wtf/Scope.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionToWebProcess->connection())
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -225,7 +227,7 @@ void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t ma
 
 void RemoteSourceBufferProxy::addTrackBuffer(TrackID trackId)
 {
-    ASSERT(m_mediaDescriptions.contains(trackId));
+    MESSAGE_CHECK(m_mediaDescriptions.contains(trackId));
     m_sourceBufferPrivate->addTrackBuffer(trackId, m_mediaDescriptions.find(trackId)->second.ptr());
 }
 
