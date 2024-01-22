@@ -592,7 +592,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     if (style.hasPositionedMask()) {
         auto* maskImage = style.maskImage();
         auto& document = renderer.document();
-        auto reresolvedURL = maskImage->reresolvedURL(document);
+        auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document) : URL();
 
         if (!reresolvedURL.isEmpty()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
