@@ -35,7 +35,9 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStore.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -47,7 +49,11 @@
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";
 NSString * const _WKReadAccessFileURLsOption = @"_WKReadAccessFileURLsOption";
 NSString * const _WKAllowNetworkLoadsOption = @"_WKAllowNetworkLoadsOption";
+NSString * const _WKSourceApplicationBundleIdentifierOption = @"_WKSourceApplicationBundleIdentifierOption";
 
+// FIXME (264780): This should ideally default to `NO`, but making this change would break
+// copy/paste from Chrome or Firefox on macOS into TextEdit and other native apps.
+constexpr BOOL shouldAllowNetworkLoadsByDefault = YES;
 constexpr CGRect webViewRect = { { 0, 0 }, { 800, 600 } };
 constexpr NSTimeInterval defaultTimeoutInterval = 60;
 constexpr NSTimeInterval purgeWebViewCacheDelay = 15;
@@ -138,9 +144,13 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
     return configuration;
 }
 
-// FIXME (264780): This should ideally default to `NO`, but making this change would break
-// copy/paste from Chrome or Firefox on macOS into TextEdit and other native apps.
-static BOOL shouldAllowNetworkLoads = YES;
+static RetainPtr<NSString>& sourceApplicationBundleIdentifier()
+{
+    static NeverDestroyed<RetainPtr<NSString>> identifier;
+    return identifier;
+}
+
+static BOOL shouldAllowNetworkLoads = shouldAllowNetworkLoadsByDefault;
 
 static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 {
@@ -163,8 +173,18 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         } else
             processPool = adoptNS([[WKProcessPool alloc] init]).get();
 
+        auto dataStore = [] {
+            auto identifier = sourceApplicationBundleIdentifier();
+            if (!identifier)
+                return retainPtr([WKWebsiteDataStore nonPersistentDataStore]);
+
+            auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+            [configuration setSourceApplicationBundleIdentifier:identifier.get()];
+            return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
+        }();
+
         [configuration setProcessPool:processPool.get()];
-        [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+        [configuration setWebsiteDataStore:dataStore.get()];
         [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAll];
         [configuration _setAllowsJavaScriptMarkup:NO];
         [configuration _setAllowsMetaRefresh:NO];
@@ -218,6 +238,14 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 
 + (void)maybeUpdateShouldAllowNetworkLoads:(id)allowNetworkLoadsValue
 {
+    if (!allowNetworkLoadsValue) {
+        if (shouldAllowNetworkLoads != shouldAllowNetworkLoadsByDefault) {
+            shouldAllowNetworkLoads = shouldAllowNetworkLoadsByDefault;
+            [self clearConfiguration];
+        }
+        return;
+    }
+
     auto *allowNetworkLoadsAsNumber = dynamic_objc_cast<NSNumber>(allowNetworkLoadsValue);
     if (!allowNetworkLoadsAsNumber)
         [self clearConfigurationAndRaiseExceptionIfNecessary:@"The value associated with _WKAllowNetworkLoadsOption must be an NSNumber."];
@@ -226,6 +254,27 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         return;
 
     shouldAllowNetworkLoads = allowNetworkLoadsAsNumber.boolValue;
+    [self clearConfiguration];
+}
+
++ (void)maybeUpdateSourceApplicationBundleIdentifier:(id)identifierValue
+{
+    if (!identifierValue) {
+        if (sourceApplicationBundleIdentifier()) {
+            sourceApplicationBundleIdentifier() = nil;
+            [self clearConfiguration];
+        }
+        return;
+    }
+
+    auto identifier = dynamic_objc_cast<NSString>(identifierValue);
+    if (!identifier)
+        [self clearConfigurationAndRaiseExceptionIfNecessary:@"The value associated with _WKSourceApplicationBundleIdentifierOption must be an NSString."];
+
+    if ([sourceApplicationBundleIdentifier() isEqualToString:identifier])
+        return;
+
+    sourceApplicationBundleIdentifier() = identifier;
     [self clearConfiguration];
 }
 
@@ -258,8 +307,8 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
     if (id maybeReadAccessFileURLs = options[_WKReadAccessFileURLsOption])
         [self maybeConsumeBundlePaths:maybeReadAccessFileURLs];
 
-    if (id allowNetworkLoads = options[_WKAllowNetworkLoadsOption])
-        [self maybeUpdateShouldAllowNetworkLoads:allowNetworkLoads];
+    [self maybeUpdateShouldAllowNetworkLoads:options[_WKAllowNetworkLoadsOption]];
+    [self maybeUpdateSourceApplicationBundleIdentifier:options[_WKSourceApplicationBundleIdentifierOption]];
 }
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView
