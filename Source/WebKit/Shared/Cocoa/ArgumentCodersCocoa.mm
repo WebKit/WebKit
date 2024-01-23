@@ -454,7 +454,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allow
 #if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
     && HAVE(STRICT_DECODABLE_PKCONTACT) \
     && HAVE(STRICT_DECODABLE_CNCONTACT) \
-    && HAVE(STRICT_DECODABLE_PKPAYMENTPASS)
+    && (HAVE(STRICT_DECODABLE_PKPAYMENTPASS) || !HAVE(PKPAYMENTPASS))
     // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
     return true;
 #else
@@ -478,7 +478,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allow
             || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
     };
 
-#if ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
 #if HAVE(SECURE_ACTION_CONTEXT)
 static constexpr bool haveSecureActionContext = true;
 #else
@@ -506,7 +505,6 @@ static constexpr bool haveSecureActionContext = false;
         && allowedClasses.contains(PAL::getRVItemClass()))
         return haveSecureActionContext;
 #endif // ENABLE(REVEAL)
-#endif // ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
 
 #if ENABLE(APPLE_PAY)
     // rdar://107553480 Don't reintroduce rdar://108235706
