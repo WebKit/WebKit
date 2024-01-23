@@ -356,7 +356,10 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::srcAttr:
     case AttributeNames::srcsetAttr:
     case AttributeNames::sizesAttr:
-        selectImageSource(RelevantMutation::Yes);
+        if (oldValue != newValue)
+            selectImageSource(RelevantMutation::Yes);
+        else
+            m_imageLoader->updateFromElementIgnoringPreviousErrorToSameValue();
         break;
     case AttributeNames::usemapAttr:
         if (isInTreeScope() && !m_parsedUsemap.isNull())
