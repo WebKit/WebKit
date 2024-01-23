@@ -86,7 +86,7 @@ static bool newFloatShrinksLine(const FloatingObject& newFloat, const RenderBloc
 
     // initial-letter float always shrinks the first line.
     const auto& style = newFloat.renderer().style();
-    if (isFirstLine && style.styleType() == PseudoId::FirstLetter && !style.initialLetter().isEmpty())
+    if (isFirstLine && style.pseudoElementType() == PseudoId::FirstLetter && !style.initialLetter().isEmpty())
         return true;
     return false;
 }

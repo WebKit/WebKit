@@ -90,7 +90,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
     Vector<SingleThreadWeakPtr<RenderObject>> descendantsToDelete;
     auto* currentGroup = documentElementRenderer.view().viewTransitionRoot()->firstChild();
     for (auto& name : activeViewTransition->namedElements().keys()) {
-        ASSERT(!currentGroup || currentGroup->style().styleType() == PseudoId::ViewTransitionGroup);
+        ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoId::ViewTransitionGroup);
         if (currentGroup && name == currentGroup->style().functionalPseudoElementArgument()) {
             auto style = documentElementRenderer.getUncachedPseudoStyle({ PseudoId::ViewTransitionGroup, name }, &documentElementRenderer.style());
             if (!style || style->display() == DisplayType::None)
@@ -162,7 +162,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
 
     enum class ShouldDeleteRenderer : bool { No, Yes };
     auto updateRenderer = [&](RenderObject& renderer) -> ShouldDeleteRenderer {
-        auto style = documentElementRenderer.getUncachedPseudoStyle({ renderer.style().styleType(), name }, &documentElementStyle);
+        auto style = documentElementRenderer.getUncachedPseudoStyle({ renderer.style().pseudoElementType(), name }, &documentElementStyle);
         if (!style || style->display() == DisplayType::None)
             return ShouldDeleteRenderer::Yes;
 
@@ -174,7 +174,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
     // Create / remove ::view-transtion-image-pair itself.
     SingleThreadWeakPtr<RenderElement> imagePair = downcast<RenderElement>(group.firstChild());
     if (imagePair) {
-        ASSERT(imagePair->style().styleType() == PseudoId::ViewTransitionImagePair);
+        ASSERT(imagePair->style().pseudoElementType() == PseudoId::ViewTransitionImagePair);
         auto shouldDeleteRenderer = updateRenderer(*imagePair);
         if (shouldDeleteRenderer == ShouldDeleteRenderer::Yes) {
             m_updater.m_builder.destroy(*imagePair);
@@ -204,13 +204,13 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
 
     RenderPtr<RenderBlockFlow> newViewTransitionOld;
     RenderPtr<RenderBlockFlow> newViewTransitionNew;
-    if (imagePairFirstChild->style().styleType() == PseudoId::ViewTransitionOld) {
+    if (imagePairFirstChild->style().pseudoElementType() == PseudoId::ViewTransitionOld) {
         viewTransitionOld = imagePairFirstChild;
         shouldDeleteViewTransitionOld = updateRenderer(*viewTransitionOld);
         viewTransitionNew = viewTransitionOld->nextSibling();
-        ASSERT(!viewTransitionNew || viewTransitionNew->style().styleType() == PseudoId::ViewTransitionNew);
+        ASSERT(!viewTransitionNew || viewTransitionNew->style().pseudoElementType() == PseudoId::ViewTransitionNew);
     } else {
-        ASSERT(imagePairFirstChild->style().styleType() == PseudoId::ViewTransitionNew);
+        ASSERT(imagePairFirstChild->style().pseudoElementType() == PseudoId::ViewTransitionNew);
         viewTransitionNew = imagePairFirstChild;
         newViewTransitionOld = createRendererIfNeeded(PseudoId::ViewTransitionOld);
     }

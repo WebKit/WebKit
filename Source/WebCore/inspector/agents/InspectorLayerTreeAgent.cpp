@@ -201,9 +201,9 @@ Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(Ren
     if (isAnonymous && !renderer->isRenderView()) {
         layerObject->setIsAnonymous(true);
         const RenderStyle& style = renderer->style();
-        if (style.styleType() == PseudoId::FirstLetter)
+        if (style.pseudoElementType() == PseudoId::FirstLetter)
             layerObject->setPseudoElement("first-letter"_s);
-        else if (style.styleType() == PseudoId::FirstLine)
+        else if (style.pseudoElementType() == PseudoId::FirstLine)
             layerObject->setPseudoElement("first-line"_s);
     }
 

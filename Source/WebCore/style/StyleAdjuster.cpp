@@ -457,7 +457,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style.display() == DisplayType::Inline && style.styleType() == PseudoId::None && style.writingMode() != m_parentStyle.writingMode())
+        if (style.display() == DisplayType::Inline && style.pseudoElementType() == PseudoId::None && style.writingMode() != m_parentStyle.writingMode())
             style.setEffectiveDisplay(DisplayType::InlineBlock);
 
         // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
@@ -818,7 +818,7 @@ void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
         return;
     }
 
-    if (!m_element && style.styleType() != PseudoId::Before && style.styleType() != PseudoId::After) {
+    if (!m_element && style.pseudoElementType() != PseudoId::Before && style.pseudoElementType() != PseudoId::After) {
         style.setEffectiveDisplay(DisplayType::None);
         return;
     }

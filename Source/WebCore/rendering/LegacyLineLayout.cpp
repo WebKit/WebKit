@@ -1846,7 +1846,7 @@ void LegacyLineLayout::checkFloatInCleanLine(LegacyRootInlineBox& cleanLine, Ren
         floatBoxOnCleanLine.height() + floatBoxOnCleanLine.verticalMarginExtent());
     
     // We have to reset the cap-height alignment done by the first-letter floats when initial-letter is set, so just always treat first-letter floats as dirty.
-    if (originalFloatRect.size() == newSize && (floatBoxOnCleanLine.style().styleType() != PseudoId::FirstLetter || !floatBoxOnCleanLine.style().initialLetterDrop()))
+    if (originalFloatRect.size() == newSize && (floatBoxOnCleanLine.style().pseudoElementType() != PseudoId::FirstLetter || !floatBoxOnCleanLine.style().initialLetterDrop()))
         return;
 
     LayoutUnit floatTop = m_flow.isHorizontalWritingMode() ? originalFloatRect.y() : originalFloatRect.x();

@@ -224,7 +224,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 #if ENABLE(FULLSCREEN_API)
     auto isFullsizeBackdrop = [](const RenderElement& renderer) -> bool {
         auto& style = renderer.style();
-        if (style.styleType() != PseudoId::Backdrop || style.position() != PositionType::Fixed)
+        if (style.pseudoElementType() != PseudoId::Backdrop || style.position() != PositionType::Fixed)
             return false;
 
         if (style.hasTransform() || style.hasClip() || style.hasMask())

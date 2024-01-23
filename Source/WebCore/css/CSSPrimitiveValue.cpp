@@ -808,7 +808,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         if (!element)
             return { };
 
-        auto mode = conversionData.style()->styleType() == PseudoId::None
+        auto mode = conversionData.style()->pseudoElementType() == PseudoId::None
             ? Style::ContainerQueryEvaluator::SelectionMode::Element
             : Style::ContainerQueryEvaluator::SelectionMode::PseudoElement;
 

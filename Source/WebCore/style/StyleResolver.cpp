@@ -323,7 +323,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setPseudoElementRequest({ elementStyle.styleType() });
+    collector.setPseudoElementRequest({ elementStyle.pseudoElementType() });
     if (hasRevert) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
@@ -484,7 +484,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
     if (collector.matchResult().isEmpty())
         return { };
 
-    state.style()->setStyleType(pseudoElementRequest.pseudoId);
+    state.style()->setPseudoElementType(pseudoElementRequest.pseudoId);
     if (!pseudoElementRequest.nameIdentifier.isNull())
         state.style()->setFunctionalPseudoElementArgument(pseudoElementRequest.nameIdentifier);
 

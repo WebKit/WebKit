@@ -85,7 +85,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
         }
     }
 
-    firstLetterStyle.setStyleType(PseudoId::FirstLetter);
+    firstLetterStyle.setPseudoElementType(PseudoId::FirstLetter);
     // Force inline display (except for floating first-letters).
     firstLetterStyle.setDisplay(firstLetterStyle.isFloating() ? DisplayType::Block : DisplayType::Inline);
     // CSS2 says first-letter can't be positioned.
@@ -146,7 +146,7 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
 
     // If the child already has style, then it has already been created, so we just want
     // to update it.
-    if (firstLetterRenderer->parent()->style().styleType() == PseudoId::FirstLetter) {
+    if (firstLetterRenderer->parent()->style().pseudoElementType() == PseudoId::FirstLetter) {
         updateStyle(block, *firstLetterRenderer);
         return;
     }

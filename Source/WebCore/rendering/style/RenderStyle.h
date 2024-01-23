@@ -280,7 +280,7 @@ struct ScopedName;
 constexpr auto PublicPseudoIDBits = 16;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
-constexpr auto StyleTypeBits = 5;
+constexpr auto PseudoElementTypeBits = 5;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 struct PseudoStyleCache {
@@ -342,8 +342,8 @@ public:
     StyleSelfAlignmentData resolvedJustifySelf(const RenderStyle* parentStyle, ItemPosition normalValueBehaviour) const;
     StyleContentAlignmentData resolvedJustifyContent(const StyleContentAlignmentData& normalValueBehaviour) const;
 
-    PseudoId styleType() const { return static_cast<PseudoId>(m_nonInheritedFlags.styleType); }
-    void setStyleType(PseudoId styleType) { m_nonInheritedFlags.styleType = static_cast<unsigned>(styleType); }
+    PseudoId pseudoElementType() const { return static_cast<PseudoId>(m_nonInheritedFlags.pseudoElementType); }
+    void setPseudoElementType(PseudoId pseudoElementType) { m_nonInheritedFlags.pseudoElementType = static_cast<unsigned>(pseudoElementType); }
     const AtomString& functionalPseudoElementArgument() const;
     void setFunctionalPseudoElementArgument(const AtomString&);
 
@@ -2203,7 +2203,7 @@ private:
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned styleType : StyleTypeBits; // PseudoId
+        unsigned pseudoElementType : PseudoElementTypeBits; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().

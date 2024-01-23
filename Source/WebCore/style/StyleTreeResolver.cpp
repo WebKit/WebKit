@@ -370,7 +370,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             // ::first-line can inherit to ::before/::after
             if (auto firstLineContext = makeResolutionContextForInheritedFirstLine(elementUpdate, *elementUpdate.style)) {
                 auto firstLineStyle = scope().resolver->styleForPseudoElement(element, { pseudoId }, *firstLineContext);
-                firstLineStyle->style->setStyleType(PseudoId::FirstLine);
+                firstLineStyle->style->setPseudoElementType(PseudoId::FirstLine);
                 animatedUpdate.style->addCachedPseudoStyle(WTFMove(firstLineStyle->style));
             }
         }
@@ -435,7 +435,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
             return { };
 
         auto elementStyle = scope().resolver->styleForElement(element, *resolutionContext);
-        elementStyle.style->setStyleType(PseudoId::FirstLine);
+        elementStyle.style->setPseudoElementType(PseudoId::FirstLine);
 
         return elementStyle;
     }

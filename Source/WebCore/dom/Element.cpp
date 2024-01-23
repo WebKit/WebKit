@@ -4120,7 +4120,7 @@ const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpec
     if (!style) {
         style = RenderStyle::createPtr();
         style->inheritFrom(*parentStyle);
-        style->setStyleType(pseudoElementSpecifier);
+        style->setPseudoElementType(pseudoElementSpecifier);
     }
 
     auto* computedStyle = style.get();

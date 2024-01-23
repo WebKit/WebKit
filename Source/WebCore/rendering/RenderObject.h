@@ -1332,7 +1332,7 @@ inline bool RenderObject::isBeforeContent() const
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isRenderText())
         return false;
-    if (style().styleType() != PseudoId::Before)
+    if (style().pseudoElementType() != PseudoId::Before)
         return false;
     return true;
 }
@@ -1342,7 +1342,7 @@ inline bool RenderObject::isAfterContent() const
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isRenderText())
         return false;
-    if (style().styleType() != PseudoId::After)
+    if (style().pseudoElementType() != PseudoId::After)
         return false;
     return true;
 }
@@ -1420,7 +1420,7 @@ inline bool RenderObject::isAnonymousBlock() const
     // FIXME: Does this relatively long function benefit from being inlined?
     return isAnonymous()
         && (style().display() == DisplayType::Block || style().display() == DisplayType::Box)
-        && style().styleType() == PseudoId::None
+        && style().pseudoElementType() == PseudoId::None
         && isRenderBlock()
 #if ENABLE(MATHML)
         && !isRenderMathMLBlock()

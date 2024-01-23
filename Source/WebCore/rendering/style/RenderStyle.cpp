@@ -112,7 +112,7 @@ static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorat
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
-static_assert(!((enumToUnderlyingType(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
+static_assert(!((enumToUnderlyingType(PseudoId::AfterLastInternalPseudoId) - 1) >> PseudoElementTypeBits));
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
@@ -166,7 +166,7 @@ RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& pare
 
 RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
 {
-    ASSERT(pseudoStyle.styleType() == PseudoId::Before || pseudoStyle.styleType() == PseudoId::After);
+    ASSERT(pseudoStyle.pseudoElementType() == PseudoId::Before || pseudoStyle.pseudoElementType() == PseudoId::After);
 
     auto style = create();
     style.inheritFrom(pseudoStyle);
@@ -229,7 +229,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
-    m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
+    m_nonInheritedFlags.pseudoElementType = static_cast<unsigned>(PseudoId::None);
     m_nonInheritedFlags.pseudoBits = static_cast<unsigned>(PseudoId::None);
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
@@ -447,7 +447,7 @@ bool RenderStyle::operator==(const RenderStyle& other) const
 
 bool RenderStyle::hasUniquePseudoStyle() const
 {
-    if (!m_cachedPseudoStyles || styleType() != PseudoId::None)
+    if (!m_cachedPseudoStyles || pseudoElementType() != PseudoId::None)
         return false;
 
     for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
@@ -458,13 +458,13 @@ bool RenderStyle::hasUniquePseudoStyle() const
     return false;
 }
 
-RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
+RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pseudo) const
 {
     if (!m_cachedPseudoStyles)
         return nullptr;
 
     for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
-        if (pseudoStyle->styleType() == pid)
+        if (pseudoStyle->pseudoElementType() == pseudo)
             return pseudoStyle.get();
     }
 
@@ -476,7 +476,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     if (!pseudo)
         return nullptr;
 
-    ASSERT(pseudo->styleType() > PseudoId::None);
+    ASSERT(pseudo->pseudoElementType() > PseudoId::None);
 
     RenderStyle* result = pseudo.get();
 
@@ -1563,7 +1563,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // firstChildState
         // lastChildState
         // isLink
-        // styleType
+        // pseudoElementType
         // pseudoBits
     };
 

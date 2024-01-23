@@ -203,7 +203,7 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
 
     auto& style = renderer.style();
 
-    switch (style.styleType()) {
+    switch (style.pseudoElementType()) {
     case PseudoId::None:
         // Sometimes elements have more then one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
@@ -503,7 +503,7 @@ void RenderCounter::updateCounter()
                 return;
             if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
                 return;
-            auto containerStyle = beforeAfterContainer->style().styleType();
+            auto containerStyle = beforeAfterContainer->style().pseudoElementType();
             if (containerStyle == PseudoId::Before || containerStyle == PseudoId::After)
                 break;
             beforeAfterContainer = beforeAfterContainer->parent();

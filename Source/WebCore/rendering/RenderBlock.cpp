@@ -1999,7 +1999,7 @@ Node* RenderBlock::nodeForHitTest() const
 {
     // If we're a ::backdrop pseudo-element, we should hit-test to the element that generated it.
     // This matches the behavior that other browsers have.
-    if (style().styleType() == PseudoId::Backdrop) {
+    if (style().pseudoElementType() == PseudoId::Backdrop) {
         for (auto& element : document().topLayerElements()) {
             if (!element->renderer())
                 continue;
@@ -2604,7 +2604,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
     firstLetterContainer = nullptr;
 
     // Don't recur
-    if (style().styleType() == PseudoId::FirstLetter)
+    if (style().pseudoElementType() == PseudoId::FirstLetter)
         return;
     
     // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
@@ -2629,7 +2629,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
         if (is<RenderListMarker>(current))
             firstLetter = current.nextSibling();
         else if (current.isFloatingOrOutOfFlowPositioned()) {
-            if (current.style().styleType() == PseudoId::FirstLetter) {
+            if (current.style().pseudoElementType() == PseudoId::FirstLetter) {
                 firstLetter = current.firstChild();
                 break;
             }

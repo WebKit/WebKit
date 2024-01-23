@@ -467,11 +467,11 @@ inline void RenderStyle::setFlexShrink(float shrink)
 
 inline void RenderStyle::setFunctionalPseudoElementArgument(const AtomString& identifier)
 {
-    ASSERT(styleType() == PseudoId::ViewTransitionGroup
-        || styleType() == PseudoId::ViewTransitionImagePair
-        || styleType() == PseudoId::ViewTransitionNew
-        || styleType() == PseudoId::ViewTransitionOld
-        || styleType() == PseudoId::Highlight);
+    ASSERT(pseudoElementType() == PseudoId::ViewTransitionGroup
+        || pseudoElementType() == PseudoId::ViewTransitionImagePair
+        || pseudoElementType() == PseudoId::ViewTransitionNew
+        || pseudoElementType() == PseudoId::ViewTransitionOld
+        || pseudoElementType() == PseudoId::Highlight);
     SET_NESTED(m_nonInheritedData, rareData, functionalPseudoElementArgument, identifier);
 }
 
