@@ -337,6 +337,12 @@ public:
     void didFinishLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didFailLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
 
+    void resourceLoadDidSendRequest(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceRequest&);
+    void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
+    void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::AuthenticationChallenge&);
+    void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
+    void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
+
     WebExtensionAction& defaultAction();
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getAction(WebExtensionTab*);
@@ -408,6 +414,8 @@ public:
     void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet, CompletionHandler<void()>&&);
 
     HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
+    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet, WebExtensionContentWorldType) const;
+
     bool pageListensForEvent(const WebPageProxy&, WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
     template<typename T>
@@ -415,6 +423,9 @@ public:
 
     template<typename T>
     void sendToProcessesForEvent(WebExtensionEventListenerType, const T& message);
+
+    template<typename T>
+    void sendToProcessesForEvents(EventListenerTypeSet, const T& message);
 
     template<typename T>
     void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message);
@@ -674,6 +685,9 @@ private:
     void windowsRemove(WebExtensionWindowIdentifier, CompletionHandler<void(WebExtensionWindow::Error)>&&);
     void fireWindowsEventIfNeeded(WebExtensionEventListenerType, std::optional<WebExtensionWindowParameters>);
 
+    // webRequest support.
+    bool hasPermissionToSendWebRequestEvent(WebExtensionTab*, const URL& resourceURL, const ResourceLoadInfo&);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -780,6 +794,12 @@ template<typename T>
 void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
 {
     sendToProcesses(processes(type, WebExtensionContentWorldType::Main), message);
+}
+
+template<typename T>
+void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet typeSet, const T& message)
+{
+    sendToProcesses(processes(typeSet, WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>

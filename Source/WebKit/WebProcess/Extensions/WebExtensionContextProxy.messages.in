@@ -77,6 +77,13 @@ messages -> WebExtensionContextProxy {
     // Web Navigation
     DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionTabIdentifier tabID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
 
+    // Web Request
+    ResourceLoadDidSendRequest(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceRequest request, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+    ResourceLoadDidPerformHTTPRedirection(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest newRequest)
+    ResourceLoadDidReceiveChallenge(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::AuthenticationChallenge challenge, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+    ResourceLoadDidReceiveResponse(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+    ResourceLoadDidCompleteWithError(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, WebCore::ResourceError error, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+
     // Windows
     DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)
 }

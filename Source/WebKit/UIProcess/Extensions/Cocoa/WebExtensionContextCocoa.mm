@@ -40,6 +40,7 @@
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
 #import "PageLoadStateObserver.h"
+#import "ResourceLoadInfo.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
@@ -48,6 +49,7 @@
 #import "WKWebViewInternal.h"
 #import "WKWebpagePreferencesPrivate.h"
 #import "WKWebsiteDataStorePrivate.h"
+#import "WebCoreArgumentCoders.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionDynamicScripts.h"
@@ -1872,6 +1874,97 @@ void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, Web
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
         });
     }
+}
+
+// MARK: webRequest
+
+bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* tab, const URL& resourceURL, const ResourceLoadInfo& loadInfo)
+{
+    if (!tab)
+        return false;
+
+    if (!hasPermission(_WKWebExtensionPermissionWebRequest, tab))
+        return false;
+
+    if (!tab->extensionHasPermission())
+        return false;
+
+    if (resourceURL.isValid() && !hasPermission(resourceURL, tab))
+        return false;
+
+    const URL& resourceLoadURL = loadInfo.originalURL;
+    if (resourceLoadURL.isValid() && !hasPermission(resourceLoadURL, tab))
+        return false;
+
+    return true;
+}
+
+void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
+{
+    auto tab = getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
+        return;
+
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnBeforeRequest, WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders, WebExtensionEventListenerType::WebRequestOnSendHeaders };
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
+        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo));
+    });
+}
+
+void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
+{
+    auto tab = getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
+        return;
+
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnBeforeRequest };
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
+        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo));
+    });
+
+    // After dispatching the redirect events, also dispatch the `didSendRequest` events for the redirection.
+    resourceLoadDidSendRequest(pageID, loadInfo, request);
+}
+
+void WebExtensionContext::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::AuthenticationChallenge& challenge)
+{
+    auto tab = getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), URL { }, loadInfo))
+        return;
+
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnAuthRequired };
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
+        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tab->identifier(), windowIdentifier, challenge, loadInfo));
+    });
+}
+
+void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
+{
+    auto tab = getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
+        return;
+
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnResponseStarted };
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
+        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tab->identifier(), windowIdentifier, response, loadInfo));
+    });
+}
+
+void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
+{
+    auto tab = getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
+        return;
+
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnErrorOccurred, WebExtensionEventListenerType::WebRequestOnCompleted };
+    wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
+        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
+    });
 }
 
 WebExtensionAction& WebExtensionContext::defaultAction()

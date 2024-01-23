@@ -332,6 +332,8 @@ void WebExtensionController::addItemsToContextMenu(WebPageProxy& page, const Con
 }
 #endif
 
+// MARK: webNavigation
+
 void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {
     for (auto& context : m_extensionContexts)
@@ -355,6 +357,8 @@ void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, 
     for (auto& context : m_extensionContexts)
         context->didFailLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
+
+// MARK: declarativeNetRequest
 
 void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdentifier pageID, URL& url, WebCore::ContentRuleListResults& results)
 {
@@ -393,6 +397,38 @@ void WebExtensionController::purgeOldMatchedRules()
 
     if (!stillHaveRules)
         m_purgeOldMatchedRulesTimer = nullptr;
+}
+
+// MARK: webRequest
+
+void WebExtensionController::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
+{
+    for (auto& context : m_extensionContexts)
+        context->resourceLoadDidSendRequest(pageID, loadInfo, request);
+}
+
+void WebExtensionController::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
+{
+    for (auto& context : m_extensionContexts)
+        context->resourceLoadDidPerformHTTPRedirection(pageID, loadInfo, response, request);
+}
+
+void WebExtensionController::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::AuthenticationChallenge& challenge)
+{
+    for (auto& context : m_extensionContexts)
+        context->resourceLoadDidReceiveChallenge(pageID, loadInfo, challenge);
+}
+
+void WebExtensionController::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
+{
+    for (auto& context : m_extensionContexts)
+        context->resourceLoadDidReceiveResponse(pageID, loadInfo, response);
+}
+
+void WebExtensionController::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
+{
+    for (auto& context : m_extensionContexts)
+        context->resourceLoadDidCompleteWithError(pageID, loadInfo, response, error);
 }
 
 } // namespace WebKit

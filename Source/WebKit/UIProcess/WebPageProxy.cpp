@@ -7975,30 +7975,55 @@ RefPtr<WebInspectorUIProxy> WebPageProxy::protectedInspector() const
 
 void WebPageProxy::resourceLoadDidSendRequest(ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request)
 {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadDidSendRequest(identifier(), loadInfo, request);
+#endif
+
     if (m_resourceLoadClient)
         m_resourceLoadClient->didSendRequest(WTFMove(loadInfo), WTFMove(request));
 }
 
 void WebPageProxy::resourceLoadDidPerformHTTPRedirection(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request)
 {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadDidPerformHTTPRedirection(identifier(), loadInfo, response, request);
+#endif
+
     if (m_resourceLoadClient)
         m_resourceLoadClient->didPerformHTTPRedirection(WTFMove(loadInfo), WTFMove(response), WTFMove(request));
 }
 
 void WebPageProxy::resourceLoadDidReceiveChallenge(ResourceLoadInfo&& loadInfo, WebCore::AuthenticationChallenge&& challenge)
 {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadDidReceiveChallenge(identifier(), loadInfo, challenge);
+#endif
+
     if (m_resourceLoadClient)
         m_resourceLoadClient->didReceiveChallenge(WTFMove(loadInfo), WTFMove(challenge));
 }
 
 void WebPageProxy::resourceLoadDidReceiveResponse(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response)
 {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadDidReceiveResponse(identifier(), loadInfo, response);
+#endif
+
     if (m_resourceLoadClient)
         m_resourceLoadClient->didReceiveResponse(WTFMove(loadInfo), WTFMove(response));
 }
 
 void WebPageProxy::resourceLoadDidCompleteWithError(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error)
 {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr webExtensionController = this->webExtensionController())
+        webExtensionController->resourceLoadDidCompleteWithError(identifier(), loadInfo, response, error);
+#endif
+
     if (m_resourceLoadClient)
         m_resourceLoadClient->didCompleteWithError(WTFMove(loadInfo), WTFMove(response), WTFMove(error));
 }

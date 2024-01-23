@@ -124,6 +124,31 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred()
     return *m_onErrorOccurredEvent;
 }
 
+void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceRequest&, const ResourceLoadInfo&)
+{
+    // FIXME: rdar://114823223 - Fire the necessary events.
+}
+
+void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const ResourceLoadInfo&, const WebCore::ResourceRequest& newRequest)
+{
+    // FIXME: rdar://114823223 - Fire the necessary events.
+}
+
+void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::AuthenticationChallenge&, const ResourceLoadInfo&)
+{
+    // FIXME: rdar://114823223 - Fire the necessary events.
+}
+
+void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const ResourceLoadInfo&)
+{
+    // FIXME: rdar://114823223 - Fire the necessary events.
+}
+
+void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const WebCore::ResourceError&, const ResourceLoadInfo&)
+{
+    // FIXME: rdar://114823223 - Fire the necessary events.
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

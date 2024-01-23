@@ -90,18 +90,26 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
 
 WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
-    auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
-    if (pagesEntry == m_eventListenerPages.end())
-        return { };
+    return processes(EventListenerTypeSet { type }, contentWorldType);
+}
 
+WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet typeSet, WebExtensionContentWorldType contentWorldType) const
+{
     WebProcessProxySet result;
-    for (auto entry : pagesEntry->value) {
-        if (!hasAccessInPrivateBrowsing() && entry.key.sessionID().isEphemeral())
+
+    for (auto type : typeSet) {
+        auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
+        if (pagesEntry == m_eventListenerPages.end())
             continue;
 
-        Ref process = entry.key.process();
-        if (process->canSendMessage())
-            result.add(WTFMove(process));
+        for (auto entry : pagesEntry->value) {
+            if (!hasAccessInPrivateBrowsing() && entry.key.sessionID().isEphemeral())
+                continue;
+
+            Ref process = entry.key.process();
+            if (process->canSendMessage())
+                result.add(WTFMove(process));
+        }
     }
 
     return result;
