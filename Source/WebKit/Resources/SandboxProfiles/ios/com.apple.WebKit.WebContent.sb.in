@@ -1237,7 +1237,7 @@
     (deny process-codesigning-text-offset-get (with telemetry))
     (deny process-codesigning-cdhash-get (with telemetry))
     (deny process-codesigning-blob-get (with telemetry))
-    (deny process-codesigning-teamid-get (with telemetry))
+    (allow process-codesigning-teamid-get (with telemetry))
     (allow process-codesigning-identity-get (target self)) ;; codeSigningIdentifierForCurrentProcess
     (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
     (allow process-codesigning-status-get) ;; _xpc_get_entitlements
