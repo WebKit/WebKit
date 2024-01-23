@@ -28,13 +28,13 @@
 namespace WebCore {
 
 class NullVideoFullscreenInterface;
-class VideoFullscreenInterfaceAVKit;
+class VideoFullscreenInterfaceIOS;
 class VideoFullscreenInterfaceMac;
 
 #if PLATFORM(WATCHOS)
 using PlatformVideoFullscreenInterface = NullVideoFullscreenInterface;
 #elif PLATFORM(IOS_FAMILY)
-using PlatformVideoFullscreenInterface = VideoFullscreenInterfaceAVKit;
+using PlatformVideoFullscreenInterface = VideoFullscreenInterfaceIOS;
 #elif PLATFORM(MAC)
 using PlatformVideoFullscreenInterface = VideoFullscreenInterfaceMac;
 #endif

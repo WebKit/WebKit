@@ -47,7 +47,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/VideoFullscreenInterfaceAVKit.h>
+#import <WebCore/VideoFullscreenInterfaceIOS.h>
 #import <WebCore/VideoPresentationModel.h>
 #import <WebCore/ViewportArguments.h>
 #import <objc/runtime.h>

@@ -39,7 +39,7 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/VideoFullscreenInterfaceAVKit.h>
+#import <WebCore/VideoFullscreenInterfaceIOS.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>

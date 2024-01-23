@@ -150,7 +150,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
-#include "VideoFullscreenInterfaceAVKit.h"
+#include "VideoFullscreenInterfaceIOS.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -552,7 +552,7 @@ platform/ios/UIFoundationSoftLink.mm
 platform/ios/UIViewControllerUtilities.mm
 platform/ios/UserAgentIOS.mm
 platform/ios/ValidationBubbleIOS.mm
-platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify
+platform/ios/VideoFullscreenInterfaceIOS.mm @no-unify
 platform/ios/WebAVPlayerController.mm
 platform/ios/WebBackgroundTaskController.mm
 platform/ios/WebCoreMotionManager.mm
