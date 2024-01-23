@@ -53,7 +53,7 @@ public:
     CALayer *layerForID(WebCore::PlatformLayerIdentifier) const;
     CALayer *rootLayer() const;
 
-    RemoteLayerTreeDrawingAreaProxy& drawingArea() const { return *m_drawingArea; }
+    RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
@@ -109,7 +109,7 @@ private:
 
     LayerContentsType layerContentsType() const;
 
-    RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
+    WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
     HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;
