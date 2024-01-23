@@ -485,6 +485,8 @@ enum class TextPositionAnchor : uint8_t {
     End = 1 << 1
 };
 
+enum class NotifyInputDelegate : bool { No, Yes };
+
 } // namespace WebKit
 
 @interface WKRelativeTextPosition : UITextPosition
@@ -7428,14 +7430,20 @@ inline static WKSEKeyModifierFlags shiftKeyState(UIKeyModifierFlags flags)
 
 - (void)_executeEditCommand:(NSString *)commandName
 {
+    [self _executeEditCommand:commandName notifyDelegate:WebKit::NotifyInputDelegate::Yes];
+}
+
+- (void)_executeEditCommand:(NSString *)commandName notifyDelegate:(WebKit::NotifyInputDelegate)notifyDelegate
+{
     _autocorrectionContextNeedsUpdate = YES;
     // FIXME: Editing commands are not considered by WebKit as user initiated even if they are the result
     // of keydown or keyup. We need to query the keyboard to determine if this was called from the keyboard
     // or not to know whether to tell WebKit to treat this command as user initiated or not.
-    [self _internalBeginSelectionChange];
-    RetainPtr<WKContentView> view = self;
-    _page->executeEditCommand(commandName, { }, [view] {
-        [view _internalEndSelectionChange];
+    if (notifyDelegate == WebKit::NotifyInputDelegate::Yes)
+        [self _internalBeginSelectionChange];
+    _page->executeEditCommand(commandName, { }, [view = retainPtr(self), notifyDelegate] {
+        if (notifyDelegate == WebKit::NotifyInputDelegate::Yes)
+            [view _internalEndSelectionChange];
     });
 }
 
@@ -12992,8 +13000,12 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)deleteInDirection:(UITextStorageDirection)direction toGranularity:(UITextGranularity)granularity
 {
+    auto notifyDelegate = granularity == UITextGranularityCharacter && direction == UITextStorageDirectionBackward
+        ? WebKit::NotifyInputDelegate::No
+        : WebKit::NotifyInputDelegate::Yes;
+
     for (NSString *command in deleteSelectionCommands(direction, granularity))
-        [self _executeEditCommand:command];
+        [self _executeEditCommand:command notifyDelegate:notifyDelegate];
 }
 
 #if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
