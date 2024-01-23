@@ -257,6 +257,7 @@ void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
 void ErrorInstance::computeErrorInfo(VM& vm)
 {
     ASSERT(!m_errorInfoMaterialized);
+    DeferGC deferGC(vm);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
         getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
