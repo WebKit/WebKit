@@ -1013,15 +1013,6 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
 
         AXPropertyValueVariant value;
         switch (propertyName) {
-        // FIXME: Once textUnderElement can be retrieved from the AX thread and/or is faster, cache this eagerly.
-        case AXPropertyName::AccessibilityText: {
-            Vector<AccessibilityText> texts;
-            axObject->accessibilityText(texts);
-            value = texts.map([] (const auto& text) -> AccessibilityText {
-                return { text.text.isolatedCopy(), text.textSource };
-            });
-            break;
-        }
         case AXPropertyName::InnerHTML:
             value = axObject->innerHTML().isolatedCopy();
             break;
