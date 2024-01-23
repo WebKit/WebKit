@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 
@@ -40,6 +41,16 @@ struct BufferAndBackendInfo {
     }
 
     bool operator==(const BufferAndBackendInfo&) const = default;
+};
+
+struct BufferSetBackendHandle {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    std::optional<ImageBufferBackendHandle> bufferHandle;
+
+    std::optional<BufferAndBackendInfo> frontBufferInfo;
+    std::optional<BufferAndBackendInfo> backBufferInfo;
+    std::optional<BufferAndBackendInfo> secondaryBackBufferInfo;
 };
 
 } // namespace WebKit

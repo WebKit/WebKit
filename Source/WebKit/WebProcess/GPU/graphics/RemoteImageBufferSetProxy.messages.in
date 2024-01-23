@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,10 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy NotRefCounted {
-    void SetPreferredFramesPerSecond(unsigned preferredFramesPerSecond)
-    void WillCommitLayerTree(WebKit::TransactionID transactionID)
-    void CommitLayerTreeNotTriggered(WebKit::TransactionID nextCommitTransactionID)
-    void CommitLayerTree(Vector<std::pair<WebKit::RemoteLayerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction>> transactions, HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>> handlesMap) CanDispatchOutOfOrder
-    void AsyncSetLayerContents(WebCore::PlatformLayerIdentifier layer, WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier identifier)
+#if ENABLE(GPU_PROCESS)
+
+messages -> RemoteImageBufferSetProxy NotRefCounted  {
+#if PLATFORM(COCOA)
+    DidPrepareForDisplay(struct WebKit::ImageBufferSetPrepareBufferForDisplayOutputData outputData, WebKit::RenderingUpdateID renderingUpdateID)
+#endif
 }
+
+#endif // ENABLE(GPU_PROCESS)
