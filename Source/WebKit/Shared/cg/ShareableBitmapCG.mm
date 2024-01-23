@@ -40,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const NativeImage& image)
     : m_size(image.size())
     , m_colorSpace(image.colorSpace())
     , m_bytesPerPixel(CGImageGetBitsPerPixel(image.platformImage().get()) / 8)
@@ -109,10 +109,11 @@ CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const Destination
     return info;
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& image)
+RefPtr<ShareableBitmap> ShareableBitmap::createFromPixelsIfPossible(const NativeImage& image, const DestinationColorSpace& colorSpace)
 {
-    auto colorSpace = image.colorSpace();
     if (colorSpace != DestinationColorSpace::SRGB())
+        return nullptr;
+    if (colorSpace != image.colorSpace())
         return nullptr;
 
     auto configuration = ShareableBitmapConfiguration(image);
@@ -122,7 +123,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
         pixels = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image.platformImage().get())));
     } @catch (id exception) {
         LOG_WITH_STREAM(Images, stream
-            << "ShareableBitmap::createFromImagePixels() failed CGDataProviderCopyData "
+            << "ShareableBitmap::createFromPixelsIfPossible() failed CGDataProviderCopyData "
             << " CGImage size: " << configuration.size()
             << " CGImage bytesPerRow: " << configuration.bytesPerRow()
             << " CGImage sizeInBytes: " << configuration.sizeInBytes());
@@ -139,7 +140,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
 
     if (configuration.sizeInBytes() != sizeInBytes) {
         LOG_WITH_STREAM(Images, stream
-            << "ShareableBitmap::createFromImagePixels() " << image.platformImage().get()
+            << "ShareableBitmap::createFromPixelsIfPossible() " << image.platformImage().get()
             << " CGImage size: " << configuration.size()
             << " CGImage bytesPerRow: " << configuration.bytesPerRow()
             << " CGImage sizeInBytes: " << configuration.sizeInBytes()

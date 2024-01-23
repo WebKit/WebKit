@@ -96,44 +96,6 @@ void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageB
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
 }
 
-inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNativeImage(NativeImage& image)
-{
-    RefPtr<ShareableBitmap> bitmap;
-    PlatformImagePtr platformImage;
-
-#if USE(CG)
-    bitmap = ShareableBitmap::createFromImagePixels(image);
-    if (bitmap)
-        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-#endif
-
-    // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
-    if (!platformImage) {
-        bitmap = ShareableBitmap::createFromImageDraw(image);
-
-        // If createGraphicsContext() failed because the image colorSpace is not
-        // supported for output, fallback to SRGB.
-        if (!bitmap)
-            bitmap = ShareableBitmap::createFromImageDraw(image, DestinationColorSpace::SRGB());
-
-        if (bitmap)
-            platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-    }
-
-    if (!platformImage)
-        return std::nullopt;
-
-    auto handle = bitmap->createHandle();
-    if (!handle)
-        return std::nullopt;
-
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-
-    // Replace the PlatformImage of the input NativeImage with the shared one.
-    image.replaceContents(WTFMove(platformImage));
-    return handle;
-}
-
 void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decomposedGlyphs)
 {
     if (m_renderingResources.add(decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs).isNewEntry) {
@@ -169,7 +131,25 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (!addResult.isNewEntry)
         return;
 
-    auto handle = createShareableBitmapFromNativeImage(image);
+    std::optional<ShareableBitmap::Handle> handle;
+    {
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(image);
+        // At the moment ShareableBitmap::create() uses a draw. If colorSpace is not supported for output, fallback to SRGB.
+        if (!bitmap)
+            bitmap = ShareableBitmap::create(image, DestinationColorSpace::SRGB());
+        PlatformImagePtr platformImage;
+        if (bitmap)
+            platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+        if (platformImage)
+            handle = bitmap->createHandle();
+        if (handle) {
+            // If sharing is possible, replace the contents of the original NativeImage to
+            // save memory.
+            handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+            image.replaceContents(WTFMove(platformImage));
+        }
+    }
+
     if (!handle) {
         // FIXME: Failing to send the image to GPUP will crash it when referencing this image.
         LOG_WITH_STREAM(Images, stream
