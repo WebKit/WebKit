@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <p>This test checks <a href="http://dev.w3.org/html5/spec/Overview.html#bidirectional-text">the default rules for direction and unicode-bidi CSS properties</a>.</p>
 <div id="container"></div>
 <div id="console"></div>
@@ -44,11 +44,11 @@ var tests = [
     ['output', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['output', {'dir': ''}, 'ltr', 'isolate'],
 
-    ['bdo', {}, 'ltr', 'bidi-override'],
-    ['bdo', {'dir': 'ltr'}, 'ltr', 'bidi-override'],
+    ['bdo', {}, 'ltr', 'isolate-override'],
+    ['bdo', {'dir': 'ltr'}, 'ltr', 'isolate-override'],
     ['bdo', {'dir': 'rtl'}, 'rtl', 'bidi-override'],
-    ['bdo', {'dir': 'auto'}, 'ltr', 'bidi-override isolate'],
-    ['bdo', {'dir': ''}, 'ltr', 'bidi-override'],
+    ['bdo', {'dir': 'auto'}, 'ltr', 'isolate-override'],
+    ['bdo', {'dir': ''}, 'ltr', 'isolate-override'],
 
     ['textarea', {}, 'ltr', 'normal'],
     ['textarea', {'dir': 'ltr'}, 'ltr', 'isolate'],
@@ -56,7 +56,7 @@ var tests = [
     ['textarea', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['textarea', {'dir': ''}, 'ltr', 'normal'],
 
-    ['pre', {}, 'ltr', 'normal'],
+    ['pre', {}, 'ltr', 'isolate'],
     ['pre', {'dir': 'ltr'}, 'ltr', 'isolate'],
     ['pre', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['pre', {'dir': 'auto'}, 'ltr', 'plaintext'],
@@ -69,6 +69,5 @@ var tests = [
 });
 
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

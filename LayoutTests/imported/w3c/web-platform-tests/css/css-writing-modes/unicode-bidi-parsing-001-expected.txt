@@ -1,7 +1,7 @@
 
-PASS Initial value of unicode-bidi
+FAIL Initial value of unicode-bidi assert_equals: expected "normal" but got "isolate"
 PASS unicode-bidi: embed; unicode-bidi: normal
 PASS unicode-bidi: embed
 PASS unicode-bidi: bidi-override
-PASS unicode-bidi should not inherit
+FAIL unicode-bidi should not inherit assert_equals: expected "normal" but got "isolate"
 

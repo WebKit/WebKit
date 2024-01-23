@@ -6,6 +6,7 @@ layer at (0,0) size 785x956
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 700x18
           text run at (0,0) width 700: "This example tests that word-break properly shrinks a cell to one character per line when it is set to break-all."
+        RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,18) size 769x104 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x102
           RenderTableRow {TR} at (0,0) size 767x102
