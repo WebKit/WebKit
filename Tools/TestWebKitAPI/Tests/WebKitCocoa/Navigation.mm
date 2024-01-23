@@ -44,6 +44,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -51,8 +52,9 @@ static RetainPtr<WKNavigation> currentNavigation;
 static RetainPtr<NSURL> redirectURL;
 static NSTimeInterval redirectDelay;
 static bool didCancelRedirect;
+static bool didReceiveAllowPrivateToken;
 
-@interface NavigationDelegate : NSObject <WKNavigationDelegate>
+@interface NavigationDelegate : NSObject <WKNavigationDelegate, _WKWebsiteDataStoreDelegate>
 @end
 
 @implementation NavigationDelegate
@@ -73,6 +75,30 @@ static bool didCancelRedirect;
     EXPECT_EQ(currentNavigation, navigation);
 
     isDone = true;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore didAllowPrivateTokenUsageByThirdPartyForTesting:(BOOL)wasAllowed forResourceURL:(NSURL *)resourceURL
+{
+    if ([resourceURL.host isEqualToString:@"site2.example"]) {
+        if ([resourceURL.path isEqualToString:@"/path2"])
+            EXPECT_TRUE(wasAllowed);
+        else
+            EXPECT_FALSE(wasAllowed);
+    } else if ([resourceURL.host isEqualToString:@"site3.example"]) {
+        if ([resourceURL.path isEqualToString:@"/path2"])
+            EXPECT_FALSE(wasAllowed);
+        else
+            EXPECT_TRUE(wasAllowed);
+    } else if ([resourceURL.host isEqualToString:@"site4.example"])
+        EXPECT_TRUE(wasAllowed);
+    else if ([resourceURL.host isEqualToString:@"site5.example"]) {
+        if ([resourceURL.path isEqualToString:@"/path6"])
+            EXPECT_FALSE(wasAllowed);
+        else
+            EXPECT_TRUE(wasAllowed);
+    } else
+        EXPECT_WK_STREQ(resourceURL.absoluteString, @"https://site1.example/path1");
+    didReceiveAllowPrivateToken = true;
 }
 
 @end
@@ -1991,3 +2017,404 @@ TEST(WKNavigation, NavigationToUnknownBlankURL)
     TestWebKitAPI::Util::run(&done);
     EXPECT_FALSE(navigationFailed);
 }
+
+struct PrivateTokenTestSetupState {
+    RetainPtr<WKWebView> webView;
+    std::unique_ptr<TestWebKitAPI::HTTPServer> server;
+    RetainPtr<_WKWebsiteDataStoreConfiguration> storeConfiguration;
+    RetainPtr<WKWebsiteDataStore> dataStore;
+    RetainPtr<NavigationDelegate> websiteDataStoreDelegate;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+};
+
+PrivateTokenTestSetupState setupWebViewForPrivateTokenTests(bool& didDecideServiceWorkerRequest, bool& finishedSuccessfully, bool& failedNavigation)
+{
+    using namespace TestWebKitAPI;
+
+    static constexpr auto mainBytes =
+"<script>"
+"navigator.serviceWorker.register('/service-worker.js').then(function(reg) {"
+"    fetch('/path5').then(() => location = '/path4' );"
+"});"
+"</script>"_s;
+
+    static constexpr auto serviceWorkerBytes =
+"self.addEventListener(\"fetch\", (event) => {"
+"    event.respondWith(fetch(new Request(event.request, { headers: { Source: \"ServiceWorker\" }})));"
+"});"_s;
+
+    auto headerFromRequest = [](const Vector<char>& request, const ASCIILiteral& headerPrefix) {
+        StringView requestView(request.data(), request.size());
+        auto headerStart = requestView.find(headerPrefix);
+        const auto headerLen = strlen(headerPrefix);
+        if (headerStart == notFound)
+            return ""_str;
+        auto headerValueStart = headerStart + headerLen;
+        auto headerEnd = requestView.find("\r\n"_s, headerValueStart);
+        if (headerEnd == notFound)
+            return ""_str;
+        return requestView.substring(headerValueStart, headerEnd - headerValueStart).toStringWithoutCopying();
+    };
+
+    auto server = makeUnique<HTTPServer>(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+
+            auto path = HTTPServer::parsePath(request);
+
+            if (headerFromRequest(request, "Host: "_s) == "site5.example"_s && (path == "/path1"_s || path == "/path6"_s)) {
+                auto source = headerFromRequest(request, "Source: "_s);
+                EXPECT_WK_STREQ(source, "ServiceWorker"_s);
+                didDecideServiceWorkerRequest = true;
+            }
+
+            if (path == "/path1"_s || path == "/path5"_s || path == "/path6"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<body>body</body>"_s).serialize());
+                continue;
+            }
+            if (path == "/path2"_s || path == "/path4"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path1\").then(r => location = \"/path1\");</script>"_s).serialize());
+                continue;
+            }
+            if (path == "/path7"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<script>fetch(\"/path6\").then(r => location = \"/path6\");</script>"_s).serialize());
+                continue;
+            }
+            if (path == "/path3"_s) {
+                co_await connection.awaitableSend(HTTPResponse(mainBytes).serialize());
+                continue;
+            }
+            if (path == "/service-worker.js"_s) {
+                co_await connection.awaitableSend(HTTPResponse({ { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerBytes }).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server->port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setPrivateTokenIPCForTesting:true];
+
+    RetainPtr<NavigationDelegate> websiteDataStoreDelegate = adoptNS([[NavigationDelegate alloc] init]);
+    dataStore.get()._delegate = websiteDataStoreDelegate.get();
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    };
+    navigationDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+        failedNavigation = true;
+    };
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    return { webView, WTFMove(server), storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate };
+}
+
+#if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
+TEST(WKNavigation, FrameNavigationWithPrivateTokenPermission)
+{
+    using namespace TestWebKitAPI;
+
+    bool didDecideServiceWorkerRequest { false };
+    __block bool finishedSuccessfully { false };
+    __block bool failedNavigation { false };
+    __block bool doneEvaluatingJavaScript { false };
+    didReceiveAllowPrivateToken = false;
+
+    auto [webView, server, storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate] = setupWebViewForPrivateTokenTests(didDecideServiceWorkerRequest, finishedSuccessfully, failedNavigation);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/path1"]]];
+    Util::run(&finishedSuccessfully);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    const auto iframeWithoutAllowedPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site2.example/path2\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithoutAllowedPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by site2.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    didReceiveAllowPrivateToken = false;
+
+    // iframe with allowslist="src"
+    const auto iframeWithAllowedPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site3.example/path2\"; iframe.allow = \"private-token\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithAllowedPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by site3.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    didReceiveAllowPrivateToken = false;
+}
+
+TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowSrc)
+{
+    using namespace TestWebKitAPI;
+
+    bool didDecideServiceWorkerRequest { false };
+    __block bool finishedSuccessfully { false };
+    __block bool failedNavigation { false };
+    __block bool doneEvaluatingJavaScript { false };
+    didReceiveAllowPrivateToken = false;
+
+    auto [webView, server, storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate] = setupWebViewForPrivateTokenTests(didDecideServiceWorkerRequest, finishedSuccessfully, failedNavigation);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/path1"]]];
+    Util::run(&finishedSuccessfully);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // iframe with allowslist="src"
+    const auto iframeWithAllowedPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site3.example/path2\"; iframe.allow = \"private-token\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithAllowedPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by site3.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    didReceiveAllowPrivateToken = false;
+}
+
+TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowOrigins)
+{
+    using namespace TestWebKitAPI;
+
+    bool didDecideServiceWorkerRequest { false };
+    __block bool finishedSuccessfully { false };
+    __block bool failedNavigation { false };
+    __block bool doneEvaluatingJavaScript { false };
+    didReceiveAllowPrivateToken = false;
+
+    auto [webView, server, storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate] = setupWebViewForPrivateTokenTests(didDecideServiceWorkerRequest, finishedSuccessfully, failedNavigation);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/path1"]]];
+    Util::run(&finishedSuccessfully);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // iframe with allowslist="https://site1.example https://site4.example"
+    const auto iframeWithAllowedOriginsPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site4.example/path2\"; iframe.allow = \"private-token https://site1.example https://site4.example\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithAllowedOriginsPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by site4.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    didReceiveAllowPrivateToken = false;
+}
+
+TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowOriginsAndWithServiceWorker)
+{
+    using namespace TestWebKitAPI;
+
+    bool didDecideServiceWorkerRequest { false };
+    __block bool finishedSuccessfully { false };
+    __block bool failedNavigation { false };
+    __block bool doneEvaluatingJavaScript { false };
+    didReceiveAllowPrivateToken = false;
+
+    auto [webView, server, storeConfiguration, dataStore, websiteDataStoreDelegate, navigationDelegate] = setupWebViewForPrivateTokenTests(didDecideServiceWorkerRequest, finishedSuccessfully, failedNavigation);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/path1"]]];
+    Util::run(&finishedSuccessfully);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // iframe with allowslist="https://site1.example https://site5.example"
+    const auto iframeWithServiceWorkerAndAllowedPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site5.example/path3\"; iframe.allow = \"private-token https://site1.example https://site5.example\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithServiceWorkerAndAllowedPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of service worker registration initiated by site5.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch from service worker registration
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of redirect after registering service worker by site5.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by site5.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of fetch request initiated by service worker
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_TRUE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // iframe without private-token permission and interacting with service worker
+    const auto iframeWithoutAllowedOriginsPrivateToken = @"iframe = document.createElement(\"iframe\"); iframe.src = \"https://site5.example/path7\"; document.body.appendChild(iframe); true";
+    [webView evaluateJavaScript:iframeWithoutAllowedOriginsPrivateToken completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(error.description, @"");
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+    doneEvaluatingJavaScript = false;
+
+    // Result of loading /path7 iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_TRUE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+
+    // Result of /path6 fetch request initiated by site5.example iframe
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_FALSE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didReceiveAllowPrivateToken = false;
+    didDecideServiceWorkerRequest = false;
+
+    // Result of /path6 fetch request initiated by service worker
+    Util::run(&didReceiveAllowPrivateToken);
+    EXPECT_TRUE(didDecideServiceWorkerRequest);
+    EXPECT_TRUE(didReceiveAllowPrivateToken);
+    finishedSuccessfully = false;
+    failedNavigation = false;
+    didDecideServiceWorkerRequest = false;
+    didReceiveAllowPrivateToken = false;
+}
+#endif

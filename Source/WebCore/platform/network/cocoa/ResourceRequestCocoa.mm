@@ -69,6 +69,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
         setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
+        setIsPrivateTokenUsageByThirdPartyAllowed(platformData.m_isPrivateTokenUsageByThirdPartyAllowed);
     }
 
     setCachePartition(cachePartition);
@@ -127,6 +128,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         privacyProxyFailClosedForUnreachableNonMainHosts(),
         useAdvancedPrivacyProtections(),
         didFilterLinkDecoration(),
+        isPrivateTokenUsageByThirdPartyAllowed(),
     };
 }
 

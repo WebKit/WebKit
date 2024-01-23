@@ -295,6 +295,7 @@ public:
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
     void setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID, bool) const;
+    void setShouldSendPrivateTokenIPCForTesting(PAL::SessionID, bool) const;
 
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
 

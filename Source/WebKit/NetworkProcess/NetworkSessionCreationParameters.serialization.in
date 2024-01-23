@@ -77,6 +77,7 @@
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode;
     bool isBlobRegistryTopOriginPartitioningEnabled;
+    bool shouldSendPrivateTokenIPCForTesting;
 
     WebKit::UnifiedOriginStorageLevel unifiedOriginStorageLevel;
     uint64_t perOriginStorageQuota;

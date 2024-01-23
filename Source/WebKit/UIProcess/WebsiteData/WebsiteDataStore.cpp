@@ -1777,12 +1777,22 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
     callback();
 }
 
+void WebsiteDataStore::didAllowPrivateTokenUsageByThirdPartyForTesting(bool wasAllowed, URL&& resourceURL)
+{
+    m_client->didAllowPrivateTokenUsageByThirdPartyForTesting(wasAllowed, WTFMove(resourceURL));
+}
+
 void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     StorageAccessUserAgentStringQuirkController::shared().setCachedQuirksForTesting({ { WebCore::RegistrableDomain::uncheckedCreateFromHost(domain), userAgentString } });
 #endif
     completionHandler();
+}
+
+void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)
+{
+    protectedNetworkProcess()->send(Messages::NetworkProcess::SetShouldSendPrivateTokenIPCForTesting(sessionID(), enabled), 0);
 }
 
 bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const

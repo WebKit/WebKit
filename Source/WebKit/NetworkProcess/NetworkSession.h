@@ -233,6 +233,8 @@ public:
     bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
 
     void setBlobRegistryTopOriginPartitioningEnabled(bool);
+    void setShouldSendPrivateTokenIPCForTesting(bool);
+    bool shouldSendPrivateTokenIPCForTesting() const { return m_shouldSendPrivateTokenIPCForTesting; }
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
@@ -334,6 +336,7 @@ protected:
     unsigned m_testSpeedMultiplier { 1 };
     bool m_allowsServerPreconnect { true };
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };
+    bool m_shouldSendPrivateTokenIPCForTesting { false };
     std::optional<unsigned> m_overrideServiceWorkerRegistrationCountTestingValue;
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
     HashMap<WebCore::FetchIdentifier, WeakRef<ServiceWorkerFetchTask>> m_navigationPreloaders;

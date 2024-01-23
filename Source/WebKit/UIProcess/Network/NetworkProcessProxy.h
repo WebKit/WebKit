@@ -272,6 +272,8 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
+    void didAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID, bool wasAllowed, URL&&);
+
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);

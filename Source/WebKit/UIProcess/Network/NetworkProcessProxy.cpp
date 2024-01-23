@@ -679,6 +679,12 @@ void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     page->resourceLoadDidCompleteWithError(WTFMove(loadInfo), WTFMove(response), WTFMove(error));
 }
 
+void NetworkProcessProxy::didAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL&& resourceURL)
+{
+    if (auto* store = websiteDataStoreFromSessionID(sessionID))
+        store->didAllowPrivateTokenUsageByThirdPartyForTesting(wasAllowed, WTFMove(resourceURL));
+}
+
 void NetworkProcessProxy::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (!canSendMessage()) {

@@ -111,6 +111,10 @@ public:
     virtual void didAccessWindowProxyProperty(const WebCore::RegistrableDomain&, const WebCore::RegistrableDomain&, WebCore::WindowProxyProperty, bool)
     {
     }
+
+    virtual void didAllowPrivateTokenUsageByThirdPartyForTesting(bool, URL&&)
+    {
+    }
 };
 
 } // namespace WebKit

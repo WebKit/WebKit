@@ -253,6 +253,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if ([mutableRequest respondsToSelector:@selector(_setWebSearchContent:)] && advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::WebSearchContent))
         [mutableRequest _setWebSearchContent:YES];
 
+#if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
+    if ([mutableRequest respondsToSelector:@selector(_setAllowPrivateAccessTokensForThirdParty:)] && parameters.request.isPrivateTokenUsageByThirdPartyAllowed())
+        [mutableRequest _setAllowPrivateAccessTokensForThirdParty:YES];
+#endif
+
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
