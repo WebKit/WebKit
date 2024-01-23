@@ -342,6 +342,7 @@ public:
     PageGroup& group();
 
     BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
+    WEBCORE_EXPORT Ref<BroadcastChannelRegistry> protectedBroadcastChannelRegistry() const;
     WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
     WEBCORE_EXPORT static void forEachPage(const Function<void(Page&)>&);

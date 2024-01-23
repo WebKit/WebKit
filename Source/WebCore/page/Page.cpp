@@ -755,6 +755,11 @@ const String& Page::groupName() const
     return m_group ? m_group->name() : nullAtom().string();
 }
 
+Ref<BroadcastChannelRegistry> Page::protectedBroadcastChannelRegistry() const
+{
+    return m_broadcastChannelRegistry;
+}
+
 void Page::setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&& broadcastChannelRegistry)
 {
     m_broadcastChannelRegistry = WTFMove(broadcastChannelRegistry);
