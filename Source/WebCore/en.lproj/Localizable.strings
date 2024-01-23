@@ -1348,6 +1348,9 @@
 /* Full Screen Deceptive Website Stay Action */
 "Stay in Full Screen (Element Full Screen)" = "Stay in Full Screen";
 
+/* Full Screen Deceptive Website Stay and Trust Action */
+"Stay in Full Screen & Trust the website (Element Full Screen)" = "Stay in Full Screen & Trust the website";
+
 /* Stop context menu item */
 "Stop" = "Stop";
 
