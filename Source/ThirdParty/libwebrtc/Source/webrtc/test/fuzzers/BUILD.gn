@@ -237,6 +237,16 @@ webrtc_fuzzer_test("rtp_packetizer_av1_fuzzer") {
   ]
 }
 
+webrtc_fuzzer_test("rtp_format_h264_fuzzer") {
+  sources = [ "rtp_format_h264_fuzzer.cc" ]
+  deps = [
+    "../../api/video:video_frame_type",
+    "../../modules/rtp_rtcp:rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../rtc_base:checks",
+  ]
+}
+
 webrtc_fuzzer_test("receive_side_congestion_controller_fuzzer") {
   sources = [ "receive_side_congestion_controller_fuzzer.cc" ]
   deps = [

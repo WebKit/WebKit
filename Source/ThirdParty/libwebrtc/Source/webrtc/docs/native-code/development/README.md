@@ -102,7 +102,8 @@ To build the fuzzers residing in the [test/fuzzers][fuzzers] directory, use
 ```
 $ gn gen out/fuzzers --args='use_libfuzzer=true optimize_for_fuzzing=true'
 ```
-Depending on the fuzzer additional arguments like `is_asan`, `is_msan` or `is_ubsan_security` might be required.
+Depending on the fuzzer additional arguments like `is_asan`, `is_msan` or `is_ubsan_security`
+might be required.
 
 See the [GN][gn-doc] documentation for all available options. There are also more
 platform specific tips on the [Android][webrtc-android-development] and
@@ -129,6 +130,11 @@ $ autoninja all -C out/Default
 
 See [Ninja build rules][ninja-build-rules] to read more about difference between `ninja` and `ninja all`.
 
+To build a particular target (like a fuzzer which is not included in the main target) use
+
+```
+autoninja -C out/Default h264_depacketizer_fuzzer
+```
 
 ## Using Another Build System
 
