@@ -547,7 +547,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 
     if (auto selectedMenuItem = [menuTarget selectedMenuItem]) {
         NSInteger tag = selectedMenuItem.tag;
-        if (contextMenu.openInPreviewIndex && *contextMenu.openInPreviewIndex == tag)
+        if (contextMenu.openInPreviewTag && *contextMenu.openInPreviewTag == tag)
             pdfOpenWithPreview(identifier);
         return completionHandler(tag);
     }

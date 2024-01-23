@@ -134,7 +134,7 @@ void PDFPluginBase::destroy()
 
 void PDFPluginBase::createPDFDocument()
 {
-    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
+    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:originalData()]);
 }
 
 bool PDFPluginBase::isFullFramePlugin() const
@@ -160,7 +160,7 @@ bool PDFPluginBase::isLocked() const
     return [m_pdfDocument isLocked];
 }
 
-NSData *PDFPluginBase::rawData() const
+NSData *PDFPluginBase::originalData() const
 {
     return (__bridge NSData *)m_data.get();
 }
@@ -596,6 +596,24 @@ bool PDFPluginBase::hudEnabled() const
     if (RefPtr page = this->page())
         return page->settings().pdfPluginHUDEnabled();
     return false;
+}
+
+void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+{
+    NSData *data = liveData();
+    URL url;
+    if (m_frame)
+        url = m_frame->url();
+    completionHandler(m_suggestedFilename, url, IPC:: DataReference(static_cast<const uint8_t*>(data.bytes), data.length));
+}
+
+void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+{
+    NSData *data = liveData();
+    FrameInfoData frameInfo;
+    if (m_frame)
+        frameInfo = m_frame->info();
+    completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createVersion4UUIDString());
 }
 
 #endif // ENABLE(PDF_HUD)

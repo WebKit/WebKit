@@ -1790,7 +1790,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (!nsMenu)
         return false;
     
-    std::optional<int> openInPreviewIndex;
+    std::optional<int> openInPreviewTag;
     Vector<PDFContextMenuItem> items;
     auto itemCount = [nsMenu numberOfItems];
     for (int i = 0; i < itemCount; i++) {
@@ -1798,7 +1798,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
         if ([item submenu])
             continue;
         if ([NSStringFromSelector(item.action) isEqualToString:@"openWithPreview"])
-            openInPreviewIndex = i;
+            openInPreviewTag = i;
         PDFContextMenuItem menuItem { String([item title]), static_cast<int>([item state]), i,
             [item isEnabled] ? ContextMenuItemEnablement::Enabled : ContextMenuItemEnablement::Disabled,
             [item action] ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No,
@@ -1806,7 +1806,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
         };
         items.append(WTFMove(menuItem));
     }
-    PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewIndex) };
+    PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewTag) };
 
     auto sendResult = webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier));
     auto [selectedIndex] = sendResult.takeReplyOr(-1);
@@ -1957,24 +1957,6 @@ void PDFPlugin::zoomIn()
 void PDFPlugin::zoomOut()
 {
     [m_pdfLayerController zoomOut:nil];
-}
-
-void PDFPlugin::save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
-{
-    NSData *data = liveData();
-    URL url;
-    if (m_frame)
-        url = m_frame->url();
-    completionHandler(m_suggestedFilename, url, IPC:: DataReference(static_cast<const uint8_t*>(data.bytes), data.length));
-}
-
-void PDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
-{
-    NSData *data = liveData();
-    FrameInfoData frameInfo;
-    if (m_frame)
-        frameInfo = m_frame->info();
-    completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createVersion4UUIDString());
 }
 
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
@@ -2361,7 +2343,7 @@ NSData *PDFPlugin::liveData() const
     if (m_pdfDocumentWasMutated)
         return [m_pdfDocument dataRepresentation];
 
-    return rawData();
+    return originalData();
 }
 
 id PDFPlugin::accessibilityAssociatedPluginParentForElement(WebCore::Element* element) const

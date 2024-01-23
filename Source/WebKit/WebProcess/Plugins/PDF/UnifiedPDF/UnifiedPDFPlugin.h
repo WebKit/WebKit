@@ -122,6 +122,8 @@ private:
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
 
+    NSData *liveData() const override;
+
     bool wantsWheelEvents() const override { return false; }
     bool handleMouseEvent(const WebMouseEvent&) override;
     bool handleWheelEvent(const WebWheelEvent&) override { return false; }
@@ -209,8 +211,6 @@ private:
 #if ENABLE(PDF_HUD)
     void zoomIn() final;
     void zoomOut() final;
-    void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) final;
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) final;
 #endif
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);

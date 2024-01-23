@@ -35,7 +35,7 @@
 struct WebKit::PDFContextMenu {
     WebCore::IntPoint point;
     Vector<WebKit::PDFContextMenuItem> items;
-    std::optional<int> openInPreviewIndex;
+    std::optional<int> openInPreviewTag;
 };
 
 #endif

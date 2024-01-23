@@ -174,8 +174,8 @@ public:
 #if ENABLE(PDF_HUD)
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
-    virtual void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) = 0;
-    virtual void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) = 0;
+    void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
+    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&);
 #endif
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
@@ -209,7 +209,8 @@ protected:
 
     virtual unsigned firstPageHeight() const = 0;
 
-    NSData *rawData() const;
+    NSData *originalData() const;
+    virtual NSData *liveData() const = 0;
 
     void ensureDataBufferLength(uint64_t);
     void addArchiveResource();

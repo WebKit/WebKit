@@ -97,8 +97,6 @@ public:
 #if ENABLE(PDF_HUD)
     void zoomIn() final;
     void zoomOut() final;
-    void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&) final;
-    void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) final;
 #endif
 
     void clickedLink(NSURL *);
@@ -216,7 +214,7 @@ private:
 
     void createPasswordEntryForm();
 
-    NSData *liveData() const;
+    NSData *liveData() const override;
 
     RetainPtr<CALayer> m_containerLayer;
     RetainPtr<CALayer> m_contentLayer;

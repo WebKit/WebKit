@@ -523,6 +523,12 @@ RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
     return nullptr;
 }
 
+NSData *UnifiedPDFPlugin::liveData() const
+{
+    // FIXME: Handle annotations and re-generate the PDF if it's been mutated.
+    return originalData();
+}
+
 void UnifiedPDFPlugin::didChangeScrollOffset()
 {
     if (this->currentScrollType() == ScrollType::User)
@@ -938,7 +944,6 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
         menuItems.constructAndAppend(String(), 0, invalidContextMenuItemTag, ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes);
     };
 
-    // FIXME: We should also set the openInPreviewIndex when UnifiedPDFPlugin::openWithPreview is implemented.
     menuItems.constructAndAppend(WebCore::contextMenuItemPDFOpenWithPreview(), 0,
         enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview),
         ContextMenuItemEnablement::Enabled,
@@ -960,7 +965,7 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
     menuItems.constructAndAppend(WebCore::contextMenuItemPDFZoomOut(), 0, enumToUnderlyingType(ContextMenuItemTag::ZoomOut), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No);
     menuItems.constructAndAppend(WebCore::contextMenuItemPDFActualSize(), 0, enumToUnderlyingType(ContextMenuItemTag::ActualSize), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No);
 
-    return { contextMenuPoint, WTFMove(menuItems), { } };
+    return { contextMenuPoint, WTFMove(menuItems), { enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview) } };
 }
 
 void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
@@ -1098,14 +1103,6 @@ void UnifiedPDFPlugin::zoomIn()
 void UnifiedPDFPlugin::zoomOut()
 {
     setPageScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
-}
-
-void UnifiedPDFPlugin::save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
-{
-}
-
-void UnifiedPDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
-{
 }
 
 #endif // ENABLE(PDF_HUD)
