@@ -136,6 +136,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::GPU:
         return "com.apple.WebKit.GPU";
 #endif
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model:
+        return "com.apple.WebKit.Model";
+#endif
     }
 }
 

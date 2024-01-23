@@ -11,7 +11,7 @@ if ! xcrun --sdk $SDK_NAME -f sbutil 2> /dev/null; then
     exit 0;
 fi;
 
-if [[ $SDK_NAME =~ "iphone" || $SDK_NAME =~ "watch" || $SDK_NAME =~ "appletv" ]]; then
+if [[ $SDK_NAME =~ "iphone" || $SDK_NAME =~ "watch" || $SDK_NAME =~ "appletv" || $SDK_NAME =~ "xr" ]]; then
     if [[ $SANDBOX_NAME == "com.apple.WebKit.adattributiond" || $SANDBOX_NAME == "com.apple.WebKit.webpushd" ]]; then
         if [ ! -e $SANDBOX_IMPORT_DIR ]; then
             exit 0;
@@ -22,6 +22,12 @@ if [[ $SDK_NAME =~ "iphone" || $SDK_NAME =~ "watch" || $SDK_NAME =~ "appletv" ]]
         fi
     fi;
     if [[ $SANDBOX_NAME == "com.apple.WebKit.GPU" || $SANDBOX_NAME == "com.apple.WebKit.Networking" || $SANDBOX_NAME == "com.apple.WebKit.WebContent" ]]; then
+        xcrun --sdk $SDK_NAME sbutil compile $SANDBOX_PATH > /dev/null;
+        if [[ $? != 0 ]]; then
+            exit 1;
+        fi
+    fi
+    if [[ $SDK_NAME =~ "xr" && $SANDBOX_NAME == "com.apple.WebKit.Model" ]]; then
         xcrun --sdk $SDK_NAME sbutil compile $SANDBOX_PATH > /dev/null;
         if [[ $? != 0 ]]; then
             exit 1;

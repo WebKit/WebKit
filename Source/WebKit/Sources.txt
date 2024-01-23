@@ -91,6 +91,9 @@ GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
+ModelProcess/ModelProcess.cpp
+ModelProcess/ModelConnectionToWebProcess.cpp
+
 NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/DatabaseUtilities.cpp
 NetworkProcess/EarlyHintsResourceLoader.cpp
@@ -560,6 +563,8 @@ UIProcess/Network/NetworkProcessProxy.cpp
 
 UIProcess/GPU/GPUProcessProxy.cpp
 
+UIProcess/Model/ModelProcessProxy.cpp
+
 UIProcess/Inspector/InspectorTargetProxy.cpp
 UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
 UIProcess/Inspector/WebInspectorUIProxy.cpp
@@ -681,6 +686,8 @@ WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
 WebProcess/Model/WebModelPlayerProvider.cpp
+
+WebProcess/Model/ModelProcessConnection.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp

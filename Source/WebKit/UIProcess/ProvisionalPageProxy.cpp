@@ -579,6 +579,14 @@ void ProvisionalPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(
     m_contextIDForVisibilityPropagationInGPUProcess = contextID;
 }
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS)
+void ProvisionalPageProxy::didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCreateContextInModelProcessForVisibilityPropagation: contextID=%u", contextID);
+    m_contextIDForVisibilityPropagationInModelProcess = contextID;
+}
+#endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 void ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation()

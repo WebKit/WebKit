@@ -27,6 +27,7 @@
 
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
+#include "PDFPluginBase.h"
 #include <WebCore/EventListener.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>

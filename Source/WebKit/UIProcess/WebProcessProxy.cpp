@@ -35,6 +35,8 @@
 #include "GoToBackForwardItemParameters.h"
 #include "LoadParameters.h"
 #include "Logging.h"
+#include "ModelProcessConnectionParameters.h"
+#include "ModelProcessProxy.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
@@ -1055,6 +1057,48 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::ModelProcessConnectionParameters&& parameters)
+{
+    bool anyPageHasModelProcessEnabled = false;
+    for (auto& page : m_pageMap.values())
+        anyPageHasModelProcessEnabled |= page->preferences().modelProcessEnabled();
+    MESSAGE_CHECK(anyPageHasModelProcessEnabled);
+
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();
+#endif
+
+#if HAVE(AUDIT_TOKEN)
+    parameters.presentingApplicationAuditToken = m_processPool->configuration().presentingApplicationProcessToken();
+#endif
+
+    ensureModelProcess().createModelProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
+}
+
+void WebProcessProxy::modelProcessDidFinishLaunching(ProcessID)
+{
+    for (auto& page : m_pageMap.values())
+        page->modelProcessDidFinishLaunching();
+}
+
+void WebProcessProxy::modelProcessExited(ProcessID, ProcessTerminationReason reason)
+{
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "modelProcessExited: reason=%{public}s", processTerminationReasonToString(reason));
+
+    for (auto& page : m_pageMap.values())
+        page->modelProcessExited(reason);
+}
+
+ModelProcessProxy& WebProcessProxy::ensureModelProcess()
+{
+    if (!m_modelProcess)
+        m_modelProcess = ModelProcessProxy::create(*this);
+    return *m_modelProcess;
+}
+
+#endif
+
 #if !PLATFORM(MAC)
 bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 {
@@ -1755,6 +1799,20 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
     m_backgroundResponsivenessTimer.updateState();
+
+#if ENABLE(MODEL_PROCESS)
+    if (m_modelProcess)
+        m_modelProcess->updateProcessAssertion(this->currentProcessAssertionType());
+#endif
+}
+
+ProcessAssertionType WebProcessProxy::currentProcessAssertionType()
+{
+    if (m_foregroundToken)
+        return ProcessAssertionType::Foreground;
+    if (m_backgroundToken)
+        return ProcessAssertionType::Background;
+    return ProcessAssertionType::NearSuspended;
 }
 
 void WebProcessProxy::didDropLastAssertion()

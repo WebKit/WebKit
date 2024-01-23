@@ -1335,6 +1335,10 @@ void TestController::findAndDumpWebKitProcessIdentifiers()
         , TestController::gpuProcessName(), ": "
         , WKPageGetGPUProcessIdentifier(page), '\n'
 #endif
+#if ENABLE(MODEL_PROCESS)
+        , TestController::modelProcessName(), ": "
+        , WKPageGetModelProcessIdentifier(page), '\n'
+#endif
     ));
 #else
     dumpResponse("\n"_s);
@@ -1429,6 +1433,18 @@ const char* TestController::gpuProcessName()
     return "com.apple.WebKit.GPU.Development";
 #else
     return "GPUProcess";
+#endif
+}
+
+const char* TestController::modelProcessName()
+{
+    // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    return "com.apple.WebKit.Model";
+#elif PLATFORM(COCOA)
+    return "com.apple.WebKit.Model.Development";
+#else
+    return "ModelProcess";
 #endif
 }
 

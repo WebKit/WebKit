@@ -29,6 +29,7 @@
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "PDFLayerControllerSPI.h"
+#import "PDFPlugin.h"
 #import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"

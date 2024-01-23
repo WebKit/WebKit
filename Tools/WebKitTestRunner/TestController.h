@@ -180,6 +180,7 @@ public:
     static const char* webProcessName();
     static const char* networkProcessName();
     static const char* gpuProcessName();
+    static const char* modelProcessName();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 

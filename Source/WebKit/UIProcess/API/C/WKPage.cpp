@@ -3045,6 +3045,15 @@ ProcessID WKPageGetGPUProcessIdentifier(WKPageRef page)
 #endif
 }
 
+ProcessID WKPageGetModelProcessIdentifier(WKPageRef page)
+{
+#if ENABLE(MODEL_PROCESS)
+    return toImpl(page)->modelProcessID();
+#else
+    return 0;
+#endif
+}
+
 #ifdef __BLOCKS__
 void WKPageGetApplicationManifest_b(WKPageRef pageRef, WKPageGetApplicationManifestBlock block)
 {

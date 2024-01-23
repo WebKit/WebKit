@@ -95,6 +95,7 @@ class TextStream;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class ModelProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;
@@ -115,6 +116,7 @@ class WebsiteDataStore;
 struct BackForwardListItemState;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
+struct ModelProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
@@ -370,6 +372,8 @@ public:
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
     String environmentIdentifier() const final;
 
+    ProcessAssertionType currentProcessAssertionType();
+
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
         None = 0,
@@ -423,6 +427,14 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching(ProcessID);
+    void modelProcessExited(ProcessID, ProcessTerminationReason);
+
+    ModelProcessProxy& ensureModelProcess();
+    ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
 #endif
 
 #if PLATFORM(COCOA)
@@ -550,6 +562,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void createModelProcessConnection(IPC::Connection::Handle&&, ModelProcessConnectionParameters&&);
 #endif
 
     bool shouldAllowNonValidInjectedCode() const;
@@ -753,6 +769,10 @@ private:
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    RefPtr<ModelProcessProxy> m_modelProcess;
 #endif
 };
 

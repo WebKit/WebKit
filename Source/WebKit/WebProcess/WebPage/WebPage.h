@@ -315,6 +315,7 @@ class InjectedBundleScriptWorld;
 class LayerHostingContext;
 class MediaDeviceSandboxExtensions;
 class MediaKeySystemPermissionRequestManager;
+class ModelProcessConnection;
 class NotificationPermissionRequestManager;
 class PDFPluginBase;
 class PageBanner;
@@ -1578,6 +1579,10 @@ public:
     void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
     void gpuProcessConnectionWasDestroyed();
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessConnectionDidBecomeAvailable(ModelProcessConnection&);
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)

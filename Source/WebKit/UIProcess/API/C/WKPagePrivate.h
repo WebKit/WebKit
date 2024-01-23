@@ -168,6 +168,7 @@ WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresV
 
 WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT WKProcessID WKPageGetGPUProcessIdentifier(WKPageRef page);
+WK_EXPORT WKProcessID WKPageGetModelProcessIdentifier(WKPageRef page);
 
 #ifdef __BLOCKS__
 typedef void (^WKPageGetApplicationManifestBlock)(void);
