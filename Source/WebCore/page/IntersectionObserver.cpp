@@ -138,8 +138,8 @@ IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionO
     , m_thresholds(WTFMove(thresholds))
     , m_callback(WTFMove(callback))
 {
-    if (is<Document>(root)) {
-        auto& observerData = downcast<Document>(*root).ensureIntersectionObserverData();
+    if (RefPtr rootDocument = dynamicDowncast<Document>(root)) {
+        auto& observerData = rootDocument->ensureIntersectionObserverData();
         observerData.observers.append(*this);
     } else if (root) {
         auto& observerData = downcast<Element>(*root).ensureIntersectionObserverData();
@@ -157,8 +157,8 @@ IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionO
 IntersectionObserver::~IntersectionObserver()
 {
     RefPtr root = m_root.get();
-    if (is<Document>(root))
-        downcast<Document>(*root).intersectionObserverDataIfExists()->observers.removeFirst(this);
+    if (RefPtr document = dynamicDowncast<Document>(root))
+        document->intersectionObserverDataIfExists()->observers.removeFirst(this);
     else if (root)
         downcast<Element>(*root).intersectionObserverDataIfExists()->observers.removeFirst(this);
     disconnect();
@@ -338,11 +338,11 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             if (trackingDocument() != &target.document())
                 return;
 
-            if (!root()->renderer() || !is<RenderBlock>(root()->renderer()))
+            if (!root()->renderer())
                 return;
 
-            rootRenderer = downcast<RenderBlock>(root()->renderer());
-            if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
+            rootRenderer = dynamicDowncast<RenderBlock>(root()->renderer());
+            if (!rootRenderer || !rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
                 return;
 
             intersectionState.canComputeIntersection = true;
@@ -376,8 +376,8 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         expandRootBoundsWithRootMargin(intersectionState.rootBounds, rootMarginBox(), rootRenderer->style().effectiveZoom());
 
     auto localTargetBounds = [&]() -> LayoutRect {
-        if (is<RenderBox>(*targetRenderer))
-            return downcast<RenderBox>(targetRenderer)->borderBoundingBox();
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*targetRenderer))
+            return renderBox->borderBoundingBox();
 
         if (is<RenderInline>(targetRenderer)) {
             Vector<LayoutRect> rects;
@@ -385,8 +385,8 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return unionRect(rects);
         }
 
-        if (is<RenderLineBreak>(targetRenderer))
-            return downcast<RenderLineBreak>(targetRenderer)->linesBoundingBox();
+        if (CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(targetRenderer))
+            return renderLineBreak->linesBoundingBox();
 
         // FIXME: Implement for SVG etc.
         return { };
@@ -531,7 +531,6 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
     if (!context)
         return std::nullopt;
 
-    ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
     if (auto* window = document.domWindow())
         return window->frozenNowTimestamp();

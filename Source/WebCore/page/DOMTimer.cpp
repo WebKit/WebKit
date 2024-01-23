@@ -211,11 +211,10 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, timer.get());
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, type == Type::SingleShot);
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        document->contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, type == Type::SingleShot);
         if (DeferDOMTimersForScope::isDeferring())
-            document.domTimerHoldingTank().add(timer.get());
+            document->domTimerHoldingTank().add(timer.get());
     }
 #endif
     return timer->m_timeoutId;
@@ -230,11 +229,10 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
         return;
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    if (is<Document>(context)) {
-        auto& document = downcast<Document>(context);
-        if (auto* timer = document.findTimeout(timeoutId)) {
-            document.contentChangeObserver().didRemoveDOMTimer(*timer);
-            if (auto* holdingTank = document.domTimerHoldingTankIfExists())
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        if (auto* timer = document->findTimeout(timeoutId)) {
+            document->contentChangeObserver().didRemoveDOMTimer(*timer);
+            if (auto* holdingTank = document->domTimerHoldingTankIfExists())
                 holdingTank->remove(*timer);
         }
     }

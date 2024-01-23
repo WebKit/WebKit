@@ -38,14 +38,12 @@ namespace WebCore {
 PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecutionContext, Ref<PerformanceObserverCallback>&& callback)
     : m_callback(WTFMove(callback))
 {
-    if (is<Document>(scriptExecutionContext)) {
-        auto& document = downcast<Document>(scriptExecutionContext);
-        if (auto* window = document.domWindow())
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        if (auto* window = document->domWindow())
             m_performance = &window->performance();
-    } else if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        auto& workerGlobalScope = downcast<WorkerGlobalScope>(scriptExecutionContext);
-        m_performance = &workerGlobalScope.performance();
-    } else
+    } else if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+        m_performance = &workerGlobalScope->performance();
+    else
         ASSERT_NOT_REACHED();
 }
 
@@ -152,7 +150,7 @@ Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& 
         "navigation"_s,
     };
 
-    if (is<Document>(context) && downcast<Document>(context).supportsPaintTiming())
+    if (RefPtr document = dynamicDowncast<Document>(context); document && document->supportsPaintTiming())
         entryTypes.append("paint"_s);
 
     entryTypes.append("resource"_s);
