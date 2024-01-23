@@ -1966,3 +1966,5 @@ webkit.org/b/267880 [ Sonoma+ ] fast/scrolling/mac/scrollbars/select-overlay-scr
 webkit.org/b/267885 [ Sonoma+ Release ] fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/267891 [ Sonoma+ Release ] fast/css/nested-table-with-collapsed-borders.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/267796 [ Monterey+ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
