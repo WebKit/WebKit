@@ -642,8 +642,8 @@ bool WebXRSession::posesCanBeReported(const Document& document) const
     if (!sessionDocument || sessionDocument->domWindow() != document.domWindow())
         return false;
 
-    // 2. If session's visibilityState in not "visible", return false.
-    if (m_visibilityState != XRVisibilityState::Visible)
+    // 2. If session's visibilityState is "hidden", return false.
+    if (m_visibilityState == XRVisibilityState::Hidden)
         return false;
 
     // 5. Determine if the pose data can be returned as follows:
