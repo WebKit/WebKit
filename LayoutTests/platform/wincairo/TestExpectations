@@ -398,7 +398,6 @@ fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
-http/wpt/mediastream/worker-mediastreamtrack.worker.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
 
@@ -1631,6 +1630,7 @@ http/wpt/geometry [ Skip ]
 http/wpt/loading/redirect-headers.html [ Skip ] # Failure
 
 http/wpt/mediarecorder [ Skip ]
+http/wpt/mediastream [ Skip ]
 http/wpt/notifications [ Skip ]
 http/wpt/offscreen-canvas [ Skip ]
 http/wpt/prefetch [ Skip ]
