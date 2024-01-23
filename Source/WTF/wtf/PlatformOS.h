@@ -112,6 +112,10 @@
 #define WTF_OS_OPENBSD 1
 #endif
 
+#if defined(__QNX__)
+#define WTF_OS_QNX 1
+#endif
+
 /* OS(WINDOWS) - Any version of Windows */
 #if defined(WIN32) || defined(_WIN32)
 #define WTF_OS_WINDOWS 1

@@ -77,6 +77,10 @@
 #include <mach/thread_switch.h>
 #endif
 
+#if OS(QNX)
+#define SA_RESTART 0
+#endif
+
 namespace WTF {
 
 Thread::~Thread()

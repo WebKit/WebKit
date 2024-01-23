@@ -36,6 +36,8 @@
 #include <windows.h>
 #elif OS(OPENBSD)
 typedef ucontext_t mcontext_t;
+#elif OS(QNX)
+#include <ucontext.h>
 #else
 #include <sys/ucontext.h>
 #endif
