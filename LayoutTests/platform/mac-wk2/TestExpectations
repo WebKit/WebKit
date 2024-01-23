@@ -1962,3 +1962,5 @@ webkit.org/b/267670 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-position
 webkit.org/b/267778 [ Sonoma+ Release ] fast/forms/listbox-padding-clip-selected.html [  Pass ImageOnlyFailure ]
 
 webkit.org/b/267880 [ Sonoma+ ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-reveal.html [ Pass Timeout ]
+
+webkit.org/b/267885 [ Sonoma+ Release ] fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html [ Pass ImageOnlyFailure ]
