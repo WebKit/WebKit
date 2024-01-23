@@ -26,6 +26,5 @@
 INFOPLIST_FILE = Shared/AuxiliaryProcessExtensions/WebContentExtension-CaptivePortal-Info.plist;
 INFOPLIST_KEY_CFBundleDisplayName = WebContentCaptivePortalExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContent.CaptivePortal;
-PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator*] = com.apple.WebKit.WebContentCaptivePortalExtension;
 EXECUTABLE_NAME = $(PRODUCT_BUNDLE_IDENTIFIER);
 PRODUCT_BUNDLE_NAME = WebContentCaptivePortalExtension;

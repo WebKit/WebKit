@@ -495,7 +495,7 @@ plistbuddy Clear dict
 # Simulator entitlements should be added to Resources/ios/XPCService-ios-simulator.entitlements
 if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
 then
-    if [[ "${PRODUCT_NAME}" != adattributiond && "${PRODUCT_NAME}" != webpushd ]]; then
+    if [[ -e "${CODE_SIGN_ENTITLEMENTS}" && "${PRODUCT_NAME}" != adattributiond && "${PRODUCT_NAME}" != webpushd ]]; then
         cp "${CODE_SIGN_ENTITLEMENTS}" "${WK_PROCESSED_XCENT_FILE}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == macosx ]]

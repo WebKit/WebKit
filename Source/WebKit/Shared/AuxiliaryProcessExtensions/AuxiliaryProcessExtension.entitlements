@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.apple.private.webkit.use-xpc-endpoint</key>
 	<true/>
-	<key>om.apple.private.extensionkit.host-requirement-exemption</key>
+	<key>com.apple.private.extensionkit.host-requirement-exemption</key>
 	<true/>
 </dict>
 </plist>

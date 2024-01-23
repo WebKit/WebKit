@@ -160,7 +160,7 @@ void ProcessLauncher::launchProcess()
         if (error) {
             NSLog(@"Error launching process %@ error %@", process, error);
             RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8().data(), String([error localizedFailureReason]).utf8().data());
-#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS)
             // Fallback to legacy extension identifiers
             // FIXME: this fallback is temporary and should be removed when possible. See rdar://120793705.
             callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
