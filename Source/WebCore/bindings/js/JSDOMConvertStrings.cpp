@@ -23,6 +23,9 @@
 #include "JSDOMConvertStrings.h"
 
 #include "JSDOMExceptionHandling.h"
+#include "JSTrustedHTML.h"
+#include "JSTrustedScript.h"
+#include "JSTrustedScriptURL.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -116,6 +119,90 @@ AtomString valueToUSVAtomString(JSGlobalObject& lexicalGlobalObject, JSValue val
     RETURN_IF_EXCEPTION(scope, { });
 
     return replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
+}
+
+String valueToTrustedHTMLString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedHTML = JSTrustedHTML::toWrapped(vm, value))
+        return trustedHTML->toString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyString();
+
+    return nullString();
+}
+
+AtomString valueToTrustedHTMLAtomString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedHTML = JSTrustedHTML::toWrapped(vm, value))
+        return trustedHTML->toString().toExistingAtomString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyAtom();
+
+    return nullAtom();
+}
+
+String valueToTrustedScriptString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedScript = JSTrustedScript::toWrapped(vm, value))
+        return trustedScript->toString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyString();
+
+    return nullString();
+}
+
+AtomString valueToTrustedScriptAtomString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedScript = JSTrustedScript::toWrapped(vm, value))
+        return trustedScript->toString().toExistingAtomString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyAtom();
+
+    return nullAtom();
+}
+
+String valueToTrustedScriptURLString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedScriptURL = JSTrustedScriptURL::toWrapped(vm, value))
+        return trustedScriptURL->toString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyString();
+
+    return nullString();
+}
+
+AtomString valueToTrustedScriptURLAtomString(JSGlobalObject& lexicalGlobalObject, JSValue value, bool nullToEmpty)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (auto* trustedScriptURL = JSTrustedScriptURL::toWrapped(vm, value))
+        return trustedScriptURL->toString().toExistingAtomString();
+
+    // TODO: Implement enforcement logic
+    if (value.isNull() && nullToEmpty)
+        return emptyAtom();
+
+    return nullAtom();
 }
 
 } // namespace WebCore

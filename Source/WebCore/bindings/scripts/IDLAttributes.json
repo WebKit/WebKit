@@ -488,6 +488,10 @@
         "SkipVTableValidation": {
             "contextsAllowed": ["interface"]
         },
+        "StringContext": {
+            "contextsAllowed": ["type"],
+            "values": ["TrustedHTML", "TrustedScript", "TrustedScriptURL"]
+        },
         "SuppressToJSObject": {
             "contextsAllowed": ["interface"]
         },

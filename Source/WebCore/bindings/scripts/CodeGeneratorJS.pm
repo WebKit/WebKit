@@ -7229,6 +7229,7 @@ sub IsAnnotatedType
     return 1 if $type->extendedAttributes->{AtomString};
     return 1 if $type->extendedAttributes->{RequiresExistingAtomString};
     return 1 if $type->extendedAttributes->{AllowShared};
+    return 1 if $type->extendedAttributes->{StringContext};
 }
 
 sub GetAnnotatedIDLType
@@ -7238,12 +7239,23 @@ sub GetAnnotatedIDLType
     return "IDLClampAdaptor" if $type->extendedAttributes->{Clamp};
     return "IDLEnforceRangeAdaptor" if $type->extendedAttributes->{EnforceRange};
     if ($type->extendedAttributes->{LegacyNullToEmptyString}) {
+        return "IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedHTML";
+        return "IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScript";
+        return "IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScriptURL";
         return "IDLLegacyNullToEmptyAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
         return "IDLLegacyNullToEmptyStringAdaptor";
     }
-    return "IDLAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
+    if ($type->extendedAttributes->{AtomString}) {
+        return "IDLAtomStringStringContextTrustedHTMLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedHTML";
+        return "IDLAtomStringStringContextTrustedScriptAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScript";
+        return "IDLAtomStringStringContextTrustedScriptURLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScriptURL";
+        return "IDLAtomStringAdaptor";
+    }
     return "IDLRequiresExistingAtomStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomString};
     return "IDLAllowSharedAdaptor" if $type->extendedAttributes->{AllowShared};
+    return "IDLStringContextTrustedHTMLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedHTML";
+    return "IDLStringContextTrustedScriptAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScript";
+    return "IDLStringContextTrustedScriptURLAdaptor" if $type->extendedAttributes->{StringContext} eq "TrustedScriptURL";
 }
 
 sub GetBaseIDLType
