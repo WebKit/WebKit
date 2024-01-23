@@ -66,7 +66,7 @@ void CSSParser::parseSheet(StyleSheetContents& sheet, const String& string)
     return CSSParserImpl::parseStyleSheet(string, m_context, sheet);
 }
 
-void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserObserver& observer)
+void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleSheetContents& sheet, const String& string, CSSParserObserver& observer)
 {
     return CSSParserImpl::parseStyleSheetForInspector(string, context, sheet, observer);
 }
@@ -78,7 +78,7 @@ RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, Styl
 
 RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)
 {
-    RefPtr<StyleRuleBase> keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
+    RefPtr keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
     return downcast<StyleRuleKeyframe>(keyframe.get());
 }
 
@@ -90,7 +90,7 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS, CSSParserEnum::IsNestedContext::No) == CSSSupportsParser::Supported;
 }
 
-static Color color(const RefPtr<CSSValue>& value)
+static Color color(RefPtr<CSSValue>&& value)
 {
     if (!value || !value->isColor())
         return { };
@@ -135,7 +135,7 @@ RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const Str
 {
     if (string.isEmpty())
         return nullptr;
-    if (auto value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
+    if (RefPtr value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
         return value;
     CSSTokenizer tokenizer(string);
     return CSSPropertyParser::parseSingleValue(propertyID, tokenizer.tokenRange(), context);
@@ -144,7 +144,7 @@ RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const Str
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
-    if (auto value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
+    if (RefPtr value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
         return declaration.addParsedProperty(CSSProperty(propertyID, WTFMove(value), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
     CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important);
@@ -152,12 +152,12 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
 
 CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomString& propertyName, const String& string, bool important, const CSSParserContext& context)
 {
-    return CSSParserImpl::parseCustomPropertyValue(&declaration, propertyName, string, important, context);
+    return CSSParserImpl::parseCustomPropertyValue(declaration, propertyName, string, important, context);
 }
 
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important)
 {
-    return CSSParserImpl::parseValue(&declaration, propertyID, string, important, m_context);
+    return CSSParserImpl::parseValue(declaration, propertyID, string, important, m_context);
 }
 
 std::optional<CSSSelectorList> CSSParser::parseSelectorList(const String& string, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
@@ -165,7 +165,7 @@ std::optional<CSSSelectorList> CSSParser::parseSelectorList(const String& string
     return parseCSSSelectorList(CSSTokenizer(string).tokenRange(), m_context, styleSheet, isNestedContext);
 }
 
-Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element* element)
+Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element& element)
 {
     return CSSParserImpl::parseInlineStyleDeclaration(string, element);
 }

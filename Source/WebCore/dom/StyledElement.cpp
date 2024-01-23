@@ -138,7 +138,7 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
     if (RefPtr mutableStyleProperties = dynamicDowncast<MutableStyleProperties>(inlineStyle))
         mutableStyleProperties->parseDeclaration(newStyleString, protectedDocument().get());
     else
-        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
+        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, *this);
 
     if (usesStyleBasedEditability(*inlineStyle))
         protectedDocument()->setHasElementUsingStyleBasedEditability();

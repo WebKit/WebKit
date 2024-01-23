@@ -234,7 +234,7 @@ static RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTo
     if (!CSSCalcValue::isCalcFunction(functionId))
         return nullptr;
 
-    auto calcValue = CSSCalcValue::create(functionId, consumeFunction(range), category, valueRange, symbolTable);
+    RefPtr calcValue = CSSCalcValue::create(functionId, consumeFunction(range), category, valueRange, symbolTable);
     if (calcValue && calcValue->category() == category)
         return calcValue;
 
@@ -269,7 +269,7 @@ struct IntegerTypeRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
             range = rangeCopy;
             // https://drafts.csswg.org/css-values-4/#integers
             // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
@@ -337,7 +337,7 @@ struct NumberRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, valueRange)) {
             if (auto validatedValue = validatedNumberRaw(value->doubleValue(), valueRange)) {
                 range = rangeCopy;
                 return validatedValue;
@@ -433,7 +433,7 @@ struct PercentRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Percent, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Percent, symbolTable, valueRange)) {
             range = rangeCopy;
 
             // FIXME: Should this validate the calc value as is done for the NumberRaw variant?
@@ -526,7 +526,7 @@ struct LengthRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, valueRange)) {
             range = rangeCopy;
 
             // FIXME: Should this validate the calc value as is done for the NumberRaw variant?
@@ -675,7 +675,7 @@ struct AngleRawKnownTokenTypeFunctionConsumer {
     static std::optional<AngleRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, valueRange)) {
             range = rangeCopy;
             return { { value->primitiveType(), value->doubleValue() } };
         }
@@ -857,7 +857,7 @@ struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
 
         auto rangeCopy = range;
         auto typeArg = consumeFunction(rangeCopy);
-        auto result = consumeString(typeArg);
+        RefPtr result = consumeString(typeArg);
 
         if (!result || !typeArg.atEnd())
             return nullptr;
@@ -1611,7 +1611,7 @@ RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange& range, Val
 
     switch (token.type()) {
     case FunctionToken:
-        if (auto value = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        if (RefPtr value = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
             return value;
         return PercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 

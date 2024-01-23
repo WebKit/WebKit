@@ -90,9 +90,9 @@ public:
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
-    static CSSParser::ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
-    static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties*, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
-    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
+    static CSSParser::ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
+    static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
+    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element&);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
@@ -107,9 +107,9 @@ public:
     RefPtr<StyleRuleBase> consumeAtRule(CSSParserTokenRange&, AllowedRulesType);
 
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
-    static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents*, CSSParserObserver&);
+    static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents&, CSSParserObserver&);
 
-    CSSTokenizer* tokenizer() const { return m_tokenizer.get(); };
+    CSSTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
 private:
     struct NestingContext {
@@ -176,6 +176,8 @@ private:
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
+    RefPtr<StyleSheetContents> protectedStyleSheet() const;
+
     Ref<StyleRuleBase> createNestingParentRule();
     void runInNewNestingContext(auto&& run);
     NestingContext& topContext()
@@ -215,7 +217,7 @@ private:
     std::unique_ptr<CSSTokenizer> m_tokenizer;
 
     // For the inspector
-    CSSParserObserverWrapper* m_observerWrapper { nullptr };
+    WeakPtr<CSSParserObserverWrapper> m_observerWrapper;
 };
 
 } // namespace WebCore

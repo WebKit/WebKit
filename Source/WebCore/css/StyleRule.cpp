@@ -578,7 +578,7 @@ WeakPtr<const StyleSheetContents> StyleRuleScope::styleSheetContents() const
 
 void StyleRuleScope::setStyleSheetContents(const StyleSheetContents& sheet)
 {
-    m_styleSheetOwner = &sheet;
+    m_styleSheetOwner = sheet;
 }
 
 Ref<StyleRuleStartingStyle> StyleRuleStartingStyle::create(Vector<Ref<StyleRuleBase>>&& rules)

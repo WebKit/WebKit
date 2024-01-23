@@ -802,7 +802,7 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
             return nullptr;
 
         pos += argumentStart;
-        auto angle = parseTransformAngleArgument(pos, end);
+        RefPtr angle = parseTransformAngleArgument(pos, end);
         if (!angle)
             return nullptr;
         return CSSFunctionValue::create(transformType, angle.releaseNonNull());
