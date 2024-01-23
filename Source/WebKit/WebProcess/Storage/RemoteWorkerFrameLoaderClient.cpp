@@ -27,7 +27,7 @@
 #include "RemoteWorkerFrameLoaderClient.h"
 
 #include "Logging.h"
-#include "WebDocumentLoader.h"
+#include <WebCore/DocumentLoader.h>
 
 namespace WebKit {
 
@@ -40,7 +40,7 @@ RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebPageProxyIdentif
 
 Ref<WebCore::DocumentLoader> RemoteWorkerFrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& substituteData)
 {
-    return WebDocumentLoader::create(request, substituteData);
+    return WebCore::DocumentLoader::create(request, substituteData);
 }
 
 } // namespace WebKit

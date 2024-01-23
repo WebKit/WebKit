@@ -1495,7 +1495,7 @@ void DocumentLoader::attachToFrame()
     DOCUMENTLOADER_RELEASE_LOG("DocumentLoader::attachToFrame: m_frame=%p", m_frame.get());
 }
 
-void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess)
+void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     DOCUMENTLOADER_RELEASE_LOG("DocumentLoader::detachFromFrame: m_frame=%p", m_frame.get());
 
@@ -1529,9 +1529,18 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess)
     if (!m_frame)
         return;
 
+    if (auto navigationID = std::exchange(m_navigationID, 0))
+        m_frame->loader().client().documentLoaderDetached(navigationID, loadWillContinueInAnotherProcess);
+
     InspectorInstrumentation::loaderDetachedFromFrame(*m_frame, *this);
 
     observeFrame(nullptr);
+}
+
+void DocumentLoader::setNavigationID(uint64_t navigationID)
+{
+    ASSERT(navigationID);
+    m_navigationID = navigationID;
 }
 
 void DocumentLoader::clearMainResourceLoader()

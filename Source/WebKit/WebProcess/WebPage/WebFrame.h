@@ -192,8 +192,6 @@ public:
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
 
-    void documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess);
-
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener : public CanMakeWeakPtr<LoadListener> {
     public:

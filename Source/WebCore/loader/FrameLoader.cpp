@@ -4628,6 +4628,16 @@ RefPtr<DocumentLoader> FrameLoader::protectedProvisionalDocumentLoader() const
     return m_provisionalDocumentLoader;
 }
 
+RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDocumentLoader canIncludeCurrentDocumentLoader) const
+{
+    RefPtr loader = policyDocumentLoader();
+    if (!loader)
+        loader = provisionalDocumentLoader();
+    if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)
+        loader = documentLoader();
+    return loader;
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

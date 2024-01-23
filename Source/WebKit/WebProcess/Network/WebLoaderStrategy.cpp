@@ -34,7 +34,6 @@
 #include "RemoteWorkerFrameLoaderClient.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDocumentLoader.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -310,8 +309,8 @@ static RefPtr<DocumentLoader> policySourceDocumentLoaderForFrame(const LocalFram
     if (!mainFrame)
         return { };
 
-    auto canIncludeCurrentDocumentLoader = isMainFrameNavigation ? WebDocumentLoader::CanIncludeCurrentDocumentLoader::No : WebDocumentLoader::CanIncludeCurrentDocumentLoader::Yes;
-    RefPtr<DocumentLoader> mainFrameDocumentLoader = WebDocumentLoader::loaderForWebsitePolicies(*mainFrame, canIncludeCurrentDocumentLoader);
+    auto canIncludeCurrentDocumentLoader = isMainFrameNavigation ? FrameLoader::CanIncludeCurrentDocumentLoader::No : FrameLoader::CanIncludeCurrentDocumentLoader::Yes;
+    auto mainFrameDocumentLoader = mainFrame->loader().loaderForWebsitePolicies(canIncludeCurrentDocumentLoader);
 
     auto policySourceDocumentLoader = mainFrameDocumentLoader;
     if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame.document()->url().protocolIsInHTTPFamily())
@@ -495,7 +494,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.isMainResourceNavigationForAnyFrame = resourceLoader.frame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
     if (loadParameters.isMainResourceNavigationForAnyFrame) {
         if (auto documentLoader = resourceLoader.documentLoader()) {
-            loadParameters.navigationID = static_cast<WebDocumentLoader&>(*documentLoader).navigationID();
+            loadParameters.navigationID = documentLoader->navigationID();
             loadParameters.navigationRequester = documentLoader->triggeringAction().requester();
         }
     }

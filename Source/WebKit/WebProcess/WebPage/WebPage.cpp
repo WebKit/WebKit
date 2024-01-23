@@ -101,7 +101,6 @@
 #include "WebDatabaseProvider.h"
 #include "WebDateTimeChooser.h"
 #include "WebDiagnosticLoggingClient.h"
-#include "WebDocumentLoader.h"
 #include "WebDragClient.h"
 #include "WebEditorClient.h"
 #include "WebEventConversion.h"
@@ -7345,7 +7344,7 @@ void WebPage::didSameDocumentNavigationForFrame(WebFrame& frame)
 {
     RefPtr<API::Object> userData;
 
-    auto navigationID = static_cast<WebDocumentLoader&>(*frame.coreLocalFrame()->loader().documentLoader()).navigationID();
+    auto navigationID = frame.coreLocalFrame()->loader().documentLoader()->navigationID();
 
     if (frame.isMainFrame())
         m_pendingNavigationID = 0;
@@ -7531,7 +7530,7 @@ void WebPage::setScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
 
 Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
+    auto documentLoader = DocumentLoader::create(request, substituteData);
 
     documentLoader->setLastNavigationWasAppInitiated(m_lastNavigationWasAppInitiated);
 
@@ -7551,7 +7550,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, const Resou
     return documentLoader;
 }
 
-void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, LocalFrame& frame)
+void WebPage::updateCachedDocumentLoader(DocumentLoader& documentLoader, LocalFrame& frame)
 {
     if (m_pendingNavigationID && frame.isMainFrame()) {
         documentLoader.setNavigationID(m_pendingNavigationID);

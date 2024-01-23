@@ -50,7 +50,6 @@
 #include "WebAutomationSessionProxy.h"
 #include "WebBackForwardListProxy.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDocumentLoader.h"
 #include "WebErrors.h"
 #include "WebEvent.h"
 #include "WebFrame.h"
@@ -215,6 +214,12 @@ void WebLocalFrameLoaderClient::detachedFromParent3()
     notImplemented();
 }
 
+void WebLocalFrameLoaderClient::documentLoaderDetached(uint64_t navigationID, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+{
+    if (RefPtr page = m_frame->page(); page && loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No)
+        page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
+}
+
 void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     RefPtr webPage = m_frame->page();
@@ -362,7 +367,7 @@ void WebLocalFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLo
     if (!webPage)
         return;
 
-    RefPtr documentLoader = static_cast<WebDocumentLoader*>(m_frame->coreLocalFrame()->loader().provisionalDocumentLoader());
+    RefPtr documentLoader = m_frame->coreLocalFrame()->loader().provisionalDocumentLoader();
     if (!documentLoader) {
         WebLocalFrameLoaderClient_RELEASE_LOG_FAULT(Loading, "dispatchDidReceiveServerRedirectForProvisionalLoad: Called with no provisional DocumentLoader (frameState=%hhu, stateForDebugging=%i)", static_cast<uint8_t>(m_frame->coreLocalFrame()->loader().state()), m_frame->coreLocalFrame()->loader().stateMachine().stateForDebugging());
         return;
@@ -385,7 +390,7 @@ void WebLocalFrameLoaderClient::dispatchDidChangeProvisionalURL()
     if (!webPage)
         return;
 
-    Ref documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().provisionalDocumentLoader());
+    Ref documentLoader { *m_frame->coreLocalFrame()->loader().provisionalDocumentLoader() };
     webPage->send(Messages::WebPageProxy::DidChangeProvisionalURLForFrame(m_frame->frameID(), documentLoader->navigationID(), documentLoader->url()));
 }
 
@@ -547,7 +552,7 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(*webPage, m_frame, userData);
-    RefPtr provisionalLoader = static_cast<WebDocumentLoader*>(m_frame->coreLocalFrame()->loader().provisionalDocumentLoader());
+    RefPtr provisionalLoader = m_frame->coreLocalFrame()->loader().provisionalDocumentLoader();
 
     if (!provisionalLoader || provisionalLoader->isContinuingLoadAfterProvisionalLoadStarted())
         return;
@@ -591,7 +596,7 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
     if (!webPage)
         return;
 
-    Ref documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader());
+    Ref documentLoader { *m_frame->coreLocalFrame()->loader().documentLoader() };
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
@@ -661,7 +666,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     uint64_t navigationID = 0;
     ResourceRequest request;
     if (auto documentLoader = m_frame->coreLocalFrame()->loader().provisionalDocumentLoader()) {
-        navigationID = static_cast<WebDocumentLoader*>(documentLoader)->navigationID();
+        navigationID = documentLoader->navigationID();
         request = documentLoader->request();
     }
 
@@ -684,7 +689,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 
     RefPtr<API::Object> userData;
 
-    Ref documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader());
+    Ref documentLoader { *m_frame->coreLocalFrame()->loader().documentLoader() };
     auto navigationID = documentLoader->navigationID();
 
     // Notify the bundle client.
@@ -712,7 +717,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishDocumentLoad()
 
     RefPtr<API::Object> userData;
 
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader()).navigationID();
+    auto navigationID = m_frame->coreLocalFrame()->loader().documentLoader()->navigationID();
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFinishDocumentLoadForFrame(*webPage, m_frame, userData);
@@ -731,7 +736,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
 
     RefPtr<API::Object> userData;
 
-    Ref documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreLocalFrame()->loader().documentLoader());
+    Ref documentLoader { *m_frame->coreLocalFrame()->loader().documentLoader() };
     auto navigationID = documentLoader->navigationID();
 
     // Notify the bundle client.
@@ -910,7 +915,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
 
     RefPtr coreFrame = m_frame->coreLocalFrame();
     RefPtr policyDocumentLoader = coreFrame ? coreFrame->loader().provisionalDocumentLoader() : nullptr;
-    auto navigationID = policyDocumentLoader ? static_cast<WebDocumentLoader&>(*policyDocumentLoader).navigationID() : 0;
+    auto navigationID = policyDocumentLoader ? policyDocumentLoader->navigationID() : 0;
 
     auto protectedFrame = m_frame.copyRef();
     uint64_t listenerID = protectedFrame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
@@ -975,7 +980,7 @@ void WebLocalFrameLoaderClient::applyToDocumentLoader(WebsitePoliciesData&& webs
     if (!coreFrame)
         return;
 
-    RefPtr documentLoader = WebDocumentLoader::loaderForWebsitePolicies(*coreFrame);
+    RefPtr documentLoader = coreFrame->loader().loaderForWebsitePolicies();
     if (!documentLoader)
         return;
 
@@ -1442,7 +1447,7 @@ Ref<DocumentLoader> WebLocalFrameLoaderClient::createDocumentLoader(const Resour
 
 void WebLocalFrameLoaderClient::updateCachedDocumentLoader(WebCore::DocumentLoader& loader)
 {
-    m_frame->page()->updateCachedDocumentLoader(static_cast<WebDocumentLoader&>(loader), *m_frame->coreLocalFrame());
+    m_frame->page()->updateCachedDocumentLoader(loader, *m_frame->coreLocalFrame());
 }
 
 void WebLocalFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)

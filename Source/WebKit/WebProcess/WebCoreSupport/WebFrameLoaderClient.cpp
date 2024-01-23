@@ -32,12 +32,12 @@
 #include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
 #include "NavigationActionPolicyParameters.h"
-#include "WebDocumentLoader.h"
 #include "WebFrame.h"
 #include "WebMouseEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PolicyChecker.h>
@@ -121,9 +121,9 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
     // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
-    RefPtr<WebDocumentLoader> documentLoader;
+    RefPtr<DocumentLoader> documentLoader;
     if (coreFrame)
-        documentLoader = WebDocumentLoader::loaderForWebsitePolicies(*coreFrame);
+        documentLoader = coreFrame->loader().loaderForWebsitePolicies();
 
     auto& mouseEventData = navigationAction.mouseEventData();
     NavigationActionData navigationActionData {

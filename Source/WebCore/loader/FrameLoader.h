@@ -180,6 +180,9 @@ public:
     RefPtr<DocumentLoader> protectedProvisionalDocumentLoader() const;
     FrameState state() const { return m_state; }
 
+    enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
+    WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies(CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes) const;
+
     bool shouldReportResourceTimingToParentFrame() const { return m_shouldReportResourceTimingToParentFrame; };
     
 #if PLATFORM(IOS_FAMILY)

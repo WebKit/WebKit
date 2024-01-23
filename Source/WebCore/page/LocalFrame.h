@@ -307,6 +307,8 @@ public:
     void didAccessWindowProxyPropertyViaOpener(WindowProxyProperty);
 #endif
 
+    WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies() const;
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 

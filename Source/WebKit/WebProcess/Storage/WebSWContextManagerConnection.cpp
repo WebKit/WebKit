@@ -43,7 +43,6 @@
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
-#include "WebDocumentLoader.h"
 #include "WebLocalFrameLoaderClient.h"
 #include "WebMessagePortChannelProvider.h"
 #include "WebNotificationClient.h"

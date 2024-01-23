@@ -331,7 +331,6 @@ class WebContextMenu;
 class WebContextMenuItemData;
 class WebDataListSuggestionPicker;
 class WebDateTimeChooser;
-class WebDocumentLoader;
 class WebEvent;
 class WebFoundTextRangeController;
 class WebHistoryItemClient;
@@ -1306,7 +1305,7 @@ public:
     void setScrollbarOverlayStyle(std::optional<uint32_t /* WebCore::ScrollbarOverlayStyle */> scrollbarStyle);
 
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
-    void updateCachedDocumentLoader(WebDocumentLoader&, WebCore::LocalFrame&);
+    void updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
 
     void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
     void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);

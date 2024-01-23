@@ -45,7 +45,6 @@
 #include "WebChromeClient.h"
 #include "WebContextMenu.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDocumentLoader.h"
 #include "WebEventConversion.h"
 #include "WebEventFactory.h"
 #include "WebImage.h"
@@ -490,7 +489,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
     m_policyDownloadID = policyDecision.downloadID;
     if (policyDecision.navigationID) {
         auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-        if (RefPtr documentLoader = localFrame ? static_cast<WebDocumentLoader*>(localFrame->loader().policyDocumentLoader()) : nullptr)
+        if (RefPtr documentLoader = localFrame ? localFrame->loader().policyDocumentLoader() : nullptr)
             documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
@@ -1090,12 +1089,6 @@ void WebFrame::setTextDirection(const String& direction)
         localFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
     else if (direction == "rtl"_s)
         localFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
-}
-
-void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess)
-{
-    if (auto* page = this->page(); page && !loadWillContinueInAnotherProcess)
-        page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 
 #if PLATFORM(COCOA)

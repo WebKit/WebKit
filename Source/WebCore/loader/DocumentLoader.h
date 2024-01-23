@@ -486,6 +486,9 @@ public:
     void contentFilterHandleProvisionalLoadFailure(const ResourceError&);
 #endif
 
+    uint64_t navigationID() const { return m_navigationID; }
+    WEBCORE_EXPORT void setNavigationID(uint64_t);
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -623,6 +626,8 @@ private:
     // The action that triggered loading - we keep this around for the
     // benefit of the various policy handlers.
     NavigationAction m_triggeringAction;
+
+    uint64_t m_navigationID { 0 };
 
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the

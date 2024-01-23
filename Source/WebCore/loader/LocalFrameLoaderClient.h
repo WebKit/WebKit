@@ -96,6 +96,7 @@ class SharedBuffer;
 class SubstituteData;
 class Widget;
 
+enum class LoadWillContinueInAnotherProcess : bool;
 enum class LockBackForwardList : bool;
 enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
@@ -378,6 +379,8 @@ public:
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     virtual void didAccessWindowProxyPropertyViaOpener(SecurityOriginData&&, WindowProxyProperty) { }
 #endif
+
+    virtual void documentLoaderDetached(uint64_t, LoadWillContinueInAnotherProcess) { }
 };
 
 } // namespace WebCore

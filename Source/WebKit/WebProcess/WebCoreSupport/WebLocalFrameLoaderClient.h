@@ -278,6 +278,8 @@ private:
     void broadcastFrameRemovalToOtherProcesses() final;
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
 
+    void documentLoaderDetached(uint64_t navigationID, WebCore::LoadWillContinueInAnotherProcess) final;
+
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
 #endif

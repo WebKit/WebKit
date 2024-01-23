@@ -233,7 +233,6 @@
 		1A5705111BE410E600874AF1 /* BlockSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5705101BE410E500874AF1 /* BlockSPI.h */; };
 		1A57109F1ABA0027002FABBE /* WKWebsiteDataStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A57109D1ABA0027002FABBE /* WKWebsiteDataStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C4F1898606F004FCF9B /* WKNavigation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */; };
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
 		1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */; };
 		1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */; };
@@ -3334,8 +3333,6 @@
 		1A57109D1ABA0027002FABBE /* WKWebsiteDataStoreRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStoreRef.h; sourceTree = "<group>"; };
 		1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigation.mm; sourceTree = "<group>"; };
 		1A5B1C4F1898606F004FCF9B /* WKNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigation.h; sourceTree = "<group>"; };
-		1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDocumentLoader.cpp; sourceTree = "<group>"; };
-		1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoader.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
 		1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VisitedLinkStore.messages.in; sourceTree = "<group>"; };
 		1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStoreMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -13171,8 +13168,6 @@
 				5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */,
 				7AFA6F6F2A9F58FB0055322A /* WebDisplayRefreshMonitor.cpp */,
 				7AFA6F702A9F58FB0055322A /* WebDisplayRefreshMonitor.h */,
-				1A5B1C5218987EDF004FCF9B /* WebDocumentLoader.cpp */,
-				1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */,
 				E55CFD4D279D31C3002F1020 /* WebFoundTextRangeController.cpp */,
 				E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
@@ -16074,7 +16069,6 @@
 				E3866B082399A2D100F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
 				7AFA6F712A9F590A0055322A /* WebDisplayRefreshMonitor.h in Headers */,
-				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
