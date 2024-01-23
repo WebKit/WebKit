@@ -3332,7 +3332,7 @@ webkit.org/b/176183 fast/block/inside-inlines/opacity-on-inline.html [ ImageOnly
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
 
-# WPT css/css-pseudo import (webkit.org/b/235197)
+# WPT css/css-pseudo import (webkit.org/b/235197, webkit.org/b/266986)
 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/cascade-highlight-005.html [ ImageOnlyFailure ]
@@ -3341,11 +3341,14 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ ImageOnly
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-with-preceding-new-line.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-text-shadow-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-text-shadow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-explicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-002.html [ ImageOnlyFailure ]
@@ -3357,6 +3360,14 @@ imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002.html [ Imag
 imported/w3c/web-platform-tests/css/css-pseudo/marker-text-transform-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-thumb-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-002.html [ ImageOnlyFailure ]
 # WPT support ::target-text (webkit.org/b/236817)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-002.html [ ImageOnlyFailure ]
@@ -3365,6 +3376,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/target-text-004.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-003.html [ ImageOnlyFailure ]
@@ -7455,8 +7468,6 @@ http/wpt/opener/iframe-access-top-via-windowproxy.html [ Skip ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
 
 webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
-
-webkit.org/b/266986 imported/w3c/web-platform-tests/css/css-pseudo/highlight-pseudos-computed.html [ Failure ]
 
 # At the time of writing this test consumes all available IOSurfaces. If the next test is image-buffer-backend-variants.html, that will fail.
 fast/canvas/2d.context.many.small.html [ Slow Skip ]

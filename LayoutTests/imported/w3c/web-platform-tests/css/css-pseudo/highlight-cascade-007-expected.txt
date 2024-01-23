@@ -1,0 +1,17 @@
+M
+W
+U
+
+FAIL M::selection’s font-size is the same as in M assert_equals: expected "12px" but got "42px"
+FAIL M span::selection’s font-size is the same as in M span assert_equals: expected "18px" but got "42px"
+FAIL M::selection’s own text-shadow respects M’s font-size assert_equals: expected "rgb(0, 128, 0) 12px 0px 0px" but got "rgb(0, 128, 0) 42px 0px 0px"
+FAIL M span::selection’s inherited text-shadow respects M’s font-size assert_equals: expected "rgb(0, 128, 0) 12px 0px 0px" but got "none"
+FAIL W::selection’s line-height is the same as in W assert_equals: expected "13px" but got "43px"
+FAIL W span::selection’s line-height is the same as in W span assert_equals: expected "19px" but got "43px"
+FAIL W::selection’s own text-shadow respects W’s line-height assert_equals: expected "rgb(0, 128, 0) 0px 13px 0px" but got "rgb(0, 128, 0) 0px 43px 0px"
+FAIL W span::selection’s inherited text-shadow respects W’s line-height assert_equals: expected "rgb(0, 128, 0) 0px 13px 0px" but got "none"
+FAIL U::selection’s font-size is the same as in U assert_equals: expected "12px" but got "42px"
+FAIL U span::selection’s font-size is the same as in U span assert_equals: expected "18px" but got "42px"
+FAIL U::selection’s own text-decoration-thickness respects U’s font-size assert_equals: expected "12px" but got "42px"
+FAIL U span::selection’s own text-decoration-thickness respects U span’s font-size assert_equals: expected "18px" but got "42px"
+
