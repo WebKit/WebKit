@@ -120,16 +120,18 @@ private:
     bool m_hasInterchangeNewlineAtEnd;
 };
 
-static bool isInterchangeNewlineNode(const Node* node)
+static bool isInterchangeNewlineNode(const Node& node)
 {
     static NeverDestroyed<String> interchangeNewlineClassString = AppleInterchangeNewline ""_s;
-    return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
+    RefPtr br = dynamicDowncast<HTMLBRElement>(node);
+    return br && br->attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
 }
 
-static bool isInterchangeConvertedSpaceSpan(const Node* node)
+static bool isInterchangeConvertedSpaceSpan(const Node& node)
 {
     static NeverDestroyed<String> convertedSpaceSpanClassString = AppleConvertedSpace ""_s;
-    return is<HTMLElement>(node) && downcast<HTMLElement>(*node).attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
+    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    return element && element->attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
 }
 
 static Position positionAvoidingPrecedingNodes(Position position)
@@ -348,7 +350,7 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     // either the first node in the fragment or the first leaf in the fragment.
     RefPtr node { container->firstChild() };
     while (node) {
-        if (isInterchangeNewlineNode(node.get())) {
+        if (isInterchangeNewlineNode(*node)) {
             m_hasInterchangeNewlineAtStart = true;
             removeNode(*node);
             break;
@@ -361,7 +363,7 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     // either the last node in the fragment or the last leaf in the fragment.
     node = container->lastChild();
     while (node) {
-        if (isInterchangeNewlineNode(node.get())) {
+        if (isInterchangeNewlineNode(*node)) {
             m_hasInterchangeNewlineAtEnd = true;
             removeNode(*node);
             break;
@@ -372,7 +374,7 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     node = container->firstChild();
     while (node) {
         RefPtr<Node> next = NodeTraversal::next(*node);
-        if (isInterchangeConvertedSpaceSpan(node.get())) {
+        if (isInterchangeConvertedSpaceSpan(*node)) {
             next = NodeTraversal::nextSkippingChildren(*node);
             removeNodePreservingChildren(*node);
         }
@@ -531,9 +533,13 @@ static bool isHeaderElement(const Node& a)
         || a.hasTagName(h6Tag);
 }
 
-static bool haveSameTagName(Node* a, Node* b)
+static bool haveSameTagName(Node& a, RefPtr<Node> b)
 {
-    return is<Element>(a) && is<Element>(b) && downcast<Element>(*a).tagName() == downcast<Element>(*b).tagName();
+    RefPtr elementA = dynamicDowncast<Element>(a);
+    if (!elementA)
+        return false;
+    RefPtr elementB = dynamicDowncast<Element>(b);
+    return elementB && elementA->tagName() == elementB->tagName();
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
@@ -550,7 +556,7 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
         && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(*sourceBlock))
         && enclosingListChild(sourceBlock.get()) == enclosingListChild(destinationNode.get())
         && enclosingTableCell(source.deepEquivalent()) == enclosingTableCell(destination.deepEquivalent())
-        && (!isHeaderElement(*sourceBlock) || haveSameTagName(sourceBlock.get(), destinationBlock.get()))
+        && (!isHeaderElement(*sourceBlock) || haveSameTagName(*sourceBlock, destinationBlock))
         // Don't merge to or from a position before or after a block because it would
         // be a no-op and cause infinite recursion.
         && !isBlock(*sourceNode) && !isBlock(*destinationNode);
@@ -592,11 +598,11 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
     const double lightnessLightEnoughForBackground = 0.6;
 
     for (RefPtr node = fragment.firstChild(); node; node = NodeTraversal::next(*node)) {
-        if (!is<StyledElement>(*node))
+        RefPtr element = dynamicDowncast<StyledElement>(*node);
+        if (!element)
             continue;
 
-        auto& element = downcast<StyledElement>(*node);
-        auto* inlineStyle = element.inlineStyle();
+        auto* inlineStyle = element->inlineStyle();
         if (!inlineStyle)
             continue;
 
@@ -616,20 +622,20 @@ void ReplaceSelectionCommand::inverseTransformColor(InsertedNodes& insertedNodes
 {
     RefPtr pastEndNode = insertedNodes.pastLastLeaf();
     for (RefPtr node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = NodeTraversal::next(*node)) {
-        if (!is<StyledElement>(*node))
+        RefPtr element = dynamicDowncast<StyledElement>(*node);
+        if (!element)
             continue;
 
-        auto& element = downcast<StyledElement>(*node);
-        auto* inlineStyle = element.inlineStyle();
+        auto* inlineStyle = element->inlineStyle();
         if (!inlineStyle)
             continue;
 
         auto editingStyle = EditingStyle::create(inlineStyle);
-        auto transformedStyle = editingStyle->inverseTransformColorIfNeeded(element);
+        auto transformedStyle = editingStyle->inverseTransformColorIfNeeded(*element);
         if (editingStyle.ptr() == transformedStyle.ptr())
             continue;
 
-        setNodeAttribute(element, styleAttr, transformedStyle->style()->asTextAtom());
+        setNodeAttribute(*element, styleAttr, transformedStyle->style()->asTextAtom());
     }
 }
 
@@ -643,24 +649,22 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
 
         next = NodeTraversal::next(*node);
-        if (!is<StyledElement>(*node))
+        RefPtr element = dynamicDowncast<StyledElement>(*node);
+        if (!element)
             continue;
-
-        RefPtr element = downcast<StyledElement>(node.get());
 
         RefPtr inlineStyle { element->inlineStyle() };
         auto newInlineStyle = EditingStyle::create(inlineStyle.get());
         if (inlineStyle) {
-            if (is<HTMLElement>(*element)) {
+            if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*element)) {
                 Vector<QualifiedName> attributes;
-                Ref htmlElement = downcast<HTMLElement>(*element);
 
-                if (newInlineStyle->conflictsWithImplicitStyleOfElement(htmlElement)) {
+                if (newInlineStyle->conflictsWithImplicitStyleOfElement(*htmlElement)) {
                     // e.g. <b style="font-weight: normal;"> is converted to <span style="font-weight: normal;">
-                    node = replaceElementWithSpanPreservingChildrenAndAttributes(htmlElement);
+                    node = replaceElementWithSpanPreservingChildrenAndAttributes(*htmlElement);
                     element = downcast<StyledElement>(node.get());
-                    insertedNodes.didReplaceNode(htmlElement.ptr(), node.get());
-                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(htmlElement, EditingStyle::PreserveWritingDirection, nullptr, attributes, EditingStyle::DoNotExtractMatchingStyle)) {
+                    insertedNodes.didReplaceNode(htmlElement.get(), node.get());
+                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(*htmlElement, EditingStyle::PreserveWritingDirection, nullptr, attributes, EditingStyle::DoNotExtractMatchingStyle)) {
                     // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
                     for (auto& attribute : attributes)
                         removeNodeAttribute(*element, attribute);
@@ -798,13 +802,14 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
     for (RefPtr node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
         next = NodeTraversal::next(*node);
 
-        if (!is<HTMLElement>(*node))
+        RefPtr element = dynamicDowncast<HTMLElement>(*node);
+        if (!element)
             continue;
 
         if (!node->isConnected())
             continue;
 
-        if (isProhibitedParagraphChild(downcast<HTMLElement>(*node).tagQName())) {
+        if (isProhibitedParagraphChild(element->tagQName())) {
             if (RefPtr paragraphElement = enclosingElementWithTag(positionInParentBeforeNode(node.get()), pTag)) {
                 RefPtr parent { paragraphElement->parentNode() };
                 if (parent && parent->hasEditableStyle()) {
@@ -820,7 +825,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
                 if (headerElement->parentNode() && headerElement->parentNode()->isContentRichlyEditable())
                     moveNodeOutOfAncestor(*node, *headerElement, insertedNodes);
                 else {
-                    RefPtr newSpanElement { replaceElementWithSpanPreservingChildrenAndAttributes(downcast<HTMLElement>(*node)) };
+                    RefPtr newSpanElement { replaceElementWithSpanPreservingChildrenAndAttributes(*element) };
                     insertedNodes.didReplaceNode(node.get(), newSpanElement.get());
                 }
             }
@@ -862,7 +867,7 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
 
     bool safeToRemoveAncestor = true;
     for (RefPtr child = ancestor.firstChild(); child; child = child->nextSibling()) {
-        if (is<Text>(child) && hasRenderedText(downcast<Text>(*child))) {
+        if (RefPtr text = dynamicDowncast<Text>(child); text && hasRenderedText(*text)) {
             safeToRemoveAncestor = false;
             break;
         }
@@ -885,7 +890,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     document->updateLayoutIgnorePendingStylesheets();
 
     RefPtr lastLeafInserted { insertedNodes.lastLeafInserted() };
-    if (is<Text>(lastLeafInserted) && !hasRenderedText(downcast<Text>(*lastLeafInserted))
+    if (RefPtr text = dynamicDowncast<Text>(lastLeafInserted); text && !hasRenderedText(*text)
         && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted.get()), selectTag)
         && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted.get()), scriptTag)) {
         insertedNodes.willRemoveNode(lastLeafInserted.get());
@@ -897,7 +902,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
     // We don't have to make sure that firstNodeInserted isn't inside a select or script element
     // because it is a top level node in the fragment and the user can't insert into those elements.
     RefPtr firstNodeInserted { insertedNodes.firstNodeInserted() };
-    if (is<Text>(firstNodeInserted) && !hasRenderedText(downcast<Text>(*firstNodeInserted))) {
+    if (RefPtr text = dynamicDowncast<Text>(firstNodeInserted); text && !hasRenderedText(*text)) {
         insertedNodes.willRemoveNode(firstNodeInserted.get());
         removeNode(*firstNodeInserted);
     }
@@ -1073,19 +1078,19 @@ static bool isInlineNodeWithStyle(const Node& node)
     if (isBlock(node))
         return false;
 
-    if (!node.isHTMLElement())
+    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    if (!element)
         return false;
 
     // We can skip over elements whose class attribute is
     // one of our internal classes.
-    Ref element = downcast<HTMLElement>(node);
     const AtomString& classAttributeValue = element->attributeWithoutSynchronization(classAttr);
     if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace ""_s
         || classAttributeValue == ApplePasteAsQuotation)
         return true;
 
-    return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(element);
+    return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(*element);
 }
 
 inline RefPtr<Node> nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& insertionPos)
@@ -1527,7 +1532,7 @@ bool ReplaceSelectionCommand::shouldPerformSmartReplace() const
         return false;
 
     RefPtr textControl = enclosingTextFormControl(positionAtStartOfInsertedContent().deepEquivalent());
-    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(textControl); input && input->isPasswordField())
         return false; // Disable smart replace for password fields.
 
     return true;
@@ -1596,7 +1601,8 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
 
     Position endUpstream = endOfInsertedContent.deepEquivalent().upstream();
     RefPtr endNode { endUpstream.computeNodeBeforePosition() };
-    int endOffset = is<Text>(endNode) ? downcast<Text>(*endNode).length() : 0;
+    RefPtr endTextNode = dynamicDowncast<Text>(endNode);
+    int endOffset = endTextNode ? endTextNode->length() : 0;
     if (endUpstream.anchorType() == Position::PositionIsOffsetInAnchor) {
         endNode = endUpstream.containerNode();
         endOffset = endUpstream.offsetInContainerNode();
@@ -1605,8 +1611,8 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) && !isStartOfParagraph(endOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(endOfInsertedContent.characterAfter(), false);
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style().collapseWhiteSpace();
-        if (is<Text>(*endNode)) {
-            insertTextIntoNode(downcast<Text>(*endNode), endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
+        if (RefPtr text = dynamicDowncast<Text>(*endNode)) {
+            insertTextIntoNode(*text, endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
             if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
@@ -1629,8 +1635,8 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
     bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) && !isEndOfParagraph(startOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(startOfInsertedContent.previous().characterAfter(), true);
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style().collapseWhiteSpace();
-        if (is<Text>(*startNode)) {
-            insertTextIntoNode(downcast<Text>(*startNode), startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
+        if (RefPtr text = dynamicDowncast<Text>(*startNode)) {
+            insertTextIntoNode(*text, startOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " "_s);
             if (m_endOfInsertedContent.containerNode() == startNode && m_endOfInsertedContent.offsetInContainerNode())
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
@@ -1690,50 +1696,48 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
     bool positionIsOffsetInAnchor = position.anchorType() == Position::PositionIsOffsetInAnchor;
     bool positionOnlyToBeUpdatedIsOffsetInAnchor = positionOnlyToBeUpdated.anchorType() == Position::PositionIsOffsetInAnchor;
     RefPtr<Text> text;
-    if (positionIsOffsetInAnchor && is<Text>(position.containerNode()))
-        text = downcast<Text>(position.containerNode());
+    if (RefPtr container = dynamicDowncast<Text>(position.containerNode()); positionIsOffsetInAnchor && container)
+        text = container;
     else {
-        if (RefPtr before = position.computeNodeBeforePosition(); is<Text>(before))
-            text = downcast<Text>(before.releaseNonNull());
-        else if (RefPtr after = position.computeNodeAfterPosition(); is<Text>(after))
-            text = downcast<Text>(after.releaseNonNull());
+        if (RefPtr before = dynamicDowncast<Text>(position.computeNodeBeforePosition()))
+            text = before;
+        else if (RefPtr after = dynamicDowncast<Text>(position.computeNodeAfterPosition()))
+            text = after;
     }
     if (!text)
         return;
 
-    if (RefPtr previousSibling = text->previousSibling(); is<Text>(previousSibling)) {
-        Ref previous = downcast<Text>(previousSibling.releaseNonNull());
+    if (RefPtr previous = dynamicDowncast<Text>(text->previousSibling())) {
         insertTextIntoNode(*text, 0, previous->data());
 
         if (positionIsOffsetInAnchor)
             position.moveToOffset(previous->length() + position.offsetInContainerNode());
         else
-            updatePositionForNodeRemoval(position, previous.get());
+            updatePositionForNodeRemoval(position, *previous);
 
         if (positionOnlyToBeUpdatedIsOffsetInAnchor) {
             if (positionOnlyToBeUpdated.containerNode() == text)
                 positionOnlyToBeUpdated.moveToOffset(previous->length() + positionOnlyToBeUpdated.offsetInContainerNode());
-            else if (positionOnlyToBeUpdated.containerNode() == previous.ptr())
+            else if (positionOnlyToBeUpdated.containerNode() == previous)
                 positionOnlyToBeUpdated.moveToPosition(text.get(), positionOnlyToBeUpdated.offsetInContainerNode());
         } else
-            updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous.get());
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, *previous);
 
-        removeNode(previous);
+        removeNode(*previous);
     }
-    if (RefPtr nextSibling = text->nextSibling(); is<Text>(nextSibling)) {
-        Ref next = downcast<Text>(nextSibling.releaseNonNull());
+    if (RefPtr next = dynamicDowncast<Text>(text->nextSibling())) {
         unsigned originalLength = text->length();
         insertTextIntoNode(*text, originalLength, next->data());
 
         if (!positionIsOffsetInAnchor)
-            updatePositionForNodeRemoval(position, next.get());
+            updatePositionForNodeRemoval(position, *next);
 
-        if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next.ptr())
+        if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next)
             positionOnlyToBeUpdated.moveToPosition(text.get(), originalLength + positionOnlyToBeUpdated.offsetInContainerNode());
         else
-            updatePositionForNodeRemoval(positionOnlyToBeUpdated, next.get());
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, *next);
 
-        removeNode(next);
+        removeNode(*next);
     }
 }
 
@@ -1769,8 +1773,8 @@ RefPtr<Node> ReplaceSelectionCommand::insertAsListItems(HTMLElement& passedListE
     // list items and insert these nodes between them.
     if (isMiddle) {
         int textNodeOffset = insertPos.offsetInContainerNode();
-        if (is<Text>(*insertPos.deprecatedNode()) && textNodeOffset > 0)
-            splitTextNode(downcast<Text>(*insertPos.deprecatedNode()), textNodeOffset);
+        if (RefPtr text = dynamicDowncast<Text>(*insertPos.deprecatedNode()); text && textNodeOffset > 0)
+            splitTextNode(*text, textNodeOffset);
         splitTreeToNode(*insertPos.deprecatedNode(), *lastNode, true);
     }
 
@@ -1830,9 +1834,9 @@ static bool fullySelectsEnclosingLink(const VisibleSelection& selection)
 // split text nodes.
 bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& fragment)
 {
-    if (!is<Text>(fragment.firstChild()) || fragment.firstChild() != fragment.lastChild())
+    RefPtr textNode = dynamicDowncast<Text>(fragment.firstChild());
+    if (!textNode || fragment.firstChild() != fragment.lastChild())
         return false;
-    Ref textNode = downcast<Text>(*fragment.firstChild());
 
     // FIXME: Would be nice to handle smart replace in the fast path.
     if (m_smartReplace || fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd())
