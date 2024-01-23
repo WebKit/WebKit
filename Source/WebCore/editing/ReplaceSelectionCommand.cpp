@@ -533,7 +533,7 @@ static bool isHeaderElement(const Node& a)
         || a.hasTagName(h6Tag);
 }
 
-static bool haveSameTagName(Node& a, RefPtr<Node> b)
+static bool haveSameTagName(Node& a, Node* b)
 {
     RefPtr elementA = dynamicDowncast<Element>(a);
     if (!elementA)
@@ -556,7 +556,7 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
         && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(*sourceBlock))
         && enclosingListChild(sourceBlock.get()) == enclosingListChild(destinationNode.get())
         && enclosingTableCell(source.deepEquivalent()) == enclosingTableCell(destination.deepEquivalent())
-        && (!isHeaderElement(*sourceBlock) || haveSameTagName(*sourceBlock, destinationBlock))
+        && (!isHeaderElement(*sourceBlock) || haveSameTagName(*sourceBlock, destinationBlock.get()))
         // Don't merge to or from a position before or after a block because it would
         // be a no-op and cause infinite recursion.
         && !isBlock(*sourceNode) && !isBlock(*destinationNode);
