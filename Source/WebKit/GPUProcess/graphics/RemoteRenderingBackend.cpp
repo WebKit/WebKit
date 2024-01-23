@@ -94,8 +94,9 @@ using namespace WebCore;
 bool isSmallLayerBacking(const ImageBufferParameters& parameters)
 {
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
+    auto checkedArea = ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area<RecordOverflow>();
     return (parameters.purpose == RenderingPurpose::LayerBacking || parameters.purpose == RenderingPurpose::BitmapOnlyLayerBacking)
-        && ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area() <= maxSmallLayerBackingArea
+        && !checkedArea.hasOverflowed() && checkedArea <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
 }
 
