@@ -150,7 +150,6 @@ private:
     PromiseAndWrapper m_updateCallbackDone;
     PromiseAndWrapper m_finished;
 
-    // WeakPtr<RenderObject> m_rootPseudoElement;
     FloatSize m_initialSnapshotContainingBlockSize;
 };
 

@@ -2217,7 +2217,6 @@ private:
     Vector<WeakPtr<ResizeObserver>> m_resizeObservers;
 
     RefPtr<ViewTransition> m_activeViewTransition;
-    bool m_hasViewTransitionPseudoElementTree;
 
     Timer m_loadEventDelayTimer;
 
@@ -2540,6 +2539,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_hasHadCaptureMediaStreamTrack { false };
 #endif
+
+    bool m_hasViewTransitionPseudoElementTree { false };
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     bool m_mayHaveElementsWithNonAutoTouchAction { false };
