@@ -642,20 +642,25 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
 
-    protectedCachedResourceLoader()->setDocument(this);
-
-    resetLinkColor();
-    resetVisitedLinkColor();
-    resetActiveLinkColor();
-
     initSecurityContext();
-    initDNSPrefetch();
-
-    for (auto& nodeListAndCollectionCount : m_nodeListAndCollectionCounts)
-        nodeListAndCollectionCount = 0;
 
     InspectorInstrumentation::addEventListenersToNode(*this);
     setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
+
+    ASSERT(!m_quirks);
+    ASSERT(!m_cachedResourceLoader);
+    ASSERT(!m_extensionStyleSheets);
+    ASSERT(!m_visitedLinkState);
+    ASSERT(!m_markers);
+    ASSERT(!m_scriptRunner);
+    ASSERT(!m_moduleLoader);
+    ASSERT(!m_fullscreenManager);
+    ASSERT(!m_fontSelector);
+    ASSERT(!m_fontLoader);
+    ASSERT(!m_undoManager);
+    ASSERT(!m_editor);
+    ASSERT(!m_reportingScope);
+    m_constructionDidFinish = true;
 }
 
 void Document::createNewIdentifier()
@@ -906,6 +911,7 @@ void Document::commonTeardown()
 
 Quirks& Document::ensureQuirks()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_quirks);
     m_quirks = makeUnique<Quirks>(*this);
     return *m_quirks;
@@ -913,19 +919,22 @@ Quirks& Document::ensureQuirks()
 
 CachedResourceLoader& Document::ensureCachedResourceLoader()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_cachedResourceLoader);
-    if (RefPtr frame = this->frame()) {
-        if (RefPtr loader = frame->loader().activeDocumentLoader()) {
-            m_cachedResourceLoader = &loader->cachedResourceLoader();
-            return *m_cachedResourceLoader;
+    m_cachedResourceLoader = [&]() -> Ref<CachedResourceLoader> {
+        if (RefPtr frame = this->frame()) {
+            if (RefPtr loader = frame->loader().activeDocumentLoader())
+                return loader->cachedResourceLoader();
         }
-    }
-    m_cachedResourceLoader = CachedResourceLoader::create(nullptr);
+        return CachedResourceLoader::create(nullptr);
+    }();
+    m_cachedResourceLoader->setDocument(this);
     return *m_cachedResourceLoader;
 }
 
 ExtensionStyleSheets& Document::ensureExtensionStyleSheets()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_extensionStyleSheets);
     m_extensionStyleSheets = makeUnique<ExtensionStyleSheets>(*this);
     return *m_extensionStyleSheets;
@@ -933,6 +942,7 @@ ExtensionStyleSheets& Document::ensureExtensionStyleSheets()
 
 DocumentMarkerController& Document::ensureMarkers()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_markers);
     m_markers = makeUnique<DocumentMarkerController>(*this);
     return *m_markers;
@@ -940,6 +950,7 @@ DocumentMarkerController& Document::ensureMarkers()
 
 VisitedLinkState& Document::ensureVisitedLinkState()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_visitedLinkState);
     m_visitedLinkState = makeUnique<VisitedLinkState>(*this);
     return *m_visitedLinkState;
@@ -948,6 +959,7 @@ VisitedLinkState& Document::ensureVisitedLinkState()
 #if ENABLE(FULLSCREEN_API)
 FullscreenManager& Document::ensureFullscreenManager()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_fullscreenManager);
     m_fullscreenManager = makeUnique<FullscreenManager>(*this);
     return *m_fullscreenManager;
@@ -956,6 +968,7 @@ FullscreenManager& Document::ensureFullscreenManager()
 
 inline DocumentFontLoader& Document::fontLoader()
 {
+    ASSERT(m_constructionDidFinish);
     if (!m_fontLoader)
         return ensureFontLoader();
     return *m_fontLoader;
@@ -963,6 +976,7 @@ inline DocumentFontLoader& Document::fontLoader()
 
 DocumentFontLoader& Document::ensureFontLoader()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_fontLoader);
     m_fontLoader = makeUnique<DocumentFontLoader>(*this);
     return *m_fontLoader;
@@ -975,6 +989,7 @@ CSSFontSelector* Document::cssFontSelector()
 
 CSSFontSelector& Document::ensureFontSelector()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_fontSelector);
     m_fontSelector = CSSFontSelector::create(*this);
     m_fontSelector->registerForInvalidationCallbacks(*this);
@@ -983,6 +998,7 @@ CSSFontSelector& Document::ensureFontSelector()
 
 UndoManager& Document::ensureUndoManager()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_undoManager);
     m_undoManager = UndoManager::create(*this);
     return *m_undoManager;
@@ -1004,6 +1020,7 @@ const Editor& Document::editor() const
 
 Editor& Document::ensureEditor()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_editor);
     m_editor = makeUnique<Editor>(*this);
     return *m_editor;
@@ -1011,6 +1028,7 @@ Editor& Document::ensureEditor()
 
 ReportingScope& Document::ensureReportingScope()
 {
+    ASSERT(m_constructionDidFinish);
     ASSERT(!m_reportingScope);
     m_reportingScope = ReportingScope::create(*this);
     return *m_reportingScope;
@@ -7178,6 +7196,7 @@ bool Document::isTelephoneNumberParsingAllowed() const
 
 String Document::originIdentifierForPasteboard() const
 {
+    ASSERT(m_constructionDidFinish);
     auto origin = securityOrigin().toString();
     if (origin != "null"_s)
         return origin;
@@ -7507,13 +7526,20 @@ TextAutoSizing& Document::textAutoSizing()
 void Document::initDNSPrefetch()
 {
     m_haveExplicitlyDisabledDNSPrefetch = false;
-    m_isDNSPrefetchEnabled = settings().dnsPrefetchingEnabled() && securityOrigin().protocol() == "http"_s;
+    m_isDNSPrefetchEnabled = settings().dnsPrefetchingEnabled() && securityOrigin().protocol() == "http"_s ? TriState::True : TriState::False;
 
     // Inherit DNS prefetch opt-out from parent frame
     if (RefPtr parent = parentDocument()) {
         if (!parent->isDNSPrefetchEnabled())
-            m_isDNSPrefetchEnabled = false;
+            m_isDNSPrefetchEnabled = TriState::False;
     }
+}
+
+bool Document::isDNSPrefetchEnabled() const
+{
+    if (m_isDNSPrefetchEnabled == TriState::Indeterminate)
+        const_cast<Document&>(*this).initDNSPrefetch();
+    return m_isDNSPrefetchEnabled == TriState::True;
 }
 
 void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
@@ -7521,12 +7547,15 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
     if (!settings().dnsPrefetchingEnabled())
         return;
 
+    if (m_isDNSPrefetchEnabled == TriState::Indeterminate)
+        initDNSPrefetch();
+
     if (equalLettersIgnoringASCIICase(dnsPrefetchControl, "on"_s) && !m_haveExplicitlyDisabledDNSPrefetch) {
-        m_isDNSPrefetchEnabled = true;
+        m_isDNSPrefetchEnabled = TriState::True;
         return;
     }
 
-    m_isDNSPrefetchEnabled = false;
+    m_isDNSPrefetchEnabled = TriState::False;
     m_haveExplicitlyDisabledDNSPrefetch = true;
 }
 

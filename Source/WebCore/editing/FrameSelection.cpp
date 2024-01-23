@@ -154,7 +154,7 @@ IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
 
 static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
 {
-    return !document || document->editor().behavior().shouldConsiderSelectionAsDirectional();
+    return !document || document->editingBehavior().shouldConsiderSelectionAsDirectional();
 }
 
 static inline bool isPageActive(Document* document)
