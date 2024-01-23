@@ -549,6 +549,7 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         case StyleRuleType::Margin:
         case StyleRuleType::Property:
         case StyleRuleType::Scope:
+        case StyleRuleType::StartingStyle:
             return false;
         };
         ASSERT_NOT_REACHED();

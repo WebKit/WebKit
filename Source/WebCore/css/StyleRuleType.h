@@ -53,6 +53,7 @@ enum class StyleRuleType : uint8_t {
     Property,
     StyleWithNesting,
     Scope,
+    StartingStyle,
 };
 
 static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::LayerBlock;

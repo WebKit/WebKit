@@ -91,6 +91,8 @@ private:
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };
     RuleSet::ScopeRuleIdentifier m_currentScopeIdentifier { 0 };
 
+    IsStartingStyle m_isStartingStyle { IsStartingStyle::No };
+
     Vector<RuleSet::ResolverMutatingRule> m_collectedResolverMutatingRules;
     bool requiresStaticMediaQueryEvaluation { false };
 };

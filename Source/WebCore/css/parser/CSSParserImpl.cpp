@@ -456,6 +456,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumePropertyRule(prelude, block);
     case CSSAtRuleScope:
         return consumeScopeRule(prelude, block);
+    case CSSAtRuleStartingStyle:
+        return consumeStartingStyleRule(prelude, block);
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -1067,6 +1069,28 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
     if (m_styleSheet)
         rule->setStyleSheetContents(*m_styleSheet);
     return rule;
+}
+
+RefPtr<StyleRuleStartingStyle> CSSParserImpl::consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    if (!m_context.cssStartingStyleAtRuleEnabled)
+        return nullptr;
+
+    if (!prelude.atEnd())
+        return nullptr;
+
+    if (m_observerWrapper) {
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::StartingStyle, m_observerWrapper->startOffset(prelude));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
+        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
+    }
+
+    auto rules = consumeNestedGroupRules(block);
+
+    if (m_observerWrapper)
+        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
+
+    return StyleRuleStartingStyle::create(WTFMove(rules));
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)

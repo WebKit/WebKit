@@ -100,6 +100,7 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
     // FIXME: implement support for this and move this case up.
     // https://bugs.webkit.org/show_bug.cgi?id=264496
     case StyleRuleType::Scope:
+    case StyleRuleType::StartingStyle:
 
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:

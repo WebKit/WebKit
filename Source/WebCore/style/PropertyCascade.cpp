@@ -196,6 +196,9 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
+    if (matchedProperties.isStartingStyle == IsStartingStyle::Yes && !m_includedProperties.contains(PropertyType::StartingStyle))
+        return false;
+
     auto propertyAllowlist = matchedProperties.allowlistType;
     bool hasImportantProperties = false;
 

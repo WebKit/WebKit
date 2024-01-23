@@ -1312,6 +1312,20 @@ CSSScrollbarWidthEnabled:
     WebCore:
       default: false
 
+CSSStartingStyleAtRuleEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS @starting-style rule"
+  humanReadableDescription: "Enable CSS @starting-style rule"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextBoxTrimEnabled:
   type: bool
   status: preview

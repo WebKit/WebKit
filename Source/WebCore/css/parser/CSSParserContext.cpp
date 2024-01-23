@@ -101,6 +101,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
 #endif
     , cssScopeAtRuleEnabled { document.settings().cssScopeAtRuleEnabled() }
+    , cssStartingStyleAtRuleEnabled { document.settings().cssStartingStyleAtRuleEnabled() }
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }

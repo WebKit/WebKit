@@ -62,6 +62,7 @@ enum CSSAtRuleID {
 
     CSSAtRuleFontPaletteValues,
     CSSAtRuleScope,
+    CSSAtRuleStartingStyle,
 };
 
 CSSAtRuleID cssAtRuleID(StringView name);

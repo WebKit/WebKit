@@ -271,7 +271,8 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
             matchedRule.ruleData->propertyAllowlist(),
             matchedRule.styleScopeOrdinal,
             FromStyleAttribute::No,
-            matchedRule.cascadeLayerPriority
+            matchedRule.cascadeLayerPriority,
+            matchedRule.ruleData->isStartingStyle()
         }, declarationOrigin);
     }
 }

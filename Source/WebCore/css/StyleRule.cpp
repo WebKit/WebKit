@@ -121,6 +121,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleProperty>(*this));
     case StyleRuleType::Scope:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleScope>(*this));
+    case StyleRuleType::StartingStyle:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleStartingStyle>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:
@@ -210,6 +212,10 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         },
         [&](StyleRuleScope& rule) -> Ref<CSSRule> {
             return CSSScopeRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleStartingStyle&) -> Ref<CSSRule> {
+            // FIXME: Implement.
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();
@@ -565,9 +571,25 @@ StyleRuleScope::StyleRuleScope(CSSSelectorList&& scopeStart, CSSSelectorList&& s
 
 StyleRuleScope::StyleRuleScope(const StyleRuleScope&) = default;
 
-WeakPtr<const StyleSheetContents> StyleRuleScope::styleSheetContents() const { return m_styleSheetOwner; }
+WeakPtr<const StyleSheetContents> StyleRuleScope::styleSheetContents() const
+{
+    return m_styleSheetOwner;
+}
 
-void StyleRuleScope::setStyleSheetContents(const StyleSheetContents& sheet) { m_styleSheetOwner = &sheet; }
+void StyleRuleScope::setStyleSheetContents(const StyleSheetContents& sheet)
+{
+    m_styleSheetOwner = &sheet;
+}
+
+Ref<StyleRuleStartingStyle> StyleRuleStartingStyle::create(Vector<Ref<StyleRuleBase>>&& rules)
+{
+    return adoptRef(*new StyleRuleStartingStyle(WTFMove(rules)));
+}
+
+StyleRuleStartingStyle::StyleRuleStartingStyle(Vector<Ref<StyleRuleBase>>&& rules)
+    : StyleRuleGroup(StyleRuleType::StartingStyle, WTFMove(rules))
+{
+}
 
 StyleRuleCharset::StyleRuleCharset()
     : StyleRuleBase(StyleRuleType::Charset)
