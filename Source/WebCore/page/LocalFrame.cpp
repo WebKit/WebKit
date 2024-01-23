@@ -1279,6 +1279,11 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
     protectedDocument()->detachFromFrame();
 }
 
+CheckedRef<FrameSelection> LocalFrame::checkedSelection() const
+{
+    return document()->selection();
+}
+
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)

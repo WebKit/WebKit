@@ -162,6 +162,7 @@ public:
 
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
+    CheckedRef<FrameSelection> checkedSelection() const;
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     CheckedRef<ScriptController> checkedScript();

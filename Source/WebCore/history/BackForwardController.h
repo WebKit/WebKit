@@ -28,6 +28,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -67,7 +68,10 @@ public:
     WEBCORE_EXPORT RefPtr<HistoryItem> forwardItem();
 
 private:
-    Page& m_page;
+    Ref<Page> protectedPage() const;
+    Ref<BackForwardClient> protectedClient() const;
+
+    SingleThreadWeakRef<Page> m_page;
     Ref<BackForwardClient> m_client;
 };
 

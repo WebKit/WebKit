@@ -49,6 +49,7 @@ public:
 
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
+    RefPtr<FrameView> protectedView() const;
     const URL& url() const { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
