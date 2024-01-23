@@ -35,10 +35,10 @@ namespace WebCore {
 class WebMResourceClientParent : public CanMakeWeakPtr<WebMResourceClientParent> {
 public:
     virtual ~WebMResourceClientParent() = default;
-    
+
     virtual void dataReceived(const SharedBuffer&) = 0;
     virtual void loadFailed(const ResourceError&) = 0;
-    virtual void loadFinished(const FragmentedSharedBuffer&) = 0;
+    virtual void loadFinished() = 0;
 };
 
 class WebMResourceClient final

@@ -83,7 +83,7 @@ void WebMResourceClient::loadFinished(PlatformMediaResource&, const NetworkLoadM
     if (!m_parent)
         return;
     
-    m_parent->loadFinished(*m_buffer.get());
+    m_parent->loadFinished();
 }
 
 } // namespace WebCore

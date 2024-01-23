@@ -103,7 +103,7 @@ private:
     friend class WebMResourceClient;
     void dataReceived(const SharedBuffer&) final;
     void loadFailed(const ResourceError&) final;
-    void loadFinished(const FragmentedSharedBuffer&) final;
+    void loadFinished() final;
 
     void cancelLoad() final;
 
