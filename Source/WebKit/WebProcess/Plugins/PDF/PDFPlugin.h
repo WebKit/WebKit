@@ -163,10 +163,6 @@ private:
 
     void installPDFDocument() override;
 
-
-    RetainPtr<PDFDocument> pdfDocumentForPrinting() const override { return m_pdfDocument; }
-    WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
-
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) override;
     void deviceScaleFactorChanged(float) override;
 

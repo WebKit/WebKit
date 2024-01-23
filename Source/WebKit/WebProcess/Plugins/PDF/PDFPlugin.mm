@@ -1244,11 +1244,6 @@ void PDFPlugin::destroyScrollbar(ScrollbarOrientation orientation)
     }
 }
 
-FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
-{
-    return FloatSize([[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size);
-}
-
 void PDFPlugin::installPDFDocument()
 {
     ASSERT(isMainRunLoop());

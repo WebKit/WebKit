@@ -35,6 +35,7 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <CoreFoundation/CoreFoundation.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
@@ -262,6 +263,11 @@ void PDFPluginBase::visibilityDidChange(bool visible)
     else
         m_frame->page()->removePDFHUD(*this);
 #endif
+}
+
+FloatSize PDFPluginBase::pdfDocumentSizeForPrinting() const
+{
+    return FloatSize { [[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size };
 }
 
 void PDFPluginBase::invalidateRect(const IntRect& rect)

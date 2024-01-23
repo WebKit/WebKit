@@ -108,8 +108,8 @@ public:
 
     bool isLocked() const;
 
-    virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const = 0;
-    virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const = 0;
+    RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_pdfDocument; }
+    WebCore::FloatSize pdfDocumentSizeForPrinting() const;
 
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange(bool);

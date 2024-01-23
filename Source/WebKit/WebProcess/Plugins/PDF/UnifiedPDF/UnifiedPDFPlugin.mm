@@ -508,16 +508,6 @@ unsigned UnifiedPDFPlugin::firstPageHeight() const
     return static_cast<unsigned>(CGCeiling(m_documentLayout.boundsForPageAtIndex(0).height()));
 }
 
-RetainPtr<PDFDocument> UnifiedPDFPlugin::pdfDocumentForPrinting() const
-{
-    return nil;
-}
-
-FloatSize UnifiedPDFPlugin::pdfDocumentSizeForPrinting() const
-{
-    return { };
-}
-
 RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
 {
     return nullptr;

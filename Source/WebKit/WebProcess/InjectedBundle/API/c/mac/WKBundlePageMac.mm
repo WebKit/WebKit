@@ -34,14 +34,10 @@
 
 WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef, WKBundleFrameRef frame)
 {
-#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = WebKit::WebPage::pluginViewForFrame(WebKit::toImpl(frame)->coreLocalFrame()))
+        return pluginView->pdfDocumentForPrinting().autorelease();
+#endif
     UNUSED_PARAM(frame);
     return nil;
-#else
-    auto* pluginView = WebKit::WebPage::pluginViewForFrame(WebKit::toImpl(frame)->coreLocalFrame());
-    if (!pluginView)
-        return nil;
-
-    return pluginView->pdfDocumentForPrinting().autorelease();
-#endif
 }

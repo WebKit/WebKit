@@ -105,9 +105,6 @@ private:
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
 
-    RetainPtr<PDFDocument> pdfDocumentForPrinting() const override;
-    WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
-
     void scheduleRenderingUpdate();
 
     void updateLayout();
