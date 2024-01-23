@@ -284,7 +284,7 @@ void LegacyRenderSVGPath::processMarkerPositions()
 
     SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
     path().applyElements([&markerData](const PathElement& pathElement) {
-        SVGMarkerData::updateFromPathElement(markerData, pathElement);
+        markerData.updateFromPathElement(pathElement);
     });
     markerData.pathIsDone();
 }

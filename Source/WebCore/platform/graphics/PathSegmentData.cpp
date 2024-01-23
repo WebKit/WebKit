@@ -53,7 +53,7 @@ void PathMoveTo::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatR
 
 void PathMoveTo::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::MoveToPoint, { point } });
+    applier(*this);
 }
 
 void PathMoveTo::transform(const AffineTransform& transform)
@@ -91,7 +91,7 @@ void PathLineTo::extendBoundingRect(const FloatPoint& currentPoint, const FloatP
 
 void PathLineTo::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::AddLineToPoint, { point } });
+    applier(*this);
 }
 
 void PathLineTo::transform(const AffineTransform& transform)
@@ -167,7 +167,7 @@ void PathQuadCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const F
 
 void PathQuadCurveTo::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
+    applier(*this);
 }
 
 void PathQuadCurveTo::transform(const AffineTransform& transform)
@@ -281,7 +281,7 @@ void PathBezierCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const
 
 void PathBezierCurveTo::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
+    applier(*this);
 }
 
 void PathBezierCurveTo::transform(const AffineTransform& transform)
@@ -588,8 +588,8 @@ void PathDataLine::extendBoundingRect(const FloatPoint&, const FloatPoint&, Floa
 
 void PathDataLine::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::MoveToPoint, { start } });
-    applier({ PathElement::Type::AddLineToPoint, { end } });
+    applier(PathMoveTo { start });
+    applier(PathLineTo { end });
 }
 
 void PathDataLine::transform(const AffineTransform& transform)
@@ -635,8 +635,8 @@ void PathDataQuadCurve::extendBoundingRect(const FloatPoint&, const FloatPoint&,
 
 void PathDataQuadCurve::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::MoveToPoint, { start } });
-    applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
+    applier(PathMoveTo { start });
+    applier(PathQuadCurveTo { controlPoint, endPoint });
 }
 
 void PathDataQuadCurve::transform(const AffineTransform& transform)
@@ -685,8 +685,8 @@ void PathDataBezierCurve::extendBoundingRect(const FloatPoint&, const FloatPoint
 
 void PathDataBezierCurve::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::MoveToPoint, { start } });
-    applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
+    applier(PathMoveTo { start });
+    applier(PathBezierCurveTo { controlPoint1, controlPoint2, endPoint });
 }
 
 void PathDataBezierCurve::transform(const AffineTransform& transform)
@@ -761,7 +761,7 @@ void PathCloseSubpath::extendBoundingRect(const FloatPoint&, const FloatPoint& l
 
 void PathCloseSubpath::applyElements(const PathElementApplier& applier) const
 {
-    applier({ PathElement::Type::CloseSubpath, { } });
+    applier(*this);
 }
 
 void PathCloseSubpath::transform(const AffineTransform&)

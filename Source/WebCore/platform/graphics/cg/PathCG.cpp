@@ -302,11 +302,10 @@ void PathCG::addPath(const PathCG& path, const AffineTransform& transform)
     CGPathAddPath(ensureMutablePlatformPath(), &transformCG, pathCopy.get());
 }
 
-static void pathSegmentApplierCallback(void* info, const CGPathElement* element)
+template <typename F>
+static void applyCGPathElement(F& applier, const CGPathElement* element)
 {
-    const auto& applier = *(PathSegmentApplier*)info;
     auto* cgPoints = element->points;
-
     switch (element->type) {
     case kCGPathElementMoveToPoint:
         applier({ PathMoveTo { cgPoints[0] } });
@@ -330,37 +329,19 @@ static void pathSegmentApplierCallback(void* info, const CGPathElement* element)
     }
 }
 
-void PathCG::applySegments(const PathSegmentApplier& applier) const
-{
-    CGPathApply(platformPath(), (void*)&applier, pathSegmentApplierCallback);
-}
-
 static void pathElementApplierCallback(void* info, const CGPathElement* element)
 {
-    const auto& applier = *(PathElementApplier*)info;
-    auto* cgPoints = element->points;
+    applyCGPathElement(*static_cast<PathElementApplier*>(info), element);
+}
 
-    switch (element->type) {
-    case kCGPathElementMoveToPoint:
-        applier({ PathElement::Type::MoveToPoint, { cgPoints[0] } });
-        break;
+static void pathSegmentsApplierCallback(void* info, const CGPathElement* element)
+{
+    applyCGPathElement(*static_cast<PathSegmentApplier*>(info), element);
+}
 
-    case kCGPathElementAddLineToPoint:
-        applier({ PathElement::Type::AddLineToPoint, { cgPoints[0] } });
-        break;
-
-    case kCGPathElementAddQuadCurveToPoint:
-        applier({ PathElement::Type::AddQuadCurveToPoint, { cgPoints[0], cgPoints[1] } });
-        break;
-
-    case kCGPathElementAddCurveToPoint:
-        applier({ PathElement::Type::AddCurveToPoint, { cgPoints[0], cgPoints[1], cgPoints[2] } });
-        break;
-
-    case kCGPathElementCloseSubpath:
-        applier({ PathElement::Type::CloseSubpath, { } });
-        break;
-    }
+void PathCG::applySegments(const PathSegmentApplier& applier) const
+{
+    CGPathApply(platformPath(), (void*)&applier, pathSegmentsApplierCallback);
 }
 
 bool PathCG::applyElements(const PathElementApplier& applier) const

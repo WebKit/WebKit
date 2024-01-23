@@ -28,6 +28,7 @@
 #include "FloatRoundedRect.h"
 #include "PathElement.h"
 #include "PathSegment.h"
+#include "RotationDirection.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>

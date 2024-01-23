@@ -307,7 +307,7 @@ void RenderSVGPath::processMarkerPositions()
 
     SVGMarkerData markerData(m_markerPositions, markerReverseStart);
     path().applyElements([&markerData](const PathElement& pathElement) {
-        SVGMarkerData::updateFromPathElement(markerData, pathElement);
+        markerData.updateFromPathElement(pathElement);
     });
     markerData.pathIsDone();
 }

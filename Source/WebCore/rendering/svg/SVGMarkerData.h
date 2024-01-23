@@ -54,20 +54,35 @@ public:
     {
     }
 
-    static void updateFromPathElement(SVGMarkerData& markerData, const PathElement& element)
+    void updateFromPathElement(const PathElement& element)
     {
         // First update the outslope for the previous element.
-        markerData.updateOutslope(element.points[0]);
-
+        m_outslopePoints[0] = m_origin;
+        m_outslopePoints[1] = WTF::switchOn(element,
+            [](const PathMoveTo& moveTo) {
+                return moveTo.point;
+            },
+            [](const PathLineTo& lineTo) {
+                return lineTo.point;
+            },
+            [](const PathQuadCurveTo& quadTo) {
+                return quadTo.controlPoint;
+            },
+            [](const PathBezierCurveTo& bezierTo) {
+                return bezierTo.controlPoint1;
+            },
+            [](const PathCloseSubpath&) {
+                return FloatPoint { };
+            });
         // Record the marker for the previous element.
-        if (markerData.m_elementIndex > 0) {
-            SVGMarkerType markerType = markerData.m_elementIndex == 1 ? StartMarker : MidMarker;
-            markerData.m_positions.append(MarkerPosition(markerType, markerData.m_origin, markerData.currentAngle(markerType)));
+        if (m_elementIndex > 0) {
+            SVGMarkerType markerType = m_elementIndex == 1 ? StartMarker : MidMarker;
+            m_positions.append(MarkerPosition(markerType, m_origin, currentAngle(markerType)));
         }
 
         // Update our marker data for this element.
-        markerData.updateMarkerDataForPathElement(element);
-        ++markerData.m_elementIndex;
+        updateMarkerDataForPathElement(element);
+        ++m_elementIndex;
     }
 
     void pathIsDone()
@@ -103,44 +118,35 @@ private:
         return 0;
     }
 
-    void updateOutslope(const FloatPoint& point)
-    {
-        m_outslopePoints[0] = m_origin;
-        m_outslopePoints[1] = point;
-    }
-
     void updateMarkerDataForPathElement(const PathElement& element)
     {
-        auto& points = element.points;
-
-        switch (element.type) {
-        case PathElement::Type::AddQuadCurveToPoint:
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=33115 (PathElement::Type::AddQuadCurveToPoint not handled for <marker>)
-            m_origin = points[1];
-            break;
-        case PathElement::Type::AddCurveToPoint:
-            m_inslopePoints[0] = points[1];
-            m_inslopePoints[1] = points[2];
-            m_origin = points[2];
-            break;
-        case PathElement::Type::MoveToPoint:
-            m_subpathStart = points[0];
-            FALLTHROUGH;
-        case PathElement::Type::AddLineToPoint:
-            updateInslope(points[0]);
-            m_origin = points[0];
-            break;
-        case PathElement::Type::CloseSubpath:
-            updateInslope(points[0]);
-            m_origin = m_subpathStart;
-            m_subpathStart = FloatPoint();
-        }
-    }
-
-    void updateInslope(const FloatPoint& point)
-    {
-        m_inslopePoints[0] = m_origin;
-        m_inslopePoints[1] = point;
+        WTF::switchOn(element,
+            [&](const PathQuadCurveTo& quadTo) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=33115 (PathElement::Type::AddQuadCurveToPoint not handled for <marker>)
+                m_origin = quadTo.endPoint;
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                m_inslopePoints[0] = bezierTo.controlPoint2;
+                m_inslopePoints[1] = bezierTo.endPoint;
+                m_origin = bezierTo.endPoint;
+            },
+            [&](const PathMoveTo& moveTo) {
+                m_inslopePoints[0] = m_origin;
+                m_inslopePoints[1] = moveTo.point;
+                m_origin = moveTo.point;
+                m_subpathStart = moveTo.point;
+            },
+            [&](const PathLineTo& lineTo) {
+                m_inslopePoints[0] = m_origin;
+                m_inslopePoints[1] = lineTo.point;
+                m_origin = lineTo.point;
+            },
+            [&](const PathCloseSubpath&) {
+                m_inslopePoints[0] = m_origin;
+                m_inslopePoints[1] = { };
+                m_origin = m_subpathStart;
+                m_subpathStart = { };
+            });
     }
 
     Vector<MarkerPosition>& m_positions;

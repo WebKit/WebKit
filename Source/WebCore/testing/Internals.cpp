@@ -5324,26 +5324,22 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
         rects.append(FloatRect(rectComponents[i], rectComponents[i + 1], rectComponents[i + 2], rectComponents[i + 3]));
 
     SVGPathStringBuilder builder;
-    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements([&builder](const PathElement& element) {
-        switch (element.type) {
-        case PathElement::Type::MoveToPoint:
-            builder.moveTo(element.points[0], false, AbsoluteCoordinates);
-            return;
-        case PathElement::Type::AddLineToPoint:
-            builder.lineTo(element.points[0], AbsoluteCoordinates);
-            return;
-        case PathElement::Type::AddQuadCurveToPoint:
-            builder.curveToQuadratic(element.points[0], element.points[1], AbsoluteCoordinates);
-            return;
-        case PathElement::Type::AddCurveToPoint:
-            builder.curveToCubic(element.points[0], element.points[1], element.points[2], AbsoluteCoordinates);
-            return;
-        case PathElement::Type::CloseSubpath:
+    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements(
+        [&](const PathMoveTo& moveTo) {
+            builder.moveTo(moveTo.point, false, AbsoluteCoordinates);
+        },
+        [&](const PathLineTo& lineTo) {
+            builder.lineTo(lineTo.point, AbsoluteCoordinates);
+        },
+        [&](const PathQuadCurveTo& quadTo) {
+            builder.curveToQuadratic(quadTo.controlPoint, quadTo.endPoint, AbsoluteCoordinates);
+        },
+        [&](const PathBezierCurveTo& bezierTo) {
+            builder.curveToCubic(bezierTo.controlPoint1, bezierTo.controlPoint2, bezierTo.endPoint, AbsoluteCoordinates);
+        },
+        [&](const PathCloseSubpath&) {
             builder.closePath();
-            return;
-        }
-        ASSERT_NOT_REACHED();
-    });
+        });
     return builder.result();
 }
 

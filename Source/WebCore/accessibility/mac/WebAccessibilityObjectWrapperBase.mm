@@ -49,6 +49,7 @@
 #import "LayoutRect.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
+#import "PathElement.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -427,70 +428,43 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     return self.axBackingObject->helpTextAttributeValue();
 }
 
-struct PathConversionInfo {
-    WebAccessibilityObjectWrapperBase *wrapper;
-    CGMutablePathRef path;
-};
-
-static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, const PathElement& element)
-{
-    WebAccessibilityObjectWrapperBase *wrapper = conversion.wrapper;
-    CGMutablePathRef newPath = conversion.path;
-    FloatRect rect;
-    switch (element.type) {
-    case PathElement::Type::MoveToPoint:
-    {
-        rect = FloatRect(element.points[0], FloatSize());
-        CGPoint newPoint = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-        CGPathMoveToPoint(newPath, nil, newPoint.x, newPoint.y);
-        break;
-    }
-    case PathElement::Type::AddLineToPoint:
-    {
-        rect = FloatRect(element.points[0], FloatSize());
-        CGPoint newPoint = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-        CGPathAddLineToPoint(newPath, nil, newPoint.x, newPoint.y);
-        break;
-    }
-    case PathElement::Type::AddQuadCurveToPoint:
-    {
-        rect = FloatRect(element.points[0], FloatSize());
-        CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-
-        rect = FloatRect(element.points[1], FloatSize());
-        CGPoint newPoint2 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-        CGPathAddQuadCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y);
-        break;
-    }
-    case PathElement::Type::AddCurveToPoint:
-    {
-        rect = FloatRect(element.points[0], FloatSize());
-        CGPoint newPoint1 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-
-        rect = FloatRect(element.points[1], FloatSize());
-        CGPoint newPoint2 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-
-        rect = FloatRect(element.points[2], FloatSize());
-        CGPoint newPoint3 = [wrapper convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
-        CGPathAddCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y, newPoint3.x, newPoint3.y);
-        break;
-    }
-    case PathElement::Type::CloseSubpath:
-    {
-        CGPathCloseSubpath(newPath);
-        break;
-    }
-    }
-}
-
 - (CGPathRef)convertPathToScreenSpace:(const Path&)path
 {
-    auto convertedPath = adoptCF(CGPathCreateMutable());
-    PathConversionInfo conversion = { self, convertedPath.get() };
-    path.applyElements([&conversion](const PathElement& pathElement) {
-        convertPathToScreenSpaceFunction(conversion, pathElement);
-    });
-    return convertedPath.autorelease();
+    RetainPtr newPath = adoptCF(CGPathCreateMutable());
+    path.applyElements(
+        [&](const PathMoveTo& moveTo) {
+            FloatRect rect { moveTo.point, FloatSize { } };
+            CGPoint newPoint = [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
+            CGPathMoveToPoint(newPath.get(), nil, newPoint.x, newPoint.y);
+        },
+        [&](const PathLineTo& lineTo) {
+            FloatRect rect { lineTo.point, FloatSize { } };
+            CGPoint newPoint = [self convertRectToSpace:rect space:AccessibilityConversionSpace::Screen].origin;
+            CGPathAddLineToPoint(newPath.get(), nil, newPoint.x, newPoint.y);
+        },
+        [&](const PathQuadCurveTo& quadTo) {
+            FloatRect rect1 { quadTo.controlPoint, FloatSize { } };
+            CGPoint newPoint1 = [self convertRectToSpace:rect1 space:AccessibilityConversionSpace::Screen].origin;
+
+            FloatRect rect2 { quadTo.endPoint, FloatSize { } };
+            CGPoint newPoint2 = [self convertRectToSpace:rect2 space:AccessibilityConversionSpace::Screen].origin;
+            CGPathAddQuadCurveToPoint(newPath.get(), nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y);
+        },
+        [&](const PathBezierCurveTo& bezierTo) {
+            FloatRect rect1 { bezierTo.controlPoint1, FloatSize { } };
+            CGPoint newPoint1 = [self convertRectToSpace:rect1 space:AccessibilityConversionSpace::Screen].origin;
+
+            FloatRect rect2 { bezierTo.controlPoint2, FloatSize { } };
+            CGPoint newPoint2 = [self convertRectToSpace:rect2 space:AccessibilityConversionSpace::Screen].origin;
+
+            FloatRect rect3 { bezierTo.endPoint, FloatSize { } };
+            CGPoint newPoint3 = [self convertRectToSpace:rect3 space:AccessibilityConversionSpace::Screen].origin;
+            CGPathAddCurveToPoint(newPath.get(), nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y, newPoint3.x, newPoint3.y);
+        },
+        [&](const PathCloseSubpath&) {
+            CGPathCloseSubpath(newPath.get());
+        });
+    return newPath.autorelease();
 }
 
 // Determine the visible range by checking intersection of unobscuredContentRect and a range of text by

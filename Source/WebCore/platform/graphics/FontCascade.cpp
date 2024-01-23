@@ -1654,65 +1654,59 @@ struct GlyphIterationState {
     float y2;
     float minX;
     float maxX;
-};
 
-static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
-{
-    if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
-        return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
-    return std::nullopt;
-}
-
-static void updateX(GlyphIterationState& state, float x)
-{
-    state.minX = std::min(state.minX, x);
-    state.maxX = std::max(state.maxX, x);
-}
-
-// This function is called by CGPathApply and is therefore invoked for each
-// contour in a glyph. This function models each contours as a straight line
-// and calculates the intersections between each pseudo-contour and
-// two horizontal lines (the upper and lower bounds of an underline) found in
-// GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
-// leftmost and rightmost intersection in GlyphIterationState::minX and
-// GlyphIterationState::maxX.
-static void findPathIntersections(GlyphIterationState& state, const PathElement& element)
-{
-    bool doIntersection = false;
-    FloatPoint point = FloatPoint();
-    switch (element.type) {
-    case PathElement::Type::MoveToPoint:
-        state.startingPoint = element.points[0];
-        state.currentPoint = element.points[0];
-        break;
-    case PathElement::Type::AddLineToPoint:
-        doIntersection = true;
-        point = element.points[0];
-        break;
-    case PathElement::Type::AddQuadCurveToPoint:
-        doIntersection = true;
-        point = element.points[1];
-        break;
-    case PathElement::Type::AddCurveToPoint:
-        doIntersection = true;
-        point = element.points[2];
-        break;
-    case PathElement::Type::CloseSubpath:
-        doIntersection = true;
-        point = state.startingPoint;
-        break;
+    static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
+    {
+        if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
+            return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
+        return std::nullopt;
     }
-    if (!doIntersection)
-        return;
-    if (auto intersectionPoint = findIntersectionPoint(state.y1, state.currentPoint, point))
-        updateX(state, *intersectionPoint);
-    if (auto intersectionPoint = findIntersectionPoint(state.y2, state.currentPoint, point))
-        updateX(state, *intersectionPoint);
-    if ((state.currentPoint.y() >= state.y1 && state.currentPoint.y() <= state.y2)
-        || (state.currentPoint.y() <= state.y1 && state.currentPoint.y() >= state.y2))
-        updateX(state, state.currentPoint.x());
-    state.currentPoint = point;
-}
+
+    void updateX(float x)
+    {
+        minX = std::min(minX, x);
+        maxX = std::max(maxX, x);
+    }
+
+    void updateIntersections(FloatPoint point)
+    {
+        if (auto intersectionPoint = findIntersectionPoint(y1, currentPoint, point))
+            updateX(*intersectionPoint);
+        if (auto intersectionPoint = findIntersectionPoint(y2, currentPoint, point))
+            updateX(*intersectionPoint);
+        if ((currentPoint.y() >= y1 && currentPoint.y() <= y2)
+            || (currentPoint.y() <= y1 && currentPoint.y() >= y2))
+            updateX(currentPoint.x());
+        currentPoint = point;
+    }
+
+    // This function models each contour as a straight line
+    // and calculates the intersections between each pseudo-contour and
+    // two horizontal lines (the upper and lower bounds of an underline) found in
+    // GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
+    // leftmost and rightmost intersection in GlyphIterationState::minX and
+    // GlyphIterationState::maxX.
+    void findPathIntersections(const Path& path)
+    {
+        path.applyElements(
+            [&](const PathMoveTo& moveTo) {
+                startingPoint = moveTo.point;
+                currentPoint = moveTo.point;
+            },
+            [&](const PathLineTo& lineTo) {
+                updateIntersections(lineTo.point);
+            },
+            [&](const PathQuadCurveTo& quadTo) {
+                updateIntersections(quadTo.endPoint);
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                updateIntersections(bezierTo.endPoint);
+            },
+            [&](const PathCloseSubpath&) {
+                updateIntersections(startingPoint);
+            });
+    }
+};
 
 class GlyphToPathTranslator {
 public:
@@ -1788,10 +1782,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         GlyphIterationState info = { FloatPoint(0, 0), FloatPoint(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x() };
         switch (translator.underlineType()) {
         case GlyphUnderlineType::SkipDescenders: {
-            Path path = translator.path();
-            path.applyElements([&](const PathElement& element) {
-                findPathIntersections(info, element);
-            });
+            info.findPathIntersections(translator.path());
             if (info.minX < info.maxX) {
                 result.append(info.minX - lineExtents.x());
                 result.append(info.maxX - lineExtents.x());

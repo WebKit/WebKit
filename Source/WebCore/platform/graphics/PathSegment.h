@@ -30,14 +30,16 @@
 
 namespace WebCore {
 
+// Represents PathElements or complex shapes that are source for Path data.
 class PathSegment {
 public:
     using Data = std::variant<
         PathMoveTo,
-
         PathLineTo,
         PathQuadCurveTo,
         PathBezierCurveTo,
+        PathCloseSubpath,
+
         PathArcTo,
 
         PathArc,
@@ -49,9 +51,7 @@ public:
         PathDataLine,
         PathDataQuadCurve,
         PathDataBezierCurve,
-        PathDataArc,
-
-        PathCloseSubpath
+        PathDataArc
     >;
 
     WEBCORE_EXPORT PathSegment(Data&&);

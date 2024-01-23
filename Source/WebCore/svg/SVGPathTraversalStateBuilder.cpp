@@ -36,24 +36,22 @@ SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder(PathTraversalState& s
 
 void SVGPathTraversalStateBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode)
 {
-    m_traversalState.processPathElement(PathElement::Type::MoveToPoint, &targetPoint);
+    m_traversalState.processPathElement(PathMoveTo { targetPoint });
 }
 
 void SVGPathTraversalStateBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode)
 {
-    m_traversalState.processPathElement(PathElement::Type::AddLineToPoint, &targetPoint);
+    m_traversalState.processPathElement(PathLineTo { targetPoint });
 }
 
 void SVGPathTraversalStateBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode)
 {
-    FloatPoint points[] = { point1, point2, targetPoint };
-
-    m_traversalState.processPathElement(PathElement::Type::AddCurveToPoint, points);
+    m_traversalState.processPathElement(PathBezierCurveTo { point1, point2, targetPoint });
 }
 
 void SVGPathTraversalStateBuilder::closePath()
 {
-    m_traversalState.processPathElement(PathElement::Type::CloseSubpath, nullptr);
+    m_traversalState.processPathElement(PathCloseSubpath { });
 }
 
 bool SVGPathTraversalStateBuilder::continueConsuming()

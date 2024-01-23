@@ -76,6 +76,8 @@ public:
 
     void applySegments(const PathSegmentApplier&) const;
     WEBCORE_EXPORT void applyElements(const PathElementApplier&) const;
+    template<class F0, class F1, class F2, class F3, class F4>
+    void applyElements(F0, F1, F2, F3, F4) const;
     void clear();
 
     void translate(const FloatSize& delta);
@@ -126,6 +128,14 @@ private:
 
     std::variant<std::monostate, PathSegment, DataRef<PathImpl>> m_data;
 };
+
+template<class F0, class F1, class F2, class F3, class F4>
+void Path::applyElements(F0 f0, F1 f1, F2 f2, F3 f3, F4 f4) const
+{
+    applyElements([&](const PathElement& element) {
+        WTF::switchOn(element, f0, f1, f2, f3, f4);
+    });
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
 

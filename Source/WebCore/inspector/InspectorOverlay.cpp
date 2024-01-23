@@ -335,34 +335,25 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 
     const auto mapPoints = [&] (const Path& path) {
         Path newPath;
-        path.applyElements([&] (const PathElement& pathElement) {
-            const auto localToRoot = [&] (size_t index) {
-                const FloatPoint& point = pathElement.points[index];
-                return localPointToRootPoint(containingView, renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));
-            };
-
-            switch (pathElement.type) {
-            case PathElement::Type::MoveToPoint:
-                newPath.moveTo(localToRoot(0));
-                break;
-
-            case PathElement::Type::AddLineToPoint:
-                newPath.addLineTo(localToRoot(0));
-                break;
-
-            case PathElement::Type::AddCurveToPoint:
-                newPath.addBezierCurveTo(localToRoot(0), localToRoot(1), localToRoot(2));
-                break;
-
-            case PathElement::Type::AddQuadCurveToPoint:
-                newPath.addQuadCurveTo(localToRoot(0), localToRoot(1));
-                break;
-
-            case PathElement::Type::CloseSubpath:
+        const auto localToRoot = [&] (FloatPoint point) {
+            return localPointToRootPoint(containingView, renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));
+        };
+        path.applyElements(
+            [&](const PathMoveTo& moveTo) {
+                newPath.moveTo(localToRoot(moveTo.point));
+            },
+            [&](const PathLineTo& lineTo) {
+                newPath.addLineTo(localToRoot(lineTo.point));
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                newPath.addBezierCurveTo(localToRoot(bezierTo.controlPoint1), localToRoot(bezierTo.controlPoint2), localToRoot(bezierTo.endPoint));
+            },
+            [&](const PathQuadCurveTo& quadTo) {
+                newPath.addQuadCurveTo(localToRoot(quadTo.controlPoint), localToRoot(quadTo.endPoint));
+            },
+            [&](const PathCloseSubpath&) {
                 newPath.closeSubpath();
-                break;
-            }
-        });
+            });
         return newPath;
     };
 
