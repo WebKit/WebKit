@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */,
 				44D88ACE2AF0495A005C956E /* PBXTargetDependency */,
 				44D88AE32AF04AE4005C956E /* PBXTargetDependency */,
 				449467D32AE05DD200A9FED0 /* PBXTargetDependency */,
@@ -3268,6 +3269,9 @@
 		446359D42AEA12FF00551EEE /* fake_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D32AEA12FE00551EEE /* fake_decoder.cc */; };
 		446359D72AEA132C00551EEE /* rtp_file_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D52AEA132B00551EEE /* rtp_file_reader.cc */; };
 		446359DA2AEA135200551EEE /* run_loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D82AEA135100551EEE /* run_loop.cc */; };
+		4469C1052B5F24C500E32E5A /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4469C1072B5F24C500E32E5A /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */; };
 		446CFE442AC694AB00F870D9 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */; };
 		449467B52AE05C9600A9FED0 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
@@ -5409,6 +5413,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 446359B62AEA108C00551EEE;
 			remoteInfo = vp8_replay_fuzzer;
+		};
+		4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4469C10D2B5F24DA00E32E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4469C0FF2B5F24C500E32E5A;
+			remoteInfo = h264_bitstream_parser_fuzzer;
 		};
 		448D483C2AB0BDB80065014C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9395,6 +9413,9 @@
 		446359D62AEA132B00551EEE /* rtp_file_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtp_file_reader.h; sourceTree = "<group>"; };
 		446359D82AEA135100551EEE /* run_loop.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = run_loop.cc; sourceTree = "<group>"; };
 		446359D92AEA135200551EEE /* run_loop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = run_loop.h; sourceTree = "<group>"; };
+		4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h264_bitstream_parser_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_bitstream_parser_fuzzer.cc; sourceTree = "<group>"; };
+		4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h264_bitstream_parser_fuzzer.xcconfig; sourceTree = "<group>"; };
 		44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base-libwebrtc.xcconfig"; sourceTree = "<group>"; };
 		448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h264_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
 		448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h265_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
@@ -11151,6 +11172,14 @@
 				44FD16802AEA36BB003636CB /* AppKit.framework in Frameworks */,
 				446359C62AEA110100551EEE /* libwebrtc.dylib in Frameworks */,
 				44FD16862AEA37E6003636CB /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4469C1062B5F24C500E32E5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4469C1072B5F24C500E32E5A /* libwebrtc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16564,6 +16593,7 @@
 				446359C82AEA114B00551EEE /* utils */,
 				441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */,
 				441380CC2AE06BC200C928CB /* fuzz_data_helper.h */,
+				4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */,
 				44D88ACF2AF049A1005C956E /* h264_depacketizer_fuzzer.cc */,
 				44D88AE02AF04AC3005C956E /* h265_depacketizer_fuzzer.cc */,
 				449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */,
@@ -19830,6 +19860,7 @@
 				44F99B2E2B2E9DCA00BE6517 /* BaseTarget-libaom.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */,
 				448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */,
 				448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */,
 				DDF30D0B27C5C01A006A526F /* libabsl.xcconfig */,
@@ -20335,6 +20366,7 @@
 				CDEBB11924C0187400ADBD44 /* libwebm.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
 				5C0884DE1E4A980100403995 /* libyuv.a */,
+				4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ACC2AF04946005C956E /* h264_depacketizer_fuzzer */,
 				44D88ADF2AF04AA1005C956E /* h265_depacketizer_fuzzer */,
 				449467CF2AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */,
@@ -20534,6 +20566,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4460B8BC2B155B6A00392062 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4469C1022B5F24C500E32E5A /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -23223,6 +23262,24 @@
 			productReference = 446359C12AEA108C00551EEE /* vp8_replay_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
+		4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4469C1082B5F24C500E32E5A /* Build configuration list for PBXNativeTarget "h264_bitstream_parser_fuzzer" */;
+			buildPhases = (
+				4469C1022B5F24C500E32E5A /* Headers */,
+				4469C1032B5F24C500E32E5A /* Sources */,
+				4469C1062B5F24C500E32E5A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4469C1002B5F24C500E32E5A /* PBXTargetDependency */,
+			);
+			name = h264_bitstream_parser_fuzzer;
+			productName = h264_bitstream_parser_fuzzer;
+			productReference = 4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		448D48332AB0BDB00065014C /* vp8_dec_fuzzer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */;
@@ -23570,6 +23627,7 @@
 				DDEBB11824C0187400ADBD44 /* aom */,
 				DDF30D0527C5C003006A526F /* absl */,
 				449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */,
+				4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ABD2AF04946005C956E /* h264_depacketizer_fuzzer */,
 				44D88AD12AF04AA1005C956E /* h265_depacketizer_fuzzer */,
 				449467C22AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */,
@@ -24178,6 +24236,15 @@
 				44FD167E2AEA361B003636CB /* video_renderer_mac.mm in Sources */,
 				446359C32AEA10C900551EEE /* vp8_replay_fuzzer.cc in Sources */,
 				446359C72AEA111E00551EEE /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4469C1032B5F24C500E32E5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */,
+				4469C1052B5F24C500E32E5A /* webrtc_fuzzer_main.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26354,6 +26421,16 @@
 			target = 446359B62AEA108C00551EEE /* vp8_replay_fuzzer */;
 			targetProxy = 446359DF2AEA14F000551EEE /* PBXContainerItemProxy */;
 		};
+		4469C1002B5F24C500E32E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */;
+		};
+		4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
+			targetProxy = 4469C10D2B5F24DA00E32E5A /* PBXContainerItemProxy */;
+		};
 		448D483D2AB0BDB80065014C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4105EB69212E01D2008C0C20 /* vpx */;
@@ -26642,6 +26719,30 @@
 		446359C02AEA108C00551EEE /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4469C1092B5F24C500E32E5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4469C10A2B5F24C500E32E5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4469C10B2B5F24C500E32E5A /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -27117,6 +27218,16 @@
 				446359BE2AEA108C00551EEE /* Debug */,
 				446359BF2AEA108C00551EEE /* Release */,
 				446359C02AEA108C00551EEE /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4469C1082B5F24C500E32E5A /* Build configuration list for PBXNativeTarget "h264_bitstream_parser_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4469C1092B5F24C500E32E5A /* Debug */,
+				4469C10A2B5F24C500E32E5A /* Release */,
+				4469C10B2B5F24C500E32E5A /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
