@@ -377,8 +377,10 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (_zoomTextOnly)
         _webView._textZoomFactor = 1;
-    else
+    else {
         _webView.pageZoom = 1;
+        _webView.magnification = 1;
+    }
 }
 
 - (BOOL)canResetZoom

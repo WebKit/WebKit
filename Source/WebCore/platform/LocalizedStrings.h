@@ -182,12 +182,12 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemPDFSinglePageContinuous();
     WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
     WEBCORE_EXPORT String contextMenuItemPDFTwoPagesContinuous();
+    WEBCORE_EXPORT String contextMenuItemPDFZoomIn();
+    WEBCORE_EXPORT String contextMenuItemPDFZoomOut();
+    WEBCORE_EXPORT String contextMenuItemPDFActualSize();
 #endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
-    String contextMenuItemPDFZoomIn();
-    String contextMenuItemPDFZoomOut();
-    String contextMenuItemPDFActualSize();
     String contextMenuItemPDFNextPage();
     String contextMenuItemPDFPreviousPage();
 #endif

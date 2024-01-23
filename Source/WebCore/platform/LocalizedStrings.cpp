@@ -530,13 +530,6 @@ String contextMenuItemPDFTwoPagesContinuous()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Two Pages Continuous", "_Two Pages Continuous", "Two Pages Continuous context menu item");
 }
-#endif
-
-#if ENABLE(PDFJS)
-String contextMenuItemPDFAutoSize()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
-}
 
 String contextMenuItemPDFZoomIn()
 {
@@ -551,6 +544,13 @@ String contextMenuItemPDFZoomOut()
 String contextMenuItemPDFActualSize()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Actual Size", "_Actual Size", "Actual Size context menu item");
+}
+#endif
+
+#if ENABLE(PDFJS)
+String contextMenuItemPDFAutoSize()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Automatically Resize", "_Automatically Resize", "Automatically Resize context menu item");
 }
 
 String contextMenuItemPDFNextPage()

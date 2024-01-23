@@ -189,8 +189,6 @@ private:
 
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
-
-    double m_pageScaleFactor { 1 };
 };
 
 } // namespace WebKit
