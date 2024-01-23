@@ -341,7 +341,7 @@ void ImageLoader::updateFromElementIgnoringPreviousError(RelevantMutation releva
 
 void ImageLoader::updateFromElementIgnoringPreviousErrorToSameValue()
 {
-    if ((m_image && !m_image->allowsCaching()) || !m_failedLoadURL.isEmpty() || element().document().activeServiceWorker()) {
+    if (!m_image || !m_image->allowsCaching() || !m_failedLoadURL.isEmpty() || element().document().activeServiceWorker()) {
         updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         return;
     }
