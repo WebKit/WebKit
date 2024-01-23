@@ -46,6 +46,16 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
     return WTF::MonotonicTime::now() + Seconds(t - CACurrentMediaTime());
 }
 
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+static CAFrameRateRange highFrameRateRange()
+{
+    static CAFrameRateRange highFrameRateRange = CAFrameRateRangeMake(80, 120, 120);
+    return highFrameRateRange;
+}
+
+static CAHighFrameRateReason highFrameRateReason = CAHighFrameRateReasonMake(44, 0);
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+
 static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
 
 @interface WKAnimationDelegate () <CAAnimationDelegate>
@@ -601,6 +611,12 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
 
         [caAnimation setDelegate:delegate.get()];
     }
+
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+    // Opt into a higher frame-rate for displays that support higher refresh rates.
+    [caAnimation setPreferredFrameRateRange:highFrameRateRange()];
+    [caAnimation setHighFrameRateReason:highFrameRateReason];
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
 
     return caAnimation;
 }
