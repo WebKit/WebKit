@@ -3988,7 +3988,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyFontSynthesis,
         CSSPropertyContainIntrinsicSize,
         CSSPropertyTextWrap,
-        CSSPropertyWhiteSpace
+        CSSPropertyWhiteSpace,
+        CSSPropertyTextDecoration
     };
     const unsigned animatableShorthandPropertiesCount = std::size(animatableShorthandProperties);
 
@@ -4220,7 +4221,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitTapHighlightColor:
 #endif
         case CSSPropertyWebkitTextCombine:
-        case CSSPropertyWebkitTextDecoration:
         case CSSPropertyWebkitTextDecorationsInEffect:
         case CSSPropertyWebkitTextSecurity:
         case CSSPropertyWebkitTextStroke:

@@ -21,7 +21,7 @@ PASS fontWeight should be applied to first-line pseudo elements.
 PASS fontVariationSettings should be applied to first-line pseudo elements.
 PASS letterSpacing should be applied to first-line pseudo elements.
 PASS opacity should be applied to first-line pseudo elements.
-FAIL textDecoration should be applied to first-line pseudo elements. assert_equals: expected "overline wavy rgb(10, 20, 30)" but got "none"
+PASS textDecoration should be applied to first-line pseudo elements.
 PASS textJustify should be applied to first-line pseudo elements.
 PASS textShadow should be applied to first-line pseudo elements.
 PASS textTransform should be applied to first-line pseudo elements.

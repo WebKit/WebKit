@@ -217,7 +217,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyWebkitPerspective:
-    case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextOrientation:
         return false;
 
@@ -293,7 +292,7 @@ StringBuilder StyleProperties::asTextInternal() const
 
         String value;
         bool alreadyUsedShorthand = false;
-        for (auto& shorthandPropertyID : shorthands) {
+        for (auto shorthandPropertyID : shorthands) {
             ASSERT(isShorthand(shorthandPropertyID));
             unsigned shorthandPropertyIndex = shorthandPropertyID - firstShorthandProperty;
 
@@ -310,6 +309,7 @@ StringBuilder StyleProperties::asTextInternal() const
             if (!value.isNull()) {
                 propertyID = shorthandPropertyID;
                 shorthandPropertyUsed.set(shorthandPropertyIndex);
+                ALWAYS_LOG_WITH_STREAM(stream << "using shorthand: value is " << value << " for property " << nameLiteral(propertyID));
                 break;
             }
         }
