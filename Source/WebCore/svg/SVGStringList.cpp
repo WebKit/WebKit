@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ bool SVGStringList::parse(StringView data, UChar delimiter)
     clearItems();
 
     auto isSVGSpaceOrDelimiter = [delimiter](auto c) {
-        return isSVGSpace(c) || c == delimiter;
+        return isASCIIWhitespace(c) || c == delimiter;
     };
 
     return readCharactersForParsing(data, [&](auto buffer) {
