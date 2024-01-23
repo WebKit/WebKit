@@ -198,7 +198,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool trackIsBlocked(TrackID) const;
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    void keyStatusesChanged();
+    void tryToEnqueueBlockedSamples();
 #endif
 
     void setTrackChangeCallbacks(const InitializationSegment&, bool initialized);

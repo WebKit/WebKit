@@ -121,7 +121,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_listener(WebAVSampleBufferListener::create(*this))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { keyStatusesChanged(); }))
+    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { tryToEnqueueBlockedSamples(); }))
     , m_streamDataParser(is<SourceBufferParserAVFObjC>(m_parser) ? downcast<SourceBufferParserAVFObjC>(m_parser)->streamDataParser() : nil)
 #endif
 #if !RELEASE_LOG_DISABLED
@@ -669,22 +669,28 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_cdmInstance && shouldAddContentKeyRecipients()) {
-        if (m_videoLayer)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoLayer->displayLayer()];
+    if (m_cdmInstance) {
+        if (shouldAddContentKeyRecipients()) {
+            if (m_videoLayer)
+                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoLayer->displayLayer()];
 
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
+            for (auto& pair : m_audioRenderers)
+                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
+        }
+        m_cdmInstance->removeKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
     }
 
     m_cdmInstance = fpsInstance;
 
-    if (m_cdmInstance && shouldAddContentKeyRecipients()) {
-        if (m_videoLayer)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoLayer->displayLayer()];
+    if (m_cdmInstance) {
+        if (shouldAddContentKeyRecipients()) {
+            if (m_videoLayer)
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoLayer->displayLayer()];
 
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
+            for (auto& pair : m_audioRenderers)
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
+        }
+        m_cdmInstance->addKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
     }
 
     attemptToDecrypt();
@@ -712,6 +718,8 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
         m_hasSessionSemaphore = nullptr;
     }
     m_waitingForKey = false;
+
+    tryToEnqueueBlockedSamples();
 #endif
 }
 #endif // (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -929,7 +937,7 @@ bool SourceBufferPrivateAVFObjC::trackIsBlocked(TrackID trackID) const
 }
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-void SourceBufferPrivateAVFObjC::keyStatusesChanged()
+void SourceBufferPrivateAVFObjC::tryToEnqueueBlockedSamples()
 {
     while (!m_blockedSamples.isEmpty()) {
         auto& firstPair = m_blockedSamples.first();

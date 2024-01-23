@@ -50,8 +50,11 @@ async function startEME(options) {
     let certificate = await fetchBuffer('resources/cert.der');
     await keys.setServerCertificate(certificate);
     consoleWrite('PROMISE: keys.setServerCertificate resolved');
-    await video.setMediaKeys(keys);
-    consoleWrite('PROMISE: setMediaKeys() resolved');
+
+    if (options.setMediaKeys) {
+        await video.setMediaKeys(keys);
+        consoleWrite('PROMISE: setMediaKeys() resolved');
+    }
 
     return keys;
 }
@@ -78,11 +81,11 @@ async function fetchAndWaitForLicenseRequest(session, sourceBuffer, url) {
     });
 }
 
-async function fetchAppendAndWaitForEncrypted(video, sourceBuffer, url) {
+async function fetchAppendAndWaitForEncrypted(video, mediaKeys, sourceBuffer, url) {
     let updateEndPromise = fetchAndAppend(sourceBuffer, url, true);
     let encryptedEvent = await waitFor(video, 'encrypted');
 
-    let session = video.mediaKeys.createSession();
+    let session = mediaKeys.createSession();
     session.generateRequest(encryptedEvent.initDataType, encryptedEvent.initData);
     let message = await waitFor(session, 'message');
     let response = await getResponse(message);
@@ -100,11 +103,11 @@ async function createBufferAndAppend(mediaSource, type, url) {
     return sourceBuffer;
 }
 
-async function createBufferAppendAndWaitForEncrypted(video, mediaSource, type, url) {
+async function createBufferAppendAndWaitForEncrypted(video, mediaSource, mediaKeys, type, url) {
     let sourceBuffer = mediaSource.addSourceBuffer(type);
     consoleWrite('Created sourceBuffer');
 
-    let session = await fetchAppendAndWaitForEncrypted(video, sourceBuffer, url);
+    let session = await fetchAppendAndWaitForEncrypted(video, mediaKeys, sourceBuffer, url);
 
     return {sourceBuffer, session};
 }

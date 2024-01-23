@@ -706,7 +706,14 @@ bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
 
 void CDMInstanceFairPlayStreamingAVFObjC::addKeyStatusesChangedObserver(const KeyStatusesChangedObserver& observer)
 {
+    ASSERT(!m_keyStatusChangedObservers.contains(observer));
     m_keyStatusChangedObservers.add(observer);
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::removeKeyStatusesChangedObserver(const KeyStatusesChangedObserver& observer)
+{
+    ASSERT(m_keyStatusChangedObservers.contains(observer));
+    m_keyStatusChangedObservers.remove(observer);
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&)
