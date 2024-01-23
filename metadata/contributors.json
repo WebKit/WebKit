@@ -6433,6 +6433,13 @@
    },
    {
       "emails" : [
+         "rding23@apple.com"
+      ],
+      "github" : "rding0207",
+      "name" : "Ren Ding"
+   },
+   {
+      "emails" : [
          "rhodovan.u-szeged@partner.samsung.com",
          "reni@inf.u-szeged.hu",
          "reni@webkit.org"
