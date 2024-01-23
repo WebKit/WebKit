@@ -123,6 +123,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
+#import <WebCore/PlatformTextAlternatives.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollTypes.h>
@@ -195,6 +196,10 @@
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UITextCursorDropPositionAnimator)
@@ -4094,13 +4099,18 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     return (NSString *)_page->editorState().postLayoutData->wordAtSelection;
 }
 
-- (NSArray<NSTextAlternatives *> *)alternativesForSelectedText
+- (NSArray *)alternativesForSelectedText
 {
     if (!_page->editorState().postLayoutData)
         return nil;
     auto& dictationContextsForSelection = _page->editorState().postLayoutData->dictationContextsForSelection;
-    return createNSArray(dictationContextsForSelection, [&] (auto& dictationContext) {
-        return _page->platformDictationAlternatives(dictationContext);
+    return createNSArray(dictationContextsForSelection, [&] (auto& dictationContext) -> NSObject * {
+        RetainPtr alternatives = _page->platformDictationAlternatives(dictationContext);
+#if SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE
+        if (!self.shouldUseAsyncInteractions)
+            return [[alternatives _nsTextAlternative] autorelease];
+#endif
+        return alternatives.autorelease();
     }).autorelease();
 }
 
@@ -6505,7 +6515,12 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     }
 
     BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
-    auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
+    auto nsAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
+#if SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE
+    auto textAlternatives = adoptNS([[PlatformTextAlternatives alloc] _initWithNSTextAlternatives:nsAlternatives.get()]);
+#else
+    auto textAlternatives = nsAlternatives;
+#endif
     WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
 
     WebKit::InsertTextOptions options;
@@ -6521,9 +6536,22 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     return editorState.hasPostLayoutData() && editorState.postLayoutData->hasPlainText;
 }
 
-- (void)addTextAlternatives:(NSTextAlternatives *)alternatives
+// Accepts either NSTextAlternatives, or an equivalent type that's currently defined as PlatformTextAlternatives.
+- (void)addTextAlternatives:(NSObject *)alternatives
 {
-    _page->addDictationAlternative({ alternatives, NSMakeRange(0, alternatives.primaryString.length) });
+    RetainPtr platformAlternatives = dynamic_objc_cast<PlatformTextAlternatives>(alternatives);
+
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    if (!platformAlternatives) {
+        if (RetainPtr nsAlternatives = dynamic_objc_cast<NSTextAlternatives>(alternatives))
+            platformAlternatives = adoptNS([[PlatformTextAlternatives alloc] _initWithNSTextAlternatives:nsAlternatives.get()]);
+    }
+#endif
+
+    if (!platformAlternatives)
+        return;
+
+    _page->addDictationAlternative({ platformAlternatives.get(), NSMakeRange(0, [platformAlternatives primaryString].length) });
 }
 
 - (void)removeEmojiAlternatives
@@ -6550,13 +6578,19 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
             if (nonEmojiAlternatives.count == originalAlternatives.count)
                 continue;
 
-            RetainPtr<NSTextAlternatives> replacement;
+            RetainPtr<NSTextAlternatives> nsReplacement;
             if (nonEmojiAlternatives.count)
-                replacement = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:alternatives.primaryString alternativeStrings:nonEmojiAlternatives isLowConfidence:alternatives.isLowConfidence]);
+                nsReplacement = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:alternatives.primaryString alternativeStrings:nonEmojiAlternatives isLowConfidence:alternatives.isLowConfidence]);
             else
                 contextsToRemove.append(context);
 
-            page->pageClient().replaceDictationAlternatives(replacement.get(), context);
+            RetainPtr<PlatformTextAlternatives> platformReplacement;
+#if SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE
+            platformReplacement = adoptNS([[PlatformTextAlternatives alloc] _initWithNSTextAlternatives:nsReplacement.get()]);
+#else
+            platformReplacement = nsReplacement;
+#endif
+            page->pageClient().replaceDictationAlternatives(platformReplacement.get(), context);
         }
         page->clearDictationAlternatives(WTFMove(contextsToRemove));
     });

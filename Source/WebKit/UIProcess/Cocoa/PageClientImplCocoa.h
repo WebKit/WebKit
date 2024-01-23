@@ -26,10 +26,11 @@
 #pragma once
 
 #include "PageClient.h"
+#include <WebCore/PlatformTextAlternatives.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakObjCPtr.h>
 
-@class NSTextAlternatives;
+@class PlatformTextAlternatives;
 @class WKWebView;
 
 namespace API {
@@ -80,11 +81,11 @@ public:
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 
-    WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) final;
-    void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) final;
+    WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) final;
+    void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
-    NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
+    PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
 
 #if ENABLE(APP_HIGHLIGHTS)
     void storeAppHighlight(const WebCore::AppHighlight&) final;

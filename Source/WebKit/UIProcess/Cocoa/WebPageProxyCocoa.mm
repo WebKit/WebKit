@@ -77,6 +77,10 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
 #endif
@@ -417,7 +421,7 @@ void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alterna
 
 #if USE(DICTATION_ALTERNATIVES)
 
-NSTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)
+PlatformTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     return pageClient().platformDictationAlternatives(dictationContext);
 }
