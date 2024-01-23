@@ -14,9 +14,17 @@ PASS fillRect should not require noise injection when noise injection is not ena
 PASS drawImage that covers entire canvas should not require noise injection
 PASS fillText should not require noise injection when noise injection is not enabled
 PASS drawImage after fillText should not require noise injection when noise injection is not enabled
+PASS drawImage with detached Canvas source should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas source should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled
 PASS getImageData should not apply noise when noise injection is not enabled
 PASS putImageData should not require noise injection
 PASS fillRect should not require noise injection when noise injection is not enabled
+PASS drawImage with detached Canvas source should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas source should not require noise injection when noise injection is not enabled
+PASS drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled
 Enabling canvas noise injection
 PASS Initial canvas should not have pending dirty rects
 PASS drawImage should not require noise injection
@@ -28,13 +36,25 @@ PASS getImageData should apply all required noise
 PASS putImageData should not require noise injection
 PASS fillRect should require noise injection
 PASS data: url after fillRect should not be equal
+PASS Canvas2D dataURL with noise value 0 should be identical
 PASS drawImage that covers entire canvas should not require noise injection
 PASS fillText should require noise injection
 PASS drawImage after fillText require noise injection
+PASS drawImage with detached Canvas source should not apply noise
+PASS drawImage with attached Canvas destination should add dirty rect and not apply noise
+PASS drawImage with attached Canvas source should not apply noise
+PASS drawImage with attached Canvas destination should add dirty rect and not apply noise
 PASS getImageData should apply all required noise
 PASS putImageData should not require noise injection
 PASS fillRect should require noise injection
 PASS data: url after fillRect should not be equal
+PASS drawImage with detached Canvas source should not have pending noise
+PASS drawImage with attached Canvas destination should not add dirty rect
+PASS drawImage with attached Canvas source should not have pending noise
+PASS drawImage with attached Canvas destination should not add dirty rect
+PASS dataURL with noise value 0 should be identical
+PASS WebGL dataURL with noise should not be identical
+PASS WebGL dataURL with noise value 0 should be identical
 PASS successfullyParsed is true
 
 TEST COMPLETE

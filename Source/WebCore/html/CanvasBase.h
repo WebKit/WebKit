@@ -83,7 +83,7 @@ public:
 
     virtual AffineTransform baseTransform() const;
 
-    void makeRenderingResultsAvailable();
+    void makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
     size_t memoryCost() const;
     size_t externalMemoryCost() const;
@@ -164,7 +164,7 @@ private:
     String m_lastFillText;
 
     CanvasNoiseInjection m_canvasNoiseInjection;
-    Markable<NoiseInjectionHashSalt, IntegralMarkableTraits<NoiseInjectionHashSalt>> m_canvasNoiseHashSalt;
+    Markable<NoiseInjectionHashSalt, IntegralMarkableTraits<NoiseInjectionHashSalt, std::numeric_limits<int64_t>::max()>> m_canvasNoiseHashSalt;
     bool m_originClean { true };
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };

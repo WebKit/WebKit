@@ -711,7 +711,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
 
     if (m_canvasBufferContents.has_value()) {
         m_canvasBufferContents = std::nullopt;
-        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()), ShouldApplyPostProcessingToDirtyRect::No);
     }
 }
 
