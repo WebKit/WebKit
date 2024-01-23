@@ -37,6 +37,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"

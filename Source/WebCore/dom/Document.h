@@ -642,9 +642,10 @@ public:
     bool isDirAttributeDirty() const { return m_isDirAttributeDirty; }
     void setIsDirAttributeDirty() { m_isDirAttributeDirty = true; }
 
-    CSSFontSelector& fontSelector() { return m_fontSelector; }
-    const CSSFontSelector& fontSelector() const { return m_fontSelector; }
-    Ref<CSSFontSelector> protectedFontSelector() const;
+    CSSFontSelector* fontSelectorIfExists() { return m_fontSelector.get(); }
+    const CSSFontSelector* fontSelectorIfExists() const { return m_fontSelector.get(); }
+    inline CSSFontSelector& fontSelector();
+    inline const CSSFontSelector& fontSelector() const;
 
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
     bool isIgnoringPendingStylesheets() const { return m_ignorePendingStylesheets; }
@@ -656,8 +657,8 @@ public:
     CheckedRef<Style::Scope> checkedStyleScope();
     CheckedRef<const Style::Scope> checkedStyleScope() const;
 
-    ExtensionStyleSheets& extensionStyleSheets() { return *m_extensionStyleSheets; }
-    const ExtensionStyleSheets& extensionStyleSheets() const { return *m_extensionStyleSheets; }
+    ExtensionStyleSheets* extensionStyleSheetsIfExists() { return m_extensionStyleSheets.get(); }
+    inline ExtensionStyleSheets& extensionStyleSheets();
 
     const Style::CustomPropertyRegistry& customPropertyRegistry() const;
     const CSSCounterStyleRegistry& counterStyleRegistry() const;
@@ -681,8 +682,8 @@ public:
     Ref<Settings> protectedSettings() const;
     EditingBehavior editingBehavior() const;
 
-    Quirks& quirks() { return m_quirks; }
-    const Quirks& quirks() const { return m_quirks; }
+    inline Quirks& quirks();
+    inline const Quirks& quirks() const;
 
     float deviceScaleFactor() const;
 
@@ -732,8 +733,8 @@ public:
     // auto is specified.
     WEBCORE_EXPORT void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
 
-    CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
-    inline Ref<CachedResourceLoader> protectedCachedResourceLoader() const; // Defined in DocumentInlines.h.
+    inline CachedResourceLoader& cachedResourceLoader();
+    inline Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
@@ -895,7 +896,8 @@ public:
     void resetLinkColor();
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
-    VisitedLinkState& visitedLinkState() const { return *m_visitedLinkState; }
+    VisitedLinkState* visitedLinkStateIfExists() const { return m_visitedLinkState.get(); }
+    inline VisitedLinkState& visitedLinkState() const;
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
     // Returns whether focus was blocked. A true value does not necessarily mean the element was focused.
@@ -1171,6 +1173,8 @@ public:
     WEBCORE_EXPORT HTMLHeadElement* head();
     RefPtr<HTMLHeadElement> protectedHead();
 
+    inline const DocumentMarkerController* markersIfExists() const { return m_markers.get(); }
+    inline DocumentMarkerController* markersIfExists() { return m_markers.get(); }
     inline DocumentMarkerController& markers(); // Defined in DocumentInlines.h.
     inline const DocumentMarkerController& markers() const; // Defined in DocumentInlines.h.
     inline CheckedRef<DocumentMarkerController> checkedMarkers(); // Defined in DocumentInlines.h.
@@ -1183,7 +1187,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<bool> queryCommandSupported(const String& command);
     WEBCORE_EXPORT ExceptionOr<String> queryCommandValue(const String& command);
 
-    UndoManager& undoManager() const { return m_undoManager.get(); }
+    UndoManager& undoManager() const;
     inline Ref<UndoManager> protectedUndoManager() const; // Defined in DocumentInlines.h.
 
     // designMode support
@@ -1198,9 +1202,10 @@ public:
     Ref<Document> protectedTopDocument() const { return topDocument(); }
     bool isTopDocument() const { return &topDocument() == this; }
     
-    ScriptRunner& scriptRunner() { return *m_scriptRunner; }
+    ScriptRunner* scriptRunnerIfExists() { return m_scriptRunner.get(); }
+    inline ScriptRunner& scriptRunner();
     CheckedRef<ScriptRunner> checkedScriptRunner();
-    ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
+    inline ScriptModuleLoader& moduleLoader();
 
     Element* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
     void pushCurrentScript(Element*);
@@ -1355,8 +1360,10 @@ public:
     void addDisplayChangedObserver(const DisplayChangedObserver&);
 
 #if ENABLE(FULLSCREEN_API)
-    FullscreenManager& fullscreenManager() { return m_fullscreenManager; }
-    const FullscreenManager& fullscreenManager() const { return m_fullscreenManager; }
+    FullscreenManager* fullscreenManagerIfExists() { return m_fullscreenManager.get(); }
+    const FullscreenManager* fullscreenManagerIfExists() const { return m_fullscreenManager.get(); }
+    inline FullscreenManager& fullscreenManager();
+    inline const FullscreenManager& fullscreenManager() const;
     inline CheckedRef<FullscreenManager> checkedFullscreenManager(); // Defined in DocumentInlines.h.
     inline CheckedRef<const FullscreenManager> checkedFullscreenManager() const; // Defined in DocumentInlines.h.
 #endif
@@ -1826,8 +1833,8 @@ public:
     bool hasVisuallyNonEmptyCustomContent() const { return m_hasVisuallyNonEmptyCustomContent; }
     void enqueuePaintTimingEntryIfNeeded();
 
-    Editor& editor() { return m_editor; }
-    const Editor& editor() const { return m_editor; }
+    WEBCORE_EXPORT Editor& editor();
+    WEBCORE_EXPORT const Editor& editor() const;
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
     CheckedRef<FrameSelection> checkedSelection();
@@ -1859,7 +1866,8 @@ public:
 
     std::optional<PAL::SessionID> sessionID() const final;
 
-    ReportingScope& reportingScope() const { return m_reportingScope.get(); }
+    ReportingScope* reportingScopeIfExists() const { return m_reportingScope.get(); }
+    inline ReportingScope& reportingScope() const;
     inline Ref<ReportingScope> protectedReportingScope() const; // Defined in DocumentInlines.h.
     WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
 
@@ -1912,6 +1920,21 @@ private:
 
     void commonTeardown();
 
+    WEBCORE_EXPORT Quirks& ensureQuirks();
+    WEBCORE_EXPORT CachedResourceLoader& ensureCachedResourceLoader();
+    WEBCORE_EXPORT ExtensionStyleSheets& ensureExtensionStyleSheets();
+    WEBCORE_EXPORT DocumentMarkerController& ensureMarkers();
+    VisitedLinkState& ensureVisitedLinkState();
+    ScriptRunner& ensureScriptRunner();
+    ScriptModuleLoader& ensureModuleLoader();
+    WEBCORE_EXPORT FullscreenManager& ensureFullscreenManager();
+    inline DocumentFontLoader& fontLoader();
+    DocumentFontLoader& ensureFontLoader();
+    CSSFontSelector& ensureFontSelector();
+    UndoManager& ensureUndoManager();
+    Editor& ensureEditor();
+    WEBCORE_EXPORT ReportingScope& ensureReportingScope();
+
     RenderObject* renderer() const = delete;
     void setRenderer(RenderObject*) = delete;
 
@@ -1921,7 +1944,7 @@ private:
     DocumentEventTiming* documentEventTimingFromNavigationTiming();
 
     // ScriptExecutionContext
-    CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
+    CSSFontSelector* cssFontSelector() final;
     std::unique_ptr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
@@ -2025,13 +2048,13 @@ private:
 
     const Ref<const Settings> m_settings;
 
-    UniqueRef<Quirks> m_quirks;
+    std::unique_ptr<Quirks> m_quirks;
 
     RefPtr<LocalDOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
 
-    Ref<CachedResourceLoader> m_cachedResourceLoader;
+    RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
 
     // Document URLs.
@@ -2094,14 +2117,14 @@ private:
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
-    const std::unique_ptr<VisitedLinkState> m_visitedLinkState;
+    std::unique_ptr<VisitedLinkState> m_visitedLinkState;
 
     StringWithDirection m_title;
     StringWithDirection m_rawTitle;
     RefPtr<Element> m_titleElement;
 
     std::unique_ptr<AXObjectCache> m_axObjectCache;
-    UniqueRef<DocumentMarkerController> m_markers;
+    std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
 
@@ -2181,7 +2204,7 @@ private:
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
 
 #if ENABLE(FULLSCREEN_API)
-    UniqueRef<FullscreenManager> m_fullscreenManager;
+    std::unique_ptr<FullscreenManager> m_fullscreenManager;
 #endif
 
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;
@@ -2260,8 +2283,8 @@ private:
 
     RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
 
-    Ref<CSSFontSelector> m_fontSelector;
-    UniqueRef<DocumentFontLoader> m_fontLoader;
+    RefPtr<CSSFontSelector> m_fontSelector;
+    std::unique_ptr<DocumentFontLoader> m_fontLoader;
 
     WeakHashSet<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
@@ -2325,8 +2348,8 @@ private:
 
     std::unique_ptr<TextManipulationController> m_textManipulationController;
 
-    Ref<UndoManager> m_undoManager;
-    UniqueRef<Editor> m_editor;
+    RefPtr<UndoManager> m_undoManager;
+    std::unique_ptr<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
 
     String m_fragmentDirective;
@@ -2344,7 +2367,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
 
-    Ref<ReportingScope> m_reportingScope;
+    RefPtr<ReportingScope> m_reportingScope;
 
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
     std::unique_ptr<SleepDisabler> m_sleepDisabler;

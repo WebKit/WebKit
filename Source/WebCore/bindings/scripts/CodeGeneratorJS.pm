@@ -1208,6 +1208,7 @@ sub GeneratePut
     # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (!$namedSetterOperation && !$indexedSetterOperation) {
        AddToImplIncludes("Document.h");
+       AddToImplIncludes("DocumentInlines.h");
        AddToImplIncludes("Quirks.h");
        push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
        push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
@@ -1318,6 +1319,7 @@ sub GeneratePutByIndex
     # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (!$namedSetterOperation && !$indexedSetterOperation) {
        AddToImplIncludes("Document.h");
+       AddToImplIncludes("DocumentInlines.h");
        AddToImplIncludes("Quirks.h");
        push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
        push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
@@ -1609,6 +1611,7 @@ sub GenerateDeleteProperty
     # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (!$namedDeleterOperation) {
        AddToImplIncludes("Document.h");
+       AddToImplIncludes("DocumentInlines.h");
        AddToImplIncludes("Quirks.h");
        push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
        push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
@@ -1661,6 +1664,7 @@ sub GenerateDeletePropertyByIndex
     # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
     if (!$namedDeleterOperation) {
        AddToImplIncludes("Document.h");
+       AddToImplIncludes("DocumentInlines.h");
        AddToImplIncludes("Quirks.h");
        push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
        push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
@@ -4267,6 +4271,7 @@ sub GenerateRuntimeEnableConditionalString
         assert("Must specify value for EnabledByQuirk.") if $context->extendedAttributes->{DisabledByQuirk} eq "VALUE_IS_MISSING";
 
         AddToImplIncludes("Document.h");
+        AddToImplIncludes("DocumentInlines.h");
         AddToImplIncludes("Quirks.h");
 
         assert("EnabledByQuirk can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
@@ -4281,6 +4286,7 @@ sub GenerateRuntimeEnableConditionalString
         assert("Must specify value for DisabledByQuirk.") if $context->extendedAttributes->{DisabledByQuirk} eq "VALUE_IS_MISSING";
 
         AddToImplIncludes("Document.h");
+        AddToImplIncludes("DocumentInlines.h");
         AddToImplIncludes("Quirks.h");
 
         assert("DisabledByQuirk can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";

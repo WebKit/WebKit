@@ -29,6 +29,7 @@
 
 #include "UserStyleSheet.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -50,7 +51,7 @@ class StyleSheetContents;
 class StyleSheetList;
 class WeakPtrImplWithEventTargetData;
 
-class ExtensionStyleSheets {
+class ExtensionStyleSheets : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ExtensionStyleSheets(Document&);

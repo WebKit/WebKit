@@ -34,6 +34,8 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "FullscreenManager.h"
 #include "HTMLAnchorElement.h"
@@ -258,7 +260,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     }
 
 #if ENABLE(FULLSCREEN_API)
-    if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
+    if (CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists(); !fullscreenStyleSheet && fullscreenManager && fullscreenManager->isFullscreen()) {
         fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)));
         addToDefaultStyle(*fullscreenStyleSheet);
     }

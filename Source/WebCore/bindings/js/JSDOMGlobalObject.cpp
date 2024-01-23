@@ -30,6 +30,7 @@
 #include "DOMConstructors.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FetchResponse.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InternalWritableStream.h"

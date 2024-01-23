@@ -32,6 +32,7 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "RenderStyleInlines.h"
 #include "StyleResolver.h"

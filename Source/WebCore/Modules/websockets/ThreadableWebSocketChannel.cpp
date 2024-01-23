@@ -33,6 +33,7 @@
 
 #include "ContentRuleListResults.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"

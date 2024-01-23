@@ -32,6 +32,7 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"

@@ -78,6 +78,7 @@
 #include "StyleGradientImage.h"
 #include "TextControlInnerElements.h"
 #include "TextInputType.h"
+#include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>

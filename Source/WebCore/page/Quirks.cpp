@@ -31,6 +31,7 @@
 #include "DOMTokenList.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentStorageAccess.h"
 #include "ElementInlines.h"

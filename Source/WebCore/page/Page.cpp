@@ -1136,7 +1136,8 @@ uint32_t Page::replaceSelectionWithText(const String& replacementText)
 void Page::unmarkAllTextMatches()
 {
     forEachDocument([] (Document& document) {
-        document.markers().removeMarkers(DocumentMarker::Type::TextMatch);
+        if (CheckedPtr markers = document.markersIfExists())
+            markers->removeMarkers(DocumentMarker::Type::TextMatch);
     });
 }
 
@@ -2129,7 +2130,7 @@ void Page::prioritizeVisibleResources()
             return LoadSchedulingMode::Prioritized;
         
         // Async script execution may generate more resource loads that benefit from prioritization.
-        if (document.scriptRunner().hasPendingScripts())
+        if (CheckedPtr scriptRunner = document.scriptRunnerIfExists(); scriptRunner && scriptRunner->hasPendingScripts())
             return LoadSchedulingMode::Prioritized;
         
         // We still haven't finished loading the visible resources.
@@ -2388,21 +2389,24 @@ void Page::userAgentChanged()
 void Page::invalidateStylesForAllLinks()
 {
     forEachDocument([] (Document& document) {
-        document.visitedLinkState().invalidateStyleForAllLinks();
+        if (auto* visitedLinkState = document.visitedLinkStateIfExists())
+            visitedLinkState->invalidateStyleForAllLinks();
     });
 }
 
 void Page::invalidateStylesForLink(SharedStringHash linkHash)
 {
     forEachDocument([&] (Document& document) {
-        document.visitedLinkState().invalidateStyleForLink(linkHash);
+        if (auto* visitedLinkState = document.visitedLinkStateIfExists())
+            visitedLinkState->invalidateStyleForLink(linkHash);
     });
 }
 
 void Page::invalidateInjectedStyleSheetCacheInAllFrames()
 {
     forEachDocument([] (Document& document) {
-        document.extensionStyleSheets().invalidateInjectedStyleSheetCache();
+        if (CheckedPtr extensionStyleSheets = document.extensionStyleSheetsIfExists())
+            extensionStyleSheets->invalidateInjectedStyleSheetCache();
     });
 }
 
@@ -3683,8 +3687,10 @@ void Page::setUseSystemAppearance(bool value)
 
     forEachDocument([&] (Document& document) {
         // System apperance change may affect stylesheet parsing. We need to reparse.
-        document.extensionStyleSheets().clearPageUserSheet();
-        document.extensionStyleSheets().invalidateInjectedStyleSheetCache();
+        if (CheckedPtr extensionStyleSheets = document.extensionStyleSheetsIfExists()) {
+            extensionStyleSheets->clearPageUserSheet();
+            extensionStyleSheets->invalidateInjectedStyleSheetCache();
+        }
     });
 }
 

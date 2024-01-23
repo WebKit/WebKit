@@ -37,6 +37,7 @@
 #include "CanvasRenderingContext2DSettings.h"
 #include "DisplayListDrawingContext.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "GPU.h"

@@ -1332,7 +1332,8 @@ void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
     if (document->hasListenerType(Document::ListenerType::OverflowChanged))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
-    document->markers().invalidateRectsForAllMarkers();
+    if (CheckedPtr markers = document->markersIfExists())
+        markers->invalidateRectsForAllMarkers();
 }
 
 bool LocalFrameView::shouldDeferScrollUpdateAfterContentSizeChange()
@@ -4526,7 +4527,11 @@ Color LocalFrameView::documentBackgroundColor() const
 
 #if ENABLE(FULLSCREEN_API)
     Color fullscreenBackgroundColor = [&] () -> Color {
-        auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
+        CheckedPtr fullscreenManager = backgroundDocument->fullscreenManagerIfExists();
+        if (!fullscreenManager)
+            return { };
+
+        auto* fullscreenElement = fullscreenManager->fullscreenElement();
         if (!fullscreenElement)
             return { };
 

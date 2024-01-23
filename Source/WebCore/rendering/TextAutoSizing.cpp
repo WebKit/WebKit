@@ -30,6 +30,7 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "Logging.h"
 #include "RenderBlock.h"

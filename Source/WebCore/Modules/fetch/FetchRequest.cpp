@@ -30,6 +30,7 @@
 #include "FetchRequest.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
 #include "Logging.h"

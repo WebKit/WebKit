@@ -133,8 +133,8 @@ public:
     ContainerNode& rootNode() const { return m_rootNode; }
     Ref<ContainerNode> protectedRootNode() const;
 
-    IdTargetObserverRegistry& idTargetObserverRegistry() { return m_idTargetObserverRegistry.get(); }
-    const IdTargetObserverRegistry& idTargetObserverRegistry() const { return m_idTargetObserverRegistry.get(); }
+    inline IdTargetObserverRegistry& idTargetObserverRegistry();
+    IdTargetObserverRegistry* idTargetObserverRegistryIfExists() { return m_idTargetObserverRegistry.get(); }
 
     RadioButtonGroups& radioButtonGroups();
 
@@ -169,6 +169,7 @@ protected:
     RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
 
 private:
+    IdTargetObserverRegistry& ensureIdTargetObserverRegistry();
     CSSStyleSheetObservableArray& ensureAdoptedStyleSheets();
 
     SVGResourcesMap& svgResourcesMap() const;
@@ -184,7 +185,7 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_imagesByUsemap;
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
-    UniqueRef<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
     RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;

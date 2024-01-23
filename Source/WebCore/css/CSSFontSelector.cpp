@@ -38,6 +38,7 @@
 #include "CSSValueList.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
@@ -283,8 +284,10 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
 {
     ++m_version;
 
-    for (auto& client : copyToVector(m_clients))
-        client->fontsNeedUpdate(*this);
+    for (auto& client : copyToVector(m_clients)) {
+        if (m_clients.contains(client))
+            client->fontsNeedUpdate(*this);
+    }
 }
 
 void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomString& familyName)

@@ -3759,9 +3759,9 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     }
 
 #if ENABLE(FULLSCREEN_API)
-    if (frame->document()->fullscreenManager().isFullscreen()) {
+    if (CheckedPtr fullscreenManager = frame->document()->fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isFullscreen()) {
         if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
-            frame->protectedDocument()->fullscreenManager().cancelFullscreen();
+            fullscreenManager->cancelFullscreen();
             return true;
         }
 

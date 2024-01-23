@@ -28,6 +28,7 @@
 
 #include "BackForwardController.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameLoader.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"

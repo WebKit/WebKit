@@ -56,6 +56,7 @@
 #include "CSSPropertyNames.h"
 #include "CommonVM.h"
 #include "CookieJar.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "ElementChildIteratorInlines.h"

@@ -29,6 +29,8 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "HTMLBodyElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"

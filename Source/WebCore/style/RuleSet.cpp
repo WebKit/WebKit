@@ -34,6 +34,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
+#include "DocumentInlines.h"
 #include "HTMLNames.h"
 #include "MediaQueryEvaluator.h"
 #include "RuleSetBuilder.h"

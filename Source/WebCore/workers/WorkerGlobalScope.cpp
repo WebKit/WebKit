@@ -34,6 +34,7 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
+#include "DocumentInlines.h"
 #include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"

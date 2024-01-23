@@ -31,6 +31,7 @@
 #include "Screen.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FloatRect.h"
 #include "LocalDOMWindow.h"

@@ -1164,7 +1164,7 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
     auto wordEnd = endOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
 
     if (auto range = makeSimpleRange(wordStart, wordEnd)) {
-        if (document.markers().hasMarkers(*range, DocumentMarker::Type::CorrectionIndicator))
+        if (CheckedPtr markers = document.markersIfExists(); markers && markers->hasMarkers(*range, DocumentMarker::Type::CorrectionIndicator))
             autocorrectionWasApplied = true;
     }
 
@@ -3208,7 +3208,9 @@ void Editor::unappliedSpellCorrection(const VisibleSelection& selectionOfCorrect
 
 void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionAtWordBoundary)
 {
-    if (!document().markers().hasMarkers())
+    Ref document = protectedDocument();
+    CheckedPtr markers = document->markersIfExists();
+    if (!markers || !markers->hasMarkers())
         return;
 
     if (!m_alternativeTextController->shouldRemoveMarkersUponEditing() && (!textChecker() || textChecker()->shouldEraseMarkersAfterChangeSelection(TextCheckingType::Spelling)))
@@ -3224,7 +3226,6 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // Of course, if current selection is a range, we potentially will edit two words that fall on the boundaries of
     // selection, and remove words between the selection boundaries.
     //
-    Ref document = protectedDocument();
     VisiblePosition startOfSelection = document->selection().selection().start();
     VisiblePosition endOfSelection = document->selection().selection().end();
     if (startOfSelection.isNull())
@@ -3278,7 +3279,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // of marker that contains the word in question, and remove marker on that whole range.
     auto wordRange = *makeSimpleRange(startOfFirstWord, endOfLastWord);
 
-    for (auto& marker : document->markers().markersInRange(wordRange, DocumentMarker::Type::DictationAlternatives))
+    for (auto& marker : markers->markersInRange(wordRange, DocumentMarker::Type::DictationAlternatives))
         m_alternativeTextController->removeDictationAlternativesForMarker(*marker);
 
     OptionSet<DocumentMarker::Type> markerTypesToRemove {
@@ -3293,7 +3294,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     adjustMarkerTypesToRemoveForWordsAffectedByEditing(markerTypesToRemove);
 
     removeMarkers(wordRange, markerTypesToRemove, RemovePartiallyOverlappingMarker::Yes);
-    document->markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Type::Replacement);
+    markers->clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Type::Replacement);
 }
 
 void Editor::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
@@ -3847,7 +3848,8 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
         return;
 
     m_areMarkedTextMatchesHighlighted = flag;
-    document().markers().repaintMarkers(DocumentMarker::Type::TextMatch);
+    if (CheckedPtr markers = document().markersIfExists())
+        markers->repaintMarkers(DocumentMarker::Type::TextMatch);
 }
 
 #if !PLATFORM(MAC)
@@ -4036,10 +4038,12 @@ void Editor::editorUIUpdateTimerFired()
     }
 
     // When continuous spell checking is off, existing markers disappear after the selection changes.
-    if (!isContinuousSpellCheckingEnabled)
-        document->markers().removeMarkers(DocumentMarker::Type::Spelling);
-    if (!isContinuousGrammarCheckingEnabled)
-        document->markers().removeMarkers(DocumentMarker::Type::Grammar);
+    if (CheckedPtr markers = document->markersIfExists()) {
+        if (!isContinuousSpellCheckingEnabled)
+            markers->removeMarkers(DocumentMarker::Type::Spelling);
+        if (!isContinuousGrammarCheckingEnabled)
+            markers->removeMarkers(DocumentMarker::Type::Grammar);
+    }
 
     if (!m_editorUIUpdateTimerWasTriggeredByDictation)
         m_alternativeTextController->respondToChangedSelection(oldSelection);
@@ -4079,9 +4083,13 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::Type markerType, int fro
     if (!node)
         return false;
 
+    CheckedPtr markers = document().markersIfExists();
+    if (!markers)
+        return false;
+
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);
-    for (auto& marker : document().markers().markersFor(*node)) {
+    for (auto& marker : markers->markersFor(*node)) {
         if (marker->startOffset() <= startOffset && endOffset <= marker->endOffset() && marker->type() == markerType)
             return true;
     }

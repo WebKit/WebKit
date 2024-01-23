@@ -36,6 +36,7 @@
 #include "CustomElementRegistry.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "EventLoop.h"
 #include "FrameDestructionObserverInlines.h"

@@ -28,6 +28,7 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventLoop.h"

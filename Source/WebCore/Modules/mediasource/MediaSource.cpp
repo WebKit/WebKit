@@ -38,6 +38,7 @@
 #include "ContentType.h"
 #include "ContentTypeUtilities.h"
 #include "DeprecatedGlobalSettings.h"
+#include "DocumentInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"

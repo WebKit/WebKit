@@ -44,6 +44,7 @@
 #include "CachedResourceLoader.h"
 #include "CompositeOperation.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementRuleCollector.h"
 #include "FrameSelection.h"
 #include "InspectorInstrumentation.h"

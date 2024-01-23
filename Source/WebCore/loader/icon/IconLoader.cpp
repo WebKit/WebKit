@@ -31,6 +31,7 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"

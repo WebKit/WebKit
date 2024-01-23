@@ -29,6 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"

@@ -108,12 +108,12 @@ RuleSet* ScopeRuleSets::styleForCascadeLevel(CascadeLevel level)
 
 void ScopeRuleSets::initializeUserStyle()
 {
-    auto& extensionStyleSheets = m_styleResolver.document().extensionStyleSheets();
+    CheckedRef extensionStyleSheets = m_styleResolver.document().extensionStyleSheets();
     auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
 
     auto userStyle = RuleSet::create();
 
-    if (auto* pageUserSheet = extensionStyleSheets.pageUserSheet()) {
+    if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet()) {
         RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
         builder.addRulesFromSheet(pageUserSheet->contents());
     }
@@ -121,17 +121,17 @@ void ScopeRuleSets::initializeUserStyle()
 #if ENABLE(APP_BOUND_DOMAINS)
     auto* page = m_styleResolver.document().page();
     auto* localMainFrame = page ? dynamicDowncast<LocalFrame>(page->mainFrame()) : nullptr;
-    if (!extensionStyleSheets.injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
+    if (!extensionStyleSheets->injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
         m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else {
-        collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
-        if (page && localMainFrame && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
+        collectRulesFromUserStyleSheets(extensionStyleSheets->injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
+        if (page && localMainFrame && !extensionStyleSheets->injectedUserStyleSheets().isEmpty())
             localMainFrame->loader().client().notifyPageOfAppBoundBehavior();
     }
 #else
-    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
+    collectRulesFromUserStyleSheets(extensionStyleSheets->injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
 #endif
-    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), userStyle, mediaQueryEvaluator);
+    collectRulesFromUserStyleSheets(extensionStyleSheets->documentUserStyleSheets(), userStyle, mediaQueryEvaluator);
 
     if (userStyle->ruleCount() > 0 || userStyle->pageRules().size() > 0)
         m_userStyle = WTFMove(userStyle);

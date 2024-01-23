@@ -940,7 +940,8 @@ OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLaye
 
 void RenderLayer::willUpdateLayerPositions()
 {
-    renderer().document().markers().invalidateRectsForAllMarkers();
+    if (CheckedPtr markers = renderer().document().markersIfExists())
+        markers->invalidateRectsForAllMarkers();
 }
 
 void RenderLayer::updateLayerPositionsAfterStyleChange()

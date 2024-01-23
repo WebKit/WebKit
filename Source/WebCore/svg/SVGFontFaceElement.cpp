@@ -32,6 +32,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "FontCascade.h"
 #include "Logging.h"

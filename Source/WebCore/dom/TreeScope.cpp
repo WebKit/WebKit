@@ -73,7 +73,6 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     : m_rootNode(shadowRoot)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
-    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -82,7 +81,6 @@ TreeScope::TreeScope(Document& document)
     : m_rootNode(document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
-    , m_idTargetObserverRegistry(makeUniqueRef<IdTargetObserverRegistry>())
 {
     document.setTreeScope(*this);
 }
@@ -139,6 +137,12 @@ void TreeScope::unregisterCheckedPtr(const void* pointer) const
 }
 #endif // CHECKED_POINTER_DEBUG
 
+IdTargetObserverRegistry& TreeScope::ensureIdTargetObserverRegistry()
+{
+    if (!m_idTargetObserverRegistry)
+        m_idTargetObserverRegistry = makeUnique<IdTargetObserverRegistry>();
+    return *m_idTargetObserverRegistry;
+}
 
 void TreeScope::destroyTreeScopeData()
 {
@@ -203,7 +207,7 @@ void TreeScope::addElementById(const AtomString& elementId, Element& element, bo
     if (!m_elementsById)
         m_elementsById = makeUnique<TreeScopeOrderedMap>();
     m_elementsById->add(elementId, element, *this);
-    if (notifyObservers)
+    if (m_idTargetObserverRegistry && notifyObservers)
         m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
@@ -212,7 +216,7 @@ void TreeScope::removeElementById(const AtomString& elementId, Element& element,
     if (!m_elementsById)
         return;
     m_elementsById->remove(elementId, element);
-    if (notifyObservers)
+    if (m_idTargetObserverRegistry && notifyObservers)
         m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 

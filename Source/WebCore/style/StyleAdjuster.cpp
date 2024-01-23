@@ -32,6 +32,8 @@
 
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementAncestorIterator.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
@@ -723,7 +725,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (hasInertAttribute(element))
             return true;
 #if ENABLE(FULLSCREEN_API)
-        if (m_document.fullscreenManager().fullscreenElement() && element == m_document.documentElement())
+        if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->fullscreenElement() && element == m_document.documentElement())
             return true;
 #endif
         return false;
@@ -737,7 +739,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setEffectiveInert(false);
 
 #if ENABLE(FULLSCREEN_API)
-        if (m_element == m_document.fullscreenManager().fullscreenElement() && !hasInertAttribute(m_element))
+        if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && m_element == fullscreenManager->fullscreenElement() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 #endif
 
@@ -960,9 +962,9 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         }
     }
 #if ENABLE(FULLSCREEN_API)
-    if (m_document.quirks().needsFullscreenObjectFitQuirk()) {
+    if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && m_document.quirks().needsFullscreenObjectFitQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
-        bool isFullscreen = m_document.fullscreenManager().isFullscreen();
+        bool isFullscreen = fullscreenManager->isFullscreen();
         RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element);
         if (video && isFullscreen && video->hasClass() && video->classNames().contains(playerClassName) && style.objectFit() == ObjectFit::Fill)
             style.setObjectFit(ObjectFit::Contain);

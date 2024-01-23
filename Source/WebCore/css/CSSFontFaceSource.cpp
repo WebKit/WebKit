@@ -31,6 +31,7 @@
 #include "CachedFontLoadRequest.h"
 #include "CachedSVGFont.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
