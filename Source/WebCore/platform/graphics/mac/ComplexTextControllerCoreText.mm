@@ -229,15 +229,16 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         // Therefore, we only need to inspect which font was actually used if isSystemFallback is true.
         if (isSystemFallback) {
             CFDictionaryRef runAttributes = CTRunGetAttributes(ctRun);
-            auto runCTFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
+            CTFontRef runCTFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
             ASSERT(runCTFont && CFGetTypeID(runCTFont) == CTFontGetTypeID());
-            if (!safeCFEqual(runCTFont, font->platformData().ctFont())) {
+            RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runCTFont);
+            if (!safeCFEqual(runFontEqualityObject.get(), font->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
                 for (unsigned i = 0; !m_font.fallbackRangesAt(i).isNull(); ++i) {
                     runFont = m_font.fallbackRangesAt(i).fontForCharacter(baseCharacter);
                     if (!runFont)
                         continue;
-                    if (safeCFEqual(runFont->platformData().ctFont(), runCTFont))
+                    if (safeCFEqual(runFont->platformData().objectForEqualityCheck().get(), runFontEqualityObject.get()))
                         break;
                     runFont = nullptr;
                 }
