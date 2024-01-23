@@ -47,6 +47,7 @@
 #include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
+#include "RenderTreeUpdaterViewTransition.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "StyleResolver.h"
@@ -77,6 +78,7 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdate* 
 RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCallbackDisabler&)
     : m_document(document)
     , m_generatedContent(makeUnique<GeneratedContent>(*this))
+    , m_viewTransition(makeUnique<ViewTransition>(*this))
     , m_builder(renderView())
 {
 }
@@ -338,6 +340,9 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         return;
 
     generatedContent().updateBackdropRenderer(*renderer);
+    if (&element == element.document().documentElement())
+        viewTransition().updatePseudoElementTree(*renderer);
+
     m_builder.updateAfterDescendants(*renderer);
 
     if (element.hasCustomStyleResolveCallbacks() && update && update->change == Style::Change::Renderer)

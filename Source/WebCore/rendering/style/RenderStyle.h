@@ -344,6 +344,8 @@ public:
 
     PseudoId styleType() const { return static_cast<PseudoId>(m_nonInheritedFlags.styleType); }
     void setStyleType(PseudoId styleType) { m_nonInheritedFlags.styleType = static_cast<unsigned>(styleType); }
+    const AtomString& functionalPseudoElementArgument() const;
+    void setFunctionalPseudoElementArgument(const AtomString&);
 
     RenderStyle* getCachedPseudoStyle(PseudoId) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);

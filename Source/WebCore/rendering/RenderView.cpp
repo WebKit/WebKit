@@ -1110,4 +1110,14 @@ SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
     return std::exchange(m_countersNeedingUpdate, { });
 }
 
+SingleThreadWeakPtr<RenderElement> RenderView::viewTransitionRoot() const
+{
+    return m_viewTransitionRoot;
+}
+
+void RenderView::setViewTransitionRoot(RenderElement& renderer)
+{
+    m_viewTransitionRoot = renderer;
+}
+
 } // namespace WebCore

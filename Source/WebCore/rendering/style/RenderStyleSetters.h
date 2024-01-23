@@ -465,6 +465,16 @@ inline void RenderStyle::setFlexShrink(float shrink)
     SET_DOUBLY_NESTED(m_nonInheritedData, miscData, flexibleBox, flexShrink, clampedShrink);
 }
 
+inline void RenderStyle::setFunctionalPseudoElementArgument(const AtomString& identifier)
+{
+    ASSERT(styleType() == PseudoId::ViewTransitionGroup
+        || styleType() == PseudoId::ViewTransitionImagePair
+        || styleType() == PseudoId::ViewTransitionNew
+        || styleType() == PseudoId::ViewTransitionOld
+        || styleType() == PseudoId::Highlight);
+    SET_NESTED(m_nonInheritedData, rareData, functionalPseudoElementArgument, identifier);
+}
+
 inline void RenderStyle::setGridColumnList(const GridTrackList& list)
 {
     if (!compareEqual(m_nonInheritedData->rareData->grid->columns(), list))
