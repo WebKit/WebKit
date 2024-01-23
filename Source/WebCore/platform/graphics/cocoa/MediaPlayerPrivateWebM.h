@@ -129,9 +129,6 @@ private:
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
-    void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final { return false; }
-
     void setRateDouble(double) final;
     double rate() const final { return m_rate; }
     double effectiveRate() const final;
@@ -255,6 +252,7 @@ private:
     // WebAVSampleBufferListenerParent
     void layerDidReceiveError(AVSampleBufferDisplayLayer*, NSError*) final;
     void rendererDidReceiveError(AVSampleBufferAudioRenderer*, NSError*) final;
+    void layerReadyForDisplayChanged(AVSampleBufferDisplayLayer*, bool isReadyForDisplay) final;
 
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
@@ -328,6 +326,27 @@ private:
     bool m_errored { false };
     bool m_processingInitializationSegment { false };
     Ref<WebAVSampleBufferListener> m_listener;
+
+    // Seek logic support
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final;
+    void seekInternal();
+    void maybeCompleteSeek();
+    MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+    bool shouldBePlaying() const;
+
+    bool m_isPlaying { false };
+    RetainPtr<id> m_timeJumpedObserver;
+    Timer m_seekTimer;
+    MediaTime m_lastSeekTime;
+    std::optional<SeekTarget> m_pendingSeek;
+    enum SeekState {
+        Seeking,
+        WaitingForAvailableFame,
+        SeekCompleted,
+    };
+    SeekState m_seekState { SeekCompleted };
+    bool m_isSynchronizerSeeking { false };
 };
 
 } // namespace WebCore
