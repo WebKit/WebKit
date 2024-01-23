@@ -2365,3 +2365,5 @@ fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ]
 fast/forms/switch/pointer-tracking.html [ Timeout ]
 
 webkit.org/b/267796 [ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
+
+webkit.org/b/267934 [ Debug ] fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Crash ]
