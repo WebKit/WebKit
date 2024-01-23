@@ -382,31 +382,6 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities>
     return true;
 }
 
-void ArgumentCoder<RefPtr<WebCore::ApplePayError>>::encode(Encoder& encoder, const RefPtr<WebCore::ApplePayError>& error)
-{
-    encoder << !!error;
-    if (error)
-        encoder << *error;
-}
-
-std::optional<RefPtr<WebCore::ApplePayError>> ArgumentCoder<RefPtr<WebCore::ApplePayError>>::decode(Decoder& decoder)
-{
-    std::optional<bool> isValid;
-    decoder >> isValid;
-    if (!isValid)
-        return std::nullopt;
-
-    if (!*isValid)
-        return { nullptr };
-
-    std::optional<Ref<WebCore::ApplePayError>> error;
-    decoder >> error;
-    if (!error)
-        return std::nullopt;
-
-    return error;
-}
-
 void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const WebCore::PaymentSessionError& error)
 {
     encoder << error.platformError();
