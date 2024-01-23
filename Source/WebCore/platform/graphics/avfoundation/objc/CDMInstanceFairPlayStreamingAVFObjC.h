@@ -137,6 +137,7 @@ public:
 
     using KeyStatusesChangedObserver = Observer<void()>;
     void addKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
+    void removeKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
 
     void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
 

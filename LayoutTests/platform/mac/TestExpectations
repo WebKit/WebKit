@@ -95,6 +95,8 @@ imported/w3c/web-platform-tests/pointerevents [ Pass ]
 imported/w3c/web-platform-tests/speech-api [ Pass ]
 
 http/tests/media/fairplay [ Pass ]
+http/tests/media/fairplay/fps-mse-attach-cdm-after-key-exchange.html [ Skip ] # Requires SampleBufferContentKeySessionSupportEnabled
+
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 media/media-source/remoteplayback-from-source-element.html [ Pass ]

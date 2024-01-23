@@ -12,7 +12,7 @@
 
     async function startTest() {
         let video = document.querySelector('video');
-        let keys = await startEME({video: video, capabilities: [{
+        let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
             initDataTypes: ['sinf'],
             audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
             videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
@@ -29,7 +29,7 @@
         consoleWrite('-');
         consoleWrite('Appending Encrypted Audio Header');
 
-        let {sourceBuffer: sourceBuffer1, session: session1} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, 'audio/mp4', 'content/elementary-stream-audio-header-keyid-1.m4a');
+        let {sourceBuffer: sourceBuffer1, session: session1} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'audio/mp4', 'content/elementary-stream-audio-header-keyid-1.m4a');
 
         consoleWrite('-');
         consoleWrite('Appending Encrypted Video Header');

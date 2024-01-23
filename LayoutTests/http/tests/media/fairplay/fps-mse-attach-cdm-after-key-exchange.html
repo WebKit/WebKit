@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ SampleBufferContentKeySessionSupportEnabled=true ] -->
 <html>
 <head>
-    <title>fps-mse-play-while-not-in-dom</title>
+    <title>fps-mse-attach-cdm-after-key-exchange</title>
     <script src=../../../media-resources/video-test.js></script>
     <script src=support.js></script>
     <script src="eme2016.js"></script>
@@ -11,8 +11,8 @@
     });
 
     async function startTest() {
-        window.video = document.createElement('video');
-        let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
+        window.video = document.querySelector('video');
+        let keys = await startEME({video: video, setMediaKeys: false, capabilities: [{
             initDataTypes: ['sinf'],
             videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
             distinctiveIdentifier: 'not-allowed',
@@ -36,10 +36,17 @@
         await fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-payload.m4v');
 
         run('video.play()');
-        await waitForEventWithTimeout(video, 'playing', 10000, 'Did not play in time');
+        let playingEvent = waitForEventWithTimeout(video, 'playing', 10000, 'Did not play in time');
+
+        await video.setMediaKeys(keys);
+        consoleWrite('PROMISE: setMediaKeys() resolved');
+
+        await playingEvent;
+        consoleWrite('PROMISE: playing event dispatched');
     }
     </script>
 </head>
 <body>
+    <video controls width="480"></video>
 </body>
 </html>
