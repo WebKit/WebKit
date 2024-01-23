@@ -37,6 +37,10 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 static void checkCGRectIsNotEmpty(CGRect rect)
 {
     BOOL isEmpty = CGRectIsEmpty(rect);
@@ -132,11 +136,17 @@ TEST(AutocorrectionTests, DoNotLearnCorrectionsAfterChangingInputTypeFromPasswor
     [webView stringByEvaluatingJavaScript:@"let first = document.querySelector('#first'); first.type = 'text'; first.focus();"];
     TestWebKitAPI::Util::run(&startedInputSession);
 
-    auto learnsCorrections = [&] {
+    auto learnsCorrections = [&]() -> BOOL {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-        if ([webView hasAsyncTextInput])
-            return ![webView extendedTextInputTraits].typingAdaptationDisabled;
+        if ([webView hasAsyncTextInput]) {
+            auto traits = [webView extendedTextInputTraits];
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+            return traits.typingAdaptationEnabled;
+#else
+            return !traits.typingAdaptationDisabled;
 #endif
+        }
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
         return [webView effectiveTextInputTraits].learnsCorrections;
     };
     EXPECT_FALSE(learnsCorrections());

@@ -33,3 +33,11 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebSEDefinitionsAdditions.h>
 #endif
+
+#if !defined(SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE)
+#define WebSEKeyEntry               UIKeyEvent
+#define WebSEKeyPressState          UIKeyEventType
+#define WebSEKeyPressStateKeyDown   UIKeyEventKeyDown
+#define WebSEKeyPressStateKeyUp     UIKeyEventKeyUp
+#define SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE 0
+#endif

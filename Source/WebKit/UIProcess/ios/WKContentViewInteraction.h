@@ -150,6 +150,10 @@ class WebPageProxy;
 #endif
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ServiceExtensionsAdditions.h>
+#endif
+
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
@@ -585,7 +589,7 @@ struct ImageAnalysisContextMenuActionData {
     std::optional<WebKit::RemoveBackgroundData> _removeBackgroundData;
 #endif
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    __weak id<WKSETextInputDelegate> _asyncSystemInputDelegate;
+    __weak id<WKSETextInputDelegate> _asyncInputDelegate;
 #endif
 }
 
@@ -613,7 +617,7 @@ struct ImageAnalysisContextMenuActionData {
 #elif ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate
 #endif
-#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
     , WKSETextInteractionDelegate
 #endif
 >

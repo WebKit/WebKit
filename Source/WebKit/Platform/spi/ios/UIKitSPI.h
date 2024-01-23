@@ -122,11 +122,8 @@
 #import <UIKit/UIAsyncTextInput.h>
 #import <UIKit/UIAsyncTextInputClient.h>
 #import <UIKit/UIAsyncTextInteraction.h>
-#import <UIKit/UIKeyEventContext.h>
-#endif
-
-#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
 #import <UIKit/UIAsyncTextInteractionDelegate.h>
+#import <UIKit/UIKeyEventContext.h>
 #endif
 
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
@@ -697,7 +694,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @interface UIWKTextInteractionAssistant ()
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
