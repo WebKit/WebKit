@@ -165,6 +165,7 @@ public:
         Exclude
     };
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+    std::optional<float> heightForGlyph(Glyph) const;
 
     Path pathForGlyph(Glyph) const;
 
@@ -238,6 +239,7 @@ private:
 
     void platformInit();
     void platformGlyphInit();
+    void platformGlyphVerticalDataInit();
     void platformCharWidthInit();
     void platformDestroy();
 
@@ -408,11 +410,10 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
     if (width != cGlyphSizeUnknown)
         return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
 
-#if ENABLE(OPENTYPE_VERTICAL)
-    if (m_verticalData)
-        width = m_verticalData->advanceHeight(this, glyph);
-    else
-#endif
+    if (m_platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback()) {
+        auto height = heightForGlyph(glyph);
+        width = height.has_value() ? height.value() : platformWidthForGlyph(glyph);
+    } else
         width = platformWidthForGlyph(glyph);
 
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);

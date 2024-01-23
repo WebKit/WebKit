@@ -56,11 +56,13 @@ struct FontSizeAdjust {
             if (fontMetrics.zeroWidth())
                 metricValue = fontMetrics.zeroWidth();
             break;
-        // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
         case FontSizeAdjust::Metric::IcWidth:
-        case FontSizeAdjust::Metric::IcHeight:
             if (fontMetrics.ideogramWidth() > 0)
                 metricValue = fontMetrics.ideogramWidth();
+            break;
+        case FontSizeAdjust::Metric::IcHeight:
+            if (fontMetrics.ideogramHeight() > 0)
+                metricValue = fontMetrics.ideogramHeight();
             break;
         case FontSizeAdjust::Metric::ExHeight:
         default:

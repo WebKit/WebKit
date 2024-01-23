@@ -202,10 +202,10 @@ float adjustedFontSize(float size, const FontSizeAdjust& sizeAdjust, const FontM
         return metrics.hasCapHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.floatCapHeight()) : size;
     case FontSizeAdjust::Metric::ChWidth:
         return metrics.zeroWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.zeroWidth()) : size;
-    // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
     case FontSizeAdjust::Metric::IcWidth:
-    case FontSizeAdjust::Metric::IcHeight:
         return metrics.ideogramWidth() > 0 ? adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramWidth()) : size;
+    case FontSizeAdjust::Metric::IcHeight:
+        return metrics.ideogramHeight() > 0 ? adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramHeight()) : size;
     case FontSizeAdjust::Metric::ExHeight:
     default:
         return metrics.hasXHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.xHeight()) : size;

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>font-size-adjust with the ic-height metric</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org" />
+<style>
+@font-face {
+  font-family: IcTestFullWidth;
+  src: url(../css-values/resources/IcTestFullWidth.woff2);
+}
+div {
+  font-family: IcTestFullWidth;
+  background: green;
+  color: green;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+.valueRef {
+  font-size: 200px;
+}
+.fromFontRef {
+  font-size: 100px;
+}
+</style>
+<div class="valueRef">水</div>
+<div class="fromFontRef">水</div>

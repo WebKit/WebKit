@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
+ * Copyright (C) 2023 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,12 +90,8 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     platformInit();
     platformGlyphInit();
     platformCharWidthInit();
-#if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No) {
-        m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
-        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
-    }
-#endif
+    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No)
+        platformGlyphVerticalDataInit();
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -158,6 +155,19 @@ void Font::platformGlyphInit()
     if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
         auto glyph = page->glyphDataForCharacter(cjkWater).glyph;
         m_fontMetrics.setIdeogramWidth(widthForGlyph(glyph));
+        m_fontMetrics.setIdeogramHeightCallback([this, weakThis = WeakPtr { *this }, glyph] {
+            if (!weakThis)
+                return 0.0f;
+
+            platformGlyphVerticalDataInit();
+
+            auto advanceHeight = heightForGlyph(glyph);
+            // FIXME: Vertical glyph data is often missing in fonts, but a fallback
+            // behavior is not standardized yet. Gecko uses average character width instead,
+            // so we implement it until a standard fallback is defined.
+            // See https://github.com/w3c/csswg-drafts/issues/8792
+            return advanceHeight.has_value() ? advanceHeight.value() : platformWidthForGlyph(glyph);
+        });
     } else
         m_fontMetrics.setIdeogramWidth(platformData().size());
 
@@ -166,6 +176,18 @@ void Font::platformGlyphInit()
     m_fontMetrics.setLineGap(m_fontMetrics.floatLineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.floatLineSpacing() - amountToAdjustLineGap);
     determinePitch();
+}
+
+void Font::platformGlyphVerticalDataInit()
+{
+#if ENABLE(OPENTYPE_VERTICAL)
+    // Initializing vertical data is expensive. We limit it if only necessary.
+    if (m_verticalData)
+        return;
+
+    m_verticalData = FontCache::forCurrentThread().verticalData(m_platformData);
+    m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
+#endif
 }
 
 Font::~Font()
@@ -615,6 +637,16 @@ bool Font::canRenderCombiningCharacterSequence(StringView stringView) const
             return false;
     }
     return true;
+}
+
+std::optional<float> Font::heightForGlyph(Glyph glyph) const
+{
+#if ENABLE(OPENTYPE_VERTICAL)
+    if (m_verticalData)
+        return m_verticalData->advanceHeight(this, glyph);
+#endif
+    UNUSED_PARAM(glyph);
+    return std::nullopt;
 }
 
 Path Font::pathForGlyph(Glyph glyph) const

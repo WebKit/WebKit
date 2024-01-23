@@ -190,7 +190,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
                         textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
 
-                        auto metrics = textBox->style().fontCascade().metricsOfPrimaryFont();
+                        const auto& metrics = textBox->style().fontCascade().metricsOfPrimaryFont();
 
                         if (!isHorizontalWritingMode) {
                             if (isFlippedBlocksWritingMode)
