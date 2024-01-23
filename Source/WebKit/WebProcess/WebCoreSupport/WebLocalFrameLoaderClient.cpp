@@ -1923,8 +1923,10 @@ void WebLocalFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<W
     if (!webPage)
         return;
 
-    for (auto& icon : icons)
-        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
+    auto iconCallbackIDPairs = WTF::map(icons, [&](auto& iconIdentifierPair) -> std::pair<WebCore::LinkIcon, CallbackID> {
+        return { iconIdentifierPair.first, CallbackID::fromInteger(iconIdentifierPair.second) };
+    });
+    webPage->send(Messages::WebPageProxy::GetLoadDecisionsForIcons(WTFMove(iconCallbackIDPairs)));
 }
 
 void WebLocalFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()

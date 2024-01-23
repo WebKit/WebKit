@@ -1812,7 +1812,7 @@ public:
 
     void didRestoreScrollPosition();
 
-    void getLoadDecisionForIcon(const WebCore::LinkIcon&, CallbackID);
+    void getLoadDecisionsForIcons(const Vector<std::pair<WebCore::LinkIcon, CallbackID>>&);
 
     void focusFromServiceWorker(CompletionHandler<void()>&&);
     void setFocus(bool focused);

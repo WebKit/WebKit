@@ -28,6 +28,7 @@
 #include <WebCore/LinkIcon.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/Vector.h>
 
 namespace API {
 
@@ -38,9 +39,10 @@ class IconLoadingClient {
 public:
     virtual ~IconLoadingClient() { }
 
-    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
+    virtual void getLoadDecisionsForIcons(const Vector<std::pair<WebCore::LinkIcon, uint64_t>>& linkIconIdentifierPairs, Function<void(uint64_t, CompletionHandler<void(API::Data*)>&&)>&& callback)
     {
-        completionHandler(nullptr);
+        for (auto& linkIconIdentifierPair : linkIconIdentifierPairs)
+            callback(linkIconIdentifierPair.second, nullptr);
     }
 };
 

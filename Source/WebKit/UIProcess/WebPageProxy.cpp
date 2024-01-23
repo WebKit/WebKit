@@ -11674,9 +11674,12 @@ void WebPageProxy::didRestoreScrollPosition()
     pageClient().didRestoreScrollPosition();
 }
 
-void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, CallbackID loadIdentifier)
+void WebPageProxy::getLoadDecisionsForIcons(const Vector<std::pair<WebCore::LinkIcon, CallbackID>>& linkIcons)
 {
-    m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = Ref { *this }, loadIdentifier] (CompletionHandler<void(API::Data*)>&& callback) {
+    auto iconIdentifierPairs = WTF::map(linkIcons, [&](auto& iconIdentifierPair) -> std::pair<WebCore::LinkIcon, uint64_t> {
+        return { iconIdentifierPair.first, iconIdentifierPair.second.toInteger() };
+    });
+    m_iconLoadingClient->getLoadDecisionsForIcons(WTFMove(iconIdentifierPairs), [this, protectedThis = Ref { *this }] (uint64_t loadIdentifier, CompletionHandler<void(API::Data*)>&& callback) {
         if (!hasRunningProcess()) {
             if (callback)
                 callback(nullptr);
@@ -11684,10 +11687,10 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
         }
 
         if (!callback) {
-            sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(false, loadIdentifier), [](auto) { });
+            sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(false, CallbackID::fromInteger(loadIdentifier)), [](auto) { });
             return;
         }
-        sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::SharedBufferReference& iconData) mutable {
+        sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, CallbackID::fromInteger(loadIdentifier)), [callback = WTFMove(callback)](const IPC::SharedBufferReference& iconData) mutable {
             callback(API::Data::create(iconData.data(), iconData.size()).ptr());
         });
     });

@@ -55,7 +55,7 @@ private:
         ~IconLoadingClient();
 
     private:
-        void getLoadDecisionForIcon(const WebCore::LinkIcon&, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&&) override;
+        void getLoadDecisionsForIcons(const Vector<std::pair<WebCore::LinkIcon, uint64_t>>&, Function<void(uint64_t, CompletionHandler<void(API::Data*)>&&)>&&) override;
 
         IconLoadingDelegate& m_iconLoadingDelegate;
     };
@@ -65,6 +65,7 @@ private:
 
     struct {
         bool webViewShouldLoadIconWithParametersCompletionHandler : 1;
+        bool webViewShouldLoadIconsWithParametersCompletionHandler : 1;
     } m_delegateMethods;
 };
 
