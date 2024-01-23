@@ -7284,6 +7284,14 @@ enum class WebCore::GraphicsContextGLSurfaceBuffer : bool;
     InvalidEnum
 };
 
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
+header: <WebCore/TextRecognitionResult.h>
+[CustomHeader] struct WebCore::TextRecognitionDataDetector {
+    RetainPtr<DDScannerResult> result;
+    Vector<WebCore::FloatQuad> normalizedQuads;
+};
+#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
+
 #if ENABLE(VIDEO)
 
 header: <WebCore/AudioTrackPrivate.h>

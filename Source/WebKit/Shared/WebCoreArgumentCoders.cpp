@@ -907,29 +907,4 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
-#if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
-
-void ArgumentCoder<TextRecognitionDataDetector>::encode(Encoder& encoder, const TextRecognitionDataDetector& info)
-{
-    encodePlatformData(encoder, info);
-    encoder << info.normalizedQuads;
-}
-
-std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDetector>::decode(Decoder& decoder)
-{
-    TextRecognitionDataDetector result;
-    if (!decodePlatformData(decoder, result))
-        return std::nullopt;
-
-    std::optional<Vector<FloatQuad>> normalizedQuads;
-    decoder >> normalizedQuads;
-    if (!normalizedQuads)
-        return std::nullopt;
-
-    result.normalizedQuads = WTFMove(*normalizedQuads);
-    return WTFMove(result);
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
-
 } // namespace IPC
