@@ -404,23 +404,27 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     }
 
     auto& lineBreakingResult = maximumIntrinsicWidthResultForSingleLine->result;
-    auto restoreTrimmedTrailingWhitespaceIfApplicable = [&] {
+    auto restoreTrimmedTrailingWhitespaceIfApplicable = [&]() -> std::optional<bool> {
         // Special 'line-break: after-white-space' behavior where min/max width trims trailing whitespace, while
         // layout should preserve _overflowing_ trailing whitespace.
         if (root().style().lineBreak() != LineBreak::AfterWhiteSpace || !lineBreakingResult.trimmedTrailingWhitespaceWidth)
-            return;
+            return { };
         if (ceiledLayoutUnit(lineBreakingResult.contentGeometry.logicalWidth) + LayoutUnit::epsilon() <= horizontalAvailableSpace)
-            return;
+            return { };
         if (!Line::restoreTrimmedTrailingWhitespace(lineBreakingResult.trimmedTrailingWhitespaceWidth, lineBreakingResult.inlineContent)) {
             ASSERT_NOT_REACHED();
-            inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
-            return;
+            return false;
         }
         lineBreakingResult.contentGeometry.logicalWidth += lineBreakingResult.trimmedTrailingWhitespaceWidth;
         lineBreakingResult.contentGeometry.logicalRightIncludingNegativeMargin += lineBreakingResult.trimmedTrailingWhitespaceWidth;
         lineBreakingResult.trimmedTrailingWhitespaceWidth = { };
+        return true;
     };
-    restoreTrimmedTrailingWhitespaceIfApplicable();
+    auto successfullyTrimmed = restoreTrimmedTrailingWhitespaceIfApplicable();
+    if (successfullyTrimmed && !*successfullyTrimmed) {
+        inlineContentCache.clearMaximumIntrinsicWidthLayoutResult();
+        return false;
+    }
 
     lineBreakingResult.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineBreakingResult.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
