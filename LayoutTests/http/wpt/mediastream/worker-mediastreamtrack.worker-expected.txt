@@ -5,4 +5,5 @@ PASS Writable gets closed when writing something else than a VideoFrame
 PASS Track settings are updated according enqueued video frames
 PASS Track gets muted based on VideoTrackGenerator.muted
 PASS VideoTrackGenerator to MediaStreamTrackProcessor
+PASS kind and content hint tests
 

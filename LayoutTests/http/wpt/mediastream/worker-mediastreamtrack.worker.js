@@ -109,7 +109,6 @@ promise_test(async (t) => {
     assert_equals(capabilities.height.max, 200, "max height 4");
 }, "Track settings are updated according enqueued video frames");
 
-
 promise_test(async (t) => {
     const generator = new VideoTrackGenerator();
     generator.muted = true;
@@ -151,5 +150,22 @@ promise_test(async (t) => {
 
     await endedPromise;
 }, "VideoTrackGenerator to MediaStreamTrackProcessor");
+
+promise_test(async (t) => {
+    const generator = new VideoTrackGenerator();
+    const track = generator.track;
+
+    assert_equals(track.kind, "video");
+
+    for (let hint of ["motion", "detail", "text", ""]) {
+        track.contentHint = hint;
+        assert_equals(track.contentHint, hint);
+    }
+
+    for (let hint of ["speech", "music", "funky"]) {
+        track.contentHint = hint;
+        assert_equals(track.contentHint, "");
+    }
+}, "kind and content hint tests");
 
 done();

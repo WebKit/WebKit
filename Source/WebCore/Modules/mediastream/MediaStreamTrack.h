@@ -230,6 +230,8 @@ private:
     bool m_isInterrupted { false };
     bool m_shouldFireMuteEventImmediately { false };
     bool m_isDetached { false };
+    mutable AtomString m_kind;
+    mutable AtomString m_contentHint;
 };
 
 typedef Vector<Ref<MediaStreamTrack>> MediaStreamTrackVector;

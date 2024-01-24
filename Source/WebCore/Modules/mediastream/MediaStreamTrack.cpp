@@ -120,12 +120,9 @@ MediaStreamTrack::~MediaStreamTrack()
 
 const AtomString& MediaStreamTrack::kind() const
 {
-    static MainThreadNeverDestroyed<const AtomString> audioKind("audio"_s);
-    static MainThreadNeverDestroyed<const AtomString> videoKind("video"_s);
-
-    if (m_private->isAudio())
-        return audioKind;
-    return videoKind;
+    if (m_kind.isNull())
+        m_kind = m_private->isAudio() ? "audio"_s : "video"_s;
+    return m_kind;
 }
 
 const String& MediaStreamTrack::id() const
@@ -138,29 +135,31 @@ const String& MediaStreamTrack::label() const
     return m_private->label();
 }
 
-const AtomString& MediaStreamTrack::contentHint() const
+static AtomString contentHintToAtomString(MediaStreamTrackPrivate::HintValue hint)
 {
-    static MainThreadNeverDestroyed<const AtomString> speechHint("speech"_s);
-    static MainThreadNeverDestroyed<const AtomString> musicHint("music"_s);
-    static MainThreadNeverDestroyed<const AtomString> detailHint("detail"_s);
-    static MainThreadNeverDestroyed<const AtomString> motionHint("motion"_s);
-
-    switch (m_private->contentHint()) {
+    switch (hint) {
     case MediaStreamTrackPrivate::HintValue::Empty:
         return emptyAtom();
     case MediaStreamTrackPrivate::HintValue::Speech:
-        return speechHint;
+        return "speech"_s;
     case MediaStreamTrackPrivate::HintValue::Music:
-        return musicHint;
+        return "music"_s;
     case MediaStreamTrackPrivate::HintValue::Motion:
-        return motionHint;
+        return "motion"_s;
     case MediaStreamTrackPrivate::HintValue::Detail:
-        return detailHint;
+        return "detail"_s;
     case MediaStreamTrackPrivate::HintValue::Text:
-        return textAtom();
+        return "text"_s;
     default:
         return emptyAtom();
     }
+}
+
+const AtomString& MediaStreamTrack::contentHint() const
+{
+    if (m_contentHint.isNull())
+        m_contentHint = contentHintToAtomString(m_private->contentHint());
+    return m_contentHint;
 }
 
 void MediaStreamTrack::setContentHint(const String& hintValue)
@@ -182,11 +181,12 @@ void MediaStreamTrack::setContentHint(const String& hintValue)
             value = MediaStreamTrackPrivate::HintValue::Detail;
         else if (hintValue == "motion"_s)
             value = MediaStreamTrackPrivate::HintValue::Motion;
-        else if (hintValue == textAtom())
+        else if (hintValue == "text"_s)
             value = MediaStreamTrackPrivate::HintValue::Text;
         else
             return;
     }
+    m_contentHint = { };
     m_private->setContentHint(value);
 }
 
