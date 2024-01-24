@@ -794,6 +794,7 @@ void FrameLoader::receivedFirstData()
 
     LinkLoader::loadLinksFromHeader(documentLoader->response().httpHeaderField(HTTPHeaderName::Link), document->url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** FrameLoader[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::receivedFirstData() -> scheduleRefreshIfNeeded()");
     scheduleRefreshIfNeeded(document, documentLoader->response().httpHeaderField(HTTPHeaderName::Refresh), IsMetaRefresh::No);
 }
 
@@ -2957,6 +2958,7 @@ void FrameLoader::closeAndRemoveChild(LocalFrame& child)
 {
     child.tree().detachFromParent();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** FrameLoader[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::closeAndRemoveChild -> setView(0)");
     child.setView(nullptr);
     child.willDetachPage();
     child.detachFromPage();
@@ -3242,9 +3244,10 @@ void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& cont
     String urlString;
     if (parseMetaHTTPEquivRefresh(content, delay, urlString)) {
         auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
-        if (!completedURL.protocolIsJavaScript())
+        if (!completedURL.protocolIsJavaScript()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** FrameLoader[" << this << " pageID=" << pageID() << " frameId=" << frameID() << "]::scheduleRefreshIfNeeded(url=" << completedURL.string() << ") -> scheduleRedirect()");
             protectedFrame()->checkedNavigationScheduler()->scheduleRedirect(document, delay, completedURL, isMetaRefresh);
-        else {
+        } else {
             String message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
             document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         }

@@ -43,6 +43,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TrackingRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -910,7 +911,7 @@ private:
 
     float deviceScaleFactor() const final;
 
-    const Ref<LocalFrame> m_frame;
+    const WTF::TrackingRef<LocalFrame> m_frame;
     LocalFrameViewLayoutContext m_layoutContext;
 
     HashSet<SingleThreadWeakRef<Widget>> m_widgetsInRenderTree;

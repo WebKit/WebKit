@@ -43,6 +43,7 @@
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 #include <memory>
+#include <wtf/TrackingRefPtr.h>
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
@@ -317,7 +318,7 @@ public:
         const EditorInternalCommand* m_command { nullptr };
         EditorCommandSource m_source;
         RefPtr<Document> m_document;
-        RefPtr<LocalFrame> m_frame;
+        WTF::TrackingRefPtr<LocalFrame> m_frame;
     };
     WEBCORE_EXPORT Command command(const String& commandName); // Command source is EditorCommandSource::MenuOrKeyBinding.
     Command command(const String& commandName, EditorCommandSource);

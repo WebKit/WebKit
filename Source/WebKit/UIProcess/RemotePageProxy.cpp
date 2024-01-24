@@ -51,13 +51,16 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
     , m_page(page)
     , m_domain(domain)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::constructor(domain=" << domain.string() << ")");
     if (registrationToTransfer)
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this);
     else
         m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::constructor(domain=" << domain.string() << ") -> m_process[" << m_process.ptr() << "]->addRemotePageProxy()");
     m_process->addRemotePageProxy(*this);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::constructor(domain=" << domain.string() << ") -> page[" << &page << "]->addRemotePageProxy()");
     page.addRemotePageProxy(domain, *this);
 }
 
@@ -100,11 +103,13 @@ void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIden
 
 void RemotePageProxy::addFrame(WebFrameProxy& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::addFrame(webFrameProxyID=" << frame.frameID() << ")");
     m_frames.add(frame);
 }
 
 void RemotePageProxy::removeFrame(WebFrameProxy& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::removeFrame(webFrameProxyID=" << frame.frameID() << ")");
     m_frames.remove(frame);
 }
 
@@ -167,10 +172,12 @@ void RemotePageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, uint64_
 
 void RemotePageProxy::didCommitLoadForFrame(WebCore::FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::didCommitLoadForFrame(frameID=" << frameID << ") -> m_process->didCommitProvisionalLoad()");
     m_process->didCommitProvisionalLoad();
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemotePageProxy[" << this << " webPageProxyID=" << (m_page ? m_page->identifier() : WebPageProxyIdentifier()) << " webPageID=" << m_webPageID << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << " ]::didCommitLoadForFrame(frameID=" << frameID << ") -> frame[" << frame.get() << " frameID=" << frame->frameID() << "]->commitProvisionalFrame()");
     frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
 }
 

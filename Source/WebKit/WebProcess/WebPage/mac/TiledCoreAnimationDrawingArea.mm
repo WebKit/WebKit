@@ -353,6 +353,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
     @autoreleasepool {
         scaleViewToFitDocumentIfNeeded();
 
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** TiledCoreAnimationDrawingArea[" << this << "]::updateRendering() -> webPage[" << webPage.ptr() << "]->updateRendering()");
         webPage->updateRendering();
         webPage->flushPendingThemeColorChange();
         webPage->flushPendingPageExtendedBackgroundColorChange();

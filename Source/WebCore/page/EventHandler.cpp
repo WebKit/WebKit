@@ -382,6 +382,7 @@ EventHandler::EventHandler(LocalFrame& frame)
     , m_textRecognitionHoverTimer(*this, &EventHandler::textRecognitionHoverTimerFired, 250_ms)
 #endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
+    , m_lastMouseMoveEventSubframe(this, "EventHandler::m_lastMouseMoveEventSubframe"_s)
 #if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
 #endif
@@ -2181,7 +2182,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
     RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
  
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
-    if (RefPtr lastMouseMoveEventSubframe = m_lastMouseMoveEventSubframe; lastMouseMoveEventSubframe && lastMouseMoveEventSubframe->tree().isDescendantOf(frame.ptr()) && lastMouseMoveEventSubframe != localSubframe)
+    if (RefPtr lastMouseMoveEventSubframe = m_lastMouseMoveEventSubframe.getRefPtr(); lastMouseMoveEventSubframe && lastMouseMoveEventSubframe->tree().isDescendantOf(frame.ptr()) && lastMouseMoveEventSubframe != localSubframe)
         passMouseMoveEventToSubframe(mouseEvent, *lastMouseMoveEventSubframe);
 
     if (localSubframe) {

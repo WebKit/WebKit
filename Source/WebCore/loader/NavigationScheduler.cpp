@@ -141,8 +141,11 @@ protected:
         Ref protectedFrame { frame };
 
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
+        if (!localFrame) {
+            ALWAYS_LOG_WITH_STREAM(stream << "ScheduledURLNavigation[url=" << m_url.url().string() << "]::didStartTimer(non-local frame=[" << &frame << "pageID=" << frame.pageID() << " frameID=" << frame.frameID() << "])");
             return;
+        }
+        ALWAYS_LOG_WITH_STREAM(stream << "ScheduledURLNavigation[url=" << m_url.url().string() << "]::didStartTimer(localFrame=[" << localFrame.get() << "pageID=" << localFrame->pageID() << " frameID=" << localFrame->frameID() << " view=" << localFrame->view() << (localFrame->isRootFrame() ? " root" : "") << "])");
         localFrame->checkedLoader()->clientRedirected(URL(m_url), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
@@ -472,6 +475,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
 
 void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url, IsMetaRefresh isMetaRefresh)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "NavigationScheduler::scheduleRedirect(url=" << url.string() << ")");
     if (!shouldScheduleNavigation(url))
         return;
     if (delay < 0 || delay > INT_MAX / 1000)

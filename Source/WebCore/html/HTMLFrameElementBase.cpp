@@ -178,6 +178,7 @@ void HTMLFrameElementBase::didAttachRenderers()
 
 void HTMLFrameElementBase::setLocation(const String& str)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "HTMLFrameElementBase[" << this << " frameID=" << (contentFrame() ? contentFrame()->frameID() : FrameIdentifier()) << " frameURL=" << frameURL() << "]::setLocation(" << str << ")");
     if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
         return;
 

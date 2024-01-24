@@ -311,6 +311,7 @@ WebProcess::WebProcess()
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcess[" << this << "]::constructor");
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
 

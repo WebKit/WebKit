@@ -36,6 +36,7 @@
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
 #include "APIFormClient.h"
+#include "APIFrameHandle.h"
 #include "APIFrameInfo.h"
 #include "APIFullscreenClient.h"
 #include "APIGeometry.h"
@@ -689,6 +690,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_browsingContextGroup(m_configuration->browsingContextGroup())
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "constructor:");
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::constructor(processId=" << process.coreProcessIdentifier() << ")");
 
     if (!m_configuration->drawsBackground())
         internals().backgroundColor = Color(Color::transparentBlack);
@@ -4270,6 +4272,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 #if HAVE(APP_SSO)
         if (policyAction == PolicyAction::Ignore && navigation && navigation->navigationID() == previousPendingNavigationID && wasNavigationIntercepted == WasNavigationIntercepted::Yes) {
             WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "receivedNavigationActionPolicyDecision: Failing navigation because decision was intercepted and policy action is Ignore.");
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() -> didFailProvisionalNavigationWithError");
             auto error = WebKit::cancelledError(navigation->currentRequest().url());
             error.setType(WebCore::ResourceError::Type::Cancellation);
             m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation, error, nullptr);
@@ -4279,6 +4282,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     UNUSED_PARAM(wasNavigationIntercepted);
     UNUSED_VARIABLE(previousPendingNavigationID);
 #endif
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() - policyAction!=PolicyAction::Use=" << (policyAction!=PolicyAction::Use) << " || (!(preferences().siteIsolationEnabled()=" << preferences().siteIsolationEnabled() << ") && !(frame.isMainFrame()=" << frame.isMainFrame() << ")) || (!navigation)=" << (!navigation) << " -> do nothing");
 
         return;
     }
@@ -4334,6 +4338,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         loadedWebArchive,
         replacedDataStoreForWebArchiveLoad
     ] (Ref<WebProcessProxy>&& processNavigatingTo, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() (after WebProcessPool.processForNavigation()) continueWithProcessForNavigation[processNavigatingFrom=" << processNavigatingFrom->processID() << "](processNavigatingTo=" << processNavigatingTo->processID() << ", reason=" << reason << ")");
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
             receivedPolicyDecision(policyAction, navigation.ptr(), navigation->protectedWebsitePolicies().get(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTFMove(message), WTFMove(completionHandler));
@@ -4368,12 +4373,14 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() continueWithProcessForNavigation -> continueNavigationInNewProcess");
             continueNavigationInNewProcess(navigation, frame.get(), WTFMove(suspendedPage), WTFMove(processNavigatingTo), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::nullopt, loadedWebArchive, replacedDataStoreForWebArchiveLoad.get());
 
             receivedPolicyDecision(policyAction, navigation.ptr(), nullptr, WTFMove(navigationAction), WillContinueLoadInNewProcess::Yes, std::nullopt, WTFMove(message), WTFMove(completionHandler));
             return;
         }
 
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() continueWithProcessForNavigation -> continue in same process");
         if (loadContinuingInNonInitiatingProcess) {
             // FIXME: Add more parameters as appropriate. <rdar://116200985>
             LoadParameters loadParameters;
@@ -4398,11 +4405,23 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         receivedPolicyDecision(policyAction, navigation.ptr(), navigation->websitePolicies(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, WTFMove(optionalHandle), WTFMove(message), WTFMove(completionHandler));
     };
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedNavigationActionPolicyDecision() -> WebProcessPool.processForNavigation()...");
     process().processPool().processForNavigation(*this, frame, *navigation, processNavigatingFrom, sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(websiteDataStore), WTFMove(continueWithProcessForNavigation));
+}
+
+static constexpr auto PolicyActionString(PolicyAction action) {
+    switch (action) {
+    case PolicyAction::Use: return "Use"_s;
+    case PolicyAction::Download: return "Download"_s;
+    case PolicyAction::Ignore: return "Ignore"_s;
+    case PolicyAction::LoadWillContinueInAnotherProcess: return "LoadWillContinueInAnotherProces"_s;
+    default: return ""_s;
+    }
 }
 
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Ref<API::NavigationAction>&& navigationAction, WillContinueLoadInNewProcess willContinueLoadInNewProcess, std::optional<SandboxExtension::Handle> sandboxExtensionHandle, std::optional<PolicyDecisionConsoleMessage>&& consoleMessage, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::receivedPolicyDecision(action=" << PolicyActionString(action) << ", NavigationAction.sourceFrameID=" << (navigationAction->sourceFrame() ? navigationAction->sourceFrame()->handle()->frameID() : FrameIdentifier()) << " targetFrameID=" << (navigationAction->targetFrame() ? navigationAction->targetFrame()->handle()->frameID() : FrameIdentifier()) << ", willContinueLoadInNewProcess=" << (willContinueLoadInNewProcess == WillContinueLoadInNewProcess::Yes) << ")");
     if (!hasRunningProcess())
         return completionHandler(PolicyDecision { });
 
@@ -4556,12 +4575,14 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
 
         auto webPageID = webPageIDInProcessForDomain(RegistrableDomain(navigation.currentRequest().url()));
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::continueNavigationInNewProcess siteIsol url:" << navigation.currentRequest().url() << " webPageIDInProcessForDomain=" << webPageID);
         frame.prepareForProvisionalNavigationInProcess(newProcess, navigation, [loadParameters = WTFMove(loadParameters), newProcess = newProcess.copyRef(), webPageID, preventProcessShutdownScope = newProcess->shutdownPreventingScope()] () mutable {
             newProcess->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
         });
         return;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::continueNavigationInNewProcess siteIsol url:" << navigation.currentRequest().url() << " -> m_provisionalPage = makeUnique<ProvisionalPageProxy>");
     m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(newProcess), WTFMove(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
 
     // FIXME: This should be a CompletionHandler, but http/tests/inspector/target/provisional-load-cancels-previous-load.html doesn't call it.
@@ -6319,8 +6340,29 @@ void WebPageProxy::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromU
     m_websiteDataStore->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
+static void printFrames(WTF::TextStream& stream, const Vector<FrameTreeNodeData>& frames, int level = 0)
+{
+    if (level == 0)
+        stream << "**GS** getAllFrameTrees: " << frames.size();
+    for (const auto& frame : frames) {
+        stream << "\n";
+        for (int i = 0; i < level ; ++i)
+            stream << "  ";
+
+        stream << "- frameID=" << frame.info.frameID << (frame.info.isMainFrame ? " main" : "") << (frame.info.frameType == FrameType::Remote ? " Remote" : " Local") << " procID=" << frame.info.processID << " '" << frame.info.frameName << "' url=" << frame.info.request.url().string();
+
+        if (!frame.children.isEmpty())
+            printFrames(stream, frame.children, level + 1);
+    }
+}
+
 void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64_t navigationID, const UserData& userData)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didFinishDocumentLoadForFrame(frameId=" << frameID << ", navID=" << navigationID << ") -> getAllFrameTrees...");
+    getAllFrameTrees([](Vector<FrameTreeNodeData>&& roots) {
+        ALWAYS_LOG_WITH_STREAM(printFrames(stream, roots));
+    });
+
     Ref protectedPageClient { pageClient() };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -6359,18 +6401,25 @@ void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, WebC
 
 void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
 {
-    if (!m_preferences->siteIsolationEnabled())
+    if (!m_preferences->siteIsolationEnabled()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::createRemoteSubframesInOtherProcesses(frameId=" << newFrame.frameID() << " pageId=" << (newFrame.page() ? newFrame.page()->webPageID() : PageIdentifier()) << ", " << frameName << ") -> not siteIsol ");
         return;
+    }
 
     RefPtr parent = newFrame.parentFrame();
     if (!parent) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::createRemoteSubframesInOtherProcesses(frameId=" << newFrame.frameID() << " pageId=" << (newFrame.page() ? newFrame.page()->webPageID() : PageIdentifier()) << ", " << frameName << ") -> no parent!? ");
         ASSERT_NOT_REACHED();
         return;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::createRemoteSubframesInOtherProcesses(frameId=" << newFrame.frameID() << " pageId=" << (newFrame.page() ? newFrame.page()->webPageID() : PageIdentifier()) << ", " << frameName << ") -> forEachWebContentProcess: ");
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        if (webProcess.processID() == newFrame.process().processID())
+        if (webProcess.processID() == newFrame.process().processID()){
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::createRemoteSubframesInOtherProcesses(...)    - skip pid " << newFrame.process().processID());
             return;
+        }
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::createRemoteSubframesInOtherProcesses(...)    - pid " << newFrame.process().processID());
         webProcess.send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), frameName), pageID);
     });
 }
@@ -13635,6 +13684,7 @@ void WebPageProxy::useRedirectionForCurrentNavigation(const ResourceResponse& re
 
 void WebPageProxy::didAccessWindowProxyPropertyViaOpenerForFrame(FrameIdentifier frameID, const SecurityOriginData& parentOrigin, WindowProxyProperty property)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPageProxy[" << this << " pageId=" << this->webPageID() << "/proxy=" << identifier() << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didAccessWindowProxyPropertyViaOpenerForFrame(frameID=" << frameID << ")");
     if (!internals().frameLoadStateObserver)
         return;
 

@@ -1899,6 +1899,7 @@ bool Editor::commandIsSupportedFromMenuOrKeyBinding(const String& commandName)
 }
 
 Editor::Command::Command()
+    : m_frame(this, "Editor::Command::m_frame"_s)
 {
 }
 
@@ -1906,7 +1907,7 @@ Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSour
     : m_command(command)
     , m_source(source)
     , m_document(command ? &document : nullptr)
-    , m_frame(command ? document.frame() : nullptr)
+    , m_frame(command ? document.frame() : nullptr, this, "Editor::Command::m_frame"_s)
 {
     ASSERT(command || !m_document);
 }
@@ -1920,7 +1921,7 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
     }
 
     m_document->updateLayoutIgnorePendingStylesheets();
-    if (m_document->frame() != m_frame)
+    if (m_document->frame() != m_frame.get())
         return false;
 
     return m_command->execute(*m_frame, triggeringEvent, m_source, parameter);

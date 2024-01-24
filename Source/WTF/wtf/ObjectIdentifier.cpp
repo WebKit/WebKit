@@ -34,13 +34,13 @@ namespace WTF {
 uint64_t ObjectIdentifierMainThreadAccessTraits::generateIdentifierInternal()
 {
     ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
-    static uint64_t current = 0;
+    static uint64_t current = uint64_t(getpid()) * 1000u;
     return ++current;
 }
 
 uint64_t ObjectIdentifierThreadSafeAccessTraits::generateIdentifierInternal()
 {
-    static std::atomic<uint64_t> current;
+    static std::atomic<uint64_t> current { uint64_t(getpid()) * 10000u };
     return ++current;
 }
 

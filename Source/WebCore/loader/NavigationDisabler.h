@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LocalFrame.h"
+#include <wtf/TrackingRefPtr.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class NavigationDisabler {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     NavigationDisabler(LocalFrame* frame)
-        : m_frame(frame)
+        : m_frame(frame, this, "NavigationDisabler::m_frame"_s)
     {
         if (frame) {
             if (auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
@@ -63,7 +64,7 @@ public:
     }
 
 private:
-    RefPtr<LocalFrame> m_frame;
+    WTF::TrackingRefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

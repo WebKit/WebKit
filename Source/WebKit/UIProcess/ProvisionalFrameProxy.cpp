@@ -42,6 +42,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, WebProcessPro
     , m_webPageID(frame.page()->identifier())
     , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalFrameProxy[" << this << " frameID=" << m_frame->frameID() << " remotePageProxyID=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " layerHostingContextId=" << m_layerHostingContextIdentifier << " core/ProcID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::constructor");
     ASSERT(!m_remotePageProxy || m_remotePageProxy->process().coreProcessIdentifier() == process.coreProcessIdentifier());
     m_process->markProcessAsRecentlyUsed();
 }
@@ -50,6 +51,7 @@ ProvisionalFrameProxy::~ProvisionalFrameProxy() = default;
 
 RefPtr<RemotePageProxy> ProvisionalFrameProxy::takeRemotePageProxy()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** ProvisionalFrameProxy[" << this << " frameID=" << m_frame->frameID() << " remotePageProxyID=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " layerHostingContextId=" << m_layerHostingContextIdentifier << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::takeRemotePageProxy()");
     return std::exchange(m_remotePageProxy, nullptr);
 }
 

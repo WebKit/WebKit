@@ -90,6 +90,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, Frame
     , m_process(process)
     , m_frameID(frameID)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " frameID=" << m_frameID << " pageID=" << page.webPageID() << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::constructor");
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
     WebProcessPool::statistics().wkFrameCount++;
@@ -239,22 +240,26 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const URL& url)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didStartProvisionalLoad " << url);
     m_frameLoadState.didStartProvisionalLoad(url);
 }
 
 void WebFrameProxy::didExplicitOpen(URL&& url, String&& mimeType)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didExplicitOpen " << url);
     m_MIMEType = WTFMove(mimeType);
     m_frameLoadState.didExplicitOpen(WTFMove(url));
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didReceiveServerRedirectForProvisionalLoad " << url);
     m_frameLoadState.didReceiveServerRedirectForProvisionalLoad(url);
 }
 
 void WebFrameProxy::didFailProvisionalLoad()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didFailProvisionalLoad ");
     m_frameLoadState.didFailProvisionalLoad();
 
     if (m_navigateCallback)
@@ -263,6 +268,7 @@ void WebFrameProxy::didFailProvisionalLoad()
 
 void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didCommitLoad ");
     m_frameLoadState.didCommitLoad();
 
     m_title = String();
@@ -273,6 +279,7 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::Cert
 
 void WebFrameProxy::didFinishLoad()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didFinishLoad ");
     m_frameLoadState.didFinishLoad();
 
     if (m_navigateCallback)
@@ -281,6 +288,7 @@ void WebFrameProxy::didFinishLoad()
 
 void WebFrameProxy::didFailLoad()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didFailLoad ");
     m_frameLoadState.didFailLoad();
 
     if (m_navigateCallback)
@@ -289,11 +297,13 @@ void WebFrameProxy::didFailLoad()
 
 void WebFrameProxy::didSameDocumentNavigation(const URL& url)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didSameDocumentNavigation " << url);
     m_frameLoadState.didSameDocumentNotification(url);
 }
 
 void WebFrameProxy::didChangeTitle(const String& title)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::didChangeTitle " << title);
     m_title = title;
 }
 
@@ -435,8 +445,10 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         LocalFrameCreationParameters localFrameCreationParameters {
             m_provisionalFrame->layerHostingContextIdentifier()
         };
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::prepareForProvisionalNavigationInProcess(core/procID=" << process.coreProcessIdentifier() << "/" << process.processID() << ", navigation=" << navigation.currentRequest().url() << ") - same procID -> send TransitionFrameToLocal");
         process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageIDInProcessForDomain(navigationDomain));
-    }
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::prepareForProvisionalNavigationInProcess(core/procID=" << process.coreProcessIdentifier() << "/" << process.processID() << ", navigation=" << navigation.currentRequest().url() << ") - different procID -> NO TransitionFrameToLocal");
 
     if (completionHandler)
         completionHandler();
@@ -446,6 +458,7 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::commitProvisionalFrame(frameID=" << frameID << ") - m_provisionalFrame=" << m_provisionalFrame.get() << " -> send WebPage::DidCommitLoadInAnotherProcess to core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << ", then switch to core/procID=" << m_provisionalFrame->process().coreProcessIdentifier() << "/" << m_provisionalFrame->process().processID());
         m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_process = m_provisionalFrame->process();
         if (m_remotePageProxy)
@@ -455,6 +468,7 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
             m_remotePageProxy->addFrame(*this);
         m_provisionalFrame = nullptr;
     }
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrameProxy[" << this << " id=" << m_frameID << " pageId=" << (m_page ? m_page->webPageID() : WebCore::PageIdentifier()) << "/rem=" << (m_remotePageProxy ? m_remotePageProxy->pageID() : WebCore::PageIdentifier()) << " core/procID=" << m_process->coreProcessIdentifier() << "/" << m_process->processID() << "]::commitProvisionalFrame(frameID=" << frameID << ") -> m_page[" << m_page.get() << "]->didCommitLoadForFrame(" << frameID << ")");
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 

@@ -161,6 +161,7 @@ GPUProcessProxy::GPUProcessProxy()
     , m_useMockCaptureDevices(MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
 #endif
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** GPUProcessProxy[" << this << " core/ProcID=" << coreProcessIdentifier() << "/" << processID() << "]::constructor");
     connect();
 
     GPUProcessCreationParameters parameters;

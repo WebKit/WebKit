@@ -84,6 +84,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     setAuxiliaryProcessType(parameters.processType);
 
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** AuxiliaryProcess[" << this << "]::initialize(uiProcessName=" << parameters.uiProcessName << ", clientIdentifier=" << parameters.clientIdentifier << ", clientBundleIdentifier=" << parameters.clientBundleIdentifier << ", extraInitializationData=" << parameters.extraInitializationData << ") -> Process::setIdentifier(" << *parameters.processIdentifier << ")");
     Process::setIdentifier(*parameters.processIdentifier);
 
     platformInitialize(parameters);

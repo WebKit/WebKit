@@ -33,8 +33,91 @@
 #include "RenderElement.h"
 #include "RenderWidget.h"
 #include "WindowProxy.h"
+#include <wtf/StringPrintStream.h>
 
 namespace WebCore {
+
+#if TRACE_FRAME_REFS
+void Frame::addStack(Op op) const
+{
+    stacks.append(OpAndStack{ op, StackTrace::captureStackTrace(16) });
+}
+
+static ASCIILiteral OpString(Frame::Op op) {
+    switch (op) {
+    case Frame::Op::ref: return "ref"_s;
+    case Frame::Op::refAllowingPartiallyDestroyed: return "rpd"_s;
+    case Frame::Op::deref: return "deref"_s;
+    case Frame::Op::derefAllowingPartiallyDestroyed: return "dpd"_s;
+    default: return "?"_s;
+    }
+}
+
+static int OpDiff(Frame::Op op) {
+    switch (op) {
+    case Frame::Op::ref:
+    case Frame::Op::refAllowingPartiallyDestroyed: return 1;
+    case Frame::Op::deref:
+    case Frame::Op::derefAllowingPartiallyDestroyed: return -1;
+    default: return 0;
+    }
+}
+
+void Frame::logStacks() const
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Frame[" << this << "] " << stacks.size() << " ref/derefs:");
+    int i = 0;
+    int refs = 1;
+    for (const auto& stack : stacks) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** " << ++i << "- " << OpString(stack.op) << " refc=" << (refs += OpDiff(stack.op)) << ":\n" << stack.stack->toString());
+    }
+}
+
+void Frame::ref(const void* handle, const char* name) const
+{
+    RefCountedBase::ref();
+    if (is<LocalFrame>(*this)) {
+        if (handle)
+            handles.append({ handle, name });
+        ALWAYS_LOG_WITH_STREAM(stream << "LocalFrame[" << this << "]::Frame::ref() -> refCount=" << refCount() << " handles=" << handles);
+        addStack(Op::ref);
+    }
+}
+
+void Frame::refAllowingPartiallyDestroyed(const void* handle, const char* name) const
+{
+    RefCountedBase::refAllowingPartiallyDestroyed();
+    if (is<LocalFrame>(*this)) {
+        if (handle)
+            handles.append({ handle, name });
+        ALWAYS_LOG_WITH_STREAM(stream << "LocalFrame[" << this << "]::Frame::refAllowingPartiallyDestroyed() -> refCount=" << refCount() << " handles=" << handles);
+        addStack(Op::refAllowingPartiallyDestroyed);
+    }
+}
+
+void Frame::deref(const void* handle, const char* name) const
+{
+    if (is<LocalFrame>(*this)) {
+        if (handle)
+            handles.removeLast(FrameHandleAndName{ handle, name });
+        ALWAYS_LOG_WITH_STREAM(stream << "LocalFrame[" << this << "]::Frame::deref() -> refCount=" << refCount() - 1 << " handles=" << handles);
+        addStack(Op::deref);
+    }
+    RefCountedBase::deref();
+}
+
+void Frame::derefAllowingPartiallyDestroyed(const void* handle, const char* name) const
+{
+    if (is<LocalFrame>(*this)) {
+        if (handle)
+            handles.removeLast(FrameHandleAndName{ handle, name });
+        ALWAYS_LOG_WITH_STREAM(stream << "LocalFrame[" << this << "]::Frame::derefAllowingPartiallyDestroyed() -> refCount=" << refCount() - 1 << " handles=" << handles);
+        addStack(Op::derefAllowingPartiallyDestroyed);
+    }
+    RefCountedBase::derefAllowingPartiallyDestroyed();
+}
+
+#endif
 
 Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : m_page(page)

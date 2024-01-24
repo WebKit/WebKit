@@ -72,6 +72,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_scheduleRenderingTimer(*this, &RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::constructor");
     if (auto viewExposedRect = parameters.viewExposedRect)
         setViewExposedRect(viewExposedRect);
 }
@@ -134,6 +135,7 @@ void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(WebCore::FrameId
 
 void RemoteLayerTreeDrawingArea::addRootFrame(WebCore::FrameIdentifier frameID)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::addRootFrame(frameID=" << frameID << ")");
     auto layer = GraphicsLayer::create(graphicsLayerFactory(), *this);
     layer->setName(makeString("drawing area root "_s, frameID));
     m_rootLayers.append(RootLayerInfo {
@@ -146,6 +148,7 @@ void RemoteLayerTreeDrawingArea::addRootFrame(WebCore::FrameIdentifier frameID)
 
 void RemoteLayerTreeDrawingArea::removeRootFrame(WebCore::FrameIdentifier frameID)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::removeRootFrame(frameID=" << frameID << ")");
     auto count = m_rootLayers.removeAllMatching([frameID] (const auto& layer) {
         return layer.frameID == frameID;
     });
@@ -154,6 +157,7 @@ void RemoteLayerTreeDrawingArea::removeRootFrame(WebCore::FrameIdentifier frameI
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, GraphicsLayer* rootGraphicsLayer)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::setRootCompositingLayer(frame[" << &frame << "]ID=" << frame.frameID() << ") -> updateRootLayers, triggerRenderingUpdate");
     for (auto& rootLayer : m_rootLayers) {
         if (rootLayer.frameID == frame.frameID())
             rootLayer.contentLayer = rootGraphicsLayer;
@@ -183,6 +187,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
         size = contentSize;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::updateGeometry() -> triggerRenderingUpdate");
     triggerRenderingUpdate();
     completionHandler();
 }
@@ -237,6 +242,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::setLayerTreeStateIsFrozen() -> startRenderingUpdateTimer");
         startRenderingUpdateTimer();
     }
 }
@@ -286,6 +292,7 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
         return;
 
     frameView->setExposedContentRect(exposedContentRect);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::setExposedContentRect() -> triggerRenderingUpdate");
     triggerRenderingUpdate();
 }
 
@@ -293,6 +300,7 @@ void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
     if (m_updateRenderingTimer.isActive())
         return;
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::startRenderingUpdateTimer() -> startOneShot");
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
@@ -303,6 +311,7 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
         return;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::triggerRenderingUpdate() -> startRenderingUpdateTimer");
     startRenderingUpdateTimer();
 }
 
@@ -313,6 +322,7 @@ void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageD
 
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::updateRendering() ");
     if (m_isRenderingSuspended) {
         m_hasDeferredRenderingUpdate = true;
         return;
@@ -334,6 +344,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     scaleViewToFitDocumentIfNeeded();
 
     SetForScope change(m_inUpdateRendering, true);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::updateRendering() -> webPage[" << webPage.ptr() << "]->updateRendering()");
     webPage->updateRendering();
     webPage->flushPendingIntrinsicContentSizeUpdate();
 
@@ -348,6 +359,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (m_remoteLayerTreeContext->nextRenderingUpdateRequiresSynchronousImageDecoding())
         flags.add(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::updateRendering() -> webPage->finalizeRenderingUpdate");
     webPage->finalizeRenderingUpdate(flags);
 
     willStartRenderingUpdateDisplay();
@@ -447,6 +459,7 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     }
 
     if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::displayDidRefresh() -> triggerRenderingUpdate");
         triggerRenderingUpdate();
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
         m_isScheduled = false;
@@ -513,6 +526,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
         m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
         m_activityStateChangeID = activityStateChangeID;
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::activityStateDidChange() -> startRenderingUpdateTimer");
         startRenderingUpdateTimer();
     }
 
@@ -528,6 +542,7 @@ void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID 
     m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
 
     m_pendingCallbackIDs.append(callbackID);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::dispatchAfterEnsuringDrawing() -> triggerRenderingUpdate");
     triggerRenderingUpdate();
 }
 
@@ -542,6 +557,7 @@ void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDraw
 
 void RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << this << " pageID=" << m_webPage->identifier() << "/proxy=" << m_webPage->webPageProxyIdentifier() << "]::scheduleRenderingUpdateTimerFired() -> triggerRenderingUpdate");
     triggerRenderingUpdate();
     m_isScheduled = false;
 }
@@ -562,6 +578,7 @@ bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
         callOnMainRunLoop([self = WeakPtr { this }] () {
             if (self) {
                 self->m_isScheduled = false;
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** RemoteLayerTreeDrawingArea[" << self.get() << " pageID=" << self->m_webPage->webPageProxyIdentifier() << "]::scheduleRenderingUpdate() -> triggerRenderingUpdate");
                 self->triggerRenderingUpdate();
             }
         });

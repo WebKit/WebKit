@@ -516,8 +516,14 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
     , m_viewSize(parameters.viewSize)
     , m_layerHostingMode(parameters.layerHostingMode)
-    , m_drawingArea(DrawingArea::create(*this, parameters))
-    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessPageParameters ? parameters.subframeProcessPageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
+    , m_drawingArea([&]() {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << pageID << "/proxy=" << parameters.webPageProxyIdentifier << "]::constructor -> DrawingArea::create()");
+        return DrawingArea::create(*this, parameters);
+    }())
+    , m_mainFrame([&]() {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << pageID << "/proxy=" << parameters.webPageProxyIdentifier << "]::constructor -> WebFrame::create()");
+        return WebFrame::create(*this, parameters.subframeProcessPageParameters ? parameters.subframeProcessPageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate()));
+    }())
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
@@ -1058,6 +1064,7 @@ void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& pa
 
 void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters& treeCreationParameters)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::constructFrameTree(parentFrameID=" << parent.frameID() << ") -> WebFrame::createRemoteSubframe(parentFrameID=" << parent.frameID() << ")");
     auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.frameName);
     for (auto& parameters : treeCreationParameters.children)
         constructFrameTree(frame, parameters);
@@ -1065,11 +1072,13 @@ void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParame
 
 void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::createRemoteSubframe(parentFrameID=" << parentID << ", newChildFrameID=" << newChildID << " '" << newChildFrameName << "')");
     RefPtr parentFrame = WebProcess::singleton().webFrame(parentID);
     if (!parentFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::createRemoteSubframe(parentFrameID=" << parentID << ", newChildFrameID=" << newChildID << " '" << newChildFrameName << "') -> WebFrame::createRemoteSubframe()");
     WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, newChildFrameName);
 }
 
@@ -1091,8 +1100,11 @@ void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& comple
 void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
+    if (!frame) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::didCommitLoadInAnotherProcess(frameID=" << frameID << ") - no such frame");
         return;
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::didCommitLoadInAnotherProcess(frameID=" << frameID << ") -> frame[" << frame.get() << "]->didCommitLoadInAnotherProcess()");
     ASSERT(frame->page() == this);
     frame->didCommitLoadInAnotherProcess(layerHostingContextIdentifier);
 }
@@ -1756,11 +1768,13 @@ void WebPage::clearMainFrameName()
 
 void WebPage::enterAcceleratedCompositingMode(WebCore::Frame& frame, GraphicsLayer* layer)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::enterAcceleratedCompositingMode(frame[" << &frame << "]Id=" << frame.frameID() << ") -> m_drawingArea[" << m_drawingArea.get() << "]->setRootCompositingLayer()");
     m_drawingArea->setRootCompositingLayer(frame, layer);
 }
 
 void WebPage::exitAcceleratedCompositingMode(WebCore::Frame& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::exitAcceleratedCompositingMode(frame[" << &frame << "]Id=" << frame.frameID() << ") -> m_drawingArea[" << m_drawingArea.get() << "]->setRootCompositingLayer()");
     m_drawingArea->setRootCompositingLayer(frame, nullptr);
 }
 
@@ -1959,6 +1973,7 @@ void WebPage::transitionFrameToLocal(LocalFrameCreationParameters&& creationPara
         return;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::transitionFrameToLocal(frameId=" << frameIdentifier << ") -> frame->transitionToLocal()");
     frame->transitionToLocal(creationParameters.layerHostingContextIdentifier);
 }
 
@@ -3288,6 +3303,7 @@ void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize
 
     if (m_drawingArea) {
         m_drawingArea->setNeedsDisplay();
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::updateFrameSize() -> DrawingArea[" << m_drawingArea.get() << "]->triggerRenderingUpdate()");
         m_drawingArea->triggerRenderingUpdate();
     }
 }
@@ -4881,6 +4897,7 @@ void WebPage::layoutIfNeeded()
     
 void WebPage::updateRendering()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebPage[" << this << " pageID=" << identifier() << "/proxy=" << webPageProxyIdentifier() << "]::updateRendering() -> Page[" << m_page.get() << "]->updateRendering()");
     m_page->updateRendering();
 
 #if PLATFORM(IOS_FAMILY)

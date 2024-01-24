@@ -68,7 +68,11 @@ void LogChannels::initializeLogChannelsIfNecessary(std::optional<String> logChan
 
     m_logChannelsNeedInitialization = false;
 
+#if 1
+    String enabledChannelsString = "EventLoop,Loading,Network,Process,ProcessSwapping,ViewState"_s;
+#else
     String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
+#endif
     WTFInitializeLogChannelStatesFromString(m_logChannels.data(), m_logChannels.size(), enabledChannelsString.utf8().data());
 }
 

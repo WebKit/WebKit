@@ -39,6 +39,7 @@ namespace WebCore {
 DOMWindowExtension::DOMWindowExtension(LocalDOMWindow* window, DOMWrapperWorld& world)
     : m_window(window)
     , m_world(world)
+    , m_disconnectedFrame(this, "DOMWindowExtension::m_disconnectedFrame"_s)
     , m_wasDetached(false)
 {
     ASSERT(this->frame());
@@ -77,7 +78,7 @@ void DOMWindowExtension::suspendForBackForwardCache()
 void DOMWindowExtension::resumeFromBackForwardCache()
 {
     ASSERT(frame());
-    ASSERT(m_disconnectedFrame == frame());
+    ASSERT(m_disconnectedFrame.get() == frame());
     ASSERT(frame()->document()->domWindow() == m_window);
 
     m_disconnectedFrame = nullptr;
@@ -93,7 +94,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
     // while there is still work to do.
     Ref protectedThis { *this };
 
-    if (RefPtr disconnectedFrame = m_disconnectedFrame)
+    if (RefPtr disconnectedFrame = m_disconnectedFrame.getRefPtr())
         disconnectedFrame->checkedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = nullptr;
 

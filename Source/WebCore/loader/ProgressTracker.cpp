@@ -78,6 +78,7 @@ public:
 ProgressTracker::ProgressTracker(Page& page, UniqueRef<ProgressTrackerClient>&& client)
     : m_page(page)
     , m_client(WTFMove(client))
+    , m_originatingProgressFrame(this, "ProgressTracker::m_originatingProgressFrame"_s)
     , m_progressHeartbeatTimer(*this, &ProgressTracker::progressHeartbeatTimerFired)
 {
 }
@@ -115,13 +116,13 @@ void ProgressTracker::progressStarted(LocalFrame& frame)
 
     m_client->willChangeEstimatedProgress();
 
-    if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame) {
+    if (!m_numProgressTrackedFrames || m_originatingProgressFrame.get() == &frame) {
         reset();
         m_progressValue = initialProgressValue;
         m_originatingProgressFrame = &frame;
 
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
-        RefPtr originatingProgressFrame = m_originatingProgressFrame;
+        RefPtr originatingProgressFrame = m_originatingProgressFrame.getRefPtr();
         originatingProgressFrame->checkedLoader()->loadProgressingStatusChanged();
 
         bool isMainFrame = !originatingProgressFrame->tree().parent();
@@ -158,7 +159,7 @@ void ProgressTracker::progressCompleted(LocalFrame& frame)
     m_client->willChangeEstimatedProgress();
 
     m_numProgressTrackedFrames--;
-    if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame)
+    if (!m_numProgressTrackedFrames || m_originatingProgressFrame.get() == &frame)
         finalProgressComplete();
 
     m_client->didChangeEstimatedProgress();
@@ -169,7 +170,7 @@ void ProgressTracker::finalProgressComplete()
     LOG(Progress, "Final progress complete (%p)", this);
     PROGRESS_TRACKER_RELEASE_LOG("finalProgressComplete: value %f, tracked frames %d, originating frame %p, isMainLoad %d, isMainLoadProgressing %d", m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad, isMainLoadProgressing());
 
-    RefPtr frame = std::exchange(m_originatingProgressFrame, nullptr);
+    RefPtr frame = m_originatingProgressFrame.extractRefPtr();
 
     // Before resetting progress value be sure to send client a least one notification
     // with final progress value.
@@ -222,7 +223,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
     if (!item)
         return;
 
-    RefPtr frame { m_originatingProgressFrame };
+    RefPtr frame { m_originatingProgressFrame.getRefPtr() };
 
     m_client->willChangeEstimatedProgress();
 
@@ -311,7 +312,7 @@ void ProgressTracker::progressHeartbeatTimerFired()
 
     m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
 
-    if (RefPtr originatingProgressFrame = m_originatingProgressFrame)
+    if (RefPtr originatingProgressFrame = m_originatingProgressFrame.getRefPtr())
         originatingProgressFrame->checkedLoader()->loadProgressingStatusChanged();
 
     if (m_progressValue >= finalProgressValue)

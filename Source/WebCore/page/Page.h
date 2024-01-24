@@ -57,6 +57,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TrackingRef.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -1178,7 +1179,7 @@ private:
     UniqueRef<BackForwardController> m_backForwardController;
     HashSet<WeakRef<LocalFrame>> m_rootFrames;
     UniqueRef<EditorClient> m_editorClient;
-    Ref<Frame> m_mainFrame;
+    WTF::TrackingRef<Frame, WTF::DowncastTrackingTester<Frame, LocalFrame>> m_mainFrame;
     URL m_mainFrameURL;
 
     RefPtr<PluginData> m_pluginData;
@@ -1503,5 +1504,6 @@ inline RefPtr<Page> Document::protectedPage() const
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);
+WTF::TextStream& operator<<(WTF::TextStream&, FinalizeRenderingUpdateFlags);
 
 } // namespace WebCore

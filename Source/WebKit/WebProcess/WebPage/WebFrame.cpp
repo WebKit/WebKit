@@ -123,6 +123,7 @@ static uint64_t generateListenerID()
 // FIXME: Remove receivedMainFrameIdentifierFromUIProcess in favor of a more correct way of sending frame tree deltas to each process. <rdar://116201135>
 void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << "]::initWithCoreMainFrame(pageID=" << page.identifier() << ", coreframeID=" << coreFrame.frameID() << (receivedMainFrameIdentifierFromUIProcess ? ", receivedMainFrameIdentifierFromUIProcess)" : ") -> page.send WebPageProxy::DidCreateMainFrame"));
     if (!receivedMainFrameIdentifierFromUIProcess)
         page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
@@ -135,11 +136,15 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool recei
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frameID = WebCore::FrameIdentifier::generate();
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", name=" << frameName << ") -> WebFrame::create(frameId=" << frameID << ")");
     auto frame = create(page, frameID);
     ASSERT(page.corePage());
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", name=" << frameName << ") -> WebFrame[" << frame.ptr() << " pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << " frameID=" << frameID << "]");
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", name=" << frameName << ") -> coreFream = LocalFrame::createSubframe(corePageID=" << page.corePage()->identifier() << ")");
     auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebLocalFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", name=" << frameName << ") -> page.send WebPageProxy::DidCreateSubframe");
     page.send(Messages::WebPageProxy::DidCreateSubframe(parent.frameID(), coreFrame->frameID(), frameName));
 
     coreFrame->tree().setSpecifiedName(frameName);
@@ -155,9 +160,11 @@ Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, We
     auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreFrame());
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", name=" << frameName << ") -> RemoteFrame::createSubframe(corePageID=" << page.corePage()->identifier() << " frameId=" << frameID << ")");
     auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame());
     frame->m_coreFrame = coreFrame.get();
     coreFrame->tree().setSpecifiedName(AtomString(frameName));
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame::createRemoteSubframe(pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << ", parentFrameID=" << parent.frameID() << ", frameID=" << frameID << ", name=" << frameName << ") -> WebFrame[" << frame.ptr() << " pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << " frameID=" << frameID << " coreFrame=RemoteFrame[" << coreFrame.ptr() << " frameID=" << coreFrame->frameID() << "]]");
     return frame;
 }
 
@@ -168,8 +175,15 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
 #ifndef NDEBUG
     webFrameCounter.increment();
 #endif
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << page.identifier() << "/proxy=" << page.webPageProxyIdentifier() << "]::constructor(frameID=" << frameID << ")");
     ASSERT(!WebProcess::singleton().webFrame(m_frameID));
     WebProcess::singleton().addWebFrame(m_frameID, this);
+}
+
+void WebFrame::setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier)
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=RemoteFrame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::setLayerHostingContextIdentifier(" << identifier << ")");
+    m_layerHostingContextIdentifier = identifier;
 }
 
 WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
@@ -339,6 +353,8 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
 
 void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - m_coreFrame.refCount=" << m_coreFrame->refCount());
+
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame) {
         ASSERT_NOT_REACHED();
@@ -375,30 +391,65 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     auto invalidator = frameLoaderClient->takeFrameInvalidator();
     auto* ownerRenderer = localFrame->ownerRenderer();
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") -> coreFrame[" << localFrame.get() << "]->setView(0)");
     localFrame->setView(nullptr);
 
-    if (parent)
+    if (parent) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") -> parent[" << parent.get() << "]->tree()[" << &parent->tree() << "].removeChild(coreFrame=" << coreFrame.get() << ")");
         parent->tree().removeChild(*coreFrame);
-    if (ownerElement)
+    }
+    if (ownerElement) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - ownerElement[" << ownerElement.get() << "]!=0 -> coreFrame[" << coreFrame.get() << "]->disconnectOwnerElement()");
         coreFrame->disconnectOwnerElement();
+    }
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
+    if (ownerElement)
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - ownerElement[" << ownerElement.get() << "]!=0 -> newFrame = RemoteFrame::createSubframeWithContentsInAnotherProcess");
+    else if (parent)
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - !ownerElement && parent[" << parent.get() << "] -> newFrame = RemoteFrame::createSubframe");
+    else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - !ownerElement && !parent -> newFrame = RemoteFrame::createMainFrame");
     auto newFrame = ownerElement
         ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
         : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, localFrame->loader().opener());
-    if (!parent)
+    if (!parent) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - !parent -> corePage[" << corePage << "]->setMainFrame(newFrame[" << newFrame.ptr() << "])");
         corePage->setMainFrame(newFrame.copyRef());
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") -> newFrame[" << newFrame.ptr() << "]->takeWindowProxyFrom(localFrame[" << localFrame.get() << "])");
     newFrame->takeWindowProxyFrom(*localFrame);
     newFrame->tree().setSpecifiedName(localFrame->tree().specifiedName());
-    if (ownerRenderer)
+    if (ownerRenderer) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - ownerRenderer -> ownerRenderer[" << ownerRenderer << "]->setWidget(newFrame[" << newFrame.ptr() << "]->view()[RemoteFrameView " << newFrame->view() << "])");
         ownerRenderer->setWidget(newFrame->view());
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") -> m_coreFrame = newFrame[" << newFrame.ptr() << "] created above");
     m_coreFrame = newFrame.get();
 
     if (corePage->focusController().focusedFrame() == localFrame.get())
         corePage->focusController().setFocusedFrame(newFrame.ptr(), FocusController::BroadcastFocusedFrame::No);
 
-    if (ownerElement)
+    if (ownerElement) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - ownerElement -> ownerElement[" << ownerElement.get() << "]->scheduleInvalidateStyleAndLayerComposition()");
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+    }
+
+    // // **GS** added fix!
+    // if (localFrame->isRootFrame()) {
+    //     ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") -> corePage->removeRootFrame(localFrame[" << localFrame.get() << "])");
+    //     corePage->removeRootFrame(*localFrame);
+    // }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << " frameID=" << m_frameID << " coreFrame=Frame[" << m_coreFrame.get() << " frameID=" << m_coreFrame->frameID() << "]]::didCommitLoadInAnotherProcess(layerHostingContextId=" << layerHostingContextIdentifier << ") - end of function, will drop RefPtr coreFrame[" << coreFrame.get() << "]==localFrame[" << localFrame.get() << "] refCount=" << localFrame->refCount());
+    // if (localFrame->refCount() > 2)
+    //     localFrame->m_crashOnDestruction = true;
+
+#if TRACE_FRAME_REFS
+    if (localFrame->refCount() > 2)
+        localFrame->logStacks();
+#endif
+    localFrame->dumpRefOperationRecords("**GS** localFrame->dumpRefOperationRecords"_s, "**GS**"_s);
 }
 
 void WebFrame::removeFromTree()
@@ -448,6 +499,7 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
 
     auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebFrame[" << this << " pageID=" << m_page->identifier() << "/proxy=" << m_page->webPageProxyIdentifier() << "]::transitionToLocal(layerHostingContextIdentifier=" << layerHostingContextIdentifier << ") - corePage=" << corePage->identifier() << " remoteFrameID=" << remoteFrame->frameID() << " -> " << (parent ? "(parent) LocalFrame::createSubframeHostedInAnotherProcess()" : "(no parent) LocalFrame::createMainFrame"));
     auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteFrame->opener());
     m_coreFrame = localFrame.ptr();
     remoteFrame->setView(nullptr);

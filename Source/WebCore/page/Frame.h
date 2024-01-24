@@ -30,9 +30,25 @@
 #include "PageIdentifier.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
+#include <wtf/StackTrace.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TrackableRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
+
+#define TRACE_FRAME_REFS 0
+
+#if TRACE_FRAME_REFS
+namespace WebCore {
+struct FrameHandleAndName { const void* handle; const char* name; };
+}
+
+inline TextStream& operator<<(WTF::TextStream& stream, const WebCore::FrameHandleAndName& handleAndName)
+{
+    stream << handleAndName.handle << "(" << handleAndName.name << ")";
+    return stream;
+}
+#endif
 
 namespace WebCore {
 
@@ -48,8 +64,38 @@ class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
-class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame> {
+class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame>, public WTF::TrackableRefCounted<Frame> {
 public:
+    using RefCountedBase = ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>;
+#if TRACE_FRAME_REFS
+    struct FrameHandleAndName {
+        const void* handle;
+        const char* name;
+        friend constexpr bool operator==(const FrameHandleAndName& a, const FrameHandleAndName& b)
+        {
+            return a.handle == b.handle && a.name == b.name;
+        }
+    };
+    friend TextStream& operator<<(WTF::TextStream& stream, const FrameHandleAndName& handleAndName)
+    {
+        stream << handleAndName.handle << "(" << handleAndName.name << ")";
+        return stream;
+    }
+    mutable Vector<FrameHandleAndName> handles;
+    enum class Op { ref, refAllowingPartiallyDestroyed, deref, derefAllowingPartiallyDestroyed};
+    struct OpAndStack {
+        Op op;
+        std::unique_ptr<StackTrace> stack;
+    };
+    mutable Vector<OpAndStack> stacks;
+    WEBCORE_EXPORT void addStack(Op) const;
+    WEBCORE_EXPORT void logStacks() const;
+    WEBCORE_EXPORT void ref(const void* handle = nullptr, const char* name = "") const;
+    WEBCORE_EXPORT void refAllowingPartiallyDestroyed(const void* handle = nullptr, const char* name = "") const;
+    WEBCORE_EXPORT void deref(const void* handle = nullptr, const char* name = "") const;
+    WEBCORE_EXPORT void derefAllowingPartiallyDestroyed(const void* handle = nullptr, const char* name = "") const;
+#endif // TRACE_FRAME_REFS
+
     virtual ~Frame();
 
     enum class FrameType : bool { Local, Remote };

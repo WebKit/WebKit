@@ -279,8 +279,10 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameL
 {
     page.relaxAdoptionRequirement();
     return switchOn(WTFMove(client), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << &page << " pageID=" << page.identifier() << "]::constructor -> LocalFrame::createMainFrame");
         return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier, mainFrameOpener.get());
     }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << &page << " pageID=" << page.identifier() << "]::constructor -> RemoteFrame::createMainFrame");
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier, mainFrameOpener.get());
     });
 }
@@ -310,7 +312,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
-    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier))
+    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier), this, "Page::m_mainFrame"_s)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
@@ -431,11 +433,12 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
 Page::~Page()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::~Page()");
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
     m_rootFrames.clear();
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame))
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.getRef()))
         localMainFrame->setView(nullptr);
     setGroupName(String());
     allPages().remove(*this);
@@ -731,7 +734,7 @@ void Page::goToItem(HistoryItem& item, FrameLoadType type, ShouldTreatAsContinui
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     Ref protectedItem { item };
 
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame);
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.getRef());
     if (!localMainFrame)
         return;
 
@@ -880,7 +883,7 @@ void Page::setCanStartMedia(bool canStartMedia)
 
 Ref<Frame> Page::protectedMainFrame() const
 {
-    return m_mainFrame;
+    return m_mainFrame.getRef();
 }
 
 static Frame* incrementFrame(Frame* current, bool forward, CanWrap canWrap, DidWrap* didWrap = nullptr)
@@ -1734,6 +1737,7 @@ void Page::layoutIfNeeded(OptionSet<LayoutOptions> layoutOptions)
 void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " scheduleTimedRenderingUpdate() - requestedSteps " << requestedSteps << " remaining steps " << m_renderingUpdateRemainingSteps);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::scheduleRenderingUpdate(requestedSteps=" << requestedSteps << ") - m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
     if (m_renderingUpdateRemainingSteps.isEmpty()) {
         scheduleRenderingUpdateInternal();
         return;
@@ -1771,6 +1775,7 @@ void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> reque
     auto remainingSteps = m_renderingUpdateRemainingSteps[0];
     auto stepsForNextUpdate = requestedSteps - remainingSteps;
     m_unfulfilledRequestedSteps.add(stepsForNextUpdate);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::computeUnfulfilledRenderingSteps() - m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps << " -> m_unfulfilledRequestedSteps.add(" << stepsForNextUpdate << ") -> " << m_unfulfilledRequestedSteps);
 }
 
 void Page::triggerRenderingUpdateForTesting()
@@ -1795,16 +1800,28 @@ void Page::updateRendering()
 {
     LOG(EventLoop, "Page %p updateRendering() - re-entering %d", this, !m_renderingUpdateRemainingSteps.isEmpty());
 
-    if (m_renderingUpdateRemainingSteps.isEmpty())
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps << " rootFrames=" << m_rootFrames);
+    for (const auto& frame : m_rootFrames) {
+        if (frame->view()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - rootFrame " << frame << " has a view: " << *frame->view());
+        } else
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - " << frame << " has no view!!!");
+    }
+
+    if (m_renderingUpdateRemainingSteps.isEmpty()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - m_renderingUpdateRemainingSteps.isEmpty -> m_unfulfilledRequestedSteps={} was " << m_unfulfilledRequestedSteps);
         m_unfulfilledRequestedSteps = { };
+    }
 
     m_renderingUpdateRemainingSteps.append(allRenderingUpdateSteps);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - after append(all) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     // This function is not reentrant, e.g. a rAF callback may trigger a forces repaint in testing.
     // This is why we track m_renderingUpdateRemainingSteps as a stack.
     if (m_renderingUpdateRemainingSteps.size() > 1) {
         layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
         m_renderingUpdateRemainingSteps.last().remove(updateRenderingSteps);
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - after layoutIfNeeded and last.remove(updateRenderingSteps) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
         return;
     }
 
@@ -1820,9 +1837,30 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+    {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - before runProcessingStep, finding all docs:");
+        auto mainFrame = protectedMainFrame();
+        for (const Frame* frame = mainFrame.ptr(); frame; frame = frame->tree().traverseNext()) {
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            if (!localFrame) {
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - - Frame[" << frame << "] not a LocalFrame -> no doc");
+                continue;
+            }
+            auto* document = localFrame->document();
+            if (!document) {
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - - LocalFrame[" << localFrame << "] has no doc");
+                continue;
+            }
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - - LocalFrame[" << frame << "] has document[" << document << "]");
+        }
+    }
+
     auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
         m_renderingUpdateRemainingSteps.last().remove(step);
-        forEachDocument(perDocumentFunction);
+        forEachDocument([&](Document& document) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - runProcessingStep(" << step << ") on Document[" << &document << "]");
+            perDocumentFunction(document);
+        });
     };
 
     runProcessingStep(RenderingUpdateStep::RestoreScrollPositionAndViewState, [] (Document& document) {
@@ -1865,6 +1903,7 @@ void Page::updateRendering()
 
     // FIXME: Run the fullscreen steps.
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - after last.remove(Fullscreen)");
 
     runProcessingStep(RenderingUpdateStep::VideoFrameCallbacks, [] (Document& document) {
         document.serviceRequestVideoFrameCallbacks();
@@ -1920,6 +1959,7 @@ void Page::updateRendering()
     }
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::WheelEventMonitorCallbacks);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() - after last.remove(WheelEventMonitorCallbacks) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     if (UNLIKELY(isMonitoringWheelEvents()))
         wheelEventTestMonitor()->checkShouldFireCallbacks();
@@ -1927,7 +1967,9 @@ void Page::updateRendering()
     if (m_isTrackingRenderingUpdates)
         ++m_renderingUpdateCount;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() -> layoutIfNeeded(LayoutOptions::UpdateCompositingLayers)");
     layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::updateRendering() -> doAfterUpdateRendering()");
     doAfterUpdateRendering();
 
     if (!isSVGImagePage)
@@ -1948,6 +1990,7 @@ void Page::doAfterUpdateRendering()
 
     auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
         m_renderingUpdateRemainingSteps.last().remove(step);
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::doAfterUpdateRendering() - in runProcessingStep after last.remove(" << step << ") -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
         forEachDocument(perDocumentFunction);
     };
 
@@ -2000,6 +2043,7 @@ void Page::doAfterUpdateRendering()
     prioritizeVisibleResources();
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::EventRegionUpdate);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::doAfterUpdateRendering() - after last.remove(EventRegionUpdate) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -2013,6 +2057,7 @@ void Page::doAfterUpdateRendering()
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::AccessibilityRegionUpdate);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::doAfterUpdateRendering() - after last.remove(AccessibilityRegionUpdate) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
     if (shouldUpdateAccessibilityRegions()) {
         m_lastAccessibilityObjectRegionsUpdate = m_lastRenderingUpdateTimestamp;
         forEachDocument([] (Document& document) {
@@ -2024,6 +2069,7 @@ void Page::doAfterUpdateRendering()
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::doAfterUpdateRendering() - after last.remove(PrepareCanvasesForDisplayOrFlush) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     forEachDocument([] (Document& document) {
         document.prepareCanvasesForDisplayOrFlushIfNeeded();
@@ -2050,11 +2096,30 @@ void Page::doAfterUpdateRendering()
     }
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, FinalizeRenderingUpdateFlags flags)
+{
+    switch (flags) {
+    case FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions: ts << "ApplyScrollingTreeLayerPositions"; break;
+    case FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes: ts << "InvalidateImagesWithAsyncDecodes"; break;
+    }
+    return ts;
+}
+
+
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
-    for (auto& rootFrame : m_rootFrames)
-        finalizeRenderingUpdateForRootFrame(rootFrame, flags);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdate(" << flags << ") - m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps << " -> finalizeRenderingUpdateForRootFrame for " << m_rootFrames);
+    if (!m_rootFrames.isEmpty()) {
+        for (auto& rootFrame : m_rootFrames) {
+            finalizeRenderingUpdateForRootFrame(rootFrame, flags);
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdate(" << flags << ") - after finalizeRenderingUpdateForRootFrame(rootFrame[" << rootFrame.ptr() << " pageID=" << rootFrame->pageID() << " frameID=" << rootFrame->frameID() << "]) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
+        }
+    } else {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdate(" << flags << ") - No root frames!!! -> m_renderingUpdateRemainingSteps.last().remove(LayerFlush, ScrollingTreeUpdate)");
+        m_renderingUpdateRemainingSteps.last().remove({ RenderingUpdateStep::LayerFlush, RenderingUpdateStep::ScrollingTreeUpdate });
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdate() - before ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty()): m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
     ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
     renderingUpdateCompleted();
 }
@@ -2065,18 +2130,22 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
 
     ASSERT(rootFrame.isRootFrame());
     RefPtr view = rootFrame.view();
-    if (!view)
+    if (!view) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdateForRootFrame(LocalFrame[" << &rootFrame << " frameID=" << rootFrame.frameID() << "], " << flags << ") -> No view!!!");
         return;
+    }
 
     if (flags.contains(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes))
         view->invalidateImagesWithAsyncDecodes();
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::LayerFlush);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdateForRootFrame(LocalFrame[" << &rootFrame << " frameID=" << rootFrame.frameID() << "]) - after last.remove(LayerFlush) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     view->flushCompositingStateIncludingSubframes();
 
 #if ENABLE(ASYNC_SCROLLING)
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::ScrollingTreeUpdate);
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::finalizeRenderingUpdateForRootFrame(LocalFrame[" << &rootFrame << " frameID=" << rootFrame.frameID() << "]) - after last.remove(ScrollingTreeUpdate) -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         scrollingCoordinator->commitTreeStateIfNeeded();
@@ -2091,10 +2160,12 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
 void Page::renderingUpdateCompleted()
 {
     m_renderingUpdateRemainingSteps.removeLast();
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::renderingUpdateCompleted() - after removeLast() -> m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps);
 
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " renderingUpdateCompleted() - steps " << m_renderingUpdateRemainingSteps << " unfulfilled steps " << m_unfulfilledRequestedSteps);
 
     if (m_unfulfilledRequestedSteps) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::renderingUpdateCompleted() - m_renderingUpdateRemainingSteps=" << m_renderingUpdateRemainingSteps << " m_unfulfilledRequestedSteps=" << m_unfulfilledRequestedSteps << " -> scheduleRenderingUpdateInternal() and then scheduleRenderingUpdateInternal={}");
         scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
@@ -4582,6 +4653,7 @@ void Page::didFinishScrolling()
 
 void Page::addRootFrame(LocalFrame& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::addRootFrame(LocalFrame[" << frame.frameID() << "])");
     ASSERT(frame.isRootFrame());
     ASSERT(!m_rootFrames.contains(frame));
     m_rootFrames.add(frame);
@@ -4590,6 +4662,7 @@ void Page::addRootFrame(LocalFrame& frame)
 
 void Page::removeRootFrame(LocalFrame& frame)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** Page[" << this << " pageID=" << identifier() << "]::removeRootFrame(LocalFrame[" << frame.frameID() << "])");
     ASSERT(frame.isRootFrame());
     ASSERT(m_rootFrames.contains(frame));
     m_rootFrames.remove(frame);

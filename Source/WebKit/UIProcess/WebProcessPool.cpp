@@ -252,7 +252,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::Yes) {
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
-        Process::setIdentifier(WebCore::ProcessIdentifier::generate());
+        auto processID = WebCore::ProcessIdentifier::generate();
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::constructor -> Process::setIdentifier(" << processID << ")");
+        Process::setIdentifier(processID);
 #if PLATFORM(COCOA)
         determineTrackingPreventionState();
 
@@ -265,7 +267,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         if (isSafari)
             enableAllSDKAlignedBehaviors();
 #endif
-    }
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::constructor");
 
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
@@ -1224,6 +1227,7 @@ UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierF
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage()...");
     if (!pageConfiguration->pageGroup())
         pageConfiguration->setPageGroup(m_defaultPageGroup.copyRef());
     if (!pageConfiguration->preferences())
@@ -1245,6 +1249,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (relatedPage && !relatedPage->isClosed() && relatedPage->hasSameGPUProcessPreferencesAs(pageConfiguration)) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &relatedPage->ensureRunningProcess();
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage() using shared WebProcessProxy[" << process.get() << "]");
         // We do not support several WebsiteDataStores sharing a single process.
         ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
@@ -1253,13 +1258,16 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // In the common case, we delay process launch until something is actually loaded in the page.
         process = dummyProcessProxy(pageConfiguration->websiteDataStore()->sessionID());
         if (!process) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage() -> WebProcessProxy::create()");
             process = WebProcessProxy::create(*this, pageConfiguration->protectedWebsiteDataStore().get(), lockdownMode, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebProcessProxy::ShouldLaunchProcess::No);
             m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), *process);
             m_processes.append(*process);
-        }
+        } else
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage() using dummy WebProcessProxy[" << process.get() << "]");
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
         process = processForRegistrableDomain(*pageConfiguration->protectedWebsiteDataStore(), { }, lockdownMode, pageConfiguration);
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage() using processForRegistrableDomain() -> WebProcessProxy[" << process.get() << "]");
     }
 
     RefPtr userContentController = pageConfiguration->userContentController();
@@ -1268,6 +1276,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     
     process->setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::createWebPage() -> WebProcessProxy[" << process.get() << "]->createWebPage()");
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 
     if (!m_remoteWorkerPreferences) {
@@ -1976,12 +1985,16 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
         if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
             Ref mainFrameProcess = page.mainFrame()->protectedProcess();
-            if (!mainFrameProcess->isInProcessCache())
+            if (!mainFrameProcess->isInProcessCache()) {
+                ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::processForNavigation(pageId=" << page.webPageID() << ", frameId=" << frame.frameID() << ", navigation[procID=" << navigation.processID() << " orig=" << navigation.originalRequest().url().string() << " curr=" << navigation.currentRequest().url().string() << ", sourceURL=" << sourceURL << ") -> Found process for the same registration domain as mainFrame domain");
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+            }
         }
         RefPtr process = page.processForRegistrableDomain(registrableDomain);
-        if (process && !process->isInProcessCache())
+        if (process && !process->isInProcessCache()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::processForNavigation(pageId=" << page.webPageID() << ", frameId=" << frame.frameID() << ", navigation[procID=" << navigation.processID() << " orig=" << navigation.originalRequest().url().string() << " curr=" << navigation.currentRequest().url().string() << ", sourceURL=" << sourceURL << ") -> Found process for the same registration domain");
             return completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
+        }
     }
 
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
@@ -2010,9 +2023,12 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     // Cookie access will be given in WebFrameProxy::prepareForProvisionalNavigationInProcess and
     // we need there to be no time between process selection and RemotePageProxy creation so that
     // remotePageProxyForRegistrableDomain will always give the same process for the same domain.
-    if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled())
+    if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::processForNavigation(pageId=" << page.webPageID() << ", frameId=" << frame.frameID() << ", navigation[procID=" << navigation.processID() << " orig=" << navigation.originalRequest().url().string() << " curr=" << navigation.currentRequest().url().string() << ", sourceURL=" << sourceURL << ") - !(frame.isMainFrame()=" << frame.isMainFrame() << ") && page.preferences().siteIsolationEnabled()=" << page.preferences().siteIsolationEnabled());
         return completionHandler(WTFMove(process), suspendedPage, reason);
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "**GS** WebProcessPool[" << this << "]::processForNavigation(pageId=" << page.webPageID() << ", frameId=" << frame.frameID() << ", navigation[procID=" << navigation.processID() << " orig=" << navigation.originalRequest().url().string() << " curr=" << navigation.currentRequest().url().string() << ", sourceURL=" << sourceURL << ") - frame.isMainFrame()=" << frame.isMainFrame() << " || !(page.preferences().siteIsolationEnabled()=" << page.preferences().siteIsolationEnabled() << ") -> prepareProcessForNavigation...");
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
     prepareProcessForNavigation(WTFMove(process), page, suspendedPage, reason, registrableDomain, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
 }

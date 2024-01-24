@@ -116,6 +116,8 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 
 class LocalFrame final : public Frame {
 public:
+    bool m_crashOnDestruction = false;
+
     WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, Frame* opener);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, Frame& parent);
