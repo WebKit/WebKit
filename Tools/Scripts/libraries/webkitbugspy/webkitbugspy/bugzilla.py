@@ -207,7 +207,7 @@ class Tracker(GenericTracker):
         issue._labels = []
         issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords'):
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
             response = self.session.get(
                 '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)),
                 timeout=self.timeout,
@@ -247,7 +247,12 @@ class Tracker(GenericTracker):
                 issue._component = response.get('component', '')
                 issue._version = response.get('version', '')
                 issue._keywords = response.get('keywords', [])
-
+                issue._related = dict(
+                    depends_on=[self.issue(id) for id in response.get('depends_on') or []],
+                    blocks=[self.issue(id) for id in response.get('blocks') or []],
+                    regressions=[self.issue(id) for id in response.get('regressions') or []],
+                    regressed_by=[self.issue(id) for id in response.get('regressed_by') or []]
+                )
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
 
@@ -460,6 +465,61 @@ class Tracker(GenericTracker):
         issue._comments.append(result)
 
         return result
+
+    def issues_to_ids(self, issues):
+        if not isinstance(issues, (list, tuple)):
+            raise TypeError('Input should be a list of Issue objects.')
+        issue_ids = []
+        for i in issues:
+            issue_id = i.link
+            if isinstance(i.tracker, Tracker):
+                issue_ids.append(i.id)
+            else:
+                raise TypeError('Cannot relate issues of different types.')
+        return issue_ids
+
+    def relate(self, issue, depends_on=None, blocks=None, regressed_by=None, regressions=None, **relations):
+        if relations:
+            raise TypeError("'{}' is an invalid relation".format(list(relations.keys())[0]))
+
+        update_dict = dict()
+        update_dict['ids'] = [issue.id]
+        if depends_on:
+            update_dict['depends_on'] = {'add': self.issues_to_ids(depends_on)}
+        if blocks:
+            update_dict['blocks'] = {'add': self.issues_to_ids(blocks)}
+        if regressed_by:
+            update_dict['regressed_by'] = {'add': self.issues_to_ids(regressed_by)}
+        if regressions:
+            update_dict['regressions'] = {'add': self.issues_to_ids(regressions)}
+
+        response = None
+        try:
+            response = self.session.put(
+                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                json=update_dict,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.RequestException as e:
+            sys.stderr.write('Request Error: {}\n'.format(e))
+        if response and response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
+        if not response or response.status_code // 100 != 2:
+            sys.stderr.write("Failed to modify '{}'\n".format(issue))
+            return None
+
+        if not issue._related:
+            self.populate(issue, 'related')
+        else:
+            if depends_on:
+                issue._related['depends_on'] += depends_on
+            if blocks:
+                issue._related['blocks'] += blocks
+            if regressed_by:
+                issue._related['regressed_by'] += regressed_by
+            if regressions:
+                issue._related['regressions'] += regressions
+        return issue
 
     @property
     @webkitcorepy.decorators.Memoize()
