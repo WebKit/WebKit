@@ -84,10 +84,8 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     if (RefPtr connection = m_connection)
         connection->invalidate();
 
-    if (m_processLauncher) {
-        m_processLauncher->invalidate();
-        m_processLauncher = nullptr;
-    }
+    if (RefPtr processLauncher = std::exchange(m_processLauncher, nullptr))
+        processLauncher->invalidate();
 
     replyToPendingMessages();
 
@@ -179,13 +177,15 @@ void AuxiliaryProcessProxy::terminate()
     RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());
 
 #if PLATFORM(COCOA)
-    if (m_connection && m_connection->kill())
-        return;
+    if (RefPtr connection = m_connection) {
+        if (connection->kill())
+            return;
+    }
 #endif
 
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
-    if (m_processLauncher)
-        m_processLauncher->terminateProcess();
+    if (RefPtr processLauncher = m_processLauncher)
+        processLauncher->terminateProcess();
 }
 
 AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
@@ -265,10 +265,10 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     case State::Running:
         if (asyncReplyHandler) {
-            if (connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
+            if (protectedConnection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
                 return true;
         } else {
-            if (connection()->sendMessage(WTFMove(encoder), sendOptions) == IPC::Error::NoError)
+            if (protectedConnection()->sendMessage(WTFMove(encoder), sendOptions) == IPC::Error::NoError)
                 return true;
         }
         break;
@@ -340,8 +340,8 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     connection->open(*this);
     connection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
         ensureOnMainRunLoop([weakThis] {
-            if (weakThis)
-                weakThis->outgoingMessageQueueIsGrowingLarge();
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->outgoingMessageQueueIsGrowingLarge();
         });
     });
 
@@ -384,10 +384,11 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 void AuxiliaryProcessProxy::shutDownProcess()
 {
     switch (state()) {
-    case State::Launching:
-        m_processLauncher->invalidate();
-        m_processLauncher = nullptr;
+    case State::Launching: {
+        RefPtr processLauncher = std::exchange(m_processLauncher, nullptr);
+        processLauncher->invalidate();
         break;
+    }
     case State::Running:
         platformStartConnectionTerminationWatchdog();
         break;
@@ -415,7 +416,7 @@ void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppression
     if (state() != State::Running)
         return;
 
-    connection()->send(Messages::AuxiliaryProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
+    protectedConnection()->send(Messages::AuxiliaryProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
@@ -492,8 +493,8 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
         // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
         // being in the middle of destruction.
         RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
-            if (weakThis)
-                weakThis->stopResponsivenessTimer();
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->stopResponsivenessTimer();
 
             if (responsivenessHandler)
                 responsivenessHandler();
