@@ -100,7 +100,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
 void Font::initCharWidths()
 {
-    auto* glyphPageZero = glyphPage(GlyphPage::pageNumberForCodePoint('0'));
+    RefPtr glyphPageZero = glyphPage(GlyphPage::pageNumberForCodePoint('0'));
 
     // Treat the width of a '0' as the avgCharWidth.
     if (m_avgCharWidth <= 0.f && glyphPageZero) {
@@ -120,19 +120,19 @@ void Font::initCharWidths()
 void Font::platformGlyphInit()
 {
 #if USE(FREETYPE)
-    auto* glyphPageZeroWidthSpace = glyphPage(GlyphPage::pageNumberForCodePoint(zeroWidthSpace));
+    RefPtr glyphPageZeroWidthSpace = glyphPage(GlyphPage::pageNumberForCodePoint(zeroWidthSpace));
     char32_t zeroWidthSpaceCharacter = zeroWidthSpace;
 #else
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph for non FreeType based ports.
-    auto* glyphPageZeroWidthSpace = glyphPage(0);
+    RefPtr glyphPageZeroWidthSpace = glyphPage(0);
     char32_t zeroWidthSpaceCharacter = 0;
 #endif
 
     if (glyphPageZeroWidthSpace)
         m_zeroWidthSpaceGlyph = glyphPageZeroWidthSpace->glyphDataForCharacter(zeroWidthSpaceCharacter).glyph;
 
-    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(space)))
+    if (RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint(space)))
         m_spaceGlyph = page->glyphDataForCharacter(space).glyph;
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
@@ -145,7 +145,7 @@ void Font::platformGlyphInit()
     // Therefore all calls to widthForGlyph must happen after this point.
 
     Glyph zeroGlyph = { 0 };
-    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
+    if (RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
         zeroGlyph = page->glyphDataForCharacter('0').glyph;
     if (zeroGlyph)
         m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
@@ -155,7 +155,7 @@ void Font::platformGlyphInit()
     // https://www.w3.org/TR/css-values-4/#ic. This is currently only used
     // to support the ic unit. If the width is not available, falls back to
     // 1em as specified.
-    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
+    if (RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
         auto glyph = page->glyphDataForCharacter(cjkWater).glyph;
         m_fontMetrics.setIdeogramWidth(widthForGlyph(glyph));
     } else
@@ -393,7 +393,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     // routine of our glyph map for actually filling in the page with the glyphs.
     // Success is not guaranteed. For example, Times fails to fill page 260, giving glyph data
     // for only 128 out of 256 characters.
-    Ref<GlyphPage> glyphPage = GlyphPage::create(font);
+    Ref glyphPage = GlyphPage::create(font);
 
     bool haveGlyphs = fillGlyphPage(glyphPage, buffer.data(), bufferLength, font);
     if (!haveGlyphs)
@@ -413,7 +413,7 @@ const GlyphPage* Font::glyphPage(unsigned pageNumber) const
 
 Glyph Font::glyphForCharacter(char32_t character) const
 {
-    auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
+    RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
     if (!page)
         return 0;
     return page->glyphForCharacter(character);
@@ -421,7 +421,7 @@ Glyph Font::glyphForCharacter(char32_t character) const
 
 GlyphData Font::glyphDataForCharacter(char32_t character) const
 {
-    auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
+    RefPtr page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
     if (!page)
         return GlyphData();
     return page->glyphDataForCharacter(character);
@@ -531,9 +531,9 @@ const OpenTypeMathData* Font::mathData() const
     if (isInterstitial())
         return nullptr;
     if (!m_mathData) {
-        m_mathData = OpenTypeMathData::create(m_platformData);
-        if (!m_mathData->hasMathData())
-            m_mathData = nullptr;
+        Ref mathData = OpenTypeMathData::create(m_platformData);
+        if (mathData->hasMathData())
+            m_mathData = WTFMove(mathData);
     }
     return m_mathData.get();
 }
