@@ -138,17 +138,15 @@ MILESTONES = [
         name='October',
         isProtected=True,
         protectedAccessGroups=['Managers', 'Integrators'],
-        categories=['Test Development', 'Tentpole Feature Work', 'Escape / Regression in the Build'],
-        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Convergence'],
-        tentpoles=['Scrolling', 'SVG'],
+        categories=['Testing', 'Feature', 'Regression', 'Important'],
+        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
         isCategoryRequired=True,
     ), dict(
         name='Internal Tools - October',
-        categories=['Test Development', 'Tentpole Feature Work', 'Escape / Regression in the Build'],
-        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Convergence'],
-        tentpoles=['Scrolling', 'SVG'],
+        categories=['Testing', 'Feature', 'Regression', 'Important'],
+        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
     ),  dict(
         name='Future',
-        categories=['Test Development', 'Tentpole TBD', 'Escape / Regression in the Build'],
+        categories=['Testing', 'TBD', 'Regression'],
     ),
 ]
