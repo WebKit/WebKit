@@ -48,6 +48,7 @@ namespace WebCore {
 
 class DocumentLoader;
 class FormState;
+class HitTestResult;
 class LocalFrame;
 class NavigationAction;
 class ResourceError;
@@ -92,6 +93,7 @@ public:
 private:
     void handleUnimplementablePolicy(const ResourceError&);
     URLKeepingBlobAlive extendBlobURLLifetimeIfNecessary(const ResourceRequest&, const Document&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
+    std::optional<HitTestResult> hitTestResult(const NavigationAction&);
 
     LocalFrame& m_frame;
 

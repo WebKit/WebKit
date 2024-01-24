@@ -38,6 +38,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/FrameLoader.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PolicyChecker.h>
 
@@ -62,7 +63,7 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
 {
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     auto* webPage = m_frame->page();
     if (!webPage) {
@@ -115,8 +116,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (auto* webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
         originatingPageID = webPage->webPageProxyIdentifier();
 
-    RefPtr coreFrame = m_frame->coreLocalFrame();
-
     // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
     // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
 
@@ -137,7 +136,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.treatAsSameOriginNavigation(),
         navigationAction.hasOpenedFrames(),
         navigationAction.openedByDOMWithOpener(),
-        coreFrame && !!coreFrame->loader().opener(), /* hasOpener */
+        hasOpener,
         requester.securityOrigin->data(),
         requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
@@ -145,12 +144,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.lockHistory(),
         navigationAction.lockBackForwardList(),
         clientRedirectSourceForHistory,
-        coreFrame ? coreFrame->loader().effectiveSandboxFlags() : SandboxFlags(),
+        sandboxFlags,
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
         requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        WebHitTestResultData::fromNavigationActionAndLocalFrame(navigationAction, coreFrame.get()),
+        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTFMove(*hitTestResult), false)) : std::nullopt
 #endif
     };
 

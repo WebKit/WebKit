@@ -127,9 +127,6 @@ struct WebHitTestResultData {
 
     std::optional<WebKit::SharedMemory::Handle> getImageSharedMemoryHandle() const;
 
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    static std::optional<WebHitTestResultData> fromNavigationActionAndLocalFrame(const WebCore::NavigationAction&, WebCore::LocalFrame*);
-#endif
 };
 
 } // namespace WebKit

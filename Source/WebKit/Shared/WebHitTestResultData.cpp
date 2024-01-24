@@ -239,21 +239,4 @@ std::optional<FrameInfoData> WebHitTestResultData::frameInfoDataFromHitTestResul
     return webFrame->info();
 }
 
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-std::optional<WebKit::WebHitTestResultData> WebHitTestResultData::fromNavigationActionAndLocalFrame(const NavigationAction& navigationAction, WebCore::LocalFrame* coreFrame)
-{
-    if (!coreFrame)
-        return std::nullopt;
-
-    auto mouseEventData = navigationAction.mouseEventData();
-    if (!mouseEventData)
-        return std::nullopt;
-
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
-
-    return WebKit::WebHitTestResultData(hitTestResult, false);
-}
-#endif
-
 } // WebKit

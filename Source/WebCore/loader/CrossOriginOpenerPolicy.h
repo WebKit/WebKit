@@ -39,7 +39,7 @@ class SecurityOrigin;
 struct NavigationRequester;
 struct ReportingClient;
 
-typedef int SandboxFlags;
+using SandboxFlags = int;
 
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
 enum class CrossOriginOpenerPolicyValue : uint8_t {

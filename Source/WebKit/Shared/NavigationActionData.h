@@ -35,13 +35,8 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebCore {
-typedef int SandboxFlags;
+using SandboxFlags = int;
 }
 
 namespace WebKit {

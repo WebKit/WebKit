@@ -46,7 +46,7 @@ class Encoder;
 }
 
 namespace WebCore {
-typedef int SandboxFlags;
+using SandboxFlags = int;
 }
 
 namespace WebKit {

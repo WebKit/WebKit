@@ -37,6 +37,7 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FormState.h"
@@ -44,6 +45,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
+#include "HitTestResult.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
@@ -269,13 +271,24 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
     auto documentLoader = m_frame.loader().loaderForWebsitePolicies();
     auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : String();
     auto navigationID = documentLoader ? documentLoader->navigationID() : 0;
+    bool hasOpener = !!m_frame.loader().opener();
+    auto sandboxFlags = m_frame.loader().effectiveSandboxFlags();
 
     if (isInitialEmptyDocumentLoad) {
         // We ignore the response from the client for initial empty document loads and proceed with the load synchronously.
-        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, policyDecisionMode, [](PolicyAction) { });
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, sandboxFlags, policyDecisionMode, [](PolicyAction) { });
         decisionHandler(PolicyAction::Use);
     } else
-        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, policyDecisionMode, WTFMove(decisionHandler));
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, sandboxFlags, policyDecisionMode, WTFMove(decisionHandler));
+}
+
+std::optional<HitTestResult> FrameLoader::PolicyChecker::hitTestResult(const NavigationAction& action)
+{
+    auto& mouseEventData = action.mouseEventData();
+    if (!mouseEventData)
+        return std::nullopt;
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
+    return m_frame.eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
 }
 
 void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
@@ -288,7 +301,7 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame.document());
 
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, [frame = Ref { m_frame }, request,
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, hitTestResult(navigationAction), [frame = Ref { m_frame }, request,
         formState = WTFMove(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)] (PolicyAction policyAction) mutable {
 
         switch (policyAction) {

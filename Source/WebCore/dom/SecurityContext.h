@@ -65,7 +65,7 @@ enum SandboxFlag {
     SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 
-typedef int SandboxFlags;
+using SandboxFlags = int;
 
 class SecurityContext {
 public:
