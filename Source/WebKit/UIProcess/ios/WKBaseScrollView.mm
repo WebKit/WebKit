@@ -32,6 +32,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
@@ -40,6 +41,7 @@
 @implementation WKBaseScrollView {
     RetainPtr<UIPanGestureRecognizer> _axisLockingPanGestureRecognizer;
     UIAxis _axesToPreventMomentumScrolling;
+    BOOL _isBeingRemovedFromSuperview;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -137,8 +139,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [panGesture setTranslation:adjustedTranslation inView:nil];
 }
 
+- (void)removeFromSuperview
+{
+    SetForScope removeFromSuperviewScope { _isBeingRemovedFromSuperview, YES };
+
+    [super removeFromSuperview];
+}
+
 - (UIAxis)_axesToPreventScrollingFromDelegate
 {
+    if (_isBeingRemovedFromSuperview || !self.window)
+        return UIAxisNeither;
     auto delegate = self.baseScrollViewDelegate;
     return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
