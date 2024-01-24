@@ -3366,8 +3366,7 @@ http/tests/websocket/tests/hybi/workers/worker-reload.html [ Pass Crash ]
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Pass Crash ]
 
 # rdar://80396393 ([ iOS15 ] http/wpt/mediarecorder/mute-tracks.html is a flaky failure)
-# webkit.org/b/238774 [ iOS ] http/wpt/mediarecorder/mute-tracks.html is a flaky crash
-http/wpt/mediarecorder/mute-tracks.html [ Pass Failure Crash ]
+http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
 
 # rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
