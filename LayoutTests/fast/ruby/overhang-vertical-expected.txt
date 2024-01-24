@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (13,3) size 20x60
           text run at (13,3) width 60: "abc"
         RenderInline {RUBY} at (0,0) size 20x70 [color=#0000FF]
-          RenderInline (generated) at (0,0) size 20x71
+          RenderInline (generated) at (0,0) size 21x70
             RenderText {#text} at (13,63) size 20x65
               text run at (13,63) width 65: "x x"
           RenderBlock {RT} at (3,60) size 10x71 [color=#C0C0C0]
