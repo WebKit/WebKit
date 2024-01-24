@@ -63,12 +63,12 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
 {
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState* formState, PolicyDecisionMode policyDecisionMode, WebCore::PolicyCheckIdentifier requestIdentifier, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     auto* webPage = m_frame->page();
     if (!webPage) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because there's no web page");
-        function(PolicyAction::Ignore, requestIdentifier);
+        function(PolicyAction::Ignore);
         return;
     }
 
@@ -77,18 +77,18 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // Always ignore requests with empty URLs.
     if (request.isEmpty()) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because request is empty");
-        function(PolicyAction::Ignore, requestIdentifier);
+        function(PolicyAction::Ignore);
         return;
     }
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
     ASSERT(navigationAction.requester());
     auto& requester = navigationAction.requester().value();
 
     if (!requester.frameID) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because frame does not exist");
-        function(PolicyAction::Ignore, requestIdentifier);
+        function(PolicyAction::Ignore);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -166,29 +166,29 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(NavigationActionPolicyParameters { m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }));
             if (!sendResult.succeeded()) {
                 WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()));
-                m_frame->didReceivePolicyDecision(listenerID, requestIdentifier, PolicyDecision { });
+                m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { });
                 return;
             }
 
             auto [policyDecision] = sendResult.takeReply();
             WebFrameLoaderClient_RELEASE_LOG(Network, "dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (unsigned)policyDecision.policyAction);
-            m_frame->didReceivePolicyDecision(listenerID, requestIdentifier, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, 0, policyDecision.downloadID });
+            m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, 0, policyDecision.downloadID });
             return;
         }
 #endif
         webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(NavigationActionPolicyParameters { m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }), [] (PolicyDecision&&) { });
-        m_frame->didReceivePolicyDecision(listenerID, requestIdentifier, PolicyDecision { std::nullopt, PolicyAction::Use });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { std::nullopt, PolicyAction::Use });
         return;
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(NavigationActionPolicyParameters { m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }), [thisPointerForLog = this, frame = m_frame, listenerID, requestIdentifier] (PolicyDecision&& policyDecision) {
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(NavigationActionPolicyParameters { m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }), [thisPointerForLog = this, frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(thisPointerForLog);
 #endif
         RELEASE_LOG(Network, WebFrameLoaderClient_PREFIX_PARAMETERS "dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", thisPointerForLog, frame.ptr(), frame->frameID().object().toUInt64(), frame->page(), frame->page() ? frame->page()->identifier().toUInt64() : 0, (unsigned)policyDecision.policyAction);
 
-        frame->didReceivePolicyDecision(listenerID, requestIdentifier, WTFMove(policyDecision));
+        frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });
 }
 

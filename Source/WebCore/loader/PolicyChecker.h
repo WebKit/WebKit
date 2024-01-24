@@ -95,8 +95,7 @@ private:
 
     LocalFrame& m_frame;
 
-    HashMap<PolicyCheckIdentifier, FramePolicyFunction> m_javaScriptURLPolicyChecks;
-
+    uint64_t m_javaScriptURLPolicyCheckIdentifier { 0 };
     bool m_delegateIsDecidingNavigationPolicy;
     bool m_delegateIsHandlingUnimplementablePolicy;
 

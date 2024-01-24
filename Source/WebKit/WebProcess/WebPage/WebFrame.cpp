@@ -305,11 +305,10 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier, WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
 {
     auto policyListenerID = generateListenerID();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
-        identifier,
         forNavigationAction,
         WTFMove(policyFunction)
     });
@@ -457,10 +456,10 @@ void WebFrame::invalidatePolicyListeners()
 
     auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
     for (auto& policyCheck : pendingPolicyChecks.values())
-        policyCheck.policyFunction(PolicyAction::Ignore, policyCheck.corePolicyIdentifier);
+        policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_page)
@@ -473,8 +472,6 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
     auto policyCheck = m_pendingPolicyChecks.take(listenerID);
     if (!policyCheck.policyFunction)
         return;
-
-    ASSERT(identifier == policyCheck.corePolicyIdentifier);
 
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
@@ -500,7 +497,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
         }
     }
 
-    function(policyDecision.policyAction, identifier);
+    function(policyDecision.policyAction);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

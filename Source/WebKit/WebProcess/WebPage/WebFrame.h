@@ -110,9 +110,9 @@ public:
     WebCore::FrameIdentifier frameID() const;
 
     enum class ForNavigationAction : bool { No, Yes };
-    uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListeners();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, PolicyDecision&&);
+    void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
     void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
@@ -245,7 +245,6 @@ private:
     WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {
-        WebCore::PolicyCheckIdentifier corePolicyIdentifier;
         ForNavigationAction forNavigationAction { ForNavigationAction::No };
         WebCore::FramePolicyFunction policyFunction;
     };

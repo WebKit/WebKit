@@ -36,11 +36,11 @@ class ResourceResponse;
 
 enum class PolicyDecisionMode;
 
-using FramePolicyFunction = Function<void(PolicyAction, PolicyCheckIdentifier)>;
+using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
 
 class FrameLoaderClient {
 public:
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, PolicyCheckIdentifier, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, FramePolicyFunction&&) = 0;
     virtual ~FrameLoaderClient() = default;
 };
 
