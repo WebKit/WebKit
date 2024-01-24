@@ -30,6 +30,7 @@
 #include "CachedPage.h"
 #include "Document.h"
 #include "KeyedCoding.h"
+#include "Page.h"
 #include "ResourceRequest.h"
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"

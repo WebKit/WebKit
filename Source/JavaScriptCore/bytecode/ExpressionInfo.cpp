@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ExpressionInfo.h"
 
+#include "VM.h"
+#include <wtf/DataLog.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/UniqueRef.h>
 
@@ -1064,12 +1066,12 @@ void printInternal(PrintStream& out, JSC::ExpressionInfo::FieldID fieldID)
 {
     auto name = [] (auto fieldID) {
         switch (fieldID) {
-        case ExpressionInfo::FieldID::InstPC: return "Inst";
-        case ExpressionInfo::FieldID::Divot: return "Divot";
-        case ExpressionInfo::FieldID::Start: return "Start";
-        case ExpressionInfo::FieldID::End: return "End";
-        case ExpressionInfo::FieldID::Line: return "Line";
-        case ExpressionInfo::FieldID::Column: return "Column";
+        case JSC::ExpressionInfo::FieldID::InstPC: return "Inst";
+        case JSC::ExpressionInfo::FieldID::Divot: return "Divot";
+        case JSC::ExpressionInfo::FieldID::Start: return "Start";
+        case JSC::ExpressionInfo::FieldID::End: return "End";
+        case JSC::ExpressionInfo::FieldID::Line: return "Line";
+        case JSC::ExpressionInfo::FieldID::Column: return "Column";
         }
         return ""; // placate GCC.
     };

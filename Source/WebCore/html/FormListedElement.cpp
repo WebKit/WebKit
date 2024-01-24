@@ -35,6 +35,7 @@
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
 #include "LocalFrame.h"
+#include "TreeScopeInlines.h"
 
 namespace WebCore {
 

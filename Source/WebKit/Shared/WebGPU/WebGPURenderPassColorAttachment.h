@@ -29,6 +29,7 @@
 
 #include "WebGPUColor.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPULoadOp.h>
 #include <WebCore/WebGPUStoreOp.h>
 #include <optional>

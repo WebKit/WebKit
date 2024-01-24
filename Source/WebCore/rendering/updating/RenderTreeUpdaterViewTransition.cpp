@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeUpdaterViewTransition.h"
 
+#include "ElementRuleCollector.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"

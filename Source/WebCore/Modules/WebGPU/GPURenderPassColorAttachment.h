@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GPUColorDict.h"
+#include "GPUIntegralTypes.h"
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTextureView.h"

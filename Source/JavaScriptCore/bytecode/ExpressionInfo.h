@@ -26,6 +26,8 @@
 #pragma once
 
 #include "LineColumn.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashTraits.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>

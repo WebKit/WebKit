@@ -27,13 +27,13 @@
 
 #include "InlineContentBreaker.h"
 #include "InlineDisplayContent.h"
+#include "InlineLevelBox.h"
 #include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
 
 class InlineFormattingContext;
-class InlineLevelBox;
 class Line;
 class LineBox;
 class Rect;

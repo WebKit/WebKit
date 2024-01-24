@@ -32,6 +32,7 @@
 #include "LLIntCLoop.h"
 #include "LLIntData.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "VMEntryRecord.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"

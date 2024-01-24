@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUColor.h"
+#include "WebGPUIntegralTypes.h"
 #include "WebGPULoadOp.h"
 #include "WebGPUStoreOp.h"
 #include <variant>

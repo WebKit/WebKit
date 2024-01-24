@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "CalcOperator.h"
 #include "CalculationCategory.h"
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
