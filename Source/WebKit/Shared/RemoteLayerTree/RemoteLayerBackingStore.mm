@@ -32,7 +32,6 @@
 #import "ImageBufferBackendHandleSharing.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
-#import "RemoteImageBufferSetProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -69,7 +68,7 @@ using namespace WebCore;
 
 namespace {
 
-class DelegatedContentsFenceFlusher final : public ThreadSafeImageBufferSetFlusher {
+class DelegatedContentsFenceFlusher final : public ThreadSafeImageBufferFlusher {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DelegatedContentsFenceFlusher);
 public:
@@ -78,7 +77,7 @@ public:
         return std::unique_ptr<DelegatedContentsFenceFlusher> { new DelegatedContentsFenceFlusher(WTFMove(fence)) };
     }
 
-    void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
+    void flush() final
     {
         m_fence->waitFor(delegatedContentsFinishedTimeout);
     }
@@ -151,6 +150,9 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 {
+    if (auto* collection = backingStoreCollection())
+        collection->backingStoreWillBeEncoded(*this);
+
     encoder << m_parameters.isOpaque;
     encoder << m_parameters.type;
 
@@ -171,8 +173,6 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
     encoder << WTFMove(handle);
 
-    encoder << bufferSetIdentifier();
-
     encodeBufferAndBackendInfos(encoder);
     encoder << m_contentsRenderingResourceIdentifier;
     encoder << m_previouslyPaintedRect;
@@ -191,9 +191,6 @@ bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLaye
         return false;
 
     if (!decoder.decode(result.m_bufferHandle))
-        return false;
-
-    if (!decoder.decode(result.m_bufferSet))
         return false;
 
     if (!decoder.decode(result.m_frontBufferInfo))
@@ -459,7 +456,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
 
     m_previouslyPaintedRect = dirtyBounds;
-    m_frontBufferFlushers.append(createFlusher());
+    m_frontBufferFlushers.appendVector(createFlushers());
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context, void (^block)(FloatRect))
@@ -606,15 +603,7 @@ void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode&
     node.setCachedContentsBuffers(WTFMove(cachedBuffers));
 }
 
-void RemoteLayerBackingStoreProperties::setBackendHandle(BufferSetBackendHandle& bufferSetHandle)
-{
-    m_bufferHandle = std::exchange(bufferSetHandle.bufferHandle, std::nullopt);
-    m_frontBufferInfo = bufferSetHandle.frontBufferInfo;
-    m_backBufferInfo = bufferSetHandle.backBufferInfo;
-    m_secondaryBackBufferInfo = bufferSetHandle.secondaryBackBufferInfo;
-}
-
-Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStore::takePendingFlushers()
+Vector<std::unique_ptr<ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::takePendingFlushers()
 {
     return std::exchange(m_frontBufferFlushers, { });
 }

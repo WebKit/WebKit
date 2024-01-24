@@ -29,9 +29,7 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
-#include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackend.h"
-#include "RemoteRenderingBackendProxyMessages.h"
 
 #if PLATFORM(COCOA)
 #include <WebCore/PlatformCALayer.h>
@@ -118,9 +116,15 @@ void RemoteImageBufferSet::flush()
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
-void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, SwapBuffersDisplayRequirement& displayRequirement, RenderingUpdateID renderingUpdateID)
+void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
 {
     assertIsCurrent(workQueue());
+    auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<RenderingResourceIdentifier> {
+        if (!buffer)
+            return std::nullopt;
+        return buffer->renderingResourceIdentifier();
+    };
+
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ::ensureFrontBufferForDisplay " << " - front "
         << m_frontBuffer << " (in-use " << (m_frontBuffer && m_frontBuffer->isInUse()) << ") "
         << m_backBuffer << " (in-use " << (m_backBuffer && m_backBuffer->isInUse()) << ") "
@@ -154,9 +158,10 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
 
     if (m_frontBuffer && !needsFullDisplay && inputData.hasEmptyDirtyRegion) {
         // No swap necessary.
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
+        outputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
     } else {
-        displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
+        outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
+
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (m_frontBuffer) {
@@ -174,25 +179,15 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ensureFrontBufferForDisplay - swapped to ["
         << m_frontBuffer << ", " << m_backBuffer << ", " << m_secondaryBackBuffer << "]");
 
-    if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
+    if (outputData.displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
         m_backend->createDisplayListRecorder(m_frontBuffer, m_displayListIdentifier);
 
-#if PLATFORM(COCOA)
-    auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<WebCore::RenderingResourceIdentifier> {
-        if (!buffer)
-            return std::nullopt;
-        return buffer->renderingResourceIdentifier();
-    };
-
-    ImageBufferSetPrepareBufferForDisplayOutputData outputData;
     if (m_frontBuffer) {
         auto* sharing = m_frontBuffer->toBackendSharing();
         outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     }
 
     outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(m_frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
-    m_backend->streamConnection().send(Messages::RemoteImageBufferSetProxy::DidPrepareForDisplay(WTFMove(outputData), renderingUpdateID), m_identifier);
-#endif
 }
 
 void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyRegion, bool requiresClearedPixels)

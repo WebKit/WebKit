@@ -43,13 +43,12 @@ public:
 
     RefPtr<RemoteImageBufferSetProxy> protectedBufferSet() { return m_bufferSet; }
 
-    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher() final;
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
     std::optional<ImageBufferBackendHandle> frontBufferHandle() const final { return std::exchange(const_cast<RemoteLayerWithRemoteRenderingBackingStore*>(this)->m_backendHandle, std::nullopt); }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<ImageBufferBackendHandle> displayListHandle() const final;
 #endif
     void encodeBufferAndBackendInfos(IPC::Encoder&) const final;
-    std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() const final;
 
     void ensureBackingStore(const Parameters&) final;
     bool hasFrontBuffer() const final;

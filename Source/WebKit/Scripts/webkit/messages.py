@@ -180,9 +180,7 @@ def types_that_must_be_moved():
         'std::optional<WebKit::ShareableResource::Handle>',
         'std::optional<WebKit::SharedMemory::Handle>',
         'std::optional<WebKit::SharedVideoFrame::Buffer>',
-        'std::optional<Win32Handle>',
-        'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData',
-        'HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
+        'std::optional<Win32Handle>'
     ]
 
 
@@ -678,7 +676,6 @@ def class_template_headers(template_string):
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': ['"ArgumentCodersCF.h"']},
         'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
-        'std::unique_ptr': {'headers': ['<memory>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
@@ -1065,7 +1062,6 @@ def headers_for_type(type):
         'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'WTF::UnixFileDescriptor': ['<wtf/unix/UnixFileDescriptor.h>'],
         'webrtc::WebKitEncodedFrameInfo': ['"RTCWebKitEncodedFrameInfo.h"', '<WebCore/LibWebRTCEnumTraits.h>'],
-        'WebKit::BufferSetBackendHandle': ['"BufferAndBackendInfo.h"'],
     }
 
     headers = []

@@ -58,6 +58,7 @@ public:
 
     virtual void backingStoreWasCreated(RemoteLayerBackingStore&);
     virtual void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
+    void backingStoreWillBeEncoded(const RemoteLayerBackingStore&);
 
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
@@ -71,7 +72,7 @@ public:
     void willFlushLayers();
     void willBuildTransaction();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
-    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> didFlushLayers(RemoteLayerTreeTransaction&);
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> didFlushLayers(RemoteLayerTreeTransaction&);
 
     virtual void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
 

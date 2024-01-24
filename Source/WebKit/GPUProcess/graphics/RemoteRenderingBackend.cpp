@@ -414,42 +414,17 @@ void RemoteRenderingBackend::flush(IPC::Semaphore&& semaphore)
 #endif
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, RenderingUpdateID renderingUpdateID)
+void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
 
-    for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
-        RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
-        SwapBuffersDisplayRequirement displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], displayRequirement, renderingUpdateID);
-        MESSAGE_CHECK(displayRequirement != SwapBuffersDisplayRequirement::NeedsFullDisplay, "Can't asynchronously require full display for a buffer set"_s);
-    }
-
-
-    // Defer preparing all the front buffers (which triggers pixel copy
-    // operations) until after we've sent the completion handler (and any
-    // buffer backend created messages) to unblock the WebProcess as soon
-    // as possible.
-    for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
-        RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
-
-        remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
-    }
-}
-
-void RemoteRenderingBackend::prepareImageBufferSetsForDisplaySync(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, RenderingUpdateID renderingUpdateID,  CompletionHandler<void(Vector<SwapBuffersDisplayRequirement>&&)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-
-    Vector<SwapBuffersDisplayRequirement> outputData;
+    Vector<ImageBufferSetPrepareBufferForDisplayOutputData> outputData;
     outputData.resizeToFit(swapBuffersInput.size());
 
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
-        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], outputData[i], renderingUpdateID);
+        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], outputData[i]);
     }
 
     completionHandler(WTFMove(outputData));
