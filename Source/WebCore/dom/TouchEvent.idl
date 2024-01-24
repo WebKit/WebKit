@@ -40,8 +40,10 @@
     readonly attribute boolean metaKey;
 };
 
-dictionary TouchEventInit : UIEventInit {
-    TouchList? touches = null;
-    TouchList? targetTouches = null;
-    TouchList? changedTouches = null;
+// https://w3c.github.io/touch-events/#dom-toucheventinit
+
+dictionary TouchEventInit : EventModifierInit {
+    sequence<Touch> touches = [];
+    sequence<Touch> targetTouches = [];
+    sequence<Touch> targetTouches = [];
 };
