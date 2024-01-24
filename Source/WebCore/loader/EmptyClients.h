@@ -179,7 +179,6 @@ class EmptyChromeClient : public ChromeClient {
     void triggerRenderingUpdate() final { }
 
 #if PLATFORM(WIN)
-    void setLastSetCursorToCurrentCursor() final { }
     void AXStartFrameLoad() final { }
     void AXFinishFrameLoad() final { }
 #endif

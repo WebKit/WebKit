@@ -495,7 +495,6 @@ public:
     virtual void contentRuleListNotification(const URL&, const ContentRuleListResults&) { };
 
 #if PLATFORM(WIN)
-    virtual void setLastSetCursorToCurrentCursor() = 0;
     virtual void AXStartFrameLoad() = 0;
     virtual void AXFinishFrameLoad() = 0;
 #endif

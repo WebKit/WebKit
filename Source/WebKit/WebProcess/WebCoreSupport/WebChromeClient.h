@@ -245,7 +245,6 @@ private:
     bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply() final;
 
 #if PLATFORM(WIN)
-    void setLastSetCursorToCurrentCursor() final { }
     void AXStartFrameLoad() final { }
     void AXFinishFrameLoad() final { }
 #endif
