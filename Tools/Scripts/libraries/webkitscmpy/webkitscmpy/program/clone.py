@@ -181,6 +181,9 @@ class Clone(Command):
             sys.stderr.write("Failed to find milestone matching '{}'\n".format(args.milestone))
             return 255
 
+        if merge_back:
+            milestone = milestones.get('Internal Tools - {}'.format(milestone.name), milestone)
+
         milestone_association = raw_issue.milestone_associations(milestone)
 
         def pick_attr(name, plural, default=None):
