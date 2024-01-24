@@ -31,6 +31,8 @@
 
 namespace TestWebKitAPI {
 
+#if PLATFORM(MAC)
+
 static auto *webRequestManifest = @{ @"manifest_version": @3, @"permissions": @[ @"webRequest" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @YES } };
 
 TEST(WKWebExtensionAPIWebRequest, EventListenerTest)
@@ -295,6 +297,8 @@ TEST(WKWebExtensionAPIWebRequest, RedirectOccurred)
 
     [manager run];
 }
+
+#endif // PLATFORM(MAC)
 
 TEST(WKWebExtensionAPIWebRequest, Initialization)
 {
