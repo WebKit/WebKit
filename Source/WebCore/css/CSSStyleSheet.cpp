@@ -43,6 +43,7 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "StyleSheetContentsCache.h"
 
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -151,6 +152,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Document& docum
     , m_constructorDocument(document)
 {
     m_contents->registerClient(this);
+    m_contents->checkLoaded();
 
     WTF::switchOn(WTFMove(options.media), [this](RefPtr<MediaList>&& mediaList) {
         if (auto queries = mediaList->mediaQueries(); !queries.isEmpty())
@@ -523,6 +525,22 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
     if (!m_wasConstructedByJS)
         return Exception { ExceptionCode::NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_s };
 
+    // Try to use the cache in the case where contents is replaced before the stylesheet is attached to the document.
+    if (isDetached() && m_childRuleCSSOMWrappers.isEmpty()) {
+        auto key = Style::StyleSheetContentsCache::Key { text, m_contents->parserContext() };
+        auto cachedContents = Style::StyleSheetContentsCache::singleton().get(key);
+        if (cachedContents) {
+            m_contents->unregisterClient(this);
+            m_contents = *cachedContents;
+            m_contents->registerClient(this);
+        } else {
+            m_contents->parseString(WTFMove(text));
+            if (m_contents->isCacheable())
+                Style::StyleSheetContentsCache::singleton().add(WTFMove(key), m_contents);
+        }
+        return { };
+    }
+
     RuleMutationScope mutationScope(this, RuleReplace);
     m_contents->clearRules();
     for (auto& childRuleWrapper : m_childRuleCSSOMWrappers)
@@ -532,6 +550,13 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
 
     m_contents->parseString(WTFMove(text));
     return { };
+}
+
+bool CSSStyleSheet::isDetached() const
+{
+    return !m_ownerNode
+        && !m_ownerRule
+        && m_adoptingTreeScopes.isEmptyIgnoringNullReferences();
 }
 
 Document* CSSStyleSheet::constructorDocument() const

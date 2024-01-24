@@ -121,6 +121,7 @@ public:
     String originalURL() const { return m_originalURL; }
     const URL& baseURL() const { return m_parserContext.baseURL; }
 
+    bool isEmpty() const { return !ruleCount(); }
     unsigned ruleCount() const;
     StyleRuleBase* ruleAt(unsigned index) const;
 

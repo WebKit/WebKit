@@ -56,6 +56,7 @@
 #include "ScrollingThread.h"
 #include "SelectorQuery.h"
 #include "StyleScope.h"
+#include "StyleSheetContentsCache.h"
 #include "StyledElement.h"
 #include "TextPainter.h"
 #include "WorkerGlobalScope.h"
@@ -89,7 +90,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     if (maintainMemoryCache == MaintainMemoryCache::No)
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
 
-    InlineStyleSheetOwner::clearCache();
+    Style::StyleSheetContentsCache::singleton().clear();
     HTMLNameCache::clear();
     ImmutableStyleProperties::clearDeduplicationMap();
     SVGPathElement::clearCache();
