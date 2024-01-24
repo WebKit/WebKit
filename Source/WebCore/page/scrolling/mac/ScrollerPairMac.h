@@ -108,8 +108,8 @@ public:
 
     NSScrollerImpPair *scrollerImpPair() const { return m_scrollerImpPair.get(); }
     void ensureOnMainThreadWithProtectedThis(Function<void()>&&);
-    ScrollingTreeScrollingNode& node() const { return m_scrollingNode; }
-    
+    RefPtr<ScrollingTreeScrollingNode> protectedNode() const { return m_scrollingNode.get(); }
+
     bool mouseInContentArea() const { return m_mouseInContentArea; }
 
 private:
@@ -118,8 +118,7 @@ private:
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
     NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
 
-
-    ScrollingTreeScrollingNode& m_scrollingNode;
+    ThreadSafeWeakPtr<ScrollingTreeScrollingNode> m_scrollingNode;
 
     ScrollbarHoverState m_scrollbarHoverState;
 
