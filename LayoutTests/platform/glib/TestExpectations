@@ -3746,6 +3746,9 @@ webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/267990 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?12-last [ Pass Failure Crash ]
 webkit.org/b/267990 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?5-6 [ Pass Failure Crash ]
 
+webkit.org/b/267992 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?11-12 [ Pass Failure Crash ]
+webkit.org/b/267992 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-cross-origin.https.html [ Pass Failure Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
