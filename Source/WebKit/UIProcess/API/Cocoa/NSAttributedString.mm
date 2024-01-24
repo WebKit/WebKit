@@ -27,7 +27,10 @@
 
 #import "NSAttributedStringPrivate.h"
 
+#import "ProcessThrottler.h"
 #import "WKErrorInternal.h"
+#import "WKWebViewInternal.h"
+#import "WebProcessProxy.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -38,6 +41,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/Box.h>
 #import <wtf/Deque.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -410,10 +414,12 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         else
             webView.get()._textZoomFactor = 1;
 
+        __block Box<UniqueRef<WebKit::ProcessThrottler::Activity>> attributedStringActivity;
         auto finish = ^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
             if (finished)
                 return;
 
+            attributedStringActivity = nullptr;
             finished = YES;
 
             webView.get().navigationDelegate = nil;
@@ -489,6 +495,8 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         });
 
         contentNavigation = loadWebContent(webView.get());
+        if (!finished)
+            attributedStringActivity = Box<UniqueRef<WebKit::ProcessThrottler::Activity>>::create([webView _page]->protectedProcess()->throttler().foregroundActivity("NSAttributedString serialization"_s));
 
         ASSERT(contentNavigation);
         ASSERT(webView.get().loading);
