@@ -994,9 +994,9 @@ WebCore::AllowsContentJavaScript WebLocalFrameLoaderClient::allowsContentJavaScr
 }
 
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
-    FormState* formState, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+    FormState* formState, const String& clientRedirectSourceForHistory, uint64_t navigationID, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
-    WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, policyDecisionMode, WTFMove(function));
+    WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, policyDecisionMode, WTFMove(function));
 }
 
 void WebLocalFrameLoaderClient::cancelPolicyCheck()

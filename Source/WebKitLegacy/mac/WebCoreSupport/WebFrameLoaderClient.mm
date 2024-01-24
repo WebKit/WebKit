@@ -879,7 +879,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const WebCore:
         decisionListener:setUpPolicyListener(WTFMove(function), WebCore::PolicyAction::Ignore, appLinkURL, referrerURL).get()];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WebCore::FormState* formState, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction& action, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WebCore::FormState* formState, const String&, uint64_t, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&& function)
 {
     WebView *webView = getWebView(m_webFrame.get());
     BOOL tryAppLink = shouldTryAppLink(webView, action, core(m_webFrame.get()));

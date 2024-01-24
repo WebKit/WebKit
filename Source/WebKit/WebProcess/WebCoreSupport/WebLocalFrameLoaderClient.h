@@ -132,7 +132,7 @@ private:
     
     void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const String& frameName, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void cancelPolicyCheck() final;
     
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;

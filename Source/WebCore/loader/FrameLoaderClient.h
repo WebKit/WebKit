@@ -40,7 +40,7 @@ using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
 
 class FrameLoaderClient {
 public:
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, PolicyDecisionMode, FramePolicyFunction&&) = 0;
     virtual ~FrameLoaderClient() = default;
 };
 

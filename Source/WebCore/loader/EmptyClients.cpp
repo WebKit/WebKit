@@ -602,7 +602,7 @@ void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Naviga
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, PolicyDecisionMode, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, const String&, uint64_t, PolicyDecisionMode, FramePolicyFunction&&)
 {
 }
 

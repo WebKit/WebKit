@@ -266,12 +266,16 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
         return;
     }
 
+    auto documentLoader = m_frame.loader().loaderForWebsitePolicies();
+    auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : String();
+    auto navigationID = documentLoader ? documentLoader->navigationID() : 0;
+
     if (isInitialEmptyDocumentLoad) {
         // We ignore the response from the client for initial empty document loads and proceed with the load synchronously.
-        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, [](PolicyAction) { });
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, policyDecisionMode, [](PolicyAction) { });
         decisionHandler(PolicyAction::Use);
     } else
-        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, WTFMove(decisionHandler));
+        m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, policyDecisionMode, WTFMove(decisionHandler));
 }
 
 void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
