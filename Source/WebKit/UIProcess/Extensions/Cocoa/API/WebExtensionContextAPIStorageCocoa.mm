@@ -43,9 +43,8 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.get()", (NSString *)toAPIPrefixString(storageType)];
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(std::nullopt, toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(std::nullopt, toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
@@ -57,9 +56,8 @@ void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPagePro
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.getBytesInUse()", (NSString *)toAPIPrefixString(storageType)];
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(std::nullopt, toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(std::nullopt, toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
@@ -71,9 +69,8 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.set()", (NSString *)toAPIPrefixString(storageType)];
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
@@ -85,9 +82,8 @@ void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdent
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.remove()", (NSString *)toAPIPrefixString(storageType)];
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
@@ -99,9 +95,8 @@ void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdenti
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.clear()", (NSString *)toAPIPrefixString(storageType)];
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
@@ -113,9 +108,8 @@ void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPagePr
 {
     static NSString * const callingAPIName = @"browser.session.setAccessLevel()";
 
-    String errorString;
-    if (!extensionCanAccessWebPage(webPageProxyIdentifier, errorString)) {
-        completionHandler(toErrorString(callingAPIName, nil, errorString));
+    if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
+        completionHandler(toErrorString(callingAPIName, nil, @"access not allowed"));
         return;
     }
 

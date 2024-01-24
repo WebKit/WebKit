@@ -237,7 +237,7 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
-    bool extensionCanAccessWebPage(WebPageProxyIdentifier, ErrorString);
+    bool extensionCanAccessWebPage(WebPageProxyIdentifier);
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
