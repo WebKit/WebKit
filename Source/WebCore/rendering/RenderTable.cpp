@@ -744,6 +744,9 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         return;
     }
 
+    if (paintPhase == PaintPhase::Accessibility)
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, paintOffset);
+
     // We're done.  We don't bother painting any children.
     if (paintPhase == PaintPhase::BlockBackground)
         return;

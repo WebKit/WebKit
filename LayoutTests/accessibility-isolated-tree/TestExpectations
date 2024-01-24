@@ -37,6 +37,7 @@ accessibility/mac/attributed-string/attributed-string-has-completion-annotation.
 # Frames are off by 1px vs. non-ITM mode.
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]
+accessibility/table-with-rules.html [ Failure ]
 
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
