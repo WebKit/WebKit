@@ -2369,3 +2369,5 @@ webkit.org/b/267796 [ Release ] imported/w3c/web-platform-tests/requestidlecallb
 webkit.org/b/267934 [ Debug ] fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Crash ]
 
 webkit.org/b/264296 fast/forms/ios/show-and-dismiss-date-input-in-landscape.html [ Pass Timeout Crash ]
+
+webkit.org/b/267974 fast/forms/ios/dismiss-date-picker-on-rotation.html [ Pass Timeout Crash ]
