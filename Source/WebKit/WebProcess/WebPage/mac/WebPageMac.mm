@@ -487,11 +487,13 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
 {
     Ref frame = m_page->focusController().focusedOrMainFrame();
 
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         String selection = pluginView->getSelectionString();
         if (!selection.isNull())
             return completionHandler(WTFMove(selection));
     }
+#endif
 
     if (frame->selection().isNone())
         return completionHandler({ });

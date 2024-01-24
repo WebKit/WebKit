@@ -6008,20 +6008,22 @@ void WebPage::setCaretBlinkingSuspended(bool suspended)
     frame->selection().setCaretBlinkingSuspended(suspended);
 }
 
-RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(LocalFrame* coreFrame)
-{
-    PluginView* pluginView = pluginViewForFrame(coreFrame);
-    if (!pluginView)
-        return nullptr;
-
-    return pluginView->pdfDocumentForPrinting();
-}
-
 void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 {
     corePage()->setUseSystemAppearance(useSystemAppearance);
 }
 
+#endif
+
+#if PLATFORM(COCOA)
+RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(LocalFrame* coreFrame)
+{
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = pluginViewForFrame(coreFrame))
+        return pluginView->pdfDocumentForPrinting();
+#endif
+    return nullptr;
+}
 #endif
 
 void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)

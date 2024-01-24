@@ -1384,6 +1384,7 @@ public:
     std::optional<double> cpuLimit() const { return m_cpuLimit; }
 
 #if ENABLE(PDF_PLUGIN)
+    static PluginView* focusedPluginViewForFrame(WebCore::LocalFrame&);
     static PluginView* pluginViewForFrame(WebCore::LocalFrame*);
     PluginView* mainFramePlugIn() const;
 #endif
@@ -2037,10 +2038,6 @@ private:
     void setCanStartMediaTimerFired();
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
-
-#if ENABLE(PDF_PLUGIN)
-    static PluginView* focusedPluginViewForFrame(WebCore::LocalFrame&);
-#endif
 
     void reportUsedFeatures();
 
