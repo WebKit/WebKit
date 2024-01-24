@@ -23,75 +23,113 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Implementation of Library Fundamentals v3's std::expected, as described here: http://wg21.link/p0323r4
+/*
+ * <expected> is a C++23 feature, so it cannot be used in WebKit yet.
+ * Portions copied (and modified) from:
+ *   https://github.com/llvm/llvm-project/tree/main/libcxx/include/__expected
+ * as of:
+ *   https://github.com/llvm/llvm-project/commit/134c91595568ea1335b22e559f20c1a488ea270e
+ * license:
+ *   Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+ *   See https://llvm.org/LICENSE.txt for license information.
+ *   SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+*/
 
 #pragma once
 
-/*
-    unexpected synopsis
-
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
-    // ?.?.3, Unexpected object type
-    template <class E>
-      class unexpected;
-
-    // ?.?.4, Unexpected relational operators
-    template <class E>
-        constexpr bool
-        operator==(const unexpected<E>&, const unexpected<E>&);
-    template <class E>
-        constexpr bool
-        operator!=(const unexpected<E>&, const unexpected<E>&);
-
-    template <class E>
-    class unexpected {
-    public:
-        unexpected() = delete;
-        template <class U = E>
-          constexpr explicit unexpected(E&&);
-        constexpr const E& value() const &;
-        constexpr E& value() &;
-        constexpr E&& value() &&;
-        constexpr E const&& value() const&&;
-    private:
-        E val; // exposition only
-    };
-
-}}}
-
-*/
-
 #include <cstdlib>
+#include <type_traits>
 #include <utility>
 #include <wtf/StdLibExtras.h>
 
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
+namespace WTF::detail_from_clang_libstdcpp {
 
-template<class E>
+template <class _Err>
+class unexpected;
+
+namespace detail {
+
+template <class _Tp>
+struct is_std_unexpected : std::false_type { };
+
+template <class _Err>
+struct is_std_unexpected<unexpected<_Err>> : std::true_type { };
+
+template <class _Tp>
+using valid_std_unexpected = std::bool_constant<
+    std::is_object_v<_Tp>
+    && !std::is_array_v<_Tp>
+    && !is_std_unexpected<_Tp>::value
+    && !std::is_const_v<_Tp>
+    && !std::is_volatile_v<_Tp>>;
+
+} // namespace detail
+
+template <class Err>
 class unexpected {
     WTF_MAKE_FAST_ALLOCATED;
+    static_assert(detail::valid_std_unexpected<Err>::value,
+        "[expected.un.general] states a program that instantiates std::unexpected for a non-object type, an "
+        "array type, a specialization of unexpected, or a cv-qualified type is ill-formed."); // NOLINT
+
 public:
-    unexpected() = delete;
-    template <class U = E>
-    constexpr explicit unexpected(U&& u) : val(std::forward<U>(u)) { }
-    constexpr const E& value() const & { return val; }
-    constexpr E& value() & { return val; }
-    constexpr E&& value() && { return WTFMove(val); }
-    constexpr const E&& value() const && { return WTFMove(val); }
+    constexpr unexpected(const unexpected&) = default;
+    constexpr unexpected(unexpected&&)      = default;
+
+    template <class Error = Err>
+        requires(!std::is_same_v<std::remove_cvref_t<Error>, unexpected>
+            && !std::is_same_v<std::remove_cvref_t<Error>, std::in_place_t>
+            && std::is_constructible_v<Err, Error>)
+    constexpr explicit unexpected(Error&& error)
+        : m_unex(std::forward<Error>(error)) { }
+
+    template <class... Args>
+        requires std::is_constructible_v<Err, Args...>
+    constexpr explicit unexpected(std::in_place_t, Args&&... args)
+        : m_unex(std::forward<Args>(args)...) { }
+
+    template <class Up, class... Args>
+        requires std::is_constructible_v<Err, std::initializer_list<Up>&, Args...>
+    constexpr explicit unexpected(std::in_place_t, std::initializer_list<Up> il, Args&&... args)
+        : m_unex(il, std::forward<Args>(args)...) { }
+
+    constexpr unexpected& operator=(const unexpected&) = default;
+    constexpr unexpected& operator=(unexpected&&)      = default;
+
+    constexpr const Err& error() const& { return m_unex; }
+    constexpr Err& error() & { return m_unex; }
+    constexpr const Err&& error() const&& { return WTFMove(m_unex); }
+    constexpr Err&& error() && { return WTFMove(m_unex); }
+
+    constexpr void swap(unexpected& other)
+    {
+        static_assert(std::is_swappable_v<Err>, "unexpected::swap requires is_swappable_v<E> to be true");
+        using std::swap; // NOLINT
+        swap(m_unex, other.m_unex);
+    }
+
+    friend constexpr void swap(unexpected& x, unexpected& y)
+        requires std::is_swappable_v<Err>
+    { // NOLINT
+        x.swap(y);
+    }
+
+    template <class Err2>
+    friend constexpr bool operator==(const unexpected& x, const unexpected<Err2>& y)
+    {
+        return x.m_unex == y.m_unex;
+    }
 
 private:
-    E val;
+    Err m_unex;
 };
 
-template<class E> constexpr bool operator==(const unexpected<E>& lhs, const unexpected<E>& rhs) { return lhs.value() == rhs.value(); }
+template <class Err>
+unexpected(Err) -> unexpected<Err>;
 
-}}} // namespace std::experimental::fundamentals_v3
+} // namespace WTF::detail_from_clang_libstdcpp
 
-template<class E> using Unexpected = std::experimental::unexpected<E>;
+template<class E> using Unexpected = WTF::detail_from_clang_libstdcpp::unexpected<E>;
 
 // Not in the std::expected spec, but useful to work around lack of C++17 deduction guides.
 template<class E> constexpr Unexpected<std::decay_t<E>> makeUnexpected(E&& v) { return Unexpected<typename std::decay<E>::type>(std::forward<E>(v)); }

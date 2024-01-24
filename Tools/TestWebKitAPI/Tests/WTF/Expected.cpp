@@ -76,19 +76,19 @@ TEST(WTF_Expected, Unexpected)
 {
     {
         auto u = Unexpected<int>(42);
-        EXPECT_EQ(u.value(), 42);
+        EXPECT_EQ(u.error(), 42);
         constexpr auto c = makeUnexpected(42);
-        EXPECT_EQ(c.value(), 42);
+        EXPECT_EQ(c.error(), 42);
         EXPECT_EQ(u, c);
         EXPECT_FALSE(u != c);
     }
     {
         auto c = makeUnexpected(oops);
-        EXPECT_EQ(c.value(), oops);
+        EXPECT_EQ(c.error(), oops);
     }
     {
         auto s = makeUnexpected(std::string(oops));
-        EXPECT_EQ(s.value(), oops);
+        EXPECT_EQ(s.error(), oops);
     }
     {
         constexpr auto s0 = makeUnexpected(oops);
