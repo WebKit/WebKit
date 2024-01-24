@@ -185,6 +185,7 @@ class RadarModel(object):
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.duplicateOfProblemID = issue['original']['id'] if issue.get('original', None) else None
+        self.related = list()
         self.substate = 'Investigate' if issue['opened'] else None
         self.priority = 2
         self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
@@ -263,15 +264,29 @@ class RadarModel(object):
             self.client.parent.issues[self.id]['component'] = component
             self.client.parent.issues[self.id]['version'] = self.component.version
 
+        related = list(self.related)
+        for r in related:
+            if not self.client.parent.issues[self.id].get('related'):
+                self.client.parent.issues[self.id]['related'] = list()
+            r_dict = {'relationship': r.type, 'related_radar': r.related_radar_id}
+            self.client.parent.issues[self.id]['related'].append(r_dict)
+
+            inverse_r_dict = {'relationship': Radar.Relationship.inverse_map[r.type], 'related_radar': self.id}
+            if not self.client.parent.issues[r.related_radar_id].get('related'):
+                self.client.parent.issues[r.related_radar_id]['related'] = list()
+            self.client.parent.issues[r.related_radar_id]['related'].append(inverse_r_dict)
+
     def milestone_associations(self, milestone=None):
         return RadarModel.MilestoneAssociations(milestone or self.milestone)
 
     def relationships(self, relationships=None):
-        if not relationships or len(relationships) != 1:
-            raise ValueError('Invalid radarclient call')
-        if relationships[0] != Radar.Relationship.TYPE_ORIGINAL_OF:
-            raise ValueError("Unknown relationship type '{}'".format(relationships[0]))
+        if not relationships:
+            if not self.client.parent.issues[self.id].get('related'):
+                self.client.parent.issues[self.id]['related'] = list()
+            return [Radar.Relationship(r_dict['relationship'], self.client.radar_for_id(self.id), self.client.radar_for_id(r_dict['related_radar'])) for r_dict in self.client.parent.issues[self.id]['related']]
         result = []
+        if relationships[0] not in Radar.Relationship.TYPES:
+            raise ValueError("Unknown relationship type '{}'".format(r))
         for data in self.client.parent.issues.values():
             if (data.get('original') or {}).get('id') != self.id:
                 continue
@@ -280,6 +295,9 @@ class RadarModel(object):
                 self, RadarModel(self.client, data),
             ))
         return result
+
+    def add_relationship(self, relationship):
+        self.related.append(relationship)
 
     def remove_keyword(self, keyword):
         if keyword.name in self._issue.get('keywords') or []:
@@ -442,7 +460,29 @@ class Radar(Base, ContextStack):
             self.addedBy = addedBy
 
     class Relationship(object):
-        TYPE_ORIGINAL_OF = 'Original of'
+        TYPE_RELATED_TO = 'related-to'
+        TYPE_ORIGINAL_OF = 'original-of'
+        TYPE_DUPLICATE_OF = 'duplicate-of'
+        TYPE_CLONE_OF = 'clone-of'
+        TYPE_CLONED_TO = 'cloned-to'
+        TYPE_BLOCKED_BY = 'blocked-by'
+        TYPE_BLOCKING = 'blocking'
+        TYPE_PARENT_OF = 'parent-of'
+        TYPE_SUBTASK_OF = 'subtask-of'
+        TYPE_CAUSE_OF = 'cause-of'
+        TYPE_CAUSED_BY = 'caused-by'
+        TYPES = [TYPE_RELATED_TO, TYPE_BLOCKED_BY, TYPE_BLOCKING, TYPE_PARENT_OF, TYPE_SUBTASK_OF, TYPE_CAUSE_OF, TYPE_CAUSED_BY,
+                 TYPE_DUPLICATE_OF, TYPE_ORIGINAL_OF]
+
+        inverse_map = {
+            TYPE_RELATED_TO: TYPE_RELATED_TO,
+            TYPE_ORIGINAL_OF: TYPE_DUPLICATE_OF,
+            TYPE_CLONE_OF: TYPE_CLONED_TO,
+            TYPE_BLOCKING: TYPE_BLOCKED_BY,
+            TYPE_PARENT_OF: TYPE_SUBTASK_OF,
+            TYPE_CAUSE_OF: TYPE_CAUSED_BY,
+        }
+        inverse_map.update({v: k for k, v in list(inverse_map.items())})
 
         def __init__(self, type, radar, related_radar=None):
             self.type = type

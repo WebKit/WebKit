@@ -71,6 +71,8 @@ class Tracker(GenericTracker):
         TASK
     ]
 
+    RELATIONSHIP_TYPES = ['related-to', 'blocked-by', 'blocking', 'parent-of', 'subtask-of', 'cause-of', 'caused-by', 'duplicate-of', 'original-of']
+
     ALWAYS = 'Always'
     SOMETIMES = 'Sometimes'
     RARELY = 'Rarely'
@@ -280,6 +282,11 @@ class Tracker(GenericTracker):
                 if r.related_radar:
                     issue._duplicates.append(self.issue(r.related_radar.id))
 
+        if member == 'related':
+            issue._related = {r: [] for r in self.RELATIONSHIP_TYPES}
+            for r in radar.relationships():
+                issue._related[r.type].append(self.issue(r.related_radar_id))
+
         return issue
 
     def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, **properties):
@@ -411,6 +418,79 @@ class Tracker(GenericTracker):
         issue._comments.append(result)
 
         return result
+
+    def create_relationship(self, issue, issue2, relationship):
+        if relationship not in self.RELATIONSHIP_TYPES:
+            sys.stderr.write('{} is not a valid relationship type.'.format(relationship))
+            return None
+
+        radar = self.client.radar_for_id(issue.id)
+        if not radar:
+            sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+            return None
+
+        radar2 = self.client.radar_for_id(issue2.id)
+        if not radar2:
+            sys.stderr.write("Failed to fetch '{}'\n".format(issue2.link))
+            return None
+
+        if relationship == self.radarclient().Relationship.TYPE_DUPLICATE_OF:
+            radar.state = 'Verify'
+            radar.resolution = 'Duplicate'
+            radar.duplicateOfProblemID = issue2.id
+            issue._original = issue2
+            radar.commit_changes()
+        elif relationship == self.radarclient().Relationship.TYPE_ORIGINAL_OF:
+            radar2 = self.client.radar_for_id(issue2.id)
+            radar2.state = 'Verify'
+            radar2.resolution = 'Duplicate'
+            radar2.duplicateOfProblemID = issue.id
+            issue2._original = issue
+            radar2.commit_changes()
+        else:
+            new_relationship = self.radarclient().Relationship(relationship, radar, radar2)
+            radar.add_relationship(new_relationship)
+            radar.commit_changes()
+
+        if not issue._related:
+            self.populate(issue, 'related')
+        else:
+            issue._related[relationship].append(issue2)
+
+        return None
+
+    def relate(self, issue, related_to=None, blocked_by=None, blocking=None, parent_of=None, subtask_of=None,
+               cause_of=None, caused_by=None, duplicate_of=None, original_of=None, **relations):
+        if relations:
+            raise TypeError("'{}' is an invalid relation".format(list(relations.keys())[0]))
+
+        if not self.client or not self.library:
+            sys.stderr.write('radarclient inaccessible on this machine\n')
+            return None
+
+        try:
+            if related_to:
+                self.create_relationship(issue, related_to, self.radarclient().Relationship.TYPE_RELATED_TO)
+            if blocked_by:
+                self.create_relationship(issue, blocked_by, self.radarclient().Relationship.TYPE_BLOCKED_BY)
+            if blocking:
+                self.create_relationship(issue, blocking, self.radarclient().Relationship.TYPE_BLOCKING)
+            if parent_of:
+                self.create_relationship(issue, parent_of, self.radarclient().Relationship.TYPE_PARENT_OF)
+            if subtask_of:
+                self.create_relationship(issue, subtask_of, self.radarclient().Relationship.TYPE_SUBTASK_OF)
+            if cause_of:
+                self.create_relationship(issue, cause_of, self.radarclient().Relationship.TYPE_CAUSE_OF)
+            if caused_by:
+                self.create_relationship(issue, caused_by, self.radarclient().Relationship.TYPE_CAUSED_BY)
+            if duplicate_of:
+                self.create_relationship(issue, duplicate_of, self.radarclient().Relationship.TYPE_DUPLICATE_OF)
+            if original_of:
+                self.create_relationship(issue, original_of, self.radarclient().Relationship.TYPE_ORIGINAL_OF)
+        except AttributeError:
+            raise AttributeError('Input should be Issue objects.')
+
+        return issue
 
     @property
     @webkitcorepy.decorators.Memoize()
