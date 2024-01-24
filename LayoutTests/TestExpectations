@@ -7441,6 +7441,8 @@ imported/w3c/web-platform-tests/css/css-break/flexbox/flexbox-fragmentation-layo
 # css/css-break missing ref
 imported/w3c/web-platform-tests/css/css-break/chrome-bug-1289999-crash.https.html [ Skip ]
 
+webkit.org/b/264830 [ Debug ] fast/rendering/render-list-marker-select.html [ Skip ]
+
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
