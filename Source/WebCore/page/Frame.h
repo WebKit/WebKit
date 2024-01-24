@@ -86,6 +86,7 @@ public:
     virtual void didFinishLoadInAnotherProcess() = 0;
 
     virtual FrameView* virtualView() const = 0;
+    RefPtr<FrameView> protectedVirtualView() const;
     virtual void disconnectView() = 0;
     virtual void setOpener(Frame*) = 0;
     virtual const Frame* opener() const = 0;

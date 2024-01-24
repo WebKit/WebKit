@@ -88,7 +88,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeBooleanOrPlainFeature
     if (range.atEnd())
         return { };
 
-    auto value = consumeValue(range);
+    RefPtr value = consumeValue(range);
     if (!value)
         return { };
 
@@ -135,7 +135,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
     auto consumeLeftComparison = [&]() -> std::optional<Comparison> {
         if (range.peek().type() == IdentToken)
             return { };
-        auto value = consumeValue(range);
+        RefPtr value = consumeValue(range);
         if (!value)
             return { };
         auto op = consumeRangeOperator();
@@ -151,7 +151,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
         auto op = consumeRangeOperator();
         if (!op)
             return { };
-        auto value = consumeValue(range);
+        RefPtr value = consumeValue(range);
         if (!value) {
             didFailParsing = true;
             return { };
@@ -192,14 +192,14 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
 
 static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range)
 {
-    auto leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
     if (!leftValue)
         return nullptr;
 
     if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
         return nullptr;
 
-    auto rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
     if (!rightValue)
         return nullptr;
 
@@ -211,21 +211,21 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
     if (range.atEnd())
         return nullptr;
 
-    if (auto value = CSSPropertyParserHelpers::consumeIdent(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeIdent(range))
         return value;
 
     auto rangeCopy = range;
-    if (auto value = consumeRatioWithSlash(range))
+    if (RefPtr value = consumeRatioWithSlash(range))
         return value;
     range = rangeCopy;
 
-    if (auto value = CSSPropertyParserHelpers::consumeInteger(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeResolution(range))
         return value;
 
     return nullptr;
@@ -234,7 +234,7 @@ RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& 
 bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
     auto validateValue = [&](auto& value) {
-        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+        RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
         switch (schema.valueType) {
         case FeatureSchema::ValueType::Integer:
             return primitiveValue && primitiveValue->isInteger();

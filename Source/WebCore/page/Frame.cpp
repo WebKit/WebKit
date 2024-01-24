@@ -126,4 +126,9 @@ bool Frame::arePluginsEnabled()
     return settings().arePluginsEnabled();
 }
 
+RefPtr<FrameView> Frame::protectedVirtualView() const
+{
+    return virtualView();
+}
+
 } // namespace WebCore

@@ -45,7 +45,7 @@ struct SizeFeatureSchema : public FeatureSchema {
         // or the query container does not support container size queries on the relevant axes, then the result of
         // evaluating the size feature is unknown."
         // https://drafts.csswg.org/css-contain-3/#size-container
-        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer);
+        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer.get());
         if (!renderer)
             return MQ::EvaluationResult::Unknown;
 
