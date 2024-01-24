@@ -3738,6 +3738,11 @@ webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
 
 webrtc/datachannel/multiple-connections.html [ Timeout ]
 
+webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Pass Failure Crash ]
+webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?7-8 [ Pass Failure Crash ]
+webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?7-8 [ Pass Failure Crash ]
+webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?17-last [ Pass Failure Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
