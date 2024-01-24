@@ -1003,7 +1003,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 {
     ASSERT(!permission.isEmpty());
 
-    if (tab && hasActiveUserGesture(*tab)) {
+    if (tab && hasPermission(_WKWebExtensionPermissionActiveTab) && hasActiveUserGesture(*tab)) {
         // An active user gesture grants the "tabs" permission.
         if (permission == String(_WKWebExtensionPermissionTabs))
             return PermissionState::GrantedExplicitly;
