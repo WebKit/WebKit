@@ -364,7 +364,7 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
     return { borderBoxRight, rubyBaseMarginBoxVisualRect.top() + ((rubyBaseMarginBoxVisualRect.height() - annotationContentBoxVisualHeight) / 2) - annotationBorderTop };
 }
 
-InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLayoutBox, const InlineFormattingContext& inlineFormattingContext)
+InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBoxVisualRect, const InlineFormattingContext& inlineFormattingContext)
 {
     // FIXME: This is where we should take advantage of the ruby-column setup.
     ASSERT(rubyBaseLayoutBox.isRubyBase());
@@ -374,13 +374,12 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
         return { };
     }
     auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
-    auto& rubyBaseVisualGeometry = inlineFormattingContext.geometryForBox(rubyBaseLayoutBox);
     auto& annotationBoxLogicalGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
 
     if (hasInterlinearAnnotation(rubyBaseLayoutBox)) {
         if (isHorizontalWritingMode)
-            return { std::max(rubyBaseVisualGeometry.marginBoxWidth(), annotationBoxLogicalGeometry.marginBoxWidth()) - annotationBoxLogicalGeometry.horizontalMarginBorderAndPadding(), annotationBoxLogicalGeometry.contentBoxHeight() };
-        return { annotationBoxLogicalGeometry.contentBoxHeight(), std::max(annotationBoxLogicalGeometry.marginBoxWidth(), rubyBaseVisualGeometry.marginBoxHeight()) - annotationBoxLogicalGeometry.horizontalMarginBorderAndPadding() };
+            return { std::max(rubyBaseMarginBoxVisualRect.width(), annotationBoxLogicalGeometry.marginBoxWidth()) - annotationBoxLogicalGeometry.horizontalMarginBorderAndPadding(), annotationBoxLogicalGeometry.contentBoxHeight() };
+        return { annotationBoxLogicalGeometry.contentBoxHeight(), std::max(annotationBoxLogicalGeometry.marginBoxWidth(), rubyBaseMarginBoxVisualRect.height()) - annotationBoxLogicalGeometry.horizontalMarginBorderAndPadding() };
     }
 
     return annotationBoxLogicalGeometry.contentBoxSize();
