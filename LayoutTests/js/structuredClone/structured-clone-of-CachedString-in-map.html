@@ -1,0 +1,38 @@
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    const string = 'Expected result';
+
+    const map = new Map();
+    map.set('free', string);
+
+    map.set('tmp', {
+        get a() {
+            map.delete('free');
+            map.set('free', 0x1234);
+
+            for (let i = 0; i < 0x10; i++)
+                map.set('gc1_' + i, new ArrayBuffer(1024 * 1024 * 0x10));
+
+            for (let i = 0; i < 0x2000; i++)
+                map.set('gc2_' + i, new Date());
+
+            map.set('expected', string);
+        }
+    });
+
+    const result = structuredClone(map);
+
+    if (result.get('expected') != "Expected result")
+        console.log("FAIL");
+    else
+        console.log("PASS");
+}
+
+main();
+</script>
+</body>

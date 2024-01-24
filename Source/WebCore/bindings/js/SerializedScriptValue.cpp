@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -918,6 +918,7 @@ protected:
 
     JSGlobalObject* const m_lexicalGlobalObject;
     bool m_failed;
+    MarkedArgumentBuffer m_keepAliveBuffer;
     MarkedArgumentBuffer m_objectPool;
 #if ASSERT_ENABLED
     Vector<SerializationTag> m_objectPoolTags;
@@ -2571,7 +2572,6 @@ private:
 #endif
     SerializationForStorage m_forStorage;
 
-    MarkedArgumentBuffer m_keepAliveBuffer;
 #if ASSERT_ENABLED
     bool m_didSeeComplexCases { false };
 #endif
@@ -2948,10 +2948,13 @@ private:
         {
         }
 
-        JSValue jsString(JSGlobalObject* lexicalGlobalObject)
+        JSValue jsString(CloneDeserializer& deserializer)
         {
-            if (!m_jsString)
-                m_jsString = JSC::jsString(lexicalGlobalObject->vm(), m_string);
+            if (!m_jsString) {
+                auto& vm = deserializer.m_lexicalGlobalObject->vm();
+                m_jsString = JSC::jsString(vm, m_string);
+                deserializer.m_keepAliveBuffer.appendWithCrashOnOverflow(m_jsString);
+            }
             return m_jsString;
         }
         const String& string() { return m_string; }
@@ -4775,7 +4778,7 @@ private:
             CachedStringRef cachedString;
             if (!readStringData(cachedString))
                 return JSValue();
-            return cachedString->jsString(m_lexicalGlobalObject);
+            return cachedString->jsString(*this);
         }
         case EmptyStringTag:
             return jsEmptyString(m_lexicalGlobalObject->vm());
@@ -4783,7 +4786,7 @@ private:
             CachedStringRef cachedString;
             if (!readStringData(cachedString))
                 return JSValue();
-            StringObject* obj = constructString(m_lexicalGlobalObject->vm(), m_globalObject, cachedString->jsString(m_lexicalGlobalObject));
+            StringObject* obj = constructString(m_lexicalGlobalObject->vm(), m_globalObject, cachedString->jsString(*this));
             addToObjectPool<StringObjectTag>(obj);
             return obj;
         }
