@@ -31,6 +31,7 @@
 #pragma once
 
 #include "FrameLoader.h"
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -71,9 +72,10 @@ private:
     URL completeURL(const String&) const;
 
     bool shouldConvertInvalidURLsToBlank() const;
+    Ref<LocalFrame> protectedFrame() const;
 
     bool m_containsPlugins { false };
-    LocalFrame& m_frame;
+    WeakRef<LocalFrame> m_frame;
 };
 
 } // namespace WebCore
