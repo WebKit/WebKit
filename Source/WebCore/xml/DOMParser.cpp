@@ -19,6 +19,7 @@
 #include "config.h"
 #include "DOMParser.h"
 
+#include "CommonAtomStrings.h"
 #include "HTMLDocument.h"
 #include "SVGDocument.h"
 #include "SecurityOriginPolicy.h"
@@ -39,16 +40,16 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
     return adoptRef(*new DOMParser(contextDocument));
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const AtomString& contentType)
 {
     RefPtr<Document> document;
-    if (contentType == "text/html"_s)
+    if (contentType == textHTMLContentTypeAtom())
         document = HTMLDocument::create(nullptr, m_settings, URL { });
-    else if (contentType == "application/xhtml+xml"_s)
+    else if (contentType == applicationXHTMLContentTypeAtom())
         document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
-    else if (contentType == "image/svg+xml"_s)
+    else if (contentType == imageSVGContentTypeAtom())
         document = SVGDocument::create(nullptr, m_settings, URL { });
-    else if (contentType == "text/xml"_s || contentType == "application/xml"_s) {
+    else if (contentType == textXMLContentTypeAtom() || contentType == applicationXMLContentTypeAtom()) {
         document = XMLDocument::create(nullptr, m_settings, URL { });
         document->overrideMIMEType(contentType);
     } else

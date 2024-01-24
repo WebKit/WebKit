@@ -62,7 +62,7 @@ static RefPtr<Document> documentFromClipboard(const Clipboard* clipboard)
 
 static FileReaderLoader::ReadType readTypeForMIMEType(const String& type)
 {
-    if (type == "text/uri-list"_s || type == "text/plain"_s || type == "text/html"_s)
+    if (type == "text/uri-list"_s || type == textPlainContentTypeAtom() || type == textHTMLContentTypeAtom())
         return FileReaderLoader::ReadAsText;
     return FileReaderLoader::ReadAsArrayBuffer;
 }
@@ -303,7 +303,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         m_data = { page->applyLinkDecorationFiltering(urlStringToSanitize, LinkDecorationFilteringTrigger::Copy) };
     }
 
-    if (m_type == "text/html"_s) {
+    if (m_type == textHTMLContentTypeAtom()) {
         auto markupToSanitize = dataAsString();
         if (markupToSanitize.isEmpty())
             return;

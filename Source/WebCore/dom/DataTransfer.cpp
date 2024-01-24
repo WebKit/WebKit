@@ -128,12 +128,12 @@ static String normalizeType(const String& type)
         return type;
 
     auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
-    if (lowercaseType == "text"_s || lowercaseType.startsWith("text/plain;"_s))
+    if (lowercaseType == "text"_s || lowercaseType.startsWith(textPlainContentTypeAtom()))
         return textPlainContentTypeAtom();
     if (lowercaseType == "url"_s || lowercaseType.startsWith("text/uri-list;"_s))
         return "text/uri-list"_s;
     if (lowercaseType.startsWith("text/html;"_s))
-        return "text/html"_s;
+        return textHTMLContentTypeAtom();
 
     return lowercaseType;
 }
@@ -182,7 +182,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
             });
         }
 
-        if (lowercaseType == "text/html"_s && DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
+        if (lowercaseType == textHTMLContentTypeAtom() && DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
             // If the pasteboard contains files and the page requests 'text/html', we only read from rich text types to prevent file
             // paths from leaking (e.g. from plain text data on the pasteboard) since we sanitize cross-origin markup. However, if
             // custom pasteboard data is disabled, then we can't ensure that the markup we deliver is sanitized, so we fall back to
@@ -211,7 +211,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     if (!Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
         return { };
 
-    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/html"_s) {
+    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == textHTMLContentTypeAtom()) {
         if (!document.frame())
             return { };
         WebContentMarkupReader reader { document.protectedFrame().releaseNonNull() };
@@ -357,8 +357,8 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
 
         if (safeTypes.contains("text/uri-list"_s))
             types.append("text/uri-list"_s);
-        if (safeTypes.contains("text/html"_s) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
-            types.append("text/html"_s);
+        if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
+            types.append(textHTMLContentTypeAtom());
         return types;
     }
 
@@ -445,7 +445,7 @@ Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, con
 {
     auto pasteboard = makeUnique<StaticPasteboard>();
     pasteboard->writeString(textPlainContentTypeAtom(), plainText);
-    pasteboard->writeString("text/html"_s, htmlText);
+    pasteboard->writeString(textHTMLContentTypeAtom(), htmlText);
     return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
 }
 

@@ -27,6 +27,7 @@
 
 #include "DOMImplementation.h"
 #include "CachedResourceLoader.h"
+#include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
 #include "FrameLoader.h"
@@ -71,7 +72,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     String documentSource = sourceString;
 
     RefPtr<Document> result;
-    if (sourceMIMEType == "text/plain"_s) {
+    if (sourceMIMEType == textPlainContentTypeAtom()) {
         result = XMLDocument::createXHTML(frame, ownerDocument->settings(), sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else
@@ -127,7 +128,7 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node& sourceNode, Do
 
     // If the output document is HTML, default to HTML method.
     if (outputDocument.isHTMLDocument())
-        resultMIMEType = "text/html"_s;
+        resultMIMEType = textHTMLContentTypeAtom();
 
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return nullptr;

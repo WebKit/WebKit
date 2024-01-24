@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
 #include "Color.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
@@ -242,7 +243,7 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
     if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat)
         results.add("text/uri-list"_s);
     if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat)
-        results.add("text/plain"_s);
+        results.add(textPlainContentTypeAtom());
 }
 
 std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
@@ -275,9 +276,9 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
             domPasteboardTypes.add(type);
     }
 
-    domPasteboardTypes.add("text/plain"_s);
+    domPasteboardTypes.add(textPlainContentTypeAtom());
     domPasteboardTypes.add("text/uri-list"_s);
-    domPasteboardTypes.add("text/html"_s);
+    domPasteboardTypes.add(textHTMLContentTypeAtom());
 
     return copyToVector(domPasteboardTypes);
 }

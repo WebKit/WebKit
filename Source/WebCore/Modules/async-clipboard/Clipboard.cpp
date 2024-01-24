@@ -123,7 +123,7 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
 
     String text;
     for (size_t index = 0; index < allInfo->size(); ++index) {
-        if (allInfo->at(index).webSafeTypesByFidelity.contains("text/plain"_s)) {
+        if (allInfo->at(index).webSafeTypesByFidelity.contains(textPlainContentTypeAtom())) {
             PasteboardPlainText plainTextReader;
             pasteboard->read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, index);
             text = WTFMove(plainTextReader.text);
@@ -147,7 +147,7 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
     }
 
     PasteboardCustomData customData;
-    customData.writeString("text/plain"_s, data);
+    customData.writeString(textPlainContentTypeAtom(), data);
     customData.setOrigin(document->originIdentifierForPasteboard());
     Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(frame->pageID()))->writeCustomData({ WTFMove(customData) });
     promise->resolve();
@@ -242,7 +242,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         resultAsString = WTFMove(plainTextReader.text);
     }
 
-    if (type == "text/html"_s) {
+    if (type == textHTMLContentTypeAtom()) {
         WebContentMarkupReader markupReader { *frame };
         activePasteboard().read(markupReader, WebContentReadingPolicy::OnlyRichTextTypes, itemIndex);
         resultAsString = markupReader.takeMarkup();

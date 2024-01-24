@@ -916,7 +916,7 @@ void Document::parseMarkupUnsafe(const String& markup, OptionSet<ParserContentPo
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
     bool usedFastPath = false;
-    if (this->contentType() == "text/html"_s) {
+    if (this->contentType() == textHTMLContentTypeAtom()) {
         auto body = HTMLBodyElement::create(*this);
         usedFastPath = tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy);
         if (LIKELY(usedFastPath)) {
@@ -1863,13 +1863,13 @@ void Document::setContent(const String& content)
 String Document::suggestedMIMEType() const
 {
     if (isXHTMLDocument())
-        return "application/xhtml+xml"_s;
+        return applicationXHTMLContentTypeAtom();
     if (isSVGDocument())
-        return "image/svg+xml"_s;
+        return imageSVGContentTypeAtom();
     if (xmlStandalone())
-        return "text/xml"_s;
+        return textXMLContentTypeAtom();
     if (isHTMLDocument())
-        return "text/html"_s;
+        return textHTMLContentTypeAtom();
     if (DocumentLoader* loader = this->loader())
         return loader->responseMIMEType();
     return String();

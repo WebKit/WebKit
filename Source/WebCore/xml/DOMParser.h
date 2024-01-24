@@ -32,7 +32,7 @@ public:
     static Ref<DOMParser> create(Document& contextDocument);
     ~DOMParser();
 
-    ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(const String&, const AtomString& contentType);
 
 private:
     explicit DOMParser(Document& contextDocument);
