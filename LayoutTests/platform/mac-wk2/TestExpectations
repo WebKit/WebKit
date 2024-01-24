@@ -1970,3 +1970,5 @@ webkit.org/b/267891 [ Sonoma+ Release ] fast/css/nested-table-with-collapsed-bor
 webkit.org/b/267796 [ Monterey+ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
 
 webkit.org/b/267953 [ Monterey+ ] http/wpt/webrtc/video-script-transform.html [ Pass Failure ]
+
+webkit.org/b/268018 [ Sonoma+ Release ] fast/images/text-recognition/mac/select-word-in-transparent-image-overlay.html [ Pass ImageOnlyFailure ]
