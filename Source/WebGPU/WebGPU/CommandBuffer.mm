@@ -53,6 +53,16 @@ void CommandBuffer::makeInvalid()
     m_commandBuffer = nil;
 }
 
+void CommandBuffer::setBufferMapCount(int bufferMapCount)
+{
+    m_bufferMapCount = bufferMapCount;
+}
+
+int CommandBuffer::bufferMapCount() const
+{
+    return m_bufferMapCount;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

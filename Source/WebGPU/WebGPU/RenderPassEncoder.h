@@ -96,6 +96,8 @@ public:
     id<MTLRenderCommandEncoder> renderCommandEncoder() const;
     void makeInvalid();
     void addResourceToActiveResources(id<MTLResource>, OptionSet<BindGroupEntryUsage>, uint32_t baseMipLevel = 0, uint32_t baseArrayLayer = 0, WGPUTextureAspect = WGPUTextureAspect_All);
+    CommandEncoder& parentEncoder();
+    void setCommandEncoder(const BindGroupEntryUsageData::Resource&);
 
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, Device&);

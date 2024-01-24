@@ -32,16 +32,18 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUBufferImpl {
 };
 
 namespace WebGPU {
 
+class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
-class Buffer : public WGPUBufferImpl, public RefCounted<Buffer> {
+class Buffer : public WGPUBufferImpl, public RefCounted<Buffer>, public CanMakeWeakPtr<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class State : uint8_t;
@@ -86,6 +88,7 @@ public:
 
     Device& device() const { return m_device; }
     bool isDestroyed() const;
+    void setCommandEncoder(CommandEncoder&) const;
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
@@ -110,6 +113,7 @@ private:
     Vector<uint8_t> m_emptyBuffer;
 
     const Ref<Device> m_device;
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

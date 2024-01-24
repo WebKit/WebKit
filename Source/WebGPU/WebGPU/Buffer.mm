@@ -152,6 +152,15 @@ Buffer::Buffer(Device& device)
 
 Buffer::~Buffer() = default;
 
+void Buffer::setCommandEncoder(CommandEncoder& commandEncoder) const
+{
+    m_commandEncoder = commandEncoder;
+    if (m_state == State::Mapped || m_state == State::MappedAtCreation)
+        commandEncoder.incrementBufferMapCount();
+    if (isDestroyed())
+        commandEncoder.makeSubmitInvalid();
+}
+
 void Buffer::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-destroy
@@ -162,7 +171,10 @@ void Buffer::destroy()
     }
 
     m_state = State::Destroyed;
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeSubmitInvalid();
 
+    m_commandEncoder = nullptr;
     m_buffer = nil;
 }
 
@@ -284,6 +296,8 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->m_state = State::Mapped;
+            if (protectedThis->m_commandEncoder)
+                protectedThis->m_commandEncoder->incrementBufferMapCount();
 
             protectedThis->m_mappingRange = { offset, offset + rangeSize };
 
@@ -323,9 +337,8 @@ void Buffer::unmap()
     if (!validateUnmap() && !m_device->isValid())
         return;
 
-    // FIXME: "If this.[[state]] is mapping pending: Reject [[mapping]] with an AbortError."
-
-    // FIXME: Handle array buffer detaching.
+    if (m_commandEncoder)
+        m_commandEncoder->decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {

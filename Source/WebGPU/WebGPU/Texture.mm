@@ -27,6 +27,7 @@
 #import "Texture.h"
 
 #import "APIConversions.h"
+#import "CommandEncoder.h"
 #import "Device.h"
 #import "TextureView.h"
 #import <bmalloc/Algorithm.h>
@@ -3082,6 +3083,13 @@ void Texture::makeCanvasBacking()
     m_canvasBacking = true;
 }
 
+void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
+{
+    m_commandEncoder = commandEncoder;
+    if (isDestroyed())
+        commandEncoder.makeSubmitInvalid();
+}
+
 void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
@@ -3092,6 +3100,9 @@ void Texture::destroy()
         if (view.get())
             view->destroy();
     }
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeSubmitInvalid();
+    m_commandEncoder = nullptr;
 
     m_textureViews.clear();
 }

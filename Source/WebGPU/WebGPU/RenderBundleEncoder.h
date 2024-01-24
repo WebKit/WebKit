@@ -68,6 +68,7 @@ class Buffer;
 class Device;
 class RenderBundle;
 class RenderPipeline;
+class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
@@ -119,6 +120,7 @@ private:
     void executePreDrawCommands();
     void endCurrentICB();
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
+    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
     bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
     void finalizeRenderCommand();

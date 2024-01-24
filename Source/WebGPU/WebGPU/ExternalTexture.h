@@ -28,13 +28,14 @@
 #import "Device.h"
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUExternalTextureImpl {
 };
 
 namespace WebGPU {
 
-class ExternalTexture : public WGPUExternalTextureImpl, public RefCounted<ExternalTexture> {
+class ExternalTexture : public WGPUExternalTextureImpl, public RefCounted<ExternalTexture>, public CanMakeWeakPtr<ExternalTexture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ExternalTexture> create(CVPixelBufferRef pixelBuffer, WGPUColorSpace colorSpace, Device& device)

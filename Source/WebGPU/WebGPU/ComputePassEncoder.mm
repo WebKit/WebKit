@@ -274,6 +274,18 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
     [m_computeCommandEncoder pushDebugGroup:groupLabel];
 }
 
+static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource, CommandEncoder& parentEncoder)
+{
+    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+        if (buffer)
+            buffer->setCommandEncoder(parentEncoder);
+        }, [&](const WeakPtr<const TextureView>& textureView) {
+            if (textureView)
+                textureView->setCommandEncoder(parentEncoder);
+        }, [](const WeakPtr<const ExternalTexture>&) {
+    });
+}
+
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
     if (dynamicOffsetCount)
@@ -286,6 +298,11 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
         resourceList.append(&resource);
+        ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+        for (size_t i = 0, sz = resource.mtlResources.size(); i < sz; ++i) {
+            auto& resourceUsage = resource.resourceUsages[i];
+            setCommandEncoder(resourceUsage.resource, m_parentEncoder);
+        }
     }
 
     m_bindGroupResources.set(groupIndex, resourceList);

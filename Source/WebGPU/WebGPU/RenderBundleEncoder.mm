@@ -80,7 +80,7 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     for (id<MTLResource> r : resources) {
         ResourceUsageAndRenderStage *usageAndStage = [resources objectForKey:r];
         stageResources[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(r);
-        stageResourceUsages[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(BindGroupEntryUsageData { .usage = usageAndStage.entryUsage, .binding = usageAndStage.binding });
+        stageResourceUsages[usageAndStage.renderStages - 1][usageAndStage.usage - 1].append(BindGroupEntryUsageData { .usage = usageAndStage.entryUsage, .binding = usageAndStage.binding, .resource = usageAndStage.resource });
     }
 
     RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline];
@@ -174,18 +174,25 @@ void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
         existingResource.renderStages |= resource.renderStages;
         existingResource.entryUsage |= resource.entryUsage;
         existingResource.binding = resource.binding;
+        // !! assert resource is the same
     } else
         [resources setObject:resource forKey:mtlResource];
 }
 
-void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, MTLRenderStages stage)
+void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* container, id<MTLResource> mtlResource, MTLRenderStages stage)
+{
+    WeakPtr<const Buffer> dummyBuffer = nullptr;
+    addResource(container, mtlResource, stage, dummyBuffer);
+}
+
+void RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, MTLRenderStages stage, const BindGroupEntryUsageData::Resource& resource)
 {
     if (m_renderPassEncoder) {
         [m_renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:MTLResourceUsageRead stages:stage];
         return;
     }
 
-    return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex]);
+    return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex resource:resource]);
 }
 
 void RenderBundleEncoder::executePreDrawCommands()
@@ -313,8 +320,10 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
     UNUSED_PARAM(indirectOffset);
 
     m_requiresCommandReplay = true;
-    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
+    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+        makeInvalid();
         return;
+    }
 
     executePreDrawCommands();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
@@ -322,6 +331,7 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
             return;
 
         if (m_renderPassEncoder) {
+            indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
             [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
             return;
         }
@@ -331,6 +341,7 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
             return;
 
         ASSERT(m_indexBufferOffset == contents->indexStart);
+        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, indirectBuffer);
         [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
     } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDrawIndexed;
@@ -346,13 +357,16 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
 
 void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments))
+    if (indirectBuffer.buffer().length < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+        makeInvalid();
         return;
+    }
 
     m_requiresCommandReplay = true;
     executePreDrawCommands();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (m_renderPassEncoder) {
+            indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
             [m_renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
             return;
         }
@@ -361,6 +375,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
         if (!contents || !contents->instanceCount || !contents->vertexCount)
             return;
 
+        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, indirectBuffer);
         [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
     } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDraw;
@@ -537,8 +552,15 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
     for (const auto& resource : group.resources()) {
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
         for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
-            ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages entryUsage:resource.resourceUsages[i].usage binding:resource.resourceUsages[i].binding];
+            auto& resourceUsage = resource.resourceUsages[i];
+            ResourceUsageAndRenderStage* usageAndRenderStage = [[ResourceUsageAndRenderStage alloc] initWithUsage:resource.usage renderStages:resource.renderStages entryUsage:resourceUsage.usage binding:resourceUsage.binding resource:resourceUsage.resource];
             addResource(m_resources, resource.mtlResources[i], usageAndRenderStage);
+        }
+        if (m_renderPassEncoder) {
+            for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
+                auto& resourceUsage = resource.resourceUsages[i];
+                m_renderPassEncoder->setCommandEncoder(resourceUsage.resource);
+            }
         }
     }
 
@@ -567,7 +589,9 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
     if (m_indexBuffer)
-        addResource(m_resources, m_indexBuffer, MTLRenderStageVertex);
+        addResource(m_resources, m_indexBuffer, MTLRenderStageVertex, buffer);
+    if (m_renderPassEncoder)
+        buffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
 }
 
 bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b)
@@ -675,8 +699,10 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, u
 {
     UNUSED_PARAM(size);
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
-        addResource(m_resources, buffer.buffer(), MTLRenderStageVertex);
+        addResource(m_resources, buffer.buffer(), MTLRenderStageVertex, buffer);
         m_vertexBuffers[slot] = { buffer.buffer(), offset };
+        if (m_renderPassEncoder)
+            buffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
     } else {
         m_requiresMetalWorkaround = false;
         m_recordedCommands.append([slot, &buffer, offset, size, protectedThis = Ref { *this }] {

@@ -94,12 +94,14 @@ public:
     static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
     void makeInvalid();
     void makeSubmitInvalid();
+    void incrementBufferMapCount();
+    void decrementBufferMapCount();
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
 
-    bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
+    NSString* errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
@@ -118,6 +120,7 @@ private:
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
+    int m_bufferMapCount { 0 };
     bool m_makeSubmitInvalid { false };
 
     const Ref<Device> m_device;

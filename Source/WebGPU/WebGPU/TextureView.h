@@ -82,7 +82,7 @@ public:
     WGPUTextureViewDimension dimension() const;
     bool isDestroyed() const;
     void destroy();
-    void setCommandEncoder(CommandEncoder&);
+    void setCommandEncoder(CommandEncoder&) const;
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
@@ -95,7 +95,7 @@ private:
 
     const Ref<Device> m_device;
     Texture& m_parentTexture;
-    WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

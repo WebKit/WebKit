@@ -28,8 +28,13 @@
 #import <Metal/Metal.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebGPU {
+
+class Buffer;
+class ExternalTexture;
+class TextureView;
 
 enum class BindGroupEntryUsage {
     Undefined = 0,
@@ -53,6 +58,8 @@ static constexpr auto isTextureBindGroupEntryUsage(OptionSet<BindGroupEntryUsage
 struct BindGroupEntryUsageData {
     OptionSet<BindGroupEntryUsage> usage { BindGroupEntryUsage::Undefined };
     uint32_t binding { 0 };
+    using Resource = std::variant<WeakPtr<const Buffer>, WeakPtr<const TextureView>, WeakPtr<const ExternalTexture>>;
+    Resource resource;
     static constexpr uint32_t invalidBindingIndex = INT_MAX;
     static constexpr BindGroupEntryUsage invalidBindGroupUsage = static_cast<BindGroupEntryUsage>(std::numeric_limits<std::underlying_type<BindGroupEntryUsage>::type>::max());
 };

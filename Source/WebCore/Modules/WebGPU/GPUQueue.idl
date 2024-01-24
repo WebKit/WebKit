@@ -55,7 +55,7 @@ interface GPUQueue {
         GPUImageDataLayout dataLayout,
         GPUExtent3D size);
 
-    undefined copyExternalImageToTexture(
+    [CallWith=CurrentScriptExecutionContext] undefined copyExternalImageToTexture(
         GPUImageCopyExternalImage source,
         GPUImageCopyTextureTagged destination,
         GPUExtent3D copySize);

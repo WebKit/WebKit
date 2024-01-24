@@ -60,12 +60,15 @@ public:
 
     Device& device() const { return m_device; }
     void makeInvalid();
+    void setBufferMapCount(int);
+    int bufferMapCount() const;
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&);
     CommandBuffer(Device&);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
+    int m_bufferMapCount { 0 };
 
     const Ref<Device> m_device;
 };

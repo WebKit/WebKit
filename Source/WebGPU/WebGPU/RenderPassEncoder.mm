@@ -31,9 +31,11 @@
 #import "BindableResource.h"
 #import "Buffer.h"
 #import "CommandEncoder.h"
+#import "ExternalTexture.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import "TextureView.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
@@ -281,6 +283,7 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
 
 void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    indirectBuffer.setCommandEncoder(m_parentEncoder);
     if (!m_indexBuffer.length || indirectBuffer.buffer().length < sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
         return;
 
@@ -290,6 +293,7 @@ void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64
 
 void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
+    indirectBuffer.setCommandEncoder(m_parentEncoder);
     if (indirectBuffer.buffer().length < sizeof(MTLDrawPrimitivesIndirectArguments))
         return;
 
@@ -345,7 +349,18 @@ void RenderPassEncoder::endPass()
         m_queryBufferIndicesToClear.clear();
         m_parentEncoder->finalizeBlitCommandEncoder();
     }
+}
 
+void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
+{
+    WTF::switchOn(resource, [&](const WeakPtr<const Buffer>& buffer) {
+        if (buffer)
+            buffer->setCommandEncoder(m_parentEncoder);
+        }, [&](const WeakPtr<const TextureView>& textureView) {
+            if (textureView)
+                textureView->setCommandEncoder(m_parentEncoder);
+        }, [](const WeakPtr<const ExternalTexture>&) {
+    });
 }
 
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles)
@@ -368,6 +383,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             makeInvalid();
             return;
         }
+
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [m_renderCommandEncoder setDepthStencilState:depthStencilState];
@@ -375,14 +391,18 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             [m_renderCommandEncoder setFrontFacingWinding:icb.frontFace];
             [m_renderCommandEncoder setDepthClipMode:icb.depthClipMode];
             [m_renderCommandEncoder setDepthBias:icb.depthBias slopeScale:icb.depthBiasSlopeScale clamp:icb.depthBiasClamp];
+            ASSERT(icb.resources);
 
             for (const auto& resource : *icb.resources) {
                 if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
                     [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
                 ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
-                for (size_t i = 0, resourceCount = resource.mtlResources.size(); i < resourceCount; ++i)
-                    addResourceToActiveResources(resource.mtlResources[i], resource.resourceUsages[i].usage);
+                for (size_t i = 0, resourceCount = resource.mtlResources.size(); i < resourceCount; ++i) {
+                    auto& resourceUsage = resource.resourceUsages[i];
+                    addResourceToActiveResources(resource.mtlResources[i], resourceUsage.usage);
+                    setCommandEncoder(resourceUsage.resource);
+                }
             }
 
             id<MTLIndirectCommandBuffer> indirectCommandBuffer = icb.indirectCommandBuffer;
@@ -392,6 +412,11 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 
         renderBundle.replayCommands(*this);
     }
+}
+
+CommandEncoder& RenderPassEncoder::parentEncoder()
+{
+    return m_parentEncoder;
 }
 
 bool RenderPassEncoder::colorDepthStencilTargetsMatch(const RenderPipeline& pipeline) const
@@ -465,8 +490,11 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
             [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
-        for (size_t i = 0, sz = resource.mtlResources.size(); i < sz; ++i)
-            addResourceToActiveResources(resource.mtlResources[i], resource.resourceUsages[i].usage);
+        for (size_t i = 0, sz = resource.mtlResources.size(); i < sz; ++i) {
+            auto& resourceUsage = resource.resourceUsages[i];
+            addResourceToActiveResources(resource.mtlResources[i], resourceUsage.usage);
+            setCommandEncoder(resourceUsage.resource);
+        }
     }
 
     [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
@@ -480,6 +508,7 @@ void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
 
 void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
+    buffer.setCommandEncoder(m_parentEncoder);
     m_indexBuffer = buffer.buffer();
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
@@ -540,6 +569,7 @@ void RenderPassEncoder::setStencilReference(uint32_t reference)
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
     UNUSED_PARAM(size);
+    buffer.setCommandEncoder(m_parentEncoder);
     addResourceToActiveResources(buffer.buffer(), BindGroupEntryUsage::Input);
     [m_renderCommandEncoder setVertexBuffer:buffer.buffer() offset:offset atIndex:slot];
 }

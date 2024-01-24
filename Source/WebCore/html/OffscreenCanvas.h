@@ -158,6 +158,7 @@ public:
     void dispatchEvent(Event&) final;
     using RefCounted::ref;
     using RefCounted::deref;
+    bool isDetached() const { return m_detached; };
 
 private:
     OffscreenCanvas(ScriptExecutionContext&, unsigned width, unsigned height);

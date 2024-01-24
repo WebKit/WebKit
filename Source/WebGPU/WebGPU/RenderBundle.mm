@@ -29,7 +29,7 @@
 #import "APIConversions.h"
 
 @implementation ResourceUsageAndRenderStage
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::BindGroupEntryUsageData::Resource)resource
 {
     if (!(self = [super init]))
         return nil;
@@ -38,6 +38,7 @@
     _renderStages = renderStages;
     _entryUsage = entryUsage;
     _binding = binding;
+    _resource = resource;
 
     return self;
 }

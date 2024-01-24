@@ -143,11 +143,9 @@ void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandl
 bool Queue::validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
-        if (!isValidToUseWith(command.get(), *this))
+        if (!isValidToUseWith(command.get(), *this) || command.get().bufferMapCount())
             return false;
     }
-
-    // FIXME: "Every GPUBuffer referenced in any element of commandBuffers is in the "unmapped" buffer state."
 
     // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
     // FIXME: "For occlusion queries, occlusionQuerySet in beginRenderPass() does not constitute a reference, while beginOcclusionQuery() does."
@@ -188,7 +186,6 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
-
     if (!validateSubmit(commands)) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
@@ -215,24 +212,19 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
         [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
-static bool validateWriteBufferInitial(size_t size)
-{
-    if (size % 4)
-        return false;
-
-    return true;
-}
-
 bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, size_t size) const
 {
     if (!isValidToUseWith(buffer, *this))
         return false;
 
     auto bufferState = buffer.state();
-    if (bufferState != Buffer::State::Unmapped && bufferState != Buffer::State::MappedAtCreation)
+    if (bufferState != Buffer::State::Unmapped)
         return false;
 
     if (!(buffer.usage() & WGPUBufferUsage_CopyDst))
+        return false;
+
+    if (size % 4)
         return false;
 
     if (bufferOffset % 4)
@@ -256,12 +248,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data,
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writebuffer
 
-    if (!validateWriteBufferInitial(size)) {
-        // FIXME: "throw OperationError and stop."
-        return;
-    }
-
-    if (!validateWriteBuffer(buffer, bufferOffset, size)) {
+    if (!validateWriteBuffer(buffer, bufferOffset, size) || &buffer.device() != &m_device) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
@@ -374,9 +361,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     if (Texture::isDepthOrStencilFormat(textureFormat))
         textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
 
-    uint32_t blockSize = Texture::texelBlockSize(textureFormat);
-
-    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture)) {
+    RELEASE_ASSERT(data);
+    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || &texture.device() != &m_device) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
@@ -384,6 +370,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     if (!dataSize)
         return;
 
+    uint32_t blockSize = Texture::texelBlockSize(textureFormat);
     auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = std::min(size.width, logicalSize.width);
     if (!widthForMetal)

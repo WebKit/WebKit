@@ -153,7 +153,7 @@ void TextureView::destroy()
     m_commandEncoder = nullptr;
 }
 
-void TextureView::setCommandEncoder(CommandEncoder& commandEncoder)
+void TextureView::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_commandEncoder = &commandEncoder;
     if (isDestroyed())

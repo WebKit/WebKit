@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "CanvasRenderingContext.h"
 #include "GPUBuffer.h"
 #include "GPUDevice.h"
 #include "GPUImageCopyExternalImage.h"
@@ -328,16 +329,182 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
     );
 }
 
+static bool isOriginClean(const auto& source, ScriptExecutionContext& context)
+{
+    UNUSED_PARAM(context);
+    using ResultType = bool;
+    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
+        return imageBitmap->originClean();
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+    }, [&](const RefPtr<ImageData>) -> ResultType {
+        return true;
+    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
+        return imageElement->originClean(*context.securityOrigin());
+    }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
+#if PLATFORM(COCOA)
+        return !videoElement->taintsOrigin(*context.securityOrigin());
+#else
+        UNUSED_PARAM(videoElement);
+#endif
+        return true;
+    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
+        return true;
+#endif
+    }, [&](const RefPtr<HTMLCanvasElement>& canvasElement) -> ResultType {
+        return canvasElement->originClean();
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+        return offscreenCanvasElement->originClean();
+    }
+#endif
+    );
+}
+
+static GPUIntegerCoordinate dimension(const GPUExtent3D& extent3D, size_t dimension)
+{
+    return WTF::switchOn(extent3D, [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
+        return dimension < vector.size() ? vector[dimension] : 0;
+    }, [&](const GPUExtent3DDict& extent3D) -> GPUIntegerCoordinate {
+        switch (dimension) {
+        case 0:
+            return extent3D.width;
+        case 1:
+            return extent3D.height;
+        case 2:
+            return extent3D.depthOrArrayLayers;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    });
+}
+
+static GPUIntegerCoordinate dimension(const GPUOrigin2D& origin, size_t dimension)
+{
+    return WTF::switchOn(origin, [&](const Vector<GPUIntegerCoordinate>& vector) -> GPUIntegerCoordinate {
+        return dimension < vector.size() ? vector[dimension] : 0;
+    }, [&](const GPUOrigin2DDict& origin2D) -> GPUIntegerCoordinate {
+        switch (dimension) {
+        case 0:
+            return origin2D.x;
+        case 1:
+            return origin2D.y;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    });
+}
+
+static bool isStateValid(const auto& source, const std::optional<GPUOrigin2D>& origin, const GPUExtent3D& copySize, ExceptionCode& errorCode)
+{
+    using ResultType = bool;
+    auto horizontalDimension = (origin ? dimension(*origin, 0) : 0) + dimension(copySize, 0);
+    auto verticalDimension = (origin ? dimension(*origin, 1) : 0) + dimension(copySize, 1);
+    auto depthDimension = dimension(copySize, 2);
+    if (depthDimension > 1) {
+        errorCode = ExceptionCode::OperationError;
+        return false;
+    }
+
+    return WTF::switchOn(source, [&](const RefPtr<ImageBitmap>& imageBitmap) -> ResultType {
+        if (!imageBitmap->buffer()) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        if (horizontalDimension > imageBitmap->width() || verticalDimension > imageBitmap->height()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        return true;
+#if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
+    }, [&](const RefPtr<ImageData> imageData) -> ResultType {
+        auto width = imageData->width();
+        auto height = imageData->height();
+        if (width < 0 || height < 0 || horizontalDimension > static_cast<uint32_t>(width) || verticalDimension > static_cast<uint32_t>(height)) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        auto size = width * height;
+        if (!size) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        return true;
+    }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
+        if (!imageElement->cachedImage()) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        if (horizontalDimension > imageElement->width() || verticalDimension > imageElement->height()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        return true;
+    }, [&](const RefPtr<HTMLVideoElement>) -> ResultType {
+        return true;
+    }, [&](const RefPtr<WebCodecsVideoFrame>) -> ResultType {
+        return true;
+#endif
+    }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ResultType {
+        if (!canvas->renderingContext()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        if (canvas->renderingContext()->isPlaceholder()) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        if (horizontalDimension > canvas->width() || verticalDimension > canvas->height()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        return true;
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [&](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> ResultType {
+        if (offscreenCanvas->isDetached()) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        if (!offscreenCanvas->renderingContext()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        if (offscreenCanvas->renderingContext()->isPlaceholder()) {
+            errorCode = ExceptionCode::InvalidStateError;
+            return false;
+        }
+        if (horizontalDimension > offscreenCanvas->width() || verticalDimension > offscreenCanvas->height()) {
+            errorCode = ExceptionCode::OperationError;
+            return false;
+        }
+        return true;
+    }
+#endif
+    );
+}
+
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed, it is to unblock
 // compiler <-> pipeline dependencies
-static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat format, size_t& sizeInBytes)
+#if PLATFORM(COCOA)
+static uint32_t convertRGBA8888ToRGB10A2(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
+    uint32_t r0 = (static_cast<uint32_t>(r) << 2) | (static_cast<uint32_t>(r) >> 6);
+    uint32_t g0 = (static_cast<uint32_t>(g) << 2) | (static_cast<uint32_t>(g) >> 6);
+    uint32_t b0 = (static_cast<uint32_t>(b) << 2) | (static_cast<uint32_t>(b) >> 6);
+    uint32_t a0 = (static_cast<uint32_t>(a) >> 6);
+    return r0 | (g0 << 10) | (b0 << 20) | (a0 << 30);
+}
+#endif
+
+static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat format, size_t& sizeInBytes, bool& supportedFormat)
+{
+    supportedFormat = true;
 #if PLATFORM(COCOA)
     switch (format) {
-    case GPUTextureFormat::R8unorm:
-    case GPUTextureFormat::R8snorm:
-    case GPUTextureFormat::R8uint:
-    case GPUTextureFormat::R8sint: {
+    case GPUTextureFormat::R8unorm: {
         uint8_t* data = (uint8_t*)malloc(sizeInBytes / 4);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
             data[i0] = rgbaBytes[i];
@@ -347,16 +514,6 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     }
 
     // 16-bit formats
-    case GPUTextureFormat::R16uint:
-    case GPUTextureFormat::R16sint: {
-        uint16_t* data = (uint16_t*)malloc(sizeInBytes / 2);
-        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
-            data[i0] = rgbaBytes[i];
-
-        sizeInBytes = sizeInBytes / 2;
-        return data;
-    }
-
     case GPUTextureFormat::R16float: {
         __fp16* data = (__fp16*)malloc(sizeInBytes / 2);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
@@ -366,10 +523,7 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
         return data;
     }
 
-    case GPUTextureFormat::Rg8unorm:
-    case GPUTextureFormat::Rg8snorm:
-    case GPUTextureFormat::Rg8uint:
-    case GPUTextureFormat::Rg8sint: {
+    case GPUTextureFormat::Rg8unorm: {
         uint8_t* data = (uint8_t*)malloc(sizeInBytes / 2);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 2, ++i0) {
             data[i0] = rgbaBytes[i];
@@ -381,30 +535,10 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     }
 
     // 32-bit formats
-    case GPUTextureFormat::R32uint:
-    case GPUTextureFormat::R32sint: {
-        uint32_t* data = (uint32_t*)malloc(sizeInBytes);
-        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
-            data[i0] = rgbaBytes[i];
-
-        return data;
-    }
-
     case GPUTextureFormat::R32float: {
         float* data = (float*)malloc(sizeInBytes);
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
             data[i0] = rgbaBytes[i] / 255.f;
-
-        return data;
-    }
-
-    case GPUTextureFormat::Rg16uint:
-    case GPUTextureFormat::Rg16sint: {
-        uint16_t* data = (uint16_t*)malloc(sizeInBytes);
-        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
-            data[i0] = rgbaBytes[i];
-            data[i0 + 1] = rgbaBytes[i + 1];
-        }
 
         return data;
     }
@@ -421,33 +555,18 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
 
     case GPUTextureFormat::Rgba8unorm:
     case GPUTextureFormat::Rgba8unormSRGB:
-    case GPUTextureFormat::Rgba8snorm:
-    case GPUTextureFormat::Rgba8uint:
-    case GPUTextureFormat::Rgba8sint:
     case GPUTextureFormat::Bgra8unorm:
     case GPUTextureFormat::Bgra8unormSRGB:
-    case GPUTextureFormat::Rgb9e5ufloat:
-    case GPUTextureFormat::Rgb10a2uint:
-    case GPUTextureFormat::Rg11b10ufloat:
         return nullptr;
     case GPUTextureFormat::Rgb10a2unorm: {
-        ASSERT_NOT_REACHED("Remapping to 10 bits per channel is not implemented");
-        return nullptr;
-    }
+        uint32_t* data = (uint32_t*)malloc(sizeInBytes);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = convertRGBA8888ToRGB10A2(rgbaBytes[i], rgbaBytes[i + 1], rgbaBytes[i + 2], rgbaBytes[i + 3]);
 
-    // 64-bit formats
-    case GPUTextureFormat::Rg32uint:
-    case GPUTextureFormat::Rg32sint: {
-        uint32_t* data = (uint32_t*)malloc((sizeInBytes / 2) * sizeof(uint32_t));
-        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
-            data[i0] = rgbaBytes[i];
-            data[i0 + 1] = rgbaBytes[i + 1];
-        }
-
-        sizeInBytes = sizeInBytes * sizeof(uint32_t);
         return data;
     }
 
+    // 64-bit formats
     case GPUTextureFormat::Rg32float: {
         float* data = (float*)malloc((sizeInBytes / 2) * sizeof(float));
         for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
@@ -456,16 +575,6 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
         }
 
         sizeInBytes = sizeInBytes * sizeof(float);
-        return data;
-    }
-
-    case GPUTextureFormat::Rgba16uint:
-    case GPUTextureFormat::Rgba16sint: {
-        uint16_t* data = (uint16_t*)malloc(sizeInBytes * sizeof(uint16_t));
-        for (size_t i = 0; i < sizeInBytes; ++i)
-            data[i] = rgbaBytes[i];
-
-        sizeInBytes = sizeInBytes * sizeof(uint16_t);
         return data;
     }
 
@@ -479,16 +588,6 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     }
 
     // 128-bit formats
-    case GPUTextureFormat::Rgba32uint:
-    case GPUTextureFormat::Rgba32sint: {
-        uint32_t* data = (uint32_t*)malloc(sizeInBytes * sizeof(uint32_t));
-        for (size_t i = 0; i < sizeInBytes; ++i)
-            data[i] = rgbaBytes[i];
-
-        sizeInBytes = sizeInBytes * sizeof(uint32_t);
-        return data;
-    }
-
     case GPUTextureFormat::Rgba32float: {
         float* data = (float*)malloc(sizeInBytes * sizeof(float));
         for (size_t i = 0; i < sizeInBytes; ++i)
@@ -498,18 +597,37 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
         return data;
     }
 
-    // Depth/stencil formats
+    // Formats which are not allowed
+    case GPUTextureFormat::R8snorm:
+    case GPUTextureFormat::R8uint:
+    case GPUTextureFormat::R8sint:
+    case GPUTextureFormat::R16uint:
+    case GPUTextureFormat::R16sint:
+    case GPUTextureFormat::Rg8snorm:
+    case GPUTextureFormat::Rg8uint:
+    case GPUTextureFormat::Rg8sint:
+    case GPUTextureFormat::R32uint:
+    case GPUTextureFormat::R32sint:
+    case GPUTextureFormat::Rg16uint:
+    case GPUTextureFormat::Rg16sint:
+    case GPUTextureFormat::Rgba32uint:
+    case GPUTextureFormat::Rgba32sint:
+    case GPUTextureFormat::Rgba8snorm:
+    case GPUTextureFormat::Rgba8uint:
+    case GPUTextureFormat::Rgba8sint:
+    case GPUTextureFormat::Rgb9e5ufloat:
+    case GPUTextureFormat::Rgb10a2uint:
+    case GPUTextureFormat::Rg11b10ufloat:
+    case GPUTextureFormat::Rg32uint:
+    case GPUTextureFormat::Rg32sint:
+    case GPUTextureFormat::Rgba16uint:
+    case GPUTextureFormat::Rgba16sint:
     case GPUTextureFormat::Stencil8:
     case GPUTextureFormat::Depth16unorm:
     case GPUTextureFormat::Depth24plus:
     case GPUTextureFormat::Depth24plusStencil8:
     case GPUTextureFormat::Depth32float:
-
-        // depth32float-stencil8 feature
     case GPUTextureFormat::Depth32floatStencil8:
-
-    // BC compressed formats usable if texture-compression-bc is both
-    // supported by the device/user agent and enabled in requestDevice.
     case GPUTextureFormat::Bc1RgbaUnorm:
     case GPUTextureFormat::Bc1RgbaUnormSRGB:
     case GPUTextureFormat::Bc2RgbaUnorm:
@@ -524,9 +642,6 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     case GPUTextureFormat::Bc6hRgbFloat:
     case GPUTextureFormat::Bc7RgbaUnorm:
     case GPUTextureFormat::Bc7RgbaUnormSRGB:
-
-    // ETC2 compressed formats usable if texture-compression-etc2 is both
-    // supported by the device/user agent and enabled in requestDevice.
     case GPUTextureFormat::Etc2Rgb8unorm:
     case GPUTextureFormat::Etc2Rgb8unormSRGB:
     case GPUTextureFormat::Etc2Rgb8a1unorm:
@@ -537,9 +652,6 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     case GPUTextureFormat::EacR11snorm:
     case GPUTextureFormat::EacRg11unorm:
     case GPUTextureFormat::EacRg11snorm:
-
-    // ASTC compressed formats usable if texture-compression-astc is both
-    // supported by the device/user agent and enabled in requestDevice.
     case GPUTextureFormat::Astc4x4Unorm:
     case GPUTextureFormat::Astc4x4UnormSRGB:
     case GPUTextureFormat::Astc5x4Unorm:
@@ -568,6 +680,7 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     case GPUTextureFormat::Astc12x10UnormSRGB:
     case GPUTextureFormat::Astc12x12Unorm:
     case GPUTextureFormat::Astc12x12UnormSRGB:
+        supportedFormat = false;
         return nullptr;
     }
 
@@ -581,18 +694,36 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
 #endif
 }
 
-void GPUQueue::copyExternalImageToTexture(const GPUImageCopyExternalImage& source, const GPUImageCopyTextureTagged& destination, const GPUExtent3D& copySize)
+ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& context, const GPUImageCopyExternalImage& source, const GPUImageCopyTextureTagged& destination, const GPUExtent3D& copySize)
 {
+    ExceptionCode outErrorCode;
+    if (!isStateValid(source.source, source.origin, copySize, outErrorCode))
+        return Exception { outErrorCode, "GPUQueue.copyExternalImageToTexture: External image state is not valid"_s };
+
+    if (!isOriginClean(source.source, context))
+        return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_s };
+
     imageBytesForSource(source.source, destination, [&](const uint8_t* imageBytes, size_t sizeInBytes, size_t rows) {
-        if (!imageBytes || !sizeInBytes || !destination.texture)
+        auto destinationTexture = destination.texture;
+        if (!imageBytes || !sizeInBytes || !destinationTexture)
             return;
 
-        auto* newImageBytes = copyToDestinationFormat(imageBytes, destination.texture->format(), sizeInBytes);
+        bool supportedFormat;
+        auto* newImageBytes = copyToDestinationFormat(imageBytes, destination.texture->format(), sizeInBytes, supportedFormat);
         GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
-        m_backing->writeTexture(destination.convertToBacking(), newImageBytes ? newImageBytes : imageBytes, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
+        auto copyDestination = destination.convertToBacking();
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=263692 - this code should be removed once copyExternalImageToTexture
+        // is implemented in the GPU process
+        if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
+            copyDestination.mipLevel = INT_MAX;
+
+        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes : imageBytes, sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
         if (newImageBytes)
             free(newImageBytes);
     });
+
+    return { };
 }
 
 } // namespace WebCore

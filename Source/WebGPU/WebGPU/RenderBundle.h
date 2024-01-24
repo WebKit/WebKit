@@ -35,23 +35,26 @@ struct WGPURenderBundleImpl {
 };
 
 @interface ResourceUsageAndRenderStage : NSObject
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding;
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::BindGroupEntryUsageData::Resource)resource;
 
 @property (nonatomic) MTLResourceUsage usage;
 @property (nonatomic) MTLRenderStages renderStages;
 @property (nonatomic) OptionSet<WebGPU::BindGroupEntryUsage> entryUsage;
 @property (nonatomic) uint32_t binding;
+@property (nonatomic) WebGPU::BindGroupEntryUsageData::Resource resource;
 @end
 
 @class RenderBundleICBWithResources;
 
 namespace WebGPU {
 
+class Buffer;
+class CommandEncoder;
 class Device;
-
 class RenderBundleEncoder;
 class RenderPassEncoder;
 class RenderPipeline;
+class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {

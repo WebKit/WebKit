@@ -38,6 +38,7 @@ struct WGPUTextureImpl {
 
 namespace WebGPU {
 
+class CommandEncoder;
 class Device;
 class TextureView;
 
@@ -115,6 +116,7 @@ public:
     static bool supportsBlending(WGPUTextureFormat, const Device&);
     void recreateIfNeeded();
     void makeCanvasBacking();
+    void setCommandEncoder(CommandEncoder&) const;
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -144,6 +146,7 @@ private:
     Vector<WeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

@@ -3,5 +3,8 @@ PASS :writeBuffer:
 PASS :copyBufferToBuffer:
 PASS :copyBufferToTexture:
 PASS :copyTextureToBuffer:
-PASS :map_command_recording_order:
+PASS :setBindGroup:
+PASS :setVertexBuffer:
+PASS :setIndexBuffer:
+PASS :resolveQuerySet:
 

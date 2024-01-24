@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Buffer.h"
+#import "CommandEncoder.h"
 #import "Device.h"
 
 namespace WebGPU {
@@ -93,12 +94,20 @@ QuerySet::QuerySet(Device& device)
 
 QuerySet::~QuerySet() = default;
 
+bool QuerySet::isValid() const
+{
+    return m_visibilityBuffer || m_timestampBuffer;
+}
+
 void QuerySet::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
     m_overrideLocations.clear();
+    if (m_cachedCommandEncoder)
+        m_cachedCommandEncoder.get()->makeSubmitInvalid();
+    m_cachedCommandEncoder = nullptr;
 }
 
 void QuerySet::setLabel(String&& label)
@@ -147,6 +156,13 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
 
         encode(state->querySet->counterSampleBuffer(), state->index);
     }
+}
+
+void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
+{
+    m_cachedCommandEncoder = commandEncoder;
+    if (!isValid())
+        commandEncoder.makeSubmitInvalid();
 }
 
 } // namespace WebGPU
