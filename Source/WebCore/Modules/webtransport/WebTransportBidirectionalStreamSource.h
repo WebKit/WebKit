@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WebTransportBidirectionalStreamSource : public ReadableStreamSource {
+class WebTransportBidirectionalStreamSource : public RefCountedReadableStreamSource {
 public:
     static Ref<WebTransportBidirectionalStreamSource> create() { return adoptRef(*new WebTransportBidirectionalStreamSource()); }
     void receiveIncomingStream();

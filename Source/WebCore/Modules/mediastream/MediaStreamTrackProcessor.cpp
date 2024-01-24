@@ -60,11 +60,12 @@ MediaStreamTrackProcessor::~MediaStreamTrackProcessor()
 ExceptionOr<Ref<ReadableStream>> MediaStreamTrackProcessor::readable(JSC::JSGlobalObject& globalObject)
 {
     if (!m_readable) {
-        auto readableStreamSource = Source::create(m_track.get(), *this);
-        auto readableOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), readableStreamSource.get());
-        if (readableOrException.hasException())
+        m_readableStreamSource = makeUniqueWithoutRefCountedCheck<Source>(m_track.get(), *this);
+        auto readableOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), *m_readableStreamSource);
+        if (readableOrException.hasException()) {
+            m_readableStreamSource = nullptr;
             return readableOrException.releaseException();
-        m_readableStreamSource = WTFMove(readableStreamSource);
+        }
         m_readable = readableOrException.releaseReturnValue();
         m_videoFrameObserverWrapper->start();
     }
@@ -174,6 +175,9 @@ void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFra
             protectedProcessor->tryEnqueueingVideoFrame();
     });
 }
+
+using MediaStreamTrackProcessorSource = MediaStreamTrackProcessor::Source;
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessorSource);
 
 MediaStreamTrackProcessor::Source::Source(Ref<MediaStreamTrack>&& track, MediaStreamTrackProcessor& processor)
     : m_track(WTFMove(track))

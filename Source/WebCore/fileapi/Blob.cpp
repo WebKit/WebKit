@@ -306,7 +306,7 @@ void Blob::arrayBuffer(Ref<DeferredPromise>&& promise)
 
 ExceptionOr<Ref<ReadableStream>> Blob::stream()
 {
-    class BlobStreamSource : public FileReaderLoaderClient, public ReadableStreamSource {
+    class BlobStreamSource : public FileReaderLoaderClient, public RefCountedReadableStreamSource {
     public:
         BlobStreamSource(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
             : m_loader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadType::ReadAsBinaryChunks, this))

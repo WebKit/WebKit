@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FetchBodyOwner;
 
-class FetchBodySource final : public ReadableStreamSource {
+class FetchBodySource final : public RefCountedReadableStreamSource {
 public:
     FetchBodySource(FetchBodyOwner&);
 

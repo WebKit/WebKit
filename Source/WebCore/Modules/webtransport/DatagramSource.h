@@ -31,7 +31,7 @@ namespace WebCore {
 
 class WebTransport;
 
-class DatagramSource : public ReadableStreamSource {
+class DatagramSource : public RefCountedReadableStreamSource {
 public:
     static Ref<DatagramSource> create() { return adoptRef(*new DatagramSource()); }
     ~DatagramSource();
