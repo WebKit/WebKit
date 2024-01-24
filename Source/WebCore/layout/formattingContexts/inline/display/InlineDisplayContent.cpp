@@ -26,35 +26,18 @@
 #include "config.h"
 #include "InlineDisplayContent.h"
 
-#include "TextPainter.h"
-
-
 namespace WebCore {
 namespace InlineDisplay {
-
-static void invalidateGlyphCache(Boxes& boxes, size_t firstBoxIndex, size_t numberOfBoxes)
-{
-    ASSERT(firstBoxIndex + numberOfBoxes <= boxes.size());
-    for (size_t index = 0; index < numberOfBoxes; ++index)
-        TextPainter::removeGlyphDisplayList(boxes[firstBoxIndex + index]);
-}
-
-static void invalidateGlyphCache(Boxes& boxes)
-{
-    invalidateGlyphCache(boxes, 0, boxes.size());
-}
 
 void Content::clear()
 {
     lines.clear();
-    invalidateGlyphCache(boxes);
     boxes.clear();
 }
 
 void Content::set(Content&& newContent)
 {
     lines = WTFMove(newContent.lines);
-    invalidateGlyphCache(boxes);
     boxes = WTFMove(newContent.boxes);
 }
 
@@ -73,7 +56,6 @@ void Content::insert(Content&& newContent, size_t lineIndex, size_t boxIndex)
 void Content::remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes)
 {
     lines.remove(firstLineIndex, numberOfLines);
-    invalidateGlyphCache(boxes, firstBoxIndex, numberOfBoxes);
     boxes.remove(firstBoxIndex, numberOfBoxes);
 }
 

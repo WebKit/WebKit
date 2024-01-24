@@ -54,7 +54,6 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     InlineContent(const LineLayout&);
-    ~InlineContent();
 
     InlineDisplay::Content& displayContent() { return m_displayContent; }
     const InlineDisplay::Content& displayContent() const { return m_displayContent; }

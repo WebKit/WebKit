@@ -107,8 +107,8 @@ public:
 
     static GlyphDisplayListCache& singleton();
 
-    DisplayList::DisplayList* get(const LegacyInlineTextBox& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun) { return get(&run, font, context, textRun); }
-    DisplayList::DisplayList* get(const InlineDisplay::Box& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun) { return get(&run, font, context, textRun); }
+    DisplayList::DisplayList* get(const LegacyInlineTextBox& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun);
+    DisplayList::DisplayList* get(const InlineDisplay::Box& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun);
 
     DisplayList::DisplayList* getIfExists(const LegacyInlineTextBox& run) { return getIfExists(&run); }
     DisplayList::DisplayList* getIfExists(const InlineDisplay::Box& run) { return getIfExists(&run); }
@@ -122,7 +122,7 @@ public:
 private:
     static bool canShareDisplayList(const DisplayList::DisplayList&);
 
-    DisplayList::DisplayList* get(const void* run, const FontCascade&, GraphicsContext&, const TextRun&);
+    template <typename LayoutRun> DisplayList::DisplayList* getDisplayList(const LayoutRun*, const FontCascade&, GraphicsContext&, const TextRun&);
     DisplayList::DisplayList* getIfExists(const void* run);
     void remove(const void* run);
 
