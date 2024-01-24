@@ -98,11 +98,9 @@ private:
         RefPtr<WebCodecsVideoFrame> takeVideoFrame(ScriptExecutionContext& context) { return m_observer->takeVideoFrame(context); }
 
     private:
-        VideoFrameObserverWrapper();
+        VideoFrameObserverWrapper(ScriptExecutionContextIdentifier, MediaStreamTrackProcessor&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
 
-        void initialize(ScriptExecutionContextIdentifier, MediaStreamTrackProcessor&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
-
-        std::unique_ptr<VideoFrameObserver> m_observer;
+        UniqueRef<VideoFrameObserver> m_observer;
     };
 
     class Source final
