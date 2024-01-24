@@ -124,6 +124,11 @@ RefPtr<XRDeviceProxy> PlatformXRSystemProxy::deviceByIdentifier(XRDeviceIdentifi
     return nullptr;
 }
 
+bool PlatformXRSystemProxy::webXREnabled() const
+{
+    return m_page.corePage() && m_page.corePage()->settings().webXREnabled();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBXR)

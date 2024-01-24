@@ -26,12 +26,12 @@
 #if ENABLE(WEBXR)
 
 messages -> PlatformXRSystem NotRefCounted {
-    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos)
-    RequestPermissionOnSessionFeatures(WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> granted, Vector<PlatformXR::SessionFeature> consentRequired, Vector<PlatformXR::SessionFeature> consentOptional, Vector<PlatformXR::SessionFeature> requiredFeaturesRequested, Vector<PlatformXR::SessionFeature> optionalFeaturesRequested) -> (std::optional<Vector<PlatformXR::SessionFeature>> userGranted)
-    InitializeTrackingAndRendering(WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> requestedFeatures)
-    ShutDownTrackingAndRendering()
-    RequestFrame() -> (struct PlatformXR::FrameData frameData)
-    SubmitFrame()
+    [EnabledIf='webXREnabled()'] EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos)
+    [EnabledIf='webXREnabled()'] RequestPermissionOnSessionFeatures(WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> granted, Vector<PlatformXR::SessionFeature> consentRequired, Vector<PlatformXR::SessionFeature> consentOptional, Vector<PlatformXR::SessionFeature> requiredFeaturesRequested, Vector<PlatformXR::SessionFeature> optionalFeaturesRequested) -> (std::optional<Vector<PlatformXR::SessionFeature>> userGranted)
+    [EnabledIf='webXREnabled()'] InitializeTrackingAndRendering(WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> requestedFeatures)
+    [EnabledIf='webXREnabled()'] ShutDownTrackingAndRendering()
+    [EnabledIf='webXREnabled()'] RequestFrame() -> (struct PlatformXR::FrameData frameData)
+    [EnabledIf='webXREnabled()'] SubmitFrame()
 }
 
 #endif

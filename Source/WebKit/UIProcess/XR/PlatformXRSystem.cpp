@@ -146,6 +146,11 @@ void PlatformXRSystem::sessionDidUpdateVisibilityState(XRDeviceIdentifier device
     });
 }
 
+bool PlatformXRSystem::webXREnabled() const
+{
+    return m_page.preferences().webXREnabled();
+}
+
 }
 
 #if !USE(APPLE_INTERNAL_SDK)
