@@ -120,6 +120,8 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto presentationTime = MediaTime::createWithDouble((elapsedTime()).seconds());
     auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, videoFrameRotation(), presentationTime, size(), frameRate(), false, WTFMove(metadata));
+    if (!videoFrame)
+        return;
 
     // Mock GstDevice is an appsrc, see webkitMockDeviceCreateElement().
     ASSERT(GST_IS_APP_SRC(m_capturer->source()));
