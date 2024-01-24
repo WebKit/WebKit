@@ -47,12 +47,12 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource& paren
     : MediaSourcePrivate(client)
     , m_player(parent)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(m_player.mediaPlayerLogger())
-    , m_logIdentifier(m_player.mediaPlayerLogIdentifier())
+    , m_logger(m_player->mediaPlayerLogger())
+    , m_logIdentifier(m_player->mediaPlayerLogIdentifier())
 #endif
 {
 #if !RELEASE_LOG_DISABLED
-    client.setLogIdentifier(m_player.mediaPlayerLogIdentifier());
+    client.setLogIdentifier(m_player->mediaPlayerLogIdentifier());
 #endif
 }
 
@@ -76,34 +76,41 @@ MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const Cont
 void MockMediaSourcePrivate::durationChanged(const MediaTime& duration)
 {
     MediaSourcePrivate::durationChanged(duration);
-    m_player.updateDuration(duration);
+    if (m_player)
+        m_player->updateDuration(duration);
 }
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
 {
-    if (status == EndOfStreamStatus::NoError)
-        m_player.setNetworkState(MediaPlayer::NetworkState::Loaded);
+    if (m_player && status == EndOfStreamStatus::NoError)
+        m_player->setNetworkState(MediaPlayer::NetworkState::Loaded);
     MediaSourcePrivate::markEndOfStream(status);
 }
 
 MediaPlayer::ReadyState MockMediaSourcePrivate::mediaPlayerReadyState() const
 {
-    return m_player.readyState();
+    if (m_player)
+        return m_player->readyState();
+    return MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MockMediaSourcePrivate::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
-    m_player.setReadyState(readyState);
+    if (m_player)
+        m_player->setReadyState(readyState);
 }
 
 void MockMediaSourcePrivate::notifyActiveSourceBuffersChanged()
 {
-    m_player.notifyActiveSourceBuffersChanged();
+    if (m_player)
+        m_player->notifyActiveSourceBuffersChanged();
 }
 
 MediaTime MockMediaSourcePrivate::currentMediaTime() const
 {
-    return m_player.currentMediaTime();
+    if (m_player)
+        return m_player->currentMediaTime();
+    return MediaTime::invalidTime();
 }
 
 std::optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQualityMetrics()
