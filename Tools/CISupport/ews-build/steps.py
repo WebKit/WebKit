@@ -6036,7 +6036,7 @@ class MapBranchAlias(shell.ShellCommandNewStyle):
         return not self.doStepIf(step)
 
 
-class ValidateSquashed(shell.ShellCommandNewStyle):
+class ValidateSquashed(shell.ShellCommandNewStyle, AddToLogMixin):
     name = 'validate-squashed'
     haltOnFailure = False
     flunkOnFailure = True
@@ -6049,12 +6049,13 @@ class ValidateSquashed(shell.ShellCommandNewStyle):
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
-        self.command = ['git', 'log', '--format=format:"%H"', head_ref, f'^{base_ref}', f'--max-count={MAX_COMMITS_IN_PR_SERIES + 1}']
+        self.command = ['git', 'log', '--format=format:%H', head_ref, f'^{base_ref}', f'--max-count={MAX_COMMITS_IN_PR_SERIES + 1}']
 
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
 
         rc = yield super().run()
+        yield self._addToLog('stdio', '\n')
 
         pr_number = self.getProperty('github.number')
         patch_id = self.getProperty('patch_id')
@@ -6075,7 +6076,7 @@ class ValidateSquashed(shell.ShellCommandNewStyle):
             ])
             return defer.returnValue(rc)
 
-        log_text = self.log_observer.getStdout()
+        log_text = self.log_observer.getStdout().rstrip()
         commit_count = len(log_text.splitlines())
         self.setProperty('commit_count', commit_count)
 
