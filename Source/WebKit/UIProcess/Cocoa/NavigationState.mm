@@ -97,8 +97,18 @@
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/NavigationStateAdditions.mm>)
 #import <WebKitAdditions/NavigationStateAdditions.mm>
-#else
-#define NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ADDITIONS
+#endif
+
+#ifndef DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
+#define DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
+#endif
+
+#ifndef NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
+#define NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
+#endif
+
+#ifndef NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
+#define NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
 #endif
 
 namespace WebKit {
@@ -405,8 +415,12 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
 #endif
 }
 
+DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
+
 static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, WTF::Function<void(bool)>&& completionHandler)
 {
+    NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
+
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
         auto url = navigationAction->request().url();
@@ -466,8 +480,6 @@ static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigatio
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
-    NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ADDITIONS
-
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 
     RefPtr<API::WebsitePolicies> defaultWebsitePolicies;
@@ -581,6 +593,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 break;
 
             case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
+                NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
+
                 trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                     if (optimizedLoad) {
                         localListener->ignore(WasNavigationIntercepted::Yes);
