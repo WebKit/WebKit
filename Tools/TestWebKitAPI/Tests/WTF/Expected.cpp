@@ -71,24 +71,26 @@ namespace TestWebKitAPI {
 
 constexpr const char* oops = "oops";
 constexpr const char* foof = "foof";
+constexpr const char* otherError = "err";
+constexpr const void* otherErrorV = static_cast<const void*>("errV");
 
 TEST(WTF_Expected, Unexpected)
 {
     {
         auto u = Unexpected<int>(42);
-        EXPECT_EQ(u.value(), 42);
+        EXPECT_EQ(u.error(), 42);
         constexpr auto c = makeUnexpected(42);
-        EXPECT_EQ(c.value(), 42);
+        EXPECT_EQ(c.error(), 42);
         EXPECT_EQ(u, c);
         EXPECT_FALSE(u != c);
     }
     {
         auto c = makeUnexpected(oops);
-        EXPECT_EQ(c.value(), oops);
+        EXPECT_EQ(c.error(), oops);
     }
     {
         auto s = makeUnexpected(std::string(oops));
-        EXPECT_EQ(s.value(), oops);
+        EXPECT_EQ(s.error(), oops);
     }
     {
         constexpr auto s0 = makeUnexpected(oops);
@@ -119,71 +121,84 @@ TEST(WTF_Expected, expected)
         EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 0);
         EXPECT_EQ(e.value_or(3.14), 0);
+        EXPECT_EQ(e.error_or(otherError), otherError);
     }
     {
         constexpr E e;
         EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 0);
         EXPECT_EQ(e.value_or(3.14), 0);
+        EXPECT_EQ(e.error_or(otherError), otherError);
     }
     {
         auto e = E(42);
         EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 42);
         EXPECT_EQ(e.value_or(3.14), 42);
+        EXPECT_EQ(e.error_or(otherError), otherError);
         const auto e2(e);
         EXPECT_TRUE(e2.has_value());
         EXPECT_EQ(e2.value(), 42);
         EXPECT_EQ(e2.value_or(3.14), 42);
+        EXPECT_EQ(e2.error_or(otherError), otherError);
         E e3;
         e3 = e2;
         EXPECT_TRUE(e3.has_value());
         EXPECT_EQ(e3.value(), 42);
         EXPECT_EQ(e3.value_or(3.14), 42);
+        EXPECT_EQ(e3.error_or(otherError), otherError);
         const E e4 = e2;
         EXPECT_TRUE(e4.has_value());
         EXPECT_EQ(e4.value(), 42);
         EXPECT_EQ(e4.value_or(3.14), 42);
+        EXPECT_EQ(e4.error_or(otherError), otherError);
     }
     {
         constexpr E c(42);
         EXPECT_TRUE(c.has_value());
         EXPECT_EQ(c.value(), 42);
         EXPECT_EQ(c.value_or(3.14), 42);
+        EXPECT_EQ(c.error_or(otherError), otherError);
         constexpr const auto c2(c);
         EXPECT_TRUE(c2.has_value());
         EXPECT_EQ(c2.value(), 42);
         EXPECT_EQ(c2.value_or(3.14), 42);
+        EXPECT_EQ(c2.error_or(otherError), otherError);
     }
     {
         auto u = E(makeUnexpected(oops));
         EXPECT_FALSE(u.has_value());
         EXPECT_EQ(u.error(), oops);
         EXPECT_EQ(u.value_or(3.14), 3);
+        EXPECT_EQ(u.error_or(otherError), oops);
     }
     {
         auto u = E(unexpect, oops);
         EXPECT_FALSE(u.has_value());
         EXPECT_EQ(u.error(), oops);
         EXPECT_EQ(u.value_or(3.14), 3);
+        EXPECT_EQ(u.error_or(otherError), oops);
     }
     {
         auto uv = EV(makeUnexpected(oops));
         EXPECT_FALSE(uv.has_value());
         EXPECT_EQ(uv.error(), oops);
         EXPECT_EQ(uv.value_or(3.14), 3);
+        EXPECT_EQ(uv.error_or(otherErrorV), oops);
     }
     {
         auto uv = EV(unexpect, oops);
         EXPECT_FALSE(uv.has_value());
         EXPECT_EQ(uv.error(), oops);
         EXPECT_EQ(uv.value_or(3.14), 3);
+        EXPECT_EQ(uv.error_or(otherErrorV), oops);
     }
     {
         E e = makeUnexpected(oops);
         EXPECT_FALSE(e.has_value());
         EXPECT_EQ(e.error(), oops);
         EXPECT_EQ(e.value_or(3.14), 3);
+        EXPECT_EQ(e.error_or(otherError), oops);
     }
     {
         auto e = FooChar(42);
@@ -194,15 +209,40 @@ TEST(WTF_Expected, expected)
         auto e0 = E(42);
         auto e1 = E(1024);
         swap(e0, e1);
+        EXPECT_TRUE(e0.has_value());
         EXPECT_EQ(e0.value(), 1024);
+        EXPECT_EQ(e0.value_or(3.14), 1024);
+        EXPECT_EQ(e0.error_or(otherError), otherError);
+        EXPECT_TRUE(e1.has_value());
         EXPECT_EQ(e1.value(), 42);
+        EXPECT_EQ(e1.value_or(3.14), 42);
+        EXPECT_EQ(e1.error_or(otherError), otherError);
     }
     {
         auto e0 = E(makeUnexpected(oops));
         auto e1 = E(makeUnexpected(foof));
         swap(e0, e1);
+        EXPECT_FALSE(e0.has_value());
         EXPECT_EQ(e0.error(), foof);
+        EXPECT_EQ(e0.value_or(3.14), 3);
+        EXPECT_EQ(e0.error_or(otherError), foof);
+        EXPECT_FALSE(e1.has_value());
         EXPECT_EQ(e1.error(), oops);
+        EXPECT_EQ(e1.value_or(3.14), 3);
+        EXPECT_EQ(e1.error_or(otherError), oops);
+    }
+    {
+        auto e0 = E(42);
+        auto e1 = E(makeUnexpected(foof));
+        swap(e0, e1);
+        EXPECT_FALSE(e0.has_value());
+        EXPECT_EQ(e0.error(), foof);
+        EXPECT_EQ(e0.value_or(3.14), 3);
+        EXPECT_EQ(e0.error_or(otherError), foof);
+        EXPECT_TRUE(e1.has_value());
+        EXPECT_EQ(e1.value(), 42);
+        EXPECT_EQ(e1.value_or(3.14), 42);
+        EXPECT_EQ(e1.error_or(otherError), otherError);
     }
     {
         FooChar c(foo(42));
@@ -218,6 +258,7 @@ TEST(WTF_Expected, expected)
         FooString e1(makeUnexpected<std::string>(message));
         FooString e2(makeUnexpected<std::string>(std::string()));
         EXPECT_EQ(e0.error(), std::string(message));
+        EXPECT_EQ(e0.error_or(std::string(otherError)), std::string(message));
         EXPECT_EQ(e0, e1);
         EXPECT_NE(e0, e2);
         FooString* e4 = new FooString(makeUnexpected<std::string>(message));
@@ -237,6 +278,7 @@ TEST(WTF_Expected, void)
     {
         auto e = E();
         EXPECT_TRUE(e.has_value());
+        EXPECT_EQ(e.error_or(otherError), otherError);
         const auto e2(e);
         EXPECT_TRUE(e2.has_value());
         EXPECT_EQ(e, e2);
@@ -256,16 +298,19 @@ TEST(WTF_Expected, void)
         auto u = E(makeUnexpected(oops));
         EXPECT_FALSE(u.has_value());
         EXPECT_EQ(u.error(), oops);
+        EXPECT_EQ(u.error_or(otherError), oops);
     }
     {
         auto uv = EV(makeUnexpected(oops));
         EXPECT_FALSE(uv.has_value());
         EXPECT_EQ(uv.error(), oops);
+        EXPECT_EQ(uv.error_or(otherError), oops);
     }
     {
         E e = makeUnexpected(oops);
         EXPECT_FALSE(e.has_value());
         EXPECT_EQ(e.error(), oops);
+        EXPECT_EQ(e.error_or(otherError), oops);
     }
     {
         auto e0 = E();
@@ -277,8 +322,22 @@ TEST(WTF_Expected, void)
         auto e0 = E(makeUnexpected(oops));
         auto e1 = E(makeUnexpected(foof));
         swap(e0, e1);
+        EXPECT_FALSE(e0.has_value());
         EXPECT_EQ(e0.error(), foof);
+        EXPECT_EQ(e0.error_or(otherError), foof);
+        EXPECT_FALSE(e0.has_value());
         EXPECT_EQ(e1.error(), oops);
+        EXPECT_EQ(e1.error_or(otherError), oops);
+    }
+    {
+        auto e0 = E();
+        auto e1 = E(makeUnexpected(foof));
+        swap(e0, e1);
+        EXPECT_FALSE(e0.has_value());
+        EXPECT_EQ(e0.error(), foof);
+        EXPECT_EQ(e0.error_or(otherError), foof);
+        EXPECT_TRUE(e1.has_value());
+        EXPECT_EQ(e1.error_or(otherError), otherError);
     }
     {
         const char* message = "very long failure string, for very bad failure cases";
@@ -286,6 +345,7 @@ TEST(WTF_Expected, void)
         String e1(makeUnexpected<std::string>(message));
         String e2(makeUnexpected<std::string>(std::string()));
         EXPECT_EQ(e0.error(), std::string(message));
+        EXPECT_EQ(e0.error_or(otherError), std::string(message));
         EXPECT_EQ(e0, e1);
         EXPECT_NE(e0, e2);
         String* e4 = new String(makeUnexpected<std::string>(message));
@@ -301,17 +361,312 @@ TEST(WTF_Expected, void)
     }
 }
 
+TEST(WTF_Expected, monadic)
+{
+    using EIC = Expected<int, const char*>;
+    using EII = Expected<int, int>;
+    using EFC = Expected<foo, const char*>;
+    using EVC = Expected<void, const char*>;
+    using EVI = Expected<void, int>;
+    {
+        auto e = EIC(42);
+        EXPECT_TRUE(e.has_value());
+        EXPECT_EQ(e.and_then([](auto&& v) {
+            static_assert(std::is_same_v<decltype(v), int&>);
+            EXPECT_EQ(v, 42);
+            return EFC(v + 1);
+        }), EFC(43));
+        EXPECT_EQ(e.and_then([](auto&& v) {
+            static_assert(std::is_same_v<decltype(v), int&>);
+            EXPECT_EQ(v, 42);
+            return EFC(makeUnexpected(foof));
+        }), EFC(makeUnexpected(foof)));
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            ASSERT_NOT_REACHED();
+            return EII(makeUnexpected(123));
+        }), EII(42));
+        EXPECT_EQ(e.transform([](auto&& v) {
+            static_assert(std::is_same_v<decltype(v), int&>);
+            EXPECT_EQ(v, 42);
+            return foo(v + 1);
+        }), EFC(43));
+        EXPECT_EQ(e.transform_error([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            ASSERT_NOT_REACHED();
+            return 123;
+        }), EII(42));
+    }
+    {
+        auto e = EIC(makeUnexpected(oops));
+        EXPECT_FALSE(e.has_value());
+        EXPECT_EQ(e.and_then([](auto&& v) {
+            static_assert(std::is_same_v<decltype(v), int&>);
+            ASSERT_NOT_REACHED();
+            return EFC(42);
+        }), EFC(makeUnexpected(oops)));
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return EII(42);
+        }), EII(42));
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return EII(makeUnexpected(43));
+        }), EII(makeUnexpected(43)));
+        EXPECT_EQ(e.transform([](auto&& v) {
+            static_assert(std::is_same_v<decltype(v), int&>);
+            ASSERT_NOT_REACHED();
+            return foo(v + 1);
+        }), EFC(makeUnexpected(oops)));
+        EXPECT_EQ(e.transform_error([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return 123;
+        }), EII(makeUnexpected(123)));
+    }
+    {
+        auto e = EVC();
+        EXPECT_TRUE(e.has_value());
+        EXPECT_EQ(e.and_then([]() {
+            return EFC(42);
+        }), EFC(42));
+        EXPECT_EQ(e.and_then([]() {
+            return EFC(makeUnexpected(foof));
+        }), EFC(makeUnexpected(foof)));
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            ASSERT_NOT_REACHED();
+            return EVI(makeUnexpected(123));
+        }), EVI());
+        EXPECT_EQ(e.transform([]() { return foo(42); }), EFC(42));
+        EXPECT_EQ(e.transform_error([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            ASSERT_NOT_REACHED();
+            return 123;
+        }), EVI());
+    }
+    {
+        auto e = EVC(makeUnexpected(oops));
+        EXPECT_FALSE(e.has_value());
+        EXPECT_EQ(e.and_then([]() {
+            ASSERT_NOT_REACHED();
+            return EIC(42);
+        }), EIC(makeUnexpected(oops)));
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return EVI();
+        }), EVI());
+        EXPECT_EQ(e.or_else([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return EVI(makeUnexpected(43));
+        }), EVI(makeUnexpected(43)));
+        EXPECT_EQ(e.transform([]() {
+            ASSERT_NOT_REACHED();
+            return foo(42);
+        }), EFC(makeUnexpected(oops)));
+        EXPECT_EQ(e.transform_error([](auto&& e) {
+            static_assert(std::is_same_v<decltype(e), const char*&>);
+            EXPECT_EQ(e, oops);
+            return 123;
+        }), EVI(makeUnexpected(123)));
+    }
+}
+
+static_assert(std::is_copy_constructible_v<int>);
+static_assert(std::is_copy_constructible_v<Expected<int, int>>);
+static_assert(std::is_copy_constructible_v<Expected<void, int>>);
+static_assert(std::is_trivially_copy_constructible_v<int>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<int, int>>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<void, int>>);
+
+static_assert(std::is_copy_assignable_v<int>);
+static_assert(std::is_copy_assignable_v<Expected<int, int>>);
+static_assert(std::is_copy_assignable_v<Expected<void, int>>);
+
+static_assert(std::is_move_constructible_v<int>);
+static_assert(std::is_move_constructible_v<Expected<int, int>>);
+static_assert(std::is_move_constructible_v<Expected<void, int>>);
+static_assert(std::is_trivially_move_constructible_v<int>);
+static_assert(std::is_trivially_move_constructible_v<Expected<int, int>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<void, int>>);
+
+static_assert(std::is_move_assignable_v<int>);
+static_assert(std::is_move_assignable_v<Expected<int, int>>);
+static_assert(std::is_move_assignable_v<Expected<void, int>>);
+
+struct Copyable {
+    Copyable(const Copyable&) = default;
+    Copyable& operator=(const Copyable&) = default;
+    Copyable(Copyable&&) = default;
+    Copyable& operator=(Copyable&&) = default;
+};
+
+static_assert(std::is_copy_constructible_v<Copyable>);
+static_assert(std::is_copy_constructible_v<Expected<Copyable, int>>);
+static_assert(std::is_copy_constructible_v<Expected<int, Copyable>>);
+static_assert(std::is_copy_constructible_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_copy_constructible_v<Expected<void, Copyable>>);
+static_assert(std::is_trivially_copy_constructible_v<Copyable>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<Copyable, int>>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<int, Copyable>>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_trivially_copy_constructible_v<Expected<void, Copyable>>);
+
+static_assert(std::is_copy_assignable_v<Copyable>);
+static_assert(std::is_copy_assignable_v<Expected<Copyable, int>>);
+static_assert(std::is_copy_assignable_v<Expected<int, Copyable>>);
+static_assert(std::is_copy_assignable_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_copy_assignable_v<Expected<void, Copyable>>);
+
+static_assert(std::is_move_constructible_v<Copyable>);
+static_assert(std::is_move_constructible_v<Expected<Copyable, int>>);
+static_assert(std::is_move_constructible_v<Expected<int, Copyable>>);
+static_assert(std::is_move_constructible_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_move_constructible_v<Expected<void, Copyable>>);
+static_assert(std::is_trivially_move_constructible_v<Copyable>);
+static_assert(std::is_trivially_move_constructible_v<Expected<Copyable, int>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<int, Copyable>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<void, Copyable>>);
+
+static_assert(std::is_move_assignable_v<Copyable>);
+static_assert(std::is_move_assignable_v<Expected<Copyable, int>>);
+static_assert(std::is_move_assignable_v<Expected<int, Copyable>>);
+static_assert(std::is_move_assignable_v<Expected<Copyable, Copyable>>);
+static_assert(std::is_move_assignable_v<Expected<void, Copyable>>);
+
+struct CopyableNonTrivially {
+    CopyableNonTrivially(const CopyableNonTrivially&) { }
+    CopyableNonTrivially& operator=(const CopyableNonTrivially&) { return *this; }
+    CopyableNonTrivially(CopyableNonTrivially&&) { }
+    CopyableNonTrivially& operator=(CopyableNonTrivially&&) { return *this; }
+};
+
+static_assert(std::is_copy_constructible_v<CopyableNonTrivially>);
+static_assert(std::is_copy_constructible_v<Expected<CopyableNonTrivially, int>>);
+static_assert(std::is_copy_constructible_v<Expected<int, CopyableNonTrivially>>);
+static_assert(std::is_copy_constructible_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(std::is_copy_constructible_v<Expected<void, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_copy_constructible_v<CopyableNonTrivially>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<CopyableNonTrivially, int>>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<int, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<void, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<CopyableNonTrivially, Copyable>>);
+static_assert(!std::is_trivially_copy_constructible_v<Expected<Copyable, CopyableNonTrivially>>);
+
+static_assert(std::is_copy_assignable_v<CopyableNonTrivially>);
+static_assert(std::is_copy_assignable_v<Expected<CopyableNonTrivially, int>>);
+static_assert(std::is_copy_assignable_v<Expected<int, CopyableNonTrivially>>);
+static_assert(std::is_copy_assignable_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(std::is_copy_assignable_v<Expected<void, CopyableNonTrivially>>);
+
+static_assert(std::is_move_constructible_v<CopyableNonTrivially>);
+static_assert(std::is_move_constructible_v<Expected<CopyableNonTrivially, int>>);
+static_assert(std::is_move_constructible_v<Expected<int, CopyableNonTrivially>>);
+static_assert(std::is_move_constructible_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(std::is_move_constructible_v<Expected<void, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_move_constructible_v<CopyableNonTrivially>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<CopyableNonTrivially, int>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<int, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<void, CopyableNonTrivially>>);
+
+static_assert(std::is_move_assignable_v<CopyableNonTrivially>);
+static_assert(std::is_move_assignable_v<Expected<CopyableNonTrivially, int>>);
+static_assert(std::is_move_assignable_v<Expected<int, CopyableNonTrivially>>);
+static_assert(std::is_move_assignable_v<Expected<CopyableNonTrivially, CopyableNonTrivially>>);
+static_assert(std::is_move_assignable_v<Expected<void, CopyableNonTrivially>>);
+
 template<typename T>
-struct NonCopyable {
-    NonCopyable(T&& t)
+struct OnlyMovable {
+    OnlyMovable(T&& t)
         : value(std::forward<T>(t)) { }
-    NonCopyable(NonCopyable&&) = default;
-    NonCopyable(const NonCopyable&) = delete;
-    NonCopyable& operator=(const NonCopyable&) = delete;
-    NonCopyable& operator=(NonCopyable&&) = default;
-    bool operator==(const NonCopyable<T>& other) const { return value == other.value; }
+    OnlyMovable(const OnlyMovable&) = delete;
+    OnlyMovable& operator=(const OnlyMovable&) = delete;
+    OnlyMovable(OnlyMovable&&) = default;
+    OnlyMovable& operator=(OnlyMovable&&) = default;
+    bool operator==(const OnlyMovable<T>& other) const { return value == other.value; }
     T value;
 };
+
+static_assert(!std::is_copy_constructible_v<OnlyMovable<int>>);
+static_assert(!std::is_copy_constructible_v<Expected<OnlyMovable<int>, int>>);
+static_assert(!std::is_copy_constructible_v<Expected<int, OnlyMovable<int>>>);
+static_assert(!std::is_copy_constructible_v<Expected<OnlyMovable<int>, OnlyMovable<int>>>);
+static_assert(!std::is_copy_constructible_v<Expected<void, OnlyMovable<int>>>);
+
+static_assert(!std::is_copy_assignable_v<OnlyMovable<int>>);
+static_assert(!std::is_copy_assignable_v<Expected<OnlyMovable<int>, int>>);
+static_assert(!std::is_copy_assignable_v<Expected<int, OnlyMovable<int>>>);
+static_assert(!std::is_copy_assignable_v<Expected<OnlyMovable<int>, OnlyMovable<int>>>);
+static_assert(!std::is_copy_assignable_v<Expected<void, OnlyMovable<int>>>);
+
+static_assert(std::is_move_constructible_v<OnlyMovable<int>>);
+static_assert(std::is_move_constructible_v<Expected<OnlyMovable<int>, int>>);
+static_assert(std::is_move_constructible_v<Expected<int, OnlyMovable<int>>>);
+static_assert(std::is_move_constructible_v<Expected<OnlyMovable<int>, OnlyMovable<int>>>);
+static_assert(std::is_move_constructible_v<Expected<void, OnlyMovable<int>>>);
+static_assert(std::is_trivially_move_constructible_v<OnlyMovable<int>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<OnlyMovable<int>, int>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<int, OnlyMovable<int>>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<OnlyMovable<int>, OnlyMovable<int>>>);
+static_assert(std::is_trivially_move_constructible_v<Expected<void, OnlyMovable<int>>>);
+
+static_assert(std::is_move_assignable_v<OnlyMovable<int>>);
+static_assert(std::is_move_assignable_v<Expected<OnlyMovable<int>, int>>);
+static_assert(std::is_move_assignable_v<Expected<int, OnlyMovable<int>>>);
+static_assert(std::is_move_assignable_v<Expected<OnlyMovable<int>, OnlyMovable<int>>>);
+static_assert(std::is_move_assignable_v<Expected<void, OnlyMovable<int>>>);
+
+template<typename T>
+struct OnlyMovableNonTrivially {
+    OnlyMovableNonTrivially(T&& t)
+        : value(std::forward<T>(t)) { }
+    OnlyMovableNonTrivially(const OnlyMovableNonTrivially&) = delete;
+    OnlyMovableNonTrivially& operator=(const OnlyMovableNonTrivially&) = delete;
+    OnlyMovableNonTrivially(OnlyMovableNonTrivially&& other)
+        : value(WTFMove(other.value))
+    { }
+    OnlyMovableNonTrivially& operator=(OnlyMovableNonTrivially&& other) { value = WTFMove(other.value); return *this; }
+    bool operator==(const OnlyMovableNonTrivially<T>& other) const { return value == other.value; }
+    T value;
+};
+
+static_assert(!std::is_copy_constructible_v<OnlyMovableNonTrivially<int>>);
+static_assert(!std::is_copy_constructible_v<Expected<OnlyMovableNonTrivially<int>, int>>);
+static_assert(!std::is_copy_constructible_v<Expected<int, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_copy_constructible_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_copy_constructible_v<Expected<void, OnlyMovableNonTrivially<int>>>);
+
+static_assert(!std::is_copy_assignable_v<OnlyMovableNonTrivially<int>>);
+static_assert(!std::is_copy_assignable_v<Expected<OnlyMovableNonTrivially<int>, int>>);
+static_assert(!std::is_copy_assignable_v<Expected<int, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_copy_assignable_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_copy_assignable_v<Expected<void, OnlyMovableNonTrivially<int>>>);
+
+static_assert(std::is_move_constructible_v<OnlyMovableNonTrivially<int>>);
+static_assert(std::is_move_constructible_v<Expected<OnlyMovableNonTrivially<int>, int>>);
+static_assert(std::is_move_constructible_v<Expected<int, OnlyMovableNonTrivially<int>>>);
+static_assert(std::is_move_constructible_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<int>>>);
+static_assert(std::is_move_constructible_v<Expected<void, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_trivially_move_constructible_v<OnlyMovableNonTrivially<int>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<OnlyMovableNonTrivially<int>, int>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<int, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<void, OnlyMovableNonTrivially<int>>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovable<int>>>);
+static_assert(!std::is_trivially_move_constructible_v<Expected<OnlyMovable<int>, OnlyMovableNonTrivially<int>>>);
+
+static_assert(std::is_move_assignable_v<OnlyMovableNonTrivially<int>>);
+static_assert(std::is_move_assignable_v<Expected<OnlyMovableNonTrivially<int>, int>>);
+static_assert(std::is_move_assignable_v<Expected<int, OnlyMovableNonTrivially<int>>>);
+static_assert(std::is_move_assignable_v<Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<int>>>);
+static_assert(std::is_move_assignable_v<Expected<void, OnlyMovableNonTrivially<int>>>);
 
 TEST(WTF_Expected, comparison)
 {
@@ -358,39 +713,89 @@ TEST(WTF_Expected, comparison)
 
     EXPECT_FALSE(makeUnexpected(oops) == Ex(42));
     EXPECT_NE(makeUnexpected(oops), Ex(42));
-    
-    NonCopyable<int> a { 5 };
-    NonCopyable<int> b { 6 };
-    Unexpected<NonCopyable<double>> c { makeUnexpected(NonCopyable<double> { 5.0 }) };
-    Expected<NonCopyable<int>, NonCopyable<double>> d { NonCopyable<int> { 5 } };
-    Expected<NonCopyable<int>, NonCopyable<double>> e { makeUnexpected(NonCopyable<double> { 5.0 }) };
 
-    EXPECT_TRUE(a != e);
-    EXPECT_TRUE(e != a);
-    EXPECT_FALSE(a == e);
-    EXPECT_FALSE(e == a);
+    {
+        OnlyMovable<int> a { 5 };
+        OnlyMovable<int> b { 6 };
+        Unexpected<OnlyMovable<double>> c { makeUnexpected(OnlyMovable<double> { 5.0 }) };
+        Expected<OnlyMovable<int>, OnlyMovable<double>> d { OnlyMovable<int> { 5 } };
+        Expected<OnlyMovable<int>, OnlyMovable<double>> e { makeUnexpected(OnlyMovable<double> { 5.0 }) };
 
-    EXPECT_TRUE(b != e);
-    EXPECT_TRUE(e != b);
-    EXPECT_FALSE(b == e);
-    EXPECT_FALSE(e == b);
+        EXPECT_TRUE(a != e);
+        EXPECT_TRUE(e != a);
+        EXPECT_FALSE(a == e);
+        EXPECT_FALSE(e == a);
 
-    EXPECT_TRUE(c != d);
-    EXPECT_TRUE(d != c);
-    EXPECT_FALSE(c == d);
-    EXPECT_FALSE(d == c);
+        EXPECT_TRUE(b != e);
+        EXPECT_TRUE(e != b);
+        EXPECT_FALSE(b == e);
+        EXPECT_FALSE(e == b);
 
-    EXPECT_TRUE(c == e);
-    EXPECT_TRUE(e == c);
-    EXPECT_FALSE(c != e);
-    EXPECT_FALSE(e != c);
+        EXPECT_TRUE(c != d);
+        EXPECT_TRUE(d != c);
+        EXPECT_FALSE(c == d);
+        EXPECT_FALSE(d == c);
+
+        EXPECT_TRUE(c == e);
+        EXPECT_TRUE(e == c);
+        EXPECT_FALSE(c != e);
+        EXPECT_FALSE(e != c);
+    }
+
+    {
+        OnlyMovableNonTrivially<int> a { 5 };
+        OnlyMovableNonTrivially<int> b { 6 };
+        Unexpected<OnlyMovableNonTrivially<double>> c { makeUnexpected(OnlyMovableNonTrivially<double> { 5.0 }) };
+        Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<double>> d { OnlyMovableNonTrivially<int> { 5 } };
+        Expected<OnlyMovableNonTrivially<int>, OnlyMovableNonTrivially<double>> e { makeUnexpected(OnlyMovableNonTrivially<double> { 5.0 }) };
+
+        EXPECT_TRUE(a != e);
+        EXPECT_TRUE(e != a);
+        EXPECT_FALSE(a == e);
+        EXPECT_FALSE(e == a);
+
+        EXPECT_TRUE(b != e);
+        EXPECT_TRUE(e != b);
+        EXPECT_FALSE(b == e);
+        EXPECT_FALSE(e == b);
+
+        EXPECT_TRUE(c != d);
+        EXPECT_TRUE(d != c);
+        EXPECT_FALSE(c == d);
+        EXPECT_FALSE(d == c);
+
+        EXPECT_TRUE(c == e);
+        EXPECT_TRUE(e == c);
+        EXPECT_FALSE(c != e);
+        EXPECT_FALSE(e != c);
+    }
 }
+
+static_assert(std::is_trivially_destructible_v<int>);
+static_assert(std::is_trivially_destructible_v<Expected<int, int>>);
+static_assert(std::is_trivially_destructible_v<Expected<void, int>>);
+
+struct TrivialDtor {
+    ~TrivialDtor() = default;
+};
+
+static_assert(std::is_trivially_destructible_v<TrivialDtor>);
+static_assert(std::is_trivially_destructible_v<Expected<TrivialDtor, int>>);
+static_assert(std::is_trivially_destructible_v<Expected<int, TrivialDtor>>);
+static_assert(std::is_trivially_destructible_v<Expected<TrivialDtor, TrivialDtor>>);
+static_assert(std::is_trivially_destructible_v<Expected<void, TrivialDtor>>);
 
 struct NonTrivialDtor {
     ~NonTrivialDtor() { ++count; }
     static int count;
 };
 int NonTrivialDtor::count = 0;
+
+static_assert(!std::is_trivially_destructible_v<NonTrivialDtor>);
+static_assert(!std::is_trivially_destructible_v<Expected<NonTrivialDtor, int>>);
+static_assert(!std::is_trivially_destructible_v<Expected<int, NonTrivialDtor>>);
+static_assert(!std::is_trivially_destructible_v<Expected<NonTrivialDtor, NonTrivialDtor>>);
+static_assert(!std::is_trivially_destructible_v<Expected<void, NonTrivialDtor>>);
 
 TEST(WTF_Expected, destructors)
 {

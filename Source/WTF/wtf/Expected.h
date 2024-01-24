@@ -23,161 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Implementation of Library Fundamentals v3's std::expected, as described here: http://wg21.link/p0323r4
+/*
+ * <expected> is a C++23 feature, so it cannot be used in WebKit yet.
+ * Portions copied (and modified) from:
+ *   https://github.com/llvm/llvm-project/tree/main/libcxx/include/__expected
+ * as of:
+ *   https://github.com/llvm/llvm-project/commit/134c91595568ea1335b22e559f20c1a488ea270e
+ * license:
+ *   Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+ *   See https://llvm.org/LICENSE.txt for license information.
+ *   SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+*/
 
 #pragma once
 
-/*
-    expected synopsis
-
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
-    // ?.?.4, Expected for object types
-    template <class T, class E>
-        class expected;
-
-    // ?.?.5, Expected specialization for void
-    template <class E>
-        class expected<void,E>;
-
-    // ?.?.6, unexpect tag
-    struct unexpect_t {
-       unexpect_t() = default;
-    };
-    inline constexpr unexpect_t unexpect{};
-
-    // ?.?.7, class bad_expected_access
-    template <class E>
-       class bad_expected_access;
-
-    // ?.?.8, Specialization for void.
-    template <>
-       class bad_expected_access<void>;
-
-    // ?.?.9, Expected relational operators
-    template <class T, class E>
-        constexpr bool operator==(const expected<T, E>&, const expected<T, E>&);
-    template <class T, class E>
-        constexpr bool operator!=(const expected<T, E>&, const expected<T, E>&);
-
-    // ?.?.10, Comparison with T
-    template <class T, class E>
-      constexpr bool operator==(const expected<T, E>&, const T&);
-    template <class T, class E>
-      constexpr bool operator==(const T&, const expected<T, E>&);
-    template <class T, class E>
-      constexpr bool operator!=(const expected<T, E>&, const T&);
-    template <class T, class E>
-      constexpr bool operator!=(const T&, const expected<T, E>&);
-
-    // ?.?.10, Comparison with unexpected<E>
-    template <class T, class E>
-      constexpr bool operator==(const expected<T, E>&, const unexpected<E>&);
-    template <class T, class E>
-      constexpr bool operator==(const unexpected<E>&, const expected<T, E>&);
-    template <class T, class E>
-      constexpr bool operator!=(const expected<T, E>&, const unexpected<E>&);
-    template <class T, class E>
-      constexpr bool operator!=(const unexpected<E>&, const expected<T, E>&);
-
-    // ?.?.11, Specialized algorithms
-    void swap(expected<T, E>&, expected<T, E>&) noexcept(see below);
-
-    template <class T, class E>
-    class expected
-    {
-    public:
-        typedef T value_type;
-        typedef E error_type;
-        typedef unexpected<E> unexpected_type;
-    
-        template <class U>
-            struct rebind {
-            using type = expected<U, error_type>;
-          };
-    
-        // ?.?.4.1, constructors
-        constexpr expected();
-        constexpr expected(const expected&);
-        constexpr expected(expected&&) noexcept(see below);
-        template <class U, class G>
-            EXPLICIT constexpr expected(const expected<U, G>&);
-        template <class U, class G>
-            EXPLICIT constexpr expected(expected<U, G>&&);
-    
-        template <class U = T>
-            EXPLICIT constexpr expected(U&& v);
-    
-        template <class... Args>
-            constexpr explicit expected(in_place_t, Args&&...);
-        template <class U, class... Args>
-            constexpr explicit expected(in_place_t, initializer_list<U>, Args&&...);
-        template <class G = E>
-            constexpr expected(unexpected<G> const&);
-        template <class G = E>
-            constexpr expected(unexpected<G> &&);
-        template <class... Args>
-            constexpr explicit expected(unexpect_t, Args&&...);
-        template <class U, class... Args>
-            constexpr explicit expected(unexpect_t, initializer_list<U>, Args&&...);
-    
-        // ?.?.4.2, destructor
-        ~expected();
-    
-        // ?.?.4.3, assignment
-        expected& operator=(const expected&);
-        expected& operator=(expected&&) noexcept(see below);
-        template <class U = T> expected& operator=(U&&);
-        template <class G = E>
-            expected& operator=(const unexpected<G>&);
-        template <class G = E>
-            expected& operator=(unexpected<G>&&) noexcept(see below);
-    
-        template <class... Args>
-            void emplace(Args&&...);
-        template <class U, class... Args>
-            void emplace(initializer_list<U>, Args&&...);
-    
-        // ?.?.4.4, swap
-        void swap(expected&) noexcept(see below);
-    
-        // ?.?.4.5, observers
-        constexpr const T* operator ->() const;
-        constexpr T* operator ->();
-        constexpr const T& operator *() const&;
-        constexpr T& operator *() &;
-        constexpr const T&& operator *() const &&;
-        constexpr T&& operator *() &&;
-        constexpr explicit operator bool() const noexcept;
-        constexpr bool has_value() const noexcept;
-        constexpr const T& value() const&;
-        constexpr T& value() &;
-        constexpr const T&& value() const &&;
-        constexpr T&& value() &&;
-        constexpr const E& error() const&;
-        constexpr E& error() &;
-        constexpr const E&& error() const &&;
-        constexpr E&& error() &&;
-        template <class U>
-            constexpr T value_or(U&&) const&;
-        template <class U>
-            T value_or(U&&) &&;
-    
-    private:
-        bool has_val; // exposition only
-        union
-        {
-            value_type val; // exposition only
-            unexpected_type unexpect; // exposition only
-        };
-    };
-
-}}}
-
-*/
-
 #include <cstdlib>
+#include <functional>
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
@@ -186,391 +47,1801 @@ inline namespace fundamentals_v3 {
 #include <wtf/StdLibExtras.h>
 #include <wtf/Unexpected.h>
 
-namespace std {
-namespace experimental {
-inline namespace fundamentals_v3 {
+namespace WTF::detail_from_clang_libstdcpp {
 
-struct unexpected_t {
-    unexpected_t() = default;
-};
-#if __cplusplus < 201703L
-#define __EXPECTED_INLINE_VARIABLE static const
-#else
-#define __EXPECTED_INLINE_VARIABLE inline
-#endif
+namespace detail {
+template <template <class...> class Func, class ...Args>
+struct Lazy : Func<Args...> { };
+}
 
-__EXPECTED_INLINE_VARIABLE constexpr unexpected_t unexpect { };
-
-template<class E> class bad_expected_access;
-
-template<>
-class bad_expected_access<void> : public std::exception {
-public:
-    explicit bad_expected_access() { }
+struct unexpect_t {
+    explicit unexpect_t() = default; // NOLINT
 };
 
-template<class E>
-class bad_expected_access : public bad_expected_access<void> {
-public:
-    explicit bad_expected_access(E val) : val(val) { }
-    const char* what() const noexcept override { return std::exception::what(); }
-    E& error() & { return val; }
-    const E& error() const& { return val; }
-    E&& error() && { return std::move(val); }
-    const E&&  error() const&& { return std::move(val); }
+inline constexpr unexpect_t unexpect { };
 
-private:
-    E val;
-};
+template <class Tp, class Err>
+class expected;
 
-namespace __expected_detail {
+namespace detail {
 
-#if COMPILER_SUPPORTS(EXCEPTIONS)
-#define __EXPECTED_THROW(__exception) (throw __exception)
-#else
-inline NO_RETURN_DUE_TO_CRASH void __expected_terminate() { RELEASE_ASSERT_NOT_REACHED(); }
-#define __EXPECTED_THROW(...) __expected_detail::__expected_terminate()
-#endif
+template <class Tp>
+struct is_std_expected : std::false_type { };
 
-__EXPECTED_INLINE_VARIABLE constexpr enum class value_tag_t { } value_tag { };
-__EXPECTED_INLINE_VARIABLE constexpr enum class error_tag_t { } error_tag { };
+template <class Tp, class Err>
+struct is_std_expected<expected<Tp, Err>> : std::true_type { };
 
-template<class T, std::enable_if_t<std::is_trivially_destructible<T>::value>* = nullptr> void destroy(T&) { }
-template<class T, std::enable_if_t<!std::is_trivially_destructible<T>::value && (std::is_class<T>::value || std::is_union<T>::value)>* = nullptr> void destroy(T& t) { t.~T(); }
+struct expected_construct_in_place_from_invoke_tag { };
+struct expected_construct_unexpected_from_invoke_tag { };
 
-template<class T, class E>
-union constexpr_storage {
-    typedef T value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    char dummy;
-    value_type val;
-    error_type err;
-    constexpr constexpr_storage() : dummy() { }
-    constexpr constexpr_storage(value_tag_t) : val() { }
-    constexpr constexpr_storage(error_tag_t) : err() { }
-    template<typename U = T>
-    constexpr constexpr_storage(value_tag_t, U&& v) : val(std::forward<U>(v)) { }
-    template<typename U = E>
-    constexpr constexpr_storage(error_tag_t, U&& e) : err(std::forward<U>(e)) { }
-    ~constexpr_storage() = default;
-};
+// FIXME: Remove specializations for trivially copy/mov-able once all compilers support
+// "conditional trivial special member functions" (__cpp_concepts >= 202002L).
 
-template<class T, class E>
-union storage {
-    typedef T value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    char dummy;
-    value_type val;
-    error_type err;
-    constexpr storage() : dummy() { }
-    constexpr storage(value_tag_t) : val() { }
-    constexpr storage(error_tag_t) : err() { }
-    constexpr storage(value_tag_t, const value_type& val) : val(val) { }
-    constexpr storage(value_tag_t, value_type&& val) : val(std::forward<value_type>(val)) { }
-    constexpr storage(error_tag_t, const error_type& err) : err(err) { }
-    constexpr storage(error_tag_t, error_type&& err) : err(std::forward<error_type>(err)) { }
-    ~storage() { }
-};
+enum class IsTriviallyCopyConstructible { No, Yes };
+enum class IsTriviallyMoveConstructible { No, Yes };
+enum class IsTriviallyDestructible { No, Yes };
 
-template<class E>
-union constexpr_storage<void, E> {
-    typedef void value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    char dummy;
-    error_type err;
-    constexpr constexpr_storage() : dummy() { }
-    constexpr constexpr_storage(value_tag_t) : dummy() { }
-    constexpr constexpr_storage(error_tag_t) : err() { }
-    constexpr constexpr_storage(error_tag_t, const error_type& e) : err(e) { }
-    ~constexpr_storage() = default;
-};
+template <typename Tp, typename Err, IsTriviallyCopyConstructible, IsTriviallyMoveConstructible, IsTriviallyDestructible>
+struct Storage;
 
-template<class E>
-union storage<void, E> {
-    typedef void value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    char dummy;
-    error_type err;
-    constexpr storage() : dummy() { }
-    constexpr storage(value_tag_t) : dummy() { }
-    constexpr storage(error_tag_t) : err() { }
-    constexpr storage(error_tag_t, const error_type& err) : err(err) { }
-    constexpr storage(error_tag_t, error_type&& err) : err(std::forward<error_type>(err)) { }
-    ~storage() { }
-};
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::No, IsTriviallyMoveConstructible::No, IsTriviallyDestructible::No> {
+    union Union {
+        constexpr Union() : m_empty() { }
 
-template<class T, class E>
-struct constexpr_base {
-    typedef T value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    constexpr_storage<value_type, error_type> s;
-    bool has;
-    constexpr constexpr_base() : s(), has(true) { }
-    constexpr constexpr_base(value_tag_t tag) : s(tag), has(true) { }
-    constexpr constexpr_base(error_tag_t tag) : s(tag), has(false) { }
-    template<typename U = T>
-    constexpr constexpr_base(value_tag_t tag, U&& val) : s(tag, std::forward<U>(val)), has(true) { }
-    template<typename U = E>
-    constexpr constexpr_base(error_tag_t tag, U&& err) : s(tag, std::forward<U>(err)), has(false) { }
-    ~constexpr_base() = default;
-};
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
 
-template<class T, class E>
-struct base {
-    typedef T value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    storage<value_type, error_type> s;
-    bool has;
-    constexpr base() : s(), has(true) { }
-    constexpr base(value_tag_t tag) : s(tag), has(true) { }
-    constexpr base(error_tag_t tag) : s(tag), has(false) { }
-    constexpr base(value_tag_t tag, const value_type& val) : s(tag, val), has(true) { }
-    constexpr base(value_tag_t tag, value_type&& val) : s(tag, std::forward<value_type>(val)), has(true) { }
-    constexpr base(error_tag_t tag, const error_type& err) : s(tag, err), has(false) { }
-    constexpr base(error_tag_t tag, error_type&& err) : s(tag, std::forward<error_type>(err)), has(false) { }
-    base(const base& o)
-        : has(o.has)
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        // the Storage's destructor handles this
+        constexpr ~Union() { }
+
+        struct Empty { };
+        Empty m_empty;
+        Tp m_val;
+        Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) requires(std::is_copy_constructible_v<Tp> && std::is_copy_constructible_v<Err>)
     {
-        if (has)
-            ::new (std::addressof(s.val)) value_type(o.s.val);
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), other.m_union.m_val);
         else
-            ::new (std::addressof(s.err)) error_type(o.s.err);
+            std::construct_at(std::addressof(m_union.m_unex), other.m_union.m_unex);
+        m_hasVal = other.m_hasVal;
     }
-    base(base&& o)
-        : has(o.has)
+
+    constexpr Storage(Storage&& other) requires(std::is_move_constructible_v<Tp> && std::is_move_constructible_v<Err>)
     {
-        if (has)
-            ::new (std::addressof(s.val)) value_type(std::move(o.s.val));
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), WTFMove(other.m_union.m_val));
         else
-            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
+            std::construct_at(std::addressof(m_union.m_unex), WTFMove(other.m_union.m_unex));
+        m_hasVal = other.m_hasVal;
     }
-    ~base()
+
+    constexpr ~Storage()
     {
-        if (has)
-            destroy(s.val);
+        if (m_hasVal)
+            std::destroy_at(std::addressof(m_union.m_val));
         else
-            destroy(s.err);
+            std::destroy_at(std::addressof(m_union.m_unex));
     }
 };
 
-template<class E>
-struct constexpr_base<void, E> {
-    typedef void value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    constexpr_storage<value_type, error_type> s;
-    bool has;
-    constexpr constexpr_base() : s(), has(true) { }
-    constexpr constexpr_base(value_tag_t tag) : s(tag), has(true) { }
-    constexpr constexpr_base(error_tag_t tag) : s(tag), has(false) { }
-    constexpr constexpr_base(error_tag_t tag, const error_type& err) : s(tag, err), has(false) { }
-    constexpr constexpr_base(error_tag_t tag, error_type&& err) : s(tag, std::forward<error_type>(err)), has(false) { }
-    ~constexpr_base() = default;
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::Yes, IsTriviallyMoveConstructible::No, IsTriviallyDestructible::No> {
+    union Union {
+        constexpr Union() : m_empty() { }
+
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        // the Storage's destructor handles this
+        constexpr ~Union() { }
+
+        struct Empty { };
+        Empty m_empty;
+        Tp m_val;
+        Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) = default;
+
+    constexpr Storage(Storage&& other) requires(std::is_move_constructible_v<Tp> && std::is_move_constructible_v<Err>)
+    {
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), WTFMove(other.m_union.m_val));
+        else
+            std::construct_at(std::addressof(m_union.m_unex), WTFMove(other.m_union.m_unex));
+        m_hasVal = other.m_hasVal;
+    }
+
+    constexpr ~Storage()
+    {
+        if (m_hasVal)
+            std::destroy_at(std::addressof(m_union.m_val));
+        else
+            std::destroy_at(std::addressof(m_union.m_unex));
+    }
 };
 
-template<class E>
-struct base<void, E> {
-    typedef void value_type;
-    typedef E error_type;
-    typedef unexpected<E> unexpected_type;
-    storage<value_type, error_type> s;
-    bool has;
-    constexpr base() : s(), has(true) { }
-    constexpr base(value_tag_t tag) : s(tag), has(true) { }
-    constexpr base(error_tag_t tag) : s(tag), has(false) { }
-    constexpr base(error_tag_t tag, const error_type& err) : s(tag, err), has(false) { }
-    constexpr base(error_tag_t tag, error_type&& err) : s(tag, std::forward<error_type>(err)), has(false) { }
-    base(const base& o)
-        : has(o.has)
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::No, IsTriviallyMoveConstructible::Yes, IsTriviallyDestructible::No> {
+    union Union {
+        constexpr Union() : m_empty() { }
+
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+        constexpr Union(Union&&) = default;
+        constexpr Union& operator=(Union&&) = default;
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        // the Storage's destructor handles this
+        constexpr ~Union() { }
+
+        struct Empty { };
+        NO_UNIQUE_ADDRESS Empty m_empty;
+        NO_UNIQUE_ADDRESS Tp m_val;
+        NO_UNIQUE_ADDRESS Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) requires(std::is_copy_constructible_v<Tp> && std::is_copy_constructible_v<Err>)
     {
-        if (!has)
-            ::new (std::addressof(s.err)) error_type(o.s.err);
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), other.m_union.m_val);
+        else
+            std::construct_at(std::addressof(m_union.m_unex), other.m_union.m_unex);
+        m_hasVal = other.m_hasVal;
     }
-    base(base&& o)
-        : has(o.has)
+
+    constexpr Storage(Storage&& other) = default;
+
+    constexpr ~Storage()
     {
-        if (!has)
-            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
-    }
-    ~base()
-    {
-        if (!has)
-            destroy(s.err);
+        if (m_hasVal)
+            std::destroy_at(std::addressof(m_union.m_val));
+        else
+            std::destroy_at(std::addressof(m_union.m_unex));
     }
 };
 
-template<class T, class E>
-using base_select = typename std::conditional<
-    ((std::is_void<T>::value || std::is_trivially_destructible<T>::value)
-        && std::is_trivially_destructible<E>::value),
-    constexpr_base<typename std::remove_const<T>::type, typename std::remove_const<E>::type>,
-    base<typename std::remove_const<T>::type, typename std::remove_const<E>::type>
->::type;
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::Yes, IsTriviallyMoveConstructible::Yes, IsTriviallyDestructible::No> {
+    union Union {
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+        constexpr Union(Union&&) = default;
+        constexpr Union& operator=(Union&&) = default;
 
-} // namespace __expected_detail
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
 
-template<class T, class E>
-class expected : private __expected_detail::base_select<T, E> {
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        // the Storage's destructor handles this
+        constexpr ~Union() { }
+
+        NO_UNIQUE_ADDRESS Tp m_val;
+        NO_UNIQUE_ADDRESS Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) = default;
+
+    constexpr Storage(Storage&& other) = default;
+
+    constexpr ~Storage()
+    {
+        if (m_hasVal)
+            std::destroy_at(std::addressof(m_union.m_val));
+        else
+            std::destroy_at(std::addressof(m_union.m_unex));
+    }
+};
+
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::No, IsTriviallyMoveConstructible::No, IsTriviallyDestructible::Yes> {
+    union Union {
+        constexpr Union() : m_empty() { }
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        struct Empty { };
+        Empty m_empty;
+        Tp m_val;
+        Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) requires(std::is_copy_constructible_v<Tp> && std::is_copy_constructible_v<Err>)
+    {
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), other.m_union.m_val);
+        else
+            std::construct_at(std::addressof(m_union.m_unex), other.m_union.m_unex);
+        m_hasVal = other.m_hasVal;
+    }
+
+    constexpr Storage(Storage&& other) requires(std::is_move_constructible_v<Tp> && std::is_move_constructible_v<Err>)
+    {
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), WTFMove(other.m_union.m_val));
+        else
+            std::construct_at(std::addressof(m_union.m_unex), WTFMove(other.m_union.m_unex));
+        m_hasVal = other.m_hasVal;
+    }
+};
+
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::Yes, IsTriviallyMoveConstructible::No, IsTriviallyDestructible::Yes> {
+    union Union {
+        constexpr Union() : m_empty() { }
+
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        struct Empty { };
+        Empty m_empty;
+        Tp m_val;
+        Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) = default;
+
+    constexpr Storage(Storage&& other) requires(std::is_move_constructible_v<Tp> && std::is_move_constructible_v<Err>)
+    {
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), WTFMove(other.m_union.m_val));
+        else
+            std::construct_at(std::addressof(m_union.m_unex), WTFMove(other.m_union.m_unex));
+        m_hasVal = other.m_hasVal;
+    }
+};
+
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::No, IsTriviallyMoveConstructible::Yes, IsTriviallyDestructible::Yes> {
+    union Union {
+        constexpr Union() : m_empty() { }
+
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+        constexpr Union(Union&&) = default;
+        constexpr Union& operator=(Union&&) = default;
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        struct Empty { };
+        NO_UNIQUE_ADDRESS Empty m_empty;
+        NO_UNIQUE_ADDRESS Tp m_val;
+        NO_UNIQUE_ADDRESS Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) requires(std::is_copy_constructible_v<Tp> && std::is_copy_constructible_v<Err>)
+    {
+        if (other.m_hasVal)
+            std::construct_at(std::addressof(m_union.m_val), other.m_union.m_val);
+        else
+            std::construct_at(std::addressof(m_union.m_unex), other.m_union.m_unex);
+        m_hasVal = other.m_hasVal;
+    }
+
+    constexpr Storage(Storage&& other) = default;
+};
+
+template <typename Tp, typename Err>
+struct Storage<Tp, Err, IsTriviallyCopyConstructible::Yes, IsTriviallyMoveConstructible::Yes, IsTriviallyDestructible::Yes> {
+    union Union {
+        constexpr Union(const Union&) = default;
+        constexpr Union& operator=(const Union&) = default;
+        constexpr Union(Union&&) = default;
+        constexpr Union& operator=(Union&&) = default;
+
+        template <class... Args>
+        constexpr explicit Union(std::in_place_t, Args&&... args)
+            : m_val(std::forward<Args>(args)...) { }
+
+        template <class... Args>
+        constexpr explicit Union(unexpect_t, Args&&... args)
+            : m_unex(std::forward<Args>(args)...) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_in_place_from_invoke_tag, Func&& f, Args&&... args)
+            : m_val(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        template <class Func, class... Args>
+        constexpr explicit Union(
+            expected_construct_unexpected_from_invoke_tag, Func&& f, Args&&... args)
+            : m_unex(std::invoke(std::forward<Func>(f), std::forward<Args>(args)...)) { }
+
+        NO_UNIQUE_ADDRESS Tp m_val;
+        NO_UNIQUE_ADDRESS Err m_unex;
+    };
+
+    NO_UNIQUE_ADDRESS Union m_union;
+    bool m_hasVal;
+
+    template <class... Args>
+    constexpr explicit Storage(std::in_place_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class... Args>
+    constexpr explicit Storage(unexpect_t tag, Args&&... args)
+        : m_union(tag, std::forward<Args>(args)...), m_hasVal(false) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(true) { }
+
+    template <class Func, class... Args>
+    constexpr explicit Storage(
+        expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_union(tag, std::forward<Func>(f), std::forward<Args>(args)...), m_hasVal(false) { }
+
+    constexpr Storage(const Storage& other) = default;
+
+    constexpr Storage(Storage&& other) = default;
+};
+
+} // namespace detail
+
+template <class Tp, class Err>
+class expected {
     WTF_MAKE_FAST_ALLOCATED;
-    typedef __expected_detail::base_select<T, E> base;
+    static_assert(
+        !std::is_reference_v<Tp>
+        && !std::is_function_v<Tp>
+        && !std::is_same_v<std::remove_cv_t<Tp>, std::in_place_t>
+        && !std::is_same_v<std::remove_cv_t<Tp>, unexpect_t>
+        && !detail::is_std_unexpected<std::remove_cv_t<Tp>>::value
+        && detail::valid_std_unexpected<Err>::value,
+        "[expected.object.general] A program that instantiates the definition of template expected<T, E> for a "
+        "reference type, a function type, or for possibly cv-qualified types std::std::in_place_t, unexpect_t, or a "
+        "specialization of unexpected for the T parameter is ill-formed. A program that instantiates the "
+        "definition of the template expected<T, E> with a type for the E parameter that is not a valid "
+        "template argument for unexpected is ill-formed."); // NOLINT
+
+    template <class Up, class OtherErr>
+    friend class expected;
 
 public:
-    typedef typename base::value_type value_type;
-    typedef typename base::error_type error_type;
-    typedef typename base::unexpected_type unexpected_type;
+    using value_type      = Tp;
+    using error_type      = Err;
+    using unexpected_type = unexpected<Err>;
+
+    template <class Up>
+    using rebind = expected<Up, error_type>;
+
+    // [expected.object.ctor], constructors
+    constexpr expected() requires std::is_default_constructible_v<Tp>
+        : m_storage(std::in_place) { }
+
+    constexpr expected(const expected&) = delete;
+
+    constexpr expected(const expected&)
+        requires(std::is_copy_constructible_v<Tp> && std::is_copy_constructible_v<Err>)
+    = default;
+
+    constexpr expected(expected&&)
+        requires(std::is_move_constructible_v<Tp> && std::is_move_constructible_v<Err>)
+    = default;
 
 private:
-    typedef expected<value_type, error_type> type;
+    template <class Up, class OtherErr, class UfQual, class OtherErrQual>
+    using CanConvert =
+        std::conjunction<
+            std::is_constructible<Tp, UfQual>,
+            std::is_constructible<Err, OtherErrQual>,
+            std::conditional_t<
+                std::negation<std::is_same<std::remove_cv_t<Tp>, bool>>::value,
+                std::conjunction<
+                    std::negation<std::is_constructible<Tp, expected<Up, OtherErr>&>>,
+                    std::negation<std::is_constructible<Tp, expected<Up, OtherErr>>>,
+                    std::negation<std::is_constructible<Tp, const expected<Up, OtherErr>&>>,
+                    std::negation<std::is_constructible<Tp, const expected<Up, OtherErr>>>,
+                    std::negation<std::is_convertible<expected<Up, OtherErr>&, Tp>>,
+                    std::negation<std::is_convertible<expected<Up, OtherErr>&&, Tp>>,
+                    std::negation<std::is_convertible<const expected<Up, OtherErr>&, Tp>>,
+                    std::negation<std::is_convertible<const expected<Up, OtherErr>&&, Tp>>>,
+                std::true_type>,
+            std::negation<std::is_constructible<unexpected<Err>, expected<Up, OtherErr>&>>,
+            std::negation<std::is_constructible<unexpected<Err>, expected<Up, OtherErr>>>,
+            std::negation<std::is_constructible<unexpected<Err>, const expected<Up, OtherErr>&>>,
+            std::negation<std::is_constructible<unexpected<Err>, const expected<Up, OtherErr>>>>;
+
+    template <class Func, class... Args>
+    constexpr explicit expected(
+        detail::expected_construct_in_place_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_storage(tag, std::forward<Func>(f), std::forward<Args>(args)...) { }
+
+    template <class Func, class... Args>
+    constexpr explicit expected(
+        detail::expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_storage(tag, std::forward<Func>(f), std::forward<Args>(args)...) { }
 
 public:
-    template<class U> struct rebind {
-        using type = expected<U, error_type>;
-    };
+    template <class Up, class OtherErr>
+        requires CanConvert<Up, OtherErr, const Up&, const OtherErr&>::value
+    constexpr explicit(!std::is_convertible_v<const Up&, Tp> || !std::is_convertible_v<const OtherErr&, Err>)
+    expected(const expected<Up, OtherErr>& other)
+        : m_storage(other.m_storage) { }
 
-    constexpr expected() : base(__expected_detail::value_tag) { }
-    expected(const expected&) = default;
-    expected(expected&&) = default;
+    template <class Up, class OtherErr>
+        requires CanConvert<Up, OtherErr, Up, OtherErr>::value
+    constexpr explicit(!std::is_convertible_v<Up, Tp> || !std::is_convertible_v<OtherErr, Err>)
+    expected(expected<Up, OtherErr>&& other)
+        : m_storage(other.m_storage) { }
 
-    constexpr expected(const value_type& e) : base(__expected_detail::value_tag, e) { }
-    constexpr expected(value_type&& e) : base(__expected_detail::value_tag, std::forward<value_type>(e)) { }
-    template<class... Args> constexpr explicit expected(std::in_place_t, Args&&... args) : base(__expected_detail::value_tag, value_type(std::forward<Args>(args)...)) { }
-    // template<class U, class... Args> constexpr explicit expected(in_place_t, std::initializer_list<U>, Args&&...);
-    constexpr expected(const unexpected_type& u) : base(__expected_detail::error_tag, u.value()) { }
-    constexpr expected(unexpected_type&& u) : base(__expected_detail::error_tag, std::forward<unexpected_type>(u).value()) { }
-    template<class Err> constexpr expected(const unexpected<Err>& u) : base(__expected_detail::error_tag, u.value()) { }
-    template<class Err> constexpr expected(unexpected<Err>&& u) : base(__expected_detail::error_tag, std::forward<Err>(u.value())) { }
-    template<class... Args> constexpr explicit expected(unexpected_t, Args&&... args) : base(__expected_detail::error_tag, error_type(std::forward<Args>(args)...)) { }
-    // template<class U, class... Args> constexpr explicit expected(unexpected_t, std::initializer_list<U>, Args&&...);
+    template <class Up = Tp>
+        requires(!std::is_same_v<std::remove_cvref_t<Up>, std::in_place_t> && !std::is_same_v<expected, std::remove_cvref_t<Up>>
+            && std::is_constructible_v<Tp, Up> && !detail::is_std_unexpected<std::remove_cvref_t<Up>>::value
+            && (!std::is_same_v<std::remove_cv_t<Tp>, bool> || !detail::is_std_expected<std::remove_cvref_t<Up>>::value))
+    constexpr explicit(!std::is_convertible_v<Up, Tp>) expected(Up&& u)
+        : m_storage(std::in_place, std::forward<Up>(u)) { }
 
-    ~expected() = default;
+    template <class OtherErr>
+        requires std::is_constructible_v<Err, const OtherErr&>
+    constexpr explicit(!std::is_convertible_v<const OtherErr&, Err>)
+    expected(const unexpected<OtherErr>& unex)
+        : m_storage(unexpect, unex.error()) { }
 
-    expected& operator=(const expected& e) { type(e).swap(*this); return *this; }
-    expected& operator=(expected&& e) { type(std::move(e)).swap(*this); return *this; }
-    template<class U> expected& operator=(U&& u) { type(std::forward<U>(u)).swap(*this); return *this; }
-    expected& operator=(const unexpected_type& u) { type(u).swap(*this); return *this; }
-    expected& operator=(unexpected_type&& u) { type(std::move(u)).swap(*this); return *this; }
-    // template<class... Args> void emplace(Args&&...);
-    // template<class U, class... Args> void emplace(std::initializer_list<U>, Args&&...);
+    template <class OtherErr>
+        requires std::is_constructible_v<Err, OtherErr>
+    constexpr explicit(!std::is_convertible_v<OtherErr, Err>)
+    expected(unexpected<OtherErr>&& unex)
+        : m_storage(unexpect, WTFMove(unex.error())) { }
 
-    void swap(expected& o)
-    {
-        using std::swap;
-        if (base::has && o.has)
-            swap(base::s.val, o.s.val);
-        else if (base::has && !o.has) {
-            error_type e(std::move(o.s.err));
-            __expected_detail::destroy(o.s.err);
-            ::new (std::addressof(o.s.val)) value_type(std::move(base::s.val));
-            __expected_detail::destroy(base::s.val);
-            ::new (std::addressof(base::s.err)) error_type(std::move(e));
-            swap(base::has, o.has);
-        } else if (!base::has && o.has) {
-            value_type v(std::move(o.s.val));
-            __expected_detail::destroy(o.s.val);
-            ::new (std::addressof(o.s.err)) error_type(std::move(base::s.err));
-            __expected_detail::destroy(base::s.err);
-            ::new (std::addressof(base::s.val)) value_type(std::move(v));
-            swap(base::has, o.has);
-        } else
-            swap(base::s.err, o.s.err);
-    }
+    template <class... Args>
+        requires std::is_constructible_v<Tp, Args...>
+    constexpr explicit expected(std::in_place_t tag, Args&&... args)
+        : m_storage(tag, std::forward<Args>(args)...) { }
 
-    constexpr const value_type* operator->() const { return &base::s.val; }
-    value_type* operator->() { return &base::s.val; }
-    constexpr const value_type& operator*() const & { return base::s.val; }
-    value_type& operator*() & { return base::s.val; }
-    constexpr const value_type&& operator*() const && { return std::move(base::s.val); }
-    constexpr value_type&& operator*() && { return std::move(base::s.val); }
-    constexpr explicit operator bool() const { return base::has; }
-    constexpr bool has_value() const { return base::has; }
-    constexpr const value_type& value() const & { return base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val); }
-    constexpr value_type& value() & { return base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val); }
-    constexpr const value_type&& value() const && { return std::move(base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val)); }
-    constexpr value_type&& value() && { return std::move(base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val)); }
-    constexpr const error_type& error() const & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    error_type& error() & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    constexpr error_type&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
-    constexpr const error_type&& error() const && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
-    template<class U> constexpr value_type value_or(U&& u) const & { return base::has ? **this : static_cast<value_type>(std::forward<U>(u)); }
-    template<class U> value_type value_or(U&& u) && { return base::has ? std::move(**this) : static_cast<value_type>(std::forward<U>(u)); }
-};
+    template <class Up, class... Args>
+        requires std::is_constructible_v< Tp, std::initializer_list<Up>&, Args... >
+    constexpr explicit
+    expected(std::in_place_t tag, std::initializer_list<Up> il, Args&&... args)
+        : m_storage(tag, il, std::forward<Args>(args)...) { }
 
-template<class E>
-class expected<void, E> : private __expected_detail::base_select<void, E> {
-    typedef __expected_detail::base_select<void, E> base;
+    template <class... Args>
+        requires std::is_constructible_v<Err, Args...>
+    constexpr explicit expected(unexpect_t tag, Args&&... args)
+        : m_storage(tag, std::forward<Args>(args)...) { }
 
-public:
-    typedef typename base::value_type value_type;
-    typedef typename base::error_type error_type;
-    typedef typename base::unexpected_type unexpected_type;
+    template <class Up, class... Args>
+        requires std::is_constructible_v< Err, std::initializer_list<Up>&, Args... >
+    constexpr explicit
+    expected(unexpect_t tag, std::initializer_list<Up> il, Args&&... args)
+        : m_storage(tag, il, std::forward<Args>(args)...) { }
 
 private:
-    typedef expected<value_type, error_type> type;
-
-public:
-    template<class U> struct rebind {
-        using type = expected<U, error_type>;
-    };
-
-    constexpr expected() : base(__expected_detail::value_tag) { }
-    expected(const expected&) = default;
-    expected(expected&&) = default;
-    // constexpr explicit expected(in_place_t);
-    constexpr expected(unexpected_type const& u) : base(__expected_detail::error_tag, u.value()) { }
-    constexpr expected(unexpected_type&& u) : base(__expected_detail::error_tag, std::forward<unexpected_type>(u).value()) { }
-    template<class Err> constexpr expected(unexpected<Err> const& u) : base(__expected_detail::error_tag, u.value()) { }
-
-    ~expected() = default;
-
-    expected& operator=(const expected& e) { type(e).swap(*this); return *this; }
-    expected& operator=(expected&& e) { type(std::move(e)).swap(*this); return *this; }
-    expected& operator=(const unexpected_type& u) { type(u).swap(*this); return *this; } // Not in the current paper.
-    expected& operator=(unexpected_type&& u) { type(std::move(u)).swap(*this); return *this; } // Not in the current paper.
-    // void emplace();
-
-    void swap(expected& o)
+    template <class T1, class T2, class... Args>
+    static constexpr void reinitExpected(T1& newval, T2& oldval, Args&&... args)
     {
-        using std::swap;
-        if (base::has && o.has) {
-            // Do nothing.
-        } else if (base::has && !o.has) {
-            error_type e(std::move(o.s.err));
-            ::new (std::addressof(base::s.err)) error_type(e);
-            swap(base::has, o.has);
-        } else if (!base::has && o.has) {
-            ::new (std::addressof(o.s.err)) error_type(std::move(base::s.err));
-            swap(base::has, o.has);
-        } else
-            swap(base::s.err, o.s.err);
+        if constexpr (std::is_constructible_v<T1, Args...>) {
+            std::destroy_at(std::addressof(oldval));
+            std::construct_at(std::addressof(newval), std::forward<Args>(args)...);
+        } else if constexpr (std::is_move_constructible_v<T1>) {
+            T1 tmp(std::forward<Args>(args)...);
+            std::destroy_at(std::addressof(oldval));
+            std::construct_at(std::addressof(newval), WTFMove(tmp));
+        } else {
+            static_assert(std::is_move_constructible_v<T2>);
+            T2 tmp(WTFMove(oldval));
+            std::destroy_at(std::addressof(oldval));
+            std::construct_at(std::addressof(newval), std::forward<Args>(args)...);
+            (void)tmp;
+        }
     }
 
-    constexpr explicit operator bool() const { return base::has; }
-    constexpr bool has_value() const { return base::has; }
-    void value() const { !base::has ? __EXPECTED_THROW(bad_expected_access<void>()) : void(); }
-    constexpr const E& error() const & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    E& error() & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    constexpr E&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
+public:
+    // [expected.object.assign], assignment
+    constexpr expected& operator=(const expected&) = delete;
+
+    constexpr expected& operator=(const expected& rhs)
+        requires(std::is_copy_assignable_v<Tp>
+            && std::is_copy_constructible_v<Tp>
+            && std::is_copy_assignable_v<Err>
+            && std::is_copy_constructible_v<Err>
+            && (std::is_move_constructible_v<Tp> || std::is_move_constructible_v<Err>))
+    {
+        if (m_storage.m_hasVal && rhs.m_storage.m_hasVal)
+            m_storage.m_union.m_val = rhs.m_storage.m_union.m_val;
+        else if (m_storage.m_hasVal)
+            reinitExpected(m_storage.m_union.m_unex, m_storage.m_union.m_val, rhs.m_storage.m_union.m_unex);
+        else if (rhs.m_storage.m_hasVal)
+            reinitExpected(m_storage.m_union.m_val, m_storage.m_union.m_unex, rhs.m_storage.m_union.m_val);
+        else
+            m_storage.m_union.m_unex = rhs.m_storage.m_union.m_unex;
+        m_storage.m_hasVal = rhs.m_storage.m_hasVal;
+        return *this;
+    }
+
+    constexpr expected& operator=(expected&& rhs)
+        requires(std::is_move_constructible_v<Tp>
+            && std::is_move_assignable_v<Tp>
+            && std::is_move_constructible_v<Err>
+            && std::is_move_assignable_v<Err>
+            && (std::is_move_constructible_v<Tp> || std::is_move_constructible_v<Err>))
+    {
+        if (m_storage.m_hasVal && rhs.m_storage.m_hasVal)
+            m_storage.m_union.m_val = WTFMove(rhs.m_storage.m_union.m_val);
+        else if (m_storage.m_hasVal)
+            reinitExpected(m_storage.m_union.m_unex, m_storage.m_union.m_val, WTFMove(rhs.m_storage.m_union.m_unex));
+        else if (rhs.m_storage.m_hasVal)
+            reinitExpected(m_storage.m_union.m_val, m_storage.m_union.m_unex, WTFMove(rhs.m_storage.m_union.m_val));
+        else
+            m_storage.m_union.m_unex = WTFMove(rhs.m_storage.m_union.m_unex);
+        m_storage.m_hasVal = rhs.m_storage.m_hasVal;
+        return *this;
+    }
+
+    template <class Up = Tp>
+    constexpr expected& operator=(Up&& v)
+        requires(!std::is_same_v<expected, std::remove_cvref_t<Up>>
+            && !detail::is_std_unexpected<std::remove_cvref_t<Up>>::value
+            && std::is_constructible_v<Tp, Up>
+            && std::is_assignable_v<Tp&, Up>
+            && (std::is_constructible_v<Tp, Up> || std::is_move_constructible_v<Tp> || std::is_move_constructible_v<Err>))
+    {
+        if (m_storage.m_hasVal)
+            m_storage.m_union.m_val = std::forward<Up>(v);
+        else {
+            reinitExpected(m_storage.m_union.m_val, m_storage.m_union.m_unex, std::forward<Up>(v));
+            m_storage.m_hasVal = true;
+        }
+        return *this;
+    }
+
+private:
+    template <class OtherErrQual>
+    static constexpr bool canAssignFromUnexpected =
+        std::conjunction<
+            std::is_constructible<Err, OtherErrQual>,
+            std::is_assignable<Err&, OtherErrQual>,
+            detail::Lazy<
+                std::disjunction,
+                std::is_constructible<Err, OtherErrQual>,
+                std::is_move_constructible<Tp>,
+                std::is_move_constructible<Err>>>::value;
+
+public:
+    template <class OtherErr>
+        requires(canAssignFromUnexpected<const OtherErr&>)
+    constexpr expected& operator=(const unexpected<OtherErr>& un)
+    {
+        if (m_storage.m_hasVal) {
+            reinitExpected(m_storage.m_union.m_unex, m_storage.m_union.m_val, un.error());
+            m_storage.m_hasVal = false;
+        } else
+            m_storage.m_union.m_unex = un.error();
+        return *this;
+    }
+
+    template <class OtherErr>
+        requires(canAssignFromUnexpected<OtherErr>)
+    constexpr expected& operator=(unexpected<OtherErr>&& un)
+    {
+        if (m_storage.m_hasVal) {
+            reinitExpected(m_storage.m_union.m_unex, m_storage.m_union.m_val, WTFMove(un.error()));
+            m_storage.m_hasVal = false;
+        } else
+            m_storage.m_union.m_unex = WTFMove(un.error());
+        return *this;
+    }
+
+    template <class... Args>
+        requires std::is_constructible_v<Tp, Args...>
+    constexpr Tp& emplace(Args&&... args)
+    {
+        if (m_storage.m_hasVal)
+            std::destroy_at(std::addressof(m_storage.m_union.m_val));
+        else {
+            std::destroy_at(std::addressof(m_storage.m_union.m_unex));
+            m_storage.m_hasVal = true;
+        }
+        return *std::construct_at(std::addressof(m_storage.m_union.m_val), std::forward<Args>(args)...);
+    }
+
+    template <class Up, class... Args>
+        requires std::is_constructible_v< Tp, std::initializer_list<Up>&, Args... >
+    constexpr Tp& emplace(std::initializer_list<Up> il, Args&&... args)
+    {
+        if (m_storage.m_hasVal)
+            std::destroy_at(std::addressof(m_storage.m_union.m_val));
+        else {
+            std::destroy_at(std::addressof(m_storage.m_union.m_unex));
+            m_storage.m_hasVal = true;
+        }
+        return *std::construct_at(std::addressof(m_storage.m_union.m_val), il, std::forward<Args>(args)...);
+    }
+
+public:
+    // [expected.object.swap], swap
+    constexpr void swap(expected& rhs)
+        requires(std::is_swappable_v<Tp>
+            && std::is_swappable_v<Err>
+            && std::is_move_constructible_v<Tp>
+            && std::is_move_constructible_v<Err>
+            && (std::is_move_constructible_v<Tp> || std::is_move_constructible_v<Err>))
+    {
+        auto swapValUnexImpl = [&](expected& withVal, expected& withErr) {
+            if constexpr (std::is_move_constructible_v<Err>) {
+                Err tmp(WTFMove(withErr.m_storage.m_union.m_unex));
+                std::destroy_at(std::addressof(withErr.m_storage.m_union.m_unex));
+                std::construct_at(std::addressof(withErr.m_storage.m_union.m_val), WTFMove(withVal.m_storage.m_union.m_val));
+                std::destroy_at(std::addressof(withVal.m_storage.m_union.m_val));
+                std::construct_at(std::addressof(withVal.m_storage.m_union.m_unex), WTFMove(tmp));
+            } else {
+                static_assert(std::is_move_constructible_v<Tp>);
+                Tp tmp(WTFMove(withVal.m_storage.m_union.m_val));
+                std::destroy_at(std::addressof(withVal.m_storage.m_union.m_val));
+                std::construct_at(std::addressof(withVal.m_storage.m_union.m_unex), WTFMove(withErr.m_storage.m_union.m_unex));
+                std::destroy_at(std::addressof(withErr.m_storage.m_union.m_unex));
+                std::construct_at(std::addressof(withErr.m_storage.m_union.m_val), WTFMove(tmp));
+            }
+            withVal.m_storage.m_hasVal = false;
+            withErr.m_storage.m_hasVal = true;
+        };
+
+        if (m_storage.m_hasVal) {
+            if (rhs.m_storage.m_hasVal) {
+                using std::swap; // NOLINT
+                swap(m_storage.m_union.m_val, rhs.m_storage.m_union.m_val);
+            } else
+                swapValUnexImpl(*this, rhs);
+        } else {
+            if (rhs.m_storage.m_hasVal)
+                swapValUnexImpl(rhs, *this);
+            else {
+                using std::swap; // NOLINT
+                swap(m_storage.m_union.m_unex, rhs.m_storage.m_union.m_unex);
+            }
+        }
+    }
+
+    friend constexpr void swap(expected& x, expected& y)
+        requires(std::is_swappable_v<Tp>
+            && std::is_swappable_v<Err>
+            && std::is_move_constructible_v<Tp>
+            && std::is_move_constructible_v<Err>
+            && (std::is_move_constructible_v<Tp> || std::is_move_constructible_v<Err>))
+    {
+        x.swap(y);
+    }
+
+    // [expected.object.obs], observers
+    constexpr const Tp* operator->() const
+    {
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator-> requires the expected to contain a value");
+        return std::addressof(m_storage.m_union.m_val);
+    }
+
+    constexpr Tp* operator->()
+    {
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator-> requires the expected to contain a value");
+        return std::addressof(m_storage.m_union.m_val);
+    }
+
+    constexpr const Tp& operator*() const&
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator* requires the expected to contain a value");
+        return m_storage.m_union.m_val;
+    }
+
+    constexpr Tp& operator*() &
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator* requires the expected to contain a value");
+        return m_storage.m_union.m_val;
+    }
+
+    constexpr const Tp&& operator*() const&&
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator* requires the expected to contain a value");
+        return WTFMove(m_storage.m_union.m_val);
+    }
+
+    constexpr Tp&& operator*() && // NOLINT
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator* requires the expected to contain a value");
+        return WTFMove(m_storage.m_union.m_val);
+    }
+
+    constexpr explicit operator bool() const { return m_storage.m_hasVal; }
+
+    constexpr bool has_value() const { return m_storage.m_hasVal; }
+
+    constexpr const Tp& value() const&
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+        return m_storage.m_union.m_val;
+    }
+
+    constexpr Tp& value() &
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+        return m_storage.m_union.m_val;
+    }
+
+    constexpr const Tp&& value() const&&
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+        return WTFMove(m_storage.m_union.m_val);
+    }
+
+    constexpr Tp&& value() && // NOLINT
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+        return WTFMove(m_storage.m_union.m_val);
+    }
+
+    constexpr const Err& error() const&
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal, "expected::error requires the expected to contain an error");
+        return m_storage.m_union.m_unex;
+    }
+
+    constexpr Err& error() &
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal, "expected::error requires the expected to contain an error");
+        return m_storage.m_union.m_unex;
+    }
+
+    constexpr const Err&& error() const&&
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal, "expected::error requires the expected to contain an error");
+        return WTFMove(m_storage.m_union.m_unex);
+    }
+
+    constexpr Err&& error() && // NOLINT
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal, "expected::error requires the expected to contain an error");
+        return WTFMove(m_storage.m_union.m_unex);
+    }
+
+    template <class Up>
+    constexpr Tp value_or(Up&& v) const&
+    { // NOLINT
+        static_assert(std::is_copy_constructible_v<Tp>, "value_type has to be copy constructible");
+        static_assert(std::is_convertible_v<Up, Tp>, "argument has to be convertible to value_type");
+        return m_storage.m_hasVal ? m_storage.m_union.m_val : static_cast<Tp>(std::forward<Up>(v));
+    }
+
+    template <class Up>
+    constexpr Tp value_or(Up&& v) && // NOLINT
+    { // NOLINT
+        static_assert(std::is_move_constructible_v<Tp>, "value_type has to be move constructible");
+        static_assert(std::is_convertible_v<Up, Tp>, "argument has to be convertible to value_type");
+        return m_storage.m_hasVal ? WTFMove(m_storage.m_union.m_val) : static_cast<Tp>(std::forward<Up>(v));
+    }
+
+    template <class Up = Err>
+    constexpr Err error_or(Up&& err) const&
+    { // NOLINT
+        static_assert(std::is_copy_constructible_v<Err>, "error_type has to be copy constructible");
+        static_assert(std::is_convertible_v<Up, Err>, "argument has to be convertible to error_type");
+        if (has_value())
+            return std::forward<Up>(err);
+        return error();
+    }
+
+    template <class Up = Err>
+    constexpr Err error_or(Up&& err) && // NOLINT
+    { // NOLINT
+        static_assert(std::is_move_constructible_v<Err>, "error_type has to be move constructible");
+        static_assert(std::is_convertible_v<Up, Err>, "argument has to be convertible to error_type");
+        if (has_value())
+            return std::forward<Up>(err);
+        return WTFMove(error());
+    }
+
+    // [expected.void.monadic], monadic
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&>
+    constexpr auto and_then(Func&& f) &
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func, Tp&>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f(**this) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Up::error_type, Err>,
+            "The result of f(**this) must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f), m_storage.m_union.m_val);
+        return Up(unexpect, error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&>
+    constexpr auto and_then(Func&& f) const&
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func, const Tp&>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f(**this) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Up::error_type, Err>,
+            "The result of f(**this) must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f), m_storage.m_union.m_val);
+        return Up(unexpect, error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&&>
+    constexpr auto and_then(Func&& f) && // NOLINT
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func, Tp&&>>;
+        static_assert(
+            detail::is_std_expected<Up>::value, "The result of f(WTFMove(**this)) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Up::error_type, Err>,
+            "The result of f(WTFMove(**this)) must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+        return Up(unexpect, WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&&>
+    constexpr auto and_then(Func&& f) const&&
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func, const Tp&&>>;
+        static_assert(
+            detail::is_std_expected<Up>::value, "The result of f(WTFMove(**this)) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Up::error_type, Err>,
+            "The result of f(WTFMove(**this)) must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+        return Up(unexpect, WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, Tp&>
+    constexpr auto or_else(Func&& f) &
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, Err&>>;
+        static_assert(detail::is_std_expected<Gp>::value, "The result of f(error()) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(error()) must have the same value_type as this expected");
+        if (has_value())
+            return Gp(std::in_place, m_storage.m_union.m_val);
+        return std::invoke(std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, const Tp&>
+    constexpr auto or_else(Func&& f) const&
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, const Err&>>;
+        static_assert(detail::is_std_expected<Gp>::value, "The result of f(error()) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(error()) must have the same value_type as this expected");
+        if (has_value())
+            return Gp(std::in_place, m_storage.m_union.m_val);
+        return std::invoke(std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, Tp&&>
+    constexpr auto or_else(Func&& f) && // NOLINT
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, Err&&>>;
+        static_assert(
+            detail::is_std_expected<Gp>::value, "The result of f(WTFMove(error())) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(WTFMove(error())) must have the same value_type as this expected");
+        if (has_value())
+            return Gp(std::in_place, WTFMove(m_storage.m_union.m_val));
+        return std::invoke(std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, const Tp&&>
+    constexpr auto or_else(Func&& f) const&&
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, const Err&&>>;
+        static_assert(
+            detail::is_std_expected<Gp>::value, "The result of f(WTFMove(error())) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(WTFMove(error())) must have the same value_type as this expected");
+        if (has_value())
+            return Gp(std::in_place, WTFMove(m_storage.m_union.m_val));
+        return std::invoke(std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&>
+    constexpr auto transform(Func&& f) &
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func, Tp&>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, error());
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f), m_storage.m_union.m_val);
+        else {
+            std::invoke(std::forward<Func>(f), m_storage.m_union.m_val);
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&>
+    constexpr auto transform(Func&& f) const&
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func, const Tp&>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, error());
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f), m_storage.m_union.m_val);
+        else {
+            std::invoke(std::forward<Func>(f), m_storage.m_union.m_val);
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&&>
+    constexpr auto transform(Func&& f) && // NOLINT
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func, Tp&&>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, WTFMove(error()));
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+        else {
+            std::invoke(std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&&>
+    constexpr auto transform(Func&& f) const&&
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func, const Tp&&>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, WTFMove(error()));
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+        else {
+            std::invoke(std::forward<Func>(f), WTFMove(m_storage.m_union.m_val));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, Tp&>
+    constexpr auto transform_error(Func&& f) &
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, Err&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(error()) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>(std::in_place, m_storage.m_union.m_val);
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, const Tp&>
+    constexpr auto transform_error(Func&& f) const&
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, const Err&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(error()) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>(std::in_place, m_storage.m_union.m_val);
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, Tp&&>
+    constexpr auto transform_error(Func&& f) && // NOLINT
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, Err&&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>(std::in_place, WTFMove(m_storage.m_union.m_val));
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Tp, const Tp&&>
+    constexpr auto transform_error(Func&& f) const&&
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, const Err&&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>(std::in_place, WTFMove(m_storage.m_union.m_val));
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), WTFMove(error()));
+    }
+
+    // [expected.object.eq], equality operators
+    template <class T2, class E2>
+        requires(!std::is_void_v<T2>)
+    friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y)
+    {
+        if (x.m_storage.m_hasVal != y.m_storage.m_hasVal)
+            return false;
+        if (x.m_storage.m_hasVal)
+            return x.m_storage.m_union.m_val == y.m_storage.m_union.m_val;
+        return x.m_storage.m_union.m_unex == y.m_storage.m_union.m_unex;
+    }
+
+    template <class T2>
+    friend constexpr bool operator==(const expected& x, const T2& v)
+    {
+        return x.m_storage.m_hasVal && static_cast<bool>(x.m_storage.m_union.m_val == v);
+    }
+
+    template <class E2>
+    friend constexpr bool operator==(const expected& x, const unexpected<E2>& e)
+    {
+        return !x.m_storage.m_hasVal && static_cast<bool>(x.m_storage.m_union.m_unex == e.error());
+    }
+
+private:
+    detail::Storage<
+        Tp,
+        Err,
+        (std::is_trivially_copy_constructible_v<Tp> && std::is_trivially_copy_constructible_v<Err>) ? detail::IsTriviallyCopyConstructible::Yes : detail::IsTriviallyCopyConstructible::No,
+        (std::is_trivially_move_constructible_v<Tp> && std::is_trivially_move_constructible_v<Err>) ? detail::IsTriviallyMoveConstructible::Yes : detail::IsTriviallyMoveConstructible::No,
+        (std::is_trivially_destructible_v<Tp> && std::is_trivially_destructible_v<Err>) ? detail::IsTriviallyDestructible::Yes : detail::IsTriviallyDestructible::No
+    > m_storage;
 };
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const expected<T, E>& y) { return bool(x) == bool(y) && (x ? x.value() == y.value() : x.error() == y.error()); }
+template <class Tp, class Err>
+    requires std::is_void_v<Tp>
+class expected<Tp, Err> {
+    WTF_MAKE_FAST_ALLOCATED;
+    static_assert(detail::valid_std_unexpected<Err>::value,
+        "[expected.void.general] A program that instantiates expected<T, E> with a E that is not a "
+        "valid argument for unexpected<E> is ill-formed"); // NOLINT
 
-template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x ? true : x.error() == y.error()); }
+    template <class, class>
+    friend class expected;
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x ? *x == y : false; }
-template<class T, class E> constexpr bool operator==(const T& x, const expected<T, E>& y) { return y ? x == *y : false; }
+    template <class Up, class OtherErr, class OtherErrQual>
+    using CanConvert =
+        std::conjunction<
+            std::is_void<Up>,
+            std::is_constructible<Err, OtherErrQual>,
+            std::negation<std::is_constructible<unexpected<Err>, expected<Up, OtherErr>&>>,
+            std::negation<std::is_constructible<unexpected<Err>, expected<Up, OtherErr>>>,
+            std::negation<std::is_constructible<unexpected<Err>, const expected<Up, OtherErr>&>>,
+            std::negation<std::is_constructible<unexpected<Err>, const expected<Up, OtherErr>>>>;
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return x ? false : x.error() == y.value(); }
-template<class T, class E> constexpr bool operator==(const unexpected<E>& x, const expected<T, E>& y) { return y ? false : x.value() == y.error(); }
+public:
+    using value_type      = Tp;
+    using error_type      = Err;
+    using unexpected_type = unexpected<Err>;
 
-template<typename T, typename E> void swap(expected<T, E>& x, expected<T, E>& y) { x.swap(y); }
+    template <class Up>
+    using rebind = expected<Up, error_type>;
 
-}}} // namespace std::experimental::fundamentals_v3
+    // [expected.void.ctor], constructors
+    constexpr expected()
+        : m_storage(std::in_place) { }
 
-__EXPECTED_INLINE_VARIABLE constexpr auto& unexpect = std::experimental::unexpect;
-template<class T, class E> using Expected = std::experimental::expected<T, E>;
+    constexpr expected(const expected&) = delete;
+
+    constexpr expected(const expected&)
+        requires(std::is_copy_constructible_v<Err>)
+    = default;
+
+    constexpr expected(expected&&)
+        requires(std::is_move_constructible_v<Err>)
+    = default;
+
+    template <class Up, class OtherErr>
+        requires CanConvert<Up, OtherErr, const OtherErr&>::value
+    constexpr explicit(!std::is_convertible_v<const OtherErr&, Err>)
+    expected(const expected<Up, OtherErr>& other)
+        : m_storage(other.m_storage) { }
+
+    template <class Up, class OtherErr>
+        requires CanConvert<Up, OtherErr, OtherErr>::value
+    constexpr explicit(!std::is_convertible_v<OtherErr, Err>)
+    expected(expected<Up, OtherErr>&& other)
+        : m_storage(other.m_storage) { }
+
+    template <class OtherErr>
+        requires std::is_constructible_v<Err, const OtherErr&>
+    constexpr explicit(!std::is_convertible_v<const OtherErr&, Err>)
+    expected(const unexpected<OtherErr>& unex)
+        : m_storage(unexpect, unex.error()) { }
+
+    template <class OtherErr>
+        requires std::is_constructible_v<Err, OtherErr>
+    constexpr explicit(!std::is_convertible_v<OtherErr, Err>)
+    expected(unexpected<OtherErr>&& unex)
+        : m_storage(unexpect, WTFMove(unex.error())) { }
+
+    constexpr explicit expected(std::in_place_t tag)
+        : m_storage(tag) { }
+
+    template <class... Args>
+        requires std::is_constructible_v<Err, Args...>
+    constexpr explicit expected(unexpect_t, Args&&... args)
+        : m_storage(unexpect, std::forward<Args>(args)...) { }
+
+    template <class Up, class... Args>
+        requires std::is_constructible_v< Err, std::initializer_list<Up>&, Args... >
+    constexpr explicit expected(unexpect_t, std::initializer_list<Up> il, Args&&... args)
+        : m_storage(unexpect, il, std::forward<Args>(args)...) { }
+
+private:
+    template <class Func>
+    constexpr explicit expected(detail::expected_construct_in_place_from_invoke_tag, Func&& f)
+        : m_storage(std::in_place)
+    {
+        std::invoke(std::forward<Func>(f));
+    }
+
+    template <class Func, class... Args>
+    constexpr explicit expected(
+        detail::expected_construct_unexpected_from_invoke_tag tag, Func&& f, Args&&... args)
+        : m_storage(tag, std::forward<Func>(f), std::forward<Args>(args)...) { }
+
+public:
+    // [expected.void.assign], assignment
+
+    constexpr expected& operator=(const expected&) = delete;
+
+    constexpr expected& operator=(const expected& rhs)
+        requires(std::is_copy_assignable_v<Err> && std::is_copy_constructible_v<Err>)
+    {
+        if (m_storage.m_hasVal) {
+            if (!rhs.m_storage.m_hasVal) {
+                std::construct_at(std::addressof(m_storage.m_union.m_unex), rhs.m_storage.m_union.m_unex);
+                m_storage.m_hasVal = false;
+            }
+        } else {
+            if (rhs.m_storage.m_hasVal) {
+                std::destroy_at(std::addressof(m_storage.m_union.m_unex));
+                m_storage.m_hasVal = true;
+            } else
+                m_storage.m_union.m_unex = rhs.m_storage.m_union.m_unex;
+        }
+        return *this;
+    }
+
+    constexpr expected& operator=(expected&&) = delete;
+
+    constexpr expected& operator=(expected&& rhs)
+        requires(std::is_move_assignable_v<Err> && std::is_move_constructible_v<Err>)
+    {
+        if (m_storage.m_hasVal) {
+            if (!rhs.m_storage.m_hasVal) {
+                std::construct_at(std::addressof(m_storage.m_union.m_unex), WTFMove(rhs.m_storage.m_union.m_unex));
+                m_storage.m_hasVal = false;
+            }
+        } else {
+            if (rhs.m_storage.m_hasVal) {
+                std::destroy_at(std::addressof(m_storage.m_union.m_unex));
+                m_storage.m_hasVal = true;
+            } else
+                m_storage.m_union.m_unex = WTFMove(rhs.m_storage.m_union.m_unex);
+        }
+        return *this;
+    }
+
+    template <class OtherErr>
+        requires(std::is_constructible_v<Err, const OtherErr&> && std::is_assignable_v<Err&, const OtherErr&>)
+    constexpr expected& operator=(const unexpected<OtherErr>& un)
+    {
+        if (m_storage.m_hasVal) {
+            std::construct_at(std::addressof(m_storage.m_union.m_unex), un.error());
+            m_storage.m_hasVal = false;
+        } else
+            m_storage.m_union.m_unex = un.error();
+        return *this;
+    }
+
+    template <class OtherErr>
+        requires(std::is_constructible_v<Err, OtherErr> && std::is_assignable_v<Err&, OtherErr>)
+    constexpr expected& operator=(unexpected<OtherErr>&& un)
+    {
+        if (m_storage.m_hasVal) {
+            std::construct_at(std::addressof(m_storage.m_union.m_unex), WTFMove(un.error()));
+            m_storage.m_hasVal = false;
+        } else
+            m_storage.m_union.m_unex = WTFMove(un.error());
+        return *this;
+    }
+
+    constexpr void emplace()
+    {
+        if (!m_storage.m_hasVal) {
+            std::destroy_at(std::addressof(m_storage.m_union.m_unex));
+            m_storage.m_hasVal = true;
+        }
+    }
+
+    // [expected.void.swap], swap
+    constexpr void swap(expected& rhs)
+        requires(std::is_swappable_v<Err> && std::is_move_constructible_v<Err>)
+    {
+        auto swapValUnexImpl = [&](expected& withVal, expected& withErr) {
+        std::construct_at(std::addressof(withVal.m_storage.m_union.m_unex), WTFMove(withErr.m_storage.m_union.m_unex));
+        std::destroy_at(std::addressof(withErr.m_storage.m_union.m_unex));
+        withVal.m_storage.m_hasVal = false;
+        withErr.m_storage.m_hasVal = true;
+        };
+
+        if (m_storage.m_hasVal) {
+            if (!rhs.m_storage.m_hasVal)
+                swapValUnexImpl(*this, rhs);
+        } else {
+            if (rhs.m_storage.m_hasVal)
+                swapValUnexImpl(rhs, *this);
+            else {
+                using std::swap; // NOLINT
+                swap(m_storage.m_union.m_unex, rhs.m_storage.m_union.m_unex);
+            }
+        }
+    }
+
+    friend constexpr void swap(expected& x, expected& y)
+        requires(std::is_swappable_v<Err> && std::is_move_constructible_v<Err>)
+    {
+        x.swap(y);
+    }
+
+    // [expected.void.obs], observers
+    constexpr explicit operator bool() const { return m_storage.m_hasVal; }
+
+    constexpr bool has_value() const { return m_storage.m_hasVal; }
+
+    constexpr void operator*() const
+    {
+        RELEASE_ASSERT(m_storage.m_hasVal, "expected::operator* requires the expected to contain a value");
+    }
+
+    constexpr void value() const&
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+    }
+
+    constexpr void value() && // NOLINT
+    { // NOLINT
+        RELEASE_ASSERT(m_storage.m_hasVal);
+    }
+
+    constexpr const Err& error() const&
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal);
+        return m_storage.m_union.m_unex;
+    }
+
+    constexpr Err& error() &
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal);
+        return m_storage.m_union.m_unex;
+    }
+
+    constexpr const Err&& error() const&&
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal);
+        return WTFMove(m_storage.m_union.m_unex);
+    }
+
+    constexpr Err&& error() && // NOLINT
+    { // NOLINT
+        RELEASE_ASSERT(!m_storage.m_hasVal);
+        return WTFMove(m_storage.m_union.m_unex);
+    }
+
+    template <class Up = Err>
+    constexpr Err error_or(Up&& err) const&
+    { // NOLINT
+        static_assert(std::is_copy_constructible_v<Err>, "error_type has to be copy constructible");
+        static_assert(std::is_convertible_v<Up, Err>, "argument has to be convertible to error_type");
+        if (has_value())
+            return std::forward<Up>(err);
+        return error();
+    }
+
+    template <class Up = Err>
+    constexpr Err error_or(Up&& err) && // NOLINT
+    { // NOLINT
+        static_assert(std::is_move_constructible_v<Err>, "error_type has to be move constructible");
+        static_assert(std::is_convertible_v<Up, Err>, "argument has to be convertible to error_type");
+        if (has_value())
+            return std::forward<Up>(err);
+        return WTFMove(error());
+    }
+
+    // [expected.void.monadic], monadic
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&>
+    constexpr auto and_then(Func&& f) &
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f() must be a specialization of std::expected");
+        static_assert(
+            std::is_same_v<typename Up::error_type, Err>, "The result of f() must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f));
+        return Up(unexpect, error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&>
+    constexpr auto and_then(Func&& f) const&
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f() must be a specialization of std::expected");
+        static_assert(
+            std::is_same_v<typename Up::error_type, Err>, "The result of f() must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f));
+        return Up(unexpect, error());
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&&>
+    constexpr auto and_then(Func&& f) && // NOLINT
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f() must be a specialization of std::expected");
+        static_assert(
+            std::is_same_v<typename Up::error_type, Err>, "The result of f() must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f));
+        return Up(unexpect, WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&&>
+    constexpr auto and_then(Func&& f) const&&
+    { // NOLINT
+        using Up = std::remove_cvref_t<std::invoke_result_t<Func>>;
+        static_assert(detail::is_std_expected<Up>::value, "The result of f() must be a specialization of std::expected");
+        static_assert(
+            std::is_same_v<typename Up::error_type, Err>, "The result of f() must have the same error_type as this expected");
+        if (has_value())
+            return std::invoke(std::forward<Func>(f));
+        return Up(unexpect, WTFMove(error()));
+    }
+
+    template <class Func>
+    constexpr auto or_else(Func&& f) &
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, Err&>>;
+        static_assert(detail::is_std_expected<Gp>::value, "The result of f(error()) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(error()) must have the same value_type as this expected");
+        if (has_value())
+            return Gp();
+        return std::invoke(std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+    constexpr auto or_else(Func&& f) const&
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, const Err&>>;
+        static_assert(detail::is_std_expected<Gp>::value, "The result of f(error()) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(error()) must have the same value_type as this expected");
+        if (has_value())
+            return Gp();
+        return std::invoke(std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+    constexpr auto or_else(Func&& f) && // NOLINT
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, Err&&>>;
+        static_assert(detail::is_std_expected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(WTFMove(error())) must have the same value_type as this expected");
+        if (has_value())
+            return Gp();
+        return std::invoke(std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+    constexpr auto or_else(Func&& f) const&&
+    { // NOLINT
+        using Gp = std::remove_cvref_t<std::invoke_result_t<Func, const Err&&>>;
+        static_assert(detail::is_std_expected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a specialization of std::expected");
+        static_assert(std::is_same_v<typename Gp::value_type, Tp>,
+            "The result of f(WTFMove(error())) must have the same value_type as this expected");
+        if (has_value())
+            return Gp();
+        return std::invoke(std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&>
+    constexpr auto transform(Func&& f) &
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, error());
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f));
+        else {
+            std::invoke(std::forward<Func>(f));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&>
+    constexpr auto transform(Func&& f) const&
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, error());
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f));
+        else {
+            std::invoke(std::forward<Func>(f));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, Err&&>
+    constexpr auto transform(Func&& f) && // NOLINT
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, WTFMove(error()));
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f));
+        else {
+            std::invoke(std::forward<Func>(f));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+        requires std::is_constructible_v<Err, const Err&&>
+    constexpr auto transform(Func&& f) const&&
+    { // NOLINT
+        using Up = std::remove_cv_t<std::invoke_result_t<Func>>;
+        if (!has_value())
+            return expected<Up, Err>(unexpect, WTFMove(error()));
+        if constexpr (!std::is_void_v<Up>)
+            return expected<Up, Err>(detail::expected_construct_in_place_from_invoke_tag { }, std::forward<Func>(f));
+        else {
+            std::invoke(std::forward<Func>(f));
+            return expected<Up, Err>();
+        }
+    }
+
+    template <class Func>
+    constexpr auto transform_error(Func&& f) &
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, Err&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(error()) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>();
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+    constexpr auto transform_error(Func&& f) const&
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, const Err&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(error()) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>();
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), error());
+    }
+
+    template <class Func>
+    constexpr auto transform_error(Func&& f) && // NOLINT
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, Err&&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>();
+        return expected<Tp, Gp>(detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), WTFMove(error()));
+    }
+
+    template <class Func>
+    constexpr auto transform_error(Func&& f) const&&
+    { // NOLINT
+        using Gp = std::remove_cv_t<std::invoke_result_t<Func, const Err&&>>;
+        static_assert(detail::valid_std_unexpected<Gp>::value,
+            "The result of f(WTFMove(error())) must be a valid template argument for unexpected");
+        if (has_value())
+            return expected<Tp, Gp>();
+        return expected<Tp, Gp>(
+            detail::expected_construct_unexpected_from_invoke_tag { }, std::forward<Func>(f), WTFMove(error()));
+    }
+
+    // [expected.void.eq], equality operators
+    template <class T2, class E2>
+        requires std::is_void_v<T2>
+    friend constexpr bool operator==(const expected& x, const expected<T2, E2>& y)
+    {
+        if (x.m_storage.m_hasVal != y.m_storage.m_hasVal)
+            return false;
+        return x.m_storage.m_hasVal || static_cast<bool>(x.m_storage.m_union.m_unex == y.m_storage.m_union.m_unex);
+    }
+
+    template <class E2>
+    friend constexpr bool operator==(const expected& x, const unexpected<E2>& y)
+    {
+        return !x.m_storage.m_hasVal && static_cast<bool>(x.m_storage.m_union.m_unex == y.error());
+    }
+
+private:
+    struct VoidPlaceholder { };
+
+    detail::Storage<
+        VoidPlaceholder,
+        Err,
+        std::is_trivially_copy_constructible_v<Err> ? detail::IsTriviallyCopyConstructible::Yes : detail::IsTriviallyCopyConstructible::No,
+        std::is_trivially_move_constructible_v<Err> ? detail::IsTriviallyMoveConstructible::Yes : detail::IsTriviallyMoveConstructible::No,
+        std::is_trivially_destructible_v<Err> ? detail::IsTriviallyDestructible::Yes : detail::IsTriviallyDestructible::No> m_storage;
+};
+
+} // namespace WTF::detail_from_clang_libstdcpp
+
+inline constexpr auto& unexpect = WTF::detail_from_clang_libstdcpp::unexpect;
+template<class T, class E> using Expected = WTF::detail_from_clang_libstdcpp::expected<T, E>;
