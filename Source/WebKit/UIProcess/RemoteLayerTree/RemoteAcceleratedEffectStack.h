@@ -28,6 +28,7 @@
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 #include <WebCore/AcceleratedEffectStack.h>
+#include <WebCore/PlatformLayer.h>
 
 namespace WebKit {
 
@@ -35,6 +36,13 @@ class RemoteAcceleratedEffectStack final : public WebCore::AcceleratedEffectStac
     WTF_MAKE_ISO_ALLOCATED(RemoteAcceleratedEffectStack);
 public:
     static Ref<RemoteAcceleratedEffectStack> create(Seconds);
+
+#if PLATFORM(MAC)
+    void initEffectsFromMainThread(PlatformLayer*, MonotonicTime now);
+    void applyEffectsFromScrollingThread(MonotonicTime now) const;
+#endif
+
+    void clear(PlatformLayer*);
 
 private:
     explicit RemoteAcceleratedEffectStack(Seconds);

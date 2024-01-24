@@ -135,6 +135,7 @@ public:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&, RemoteLayerTreeHost&);
+    const RemoteAcceleratedEffectStack* effectStack() const { return m_effectStack.get(); }
     RefPtr<RemoteAcceleratedEffectStack> takeEffectStack() { return std::exchange(m_effectStack, nullptr); }
 #endif
 

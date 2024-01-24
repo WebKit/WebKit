@@ -72,6 +72,10 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerI
 
 RemoteLayerTreeNode::~RemoteLayerTreeNode()
 {
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (m_effectStack)
+        m_effectStack->clear(layer());
+#endif
     [layer() setValue:nil forKey:WKRemoteLayerTreeNodePropertyKey];
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     removeInteractionRegionsContainer();
@@ -248,8 +252,10 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
 {
     ASSERT(isUIThread());
 
-    if (m_effectStack)
+    if (m_effectStack) {
+        m_effectStack->clear(layer());
         host.animationsWereRemovedFromNode(*this);
+    }
 
     if (effects.isEmpty())
         return;
@@ -261,6 +267,10 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
 
     m_effectStack->setEffects(WTFMove(clonedEffects));
     m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
+
+#if PLATFORM(MAC)
+    m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime());
+#endif
 
     host.animationsWereAddedToNode(*this);
 }

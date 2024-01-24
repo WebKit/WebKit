@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
+#include "RemoteLayerTreeEventDispatcher.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 
 namespace WebKit {
@@ -65,13 +66,17 @@ private:
     void windowScreenWillChange() override;
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
 
-    void willCommitLayerAndScrollingTrees() override;
-    void didCommitLayerAndScrollingTrees() override;
     void applyScrollingTreeLayerPositionsAfterCommit() override;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void willCommitLayerAndScrollingTrees() override WTF_ACQUIRES_LOCK(m_eventDispatcher->m_effectStacksLock);
+    void didCommitLayerAndScrollingTrees() override WTF_RELEASES_LOCK(m_eventDispatcher->m_effectStacksLock);
+
     void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+#else
+    void willCommitLayerAndScrollingTrees() override;
+    void didCommitLayerAndScrollingTrees() override;
 #endif
 
 #if ENABLE(SCROLLING_THREAD)

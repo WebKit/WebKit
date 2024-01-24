@@ -481,6 +481,11 @@ Seconds RemoteLayerTreeHost::acceleratedTimelineTimeOrigin() const
 {
     return m_drawingArea->acceleratedTimelineTimeOrigin();
 }
+
+MonotonicTime RemoteLayerTreeHost::animationCurrentTime() const
+{
+    return m_drawingArea->animationCurrentTime();
+}
 #endif
 
 void RemoteLayerTreeHost::remotePageProcessCrashed(WebCore::ProcessIdentifier processIdentifier)

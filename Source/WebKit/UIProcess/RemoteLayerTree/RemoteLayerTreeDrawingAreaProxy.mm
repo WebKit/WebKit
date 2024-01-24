@@ -290,6 +290,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     m_acceleratedTimelineTimeOrigin = layerTreeTransaction.acceleratedTimelineTimeOrigin();
+    m_animationCurrentTime = MonotonicTime::now();
 #endif
 
     webPageProxy->scrollingCoordinatorProxy()->willCommitLayerAndScrollingTrees();

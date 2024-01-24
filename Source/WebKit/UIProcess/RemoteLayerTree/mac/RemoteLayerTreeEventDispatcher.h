@@ -89,8 +89,11 @@ public:
     void renderingUpdateComplete();
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void lockForAnimationChanges() WTF_ACQUIRES_LOCK(m_effectStacksLock);
+    void unlockForAnimationChanges() WTF_RELEASES_LOCK(m_effectStacksLock);
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
+    void updateAnimations();
 #endif
 
 private:
@@ -166,7 +169,10 @@ private:
     std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAcceleratedEffectStack>> m_effectStacks;
+    // For WTF_ACQUIRES_LOCK
+    friend class RemoteScrollingCoordinatorProxyMac;
+    Lock m_effectStacksLock;
+    HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAcceleratedEffectStack>> m_effectStacks WTF_GUARDED_BY_LOCK(m_effectStacksLock);
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)

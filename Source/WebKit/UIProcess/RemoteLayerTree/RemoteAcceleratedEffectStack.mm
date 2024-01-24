@@ -44,6 +44,20 @@ RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(Seconds acceleratedTi
 {
 }
 
+#if PLATFORM(MAC)
+void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer*, MonotonicTime)
+{
+}
+
+void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime) const
+{
+}
+#endif
+
+void RemoteAcceleratedEffectStack::clear(PlatformLayer*)
+{
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)

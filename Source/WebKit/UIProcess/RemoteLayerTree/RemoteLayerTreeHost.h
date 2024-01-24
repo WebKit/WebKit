@@ -95,6 +95,7 @@ public:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds acceleratedTimelineTimeOrigin() const;
+    MonotonicTime animationCurrentTime() const;
 #endif
 
     void remotePageProcessCrashed(WebCore::ProcessIdentifier);

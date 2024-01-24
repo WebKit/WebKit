@@ -80,6 +80,7 @@ public:
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     Seconds acceleratedTimelineTimeOrigin() const { return m_acceleratedTimelineTimeOrigin; }
+    MonotonicTime animationCurrentTime() const { return m_animationCurrentTime; }
 #endif
 
     // For testing.
@@ -186,6 +187,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds m_acceleratedTimelineTimeOrigin;
+    MonotonicTime m_animationCurrentTime;
 #endif
 };
 

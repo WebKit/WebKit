@@ -273,11 +273,17 @@ void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
 void RemoteScrollingCoordinatorProxyMac::willCommitLayerAndScrollingTrees()
 {
     scrollingTree()->lockLayersForHitTesting();
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    m_eventDispatcher->lockForAnimationChanges();
+#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
 {
     scrollingTree()->unlockLayersForHitTesting();
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    m_eventDispatcher->unlockForAnimationChanges();
+#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCommit()
