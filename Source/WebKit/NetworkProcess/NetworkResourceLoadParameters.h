@@ -86,6 +86,9 @@ public:
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+        , bool pageHasExtensionController
+#endif
         , bool linkPreconnectEarlyHintsEnabled
     );
     
@@ -131,6 +134,10 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    bool pageHasExtensionController { false };
 #endif
 
     bool linkPreconnectEarlyHintsEnabled { false };

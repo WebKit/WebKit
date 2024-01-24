@@ -273,6 +273,8 @@ private:
     void startRequest(const WebCore::ResourceRequest&);
     bool abortIfServiceWorkersOnly();
 
+    bool shouldSendResourceLoadMessages() const;
+
     NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;

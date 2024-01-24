@@ -54,6 +54,8 @@ public:
     void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
+    void invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const ResourceLoadInfo&);
+
     void removeAllListeners();
 
     virtual ~WebExtensionAPIWebRequestEvent()

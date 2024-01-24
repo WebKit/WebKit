@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "ResourceLoadInfo.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
@@ -47,37 +48,37 @@ static NSString *typesKey = @"types";
 static NSString *tabIdKey = @"tabId";
 static NSString *windowIdKey = @"windowId";
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromWKResourceLoadInfo(_WKResourceLoadInfo *resourceLoadInfo)
+_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const ResourceLoadInfo& resourceLoadInfo)
 {
-    switch (resourceLoadInfo.resourceType) {
-    case _WKResourceLoadInfoResourceTypeDocument:
-        return resourceLoadInfo.parentFrame ? _WKWebExtensionWebRequestResourceTypeMainFrame : _WKWebExtensionWebRequestResourceTypeSubframe;
-    case _WKResourceLoadInfoResourceTypeStylesheet:
+    switch (resourceLoadInfo.type) {
+    case ResourceLoadInfo::Type::Document:
+        return resourceLoadInfo.parentFrameID ? _WKWebExtensionWebRequestResourceTypeMainFrame : _WKWebExtensionWebRequestResourceTypeSubframe;
+    case ResourceLoadInfo::Type::Stylesheet:
         return _WKWebExtensionWebRequestResourceTypeStylesheet;
-    case _WKResourceLoadInfoResourceTypeScript:
+    case ResourceLoadInfo::Type::Script:
         return _WKWebExtensionWebRequestResourceTypeScript;
-    case _WKResourceLoadInfoResourceTypeImage:
+    case ResourceLoadInfo::Type::Image:
         return _WKWebExtensionWebRequestResourceTypeImage;
-    case _WKResourceLoadInfoResourceTypeFont:
+    case ResourceLoadInfo::Type::Font:
         return _WKWebExtensionWebRequestResourceTypeFont;
-    case _WKResourceLoadInfoResourceTypeObject:
+    case ResourceLoadInfo::Type::Object:
         return _WKWebExtensionWebRequestResourceTypeObject;
-    case _WKResourceLoadInfoResourceTypeFetch:
-    case _WKResourceLoadInfoResourceTypeXMLHTTPRequest:
+    case ResourceLoadInfo::Type::Fetch:
+    case ResourceLoadInfo::Type::XMLHTTPRequest:
         return _WKWebExtensionWebRequestResourceTypeXMLHTTPRequest;
-    case _WKResourceLoadInfoResourceTypeCSPReport:
+    case ResourceLoadInfo::Type::CSPReport:
         return _WKWebExtensionWebRequestResourceTypeCSPReport;
-    case _WKResourceLoadInfoResourceTypeMedia:
+    case ResourceLoadInfo::Type::Media:
         return _WKWebExtensionWebRequestResourceTypeMedia;
-    case _WKResourceLoadInfoResourceTypeApplicationManifest:
+    case ResourceLoadInfo::Type::ApplicationManifest:
         return _WKWebExtensionWebRequestResourceTypeApplicationManifest;
-    case _WKResourceLoadInfoResourceTypeXSLT:
+    case ResourceLoadInfo::Type::XSLT:
         return _WKWebExtensionWebRequestResourceTypeXSLT;
-    case _WKResourceLoadInfoResourceTypePing:
+    case ResourceLoadInfo::Type::Ping:
         return _WKWebExtensionWebRequestResourceTypePing;
-    case _WKResourceLoadInfoResourceTypeBeacon:
+    case ResourceLoadInfo::Type::Beacon:
         return _WKWebExtensionWebRequestResourceTypeBeacon;
-    case _WKResourceLoadInfoResourceTypeOther:
+    case ResourceLoadInfo::Type::Other:
         return _WKWebExtensionWebRequestResourceTypeOther;
     }
 
@@ -262,7 +263,7 @@ static std::optional<WebExtensionWindowIdentifier> toWindowID(NSNumber *rawValue
     return NO;
 }
 
-_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromWKResourceLoadInfo(_WKResourceLoadInfo *resourceLoadInfo)
+_WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const WebKit::ResourceLoadInfo&)
 {
     return _WKWebExtensionWebRequestResourceTypeOther;
 }

@@ -69,6 +69,9 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , URL&& mainDocumentURL
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    , bool pageHasExtensionController
+#endif
     , bool linkPreconnectEarlyHintsEnabled
     ) : NetworkLoadParameters(WTFMove(networkLoadParameters))
         , identifier(identifier)
@@ -103,6 +106,9 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
 #if ENABLE(CONTENT_EXTENSIONS)
         , mainDocumentURL(WTFMove(mainDocumentURL))
         , userContentControllerIdentifier(userContentControllerIdentifier)
+#endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+        , pageHasExtensionController(pageHasExtensionController)
 #endif
         , linkPreconnectEarlyHintsEnabled(linkPreconnectEarlyHintsEnabled)
 {

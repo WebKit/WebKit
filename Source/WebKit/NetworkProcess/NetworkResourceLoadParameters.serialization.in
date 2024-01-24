@@ -106,5 +106,9 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebKit::UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    bool pageHasExtensionController;
+#endif
+
     bool linkPreconnectEarlyHintsEnabled;
 };

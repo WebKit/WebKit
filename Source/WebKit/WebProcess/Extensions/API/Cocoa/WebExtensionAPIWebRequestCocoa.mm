@@ -28,7 +28,10 @@
 #endif
 
 #import "config.h"
+#import "ResourceLoadInfo.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIWebRequest.h"
+#import <WebCore/ResourceResponse.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -124,29 +127,179 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred()
     return *m_onErrorOccurredEvent;
 }
 
-void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceRequest&, const ResourceLoadInfo&)
+static NSDictionary *convertRequestBodyToWebExtensionFormat(NSData *requestBody)
 {
-    // FIXME: rdar://114823223 - Fire the necessary events.
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+
+    NSURLComponents *urlComponents = [NSURLComponents componentsWithString:[NSString stringWithFormat:@"https://example.org/?%@", [[NSString alloc] initWithData:requestBody encoding:NSUTF8StringEncoding]]];
+    for (NSURLQueryItem *item in urlComponents.queryItems) {
+        NSMutableArray *array = dictionary[item.name];
+        if (!array) {
+            array = [NSMutableArray array];
+            dictionary[item.name] = array;
+        }
+        [array addObject:item.value];
+    }
+
+    return dictionary;
 }
 
-void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const ResourceLoadInfo&, const WebCore::ResourceRequest& newRequest)
+static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadInfo& resourceLoad)
 {
-    // FIXME: rdar://114823223 - Fire the necessary events.
+    return [@{
+        @"frameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.frameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::MainFrameIdentifier)),
+        @"parentFrameId": resourceLoad.parentFrameID ? @(toWebAPI(toWebExtensionFrameIdentifier(resourceLoad.parentFrameID.value()))) : @(toWebAPI(WebExtensionFrameConstants::NoneIdentifier)),
+        @"requestId": [NSString stringWithFormat:@"%llu", resourceLoad.resourceLoadID.toUInt64()],
+        @"timeStamp": @(floor(resourceLoad.eventTimestamp.approximateWallTime().secondsSinceEpoch().milliseconds())),
+        @"url": resourceLoad.originalURL.string(),
+        @"method": resourceLoad.originalHTTPMethod,
+    } mutableCopy];
 }
 
-void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::AuthenticationChallenge&, const ResourceLoadInfo&)
+static NSArray *convertHeaderFieldsToWebExtensionFormat(const WebCore::HTTPHeaderMap& headerMap)
 {
-    // FIXME: rdar://114823223 - Fire the necessary events.
+    NSMutableArray *convertedHeaderFields = [NSMutableArray arrayWithCapacity:headerMap.size()];
+    for (auto header : headerMap) {
+        [convertedHeaderFields addObject:@{
+            @"name": header.key,
+            @"value": header.value
+        }];
+    }
+
+    // FIXME: <rdar://problem/58967376> Add cookies.
+
+    return [convertedHeaderFields copy];
 }
 
-void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const ResourceLoadInfo&)
+static NSMutableDictionary *headersReceivedDetails(const ResourceLoadInfo& resourceLoad, WebExtensionTabIdentifier tabID, const WebCore::ResourceResponse& response)
 {
-    // FIXME: rdar://114823223 - Fire the necessary events.
+    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
+    details[@"tabId"] = @(toWebAPI(tabID));
+
+    NSURLResponse *urlResponse = response.nsURLResponse();
+    if (urlResponse && [urlResponse isKindOfClass:NSHTTPURLResponse.class]) {
+        NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)urlResponse;
+        [details addEntriesFromDictionary:@{
+            @"statusLine": (__bridge_transfer NSString *)CFHTTPMessageCopyResponseStatusLine(CFURLResponseGetHTTPResponse([urlResponse _CFURLResponse])),
+            // FIXME: <rdar://problem/59922101> responseHeaders (here and elsewhere) and all other optional members should check the options object.
+            @"responseHeaders": convertHeaderFieldsToWebExtensionFormat(response.httpHeaderFields()),
+            @"statusCode": @(httpResponse.statusCode),
+            @"fromCache": @(resourceLoad.loadedFromCache)
+            // FIXME: <rdar://problem/57132290> Add ip.
+        }];
+    }
+
+    return details;
 }
 
-void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const WebCore::ResourceResponse&, const WebCore::ResourceError&, const ResourceLoadInfo&)
+void WebExtensionContextProxy::resourceLoadDidSendRequest(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceRequest& request, const ResourceLoadInfo& resourceLoad)
 {
-    // FIXME: rdar://114823223 - Fire the necessary events.
+    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
+    details[@"tabId"] = @(toWebAPI(tabID));
+
+    // FIXME: <rdar://problem/59922101> Chrome documentation says this about requestBody:
+    // Only provided if extraInfoSpec contains 'requestBody'.
+    if (NSData *requestBody = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).HTTPBody)
+        details[@"requestBody"] = convertRequestBodyToWebExtensionFormat(requestBody);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onBeforeRequest().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+
+    [details removeObjectForKey:@"requestBody"];
+    details[@"requestHeaders"] = convertHeaderFieldsToWebExtensionFormat(request.httpHeaderFields());
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onBeforeSendHeaders().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+        webRequestObject.onSendHeaders().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+}
+
+void WebExtensionContextProxy::resourceLoadDidPerformHTTPRedirection(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const ResourceLoadInfo& resourceLoad, const WebCore::ResourceRequest& newRequest)
+{
+    NSMutableDictionary *details = headersReceivedDetails(resourceLoad, tabID, response);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onHeadersReceived().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+
+    details[@"redirectUrl"] = newRequest.url().string();
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onBeforeRedirect().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+}
+
+void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::AuthenticationChallenge& webCoreChallenge, const ResourceLoadInfo& resourceLoad)
+{
+    NSURLAuthenticationChallenge *challenge = webCoreChallenge.nsURLAuthenticationChallenge();
+    NSURLResponse *response = challenge.failureResponse;
+    if (!response || ![response isKindOfClass:NSHTTPURLResponse.class])
+        return;
+
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    // Firefox only calls onAuthRequired when the status code is 401 or 407.
+    // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onAuthRequired
+    if (httpResponse.statusCode != 401 && httpResponse.statusCode != 407)
+        return;
+
+    NSMutableDictionary<NSString *, id> *details = webRequestDetailsForResourceLoad(resourceLoad);
+    [details addEntriesFromDictionary:headersReceivedDetails(resourceLoad, tabID, webCoreChallenge.failureResponse())];
+    [details addEntriesFromDictionary:@{
+        @"scheme": [challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPDigest] ? @"digest" : @"basic",
+        @"challenger": @{
+            @"host": challenge.protectionSpace.host,
+            @"port": @(challenge.protectionSpace.port)
+        },
+        @"isProxy": @(challenge.protectionSpace.isProxy),
+    }];
+
+    if (NSString *realm = challenge.protectionSpace.realm)
+        details[@"realm"] = realm;
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onAuthRequired().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+}
+
+void WebExtensionContextProxy::resourceLoadDidReceiveResponse(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const ResourceLoadInfo& resourceLoad)
+{
+    NSMutableDictionary *details = headersReceivedDetails(resourceLoad, tabID, response);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& webRequestObject = namespaceObject.webRequest();
+        webRequestObject.onHeadersReceived().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+        webRequestObject.onResponseStarted().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+    });
+}
+
+void WebExtensionContextProxy::resourceLoadDidCompleteWithError(WebExtensionTabIdentifier tabID, WebExtensionWindowIdentifier windowID, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error, const ResourceLoadInfo& resourceLoad)
+{
+    NSMutableDictionary *details = webRequestDetailsForResourceLoad(resourceLoad);
+
+    if (!error.isNull()) {
+        [details addEntriesFromDictionary:@{
+            @"tabId": @(toWebAPI(tabID)),
+            @"error": @"net::ERR_ABORTED"
+        }];
+
+        enumerateNamespaceObjects([&](auto& namespaceObject) {
+            auto& webRequestObject = namespaceObject.webRequest();
+            webRequestObject.onErrorOccurred().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+        });
+    } else {
+        [details addEntriesFromDictionary:headersReceivedDetails(resourceLoad, tabID, response)];
+
+        enumerateNamespaceObjects([&](auto& namespaceObject) {
+            auto& webRequestObject = namespaceObject.webRequest();
+            webRequestObject.onCompleted().invokeListenersWithArgument(details, tabID, windowID, resourceLoad);
+        });
+    }
 }
 
 } // namespace WebKit

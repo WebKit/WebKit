@@ -31,7 +31,10 @@
 #import "WebExtensionAPIWebRequestEvent.h"
 
 #import "MessageSenderInlines.h"
+#import "ResourceLoadInfo.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionTabIdentifier.h"
+#import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionWebRequestFilter.h"
@@ -39,6 +42,23 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
+
+void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo)
+{
+    if (m_listeners.isEmpty())
+        return;
+
+    _WKWebExtensionWebRequestResourceType resourceType = _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(resourceLoadInfo);
+    auto resourceURL = resourceLoadInfo.originalURL;
+
+    for (auto& listener : m_listeners) {
+        _WKWebExtensionWebRequestFilter *filter = listener.second.get();
+        if (filter && ![filter matchesRequestForResourceOfType:resourceType URL:resourceURL tabID:toWebAPI(tabIdentifier) windowID:toWebAPI(windowIdentifier)])
+            continue;
+
+        listener.first->call(argument);
+    }
+}
 
 void WebExtensionAPIWebRequestEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
 {

@@ -345,6 +345,11 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         parameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
         parameters.shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();
         page->logMediaDiagnosticMessage(parameters.request.httpBody());
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+        if (auto* webPage = WebPage::fromCorePage(*page))
+            parameters.pageHasExtensionController = webPage->webExtensionControllerProxy();
+#endif
     }
 
     if (auto* ownerElement = frame->ownerElement()) {

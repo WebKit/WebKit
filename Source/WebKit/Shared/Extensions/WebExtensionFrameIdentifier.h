@@ -98,6 +98,13 @@ inline bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const We
     return frame.frameID().object().toUInt64() == identifier.toUInt64();
 }
 
+inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WebCore::FrameIdentifier frameIdentifier)
+{
+    WebExtensionFrameIdentifier result { frameIdentifier.object().toUInt64() };
+    ASSERT(result.isValid());
+    return result;
+}
+
 inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame& frame)
 {
     if (auto* coreFrame = frame.coreFrame(); coreFrame->isMainFrame())
@@ -106,9 +113,7 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&
     if (auto* page = frame.page(); &page->mainWebFrame() == &frame)
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
-    WebExtensionFrameIdentifier result { frame.frameID().object().toUInt64() };
-    ASSERT(result.isValid());
-    return result;
+    return toWebExtensionFrameIdentifier(frame.frameID());
 }
 
 inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData& frameInfoData)
@@ -116,9 +121,7 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfo
     if (frameInfoData.isMainFrame)
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
-    WebExtensionFrameIdentifier result { frameInfoData.frameID.object().toUInt64() };
-    ASSERT(result.isValid());
-    return result;
+    return toWebExtensionFrameIdentifier(frameInfoData.frameID);
 }
 
 #ifdef __OBJC__

@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-static auto *webRequestManifest = @{ @"manifest_version": @3, @"permissions": @[ @"webRequest" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+static auto *webRequestManifest = @{ @"manifest_version": @3, @"permissions": @[ @"webRequest" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @YES } };
 
 TEST(WKWebExtensionAPIWebRequest, EventListenerTest)
 {
@@ -51,6 +51,249 @@ TEST(WKWebExtensionAPIWebRequest, EventListenerTest)
     ]);
 
     Util::loadAndRunExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIWebRequest, EventFiringTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener(details) {",
+
+        // This event was fired on a main frame load, so the frameId should be 0 and we shouldn't have a parent frame.
+        @"  browser.test.assertEq(details.frameId, 0)",
+        @"  browser.test.assertEq(details.parentFrameId, -1)",
+
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webRequest.onCompleted.addListener(passListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, AllowedFilterTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webRequest.onCompleted.addListener(passListener, { 'urls': [ '*://*.localhost/*' ] })",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, DeniedFilterTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+        @"function failListener() { browser.test.notifyFail('This listener should not have been called') }",
+
+        // The passListener firing (but not the failListener) will consider the test passed.
+        @"browser.webRequest.onCompleted.addListener(failListener, { 'urls': [ '*://*.example.com/*' ] })",
+        @"browser.webRequest.onCompleted.addListener(passListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, AllEventsFiredTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"let beforeRequestFired = false",
+        @"let beforeSendHeadersFired = false",
+        @"let sendHeadersFired = false",
+        @"let headersReceivedFired = false",
+        @"let responseStartedFired = false",
+
+        @"browser.webRequest.onBeforeRequest.addListener(() => { beforeRequestFired = true })",
+        @"browser.webRequest.onBeforeSendHeaders.addListener(() => { beforeSendHeadersFired = true })",
+        @"browser.webRequest.onSendHeaders.addListener(() => { sendHeadersFired = true })",
+        @"browser.webRequest.onHeadersReceived.addListener(() => { headersReceivedFired = true })",
+        @"browser.webRequest.onResponseStarted.addListener(() => { responseStartedFired = true })",
+
+        @"function completedHandler() {",
+        @"  browser.test.assertTrue(beforeRequestFired)",
+        @"  browser.test.assertTrue(beforeSendHeadersFired)",
+        @"  browser.test.assertTrue(sendHeadersFired)",
+        @"  browser.test.assertTrue(headersReceivedFired)",
+        @"  browser.test.assertTrue(responseStartedFired)",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.webRequest.onCompleted.addListener(completedHandler)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, ErrorOccurred)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='nonexistent.png' />"_s } },
+        { "/nonexistent.png"_s, { HTTPResponse::TerminateConnection::Yes } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+
+        @"browser.webRequest.onErrorOccurred.addListener(passListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebRequest, RedirectOccurred)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { 301, {{ "Location"_s, "/target.html"_s }}, "redirecting..."_s } },
+        { "/target.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function passListener() { browser.test.notifyPass() }",
+
+        @"browser.webRequest.onBeforeRedirect.addListener(passListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithString:[NSString stringWithFormat:@"*://*.%@/*", urlRequest.URL.host]];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWebRequest, Initialization)

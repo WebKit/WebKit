@@ -28,7 +28,7 @@
     MainWorldOnly,
 ] interface WebExtensionAPIWebRequestEvent {
 
-    [NeedsPage, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter, [Optional] any extraInfoSpec);
+    [NeedsPage, RaisesException] void addListener([CallbackHandler] function listener, [NSDictionary, Optional] any filter, [NSArray=NSString, Optional] array extraInfoSpec);
     [NeedsPage] void removeListener([CallbackHandler] function listener);
     boolean hasListener([CallbackHandler] function listener);
 

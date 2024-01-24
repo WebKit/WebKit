@@ -1918,10 +1918,10 @@ void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIden
     if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
         return;
 
-    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnBeforeRequest };
+    auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnBeforeRedirect };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
         auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
-        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo));
+        sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tab->identifier(), windowIdentifier, response, loadInfo, request));
     });
 
     // After dispatching the redirect events, also dispatch the `didSendRequest` events for the redirection.

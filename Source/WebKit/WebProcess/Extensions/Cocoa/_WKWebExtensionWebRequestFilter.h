@@ -25,9 +25,13 @@
 
 #import <WebKit/WKFoundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+#ifdef __cplusplus
+namespace WebKit {
+struct ResourceLoadInfo;
+}
+#endif
 
-@class _WKResourceLoadInfo;
+NS_ASSUME_NONNULL_BEGIN
 
 // https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType
 typedef NS_ENUM(NSInteger, _WKWebExtensionWebRequestResourceType) {
@@ -49,7 +53,9 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionWebRequestResourceType) {
     _WKWebExtensionWebRequestResourceTypeOther,
 };
 
-WK_EXTERN _WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromWKResourceLoadInfo(_WKResourceLoadInfo *);
+#ifdef __cplusplus
+WK_EXTERN _WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const WebKit::ResourceLoadInfo&);
+#endif
 
 // https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/RequestFilter
 WK_EXTERN
