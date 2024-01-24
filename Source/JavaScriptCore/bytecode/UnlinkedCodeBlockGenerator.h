@@ -210,13 +210,12 @@ private:
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     Vector<WriteBarrier<UnlinkedFunctionExecutable>> m_functionDecls;
     Vector<WriteBarrier<UnlinkedFunctionExecutable>> m_functionExprs;
-    Vector<ExpressionRangeInfo> m_expressionInfo;
+    ExpressionInfo::Encoder m_expressionInfoEncoder;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     // In RareData.
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     Vector<UnlinkedSimpleJumpTable> m_unlinkedSwitchJumpTables;
     Vector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
-    Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     Vector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;

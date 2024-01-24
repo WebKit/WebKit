@@ -42,7 +42,7 @@
 #include "DirectEvalCodeCache.h"
 #include "EvalExecutable.h"
 #include "ExecutionCounter.h"
-#include "ExpressionRangeInfo.h"
+#include "ExpressionInfo.h"
 #include "FunctionExecutable.h"
 #include "HandlerInfo.h"
 #include "ICStatusMap.h"
@@ -241,11 +241,9 @@ public:
     HandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
     HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
-    unsigned lineNumberForBytecodeIndex(BytecodeIndex);
-    unsigned columnNumberForBytecodeIndex(BytecodeIndex);
-    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot,
-        unsigned& startOffset, unsigned& endOffset, LineColumn&) const;
+
     LineColumn lineColumnForBytecodeIndex(BytecodeIndex) const;
+    ExpressionInfo::Entry expressionInfoForBytecodeIndex(BytecodeIndex) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 

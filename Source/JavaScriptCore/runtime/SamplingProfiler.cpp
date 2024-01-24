@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -492,11 +492,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
         auto populateCodeLocation = [] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
-                unsigned divot;
-                unsigned startOffset;
-                unsigned endOffset;
-                codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset,
-                    location.lineColumn);
+                location.lineColumn = codeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
                 location.bytecodeIndex = bytecodeIndex;
             }
             if (codeBlock->hasHash())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Levin <levin@chromium.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -458,6 +458,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         unsigned size() const { return keyCount(); }
         unsigned capacity() const { return tableSize(); }
+        size_t byteSize() const { return metadataSize + tableSize() * sizeof(ValueType); }
         bool isEmpty() const { return !keyCount(); }
 
         void reserveInitialCapacity(unsigned keyCount)
