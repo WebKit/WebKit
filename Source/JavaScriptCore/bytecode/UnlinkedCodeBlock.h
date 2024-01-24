@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -250,9 +250,9 @@ public:
 
     bool hasRareData() const { return m_rareData.get(); }
 
-    int lineNumberForBytecodeIndex(BytecodeIndex);
+    LineColumn lineColumnForBytecodeIndex(BytecodeIndex);
 
-    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
+    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, LineColumn&) const;
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
@@ -390,7 +390,7 @@ private:
             m_rareData = makeUnique<RareData>();
     }
 
-    void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
+    LineColumn getLineAndColumn(const ExpressionRangeInfo&) const;
     BytecodeLivenessAnalysis& livenessAnalysisSlow(CodeBlock*);
 
 

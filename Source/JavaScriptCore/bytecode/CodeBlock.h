@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -244,7 +244,8 @@ public:
     unsigned lineNumberForBytecodeIndex(BytecodeIndex);
     unsigned columnNumberForBytecodeIndex(BytecodeIndex);
     void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot,
-        unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
+        unsigned& startOffset, unsigned& endOffset, LineColumn&) const;
+    LineColumn lineColumnForBytecodeIndex(BytecodeIndex) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 

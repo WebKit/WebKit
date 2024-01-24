@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,17 @@
 
 #pragma once
 
-#include "FuzzerAgent.h"
-#include "LineColumn.h"
-#include "Opcode.h"
-#include <wtf/Lock.h>
-#include <wtf/TZoneMalloc.h>
-
 namespace JSC {
 
-class VM;
+struct LineColumn {
+    bool operator==(const LineColumn& other) const
+    {
+        return line == other.line && column == other.column;
+    }
 
-struct PredictionTarget {
-    BytecodeIndex bytecodeIndex;
-    unsigned divot;
-    unsigned startOffset;
-    unsigned endOffset;
-    LineColumn lineColumn;
-    OpcodeID opcodeId;
-    String sourceFilename;
-    String lookupKey;
-};
-
-class FileBasedFuzzerAgentBase : public FuzzerAgent {
-    WTF_MAKE_TZONE_ALLOCATED(FileBasedFuzzerAgentBase);
-
-public:
-    FileBasedFuzzerAgentBase(VM&);
-
-protected:
-    Lock m_lock;
-    virtual SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) = 0;
-
-public:
-    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType original) final;
-
-protected:
-    static String createLookupKey(const String& sourceFilename, OpcodeID, int startLocation, int endLocation);
-    static OpcodeID opcodeAliasForLookupKey(const OpcodeID&);
+    unsigned line { 0 };
+    unsigned column { 0 };
 };
 
 } // namespace JSC
+
