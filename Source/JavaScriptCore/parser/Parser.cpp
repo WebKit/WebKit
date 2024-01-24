@@ -4838,7 +4838,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         tail = context.createPropertyList(propertyLocation, property, tail);
     }
 
-    location = tokenLocation();
     handleProductionOrFail2(CLOSEBRACE, "}", "end", "object literal");
 
     return context.createObjectLiteral(location, propertyList);
