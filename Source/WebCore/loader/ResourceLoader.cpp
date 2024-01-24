@@ -370,6 +370,11 @@ const FragmentedSharedBuffer* ResourceLoader::resourceData() const
     return m_resourceData.get().get();
 }
 
+RefPtr<const FragmentedSharedBuffer> ResourceLoader::protectedResourceData() const
+{
+    return resourceData();
+}
+
 void ResourceLoader::clearResourceData()
 {
     if (m_resourceData)
@@ -915,6 +920,11 @@ bool ResourceLoader::isPDFJSResourceLoad() const
 #else
     return false;
 #endif
+}
+
+RefPtr<LocalFrame> ResourceLoader::protectedFrame() const
+{
+    return m_frame;
 }
 
 } // namespace WebCore

@@ -103,6 +103,7 @@ public:
     const ResourceResponse& response() const { return m_response; }
 
     const FragmentedSharedBuffer* resourceData() const;
+    RefPtr<const FragmentedSharedBuffer> protectedResourceData() const;
     void clearResourceData();
     
     virtual bool isSubresourceLoader() const;
@@ -156,7 +157,8 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    const LocalFrame* frame() const { return m_frame.get(); }
+    LocalFrame* frame() const { return m_frame.get(); }
+    RefPtr<LocalFrame> protectedFrame() const;
 
     const ResourceLoaderOptions& options() const { return m_options; }
 

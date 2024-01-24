@@ -204,6 +204,7 @@ public:
     ResourceRequest& request();
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
+    Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
 
     const SubstituteData& substituteData() const { return m_substituteData; }
 

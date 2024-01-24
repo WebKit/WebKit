@@ -2623,6 +2623,11 @@ bool DocumentLoader::fingerprintingProtectionsEnabled() const
     return m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
+Ref<CachedResourceLoader> DocumentLoader::protectedCachedResourceLoader() const
+{
+    return m_cachedResourceLoader;
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID
