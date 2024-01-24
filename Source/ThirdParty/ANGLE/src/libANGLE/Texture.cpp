@@ -1833,12 +1833,7 @@ angle::Result Texture::generateMipmap(Context *context)
 angle::Result Texture::bindTexImageFromSurface(Context *context, egl::Surface *surface)
 {
     ASSERT(surface);
-
-    if (mBoundSurface)
-    {
-        ANGLE_TRY(releaseTexImageFromSurface(context));
-    }
-
+    ASSERT(!mBoundSurface);
     mBoundSurface = surface;
 
     // Set the image info to the size and format of the surface
