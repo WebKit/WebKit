@@ -143,8 +143,9 @@ private:
     explicit WebCodecsVideoFrame(ScriptExecutionContext&);
     WebCodecsVideoFrame(ScriptExecutionContext&, WebCodecsVideoFrameData&&);
 
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&);
+    enum class CanUpdateVideoFrameTimestamp : bool { No, Yes };
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&, CanUpdateVideoFrameTimestamp);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&, CanUpdateVideoFrameTimestamp);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
 
     WebCodecsVideoFrameData m_data;

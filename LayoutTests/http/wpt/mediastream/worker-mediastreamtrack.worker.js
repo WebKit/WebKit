@@ -3,7 +3,7 @@ importScripts("/resources/testharness.js");
 
 function makeOffscreenCanvasVideoFrame(width, height, timestamp) {
     if (!timestamp)
-      timestamp = 1;
+        timestamp = 1;
     let canvas = new OffscreenCanvas(width, height);
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgba(50, 100, 150, 255)';
@@ -162,10 +162,10 @@ promise_test(async (t) => {
 }, "Track gets muted based on VideoTrackGenerator.muted");
 
 promise_test(async (t) => {
-    const frame1 = makeOffscreenCanvasVideoFrame(100, 100);
+    const frame1 = makeOffscreenCanvasVideoFrame(100, 100, 1);
     t.add_cleanup(() => frame1.close());
 
-    const frame2 = makeOffscreenCanvasVideoFrame(200, 200);
+    const frame2 = makeOffscreenCanvasVideoFrame(200, 200, 2);
     t.add_cleanup(() => frame2.close());
 
     const generator = new VideoTrackGenerator();
@@ -176,13 +176,17 @@ promise_test(async (t) => {
 
     writer.write(frame1);
 
-    let chunk = await reader.read();
-    assert_equals(chunk.value.codedWidth, 100);
+    const chunk1 = await reader.read();
+    assert_equals(chunk1.value.codedWidth, 100);
+    assert_equals(chunk1.value.timestamp, 1);
+    t.add_cleanup(() => chunk1.value.close());
 
     writer.write(frame2);
 
-    chunk = await reader.read();
-    assert_equals(chunk.value.codedWidth, 200);
+    const chunk2 = await reader.read();
+    assert_equals(chunk2.value.codedWidth, 200);
+    assert_equals(chunk2.value.timestamp, 2);
+    t.add_cleanup(() => chunk2.value.close());
 
     const endedPromise = new Promise(resolve => generator.track.onended = resolve);
 

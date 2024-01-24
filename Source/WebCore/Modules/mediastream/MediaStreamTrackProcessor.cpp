@@ -29,6 +29,7 @@
 
 #include "JSWebCodecsVideoFrame.h"
 #include "ReadableStream.h"
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -158,6 +159,7 @@ RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeV
     init.codedWidth = videoFrame->presentationSize().width();
     init.codedHeight = videoFrame->presentationSize().height();
     init.colorSpace = videoFrame->colorSpace();
+    init.timestamp = Seconds(videoFrame->presentationTime().toDouble()).microseconds();
 
     return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTFMove(init));
 }
