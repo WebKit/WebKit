@@ -247,9 +247,13 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         };
     }
 
-    auto isLastLine = isLastLineWithInlineContent(lineContent, lineInput.needsLayoutRange.endIndex(), !result.runs.isEmpty());
+    auto isLastInlineContent = isLastLineWithInlineContent(lineContent, lineInput.needsLayoutRange.endIndex(), result.runs);
+    // Lines with nothing but content trailing out-of-flow boxes should also be considered last line for alignment
+    // e.g. <div style="text-align-last: center">last line<br><div style="display: inline; position: absolute"></div></div>
+    // Both the inline content ('last line') and the trailing out-of-flow box are supposed to be center aligned.
+    auto shouldTreatAsLastLine = isLastInlineContent || lineContent.range.endIndex() == lineInput.needsLayoutRange.endIndex();
     auto inlineBaseDirection = !result.runs.isEmpty() ? inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine) : TextDirection::LTR;
-    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastLine, inlineBaseDirection) : 0.f;
+    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, shouldTreatAsLastLine, inlineBaseDirection) : 0.f;
     Vector<int32_t> visualOrderList;
     if (result.contentNeedsBidiReordering)
         computedVisualOrder(result.runs, visualOrderList);
@@ -261,7 +265,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { WTFMove(visualOrderList), inlineBaseDirection }
-        , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastInlineContent }
         , { WTFMove(lineContent.rubyBaseAlignmentOffsetList), lineContent.rubyAnnotationOffset }
         , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
@@ -472,7 +476,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     ASSERT(lineContent.range.endIndex() <= needsLayoutRange.endIndex());
 
     auto handleLineEnding = [&] {
-        auto isLastLine = isLastLineWithInlineContent(lineContent, needsLayoutRange.endIndex(), !m_line.runs().isEmpty());
+        auto isLastInlineContent = isLastLineWithInlineContent(lineContent, needsLayoutRange.endIndex(), m_line.runs());
         auto horizontalAvailableSpace = m_lineLogicalRect.width();
         auto& rootStyle = this->rootStyle();
 
@@ -482,13 +486,13 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContentOrListMarker();
             };
             auto isLineBreakAfterWhitespace = [&] {
-                return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || lineHasOverflow());
+                return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastInlineContent || lineHasOverflow());
             };
             m_line.handleTrailingTrimmableContent(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
             if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow()))
                 m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
-            m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
+            m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastInlineContent);
 
             auto mayNeedOutOfFlowOverflowTrimming = !isInIntrinsicWidthMode() && lineHasOverflow() && !lineContent.partialTrailingContentLength && TextUtil::isWrappingAllowed(rootStyle);
             if (mayNeedOutOfFlowOverflowTrimming) {
@@ -531,7 +535,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 // Text is justified according to the method specified by the text-justify property,
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
-                auto hasTextAlignJustify = (isLastLine || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
+                auto hasTextAlignJustify = (isLastInlineContent || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
                 if (hasTextAlignJustify) {
                     auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                     m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
@@ -1204,13 +1208,21 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
     return committedCount;
 }
 
-bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, size_t needsLayoutEnd, bool lineHasInlineContent) const
+bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, size_t needsLayoutEnd, const Line::RunList& lineRuns) const
 {
     if (lineContent.partialTrailingContentLength)
         return false;
     // FIXME: This needs work with partial layout.
-    if (lineContent.range.endIndex() == needsLayoutEnd)
-        return lineHasInlineContent;
+    if (lineContent.range.endIndex() == needsLayoutEnd) {
+        auto lineHasNonOutOfFlowRun = [&] {
+            for (auto& lineRun : makeReversedRange(lineRuns)) {
+                if (!lineRun.isOpaque())
+                    return true;
+            }
+            return false;
+        };
+        return lineHasNonOutOfFlowRun();
+    }
     // Omit floats to see if this is the last line with inline content.
     for (auto i = needsLayoutEnd; i--;) {
         auto& inlineItem = m_inlineItemList[i];

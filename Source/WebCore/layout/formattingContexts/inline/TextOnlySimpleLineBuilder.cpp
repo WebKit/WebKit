@@ -104,9 +104,9 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
     auto placedContentEnd = isWrappingAllowed() ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
 
-    auto isLastLine = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
+    auto isLastInlineContent = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
     auto& rootStyle = isFirstFormattedLine() ? root().firstLineStyle() : root().style();
-    auto contentLogicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastLine);
+    auto contentLogicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastInlineContent);
 
     return { { lineInput.needsLayoutRange.start, placedContentEnd }
         , WTFMove(result.runs)
@@ -115,7 +115,7 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left()  }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
-        , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastInlineContent }
         , { }
         , { }
         , { }
@@ -379,15 +379,15 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
 void TextOnlySimpleLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
 {
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
-    auto isLastLine = isLastLineWithInlineContent(placedContentEnd, layoutRangeEndIndex);
+    auto isLastInlineContent = isLastLineWithInlineContent(placedContentEnd, layoutRangeEndIndex);
     auto shouldPreserveTrailingWhitespace = [&] {
-        return root().style().lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || horizontalAvailableSpace < m_line.contentLogicalWidth());
+        return root().style().lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastInlineContent || horizontalAvailableSpace < m_line.contentLogicalWidth());
     };
     m_trimmedTrailingWhitespaceWidth = m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
     if (formattingContext().quirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
         m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
-    m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
+    m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastInlineContent);
 }
 
 size_t TextOnlySimpleLineBuilder::revertToTrailingItem(const InlineItemRange& layoutRange, const InlineTextItem& trailingInlineItem)
