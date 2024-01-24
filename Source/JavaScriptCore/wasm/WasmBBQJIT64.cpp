@@ -2996,7 +2996,7 @@ void BBQJIT::restoreWebAssemblyGlobalStateAfterWasmCall()
         Jump isSameInstanceAfter = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         m_jit.move(wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
-        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
         isSameInstanceAfter.link(&m_jit);
     } else
         restoreWebAssemblyGlobalState();

@@ -1231,7 +1231,7 @@ void B3IRGenerator::reloadMemoryRegistersFromInstance(const MemoryInformation& m
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg scratch = params.gpScratch(0);
             jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+            jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch);
         });
     }
 }
@@ -1634,7 +1634,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
             ASSERT(GPRInfo::wasmBoundsCheckingSizeRegister != calleeInstance);
             GPRReg scratch = params.gpScratch(0);
             jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+            jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch);
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 

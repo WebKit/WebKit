@@ -399,7 +399,7 @@ macro ipintReloadMemory()
         loadp Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, t2, t3)
+        cagedPrimitiveMayBeNull(memoryBase, t2)
     end
 end
 

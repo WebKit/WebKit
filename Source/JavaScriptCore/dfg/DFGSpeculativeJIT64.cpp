@@ -5874,7 +5874,7 @@ void SpeculativeJIT::compile(Node* node)
         speculationCheck(OutOfBounds, JSValueRegs(), node, branch64(AboveOrEqual, t2, t1));
 
         loadPtr(Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
-        cageTypedArrayStorage(dataViewGPR, t2, false);
+        cageTypedArrayStorage(dataViewGPR, t2);
 
         zeroExtend32ToWord(indexGPR, t1);
         auto baseIndex = BaseIndex(t2, t1, TimesOne);
@@ -6091,7 +6091,7 @@ void SpeculativeJIT::compile(Node* node)
         speculationCheck(OutOfBounds, JSValueRegs(), node, branch64(AboveOrEqual, t2, t1));
 
         loadPtr(Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
-        cageTypedArrayStorage(dataViewGPR, t2, false);
+        cageTypedArrayStorage(dataViewGPR, t2);
 
         zeroExtend32ToWord(indexGPR, t1);
         auto baseIndex = BaseIndex(t2, t1, TimesOne);

@@ -960,7 +960,7 @@ public:
         JumpList doneCases;
         doneCases.append(branchTest32(Zero, destGPR));
         loadPtr(Address(cellGPR, JSBigInt::offsetOfData()), scratchGPR);
-        cageConditionallyAndUntag(Gigacage::Primitive, scratchGPR, destGPR, scratch2GPR, false, false);
+        cageConditionally(Gigacage::Primitive, scratchGPR, destGPR, scratch2GPR);
         load64(Address(scratchGPR), destGPR);
         doneCases.append(branchTest8(Zero, Address(cellGPR, JSBigInt::offsetOfSign())));
         neg64(destGPR);
@@ -1742,9 +1742,9 @@ public:
         ok.link(this);
     }
 
-    JS_EXPORT_PRIVATE void cageWithoutUntagging(Gigacage::Kind, GPRReg storage, bool mayBeNull = true);
+    JS_EXPORT_PRIVATE void cage(Gigacage::Kind, GPRReg storage);
     // length may be the same register as scratch.
-    JS_EXPORT_PRIVATE void cageConditionallyAndUntag(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth = true, bool mayBeNull = true);
+    JS_EXPORT_PRIVATE void cageConditionally(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch);
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
     {

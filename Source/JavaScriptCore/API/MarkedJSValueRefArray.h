@@ -58,7 +58,7 @@ public:
     JSValueRef* data()
     {
         if (m_buffer)
-            return m_buffer.get(m_size);
+            return m_buffer.get();
         return m_inlineBuffer;
     }
 

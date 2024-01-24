@@ -86,7 +86,7 @@ public:
     
     bool isMappedArgument(uint32_t i) const
     {
-        return i < m_length && (!m_mappedArguments || !m_mappedArguments.at(i, m_length));
+        return i < m_length && (!m_mappedArguments || !m_mappedArguments.at(i));
     }
 
     bool isMappedArgumentInDFG(uint32_t i) const

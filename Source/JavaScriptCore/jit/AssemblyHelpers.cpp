@@ -1424,91 +1424,43 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 #endif
 }
 
-void AssemblyHelpers::cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage, bool mayBeNull)
+void AssemblyHelpers::cage(Gigacage::Kind kind, GPRReg storage)
 {
 #if GIGACAGE_ENABLED
     if (!Gigacage::isEnabled(kind))
         return;
-
-#if CPU(ARM64E)
-    RegisterID tempReg = InvalidGPRReg;
-    Jump skip;
-    if (kind == Gigacage::Primitive) {
-        if (mayBeNull)
-            skip = branchPtr(Equal, storage, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
-        tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
-        and64(TrustedImm64(Gigacage::mask(kind)), storage, tempReg);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), tempReg);
-        // Flip the registers since bitFieldInsert only inserts into the low bits.
-        std::swap(storage, tempReg);
-    } else {
-        and64(TrustedImm64(Gigacage::mask(kind)), storage);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-    }
-    if (kind == Gigacage::Primitive)
-        insertBitField64(storage, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), tempReg);
-    if (skip.isSet())
-        skip.link(this);
-#else
-    UNUSED_PARAM(mayBeNull);
     andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
     addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-#endif
-
 #else
     UNUSED_PARAM(kind);
     UNUSED_PARAM(storage);
-    UNUSED_PARAM(mayBeNull);
 #endif
 }
 
 // length may be the same register as scratch.
-void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth, bool mayBeNull)
+void AssemblyHelpers::cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch)
 {
 #if GIGACAGE_ENABLED
     if (Gigacage::isEnabled(kind)) {
         if (kind != Gigacage::Primitive || Gigacage::disablingPrimitiveGigacageIsForbidden())
-            cageWithoutUntagging(kind, storage, mayBeNull);
+            cage(kind, storage);
         else {
-#if CPU(ARM64E)
-            if (length == scratch)
-                scratch = getCachedMemoryTempRegisterIDAndInvalidate();
-#endif
             JumpList done;
-#if CPU(ARM64E)
-            if (mayBeNull)
-                done.append(branchPtr(Equal, storage, TrustedImmPtr(JSArrayBufferView::nullVectorPtr())));
-#endif
             done.append(branchTest8(NonZero, AbsoluteAddress(&Gigacage::disablePrimitiveGigacageRequested)));
 
             loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
             done.append(branchTest64(Zero, scratch));
-#if CPU(ARM64E)
-            GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();
-            move(storage, tempReg);
-            ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
-            andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
-            addPtr(scratch, tempReg);
-            insertBitField64(tempReg, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), storage);
-#else
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
             addPtr(scratch, storage);
-#endif // CPU(ARM64E)
             done.link(this);
         }
     }
 #endif
 
-#if CPU(ARM64E)
-    if (kind == Gigacage::Primitive)
-        untagArrayPtr(length, storage, validateAuth, scratch);
-#endif
-    UNUSED_PARAM(validateAuth);
     UNUSED_PARAM(kind);
     UNUSED_PARAM(storage);
     UNUSED_PARAM(length);
     UNUSED_PARAM(scratch);
-    UNUSED_PARAM(mayBeNull);
 }
 
 void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)

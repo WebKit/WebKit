@@ -3905,21 +3905,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node*
                 Address(base, JSArrayBufferView::offsetOfMode()),
                 TrustedImm32(isWastefulTypedArrayMode));
 
-            Jump hasNullVector;
-#if CPU(ARM64E)
-            {
-                GPRReg scratch = scratchRegister();
-                DisallowMacroScratchRegisterUsage disallowScratch(*this);
-
-                loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-                removeArrayPtrTag(scratch);
-                hasNullVector = branchTestPtr(Zero, scratch);
-            }
-#else // CPU(ARM64E)
-            hasNullVector = branchTestPtr(
+            auto hasNullVector = branchTestPtr(
                 Zero,
                 Address(base, JSArrayBufferView::offsetOfVector()));
-#endif
             speculationCheck(Uncountable, JSValueSource(), node, hasNullVector);
             notWasteful.link(this);
         }
@@ -8760,38 +8748,23 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
     storageResult(storageGPR, node);
 }
 
-void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bool validateAuth)
+void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
 {
-    auto untagArrayPtr = [&]() {
-#if CPU(ARM64E)
-        untagArrayPtrLength64(Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
-#else
-        UNUSED_PARAM(validateAuth);
-        UNUSED_PARAM(baseReg);
-        UNUSED_PARAM(storageReg);
-#endif
-    };
-
-#if GIGACAGE_ENABLED
     UNUSED_PARAM(baseReg);
-    if (!Gigacage::shouldBeEnabled()) {
-        untagArrayPtr();
+    UNUSED_PARAM(storageReg);
+#if GIGACAGE_ENABLED
+    if (!Gigacage::shouldBeEnabled())
         return;
-    }
     
     if (!Gigacage::disablingPrimitiveGigacageIsForbidden()) {
         VM& vm = this->vm();
-        if (vm.primitiveGigacageEnabled().isStillValid())
-            m_graph.watchpoints().addLazily(vm.primitiveGigacageEnabled());
-        else {
-            untagArrayPtr();
+        if (!vm.primitiveGigacageEnabled().isStillValid())
             return;
-        }
+        m_graph.watchpoints().addLazily(vm.primitiveGigacageEnabled());
     }
     
-    cageWithoutUntagging(Gigacage::Primitive, storageReg);
+    cage(Gigacage::Primitive, storageReg);
 #endif
-    untagArrayPtr();
 }
 
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
@@ -12179,11 +12152,6 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
         BaseIndex(storageGPR, scratchGPR, TimesFour));
     branchTest32(NonZero, scratchGPR).linkTo(loop, this);
     done.link(this);
-#if CPU(ARM64E)
-    // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
-    zeroExtend48ToWord(sizeGPR, scratchGPR); // See rdar://107561209, rdar://107724053.
-    tagArrayPtr(scratchGPR, storageGPR);
-#endif
 
     auto butterfly = TrustedImmPtr(nullptr);
     switch (typedArrayType) {

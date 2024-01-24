@@ -90,7 +90,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLen
         if (UNLIKELY(!newArguments))
             return nullptr;
         for (unsigned i = std::min(m_length, newLength); i--;)
-            newArguments.at(i, newLength) = this->at(i);
+            newArguments.at(i) = this->at(i);
         m_length = newLength;
         m_arguments = WTFMove(newArguments);
         return this;

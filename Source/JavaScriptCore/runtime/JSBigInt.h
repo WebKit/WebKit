@@ -609,13 +609,13 @@ private:
 
     JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
 
-    inline Digit* dataStorage() { return m_data.get(m_length); }
+    inline Digit* dataStorage() { return m_data.get(); }
     inline Digit* dataStorageUnsafe() { return m_data.getUnsafe(); }
 
     const unsigned m_length;
     unsigned m_hash { 0 };
     uint8_t m_sign { false };
-    CagedBarrierPtr<Gigacage::Primitive, Digit, tagCagedPtr> m_data;
+    CagedBarrierPtr<Gigacage::Primitive, Digit> m_data;
 };
 
 inline JSBigInt* asHeapBigInt(JSValue value)

@@ -5901,7 +5901,7 @@ static void testCagePreservesPACFailureBit()
         constexpr GPRReg storageGPR = GPRInfo::argumentGPR0;
         constexpr GPRReg lengthGPR = GPRInfo::argumentGPR1;
         constexpr GPRReg scratchGPR = GPRInfo::argumentGPR2;
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, storageGPR, lengthGPR, scratchGPR);
+        jit.cageConditionally(Gigacage::Primitive, storageGPR, lengthGPR, scratchGPR);
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
         emitFunctionEpilogue(jit);
         jit.ret();
@@ -5921,7 +5921,7 @@ static void testCagePreservesPACFailureBit()
 
     auto cageWithoutAuthentication = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        jit.cageWithoutUntagging(Gigacage::Primitive, GPRInfo::argumentGPR0);
+        jit.cage(Gigacage::Primitive, GPRInfo::argumentGPR0);
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
         emitFunctionEpilogue(jit);
         jit.ret();

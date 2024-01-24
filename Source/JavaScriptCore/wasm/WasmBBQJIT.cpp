@@ -3884,7 +3884,7 @@ void BBQJIT::restoreWebAssemblyContextInstance()
 void BBQJIT::loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg wasmBoundsCheckingSizeRegister)
 {
     m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
-    m_jit.cageConditionallyAndUntag(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+    m_jit.cageConditionally(Gigacage::Primitive, wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister, wasmScratchGPR);
 }
 
 void BBQJIT::flushRegistersForException()

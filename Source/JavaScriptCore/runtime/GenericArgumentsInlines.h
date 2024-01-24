@@ -282,7 +282,7 @@ void GenericArguments<Type>::initModifiedArgumentsDescriptor(JSGlobalObject* glo
             return;
         }
         bool* modifiedArguments = static_cast<bool*>(backingStore);
-        m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments, argsLength);
+        m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments);
         for (unsigned i = argsLength; i--;)
             modifiedArguments[i] = false;
     }
@@ -304,7 +304,7 @@ void GenericArguments<Type>::setModifiedArgumentDescriptor(JSGlobalObject* globa
     initModifiedArgumentsDescriptorIfNecessary(globalObject, length);
     RETURN_IF_EXCEPTION(scope, void());
     if (index < length)
-        m_modifiedArgumentsDescriptor.at(index, length) = true;
+        m_modifiedArgumentsDescriptor.at(index) = true;
 }
 
 template<typename Type>
@@ -313,7 +313,7 @@ bool GenericArguments<Type>::isModifiedArgumentDescriptor(unsigned index, unsign
     if (!m_modifiedArgumentsDescriptor)
         return false;
     if (index < length)
-        return m_modifiedArgumentsDescriptor.at(index, length);
+        return m_modifiedArgumentsDescriptor.at(index);
     return false;
 }
 
