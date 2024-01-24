@@ -43,6 +43,8 @@ WK_SANITIZER_OTHER_TAPI_FLAGS_LIBFUZZER_YES = -Xparser -fsanitize=fuzzer;
 WK_SANITIZER_OTHER_TAPI_FLAGS_TSAN_YES = -Xparser -fsanitize=thread;
 WK_SANITIZER_OTHER_TAPI_FLAGS_UBSAN_YES = -Xparser -fsanitize=undefined;
 
+WK_SANITIZER_WARNING_CFLAGS = $(WK_STATIC_ANALYZER_WARNING_CFLAGS_$(RUN_CLANG_STATIC_ANALYZER));
+
 // All Sanitizers
 
 // FIXME: Tell Xcode not to compile host-side tools with sanitizers enabled (see <rdar://99386433>).
@@ -99,3 +101,8 @@ WK_LIBFUZZER_OTHER_LDFLAGS_YES = -fsanitize-coverage=$(WK_LIBFUZZER_COVERAGE);
 
 WK_FUZZILLI_OTHER_CFLAGS_YES = -fsanitize-coverage=trace-pc-guard -DENABLE_FUZZILLI=1;
 WK_FUZZILLI_OTHER_LDFLAGS_YES = -fsanitize-coverage=trace-pc-guard;
+
+// Clang Static Analyzer
+
+// FIXME: Remove -Wno-elaborated-enum-base once <rdar://121475724> is resolved.
+WK_STATIC_ANALYZER_WARNING_CFLAGS_YES = -Wno-elaborated-enum-base;
