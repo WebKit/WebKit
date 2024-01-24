@@ -153,16 +153,13 @@ private:
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameWriter& ensureSharedVideoFrameWriter();
-#endif
-
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     ThreadSafeWeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
     WebCore::RenderingMode m_renderingMode;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter;
+    Lock m_sharedVideoFrameWriterLock;
+    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter WTF_GUARDED_BY_LOCK(m_sharedVideoFrameWriterLock);
 #endif
 };
 
