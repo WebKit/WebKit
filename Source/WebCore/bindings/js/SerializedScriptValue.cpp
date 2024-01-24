@@ -326,10 +326,6 @@ static const char* name(SerializationTag tag)
     case InMemoryOffscreenCanvasTag: return "InMemoryOffscreenCanvasTag";
 #endif
     case InMemoryMessagePortTag: return "InMemoryMessagePortTag";
-#if ENABLE(WEB_CODECS)
-    case WebCodecsEncodedAudioChunkTag: return "WebCodecsEncodedAudioChunkTag";
-    case WebCodecsAudioDataTag: return "WebCodecsAudioDataTag";
-#endif
     case ErrorTag: return "ErrorTag";
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -2863,8 +2859,6 @@ public:
 #if ENABLE(WEB_CODECS)
                 , deserializer.takeSerializedVideoChunks()
                 , deserializer.takeSerializedVideoFrames()
-                , deserializer.takeSerializedAudioChunks()
-                , deserializer.takeSerializedAudioData()
 #endif
                 );
             newDeserializer.upgradeVersion();
@@ -3035,8 +3029,6 @@ private:
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> takeSerializedVideoChunks() { return std::exchange(m_serializedVideoChunks, { }); }
     Vector<WebCodecsVideoFrameData> takeSerializedVideoFrames() { return std::exchange(m_serializedVideoFrames, { }); }
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> takeSerializedAudioChunks() { return std::exchange(m_serializedAudioChunks, { }); }
-    Vector<WebCodecsAudioInternalData> takeSerializedAudioData() { return std::exchange(m_serializedAudioData, { }); }
 #endif
 
     bool isValid() const { return m_version <= CurrentVersion; }
@@ -5227,8 +5219,6 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
     Vector<WebCodecsVideoFrameData> serializedVideoFrames;
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
-    Vector<WebCodecsAudioInternalData> serializedAudioData;
 #endif
 
     CloneDeserializer deserializer(lexicalGlobalObject, globalObject, messagePorts, &arrayBufferContentsArray, result, blobURLs, blobFilePaths, &sharedBuffers, WTFMove(backingStores)
