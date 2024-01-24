@@ -3060,7 +3060,7 @@ void FrameLoader::detachFromParent()
     Ref frame = m_frame.get();
 
     closeURL();
-    history().saveScrollPositionAndViewStateToItem(history().currentItem());
+    history().saveScrollPositionAndViewStateToItem(history().protectedCurrentItem().get());
     detachChildren();
     if (frame->document()->backForwardCacheState() != Document::InBackForwardCache) {
         // stopAllLoaders() needs to be called after detachChildren() if the document is not in the back/forward cache,
@@ -4097,6 +4097,11 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
 
     // Restore user view state from the current history item here since we don't do a normal load.
     history().restoreScrollPositionAndViewState();
+}
+
+CheckedRef<HistoryController> FrameLoader::checkedHistory() const
+{
+    return *m_history;
 }
 
 // FIXME: This function should really be split into a couple pieces, some of

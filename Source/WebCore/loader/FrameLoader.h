@@ -117,6 +117,7 @@ public:
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
     HistoryController& history() const { return *m_history; }
+    CheckedRef<HistoryController> checkedHistory() const;
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
     class SubframeLoader;
