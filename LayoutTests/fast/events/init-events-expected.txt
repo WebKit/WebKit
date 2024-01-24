@@ -28,8 +28,6 @@ PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, fals
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, true, false, false').shiftKey is true
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').metaKey is false
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, true, false').metaKey is true
-PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').altGraphKey is false
-PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, true').altGraphKey is true
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, true').detail is 0
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').keyCode is 0
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').charCode is 0

@@ -45,7 +45,6 @@
     // Everything below is legacy.
     readonly attribute [AtomString] DOMString keyIdentifier;
     [ImplementedAs=location] readonly attribute unsigned long keyLocation;
-    readonly attribute boolean altGraphKey;
     readonly attribute unsigned long charCode;
     readonly attribute unsigned long keyCode;
     readonly attribute unsigned long which;
@@ -53,7 +52,7 @@
     // FIXME: this does not match the version in the DOM spec.
     undefined initKeyboardEvent([AtomString] DOMString type, optional boolean canBubble = false, optional boolean cancelable = false,
         optional WindowProxy? view = null, optional [AtomString] DOMString keyIdentifier = "undefined", optional unsigned long location = 0,
-        optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false, optional boolean altGraphKey = false);
+        optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false);
 };
 
 dictionary KeyboardEventInit : EventModifierInit {

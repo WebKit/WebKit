@@ -34,28 +34,4 @@ test tab case that should not advance focus
 resetting focus to middle input
 test tab case that should not advance focus
 - keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
-resetting focus to middle input
-test tab case that should not advance focus
-- keydown event: b
 

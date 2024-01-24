@@ -161,7 +161,7 @@ Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& ini
 }
 
 void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
-    const AtomString& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
+    const AtomString& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     if (isBeingDispatched())
         return;
@@ -171,7 +171,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
     m_keyIdentifier = keyIdentifier;
     m_location = location;
 
-    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey, altGraphKey);
+    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
 
     m_charCode = std::nullopt;
     m_isComposing = false;

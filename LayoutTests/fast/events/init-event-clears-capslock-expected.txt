@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 keyEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, view: window, detail: 0, key: 'a', code: 'KeyA',
-    ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
+ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
 PASS keyEvent.ctrlKey is true
 PASS keyEvent.shiftKey is true
 PASS keyEvent.altKey is true
@@ -13,7 +13,7 @@ PASS keyEvent.getModifierState("Control") is true
 PASS keyEvent.getModifierState("Shift") is true
 PASS keyEvent.getModifierState("Alt") is true
 PASS keyEvent.getModifierState("Meta") is true
-PASS keyEvent.getModifierState("AltGraph") is true
+PASS keyEvent.getModifierState("AltGraph") is false
 PASS keyEvent.getModifierState("CapsLock") is true
 keyEvent.initKeyboardEvent('keydown', false, false, window, 'U+0041', 0, /* ctrl */ false, /* alt */ false, /* shift */ false, /* meta */ false, /* altGraph */ false)
 PASS keyEvent.ctrlKey is false
@@ -35,10 +35,10 @@ PASS keyEvent.getModifierState("Control") is true
 PASS keyEvent.getModifierState("Shift") is true
 PASS keyEvent.getModifierState("Alt") is true
 PASS keyEvent.getModifierState("Meta") is true
-PASS keyEvent.getModifierState("AltGraph") is true
+PASS keyEvent.getModifierState("AltGraph") is false
 PASS keyEvent.getModifierState("CapsLock") is false
 mouseEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window, detail: 0, key: 'a', code: 'KeyA',
-    ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
+ctrlKey: true, altKey: true, shiftKey: true, metaKey: true, modifierAltGraph: true, modifierCapsLock: true });
 PASS mouseEvent.ctrlKey is true
 PASS mouseEvent.shiftKey is true
 PASS mouseEvent.altKey is true
@@ -47,7 +47,7 @@ PASS mouseEvent.getModifierState("Control") is true
 PASS mouseEvent.getModifierState("Shift") is true
 PASS mouseEvent.getModifierState("Alt") is true
 PASS mouseEvent.getModifierState("Meta") is true
-PASS mouseEvent.getModifierState("AltGraph") is true
+PASS mouseEvent.getModifierState("AltGraph") is false
 PASS mouseEvent.getModifierState("CapsLock") is true
 mouseEvent.initMouseEvent('mousedown', false, false, window, 0, 0, 0, 0, 0, /* ctrl */ false, /* alt */ false, /* shift */ false, /* meta */ false)
 PASS mouseEvent.ctrlKey is false

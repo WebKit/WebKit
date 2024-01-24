@@ -58,11 +58,11 @@ function addElements(parentElement)
     parentElement.appendChild(input);
 }
 
-function dispatchTab(element, shiftKey, metaKey, ctrlKey, altGraphKey)
+function dispatchTab(element, shiftKey, metaKey, ctrlKey)
 {
     var event = document.createEvent("KeyboardEvents");
     var tabKeyIdentifier = "U+0009";
-    event.initKeyboardEvent("keydown", true, true, document.defaultView, tabKeyIdentifier, 0, ctrlKey, false, shiftKey, metaKey, altGraphKey);
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, tabKeyIdentifier, 0, ctrlKey, false, shiftKey, metaKey);
     element.dispatchEvent(event);
 }
 
@@ -80,13 +80,13 @@ for (i = 0; i < 2; ++i) {
     log("resetting focus to middle input\n");
     middleInput.focus();
     log("test tab case that should advance focus\n");
-    dispatchTab(middleInput, (i & 1) != 0, false, false, false);
+    dispatchTab(middleInput, (i & 1) != 0, false, false);
 }
-for (i = 2; i < 16; ++i) {
+for (i = 2; i < 8; ++i) {
     log("resetting focus to middle input\n");
     middleInput.focus();
     log("test tab case that should not advance focus\n");
-    dispatchTab(middleInput, (i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0);
+    dispatchTab(middleInput, (i & 1) != 0, (i & 2) != 0, (i & 4) != 0);
 }
 
 </script>

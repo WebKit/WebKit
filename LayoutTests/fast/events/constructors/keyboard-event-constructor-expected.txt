@@ -106,7 +106,7 @@ PASS new KeyboardEvent('eventType', { shiftKey: false }).shiftKey is false
 PASS new KeyboardEvent('eventType', { shiftKey: true }).shiftKey is true
 PASS new KeyboardEvent('eventType', { metaKey: false }).metaKey is false
 PASS new KeyboardEvent('eventType', { metaKey: true }).metaKey is true
-PASS new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph') is true
+PASS new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph') is false
 PASS new KeyboardEvent('eventType', { modifierCapsLock: true }).getModifierState('CapsLock') is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).cancelable is true

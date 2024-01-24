@@ -68,7 +68,7 @@ public:
     
     WEBCORE_EXPORT void initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
         const AtomString& keyIdentifier, unsigned location,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
     
     const String& key() const { return m_key; }
     const String& code() const { return m_code; }

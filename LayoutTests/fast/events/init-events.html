@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -51,8 +51,6 @@ shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, fa
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, true, false, false').shiftKey", "true");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').metaKey", "false");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, true, false').metaKey", "true");
-shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').altGraphKey", "false");
-shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, true').altGraphKey", "true");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, true').detail", "0");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').keyCode", "0");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').charCode", "0");
@@ -191,6 +189,5 @@ shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').which", "0");
 
 // WheelEvent has no init function yet; roughly speaking, we are waiting for that part of DOM 3 to stabilize.
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

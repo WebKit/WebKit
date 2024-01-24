@@ -3535,7 +3535,7 @@ bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& ev
     if (event.charCode() != '\t')
         return false;
 
-    if (!event.shiftKey() || event.ctrlKey() || event.metaKey() || event.altGraphKey())
+    if (!event.shiftKey() || event.ctrlKey() || event.metaKey())
         return false;
 
     ASSERT(event.type() == eventNames().keypressEvent);

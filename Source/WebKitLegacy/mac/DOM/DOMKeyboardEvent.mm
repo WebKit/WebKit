@@ -85,8 +85,7 @@
 
 - (BOOL)altGraphKey
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->altGraphKey();
+    return false;
 }
 
 - (int)keyCode
@@ -110,7 +109,7 @@
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier location:(unsigned)inLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey altGraphKey:(BOOL)inAltGraphKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey, inAltGraphKey);
+    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier location:(unsigned)inLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey
@@ -122,7 +121,7 @@
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier keyLocation:(unsigned)inKeyLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey altGraphKey:(BOOL)inAltGraphKey
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey, inAltGraphKey);
+    IMPL->initKeyboardEvent(type, canBubble, cancelable, toWindowProxy(view), inKeyIdentifier, inKeyLocation, inCtrlKey, inAltKey, inShiftKey, inMetaKey);
 }
 
 - (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)inKeyIdentifier keyLocation:(unsigned)inKeyLocation ctrlKey:(BOOL)inCtrlKey altKey:(BOOL)inAltKey shiftKey:(BOOL)inShiftKey metaKey:(BOOL)inMetaKey
