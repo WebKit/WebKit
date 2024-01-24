@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing macFramerate</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script src ="routines.js"></script>
+        <script>
+if (window.internals)
+    internals.settings.setPeerConnectionVideoScalingAdaptationDisabled(false);
+
+var pc1, pc2;
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video:{width:640}});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            const sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    let settings = stream.getVideoTracks()[0].getSettings();
+
+    let counter = 0;
+    while (++counter < 200 && settings.frameRate < 10) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        settings = stream.getVideoTracks()[0].getSettings();
+    }
+    assert_greater_than(settings.frameRate, 5, "remote track settings frame rate");
+
+    counter = 0;
+    while (++counter < 200 && settings.width < 640) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        settings = stream.getVideoTracks()[0].getSettings();
+    }
+    assert_greater_than_equal(settings.width, 640, "remote track settings width");
+
+    let parameters = pc1.getSenders()[0].getParameters();
+    parameters.encodings[0].maxFramerate = 30;
+    parameters.encodings[0].maxBitrate = 10000;
+    parameters.degradationPreference = "maintain-resolution";
+    await pc1.getSenders()[0].setParameters(parameters);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    assert_greater_than_equal(settings.width, 640, "remote track width with reduced bitrate and maintain-resolution");
+
+    parameters = pc1.getSenders()[0].getParameters();
+    parameters.degradationPreference = "maintain-framerate";
+    await pc1.getSenders()[0].setParameters(parameters);
+
+    counter = 0;
+    while (++counter < 200 && settings.width == 640) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        settings = stream.getVideoTracks()[0].getSettings();
+    }
+    assert_less_than_equal(settings.width, 480, "remote track width with reduced bitrate and maintain-framerate");
+}, "Testing that maxBitrate and maintain-framerate have an effect");
+        </script>
+    </body>
+</html>

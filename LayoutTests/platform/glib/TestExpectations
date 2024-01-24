@@ -1898,6 +1898,11 @@ webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creat
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
 webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
 
+# Requires video scaling adaptation.
+webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
+webrtc/video-maxBitrate.html [ Failure ]
+webrtc/video-maxBitrate-vp8.html [ Failure ]
+
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 

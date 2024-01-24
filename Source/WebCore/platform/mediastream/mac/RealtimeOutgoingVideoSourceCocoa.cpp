@@ -85,6 +85,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
         break;
     }
 
+    auto videoFrameScaling = this->videoFrameScaling();
     bool shouldApplyRotation = m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0;
     if (!shouldApplyRotation) {
         if (videoFrame.isRemoteProxy()) {
@@ -93,11 +94,14 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
             sendFrame(webrtc::toWebRTCVideoFrameBuffer(&remoteVideoFrame.leakRef(),
                 [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
                 [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
-                static_cast<int>(size.width()), static_cast<int>(size.height())));
+                static_cast<int>(size.width() * videoFrameScaling), static_cast<int>(size.height() * videoFrameScaling)));
             return;
         }
         if (videoFrame.isLibWebRTC()) {
-            sendFrame(downcast<VideoFrameLibWebRTC>(videoFrame).buffer());
+            auto webrtcBuffer = downcast<VideoFrameLibWebRTC>(videoFrame).buffer();
+            if (videoFrameScaling != 1)
+                webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
+            sendFrame(WTFMove(webrtcBuffer));
             return;
         }
     }
@@ -111,7 +115,11 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     if (shouldApplyRotation)
         convertedBuffer = rotatePixelBuffer(convertedBuffer.get(), m_currentRotation);
 
-    sendFrame(webrtc::pixelBufferToFrame(convertedBuffer.get()));
+    auto webrtcBuffer = webrtc::pixelBufferToFrame(convertedBuffer.get());
+    if (videoFrameScaling != 1)
+        webrtcBuffer = webrtcBuffer->Scale(webrtcBuffer->width() * videoFrameScaling, webrtcBuffer->height() * videoFrameScaling);
+
+    sendFrame(WTFMove(webrtcBuffer));
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> RealtimeOutgoingVideoSourceCocoa::createBlackFrame(size_t  width, size_t  height)

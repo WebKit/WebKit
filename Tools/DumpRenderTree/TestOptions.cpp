@@ -91,6 +91,7 @@ const TestFeatures& TestOptions::defaults()
             { "MockScrollbarsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
+            { "PeerConnectionVideoScalingAdaptationDisabled", true },
             { "PushAPIEnabled", true },
             { "ReferrerPolicyAttributeEnabled", true },
             { "RemotePlaybackEnabled", true },
