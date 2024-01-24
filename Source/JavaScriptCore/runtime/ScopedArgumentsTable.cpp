@@ -127,7 +127,9 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffs
 
 void ScopedArgumentsTable::trySetWatchpointSet(uint32_t i, WatchpointSet* watchpoints)
 {
-    ASSERT(watchpoints);
+    if (!watchpoints)
+        return;
+
     if (i >= m_watchpointSets.size())
         return;
 
