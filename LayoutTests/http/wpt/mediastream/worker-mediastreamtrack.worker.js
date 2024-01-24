@@ -1,13 +1,56 @@
 // META: title=MediaStreamTrack processor and generator tests.
 importScripts("/resources/testharness.js");
 
-function makeOffscreenCanvasVideoFrame(width, height) {
+function makeOffscreenCanvasVideoFrame(width, height, timestamp) {
+    if (!timestamp)
+      timestamp = 1;
     let canvas = new OffscreenCanvas(width, height);
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgba(50, 100, 150, 255)';
     ctx.fillRect(0, 0, width, height);
-    return new VideoFrame(canvas, { timestamp: 1 });
+    return new VideoFrame(canvas, { timestamp });
 }
+
+promise_test(async t => {
+    const generator = new VideoTrackGenerator();
+    t.add_cleanup(() => generator.track.stop());
+
+    // Use a MediaStreamTrackProcessor as a sink for |generator| to verify
+    // that |processor| actually forwards the frames written to its writable
+    // field.
+    self.processor = new MediaStreamTrackProcessor(generator);
+    t.add_cleanup(() => self.processor = undefined);
+    const reader = processor.readable.getReader();
+
+    const writer = generator.writable.getWriter();
+    const videoFrame1 = makeOffscreenCanvasVideoFrame(100, 100, 1);
+    writer.write(videoFrame1);
+    const result1 = await reader.read();
+    t.add_cleanup(() => result1.value.close());
+    assert_equals(result1.value.codedWidth, 100);
+    generator.muted = true;
+
+    // This frame is expected to be discarded.
+    const videoFrame2 = makeOffscreenCanvasVideoFrame(200, 200, 2);
+    writer.write(videoFrame2);
+    generator.muted = false;
+
+    const videoFrame3 = makeOffscreenCanvasVideoFrame(300, 300, 3);
+    writer.write(videoFrame3);
+    const result3 = await reader.read();
+    t.add_cleanup(() => result3.value.close());
+    assert_equals(result3.value.codedWidth, 300);
+
+    // Set up a read ahead of time, then mute, enqueue and unmute.
+    const promise5 = reader.read();
+    generator.muted = true;
+    writer.write(makeOffscreenCanvasVideoFrame(400, 400, 4)); // Expected to be discarded.
+    generator.muted = false;
+    writer.write(makeOffscreenCanvasVideoFrame(500, 500, 5));
+    const result5 = await promise5;
+    t.add_cleanup(() => result5.value.close());
+    assert_equals(result5.value.codedWidth, 500);
+}, 'Tests that VideoTrackGenerator forwards frames only when unmuted');
 
 promise_test(async (t) => {
     const frame1 = makeOffscreenCanvasVideoFrame(100, 100);

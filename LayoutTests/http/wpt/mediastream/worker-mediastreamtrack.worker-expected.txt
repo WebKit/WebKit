@@ -1,4 +1,5 @@
 
+PASS Tests that VideoTrackGenerator forwards frames only when unmuted
 PASS Frames get closed when written in a VideoTrackGenerator writable
 PASS Writable gets closed when writing a closed VideoFrame
 PASS Writable gets closed when writing something else than a VideoFrame

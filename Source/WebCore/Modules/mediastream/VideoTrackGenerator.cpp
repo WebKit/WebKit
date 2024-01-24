@@ -100,6 +100,8 @@ void VideoTrackGenerator::setMuted(ScriptExecutionContext& context, bool muted)
         return;
 
     m_muted = muted;
+    m_sink->setMuted(m_muted);
+
     if (m_hasMutedChanged)
         return;
 
@@ -107,7 +109,6 @@ void VideoTrackGenerator::setMuted(ScriptExecutionContext& context, bool muted)
     context.postTask([this, protectedThis = Ref { *this }] (auto&) {
         m_hasMutedChanged = false;
         m_track->privateTrack().setMuted(m_muted);
-        m_sink->setMuted(m_muted);
     });
 }
 
