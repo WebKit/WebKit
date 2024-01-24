@@ -48,3 +48,11 @@ enum class JSC::MessageLevel : uint8_t {
     Debug,
     Info,
 };
+
+header: <JavaScriptCore/SourceTaintedOrigin.h>
+enum class JSC::SourceTaintedOrigin : uint8_t {
+    Untainted,
+    IndirectlyTaintedByHistory,
+    IndirectlyTainted,
+    KnownTainted
+};

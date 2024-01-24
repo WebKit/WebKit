@@ -221,17 +221,3 @@ class UnlinkedFunctionCodeBlock;
 #endif
 
 } // namespace JSC
-
-namespace WTF {
-
-template<> struct EnumTraits<JSC::SourceTaintedOrigin> {
-    using values = EnumValues<
-        JSC::SourceTaintedOrigin,
-        JSC::SourceTaintedOrigin::Untainted,
-        JSC::SourceTaintedOrigin::IndirectlyTaintedByHistory,
-        JSC::SourceTaintedOrigin::IndirectlyTainted,
-        JSC::SourceTaintedOrigin::KnownTainted
-    >;
-};
-
-} // namespace WTF
