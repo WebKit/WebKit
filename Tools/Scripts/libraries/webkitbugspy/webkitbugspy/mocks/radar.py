@@ -289,6 +289,24 @@ class RadarClient(object):
             return None
         return RadarModel(self, found)
 
+    def find_radars(self, query, return_find_results_directly=False):
+        result = []
+        for issue in self.parent.issues.values():
+            r = RadarModel(self, issue)
+
+            for key, value in query.items():
+                if key == 'state':
+                    if r.state != value:
+                        break
+                elif key == 'assignee':
+                    if r.assignee.dsid != value:
+                        break
+                elif issue.get(key, None) != value:
+                    break
+            else:
+                result.append(r)
+        return result
+
     def milestones_for_component(self, component, include_access_groups=False):
         return list(self.parent.milestones.values())
 

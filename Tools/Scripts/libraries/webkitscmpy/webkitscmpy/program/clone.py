@@ -32,6 +32,7 @@ from webkitscmpy import log
 class Clone(Command):
     name = 'clone'
     help = 'Clone the radar a bugzilla or commit refers to'
+    UMBRELLA = b'\xe2\x98\x82\xef\xb8\x8f'.decode('utf-8')
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -70,6 +71,33 @@ class Clone(Command):
             help='Annotate the cloned issue for merge-back',
             action='store_true',
         )
+
+    @classmethod
+    def parent(cls, rdar, milestone):
+        radar_user = rdar.me()
+        if not radar_user:
+            sys.stderr.write('Failed to find current radar user\n')
+            return None
+
+        candidates = {}
+        for r in rdar.search(dict(
+            assignee=radar_user.username,
+            milestone=milestone,
+            state='Analyze',
+        )):
+            if 'merge-back' in r.title.lower() and cls.UMBRELLA in r.title:
+                candidates[r.title] = r
+
+        if not candidates:
+            return None
+        if len(candidates) == 1:
+            return list(candidates.values())[0]
+
+        return candidates.get(Terminal.choose(
+            prompt='Multiple umbrella merge-back candidates found',
+            options=list(sorted(candidates.keys())),
+            numbered=True,
+        ), None)
 
     @classmethod
     def main(cls, args, repository, merge_back=False, **kwargs):
@@ -181,7 +209,13 @@ class Clone(Command):
             sys.stderr.write("Failed to find milestone matching '{}'\n".format(args.milestone))
             return 255
 
+        parent = None
         if merge_back:
+            parent = cls.parent(rdar, milestone.name)
+            if not parent:
+                sys.stderr.write('Failed to find existing Merge-Back umbrella\n')
+                sys.stderr.write(u"Make sure you have a '{} Merge-Back' radar in {} assigned to you\n".format(cls.UMBRELLA, args.milestone))
+                return 255
             milestone = milestones.get('Internal Tools - {}'.format(milestone.name), milestone)
 
         milestone_association = raw_issue.milestone_associations(milestone)
@@ -217,6 +251,8 @@ class Clone(Command):
         if args.dry_run:
             print("Cloning into '{}'".format(milestone.name))
             print("    Reason: {}".format(args.reason))
+            if parent:
+                print("    as child of {}".format(parent.link()))
             if prefix:
                 print("    with tile '{} {}'".format(prefix, issue.title))
             if category:
@@ -234,6 +270,14 @@ class Clone(Command):
         print("Created '{}{}'".format('{} '.format(prefix) if merge_back else '', cloned))
 
         raw_clone = rdar.client.radar_for_id(cloned.id)
+
+        result = 0
+        if parent:
+            try:
+                cloned.relate(subtask_of=parent)
+            except rdar.radarclient().exceptions.UnsuccessfulResponseException:
+                sys.stderr.write('Completed clone, but failed to set parent, continuing...\n')
+                result += 1
 
         try:
             if prefix:
@@ -273,4 +317,4 @@ class Clone(Command):
             raw_clone.state,
             ': {}'.format(raw_clone.substate) if raw_clone.state == 'Analyze' else '',
         ))
-        return 0
+        return result
