@@ -850,14 +850,17 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
                 cache->childrenChanged(checkedParent().get(), this);
         }
 
-        // Keep layer hierarchy visibility bits up to date if visibility changes.
+        // Keep layer hierarchy visibility bits up to date if visibility or skipped content state changes.
         bool wasVisible = m_style.visibility() == Visibility::Visible && !m_style.hasSkippedContent();
         bool willBeVisible = newStyle.visibility() == Visibility::Visible && !newStyle.hasSkippedContent();
         if (wasVisible != willBeVisible) {
             if (CheckedPtr layer = enclosingLayer()) {
-                if (willBeVisible)
-                    layer->setHasVisibleContent();
-                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != Visibility::Visible))
+                if (willBeVisible) {
+                    if (m_style.hasSkippedContent() && isSkippedContentRoot())
+                        layer->dirtyVisibleContentStatus();
+                    else
+                        layer->setHasVisibleContent();
+                } else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != Visibility::Visible))
                     layer->dirtyVisibleContentStatus();
             }
         }
