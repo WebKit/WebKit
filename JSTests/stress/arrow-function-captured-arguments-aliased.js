@@ -1,3 +1,6 @@
+//@ runDefault
+//@ runNoJIT
+
 function createOptAll(count) {
     count = 0;
 
