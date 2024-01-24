@@ -307,6 +307,7 @@ public:
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    WEBCORE_EXPORT RefPtr<FontCascadeFonts> protectedFonts() const;
     bool isLoadingCustomFonts() const;
 
     static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);
@@ -356,30 +357,31 @@ private:
 inline const Font& FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
-    return m_fonts->primaryFont(m_fontDescription);
+    return protectedFonts()->primaryFont(m_fontDescription);
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     ASSERT(m_fonts);
-    return m_fonts->realizeFallbackRangesAt(m_fontDescription, index);
+    return protectedFonts()->realizeFallbackRangesAt(m_fontDescription, index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
     ASSERT(m_fonts);
-    return m_fonts->isFixedPitch(m_fontDescription);
+    return protectedFonts()->isFixedPitch(m_fontDescription);
 }
 
 inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
 {
     ASSERT(m_fonts);
-    return m_fonts->canTakeFixedPitchFastContentMeasuring(m_fontDescription);
+    return protectedFonts()->canTakeFixedPitchFastContentMeasuring(m_fontDescription);
 }
 
 inline FontSelector* FontCascade::fontSelector() const
 {
-    return m_fonts ? m_fonts->fontSelector() : nullptr;
+    RefPtr fonts = m_fonts;
+    return fonts ? fonts->fontSelector() : nullptr;
 }
 
 inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position, Font::SyntheticBoldInclusion syntheticBoldInclusion) const
