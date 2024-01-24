@@ -7399,13 +7399,12 @@ WebAudioEnabled:
     WebCore:
       default: false
 
-
 WebAuthenticationASEnabled:
   type: bool
   status: embedder
   humanReadableName: "Web Authentication AuthenticationServices"
   humanReadableDescription: "Enable Modern Web Authentication support though AuthenticationServices"
-  condition: ENABLE(WEB_AUTHN_AS_MODERN)
+  condition: HAVE(WEB_AUTHN_AS_MODERN)
   defaultValue:
     WebKitLegacy:
       default: false
