@@ -1826,7 +1826,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             m_loadingStalled = true;
             error = MediaPlayer::NetworkState::DecodeError;
             attemptNextLocation = true;
-        } else if (err->domain == GST_STREAM_ERROR) {
+        } else if (err->domain == GST_STREAM_ERROR
+            || g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_DECODE)) {
             error = MediaPlayer::NetworkState::DecodeError;
             attemptNextLocation = true;
         } else if (err->domain == GST_RESOURCE_ERROR)
@@ -3150,6 +3151,10 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         if (gstObjectHasProperty(decoder, "max-threads"))
             g_object_set(decoder, "max-threads", 2, nullptr);
     }
+
+    if (gstObjectHasProperty(decoder, "max-errors"))
+        g_object_set(decoder, "max-errors", 0, nullptr);
+
 #if USE(TEXTURE_MAPPER)
     updateTextureMapperFlags();
 #endif
