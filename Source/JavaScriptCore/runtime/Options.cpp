@@ -704,10 +704,6 @@ void Options::notifyOptionsChanged()
     Options::useFTLJIT() = false;
 #endif
 
-#if CPU(ARM_THUMB2)
-    Options::useDFGJIT() = false;
-#endif
-
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
