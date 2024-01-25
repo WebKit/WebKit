@@ -109,6 +109,9 @@ void ThreadedScrollingCoordinator::didScheduleRenderingUpdate()
 
 void ThreadedScrollingCoordinator::willStartRenderingUpdate()
 {
+    ASSERT(isMainThread());
+    if (m_page)
+        m_page->layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     threadedScrollingTree->willStartRenderingUpdate();
     commitTreeStateIfNeeded();
