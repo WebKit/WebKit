@@ -272,6 +272,13 @@
     [_transformedContentWidthConstraint setActive:YES];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+
+    [self _dispatchPopoverControllerDidDismissIfNeeded];
+}
+
 - (void)presentInView:(UIView *)view sourceRect:(CGRect)rect completion:(void(^)())completion
 {
     RetainPtr controller = [view _wk_viewControllerForFullScreenPresentation];
