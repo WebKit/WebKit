@@ -34,7 +34,7 @@ import os
 import requests
 
 
-def upload(filename, url, max_attempts=3):
+def upload(filename, url, max_attempts=2):
     if not os.path.isfile(filename):
         sys.stderr.write(f'ERROR: File not found: {filename}\n')
         return -1
@@ -55,7 +55,7 @@ def upload(filename, url, max_attempts=3):
 
         for attempt in range(1, max_attempts + 1):
             try:
-                response = requests.put(url, data=data, timeout=10*60)
+                response = requests.put(url, data=data, timeout=15*60)
                 sys.stderr.write(f'Response: {response}, status_code: {response.status_code}, {response.reason}\n')
                 if response and response.status_code // 100 == 2:
                     return 0
