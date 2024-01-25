@@ -942,7 +942,7 @@ bool GridTrackSizingAlgorithm::canParticipateInBaselineAlignment(const RenderBox
 
     // FIXME: We don't currently allow items within subgrids that need to
     // synthesize a baseline, since we need a layout to have been completed
-    // and performGridItemsPreLayout on the outer grid doesn't layout subgrid
+    // and performPreLayoutForGridItems on the outer grid doesn't layout subgrid
     // items.
     if (child.parent() != renderGrid())
         return false;
