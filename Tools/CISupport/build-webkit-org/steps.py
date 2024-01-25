@@ -76,7 +76,7 @@ class CustomFlagsMixin(object):
             device_model = 'ipad-simulator'
         else:
             device_model = platform
-        self.setCommand(self.command + ['--' + device_model])
+        self.command += ['--' + device_model]
 
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
@@ -98,16 +98,18 @@ class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
             return
 
 
-class TestWithFailureCount(shell.Test):
+class TestWithFailureCount(shell.TestNewStyle):
     failedTestsFormatString = "%d test%s failed"
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return 0
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
-        self.failedTestCount = self.countFailures(cmd)
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        self.failedTestCount = self.countFailures()
         self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+        defer.returnValue(rc)
 
     def evaluateCommand(self, cmd):
         if self.failedTestCount:
@@ -627,10 +629,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         kwargs['logEnviron'] = False
         if 'sigtermTime' not in kwargs:
             kwargs['sigtermTime'] = 10
-        TestWithFailureCount.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+    def run(self):
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
@@ -653,9 +655,9 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             self.setCommand(self.command + ['--test-writer=ruby'])
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
-        return shell.Test.start(self)
+        return super().run()
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         logText = self.log_observer.getStdout()
         count = 0
 
@@ -682,23 +684,23 @@ class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin):
     command = ["perl", "Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
     test_summary_re = re.compile(r'^\! NEW FAIL')
 
-    def start(self):
+    def run(self):
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
         self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
-        return shell.Test.start(self)
+        return super().run()
 
     def parseOutputLine(self, line):
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount += 1
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
 
-class RunWebKitTests(shell.Test, CustomFlagsMixin):
+class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
     name = "layout-test"
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
@@ -730,10 +732,10 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
-        shell.Test.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+    def run(self):
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.incorrectLayoutLines = []
@@ -743,18 +745,18 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin):
         self.appendCustomTestingFlags(platform, self.getProperty('device_model'))
         additionalArguments = self.getProperty('additionalArguments')
 
-        self.setCommand(self.command + ["--results-directory", self.resultDirectory])
-        self.setCommand(self.command + ['--debug-rwt-logging'])
+        self.command += ["--results-directory", self.resultDirectory]
+        self.command += ['--debug-rwt-logging']
 
         if platform == "win":
-            self.setCommand(self.command + ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin64")])
+            self.command += ['--batch-size', '100', '--root=' + os.path.join("WebKitBuild", self.getProperty('configuration'), "bin64")]
 
         if platform in ['gtk', 'wpe']:
-            self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
+            self.command += ['--enable-core-dumps-nolimit']
 
         if additionalArguments:
-            self.setCommand(self.command + additionalArguments)
-        return shell.Test.start(self)
+            self.command += additionalArguments
+        return super().run()
 
     def _strip_python_logging_prefix(self, line):
         match_object = self.nrwt_log_message_regexp.match(line)
@@ -828,9 +830,9 @@ class RunDashboardTests(RunWebKitTests):
     descriptionDone = ["dashboard-tests"]
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "dashboard-layout-test-results")
 
-    def start(self):
-        self.setCommand(self.command + ["--layout-tests-directory", "Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"])
-        return RunWebKitTests.start(self)
+    def run(self):
+        self.command += ["--layout-tests-directory", "Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"]
+        return super().run()
 
 
 class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
@@ -860,9 +862,9 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
-        TestWithFailureCount.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def start(self):
+    def run(self):
         self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
@@ -872,9 +874,9 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         for additionalArgument in additionalArguments or []:
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
                 self.command += [additionalArgument]
-        return shell.Test.start(self)
+        return super().run()
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
     def parseOutputLine(self, line):
@@ -903,7 +905,7 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
 class RunPythonTests(TestWithFailureCount):
     test_summary_re = re.compile(r'^FAILED \((?P<counts>[^)]+)\)')  # e.g.: FAILED (failures=2, errors=1)
 
-    def start(self):
+    def run(self):
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
@@ -911,19 +913,19 @@ class RunPythonTests(TestWithFailureCount):
         # Python tests are flaky on the GTK builders, running them serially
         # helps and does not significantly prolong the cycle time.
         if platform == 'gtk':
-            self.setCommand(self.command + ['--child-processes', '1'])
+            self.command += ['--child-processes', '1']
         # Python tests fail on windows bots when running more than one child process
         # https://bugs.webkit.org/show_bug.cgi?id=97465
         if platform == 'win':
-            self.setCommand(self.command + ['--child-processes', '1'])
-        return shell.Test.start(self)
+            self.command += ['--child-processes', '1']
+        return super().run()
 
     def parseOutputLine(self, line):
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = sum(int(component.split('=')[1]) for component in match.group('counts').split(', '))
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
 
@@ -947,9 +949,9 @@ class RunWebKitPyTests(RunPythonTests):
         kwargs['logEnviron'] = False
         RunPythonTests.__init__(self, *args, **kwargs)
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
-        return RunPythonTests.start(self)
+    def run(self):
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        return super().run()
 
 
 class RunLLDBWebKitTests(RunPythonTests):
@@ -974,18 +976,18 @@ class RunPerlTests(TestWithFailureCount):
     failedTestsFormatString = "%d perl test%s failed"
     test_summary_re = re.compile(r'^Failed \d+/\d+ test programs\. (?P<count>\d+)/\d+ subtests failed\.')  # e.g.: Failed 2/19 test programs. 5/363 subtests failed.
 
-    def start(self):
+    def run(self):
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        return shell.Test.start(self)
+        return super().run()
 
     def parseOutputLine(self, line):
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = int(match.group('count'))
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
 
@@ -1012,21 +1014,21 @@ class RunLLINTCLoopTests(TestWithFailureCount):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
-        TestWithFailureCount.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+    def run(self):
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        return shell.Test.start(self)
+        return super().run()
 
     def parseOutputLine(self, line):
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = int(match.group('count'))
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
 
@@ -1053,54 +1055,55 @@ class Run32bitJSCTests(TestWithFailureCount):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
-        TestWithFailureCount.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def start(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+    def run(self):
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        return shell.Test.start(self)
+        return super().run()
 
     def parseOutputLine(self, line):
         match = self.test_summary_re.match(line)
         if match:
             self.failedTestCount = int(match.group('count'))
 
-    def countFailures(self, cmd):
+    def countFailures(self):
         return self.failedTestCount
 
 
-class RunBindingsTests(shell.Test):
+class RunBindingsTests(shell.TestNewStyle):
     name = "bindings-generation-tests"
     description = ["bindings-tests running"]
     descriptionDone = ["bindings-tests"]
     command = ["python3", "Tools/Scripts/run-bindings-tests"]
 
 
-class RunBuiltinsTests(shell.Test):
+class RunBuiltinsTests(shell.TestNewStyle):
     name = "builtins-generator-tests"
     description = ["builtins-generator-tests running"]
     descriptionDone = ["builtins-generator-tests"]
     command = ["python3", "Tools/Scripts/run-builtins-generator-tests"]
 
 
-class RunGLibAPITests(shell.Test):
+class RunGLibAPITests(shell.TestNewStyle):
     name = "API-tests"
     description = ["API tests running"]
     descriptionDone = ["API tests"]
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         additionalArguments = self.getProperty("additionalArguments")
         if additionalArguments:
             self.command += additionalArguments
-        self.setCommand(self.command)
-        return shell.Test.start(self)
 
-    def commandComplete(self, cmd):
-        shell.Test.commandComplete(self, cmd)
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
 
-        logText = cmd.logs['stdio'].getText()
+        rc = yield super().run(self)
+
+        logText = self.log_observer.getStdout()
 
         failedTests = 0
         crashedTests = 0
@@ -1132,6 +1135,8 @@ class RunGLibAPITests(shell.Test):
         if messages:
             self.statusLine = ["API tests: %s" % ", ".join(messages)]
 
+        defer.returnValue(rc)
+
     def evaluateCommand(self, cmd):
         if self.totalFailedTests > 0:
             return FAILURE
@@ -1159,54 +1164,71 @@ class RunWPEAPITests(RunGLibAPITests):
     command = ["python3", "Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
-class RunWebDriverTests(shell.Test, CustomFlagsMixin):
+class RunWebDriverTests(shell.Test):
     name = "webdriver-test"
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
     jsonFileName = "webdriver_tests.json"
-    command = ["python3", "Tools/Scripts/run-webdriver-tests", f"--json-output={jsonFileName}", WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
-    cancelled_due_to_huge_logs = False
-    line_count = 0
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
-            self.setCommand(self.command + additionalArguments)
+            self.command += additionalArguments
 
-        self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+
+        self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
 
-        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
-        return shell.Test.start(self)
+        rc = yield super().run()
 
-    def getResultSummary(self):
-        # TODO: Parse logs to count number of failures and unexpected passes. https://webkit.org/b/261698
-        if self.cancelled_due_to_huge_logs:
-            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
-        if self.results == FAILURE:
-            return {'step': f'Failed {self.name}'}
-        return super().getResultSummary()
+        logText = self.log_observer.getStdout()
 
-    def parseOutputLine(self, line):
-        self.line_count += 1
-        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
-            self.handleExcessiveLogging()
-            return
+        self.failuresCount = 0
+        self.newPassesCount = 0
+        foundItems = re.findall(r"^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
+        if foundItems:
+            self.failuresCount = int(foundItems[0])
+        foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
+        if foundItems:
+            self.newPassesCount = int(foundItems[0])
 
-    def handleExcessiveLogging(self):
-        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
-        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
-        self.cancelled_due_to_huge_logs = True
-        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
-        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+        defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if self.failuresCount:
+            return FAILURE
+
+        if self.newPassesCount:
+            return WARNINGS
+
+        if cmd.rc != 0:
+            return FAILURE
+
+        return SUCCESS
+
+    def getText(self, cmd, results):
+        return self.getText2(cmd, results)
+
+    def getText2(self, cmd, results):
+        if results != SUCCESS and (self.failuresCount or self.newPassesCount):
+            lines = []
+            if self.failuresCount:
+                lines.append("%d failures" % self.failuresCount)
+            if self.newPassesCount:
+                lines.append("%d new passes" % self.newPassesCount)
+            return ["%s %s" % (self.name, ", ".join(lines))]
+
+        return [self.name]
 
 
 class RunWebKit1Tests(RunWebKitTests):
-    def start(self):
-        self.setCommand(self.command + ["--dump-render-tree"])
-
-        return RunWebKitTests.start(self)
+    def run(self):
+        self.command += ["--dump-render-tree"]
+        return super().run()
 
 
 class RunWebKit1LeakTests(RunWebKit1Tests):
@@ -1219,7 +1241,7 @@ class RunWebKit1LeakTests(RunWebKit1Tests):
         return RunWebKit1Tests.start(self)
 
 
-class RunAndUploadPerfTests(shell.Test):
+class RunAndUploadPerfTests(shell.TestNewStyle):
     name = "perf-test"
     description = ["perf-tests running"]
     descriptionDone = ["perf-tests"]
@@ -1235,12 +1257,11 @@ class RunAndUploadPerfTests(shell.Test):
                "--no-build",
                WithProperties("--%(configuration)s")]
 
-    def start(self):
+    def run(self):
         additionalArguments = self.getProperty("additionalArguments")
         if additionalArguments:
             self.command += additionalArguments
-        self.setCommand(self.command)
-        return shell.Test.start(self)
+        return super().run()
 
     def getText(self, cmd, results):
         return self.getText2(cmd, results)
@@ -1265,7 +1286,7 @@ class RunAndUploadPerfTests(shell.Test):
         return [self.name]
 
 
-class RunBenchmarkTests(shell.Test):
+class RunBenchmarkTests(shell.TestNewStyle):
     name = "benchmark-test"
     description = ["benchmark tests running"]
     descriptionDone = ["benchmark tests"]
@@ -1274,12 +1295,11 @@ class RunBenchmarkTests(shell.Test):
                "--browser-version", WithProperties("%(archive_revision)s"),
                "--timestamp-from-repo", "."]
 
-    def start(self):
+    def run(self):
         platform = self.getProperty("platform")
         if platform == "gtk":
             self.command += ["--browser", "minibrowser-gtk"]
-        self.setCommand(self.command)
-        return shell.Test.start(self)
+        return super().run()
 
     def getText(self, cmd, results):
         return self.getText2(cmd, results)
@@ -1466,7 +1486,7 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
 
         rc = yield super().run()
         if rc != SUCCESS:
-            return rc
+            return defer.returnValue(rc)
 
         log_text = self.log_observer.getStdout()
         match = re.search(self.identifier_re, log_text, re.MULTILINE)
@@ -1489,7 +1509,7 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
         else:
             self.descriptionDone = 'Failed to find identifier'
             self.setProperty('archive_revision', self.getProperty('got_revision'))
-        return rc
+        return defer.returnValue(rc)
 
     def getLastBuildStepByName(self, name):
         for step in reversed(self.build.executedSteps):
