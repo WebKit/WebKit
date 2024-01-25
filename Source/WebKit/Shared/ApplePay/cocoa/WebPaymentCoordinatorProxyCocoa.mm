@@ -287,8 +287,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(W
 
     [result setCountryCode:paymentRequest.countryCode()];
     [result setCurrencyCode:paymentRequest.currencyCode()];
-    [result setBillingContact:paymentRequest.billingContact().pkContact()];
-    [result setShippingContact:paymentRequest.shippingContact().pkContact()];
+    [result setBillingContact:paymentRequest.billingContact().pkContact().get()];
+    [result setShippingContact:paymentRequest.shippingContact().pkContact().get()];
     [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
     [result setRequiredShippingContactFields:toPKContactFields(paymentRequest.requiredShippingContactFields()).get()];
 

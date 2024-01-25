@@ -112,7 +112,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
-    if (request.shippingContact().pkContact())
+    if (request.shippingContact().pkContact().get())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
     m_supportedCountries = request.supportedCountries();
     m_shippingMethods = request.shippingMethods();

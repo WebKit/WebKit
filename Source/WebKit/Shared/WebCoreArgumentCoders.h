@@ -220,21 +220,6 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
 
 #if ENABLE(APPLE_PAY)
 
-template<> struct ArgumentCoder<WebCore::Payment> {
-    static void encode(Encoder&, const WebCore::Payment&);
-    static std::optional<WebCore::Payment> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::PaymentContact> {
-    static void encode(Encoder&, const WebCore::PaymentContact&);
-    static std::optional<WebCore::PaymentContact> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::PaymentMerchantSession> {
-    static void encode(Encoder&, const WebCore::PaymentMerchantSession&);
-    static std::optional<WebCore::PaymentMerchantSession> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest> {
     static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest&);

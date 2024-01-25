@@ -45,7 +45,7 @@ public:
     static PaymentContact fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact&);
     virtual ApplePayPaymentContact toApplePayPaymentContact(unsigned version) const;
 
-    PKContact *pkContact() const;
+    RetainPtr<PKContact> pkContact() const;
 
 private:
     RetainPtr<PKContact> m_pkContact;

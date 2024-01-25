@@ -94,9 +94,9 @@ ApplePayPayment Payment::toApplePayPayment(unsigned version) const
     return convert(version, m_pkPayment.get());
 }
 
-PKPayment *Payment::pkPayment() const
+RetainPtr<PKPayment> Payment::pkPayment() const
 {
-    return m_pkPayment.get();
+    return m_pkPayment;
 }
 
 }

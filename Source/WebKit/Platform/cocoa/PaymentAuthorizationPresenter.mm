@@ -205,7 +205,7 @@ static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>
 void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::PaymentMerchantSession& merchantSession)
 {
     ASSERT(platformDelegate());
-    [platformDelegate() completeMerchantValidation:merchantSession.pkPaymentMerchantSession() error:nil];
+    [platformDelegate() completeMerchantValidation:merchantSession.pkPaymentMerchantSession().get() error:nil];
 }
 
 void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)

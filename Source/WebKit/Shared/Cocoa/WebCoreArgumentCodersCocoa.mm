@@ -80,63 +80,6 @@ namespace IPC {
 
 #if ENABLE(APPLE_PAY)
 
-template<> Class getClass<PKPayment>()
-{
-    return PAL::getPKPaymentClass();
-}
-
-template<> Class getClass<PKPaymentMerchantSession>()
-{
-    return PAL::getPKPaymentMerchantSessionClass();
-}
-
-template<> Class getClass<PKPaymentMethod>()
-{
-    return PAL::getPKPaymentMethodClass();
-}
-
-void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
-{
-    encoder << payment.pkPayment();
-}
-
-std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
-{
-    auto payment = decoder.decodeWithAllowedClasses<PKPayment>();
-    if (!payment)
-        return std::nullopt;
-
-    return WebCore::Payment { WTFMove(*payment) };
-}
-
-void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
-{
-    encoder << paymentContact.pkContact();
-}
-
-std::optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
-{
-    auto contact = decoder.decodeWithAllowedClasses<PKContact>();
-    if (!contact)
-        return std::nullopt;
-
-    return WebCore::PaymentContact { WTFMove(*contact) };
-}
-
-void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
-{
-    encoder << paymentMerchantSession.pkPaymentMerchantSession();
-}
-
-std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
-{
-    auto paymentMerchantSession = decoder.decodeWithAllowedClasses<PKPaymentMerchantSession>();
-    if (!paymentMerchantSession)
-        return std::nullopt;
-
-    return WebCore::PaymentMerchantSession { WTFMove(*paymentMerchantSession) };
-}
-
 void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest& request)
 {
     encoder << request.countryCode();
