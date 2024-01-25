@@ -64,7 +64,7 @@ void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& 
     m_sinkVideoFrameCallback.first = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerVideoCapturer* capturer, GstElement* sink) -> GstFlowReturn {
         auto gstSample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
         auto presentationTime = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(gstSample.get())));
-        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(gstSample), WebCore::FloatSize(), presentationTime));
+        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::createWrappedSample(gstSample, presentationTime));
         return GST_FLOW_OK;
     }), this);
 }
