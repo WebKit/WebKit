@@ -27,6 +27,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
+#include "PrepareBackingStoreBuffersData.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -50,6 +51,11 @@ class ThreadSafeImageBufferSetFlusher {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferSetFlusher);
 public:
+    enum class FlushType {
+        BackendHandlesOnly,
+        BackendHandlesAndDrawing,
+    };
+
     ThreadSafeImageBufferSetFlusher() = default;
     virtual ~ThreadSafeImageBufferSetFlusher() = default;
     virtual void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
@@ -88,7 +94,7 @@ public:
 
     WebCore::RenderingResourceIdentifier displayListResourceIdentifier() const { return m_displayListIdentifier; }
 
-    std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync();
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
 
     void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();

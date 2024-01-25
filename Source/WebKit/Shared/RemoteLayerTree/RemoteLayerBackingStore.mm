@@ -345,8 +345,14 @@ void RemoteLayerBackingStore::dirtyRepaintCounterIfNecessary()
 void RemoteLayerBackingStore::paintContents()
 {
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
-    if (hasEmptyDirtyRegion())
+    if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer))
         return;
+
+    if (hasEmptyDirtyRegion()) {
+        if (auto flusher = createFlusher(ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly))
+            m_frontBufferFlushers.append(WTFMove(flusher));
+        return;
+    }
 
     m_lastDisplayTime = MonotonicTime::now();
 

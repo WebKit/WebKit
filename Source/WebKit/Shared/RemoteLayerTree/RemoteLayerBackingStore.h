@@ -29,6 +29,7 @@
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
 #include "RemoteImageBufferSetIdentifier.h"
+#include "RemoteImageBufferSetProxy.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PlatformCALayer.h>
@@ -122,7 +123,7 @@ public:
     virtual void prepareToDisplay() = 0;
     virtual void createContextAndPaintContents() = 0;
 
-    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher() = 0;
+    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) = 0;
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }

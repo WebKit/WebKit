@@ -37,7 +37,7 @@ public:
 
     void prepareToDisplay() final;
     void createContextAndPaintContents() final;
-    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher() final;
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
 
     void clearBackingStore() final;
 

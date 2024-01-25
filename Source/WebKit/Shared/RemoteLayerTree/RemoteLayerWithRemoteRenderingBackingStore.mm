@@ -73,11 +73,11 @@ void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
     m_cleared = true;
 }
 
-std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingBackingStore::createFlusher()
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
     if (!m_bufferSet)
         return { };
-    return m_bufferSet->flushFrontBufferAsync();
+    return m_bufferSet->flushFrontBufferAsync(flushType);
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()

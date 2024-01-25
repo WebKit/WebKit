@@ -157,8 +157,10 @@ private:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_imageBufferFlusher;
 };
 
-std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderingBackingStore::createFlusher()
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderingBackingStore::createFlusher(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
+    if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly)
+        return nullptr;
     m_frontBuffer.imageBuffer->flushDrawingContextAsync();
     return ImageBufferBackingStoreFlusher::create(m_frontBuffer.imageBuffer->createFlusher());
 }

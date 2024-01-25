@@ -41,7 +41,7 @@ class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteIm
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteImageBufferSetProxyFlushFence> create(IPC::Event event, RenderingUpdateID renderingUpdateID)
+    static Ref<RemoteImageBufferSetProxyFlushFence> create(std::optional<IPC::Event> event, RenderingUpdateID renderingUpdateID)
     {
         return adoptRef(*new RemoteImageBufferSetProxyFlushFence { WTFMove(event), renderingUpdateID });
     }
@@ -59,7 +59,7 @@ public:
         if (!m_handles)
             m_condition.waitFor(m_lock, timeout.secondsUntilDeadline());
         ASSERT(!m_signaled);
-        m_signaled = m_event.waitFor(timeout);
+        m_signaled = !m_event || m_event->waitFor(timeout);
         if (m_signaled)
             tracePoint(FlushRemoteImageBufferEnd, reinterpret_cast<uintptr_t>(this), 0u);
         return m_signaled && m_handles;
@@ -70,7 +70,7 @@ public:
         if (!m_signaled)
             return std::nullopt;
         Locker locker { m_lock };
-        return WTFMove(m_event);
+        return std::exchange(m_event, std::nullopt);
     }
 
     void setHandles(BufferSetBackendHandle&& handles)
@@ -89,7 +89,7 @@ public:
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
 
 private:
-    RemoteImageBufferSetProxyFlushFence(IPC::Event event, RenderingUpdateID renderingUpdateID)
+    RemoteImageBufferSetProxyFlushFence(std::optional<IPC::Event> event, RenderingUpdateID renderingUpdateID)
         : m_event(WTFMove(event))
         , m_renderingUpdateID(renderingUpdateID)
     {
@@ -98,7 +98,7 @@ private:
     Lock m_lock;
     Condition m_condition;
     std::atomic<bool> m_signaled { false };
-    IPC::Event WTF_GUARDED_BY_LOCK(m_lock) m_event;
+    std::optional<IPC::Event> WTF_GUARDED_BY_LOCK(m_lock) m_event;
     std::optional<BufferSetBackendHandle> m_handles WTF_GUARDED_BY_LOCK(m_lock);
     RenderingUpdateID m_renderingUpdateID;
 };
@@ -231,25 +231,28 @@ void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float 
     m_remoteNeedsConfigurationUpdate = true;
 }
 
-std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync()
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
     if (!m_remoteRenderingBackendProxy)
         return nullptr;
 
     std::optional<IPC::Event> event;
-    if (m_pendingFlush)
-        event = m_pendingFlush->tryTakeEvent();
-    if (!event) {
-        auto pair = IPC::createEventSignalPair();
-        if (!pair)
-            return nullptr;
+    if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) {
+        if (m_pendingFlush)
+            event = m_pendingFlush->tryTakeEvent();
+        if (!event) {
+            auto pair = IPC::createEventSignalPair();
+            if (!pair)
+                return nullptr;
 
-        event = WTFMove(pair->event);
-        send(Messages::RemoteImageBufferSet::SetFlushSignal(WTFMove(pair->signal)));
+            event = WTFMove(pair->event);
+            send(Messages::RemoteImageBufferSet::SetFlushSignal(WTFMove(pair->signal)));
+        }
+
+        send(Messages::RemoteImageBufferSet::Flush());
     }
 
-    send(Messages::RemoteImageBufferSet::Flush());
-    m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(WTFMove(*event), m_remoteRenderingBackendProxy->renderingUpdateID());
+    m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(WTFMove(event), m_remoteRenderingBackendProxy->renderingUpdateID());
 
     return makeUnique<RemoteImageBufferSetProxyFlusher>(m_identifier, Ref { *m_pendingFlush }, m_generation);
 }
