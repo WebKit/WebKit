@@ -549,7 +549,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     completionHandler(WebCore::createHTTPBodyNSInputStream(body.releaseNonNull()).get());
 }
 
-static NSURLRequest* downgradeRequest(NSURLRequest *request)
+static RetainPtr<NSURLRequest> downgradeRequest(NSURLRequest *request)
 {
     auto nsMutableRequest = adoptNS([request mutableCopy]);
     if ([[nsMutableRequest URL].scheme isEqualToString:@"https"]) {
@@ -557,7 +557,7 @@ static NSURLRequest* downgradeRequest(NSURLRequest *request)
         components.scheme = @"http";
         [nsMutableRequest setURL:components.URL];
         ASSERT([[nsMutableRequest URL].scheme isEqualToString:@"http"]);
-        return nsMutableRequest.autorelease();
+        return nsMutableRequest;
     }
 
     ASSERT_NOT_REACHED();
@@ -617,9 +617,13 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(firstPartyForCookies, request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
-                request = downgradeRequest(request);
-                ASSERT([request.URL.scheme isEqualToString:@"http"]);
-                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+                RetainPtr newRequest = downgradeRequest(request);
+                ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
+                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, newRequest.get().URL.absoluteString.UTF8String);
+
+                updateIgnoreStrictTransportSecuritySetting(newRequest, shouldIgnoreHSTS);
+                completionHandler(newRequest.get());
+                return;
             }
         } else
             ASSERT_NOT_REACHED();
@@ -666,9 +670,13 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
-                request = downgradeRequest(request);
-                ASSERT([request.URL.scheme isEqualToString:@"http"]);
-                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+                RetainPtr newRequest = downgradeRequest(request);
+                ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
+                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, newRequest.get().URL.absoluteString.UTF8String);
+
+                updateIgnoreStrictTransportSecuritySetting(newRequest, shouldIgnoreHSTS);
+                completionHandler(newRequest.get());
+                return;
             }
         } else
             ASSERT_NOT_REACHED();
