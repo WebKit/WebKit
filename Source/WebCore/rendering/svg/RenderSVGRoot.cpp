@@ -330,7 +330,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 
     if (paintInfo.phase == PaintPhase::ClippingMask && style().visibility() == Visibility::Visible) {
-        paintSVGClippingMask(paintInfo);
+        paintSVGClippingMask(paintInfo, objectBoundingBox());
         return;
     }
 

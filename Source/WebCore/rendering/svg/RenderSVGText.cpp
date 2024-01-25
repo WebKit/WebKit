@@ -522,7 +522,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             return;
 
         if (paintInfo.phase == PaintPhase::ClippingMask) {
-            paintSVGClippingMask(paintInfo);
+            paintSVGClippingMask(paintInfo, objectBoundingBox());
             return;
         }
 

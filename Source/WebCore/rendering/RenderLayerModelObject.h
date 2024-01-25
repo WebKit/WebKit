@@ -101,7 +101,7 @@ public:
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
 
-    void paintSVGClippingMask(PaintInfo&) const;
+    void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
 #endif
 

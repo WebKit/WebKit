@@ -620,7 +620,7 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
     repaintRendererOrClientsOfReferencedSVGResources();
 }
 
-void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo) const
+void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo, const FloatRect& objectBoundingBox) const
 {
     ASSERT(paintInfo.phase == PaintPhase::ClippingMask);
     auto& context = paintInfo.context();
@@ -629,7 +629,7 @@ void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo) const
 
     ASSERT(isSVGLayerAwareRenderer());
     if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
-        referencedClipperRenderer->applyMaskClipping(paintInfo, *this, objectBoundingBox());
+        referencedClipperRenderer->applyMaskClipping(paintInfo, *this, objectBoundingBox);
 }
 
 void RenderLayerModelObject::paintSVGMask(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset) const

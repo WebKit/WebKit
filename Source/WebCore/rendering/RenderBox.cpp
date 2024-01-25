@@ -1952,6 +1952,14 @@ void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paint
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled() && style().clipPath() && style().clipPath()->type() == PathOperation::Reference) {
+        paintSVGClippingMask(paintInfo, paintRect);
+        return;
+    }
+#endif
+
     paintInfo.context().fillRect(snappedIntRect(paintRect), Color::black);
 }
 
