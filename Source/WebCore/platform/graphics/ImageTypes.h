@@ -92,4 +92,14 @@ enum class ImageDrawResult {
     DidDraw
 };
 
+enum class ShowDebugBackground : bool {
+    No,
+    Yes
+};
+
+enum class AllowImageSubsampling : bool {
+    No,
+    Yes
+};
+
 }

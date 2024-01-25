@@ -305,23 +305,20 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
-    auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
-    if (!bitmapImage || bitmapImage->canAnimate()) {
-        // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
-        // for the next frame will be calculated in BitmapImage::internalStartAnimation().
-        return DecodingMode::Synchronous;
-    }
-
-    // Some document types force synchronous decoding.
-#if PLATFORM(IOS_FAMILY)
-    if (IOSApplication::isIBooksStorytime())
-        return DecodingMode::Synchronous;
-#endif
     if (document().isImageDocument())
         return DecodingMode::Synchronous;
 
     // A PaintBehavior may force synchronous decoding.
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
+        return DecodingMode::Synchronous;
+
+#if PLATFORM(IOS_FAMILY)
+    if (IOSApplication::isIBooksStorytime())
+        return DecodingMode::Synchronous;
+#endif
+
+    auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage)
         return DecodingMode::Synchronous;
 
     auto defaultDecodingMode = [&]() -> DecodingMode {
@@ -359,6 +356,18 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     // isAsyncDecodingEnabledForTesting() forces async image decoding regardless of the size.
     if (bitmapImage->isAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
+
+    // Animated image case.
+    if (bitmapImage->canAnimate()) {
+        if (!(bitmapImage->shouldUseAsyncDecodingForAnimatedImages() && settings().animatedImageAsyncDecodingEnabled()))
+            return DecodingMode::Synchronous;
+
+        // First frame should be decoded according to its state in the viewport.
+        if (bitmapImage->currentFrameIndex())
+            return DecodingMode::Asynchronous;
+
+        return defaultDecodingMode();
+    }
 
     // Large image case.
     if (!(bitmapImage->canUseAsyncDecodingForLargeImages() && settings().largeImageAsyncDecodingEnabled()))

@@ -173,14 +173,13 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     if (!image || image->isNull())
         return ImageDrawResult::DidNothing;
 
-    if (auto* bitmapImage = dynamicDowncast<BitmapImage>(*image))
-        bitmapImage->updateFromSettings(settings());
-
     ImagePaintingOptions options {
         CompositeOperator::SourceOver,
         DecodingMode::Synchronous,
         imageOrientation(),
-        InterpolationQuality::Default
+        InterpolationQuality::Default,
+        settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+        settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
     };
 
     auto drawResult = paintInfo.context().drawImage(*image, rect, sourceRect, options);

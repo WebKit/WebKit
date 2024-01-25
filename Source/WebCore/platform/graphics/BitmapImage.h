@@ -48,7 +48,6 @@ typedef struct HBITMAP__ *HBITMAP;
 
 namespace WebCore {
 
-class Settings;
 class Timer;
 
 class BitmapImage final : public Image {
@@ -75,8 +74,6 @@ public:
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(HBITMAP);
 #endif
     virtual ~BitmapImage();
-
-    void updateFromSettings(const Settings&);
 
     EncodedDataStatus dataChanged(bool allDataReceived) override;
     unsigned decodedSize() const { return m_source->decodedSize(); }
@@ -107,9 +104,9 @@ public:
     Seconds frameDurationAtIndex(size_t index) const { return m_source->frameDurationAtIndex(index); }
     ImageOrientation frameOrientationAtIndex(size_t index) const { return m_source->frameOrientationAtIndex(index); }
 
-    size_t currentFrame() const { return m_currentFrame; }
-    bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
-    ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrame()); }
+    size_t currentFrameIndex() const { return m_currentFrame; }
+    bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrameIndex()); }
+    ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrameIndex()); }
     bool canAnimate() const;
 
     bool shouldUseAsyncDecodingForTesting() const { return m_source->frameDecodingDurationForTesting() > 0_s; }
@@ -190,8 +187,8 @@ private:
     enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
     bool isAnimated() const override { return m_source->frameCount() > 1; }
     bool shouldAnimate() const;
-    void startAnimation() override { internalStartAnimation(); }
-    StartAnimationStatus internalStartAnimation();
+    void startAnimation() override { internalStartAnimation({ }); }
+    StartAnimationStatus internalStartAnimation(ImagePaintingOptions);
     void advanceAnimation();
     void internalAdvanceAnimation();
     bool isAnimating() const final;
@@ -215,7 +212,7 @@ private:
 
     void clearTimer();
     void startTimer(Seconds delay);
-    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor);
+    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor, AllowImageSubsampling);
     bool canDestroyDecodedData();
     void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
     bool isBitmapImage() const override { return true; }
@@ -237,15 +234,6 @@ private:
     std::unique_ptr<Vector<Function<void()>, 1>> m_decodingCallbacks;
 
     bool m_animationFinished { false };
-
-    // The default value of m_allowSubsampling should be the same as default value of the ImageSubsamplingEnabled setting.
-#if PLATFORM(IOS_FAMILY)
-    bool m_allowSubsampling { true };
-#else
-    bool m_allowSubsampling { false };
-#endif
-    bool m_allowAnimatedImageAsyncDecoding { false };
-    bool m_showDebugBackground { false };
 
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
     bool m_asyncDecodingEnabledForTesting { false };
