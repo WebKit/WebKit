@@ -60,7 +60,6 @@ private:
 
     WeakPtr<WebMResourceClientParent> m_parent;
     RefPtr<PlatformMediaResource> m_resource;
-    SharedBufferBuilder m_buffer;
 };
 
 } // namespace WebCore

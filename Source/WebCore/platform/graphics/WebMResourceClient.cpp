@@ -66,7 +66,6 @@ void WebMResourceClient::dataReceived(PlatformMediaResource&, const SharedBuffer
     if (!m_parent)
         return;
     
-    m_buffer.append(buffer);
     m_parent->dataReceived(buffer);
 }
 
