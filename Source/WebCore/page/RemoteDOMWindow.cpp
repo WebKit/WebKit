@@ -181,10 +181,14 @@ void RemoteDOMWindow::setLocation(LocalDOMWindow& activeWindow, const URL& compl
     if (!activeDocument)
         return;
 
+    RefPtr frame = this->frame();
+    if (!activeDocument->canNavigate(frame.get(), completedURL))
+        return;
+
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != SetLocationLocking::LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != SetLocationLocking::LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
-    frame()->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
+    frame->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, activeDocument->frame()->loader().outgoingReferrer(),
         lockHistory, lockBackForwardList);

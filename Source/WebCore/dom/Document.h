@@ -136,6 +136,7 @@ class FontLoadRequest;
 class FormController;
 class FrameSelection;
 class FullscreenManager;
+class Frame;
 class GPUCanvasContext;
 class GraphicsClient;
 class HTMLAllCollection;
@@ -845,7 +846,7 @@ public:
     WEBCORE_EXPORT void setRTCNetworkManager(Ref<RTCNetworkManager>&&);
 #endif
 
-    bool canNavigate(LocalFrame* targetFrame, const URL& destinationURL = URL());
+    bool canNavigate(Frame* targetFrame, const URL& destinationURL = URL());
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();
@@ -1887,7 +1888,7 @@ public:
 #endif
 
     virtual void didChangeViewSize() { }
-    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL);
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
     void updateRelevancyOfContentVisibilityElements();
     void scheduleContentRelevancyUpdate(ContentRelevancy);
@@ -2013,7 +2014,7 @@ private:
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
     void didLoadResourceSynchronously(const URL&) final;
 
-    bool canNavigateInternal(LocalFrame& targetFrame);
+    bool canNavigateInternal(Frame& targetFrame);
 
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;

@@ -474,7 +474,7 @@ static bool acceptsEditingFocus(const Element& element)
     return frame->editor().shouldBeginEditing(makeRangeSelectingNodeContents(*root));
 }
 
-static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalFrame* targetFrame)
+static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame* targetFrame)
 {
     // targetFrame can be 0 when we're trying to navigate a top-level frame
     // that has a 0 opener.
@@ -505,12 +505,15 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalF
     return false;
 }
 
-static void printNavigationErrorMessage(LocalFrame& frame, const URL& activeURL, const char* reason)
+static void printNavigationErrorMessage(Frame& frame, const URL& activeURL, const char* reason)
 {
-    String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + frame.document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (!localFrame)
+        return;
+    String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + localFrame->document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
 
     // FIXME: should we print to the console of the document performing the navigation instead?
-    frame.document()->protectedWindow()->printErrorMessage(message);
+    localFrame->document()->protectedWindow()->printErrorMessage(message);
 }
 
 uint64_t Document::s_globalTreeVersion = 0;
@@ -4243,7 +4246,7 @@ void Document::setRTCNetworkManager(Ref<RTCNetworkManager>&& rtcNetworkManager)
 }
 #endif
 
-bool Document::canNavigate(LocalFrame* targetFrame, const URL& destinationURL)
+bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
 {
     if (!m_frame)
         return false;
@@ -4266,7 +4269,7 @@ bool Document::canNavigate(LocalFrame* targetFrame, const URL& destinationURL)
     return true;
 }
 
-bool Document::canNavigateInternal(LocalFrame& targetFrame)
+bool Document::canNavigateInternal(Frame& targetFrame)
 {
     ASSERT(m_frame);
 
@@ -4311,7 +4314,7 @@ bool Document::canNavigateInternal(LocalFrame& targetFrame)
 
     // 3. Otherwise, if B is a top-level browsing context, and is neither A nor one of the ancestor browsing contexts of A, and A's Document's active sandboxing flag set has its
     // sandboxed navigation browsing context flag set, and A is not the one permitted sandboxed navigator of B, then abort these steps negatively.
-    if (!targetFrame.tree().parent() && m_frame != &targetFrame && &targetFrame != &m_frame->tree().top() && isSandboxed(SandboxNavigation) && targetFrame.loader().opener() != m_frame) {
+    if (!targetFrame.tree().parent() && m_frame != &targetFrame && &targetFrame != &m_frame->tree().top() && isSandboxed(SandboxNavigation) && targetFrame.opener() != m_frame) {
         printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."_s);
         return false;
     }
@@ -4343,7 +4346,7 @@ bool Document::canNavigateInternal(LocalFrame& targetFrame)
         if (&targetFrame == m_frame->loader().opener())
             return true;
 
-        if (RefPtr localOpener = dynamicDowncast<LocalFrame>(targetFrame.loader().opener())) {
+        if (RefPtr localOpener = dynamicDowncast<LocalFrame>(targetFrame.opener())) {
             if (canAccessAncestor(securityOrigin(), localOpener.get()))
                 return true;
         }
@@ -4364,7 +4367,7 @@ void Document::willLoadFrameElement(const URL& frameURL)
 }
 
 // Prevent cross-site top-level redirects from third-party iframes unless the user has ever interacted with the frame.
-bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL)
+bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL)
 {
     // Only prevent top frame navigations by subframes.
     if (m_frame == &targetFrame || &targetFrame != &m_frame->tree().top())
@@ -4392,7 +4395,10 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame&
         return false;
 
     // Only prevent cross-site navigations.
-    RefPtr targetDocument = targetFrame.document();
+    RefPtr targetLocalFrame = dynamicDowncast<LocalFrame>(targetFrame);
+    if (!targetLocalFrame)
+        return true;
+    RefPtr targetDocument = targetLocalFrame->document();
     if (!targetDocument)
         return true;
 

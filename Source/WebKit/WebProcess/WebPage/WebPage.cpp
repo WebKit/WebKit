@@ -1069,10 +1069,8 @@ void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& comple
 void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame) {
-        ASSERT_NOT_REACHED();
+    if (!frame)
         return;
-    }
     ASSERT(frame->page() == this);
     frame->didCommitLoadInAnotherProcess(layerHostingContextIdentifier);
 }
@@ -1080,10 +1078,8 @@ void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, st
 void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame) {
-        ASSERT_NOT_REACHED();
+    if (!frame)
         return;
-    }
     ASSERT(frame->page() == this);
     frame->didFinishLoadInAnotherProcess();
 }

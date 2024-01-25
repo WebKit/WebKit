@@ -252,7 +252,7 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!activeWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+    if (!activeWindow.document()->canNavigate(frame.get(), completedURL))
         return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
@@ -302,7 +302,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
 
-    if (!incumbentWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+    if (!incumbentWindow.document()->canNavigate(frame.get(), completedURL))
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(frame->window());
