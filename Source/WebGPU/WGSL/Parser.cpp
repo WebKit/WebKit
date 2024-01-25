@@ -33,6 +33,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -132,6 +133,11 @@ struct TemplateTypes<TT> {
         FAIL(builder.toString()); \
     } \
     auto& name = *name##Expected;
+
+#define CHECK_RECURSION() \
+    SetForScope __parseDepth(m_parseDepth, m_parseDepth + 1); \
+    if (m_parseDepth > 128) \
+        FAIL("maximum parser recursive depth reached"_s);
 
 static bool canBeginUnaryExpression(const Token& token)
 {
@@ -1081,6 +1087,7 @@ template<typename Lexer>
 Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     switch (current().type) {
     case TokenType::BraceLeft: {
@@ -1604,11 +1611,12 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseUnaryExpression()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     if (canBeginUnaryExpression(current())) {
         auto op = toUnaryOperation(current());
         consume();
-        PARSE(expression, SingularExpression);
+        PARSE(expression, UnaryExpression);
         RETURN_ARENA_NODE(UnaryExpression, WTFMove(expression), op);
     }
 
