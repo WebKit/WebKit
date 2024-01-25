@@ -85,6 +85,7 @@ OBJC_CLASS _WKWebExtensionContext;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_CLASS _WKWebExtensionDeclarativeNetRequestSQLiteStore;
 OBJC_CLASS _WKWebExtensionRegisteredScriptsSQLiteStore;
+OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_PROTOCOL(_WKWebExtensionTab);
 OBJC_PROTOCOL(_WKWebExtensionWindow);
 
@@ -513,11 +514,18 @@ private:
 
     // Registered content scripts methods.
     void loadRegisteredContentScripts();
-    RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> registeredContentScriptsStore();
+    _WKWebExtensionRegisteredScriptsSQLiteStore *registeredContentScriptsStore();
 
     // Storage
     void setSessionStorageAllowedInContentScripts(bool);
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
+    size_t quoataForStorageType(WebExtensionStorageType);
+
+    _WKWebExtensionStorageSQLiteStore *localStorageStore();
+    _WKWebExtensionStorageSQLiteStore *sessionStorageStore();
+    _WKWebExtensionStorageSQLiteStore *syncStorageStore();
+    _WKWebExtensionStorageSQLiteStore *storageForType(WebExtensionStorageType);
+
 
     void fetchCookies(WebsiteDataStore&, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Vector<WebExtensionCookieParameters>&&, ErrorString)>&&);
 
@@ -625,9 +633,9 @@ private:
     bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, InjectedContentVector&, NSString *callingAPIName, NSString **errorMessage);
 
     // Storage APIs
-    void storageGet(WebPageProxyIdentifier, WebExtensionStorageType, const IPC::DataReference&, CompletionHandler<void(std::optional<IPC::DataReference>, ErrorString)>&&);
+    void storageGet(WebPageProxyIdentifier, WebExtensionStorageType, const Vector<String>& keys, CompletionHandler<void(std::optional<String> dataJSON, ErrorString)>&&);
     void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionStorageType, const Vector<String>& keys, CompletionHandler<void(std::optional<size_t>, ErrorString)>&&);
-    void storageSet(WebPageProxyIdentifier, WebExtensionStorageType, const IPC::DataReference&, CompletionHandler<void(ErrorString)>&&);
+    void storageSet(WebPageProxyIdentifier, WebExtensionStorageType, const String& dataJSON, CompletionHandler<void(ErrorString)>&&);
     void storageRemove(WebPageProxyIdentifier, WebExtensionStorageType, const Vector<String>& keys, CompletionHandler<void(ErrorString)>&&);
     void storageClear(WebPageProxyIdentifier, WebExtensionStorageType, CompletionHandler<void(ErrorString)>&&);
     void storageSetAccessLevel(WebPageProxyIdentifier, WebExtensionStorageType, WebExtensionStorageAccessLevel, CompletionHandler<void(ErrorString)>&&);
@@ -781,6 +789,9 @@ private:
     MenuItemVector m_mainMenuItems;
 
     bool m_isSessionStorageAllowedInContentScripts { false };
+    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_localStorageStore;
+    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_sessionStorageStore;
+    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_syncStorageStore;
 };
 
 template<typename T>

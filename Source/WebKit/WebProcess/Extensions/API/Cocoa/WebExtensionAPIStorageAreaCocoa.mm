@@ -68,76 +68,72 @@ void WebExtensionAPIStorageArea::get(WebPage* page, id items, Ref<WebExtensionCa
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get
 
+    if (!items)
+        items = NSNull.null;
+
     if (!validateObject(items, @"items", [NSOrderedSet orderedSetWithObjects:NSDictionary.class, NSString.class, @[ NSString.class ], NSNull.class, nil], outExceptionString))
         return;
 
-    auto returnEmptyResult = ^() {
-        callback->call(@{ });
-    };
+    Vector<String> keysVector;
+    NSDictionary *keysWithDefaultValues = dynamic_objc_cast<NSDictionary>(items);
 
-    auto validateJSONAndReturnData = ^(id items, JSONOptionSet options, NSString **outExceptionString) {
-        if (!isValidJSONObject(items, options)) {
-            *outExceptionString = toErrorString(nil, @"items", @"it is not JSON-serializable");
-            return;
-        }
-
-        NSData *data = encodeJSONData(items, options);
-        if (!data) {
-            *outExceptionString = toErrorString(nil, @"items", @"it is not JSON-serializable");
-            return;
-        }
-
-        WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page->webPageProxyIdentifier(), m_type, API::Data::createWithoutCopying(data)->dataReference()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<IPC::DataReference> dataReference, WebKit::WebExtensionContext::ErrorString error) {
-            if (error)
-                callback->reportError(error.value());
-            else
-                callback->call(parseJSON(API::Data::create(dataReference.value())));
-        }, extensionContext().identifier());
-    };
-
-    if ([items isKindOfClass:NSDictionary.class]) {
-        auto *keysWithDefaultValues = (NSDictionary *)items;
+    if (keysWithDefaultValues) {
         if (!keysWithDefaultValues.count) {
-            returnEmptyResult();
+            callback->call(@{ });
             return;
         }
 
-        validateJSONAndReturnData(keysWithDefaultValues, { }, outExceptionString);
-        return;
+        keysVector = makeVector<String>(keysWithDefaultValues.allKeys);
     }
 
-    if ([items isKindOfClass:NSArray.class]) {
-        auto *keys = (NSArray *)items;
+    if (NSArray *keys = dynamic_objc_cast<NSArray>(items)) {
         if (!keys.count) {
-            returnEmptyResult();
+            callback->call(@{ });
             return;
         }
 
-        validateJSONAndReturnData(keys, { JSONOptions::FragmentsAllowed }, outExceptionString);
-        return;
+        keysVector = makeVector<String>(keys);
     }
 
-    if ([items isKindOfClass:NSString.class]) {
-        auto *key = (NSString *)items;
+    if (NSString *key = dynamic_objc_cast<NSString>(items)) {
         if (!key.length) {
-            returnEmptyResult();
+            callback->call(@{ });
             return;
         }
 
-        validateJSONAndReturnData(key, { JSONOptions::FragmentsAllowed }, outExceptionString);
-        return;
+        keysVector = { key };
     }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page->webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> dataJSON, WebKit::WebExtensionContext::ErrorString error) {
+        if (error)
+            callback->reportError(error.value());
+        else {
+            NSDictionary *data = parseJSON(dataJSON.value());
+            NSDictionary<NSString *, id> *deserializedData = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
+                return parseJSON(jsonString, { JSONOptions::FragmentsAllowed });
+            });
+
+            deserializedData = keysWithDefaultValues ? mergeDictionaries(deserializedData, keysWithDefaultValues) : deserializedData;
+            callback->call(deserializedData);
+        }
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIStorageArea::getBytesInUse(WebPage* page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/getBytesInUse
 
+    if (!keys)
+        keys = NSNull.null;
+
     if (keys && !validateObject(keys, @"keys", [NSOrderedSet orderedSetWithObjects:NSString.class, @[ NSString.class ], NSNull.class, nil], outExceptionString))
         return;
 
-    // If empty, return the total storage size.
-    Vector<String> keysVector = [keys isKindOfClass:NSArray.class] ? makeVector<String>((NSArray *)keys) : Vector<String> { (NSString *)keys };
+    Vector<String> keysVector;
+    if (NSArray *keysArray = dynamic_objc_cast<NSArray>(keys))
+        keysVector = makeVector<String>(keysArray);
+    else if (NSString *key = dynamic_objc_cast<NSString>(keys))
+        keysVector = { key };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(page->webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<size_t> size, WebKit::WebExtensionContext::ErrorString error) {
         if (error)
@@ -161,13 +157,16 @@ void WebExtensionAPIStorageArea::set(WebPage* page, NSDictionary *items, Ref<Web
         return;
     }
 
-    auto *data = encodeJSONData(items);
-    if (!data) {
-        *outExceptionString = toErrorString(nil, @"items", @"it is not JSON-serializable");
+    NSDictionary<NSString *, NSString *> *serializedData = mapObjects(items, ^NSString *(NSString *key, id object) {
+        return encodeJSONString(object, { JSONOptions::FragmentsAllowed });
+    });
+
+    if (anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem)) {
+        *outExceptionString = toErrorString(nil, @"items", @"exceeded maximum size for a single item");
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page->webPageProxyIdentifier(), m_type, API::Data::createWithoutCopying(data)->dataReference()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page->webPageProxyIdentifier(), m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else

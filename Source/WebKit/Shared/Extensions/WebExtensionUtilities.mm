@@ -369,6 +369,38 @@ NSString *toWebAPI(NSLocale *locale)
     return locale.languageCode;
 }
 
+size_t storageSizeOf(NSString *keyOrValue)
+{
+    // The size of a key is the length of the key string.
+    // The size of a value is the length of the JSON representation of the value.
+    // If keyOrValue represents a value we assume that the string is the JSON representation.
+    return [keyOrValue lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+}
+
+size_t storageSizeOf(NSDictionary<NSString *, NSString *> *keysAndValues)
+{
+    __block double storageSize = 0;
+    [keysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        storageSize += storageSizeOf(key) + storageSizeOf(value);
+    }];
+
+    return storageSize;
+}
+
+bool anyItemsExceedQuota(NSDictionary *items, size_t quota)
+{
+    __block BOOL itemExceededQuota = NO;
+    [items enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        size_t sizeOfCurrentItem = storageSizeOf(key) + storageSizeOf(value);
+        if (sizeOfCurrentItem > quota) {
+            itemExceededQuota = YES;
+            *stop = YES;
+        }
+    }];
+
+    return itemExceededQuota;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

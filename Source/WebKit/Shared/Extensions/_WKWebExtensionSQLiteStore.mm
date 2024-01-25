@@ -32,6 +32,7 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WebExtensionConstants.h"
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
 #import "_WKWebExtensionSQLiteRow.h"

@@ -32,14 +32,18 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
 #import "WebExtensionConstants.h"
 #import "WebExtensionStorageAccessLevel.h"
 #import "WebExtensionStorageType.h"
 #import "WebExtensionUtilities.h"
+#import "_WKWebExtensionStorageSQLiteStore.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
-void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const IPC::DataReference& dataReference, CompletionHandler<void(std::optional<IPC::DataReference>, ErrorString)>&& completionHandler)
+void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const Vector<String>& keys, CompletionHandler<void(std::optional<String> dataJSON, ErrorString)>&& completionHandler)
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.get()", (NSString *)toAPIPrefixString(storageType)];
 
@@ -48,8 +52,13 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    // FIXME: <https://webkit.org/b/267649> Get values from StorageAPISQLiteStore.
-    completionHandler(std::nullopt, std::nullopt);
+    auto storage = storageForType(storageType);
+    [storage getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *values, NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(std::nullopt, toErrorString(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(encodeJSONString(values), std::nullopt);
+    }).get()];
 }
 
 void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const Vector<String>& keys, CompletionHandler<void(std::optional<size_t> size, ErrorString)>&& completionHandler)
@@ -61,11 +70,16 @@ void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPagePro
         return;
     }
 
-    // FIXME: <https://webkit.org/b/267649> Get storage size from StorageAPISQLiteStore.
-    completionHandler(std::nullopt, std::nullopt);
+    auto storage = storageForType(storageType);
+    [storage getStorageSizeForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](size_t size, NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(std::nullopt, toErrorString(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(size, std::nullopt);
+    }).get()];
 }
 
-void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const IPC::DataReference& dataReference, CompletionHandler<void(ErrorString)>&& completionHandler)
+void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const String& dataJSON, CompletionHandler<void(ErrorString)>&& completionHandler)
 {
     static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.set()", (NSString *)toAPIPrefixString(storageType)];
 
@@ -74,8 +88,53 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    // FIXME: <https://webkit.org/b/267649> Set values for StorageAPISQLiteStore.
-    completionHandler(std::nullopt);
+    NSDictionary *data = parseJSON(dataJSON);
+    auto storage = storageForType(storageType);
+
+    [storage getStorageSizeForAllKeysIncludingKeyedData:data withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, storageType, storage, retainData = RetainPtr { data }, completionHandler = WTFMove(completionHandler)](size_t size, NSUInteger numberOfKeys, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString *errorMessage) mutable {
+        if (errorMessage) {
+            completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+            return;
+        }
+
+        if (size > quoataForStorageType(storageType)) {
+            completionHandler(toErrorString(callingAPIName, nil, @"exceeded storage quota"));
+            return;
+        }
+
+        if (storageType == WebExtensionStorageType::Sync && numberOfKeys > webExtensionStorageAreaSyncMaximumItems) {
+            completionHandler(toErrorString(callingAPIName, nil, @"exceeded maximum number of items"));
+            return;
+        }
+
+        [storage setKeyedData:retainData.get() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, retainData, completionHandler = WTFMove(completionHandler)](NSArray *keysSuccessfullySet, NSString *errorMessage) mutable {
+            if (errorMessage)
+                completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+            else
+                completionHandler(std::nullopt);
+
+            auto *data = retainData.get();
+            if (keysSuccessfullySet.count != data.allKeys.count) {
+                // Only fire an onChanged event for the keys that were successfully set.
+                auto *successfullySetData = [NSMutableDictionary dictionaryWithCapacity:keysSuccessfullySet.count];
+                for (NSString *key in keysSuccessfullySet) {
+                    NSString *value = data[key];
+                    ASSERT(value);
+                    if (!value)
+                        continue;
+
+                    successfullySetData[key] = value;
+                }
+
+                if (!successfullySetData.count)
+                    return;
+
+                data = successfullySetData;
+            }
+
+            // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+        }).get()];
+    }).get()];
 }
 
 void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const Vector<String>& keys, CompletionHandler<void(ErrorString)>&& completionHandler)
@@ -87,8 +146,15 @@ void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    // FIXME: <https://webkit.org/b/267649> Remove values from StorageAPISQLiteStore.
-    completionHandler(std::nullopt);
+    auto storage = storageForType(storageType);
+    [storage deleteValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(std::nullopt);
+
+        // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+    }).get()];
 }
 
 void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, CompletionHandler<void(ErrorString)>&& completionHandler)
@@ -100,8 +166,15 @@ void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdenti
         return;
     }
 
-    // FIXME: <https://webkit.org/b/267649> Clear values in StorageAPISQLiteStore.
-    completionHandler(std::nullopt);
+    auto storage = storageForType(storageType);
+    [storage deleteDatabaseWithCompletionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(std::nullopt);
+
+        // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+    }).get()];
 }
 
 void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionStorageType storageType, const WebExtensionStorageAccessLevel accessLevel, CompletionHandler<void(ErrorString)>&& completionHandler)

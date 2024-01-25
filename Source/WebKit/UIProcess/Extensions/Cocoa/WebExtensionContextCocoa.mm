@@ -51,9 +51,11 @@
 #import "WKWebsiteDataStorePrivate.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebExtensionAction.h"
+#import "WebExtensionConstants.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionDynamicScripts.h"
 #import "WebExtensionMenuItemContextParameters.h"
+#import "WebExtensionStorageType.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -70,6 +72,7 @@
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
+#import "_WKWebExtensionStorageSQLiteStore.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
@@ -375,7 +378,10 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
 void WebExtensionContext::invalidateStorage()
 {
     m_storageDirectory = nullString();
-    m_registeredContentScriptsStorage = nil;
+    m_registeredContentScriptsStorage = nullptr;
+    m_localStorageStore = nullptr;
+    m_sessionStorageStore = nullptr;
+    m_syncStorageStore = nullptr;
 }
 
 void WebExtensionContext::setBaseURL(URL&& url)
@@ -3303,11 +3309,11 @@ bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
     return !m_matchedRules.isEmpty();
 }
 
-RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> WebExtensionContext::registeredContentScriptsStore()
+_WKWebExtensionRegisteredScriptsSQLiteStore *WebExtensionContext::registeredContentScriptsStore()
 {
     if (!m_registeredContentScriptsStorage)
         m_registeredContentScriptsStorage = [[_WKWebExtensionRegisteredScriptsSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
-    return m_registeredContentScriptsStorage;
+    return m_registeredContentScriptsStorage.get();
 }
 
 void WebExtensionContext::setSessionStorageAllowedInContentScripts(bool allowed)
@@ -3322,6 +3328,57 @@ void WebExtensionContext::setSessionStorageAllowedInContentScripts(bool allowed)
         return;
 
     extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(allowed), identifier());
+}
+
+size_t WebExtensionContext::quoataForStorageType(WebExtensionStorageType storageType)
+{
+    switch (storageType) {
+    case WebExtensionStorageType::Local:
+        return hasPermission(_WKWebExtensionPermissionUnlimitedStorage) ? webExtensionUnlimitedStorageQuotaBytes : webExtensionStorageAreaLocalQuotaBytes;
+    case WebExtensionStorageType::Session:
+        return webExtensionStorageAreaSessionQuotaBytes;
+    case WebExtensionStorageType::Sync:
+        return webExtensionStorageAreaSyncQuotaBytes;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+_WKWebExtensionStorageSQLiteStore *WebExtensionContext::localStorageStore()
+{
+    if (!m_localStorageStore)
+        m_localStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Local directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+    return m_localStorageStore.get();
+}
+
+_WKWebExtensionStorageSQLiteStore *WebExtensionContext::sessionStorageStore()
+{
+    if (!m_sessionStorageStore)
+        m_sessionStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Session directory:storageDirectory() usesInMemoryDatabase:true];
+    return m_sessionStorageStore.get();
+}
+
+_WKWebExtensionStorageSQLiteStore *WebExtensionContext::syncStorageStore()
+{
+    if (!m_syncStorageStore)
+        m_syncStorageStore = [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier storageType:WebExtensionStorageType::Sync directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+    return m_syncStorageStore.get();
+}
+
+_WKWebExtensionStorageSQLiteStore *WebExtensionContext::storageForType(WebExtensionStorageType storageType)
+{
+    switch (storageType) {
+    case WebExtensionStorageType::Local:
+        return localStorageStore();
+    case WebExtensionStorageType::Session:
+        return sessionStorageStore();
+    case WebExtensionStorageType::Sync:
+        return syncStorageStore();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
 }
 
 } // namespace WebKit

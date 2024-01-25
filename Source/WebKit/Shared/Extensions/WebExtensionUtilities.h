@@ -62,6 +62,15 @@ NSString *toWebAPI(NSLocale *);
 /// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.
 constexpr size_t webExtensionMaxMessageLength = 1024 * 1024 * 64;
 
+/// Returns the storage size of a string.
+size_t storageSizeOf(NSString *);
+
+/// Returns the storage size of all of the key value pairs in a dictionary.
+size_t storageSizeOf(NSDictionary<NSString *, NSString *> *);
+
+/// Returns true if the size of any item in the dictionary exceeds the given quota.
+bool anyItemsExceedQuota(NSDictionary *, size_t quota);
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
