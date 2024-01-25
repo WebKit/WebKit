@@ -239,6 +239,8 @@ Node::InsertedIntoAncestorResult HTMLObjectElement::insertedIntoAncestor(Inserti
 {
     HTMLPlugInImageElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     FormListedElement::elementInsertedIntoAncestor(*this, insertionType);
+    if (!insertionType.connectedToDocument)
+        return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 

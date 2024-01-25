@@ -123,6 +123,8 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     ValidatedFormListedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
+    if (!insertionType.connectedToDocument)
+        return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
