@@ -22,7 +22,7 @@
 
 messages -> WebPageProxy {
     # UI messages
-    CreateNewPage(struct WebKit::FrameInfoData originatingFrameInfoData, WebKit::WebPageProxyIdentifier originatingPageID, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (std::optional<WebCore::PageIdentifier> newPageID, std::optional<WebKit::WebPageCreationParameters> newPageParameters) Synchronous
+    CreateNewPage(struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (std::optional<WebCore::PageIdentifier> newPageID, std::optional<WebKit::WebPageCreationParameters> newPageParameters) Synchronous
     ShowPage()
     ClosePage()
     RunJavaScriptAlert(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> () Synchronous
@@ -102,9 +102,9 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionAsync(struct WebKit::NavigationActionPolicyParameters parameters) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionSync(struct WebKit::NavigationActionPolicyParameters parameters) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
-    DecidePolicyForNewWindowAction(struct WebKit::FrameInfoData frameInfo, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName) -> (struct WebKit::PolicyDecision PolicyDecision)
+    DecidePolicyForNavigationActionAsync(struct WebKit::NavigationActionData data) -> (struct WebKit::PolicyDecision PolicyDecision)
+    DecidePolicyForNavigationActionSync(struct WebKit::NavigationActionData data) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
+    DecidePolicyForNewWindowAction(struct WebKit::NavigationActionData navigationActionData, String frameName) -> (struct WebKit::PolicyDecision PolicyDecision)
 
     # Progress messages
     DidChangeProgress(double value)
@@ -135,7 +135,7 @@ messages -> WebPageProxy {
     DidDisplayInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, WebKit::UserData userData)
-    DidSameDocumentNavigationForFrameViaJSHistoryAPI(WebCore::FrameIdentifier frameID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
+    DidSameDocumentNavigationForFrameViaJSHistoryAPI(enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
     DidChangeMainDocument(WebCore::FrameIdentifier frameID)
     DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
     DidDestroyNavigation(uint64_t navigationID)

@@ -36,7 +36,7 @@
 #include "LocalFrameCreationParameters.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
-#include "NavigationActionPolicyParameters.h"
+#include "NavigationActionData.h"
 #include "PageClient.h"
 #include "RemotePageProxy.h"
 #include "SuspendedPageProxy.h"
@@ -446,12 +446,12 @@ void ProvisionalPageProxy::didChangeProvisionalURLForFrame(FrameIdentifier frame
     m_page->didChangeProvisionalURLForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url));
 }
 
-void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(NavigationActionPolicyParameters&& parameters, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
-    if (!validateInput(parameters.frameInfo.frameID, parameters.navigationID))
+    if (!validateInput(data.frameInfo.frameID, data.navigationID))
         return completionHandler({ });
 
-    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, WTFMove(parameters), WTFMove(completionHandler));
+    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(completionHandler));
 }
 
 void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -488,10 +488,10 @@ void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIde
     m_page->backForwardGoToItemShared(identifier, WTFMove(completionHandler));
 }
 
-void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionPolicyParameters&& parameters, CompletionHandler<void(PolicyDecision&&)>&& reply)
+void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& reply)
 {
-    auto& frameInfo = parameters.frameInfo;
-    auto navigationID = parameters.navigationID;
+    auto& frameInfo = data.frameInfo;
+    auto navigationID = data.navigationID;
     if (!frameInfo.isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameInfo.frameID) || navigationID != m_navigationID) {
         reply(PolicyDecision { std::nullopt, WebCore::PolicyAction::Ignore, navigationID });
         return;
@@ -503,7 +503,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionP
     }
     ASSERT(m_mainFrame);
 
-    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, WTFMove(parameters), WTFMove(reply));
+    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(reply));
 }
 
 void ProvisionalPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)

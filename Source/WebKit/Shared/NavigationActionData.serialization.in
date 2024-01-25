@@ -51,4 +51,10 @@ struct WebKit::NavigationActionData {
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif
+    WebKit::FrameInfoData originatingFrameInfoData;
+    std::optional<WebKit::WebPageProxyIdentifier> originatingPageID;
+    WebKit::FrameInfoData frameInfo;
+    uint64_t navigationID;
+    WebCore::ResourceRequest originalRequest;
+    [EncodeRequestBody] WebCore::ResourceRequest request;
 };

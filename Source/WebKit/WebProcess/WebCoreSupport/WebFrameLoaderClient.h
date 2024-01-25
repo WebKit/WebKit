@@ -30,10 +30,14 @@
 namespace WebKit {
 
 class WebFrame;
+struct NavigationActionData;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
+
+    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags) const;
+
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&);
 

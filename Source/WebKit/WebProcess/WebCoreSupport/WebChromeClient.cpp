@@ -313,6 +313,8 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 
     auto& mouseEventData = navigationAction.mouseEventData();
 
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+
     NavigationActionData navigationActionData {
         navigationAction.type(),
         modifiersForNavigationAction(navigationAction),
@@ -344,11 +346,15 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
+        webFrame->info(), /* originatingFrameInfoData */
+        webFrame->page()->webPageProxyIdentifier(),
+        webFrame->info(), /* frameInfo */
+        0, /* navigationID */
+        navigationAction.originalRequest(), /* originalRequest */
+        navigationAction.originalRequest() /* request */
     };
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
-
-    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.originalRequest(), windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
+    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     if (!sendResult.succeeded())
         return nullptr;
 

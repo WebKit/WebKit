@@ -31,7 +31,6 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
-#include "NavigationActionPolicyParameters.h"
 #include "WebFrame.h"
 #include "WebMouseEvent.h"
 #include "WebPage.h"
@@ -63,38 +62,32 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
 {
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags) const
 {
-    auto* webPage = m_frame->page();
+    RefPtr webPage = m_frame->page();
     if (!webPage) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because there's no web page");
-        function(PolicyAction::Ignore);
-        return;
+        return std::nullopt;
     }
-
-    LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
 
     // Always ignore requests with empty URLs.
     if (request.isEmpty()) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because request is empty");
-        function(PolicyAction::Ignore);
-        return;
+        return std::nullopt;
     }
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::Yes);
+    if (!navigationAction.requester()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
 
-    ASSERT(navigationAction.requester());
-    auto& requester = navigationAction.requester().value();
-
+    auto& requester = *navigationAction.requester();
     if (!requester.frameID) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because frame does not exist");
-        function(PolicyAction::Ignore);
-        ASSERT_NOT_REACHED();
-        return;
+        return std::nullopt;
     }
 
     RefPtr requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
-
     auto originatingFrameID = *requester.frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     if (auto parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
@@ -120,7 +113,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
 
     auto& mouseEventData = navigationAction.mouseEventData();
-    NavigationActionData navigationActionData {
+    return NavigationActionData {
         navigationAction.type(),
         modifiersForNavigationAction(navigationAction),
         mouseButton(navigationAction),
@@ -149,15 +142,34 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
         requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTFMove(*hitTestResult), false)) : std::nullopt
+        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTFMove(*hitTestResult), false)) : std::nullopt,
 #endif
+        WTFMove(originatingFrameInfoData),
+        originatingPageID,
+        m_frame->info(),
+        navigationID,
+        navigationAction.originalRequest(),
+        request
     };
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+{
+    LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
+
+    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTFMove(hitTestResult), hasOpener, sandboxFlags);
+    if (!navigationActionData)
+        return function(PolicyAction::Ignore);
+
+    RefPtr webPage = m_frame->page();
+
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::Yes);
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
 #if PLATFORM(COCOA)
         if (navigationAction.processingUserGesture() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AsyncFragmentNavigationPolicyDecision)) {
-            auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(NavigationActionPolicyParameters { m_frame->info(), navigationID, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }));
+            auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(*navigationActionData));
             if (!sendResult.succeeded()) {
                 WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()));
                 m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { });
@@ -170,13 +182,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             return;
         }
 #endif
-        webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(NavigationActionPolicyParameters { m_frame->info(), navigationID, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }), [] (PolicyDecision&&) { });
+        webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [] (PolicyDecision&&) { });
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { std::nullopt, PolicyAction::Use });
         return;
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(NavigationActionPolicyParameters { m_frame->info(), navigationID, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.originalRequest(), request }), [thisPointerForLog = this, frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [thisPointerForLog = this, frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(thisPointerForLog);
 #endif

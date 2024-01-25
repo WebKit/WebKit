@@ -33,7 +33,6 @@
 #include "HandleMessage.h"
 #include "NativeWebMouseEvent.h"
 #include "NavigationActionData.h"
-#include "NavigationActionPolicyParameters.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"
@@ -174,18 +173,18 @@ void RemotePageProxy::didCommitLoadForFrame(WebCore::FrameIdentifier frameID, Fr
     frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
 }
 
-void RemotePageProxy::decidePolicyForNavigationActionAsync(NavigationActionPolicyParameters&& parameters, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void RemotePageProxy::decidePolicyForNavigationActionAsync(NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     if (!m_page)
         return completionHandler({ });
-    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, WTFMove(parameters), WTFMove(completionHandler));
+    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(completionHandler));
 }
 
-void RemotePageProxy::decidePolicyForNavigationActionSync(NavigationActionPolicyParameters&& parameters, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void RemotePageProxy::decidePolicyForNavigationActionSync(NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     if (!m_page)
         return completionHandler({ });
-    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, WTFMove(parameters), WTFMove(completionHandler));
+    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(completionHandler));
 }
 
 void RemotePageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
