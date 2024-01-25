@@ -46,11 +46,19 @@ public:
     const CSSValue& right() const { return m_right; }
     const CSSValue& bottom() const { return m_bottom; }
     const CSSValue& left() const { return m_left; }
+    Ref<CSSValue> protectedTop() const { return m_top; }
+    Ref<CSSValue> protectedRight() const { return m_right; }
+    Ref<CSSValue> protectedBottom() const { return m_bottom; }
+    Ref<CSSValue> protectedLeft() const { return m_left; }
 
     const CSSValue* topLeftRadius() const { return m_topLeftRadius.get(); }
     const CSSValue* topRightRadius() const { return m_topRightRadius.get(); }
     const CSSValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
     const CSSValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+    RefPtr<CSSValue> protectedTopLeftRadius() const { return m_topLeftRadius; }
+    RefPtr<CSSValue> protectedTopRightRadius() const { return m_topRightRadius; }
+    RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
+    RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
     String customCSSText() const;
     bool equals(const CSSInsetShapeValue&) const;
@@ -76,6 +84,9 @@ public:
     const CSSValue* radius() const { return m_radius.get(); }
     const CSSValue* centerX() const { return m_centerX.get(); }
     const CSSValue* centerY() const { return m_centerY.get(); }
+    RefPtr<CSSValue> protectedRadius() const { return m_radius; }
+    RefPtr<CSSValue> protectedCenterX() const { return m_centerX; }
+    RefPtr<CSSValue> protectedCenterY() const { return m_centerY; }
 
     String customCSSText() const;
     bool equals(const CSSCircleValue&) const;
@@ -96,6 +107,10 @@ public:
     const CSSValue* radiusY() const { return m_radiusY.get(); }
     const CSSValue* centerX() const { return m_centerX.get(); }
     const CSSValue* centerY() const { return m_centerY.get(); }
+    RefPtr<CSSValue> protectedRadiusX() const { return m_radiusX; }
+    RefPtr<CSSValue> protectedRadiusY() const { return m_radiusY; }
+    RefPtr<CSSValue> protectedCenterX() const { return m_centerX; }
+    RefPtr<CSSValue> protectedCenterY() const { return m_centerY; }
 
     String customCSSText() const;
     bool equals(const CSSEllipseValue&) const;
@@ -132,11 +147,19 @@ public:
     const CSSValue& right() const { return m_right; }
     const CSSValue& bottom() const { return m_bottom; }
     const CSSValue& left() const { return m_left; }
+    Ref<CSSValue> protectedTop() const { return m_top; }
+    Ref<CSSValue> protectedRight() const { return m_right; }
+    Ref<CSSValue> protectedBottom() const { return m_bottom; }
+    Ref<CSSValue> protectedLeft() const { return m_left; }
 
     const CSSValue* topLeftRadius() const { return m_topLeftRadius.get(); }
     const CSSValue* topRightRadius() const { return m_topRightRadius.get(); }
     const CSSValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
     const CSSValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+    RefPtr<CSSValue> protectedTopLeftRadius() const { return m_topLeftRadius; }
+    RefPtr<CSSValue> protectedTopRightRadius() const { return m_topRightRadius; }
+    RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
+    RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
     String customCSSText() const;
     bool equals(const CSSRectShapeValue&) const;
@@ -163,11 +186,19 @@ public:
     const CSSValue& insetY() const { return m_insetY; }
     const CSSValue& width() const { return m_width; }
     const CSSValue& height() const { return m_height; }
+    Ref<CSSValue> protectedInsetX() const { return m_insetX; }
+    Ref<CSSValue> protectedInsetY() const { return m_insetY; }
+    Ref<CSSValue> protectedWidth() const { return m_width; }
+    Ref<CSSValue> protectedHeight() const { return m_height; }
 
     const CSSValue* topLeftRadius() const { return m_topLeftRadius.get(); }
     const CSSValue* topRightRadius() const { return m_topRightRadius.get(); }
     const CSSValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
     const CSSValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+    RefPtr<CSSValue> protectedTopLeftRadius() const { return m_topLeftRadius; }
+    RefPtr<CSSValue> protectedTopRightRadius() const { return m_topRightRadius; }
+    RefPtr<CSSValue> protectedBottomRightRadius() const { return m_bottomRightRadius; }
+    RefPtr<CSSValue> protectedBottomLeftRadius() const { return m_bottomLeftRadius; }
 
     String customCSSText() const;
     bool equals(const CSSXywhValue&) const;

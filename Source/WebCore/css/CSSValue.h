@@ -184,7 +184,9 @@ public:
     inline int integer() const;
 
     inline const CSSValue& first() const; // CSSValuePair
+    Ref<CSSValue> protectedFirst() const; // CSSValuePair
     inline const CSSValue& second() const; // CSSValuePair
+    Ref<CSSValue> protectedSecond() const; // CSSValuePair
     inline const Quad& quad() const; // CSSValueQuad
     inline const Rect& rect() const; // CSSSValueRect
 

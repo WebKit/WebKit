@@ -37,6 +37,8 @@ public:
 
     const CSSValue& first() const { return m_first; }
     const CSSValue& second() const { return m_second; }
+    Ref<CSSValue> protectedFirst() const { return m_first; }
+    Ref<CSSValue> protectedSecond() const { return m_second; }
 
     String customCSSText() const;
     bool equals(const CSSValuePair&) const;
@@ -60,9 +62,19 @@ inline const CSSValue& CSSValue::first() const
     return downcast<CSSValuePair>(*this).first();
 }
 
+inline Ref<CSSValue> CSSValue::protectedFirst() const
+{
+    return downcast<CSSValuePair>(*this).protectedFirst();
+}
+
 inline const CSSValue& CSSValue::second() const
 {
     return downcast<CSSValuePair>(*this).second();
+}
+
+inline Ref<CSSValue> CSSValue::protectedSecond() const
+{
+    return downcast<CSSValuePair>(*this).protectedSecond();
 }
 
 } // namespace WebCore

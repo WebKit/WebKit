@@ -74,6 +74,7 @@ public:
     // Consider removing these functions and having callers use size() and operator[] instead.
     unsigned length() const { return size(); }
     const CSSValue* item(unsigned index) const { return index < size() ? &(*this)[index] : nullptr; }
+    RefPtr<const CSSValue> protectedItem(unsigned index) const { return item(index); }
     const CSSValue* itemWithoutBoundsCheck(unsigned index) const { return &(*this)[index]; }
 
 protected:
