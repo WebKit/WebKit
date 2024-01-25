@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <PDFKit/PDFKit.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -74,6 +75,14 @@
 #endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+@interface PDFDocument ()
+-(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
+-(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
+@property (readwrite, nonatomic) BOOL hasHighLatencyDataProvider;
+@end
+#endif // HAVE(INCREMENTAL_PDF_APIS)
 
 #if ENABLE(UNIFIED_PDF)
 @interface PDFPage (IPI)

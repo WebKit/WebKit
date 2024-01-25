@@ -43,7 +43,7 @@ OBJC_CLASS PDFLayerController;
 
 namespace WebKit {
 
-class PDFPlugin;
+class PDFPluginBase;
 
 class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation> {
 public:

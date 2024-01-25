@@ -28,12 +28,17 @@
 
 #if ENABLE(PDF_PLUGIN)
 
+#import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "PDFIncrementalLoader.h"
+#import "PDFKitSPI.h"
 #import "PluginView.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebLoaderStrategy.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import "WebProcess.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <PDFKit/PDFKit.h>
 #import <WebCore/AXObjectCache.h>
@@ -51,6 +56,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
+#import <wtf/text/TextStream.h>
 
 #import "PDFKitSoftLink.h"
 
@@ -90,6 +96,9 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     : m_frame(*WebFrame::fromCoreFrame(*element.document().frame()))
     , m_element(element)
     , m_identifier(PDFPluginIdentifier::generate())
+#if HAVE(INCREMENTAL_PDF_APIS)
+    , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
+#endif
 {
 }
 
@@ -103,6 +112,13 @@ PDFPluginBase::~PDFPluginBase()
 
 void PDFPluginBase::teardown()
 {
+    m_data = nil;
+
+    if (m_incrementalLoader) {
+        m_incrementalLoader->clear();
+        m_incrementalLoader = nullptr;
+    }
+
     destroyScrollbar(ScrollbarOrientation::Horizontal);
     destroyScrollbar(ScrollbarOrientation::Vertical);
 }
@@ -177,6 +193,53 @@ void PDFPluginBase::ensureDataBufferLength(uint64_t targetLength)
         CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
 }
 
+bool PDFPluginBase::haveStreamedDataForRange(uint64_t offset, size_t count) const
+{
+    if (!m_data)
+        return false;
+
+    return streamedBytes() >= offset + count;
+}
+
+bool PDFPluginBase::haveDataForRange(uint64_t offset, size_t count) const
+{
+    if (!m_data)
+        return false;
+
+    uint64_t dataLength = CFDataGetLength(m_data.get());
+    return offset + count <= dataLength;
+}
+
+size_t PDFPluginBase::copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const
+{
+    ASSERT(isMainRunLoop());
+    ASSERT(documentFinishedLoading());
+
+    if (!haveStreamedDataForRange(sourcePosition, count))
+        return 0;
+
+    memcpy(buffer, CFDataGetBytePtr(m_data.get()) + sourcePosition, count);
+    return count;
+}
+
+const uint8_t* PDFPluginBase::dataPtrForRange(uint64_t sourcePosition, size_t count) const
+{
+    ASSERT(isMainRunLoop());
+
+    if (!haveDataForRange(sourcePosition, count))
+        return nullptr;
+
+    return CFDataGetBytePtr(m_data.get()) + sourcePosition;
+}
+
+void PDFPluginBase::insertRangeRequestData(uint64_t offset, const Vector<uint8_t>& requestData)
+{
+    auto requiredLength = offset + requestData.size();
+    ensureDataBufferLength(requiredLength);
+
+    memcpy(CFDataGetMutableBytePtr(m_data.get()) + offset, requestData.data(), requestData.size());
+}
+
 void PDFPluginBase::streamDidReceiveResponse(const ResourceResponse& response)
 {
     m_suggestedFilename = response.suggestedFilename();
@@ -195,7 +258,12 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
     memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, buffer.data(), buffer.size());
     m_streamedBytes += buffer.size();
 
-    incrementalPDFStreamDidReceiveData(buffer);
+#if !LOG_DISABLED
+    pdfLog(makeString("PDFPluginBase::streamDidReceiveData() - received ", buffer.size(), " bytes, total streamed bytes ", m_streamedBytes));
+#endif
+
+    if (m_incrementalLoader)
+        m_incrementalLoader->incrementalPDFStreamDidReceiveData(buffer);
 }
 
 void PDFPluginBase::streamDidFinishLoading()
@@ -206,6 +274,14 @@ void PDFPluginBase::streamDidFinishLoading()
     addArchiveResource();
 
     m_documentFinishedLoading = true;
+
+    auto incrementalPDFStreamDidFinishLoading = [&]() {
+        if (!m_incrementalLoader)
+            return false;
+
+        m_incrementalLoader->incrementalPDFStreamDidFinishLoading();
+        return true;
+    };
 
     if (!incrementalPDFStreamDidFinishLoading()) {
         createPDFDocument();
@@ -218,8 +294,98 @@ void PDFPluginBase::streamDidFinishLoading()
 void PDFPluginBase::streamDidFail()
 {
     m_data = nullptr;
-    incrementalPDFStreamDidFail();
+    if (m_incrementalLoader)
+        m_incrementalLoader->incrementalPDFStreamDidFail();
 }
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+
+void PDFPluginBase::adoptBackgroundThreadDocument(RetainPtr<PDFDocument>&& backgroundThreadDocument)
+{
+    if (m_hasBeenDestroyed)
+        return;
+
+    ASSERT(!m_pdfDocument);
+    ASSERT(isMainRunLoop());
+
+#if !LOG_DISABLED
+    pdfLog("Adopting PDFDocument from background thread"_s);
+#endif
+
+    m_pdfDocument = WTFMove(backgroundThreadDocument);
+    // FIXME: Can we throw away the m_incrementalLoader?
+
+    // If the plugin is being destroyed, no point in doing any more PDF work
+    if (m_isBeingDestroyed)
+        return;
+
+    installPDFDocument();
+}
+
+void PDFPluginBase::maybeClearHighLatencyDataProviderFlag()
+{
+    if (!m_pdfDocument || !m_documentFinishedLoading)
+        return;
+
+    if ([m_pdfDocument.get() respondsToSelector:@selector(setHasHighLatencyDataProvider:)])
+        [m_pdfDocument.get() setHasHighLatencyDataProvider:NO];
+}
+
+void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& streamLoaderClient, uint64_t requestIdentifier, uint64_t position, size_t count)
+{
+    if (!m_incrementalLoader)
+        return;
+
+    if (!m_frame)
+        return;
+
+    RefPtr coreFrame = m_frame->coreLocalFrame();
+    if (!coreFrame)
+        return;
+
+    RefPtr documentLoader = coreFrame->loader().documentLoader();
+    if (!documentLoader)
+        return;
+
+    auto resourceRequest = documentLoader->request();
+    resourceRequest.setURL(m_view->mainResourceURL());
+    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
+    resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
+
+    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTFMove(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
+        incrementalLoader->streamLoaderDidStart(requestIdentifier, WTFMove(streamLoader));
+    });
+}
+
+void PDFPluginBase::receivedNonLinearizedPDFSentinel()
+{
+    m_incrementalPDFLoadingEnabled = false;
+
+    if (m_hasBeenDestroyed)
+        return;
+
+    if (!isMainRunLoop()) {
+#if !LOG_DISABLED
+        pdfLog("Disabling incremental PDF loading on background thread"_s);
+#endif
+        callOnMainRunLoop([this, protectedThis = Ref { *this }] {
+            receivedNonLinearizedPDFSentinel();
+        });
+        return;
+    }
+
+    if (m_incrementalLoader)
+        m_incrementalLoader->receivedNonLinearizedPDFSentinel();
+
+    if (!m_documentFinishedLoading || m_pdfDocument)
+        return;
+
+    createPDFDocument();
+    installPDFDocument();
+    tryRunScriptsInPDFDocument();
+}
+
+#endif // HAVE(INCREMENTAL_PDF_APIS)
 
 void PDFPluginBase::addArchiveResource()
 {
@@ -637,6 +803,44 @@ bool PDFPluginBase::supportsForms()
     // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
     return isFullFramePlugin();
 }
+
+#if !LOG_DISABLED
+
+void PDFPluginBase::pdfLog(const String& message)
+{
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
+            pdfLog(message);
+        });
+        return;
+    }
+
+    LOG_WITH_STREAM(IncrementalPDF, stream << message);
+    verboseLog();
+    LOG_WITH_STREAM(IncrementalPDFVerbose, stream << message);
+}
+
+void PDFPluginBase::verboseLog()
+{
+    ASSERT(isMainRunLoop());
+
+    TextStream stream;
+    stream << "\n";
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    if (m_incrementalLoader)
+        m_incrementalLoader->logState(stream);
+#endif
+
+    stream << "The main document loader has finished loading " << m_streamedBytes << " bytes, and is";
+    if (!m_documentFinishedLoading)
+        stream << " not";
+    stream << " complete";
+
+    LOG(IncrementalPDFVerbose, "%s", stream.release().utf8().data());
+}
+
+#endif // !LOG_DISABLED
 
 } // namespace WebKit
 

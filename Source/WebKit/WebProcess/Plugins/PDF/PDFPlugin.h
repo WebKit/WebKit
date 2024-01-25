@@ -117,19 +117,6 @@ public:
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
     WebCore::AXObjectCache* axObjectCache() const;
 
-#if HAVE(INCREMENTAL_PDF_APIS)
-    void getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t count)>&&);
-    size_t getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count);
-    void receivedNonLinearizedPDFSentinel();
-    bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
-#endif
-
-#if HAVE(INCREMENTAL_PDF_APIS) && !LOG_DISABLED
-    void pdfLog(const String& event);
-    size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
-    size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
-#endif
-
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
@@ -200,10 +187,6 @@ private:
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 
-    void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&) override;
-    bool incrementalPDFStreamDidFinishLoading() override;
-    void incrementalPDFStreamDidFail() override;
-
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
 
     void updatePageAndDeviceScaleFactors();
@@ -230,90 +213,6 @@ private:
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 
     URL m_sourceURL;
-
-#if HAVE(INCREMENTAL_PDF_APIS)
-    void threadEntry(Ref<PDFPlugin>&&);
-    void adoptBackgroundThreadDocument();
-
-    bool documentFinishedLoading() { return m_documentFinishedLoading; }
-    uint64_t identifierForLoader(WebCore::NetscapePlugInStreamLoader* loader) { return m_streamLoaderMap.get(loader); }
-    void removeOutstandingByteRangeRequest(uint64_t identifier) { m_outstandingByteRangeRequests.remove(identifier); }
-
-    class PDFPluginStreamLoaderClient : public RefCounted<PDFPluginStreamLoaderClient>,
-                                        public WebCore::NetscapePlugInStreamLoaderClient {
-    public:
-        PDFPluginStreamLoaderClient(PDFPlugin& pdfPlugin)
-            : m_pdfPlugin(pdfPlugin)
-        {
-        }
-
-        ~PDFPluginStreamLoaderClient() = default;
-
-        void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
-        void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) final;
-        void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const WebCore::SharedBuffer&) final;
-        void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) final;
-        void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) final;
-
-    private:
-        WeakPtr<PDFPlugin> m_pdfPlugin;
-    };
-
-    class ByteRangeRequest : public Identified<ByteRangeRequest> {
-    public:
-        ByteRangeRequest() = default;
-        ByteRangeRequest(uint64_t position, size_t count, CompletionHandler<void(const uint8_t*, size_t count)>&& completionHandler)
-            : m_position(position)
-            , m_count(count)
-            , m_completionHandler(WTFMove(completionHandler))
-        {
-        }
-
-        WebCore::NetscapePlugInStreamLoader* streamLoader() { return m_streamLoader; }
-        void setStreamLoader(WebCore::NetscapePlugInStreamLoader* loader) { m_streamLoader = loader; }
-        void clearStreamLoader();
-        void addData(const uint8_t* data, size_t count) { m_accumulatedData.append(data, count); }
-
-        void completeWithBytes(const uint8_t*, size_t, PDFPlugin&);
-        void completeWithAccumulatedData(PDFPlugin&);
-
-        bool maybeComplete(PDFPlugin&);
-        void completeUnconditionally(PDFPlugin&);
-
-        uint64_t position() const { return m_position; }
-        size_t count() const { return m_count; }
-
-    private:
-        uint64_t m_position { 0 };
-        size_t m_count { 0 };
-        CompletionHandler<void(const uint8_t*, size_t count)> m_completionHandler;
-        Vector<uint8_t> m_accumulatedData;
-        WebCore::NetscapePlugInStreamLoader* m_streamLoader { nullptr };
-    };
-    void unconditionalCompleteOutstandingRangeRequests();
-
-    ByteRangeRequest* byteRangeRequestForLoader(WebCore::NetscapePlugInStreamLoader&);
-    void forgetLoader(WebCore::NetscapePlugInStreamLoader&);
-    void cancelAndForgetLoader(WebCore::NetscapePlugInStreamLoader&);
-    void maybeClearHighLatencyDataProviderFlag();
-
-    RetainPtr<PDFDocument> m_backgroundThreadDocument;
-    RefPtr<Thread> m_pdfThread;
-    HashMap<uint64_t, ByteRangeRequest> m_outstandingByteRangeRequests;
-    Ref<PDFPluginStreamLoaderClient> m_streamLoaderClient;
-    HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, uint64_t> m_streamLoaderMap;
-    RangeSet<WTF::Range<uint64_t>> m_completedRanges;
-    bool m_incrementalPDFLoadingEnabled;
-
-#if !LOG_DISABLED
-    void verboseLog();
-    void logStreamLoader(TextStream&, WebCore::NetscapePlugInStreamLoader&);
-    std::atomic<size_t> m_threadsWaitingOnCallback { 0 };
-    std::atomic<size_t> m_completedRangeRequests { 0 };
-    std::atomic<size_t> m_completedNetworkRangeRequests { 0 };
-#endif
-
-#endif // HAVE(INCREMENTAL_PDF_APIS)
 };
 
 } // namespace WebKit

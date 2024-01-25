@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -3216,6 +3216,8 @@
 		0FDCD7F61D47E92A009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
 		0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationScrollingCoordinator.h; sourceTree = "<group>"; };
 		0FE27FAF2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationScrollingCoordinator.mm; sourceTree = "<group>"; };
+		0FE653202B5F1BFC00EECEA0 /* PDFIncrementalLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFIncrementalLoader.h; path = PDF/PDFIncrementalLoader.h; sourceTree = "<group>"; };
+		0FE653212B5F1BFC00EECEA0 /* PDFIncrementalLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFIncrementalLoader.mm; path = PDF/PDFIncrementalLoader.mm; sourceTree = "<group>"; };
 		0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessTerminationReason.cpp; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCaptureSampleManagerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -14920,6 +14922,8 @@
 			children = (
 				0FFACF022AC2453300ED8DB6 /* UnifiedPDF */,
 				3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */,
+				0FE653202B5F1BFC00EECEA0 /* PDFIncrementalLoader.h */,
+				0FE653212B5F1BFC00EECEA0 /* PDFIncrementalLoader.mm */,
 				2D2ADF0C16363DEC00197E47 /* PDFLayerControllerSPI.h */,
 				2D0035221BC7414800DA8716 /* PDFPlugin.h */,
 				2D0035231BC7414800DA8716 /* PDFPlugin.mm */,

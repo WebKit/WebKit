@@ -53,6 +53,7 @@ class FragmentedSharedBuffer;
 class GraphicsContext;
 class Element;
 class HTMLPlugInElement;
+class NetscapePlugInStreamLoaderClient;
 class ResourceResponse;
 class Scrollbar;
 class SharedBuffer;
@@ -61,6 +62,7 @@ enum class PlatformCursorType : uint8_t;
 
 namespace WebKit {
 
+class PDFIncrementalLoader;
 class PDFPluginAnnotation;
 class PluginView;
 class ShareableBitmap;
@@ -70,9 +72,10 @@ class WebMouseEvent;
 class WebWheelEvent;
 struct WebHitTestResultData;
 
-class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client {
+class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
+    friend class PDFIncrementalLoader;
 public:
     static WebCore::PluginInfo pluginInfo();
 
@@ -190,6 +193,31 @@ public:
     virtual void focusPreviousAnnotation() = 0;
 
     virtual void attemptToUnlockPDF(const String& password) = 0;
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
+    void receivedNonLinearizedPDFSentinel();
+    void startByteRangeRequest(WebCore::NetscapePlugInStreamLoaderClient&, uint64_t requestIdentifier, uint64_t position, size_t count);
+    void adoptBackgroundThreadDocument(RetainPtr<PDFDocument>&&);
+    void maybeClearHighLatencyDataProviderFlag();
+#endif
+
+private:
+    bool documentFinishedLoading() const { return m_documentFinishedLoading; }
+    uint64_t streamedBytes() const { return m_streamedBytes; }
+    void ensureDataBufferLength(uint64_t);
+
+    bool haveStreamedDataForRange(uint64_t offset, size_t count) const;
+    // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
+    bool haveDataForRange(uint64_t offset, size_t count) const;
+
+    void insertRangeRequestData(uint64_t offset, const Vector<uint8_t>&);
+
+    // Returns the number of bytes copied.
+    size_t copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const;
+    // FIXME: It would be nice to avoid having both the "copy into a buffer" and "return a pointer" ways of getting data.
+    const uint8_t* dataPtrForRange(uint64_t sourcePosition, size_t count) const;
+
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
@@ -203,16 +231,11 @@ protected:
     virtual void installPDFDocument() = 0;
     void tryRunScriptsInPDFDocument();
 
-    virtual void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&) { }
-    virtual bool incrementalPDFStreamDidFinishLoading() { return false; }
-    virtual void incrementalPDFStreamDidFail() { }
-
     virtual unsigned firstPageHeight() const = 0;
 
     NSData *originalData() const;
     virtual NSData *liveData() const = 0;
 
-    void ensureDataBufferLength(uint64_t);
     void addArchiveResource();
 
     void invalidateRect(const WebCore::IntRect&);
@@ -257,11 +280,17 @@ protected:
     virtual Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
 
-    // HUD.
 #if ENABLE(PDF_HUD)
     void updatePDFHUDLocation();
     WebCore::IntRect frameForHUDInRootViewCoordinates() const;
     bool hudEnabled() const;
+#endif
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+#if !LOG_DISABLED
+    void pdfLog(const String&);
+    void verboseLog();
+#endif
 #endif
 
     SingleThreadWeakPtr<PluginView> m_view;
@@ -270,11 +299,15 @@ protected:
 
     PDFPluginIdentifier m_identifier;
 
+    // m_data grows as we receive data in the primary request (PDFPluginBase::streamDidReceiveData())
+    // but also as byte range requests are received via m_incrementalLoader, so it may have "holes"
+    // before the main resource is fully loaded.
     RetainPtr<CFMutableDataRef> m_data;
+    uint64_t m_streamedBytes { 0 };
+
     RetainPtr<PDFDocument> m_pdfDocument;
 
     String m_suggestedFilename;
-    uint64_t m_streamedBytes { 0 };
 
     WebCore::IntSize m_size;
     WebCore::AffineTransform m_rootViewToPluginTransform;
@@ -287,7 +320,7 @@ protected:
 
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };
-    bool m_hasBeenDestroyed { false };
+    std::atomic<bool> m_hasBeenDestroyed { false };
     bool m_didRunScripts { false };
 
 #if PLATFORM(MAC)
@@ -295,6 +328,11 @@ protected:
 #endif
     RefPtr<WebCore::Element> m_annotationContainer;
     bool m_pdfDocumentWasMutated { false };
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    RefPtr<PDFIncrementalLoader> m_incrementalLoader;
+    std::atomic<bool> m_incrementalPDFLoadingEnabled { false };
+#endif
 
     // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
     // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
@@ -326,7 +364,6 @@ protected:
     "    margin-top: 110px; "
     "    font-size: 15px; "
     "} "_s;
-
 };
 
 } // namespace WebKit
