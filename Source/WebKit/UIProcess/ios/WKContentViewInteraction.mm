@@ -6057,7 +6057,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)]) {
 #if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
-        RetainPtr uiTextSuggestion = [UITextSuggestion textSuggestionWithInputText:textSuggestion.inputText];
+        RetainPtr uiTextSuggestion = [textSuggestion _uikitTextSuggestion];
 #else
         RetainPtr uiTextSuggestion = textSuggestion;
 #endif

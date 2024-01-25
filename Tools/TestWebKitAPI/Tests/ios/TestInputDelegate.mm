@@ -31,11 +31,22 @@
 #import <wtf/BlockPtr.h>
 
 @implementation TestInputDelegate {
-    BlockPtr<_WKFocusStartsInputSessionPolicy(WKWebView *, id <_WKFocusedElementInfo>)> _focusStartsInputSessionPolicyHandler;
-    BlockPtr<void(WKWebView *, id <_WKFormInputSession>)> _willStartInputSessionHandler;
-    BlockPtr<void(WKWebView *, id <_WKFormInputSession>)> _didStartInputSessionHandler;
+    BlockPtr<_WKFocusStartsInputSessionPolicy(WKWebView *, id<_WKFocusedElementInfo>)> _focusStartsInputSessionPolicyHandler;
+    BlockPtr<void(WKWebView *, id<_WKFormInputSession>)> _willStartInputSessionHandler;
+    BlockPtr<void(WKWebView *, id<_WKFormInputSession>)> _didStartInputSessionHandler;
     BlockPtr<NSDictionary<id, NSString *> *(WKWebView *)> _webViewAdditionalContextForStrongPasswordAssistanceHandler;
-    BlockPtr<BOOL(WKWebView *, id <_WKFocusedElementInfo>)> _focusRequiresStrongPasswordAssistanceHandler;
+    BlockPtr<BOOL(WKWebView *, id<_WKFocusedElementInfo>)> _focusRequiresStrongPasswordAssistanceHandler;
+    BlockPtr<void(WKWebView *, UITextSuggestion *, id<_WKFormInputSession>)> _insertTextSuggestionHandler;
+}
+
+- (void)setInsertTextSuggestionHandler:(void (^)(WKWebView *, UITextSuggestion *, id<_WKFormInputSession>))insertTextSuggestionHandler
+{
+    _insertTextSuggestionHandler = makeBlockPtr(insertTextSuggestionHandler);
+}
+
+- (void(^)(WKWebView *, UITextSuggestion *, id<_WKFormInputSession>))insertTextSuggestionHandler
+{
+    return _insertTextSuggestionHandler.get();
 }
 
 - (void)setFocusStartsInputSessionPolicyHandler:(_WKFocusStartsInputSessionPolicy (^)(WKWebView *, id <_WKFocusedElementInfo>))handler
@@ -117,6 +128,12 @@
     if (_focusRequiresStrongPasswordAssistanceHandler)
         return _focusRequiresStrongPasswordAssistanceHandler(webView, info);
     return NO;
+}
+
+- (void)_webView:(WKWebView *)webView insertTextSuggestion:(UITextSuggestion *)suggestion inInputSession:(id<_WKFormInputSession>)inputSession
+{
+    if (_insertTextSuggestionHandler)
+        _insertTextSuggestionHandler(webView, suggestion, inputSession);
 }
 
 @end
