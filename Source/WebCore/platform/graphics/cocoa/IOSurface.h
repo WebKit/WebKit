@@ -30,7 +30,7 @@
 #include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "ProcessIdentity.h"
-#include <CoreGraphics/CoreGraphics.h>
+#include <CoreGraphics/CGImage.h>
 #include <objc/objc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 

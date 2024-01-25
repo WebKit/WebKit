@@ -181,10 +181,6 @@ private:
     void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
     void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
 
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
-#endif
-
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     RemoteResourceCache m_remoteResourceCache;
@@ -194,9 +190,6 @@ private:
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
 #if HAVE(IOSURFACE)
     Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
-#endif
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
 #endif
 
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayLists WTF_GUARDED_BY_CAPABILITY(workQueue());

@@ -92,10 +92,6 @@ public:
     bool useDynamicContentScalingDisplayListsForDOMRendering() const { return m_useDynamicContentScalingDisplayListsForDOMRendering; }
     void setUseDynamicContentScalingDisplayListsForDOMRendering(bool useDynamicContentScalingDisplayLists) { m_useDynamicContentScalingDisplayListsForDOMRendering = useDynamicContentScalingDisplayLists; }
 
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
-#endif
-
     void gpuProcessConnectionWasDestroyed();
 
 #if PLATFORM(IOS_FAMILY)
@@ -126,10 +122,6 @@ private:
     WebCore::LayerPool m_layerPool;
 
     RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
-#endif
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };

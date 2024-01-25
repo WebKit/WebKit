@@ -277,10 +277,8 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     RefPtr<ImageBuffer> imageBuffer;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM)) {
-        creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
+    if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM))
         imageBuffer = allocateImageBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, imageBufferIdentifier);
-    }
 #endif
 
     if (!imageBuffer)
@@ -603,15 +601,6 @@ void RemoteRenderingBackend::terminateWebProcess(ASCIILiteral message)
         m_gpuConnectionToWebProcess->terminateWebProcess();
     }
 }
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-DynamicContentScalingResourceCache RemoteRenderingBackend::ensureDynamicContentScalingResourceCache()
-{
-    if (!m_dynamicContentScalingResourceCache)
-        m_dynamicContentScalingResourceCache = DynamicContentScalingResourceCache::create();
-    return m_dynamicContentScalingResourceCache;
-}
-#endif
 
 } // namespace WebKit
 
