@@ -243,7 +243,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         [requests addObject:request.leakRef()];
     }
 
-    if ([crossPlatformAllowedCredentials count] || ![platformAllowedCredentials count]) {
+    if (!m_isConditionalAssertion && ([crossPlatformAllowedCredentials count] || ![platformAllowedCredentials count])) {
         auto request = adoptNS([[allocASAuthorizationSecurityKeyPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId] createCredentialAssertionRequestWithChallenge:toNSData(options.challenge).get()]);
 
         if (crossPlatformAllowedCredentials)
@@ -288,7 +288,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         return;
     }
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    m_isConditionalAssertion = *requestData.mediation == MediationRequirement::Conditional;
+    m_isConditionalAssertion = requestData.mediation == MediationRequirement::Conditional;
     auto controller = constructASController(WTFMove(requestData));
     if (!controller) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
