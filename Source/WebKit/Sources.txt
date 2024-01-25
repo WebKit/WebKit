@@ -380,6 +380,7 @@ UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DisplayLink.cpp
 UIProcess/DisplayLinkProcessProxyClient.cpp
 UIProcess/DrawingAreaProxy.cpp
+UIProcess/FindStringCallbackAggregator.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp

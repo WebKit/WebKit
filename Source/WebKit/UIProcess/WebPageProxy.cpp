@@ -72,6 +72,7 @@
 #include "DrawingAreaProxy.h"
 #include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
+#include "FindStringCallbackAggregator.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
 #include "FrameTreeCreationParameters.h"
@@ -5236,27 +5237,10 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
-    class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
-    public:
-        static Ref<FindStringCallbackAggregator> create(CompletionHandler<void(bool)>&& completionHandler) { return adoptRef(*new FindStringCallbackAggregator(WTFMove(completionHandler))); }
-        void wasFound(bool result) { m_found |= result; }
-        ~FindStringCallbackAggregator()
-        {
-            m_completionHandler(m_found);
-        }
-    private:
-        explicit FindStringCallbackAggregator(CompletionHandler<void(bool)>&& completionHandler)
-            : m_completionHandler(WTFMove(completionHandler))
-        {
-        }
-        CompletionHandler<void(bool)> m_completionHandler;
-        bool m_found { false };
-    };
-
-    Ref callbackAggregator = FindStringCallbackAggregator::create(WTFMove(callbackFunction));
+    Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTFMove(callbackFunction));
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), [callbackAggregator] (bool result) {
-            callbackAggregator->wasFound(result);
+        webProcess.sendWithAsyncReply(Messages::WebPage::FindString(string, options | FindOptions::DoNotSetSelection, maxMatchCount), [callbackAggregator] (std::optional<FrameIdentifier> frameID, bool didWrap) {
+            callbackAggregator->foundString(frameID, didWrap);
         }, pageID);
     });
 }

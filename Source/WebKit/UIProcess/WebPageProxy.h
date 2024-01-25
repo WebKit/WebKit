@@ -544,6 +544,7 @@ public:
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebFrameProxy* openerFrame() const { return m_openerFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
+    WebFrameProxy* focusedOrMainFrame() const { return m_focusedFrame ? m_focusedFrame.get() : m_mainFrame.get(); }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     DrawingAreaProxy* provisionalDrawingArea() const;

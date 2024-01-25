@@ -1008,6 +1008,24 @@ static InputSessionChangeCount nextInputSessionChangeCount()
     return matches;
 }
 
+- (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end inFrame:(WKFrameInfo *)frameInfo
+{
+    __block bool isDone = false;
+    __block bool matches = true;
+    [self evaluateJavaScript:@"window.getSelection().getRangeAt(0).startOffset" inFrame:frameInfo inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        if ([(NSNumber *)result intValue] != start)
+            matches = false;
+    }];
+    [self evaluateJavaScript:@"window.getSelection().getRangeAt(0).endOffset" inFrame:frameInfo inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        if ([(NSNumber *)result intValue] != end)
+            matches = false;
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    return matches;
+}
+
 - (void)clickOnElementID:(NSString *)elementID
 {
     [self evaluateJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').click();", elementID] completionHandler:nil];

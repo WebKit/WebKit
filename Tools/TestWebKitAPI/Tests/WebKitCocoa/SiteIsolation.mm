@@ -50,13 +50,13 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
-static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server)
 {
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTFMove(webView), WTFMove(navigationDelegate) };
 }
@@ -1729,6 +1729,346 @@ TEST(SiteIsolation, FindStringInNestedFrame)
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
+}
+
+TEST(SiteIsolation, FindStringSelection)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain3.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 3>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(2UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+    };
+
+    std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 11 } } },
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionWithEmptyFrames)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain3.com/empty_subframe'></iframe>"
+        "<iframe src='https://domain4.com/subframe'></iframe>"
+        "<iframe src='https://domain5.com/empty_subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } },
+        { "/empty_subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 3>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(4UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[2].info]);
+    };
+
+    std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 11 } } },
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionSameOriginFrames)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 3>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(2UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+    };
+
+    std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 11 } } },
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionNestedFrames)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"
+        "<iframe src='https://domain3.com/subframe'></iframe>"_s;
+    auto subframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain4.com/nested_subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } },
+        { "/nested_subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 5>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(2UL, mainFrame.childFrames.count);
+            EXPECT_EQ(1UL, mainFrame.childFrames[0].childFrames.count);
+            EXPECT_EQ(1UL, mainFrame.childFrames[1].childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[3].first endOffset:offsets[3].second inFrame:mainFrameNode.get().childFrames[0].childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[4].first endOffset:offsets[4].second inFrame:mainFrameNode.get().childFrames[1].childFrames[0].info]);
+    };
+
+    std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 }, { 0, 0 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 11 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 11 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionMultipleMatchesInMainFrame)
+{
+    auto mainframeHTML = "<p>Hello world Hello world Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 2>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(1UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+    };
+
+    std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 } } },
+        { { { 12, 23 }, { 0, 0 } } },
+        { { { 24, 35 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 } } },
+        { { { 0, 11 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionMultipleMatchesInChildFrame)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world Hello world Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 2>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(1UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+    };
+
+    std::array<SelectionOffsets, 5> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 } } },
+        { { { 0, 0 }, { 12, 23 } } },
+        { { { 0, 0 }, { 24, 35 } } },
+        { { { 0, 11 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
+TEST(SiteIsolation, FindStringSelectionSameOriginFrameBeforeWrap)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // FIXME(267907): If the iframe is not added like this the UI process and web processes may have mismatched frame trees.
+    auto addFrameToBody = @"let frame = document.createElement('iframe');"
+    "frame.setAttribute('src', 'https://domain1.com/subframe');"
+    "document.body.appendChild(frame);";
+    __block bool done = false;
+    [webView evaluateJavaScript:addFrameToBody completionHandler:^(id _Nullable, NSError * _Nullable error) {
+        done = true;
+    }];
+    Util::run(&done);
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    using SelectionOffsets = std::array<std::pair<int, int>, 3>;
+    auto findStringAndValidateResults = [&findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(2UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            EXPECT_TRUE(result.matchFound);
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[2].first endOffset:offsets[2].second inFrame:mainFrameNode.get().childFrames[1].info]);
+    };
+
+    std::array<SelectionOffsets, 4> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 0 }, { 0, 11 } } },
+        { { { 0, 11 }, { 0, 0 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
 }
 
 #if PLATFORM(MAC)

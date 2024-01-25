@@ -146,6 +146,7 @@ struct AutocorrectionContext {
 - (void)collapseToEnd;
 - (void)addToTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
+- (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end inFrame:(WKFrameInfo *)frameInfo;
 - (void)clickOnElementID:(NSString *)elementID;
 - (void)waitForPendingMouseEvents;
 - (void)focus;

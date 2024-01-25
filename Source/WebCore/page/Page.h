@@ -423,7 +423,7 @@ public:
     void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
     bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
-    WEBCORE_EXPORT bool findString(const String&, FindOptions, DidWrap* = nullptr);
+    WEBCORE_EXPORT std::optional<FrameIdentifier> findString(const String&, FindOptions, DidWrap* = nullptr);
     WEBCORE_EXPORT uint32_t replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace, const String& replacementText, bool selectionOnly);
     WEBCORE_EXPORT uint32_t replaceSelectionWithText(const String& replacementText);
 

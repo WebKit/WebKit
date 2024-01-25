@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width">
     <script src="../../../../resources/testharness.js"></script>
     <script src="../../../../resources/testharnessreport.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script type="text/javascript">
       if (window.internals)
         window.internals.settings.setAsyncFrameScrollingEnabled(true);
@@ -34,7 +35,8 @@
           testRunner.runUIScript(`
             uiController.findString("match", ${findOptions}, ${maxCount}); // match 4
             uiController.uiScriptComplete("Done");
-          `, afterMatch4.step_func_done(function() {
+          `, afterMatch4.step_func_done(async function() {
+              await UIHelper.ensurePresentationUpdate();
               assert_greater_than(node.scrollY, 0);
               var expectedScrollY = height(node, "divBefore") + height(node, "match4") / 2 - height(window, "scrollable") / 2;
               assert_approx_equals(node.scrollY, expectedScrollY, 2);

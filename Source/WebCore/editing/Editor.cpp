@@ -3694,7 +3694,8 @@ bool Editor::findString(const String& target, FindOptions options)
     if (!resultRange)
         return false;
 
-    document->selection().setSelection(VisibleSelection(*resultRange));
+    if (!options.contains(DoNotSetSelection))
+        document->selection().setSelection(VisibleSelection(*resultRange));
 
     if (!(options.contains(DoNotRevealSelection)))
         document->selection().revealSelection();

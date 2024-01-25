@@ -569,6 +569,7 @@ private:
 #endif
 
     void updateProcessAssertions();
+    static constexpr Seconds audibleActivityClearDelay = 5_s;
     void updateAudibleMediaAssertions();
     void updateMediaStreamingActivity();
 

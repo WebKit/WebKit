@@ -557,6 +557,107 @@ std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess(
     return std::nullopt;
 }
 
+auto WebFrameProxy::traverseNext() const -> TraversalResult
+{
+    if (RefPtr child = firstChild())
+        return { child, DidWrap::No };
+
+    RefPtr sibling = nextSibling();
+    if (sibling)
+        return { sibling.get(), DidWrap::No };
+
+    RefPtr frame = this;
+    while (!sibling) {
+        frame = frame->parentFrame();
+        if (!frame)
+            return { };
+        sibling = frame->nextSibling();
+    }
+
+    if (frame)
+        return { sibling.get(), DidWrap::No };
+
+    return { };
+}
+
+auto WebFrameProxy::traverseNext(CanWrap canWrap) const -> TraversalResult
+{
+    if (RefPtr result = traverseNext().frame)
+        return { result, DidWrap::No };
+
+    if (canWrap == CanWrap::Yes) {
+        if (m_page)
+            return { m_page->mainFrame(), DidWrap::Yes };
+    }
+    return { };
+}
+
+auto WebFrameProxy::traversePrevious(CanWrap canWrap) -> TraversalResult
+{
+    if (RefPtr previousSibling = this->previousSibling())
+        return { previousSibling->deepLastChild(), DidWrap::No };
+    if (RefPtr parent = parentFrame())
+        return { parent, DidWrap::No };
+
+    if (canWrap == CanWrap::Yes)
+        return { deepLastChild(), DidWrap::Yes };
+    return { };
+}
+
+RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
+{
+    RefPtr result = this;
+    for (RefPtr last = lastChild(); last; last = last->lastChild())
+        result = last;
+    return result.get();
+}
+
+RefPtr<WebFrameProxy> WebFrameProxy::firstChild() const
+{
+    if (m_childFrames.isEmpty())
+        return nullptr;
+    return m_childFrames.first().ptr();
+}
+
+RefPtr<WebFrameProxy> WebFrameProxy::lastChild() const
+{
+    if (m_childFrames.isEmpty())
+        return nullptr;
+    return m_childFrames.last().ptr();
+}
+
+RefPtr<WebFrameProxy> WebFrameProxy::nextSibling() const
+{
+    if (!m_parentFrame)
+        return nullptr;
+
+    if (m_parentFrame->m_childFrames.last().ptr() == this)
+        return nullptr;
+
+    auto it = m_parentFrame->m_childFrames.find(this);
+    if (it == m_childFrames.end()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    return (++it)->ptr();
+}
+
+RefPtr<WebFrameProxy> WebFrameProxy::previousSibling() const
+{
+    if (!m_parentFrame)
+        return nullptr;
+
+    if (m_parentFrame->m_childFrames.first().ptr() == this)
+        return nullptr;
+
+    auto it = m_parentFrame->m_childFrames.find(this);
+    if (it == m_childFrames.end()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    return (--it)->ptr();
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

@@ -63,6 +63,8 @@ class WebPageProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
 
+enum class CanWrap : bool { No, Yes };
+enum class DidWrap : bool { No, Yes };
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
 
@@ -158,7 +160,7 @@ public:
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
-    WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
+    WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
     WebProcessProxy& process() const { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(WebProcessProxy& process) { m_process = process; }
@@ -171,10 +173,24 @@ public:
 
     bool isFocused() const;
 
+    struct TraversalResult {
+        RefPtr<WebFrameProxy> frame;
+        DidWrap didWrap { DidWrap::No };
+    };
+    TraversalResult traverseNext() const;
+    TraversalResult traverseNext(CanWrap) const;
+    TraversalResult traversePrevious(CanWrap);
+
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
+
+    RefPtr<WebFrameProxy> deepLastChild();
+    RefPtr<WebFrameProxy> firstChild() const;
+    RefPtr<WebFrameProxy> lastChild() const;
+    RefPtr<WebFrameProxy> nextSibling() const;
+    RefPtr<WebFrameProxy> previousSibling() const;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;

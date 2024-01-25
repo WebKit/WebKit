@@ -167,8 +167,6 @@ constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
-static constexpr Seconds audibleActivityClearDelay = 5_s;
-
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();

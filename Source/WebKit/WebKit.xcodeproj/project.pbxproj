@@ -116,6 +116,7 @@
 		005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 005D158E18E4C4EB00734619 /* _WKFindDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661518E24CBA00CE1F88 /* APIFindClient.h */; };
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
+		0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */; };
 		0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0701789B23BAE261005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp */; };
 		0712654928EE06F800AE69D7 /* WebChromeClientCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0712654728EE06F800AE69D7 /* WebChromeClientCocoa.mm */; };
 		071BC58F23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 071BC58C23CE1EA900680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp */; };
@@ -2996,6 +2997,8 @@
 		0214701A2995D2FE0077AFD6 /* DrawingAreaCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawingAreaCocoa.mm; sourceTree = "<group>"; };
 		0214701B2995D3860077AFD6 /* DrawingArea.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		0237C21428C168D10018A851 /* WebGPUSupportedFeatures.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSupportedFeatures.serialization.in; sourceTree = "<group>"; };
+		0250C24E2B5DCAFB00D05C0B /* FindStringCallbackAggregator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FindStringCallbackAggregator.cpp; sourceTree = "<group>"; };
+		0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FindStringCallbackAggregator.h; sourceTree = "<group>"; };
 		02789EF628D3FC3200F77E40 /* WebGPUBufferBindingLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBufferBindingLayout.serialization.in; sourceTree = "<group>"; };
 		02789EF728D3FF4800F77E40 /* WebGPUCanvasConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUCanvasConfiguration.serialization.in; sourceTree = "<group>"; };
 		02789EF828D4026000F77E40 /* WebGPUColor.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUColor.serialization.in; sourceTree = "<group>"; };
@@ -13238,6 +13241,8 @@
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
 				1A6422FC12DD08FE00CAAE2C /* DrawingAreaProxy.messages.in */,
+				0250C24E2B5DCAFB00D05C0B /* FindStringCallbackAggregator.cpp */,
+				0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */,
 				1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */,
 				1AE00D5F1831792100087DD7 /* FrameLoadState.h */,
 				9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */,
@@ -15540,6 +15545,7 @@
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
+				0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				DD4DB78A280F9471001700D4 /* FormElementClear.js in Headers */,

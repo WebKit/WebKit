@@ -28,6 +28,7 @@
 #include "ShareableBitmap.h"
 #include "WebFindOptions.h"
 #include <WebCore/FindOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/SimpleRange.h>
@@ -62,7 +63,7 @@ public:
     explicit FindController(WebPage*);
     virtual ~FindController();
 
-    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, TriggerImageAnalysis, CompletionHandler<void(bool)>&& = { });
+    void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, TriggerImageAnalysis, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, bool)>&& = { });
     void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void findRectsForStringMatches(const String&, OptionSet<WebKit::FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void getImageForFindMatch(uint32_t matchIndex);

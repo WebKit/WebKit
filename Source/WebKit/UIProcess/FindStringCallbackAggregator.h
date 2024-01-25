@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebFindOptions.h"
+#pragma once
+
+#include <WebCore/FrameIdentifier.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
-WebCore::FindOptions core(OptionSet<FindOptions> options)
-{
-    WebCore::FindOptions result;
-    if (options.contains(FindOptions::CaseInsensitive))
-        result.add(WebCore::CaseInsensitive);
-    if (options.contains(FindOptions::AtWordStarts))
-        result.add(WebCore::AtWordStarts);
-    if (options.contains(FindOptions::TreatMedialCapitalAsWordStart))
-        result.add(WebCore::TreatMedialCapitalAsWordStart);
-    if (options.contains(FindOptions::Backwards))
-        result.add(WebCore::Backwards);
-    if (options.contains(FindOptions::WrapAround))
-        result.add(WebCore::WrapAround);
-    if (options.contains(FindOptions::AtWordEnds))
-        result.add(WebCore::AtWordEnds);
-    if (options.contains(FindOptions::DoNotSetSelection))
-        result.add(WebCore::DoNotSetSelection);
-    return result;
-}
+class WebPageProxy;
+
+enum class FindOptions : uint16_t;
+
+class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
+public:
+    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+    void foundString(std::optional<WebCore::FrameIdentifier>, bool didWrap);
+    ~FindStringCallbackAggregator();
+
+private:
+    FindStringCallbackAggregator(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+
+    WeakPtr<WebPageProxy> m_page;
+    String m_string;
+    OptionSet<FindOptions> m_options;
+    unsigned m_maxMatchCount;
+    CompletionHandler<void(bool)> m_completionHandler;
+    HashMap<WebCore::FrameIdentifier, bool> m_matches;
+};
 
 } // namespace WebKit

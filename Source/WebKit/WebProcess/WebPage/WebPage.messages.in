@@ -328,7 +328,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PostInjectedBundleMessage(String messageName, WebKit::UserData messageBody)
 
     # Find.
-    FindString(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (bool found)
+    FindString(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (std::optional<WebCore::FrameIdentifier> frameContainingString, bool didWrap)
     FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
     GetImageForFindMatch(uint32_t matchIndex)
     SelectFindMatch(uint32_t matchIndex)
