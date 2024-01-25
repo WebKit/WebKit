@@ -338,6 +338,7 @@ TEST(WTF_ListHashSet, MoveConstructor)
     ASSERT_EQ(3, *iterator2);
     ++iterator2;
 
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
     ASSERT_EQ(0U, list.size());
     ASSERT_TRUE(list.begin() == list.end());
     list.add(4);
@@ -380,6 +381,7 @@ TEST(WTF_ListHashSet, MoveAssignment)
     ASSERT_EQ(3, *iterator2);
     ++iterator2;
 
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
     ASSERT_EQ(0U, list.size());
     ASSERT_TRUE(list.begin() == list.end());
     list.add(4);

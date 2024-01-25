@@ -142,11 +142,13 @@ TEST(WebKit2_WeakObjCPtr, MoveConstructor)
     WeakObjCPtr<id> weak1(object);
     WeakObjCPtr<id> weak2(WTFMove(weak1));
 
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
     EXPECT_EQ(weak1.get(), (void*)nil);
     EXPECT_EQ(weak2.get(), object);
 
     [object release];
 
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
     EXPECT_EQ(weak1.get(), (void*)nil);
     EXPECT_EQ(weak2.get(), (void*)nil);
 }

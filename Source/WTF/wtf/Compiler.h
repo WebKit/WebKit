@@ -34,6 +34,15 @@
 /* COMPILER_QUIRK() - whether the compiler being used to build the project requires a given quirk. */
 #define COMPILER_QUIRK(WTF_COMPILER_QUIRK) (defined WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK  && WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK)
 
+/* COMPILER_HAS_ATTRIBUTE() - whether the compiler supports a particular attribute. */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-attribute */
+/* https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fattribute.html */
+#ifdef __has_attribute
+#define COMPILER_HAS_ATTRIBUTE(x) __has_attribute(x)
+#else
+#define COMPILER_HAS_ATTRIBUTE(x) 0
+#endif
+
 /* COMPILER_HAS_CLANG_BUILTIN() - whether the compiler supports a particular clang builtin. */
 #ifdef __has_builtin
 #define COMPILER_HAS_CLANG_BUILTIN(x) __has_builtin(x)
@@ -42,7 +51,7 @@
 #endif
 
 /* COMPILER_HAS_CLANG_FEATURE() - whether the compiler supports a particular language or library feature. */
-/* http://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-feature-and-has-extension */
 #ifdef __has_feature
 #define COMPILER_HAS_CLANG_FEATURE(x) __has_feature(x)
 #else
@@ -249,11 +258,8 @@
 
 #elif !defined(FALLTHROUGH) && !defined(__cplusplus)
 
-#if COMPILER(GCC_COMPATIBLE) && defined(__has_attribute)
-// Break out this #if to satisy some versions Windows compilers.
-#if __has_attribute(fallthrough)
+#if COMPILER_HAS_ATTRIBUTE(fallthrough)
 #define FALLTHROUGH __attribute__ ((fallthrough))
-#endif
 #endif
 
 #endif // !defined(FALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)
@@ -302,8 +308,8 @@
 
 /* NOT_TAIL_CALLED */
 
-#if !defined(NOT_TAIL_CALLED) && defined(__has_attribute)
-#if __has_attribute(not_tail_called)
+#if !defined(NOT_TAIL_CALLED)
+#if COMPILER_HAS_ATTRIBUTE(not_tail_called)
 #define NOT_TAIL_CALLED __attribute__((not_tail_called))
 #endif
 #endif
@@ -539,7 +545,6 @@
 
 #endif /* COMPILER(GCC) || COMPILER(CLANG) */
 
-
 #if COMPILER(GCC)
 #define IGNORE_GCC_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(GCC, warning)
 #define IGNORE_GCC_WARNINGS_END IGNORE_WARNINGS_END_IMPL(GCC)
@@ -564,6 +569,17 @@
 #define IGNORE_WARNINGS_END
 #endif
 
+/* IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_BEGIN() - whether the compiler supports suppressing static analysis warnings. */
+/* https://clang.llvm.org/docs/AttributeReference.html#suppress */
+#if COMPILER_HAS_ATTRIBUTE(suppress)
+#define IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE(warning, ...) [[clang::suppress]]
+#define IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_BEGIN(warning, ...) [[clang::suppress]] {
+#else
+#define IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE(warning, ...)
+#define IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_BEGIN(warning, ...) {
+#endif
+#define IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_END }
+
 #define ALLOW_DEPRECATED_DECLARATIONS_BEGIN IGNORE_WARNINGS_BEGIN("deprecated-declarations")
 #define ALLOW_DEPRECATED_DECLARATIONS_END IGNORE_WARNINGS_END
 
@@ -585,6 +601,9 @@
 #define ALLOW_NONLITERAL_FORMAT_BEGIN IGNORE_WARNINGS_BEGIN("format-nonliteral")
 #define ALLOW_NONLITERAL_FORMAT_END IGNORE_WARNINGS_END
 
+#define IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE \
+    IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE("cplusplus.Move")
+
 #define IGNORE_RETURN_TYPE_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("return-type")
 #define IGNORE_RETURN_TYPE_WARNINGS_END IGNORE_WARNINGS_END
 
@@ -605,8 +624,8 @@
 
 /* TLS_MODEL_INITIAL_EXEC */
 
-#if !defined(TLS_MODEL_INITIAL_EXEC) && defined(__has_attribute)
-#if __has_attribute(tls_model)
+#if !defined(TLS_MODEL_INITIAL_EXEC)
+#if COMPILER_HAS_ATTRIBUTE(tls_model)
 #define TLS_MODEL_INITIAL_EXEC __attribute__((tls_model("initial-exec")))
 #endif
 #endif

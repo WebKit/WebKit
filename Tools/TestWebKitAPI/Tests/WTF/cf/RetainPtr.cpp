@@ -61,7 +61,8 @@ TEST(RetainPtr, ConstructionFromMutableCFType)
     RetainPtr<CFStringRef> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((CFStringRef)nullptr, temp);
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
+    EXPECT_EQ((CFStringRef)nullptr, temp.get());
 }
 
 TEST(RetainPtr, ConstructionFromSameCFType)
@@ -81,7 +82,8 @@ TEST(RetainPtr, ConstructionFromSameCFType)
     RetainPtr<CFStringRef> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((CFStringRef)nullptr, temp);
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
+    EXPECT_EQ((CFStringRef)nullptr, temp.get());
 }
 
 TEST(RetainPtr, MoveAssignmentFromMutableCFType)
@@ -103,7 +105,8 @@ TEST(RetainPtr, MoveAssignmentFromMutableCFType)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((CFStringRef)nullptr, temp);
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
+    EXPECT_EQ((CFStringRef)nullptr, temp.get());
 }
 
 TEST(RetainPtr, MoveAssignmentFromSameCFType)
@@ -125,7 +128,8 @@ TEST(RetainPtr, MoveAssignmentFromSameCFType)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((CFStringRef)nullptr, temp);
+    IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
+    EXPECT_EQ((CFStringRef)nullptr, temp.get());
 }
 
 TEST(RetainPtr, OptionalRetainPtrCF)

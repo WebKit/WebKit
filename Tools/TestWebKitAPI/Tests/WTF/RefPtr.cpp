@@ -77,6 +77,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -85,6 +86,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2(WTFMove(p1));
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -101,6 +103,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<DerivedRefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -203,6 +206,7 @@ TEST(WTF_RefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
@@ -249,6 +253,7 @@ TEST(WTF_RefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
@@ -344,6 +349,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -352,6 +358,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2(WTFMove(p1));
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -360,6 +367,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<DerivedRefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
@@ -373,6 +381,7 @@ TEST(WTF_RefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
@@ -386,6 +395,7 @@ TEST(WTF_RefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
@@ -530,6 +540,7 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }

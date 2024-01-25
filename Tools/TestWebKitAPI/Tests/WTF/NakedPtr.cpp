@@ -69,6 +69,7 @@ TEST(WTF_NakedPtr, Basic)
     {
         NakedPtr<RefLogger> p1 = &a;
         NakedPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -76,6 +77,7 @@ TEST(WTF_NakedPtr, Basic)
     {
         NakedPtr<RefLogger> p1 = &a;
         NakedPtr<RefLogger> p2(WTFMove(p1));
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -90,6 +92,7 @@ TEST(WTF_NakedPtr, Basic)
     {
         NakedPtr<DerivedRefLogger> p1 = &a;
         NakedPtr<RefLogger> p2 = WTFMove(p1);
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -139,6 +142,7 @@ TEST(WTF_NakedPtr, Assignment)
         ASSERT_EQ(&b, p2.get());
         p1 = WTFMove(p2);
         ASSERT_EQ(&b, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         ASSERT_EQ(&b, p2.get());
     }
 
@@ -166,6 +170,7 @@ TEST(WTF_NakedPtr, Assignment)
         ASSERT_EQ(&c, p2.get());
         p1 = WTFMove(p2);
         ASSERT_EQ(&c, p1.get());
+        IGNORE_CLANG_STATIC_ANALYZER_USE_AFTER_MOVE_ATTRIBUTE
         ASSERT_EQ(&c, p2.get());
     }
 
