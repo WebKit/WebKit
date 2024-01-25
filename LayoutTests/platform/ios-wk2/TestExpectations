@@ -2372,6 +2372,4 @@ webkit.org/b/264296 fast/forms/ios/show-and-dismiss-date-input-in-landscape.html
 
 webkit.org/b/267974 fast/forms/ios/dismiss-date-picker-on-rotation.html [ Pass Timeout Crash ]
 
-webkit.org/b/268029 [ Debug arm64 ] http/tests/workers/service/postmessage-after-terminate.https.html [ Pass Crash ]
-
 webkit.org/b/268044 [ Debug ] ipc/shared-video-frame-size.html [ Crash ]
