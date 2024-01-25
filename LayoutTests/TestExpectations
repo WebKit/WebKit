@@ -7476,5 +7476,11 @@ webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap
 
 # At the time of writing this test consumes all available IOSurfaces. If the next test is image-buffer-backend-variants.html, that will fail.
 fast/canvas/2d.context.many.small.html [ Slow Skip ]
-# rdar://120852401
-[ Debug ] ipc/media-player-invalid-test.html [ Skip ]
+
+# web-platform-tests/html/dom/elements/global-attributes failures
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-06.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-36.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-38.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-39.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ ImageOnlyFailure ]

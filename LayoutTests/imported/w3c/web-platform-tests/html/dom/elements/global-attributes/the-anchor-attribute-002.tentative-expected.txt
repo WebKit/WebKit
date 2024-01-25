@@ -1,0 +1,4 @@
+
+FAIL Layout should be updated when anchor attribute changes to another element assert_equals: expected 150 but got 0
+FAIL Layout should be updated when anchor attribute changes to a non-existent element assert_equals: expected 123 but got 0
+

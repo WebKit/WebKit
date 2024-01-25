@@ -1,0 +1,34 @@
+
+PASS Root element has a direction
+PASS Element outside the document tree has a direction
+FAIL Non-HTML element outside the document tree has a direction assert_true: expected true got false
+PASS Element without direction has parent element direction
+FAIL Non-HTML element without direction has parent element direction assert_true: expected true got false
+PASS dir inheritance is correct after insertion and removal from document
+FAIL Non-HTML element text contents influence dir=auto assert_true: is RTL before change expected true got false
+PASS text changes apply to dir=auto on further ancestor after removing dir=auto from closer ancestor
+PASS directionality of bdi elements: dir=ltr with LTR contents in ltr parent
+PASS directionality of bdi elements: dir=ltr with LTR contents in rtl parent
+PASS directionality of bdi elements: dir=ltr with RTL contents in ltr parent
+PASS directionality of bdi elements: dir=ltr with RTL contents in rtl parent
+PASS directionality of bdi elements: dir=ltr empty in ltr parent
+PASS directionality of bdi elements: dir=ltr empty in rtl parent
+PASS directionality of bdi elements: dir=rtl with LTR contents in ltr parent
+PASS directionality of bdi elements: dir=rtl with LTR contents in rtl parent
+PASS directionality of bdi elements: dir=rtl with RTL contents in ltr parent
+PASS directionality of bdi elements: dir=rtl with RTL contents in rtl parent
+PASS directionality of bdi elements: dir=rtl empty in ltr parent
+PASS directionality of bdi elements: dir=rtl empty in rtl parent
+PASS directionality of bdi elements: dir=auto with LTR contents in ltr parent
+PASS directionality of bdi elements: dir=auto with LTR contents in rtl parent
+PASS directionality of bdi elements: dir=auto with RTL contents in ltr parent
+PASS directionality of bdi elements: dir=auto with RTL contents in rtl parent
+PASS directionality of bdi elements: dir=auto empty in ltr parent
+FAIL directionality of bdi elements: dir=auto empty in rtl parent assert_true: expected true got false
+PASS directionality of bdi elements: no dir attribute with LTR contents in ltr parent
+PASS directionality of bdi elements: no dir attribute with LTR contents in rtl parent
+PASS directionality of bdi elements: no dir attribute with RTL contents in ltr parent
+PASS directionality of bdi elements: no dir attribute with RTL contents in rtl parent
+PASS directionality of bdi elements: no dir attribute empty in ltr parent
+FAIL directionality of bdi elements: no dir attribute empty in rtl parent assert_true: expected true got false
+
