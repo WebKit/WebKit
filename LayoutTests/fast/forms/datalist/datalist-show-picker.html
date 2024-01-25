@@ -31,11 +31,20 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+function waitForDataListSuggestionsToChangeVisibility(visible)
+{
+    return new Promise(async resolve => {
+        while (visible != await UIHelper.isShowingDataListSuggestions())
+            continue;
+        resolve();
+    });
+}
+
 async function runTest() {
     await UIHelper.activateAt(0, 0);
 
     input.showPicker();
-
+    await waitForDataListSuggestionsToChangeVisibility(true);
     before.textContent = await UIHelper.isShowingDataListSuggestions();
 
     testRunner.notifyDone();

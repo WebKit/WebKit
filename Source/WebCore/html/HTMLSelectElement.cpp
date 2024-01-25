@@ -1686,7 +1686,9 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
     if (!window || !window->hasTransientActivation())
         return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+    focus();
+#else
     auto* renderer = this->renderer();
     if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
         renderMenuList->showPopup();

@@ -134,6 +134,15 @@ void MonthInputType::handleDOMActivateEvent(Event&)
 
 void MonthInputType::showPicker()
 {
+    if (!element()->renderer())
+        return;
+
+    if (!element()->document().page())
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    element()->focus();
+#endif
 }
 
 bool MonthInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const

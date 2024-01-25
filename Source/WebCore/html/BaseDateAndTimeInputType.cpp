@@ -314,6 +314,9 @@ void BaseDateAndTimeInputType::showPicker()
     if (!element()->document().page())
         return;
 
+#if PLATFORM(IOS_FAMILY)
+    element()->focus();
+#else
     DateTimeChooserParameters parameters;
     if (!setupDateTimeChooserParameters(parameters))
         return;
@@ -323,6 +326,7 @@ void BaseDateAndTimeInputType::showPicker()
         if (m_dateTimeChooser)
             m_dateTimeChooser->showChooser(parameters);
     }
+#endif
 }
 
 void BaseDateAndTimeInputType::createShadowSubtree()

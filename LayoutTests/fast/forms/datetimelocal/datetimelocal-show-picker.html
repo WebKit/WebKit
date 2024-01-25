@@ -26,12 +26,30 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+function getFormControlInteractionScript()
+{
+    return `
+    (function() {
+        uiController.didStartFormControlInteractionCallback(function () {
+            uiController.uiScriptComplete();
+        })
+    })();`
+}
+
 async function runTest() {
     await UIHelper.activateAt(0, 0);
     input.showPicker();
 
-    before.textContent = await UIHelper.isShowingDateTimePicker();
-
+    if (UIHelper.isIOSFamily()) {
+        await new Promise((resolve) => {
+            testRunner.runUIScript(getFormControlInteractionScript(), function () {
+                resolve();
+            });
+        });
+        before.textContent = 'true';
+    } else {
+        before.textContent = await UIHelper.isShowingDateTimePicker();
+    }
     testRunner.notifyDone();
 }
 </script>

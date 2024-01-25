@@ -1,0 +1,4 @@
+
+Is showing color picker? true
+
+This test verifies that a color picker is presented when calling showPicker on a color input.

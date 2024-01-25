@@ -15,13 +15,10 @@ body {
 </style>
 <head>
 <body onload="runTest()">
-<select name="select" id="select">
-    <option value="one">One</option>
-    <option value="two">Two</option>
-</select>
-<pre>Is showing popup? <span id="before"></span></pre>
+<input id="input" type="color"/>
+<pre>Is showing color picker? <span id="before"></span></pre>
 <br>
-<div>This test verifies that the popup is presented when calling showPicker on a select.</div>
+<div>This test verifies that a color picker is presented when calling showPicker on a color input.</div>
 </body>
 <script>
 if (window.testRunner) {
@@ -41,17 +38,11 @@ function getFormControlInteractionScript()
 
 async function runTest() {
     await UIHelper.activateAt(0, 0);
-    select.showPicker();
-
-    if (UIHelper.isIOSFamily()) {
-        await new Promise((resolve) => {
-            testRunner.runUIScript(getFormControlInteractionScript(), resolve);
-        });
-        before.textContent = 'true';
-    } else {
-        before.textContent = internals.isSelectPopupVisible(select);
-    }
-
+    input.showPicker();
+    await new Promise((resolve) => {
+        testRunner.runUIScript(getFormControlInteractionScript(), resolve);
+    });
+    before.textContent = 'true';
     testRunner.notifyDone();
 }
 </script>

@@ -190,10 +190,11 @@ void TextFieldInputType::handleClickEvent(MouseEvent&)
 
 void TextFieldInputType::showPicker()
 {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+    element()->focus();
+#endif
     if (element()->list())
         displaySuggestions(DataListSuggestionActivationType::ControlClicked);
-#endif
 }
 #endif
 

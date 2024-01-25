@@ -109,6 +109,15 @@ void TimeInputType::handleDOMActivateEvent(Event&)
 
 void TimeInputType::showPicker()
 {
+    if (!element()->renderer())
+        return;
+
+    if (!element()->document().page())
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    element()->focus();
+#endif
 }
 
 bool TimeInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
