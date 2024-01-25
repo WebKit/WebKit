@@ -49,3 +49,6 @@ http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ S
 http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
+
+webkit.org/b/268095 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
+
