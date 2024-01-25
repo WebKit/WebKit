@@ -514,6 +514,11 @@ RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
     return convertSampleToImage(m_sample);
 }
 
+Ref<VideoFrame> VideoFrameGStreamer::clone()
+{
+    return createWrappedSample(m_sample, presentationTime());
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

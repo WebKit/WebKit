@@ -66,6 +66,7 @@ private:
     VideoFrameGStreamer(const GRefPtr<GstSample>&, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
 
     bool isGStreamer() const final { return true; }
+    Ref<VideoFrame> clone() final;
 
     GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&);
 

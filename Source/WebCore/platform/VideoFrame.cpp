@@ -49,6 +49,16 @@ void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMi
     const_cast<Rotation&>(m_rotation) = rotation;
 }
 
+Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldCloneWithDifferentTimestamp shouldCloneWithDifferentTimestamp)
+{
+    if (m_presentationTime == mediaTime)
+        return *this;
+
+    Ref updatedVideoFrame = shouldCloneWithDifferentTimestamp == ShouldCloneWithDifferentTimestamp::Yes ? clone() : Ref { *this };
+    const_cast<MediaTime&>(updatedVideoFrame->m_presentationTime) = mediaTime;
+    return updatedVideoFrame;
+}
+
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
 {
