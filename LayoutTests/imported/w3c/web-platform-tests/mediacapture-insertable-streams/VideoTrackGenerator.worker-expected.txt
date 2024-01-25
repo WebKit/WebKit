@@ -1,0 +1,7 @@
+
+PASS Tests that VideoTrackGenerator forwards frames to sink
+PASS Tests that creating a VideoTrackGenerator works as expected
+PASS Tests that VideoFrames are destroyed on write.
+PASS Mismatched frame and generator kind throws on write.
+PASS Tests that VideoTrackGenerator forwards frames only when unmuted
+
