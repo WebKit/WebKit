@@ -128,6 +128,13 @@ bool Quirks::isDomain(const String& domainString) const
     return RegistrableDomain(m_document->topDocument().url()).string() == domainString;
 }
 
+bool Quirks::isEmbedDomain(const String& domainString) const
+{
+    if (m_document->isTopDocument())
+        return false;
+    return RegistrableDomain(m_document->url()).string() == domainString;
+}
+
 // vote.gov https://bugs.webkit.org/show_bug.cgi?id=267779
 bool Quirks::needsAnchorElementsToBeMouseFocusable() const
 {
@@ -413,8 +420,15 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
     // (Ref: rdar://116531089)
     // Instagram.com stories flow under the notch and status bar
     // (Ref: rdar://121014613)
-    if (!m_shouldDisableElementFullscreen)
-        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s) || isDomain("instagram.com"_s);
+    // Twitter.com video embeds have controls that are too tiny and
+    // show page behind fullscreen.
+    // (Ref: rdar://121473410)
+    if (!m_shouldDisableElementFullscreen) {
+        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s)
+            || isDomain("instagram.com"_s)
+            || isEmbedDomain("twitter.com"_s);
+    }
+
     return m_shouldDisableElementFullscreen.value();
 #else
     return false;
