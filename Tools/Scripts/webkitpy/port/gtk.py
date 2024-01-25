@@ -31,10 +31,12 @@
 import os
 import logging
 import shlex
+import webbrowser
 
 import webkitpy
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.xvfbdriver import XvfbDriver
@@ -156,7 +158,12 @@ class GtkPort(GLibPort):
         self._leakdetector.parse_and_print_leaks_detail(leaks_files)
 
     def show_results_html_file(self, results_filename):
-        self.run_minibrowser([path.abspath_to_uri(self.host.platform, results_filename)])
+        uri = path.abspath_to_uri(self.host.platform, results_filename)
+        try:
+            self.run_minibrowser([uri, ])
+        except ScriptError:
+            print('Failed to run Minibrowser, falling back to default browser')
+            webbrowser.open_new(uri)
 
     def check_sys_deps(self):
         return super(GtkPort, self).check_sys_deps() and self._driver_class().check_driver(self)
