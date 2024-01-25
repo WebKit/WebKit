@@ -36,22 +36,22 @@ void printInternal(PrintStream& out, JITCompilationMode mode)
 {
     switch (mode) {
     case JITCompilationMode::InvalidCompilation:
-        out.print("InvalidCompilationMode");
+        out.print("InvalidCompilation");
         return;
     case JITCompilationMode::Baseline:
-        out.print("BaselineMode");
+        out.print("Baseline");
         return;
     case JITCompilationMode::DFG:
-        out.print("DFGMode");
+        out.print("DFG");
         return;
     case JITCompilationMode::UnlinkedDFG:
         out.print("UnlinkedDFG");
         return;
     case JITCompilationMode::FTL:
-        out.print("FTLMode");
+        out.print("FTL");
         return;
     case JITCompilationMode::FTLForOSREntry:
-        out.print("FTLForOSREntryMode");
+        out.print("FTLForOSREntry");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
