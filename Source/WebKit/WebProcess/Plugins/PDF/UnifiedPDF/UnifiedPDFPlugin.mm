@@ -83,6 +83,18 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 {
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
     this->setHorizontalScrollElasticity(ScrollElasticity::Automatic);
+
+    if (supportsForms()) {
+        Ref document = element.document();
+        m_annotationContainer = document->createElement(HTMLNames::divTag, false);
+        m_annotationContainer->setAttributeWithoutSynchronization(HTMLNames::idAttr, "annotationContainer"_s);
+
+        auto annotationStyleElement = document->createElement(HTMLNames::styleTag, false);
+        annotationStyleElement->setTextContent(annotationStyle);
+
+        m_annotationContainer->appendChild(annotationStyleElement);
+        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
+    }
 }
 
 void UnifiedPDFPlugin::teardown()
@@ -794,14 +806,9 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::nearestPageIndexFo
     return std::nullopt;
 }
 
-WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::IntPoint& point, PDFDocumentLayout::PageIndex pageIndex) const
+static AffineTransform documentSpaceToPageSpaceTransform(const IntDegrees& pageRotation, const FloatRect& pageBounds)
 {
-    ASSERT(pageIndex < m_documentLayout.pageCount());
-
-    auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
-    auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
-    auto pointInPDFPageSpace = IntPoint { point - WebCore::flooredIntPoint(pageBounds.location()) };
-    auto documentSpaceToPageSpaceTransform = AffineTransform::makeRotation(pageRotation).translate([&pageBounds, pageRotation] () -> FloatPoint {
+    return AffineTransform::makeRotation(pageRotation).translate([&pageBounds, pageRotation] () -> FloatPoint {
         auto width = pageBounds.width();
         auto height = pageBounds.height();
         switch (pageRotation) {
@@ -818,9 +825,27 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::Int
             return { };
         }
     }());
+}
 
-    auto pointWithTopLeftOrigin = documentSpaceToPageSpaceTransform.mapPoint(pointInPDFPageSpace);
+WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::IntPoint& point, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    ASSERT(pageIndex < m_documentLayout.pageCount());
+
+    auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
+    auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
+    auto pointInPDFPageSpace = IntPoint { point - WebCore::flooredIntPoint(pageBounds.location()) };
+
+    auto pointWithTopLeftOrigin = documentSpaceToPageSpaceTransform(pageRotation, pageBounds).mapPoint(pointInPDFPageSpace);
     return IntPoint { pointWithTopLeftOrigin.x(), static_cast<int>(pageBounds.height()) - pointWithTopLeftOrigin.y() };
+}
+
+WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::IntPoint& pageSpacePoint, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
+    auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
+    auto pageSpacePointWithFlippedYOrigin = IntPoint { pageSpacePoint.x(), static_cast<int>(pageBounds.height()) - pageSpacePoint.y() };
+    auto documentSpacePoint = WebCore::flooredIntPoint(pageBounds.location()) + pageSpacePointWithFlippedYOrigin;
+    return documentSpaceToPageSpaceTransform(pageRotation, pageBounds).inverse()->mapPoint(documentSpacePoint);
 }
 
 auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
@@ -883,6 +908,25 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             auto pdfElementTypes = pdfElementTypesForPluginPoint(m_lastMousePositionInPluginCoordinates);
             notifyCursorChanged(toWebCoreCursorType(pdfElementTypes, altKeyIsActive));
             return true;
+        }
+        default:
+            return false;
+        }
+    case WebEventType::MouseDown:
+        switch (event.button()) {
+        case WebMouseEventButton::Left: {
+            auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(event.position()));
+            auto nearestPageIndex = nearestPageIndexForDocumentPoint(pointInDocumentSpace);
+            if (!nearestPageIndex)
+                return false;
+
+            auto page = m_documentLayout.pageAtIndex(nearestPageIndex.value());
+            auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex.value());
+            if (auto annotation = [page annotationAtPoint:pointInPDFPageSpace]; annotation && [annotation isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
+                setActiveAnnotation(annotation);
+                return true;
+            }
+            return false;
         }
         default:
             return false;
@@ -1099,8 +1143,22 @@ void UnifiedPDFPlugin::zoomOut()
 
 CGRect UnifiedPDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
-    return { };
+    auto pageSpaceBounds = IntRect([annotation.get() bounds]);
+    if (auto pageIndex = m_documentLayout.indexForPage([annotation.get() page])) {
+        auto documentSpacePoint = convertFromPageToDocument({ pageSpaceBounds.x(), pageSpaceBounds.y() }, pageIndex.value());
+
+        // The origin of an annotation in page space and document space are opposite
+        // in the Y axis so we need to perform a flip
+        documentSpacePoint.setY(documentSpacePoint.y() - pageSpaceBounds.height());
+
+        documentSpacePoint.scale(m_documentLayout.scale());
+        pageSpaceBounds.scale(m_documentLayout.scale());
+        return { documentSpacePoint, pageSpaceBounds.size() };
+    }
+    ASSERT_NOT_REACHED();
+    return pageSpaceBounds;
 }
+
 
 void UnifiedPDFPlugin::focusNextAnnotation()
 {
@@ -1112,6 +1170,28 @@ void UnifiedPDFPlugin::focusPreviousAnnotation()
 
 void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
 {
+#if PLATFORM(MAC)
+    if (!supportsForms())
+        return;
+
+    if (m_activeAnnotation)
+        m_activeAnnotation->commit();
+
+    if (annotation) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+            m_activeAnnotation = nullptr;
+            return;
+        }
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+        auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
+        m_activeAnnotation = activeAnnotation.get();
+        activeAnnotation->attach(m_annotationContainer.get());
+    } else
+        m_activeAnnotation = nullptr;
+    updateLayerHierarchy();
+#endif
 }
 
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)

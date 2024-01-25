@@ -46,6 +46,15 @@ RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
     return [m_pdfDocument pageAtIndex:index];
 }
 
+std::optional<unsigned> PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const
+{
+    for (unsigned pageIndex = 0; pageIndex < [m_pdfDocument pageCount]; ++pageIndex) {
+        if (page == [m_pdfDocument pageAtIndex:pageIndex])
+            return pageIndex;
+    }
+    return std::nullopt;
+}
+
 void PDFDocumentLayout::updateLayout(IntSize pluginSize)
 {
     auto pageCount = this->pageCount();

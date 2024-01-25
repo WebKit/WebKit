@@ -63,6 +63,7 @@ public:
     static constexpr WebCore::FloatSize pageMargin { 4, 6 };
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
+    std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
     WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;

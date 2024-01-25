@@ -114,36 +114,6 @@
 @end
 #endif
 
-// Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
-// scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
-// will break rubber-banding.
-static constexpr auto annotationStyle =
-"#annotationContainer {"
-"    overflow: hidden; "
-"    position: absolute; "
-"    pointer-events: none; "
-"    top: 0; "
-"    left: 0; "
-"    right: 0; "
-"    bottom: 0; "
-"    display: -webkit-box; "
-"    -webkit-box-align: center; "
-"    -webkit-box-pack: center; "
-"} "
-".annotation { "
-"    position: absolute; "
-"    pointer-events: auto; "
-"} "
-"textarea.annotation { "
-"    resize: none; "
-"} "
-"input.annotation[type='password'] { "
-"    position: static; "
-"    width: 238px; "
-"    height: 20px; "
-"    margin-top: 110px; "
-"    font-size: 15px; "
-"} "_s;
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
@@ -2106,7 +2076,10 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
 
 CGRect PDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
-    return [m_pdfLayerController boundsForAnnotation:annotation.get()];
+    auto documentSize = contentSizeRespectingZoom();
+    auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation.get()];
+    annotationBounds.origin.y = documentSize.height - annotationBounds.origin.y - annotationBounds.size.height;
+    return annotationBounds;
 }
 
 void PDFPlugin::focusNextAnnotation()

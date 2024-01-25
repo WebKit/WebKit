@@ -104,7 +104,6 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
 void PDFPluginAnnotation::updateGeometry()
 {
-    IntSize documentSize(m_plugin->contentSizeRespectingZoom());
     NSRect annotationRect = NSRectFromCGRect(m_plugin->boundsForAnnotation(m_annotation));
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
@@ -112,7 +111,7 @@ void PDFPluginAnnotation::updateGeometry()
     styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSUnitType::CSS_PX);
     IntPoint scrollPosition(m_plugin->scrollPosition());
     styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSUnitType::CSS_PX);
-    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyTop, annotationRect.origin.y - scrollPosition.y(), CSSUnitType::CSS_PX);
 }
 
 bool PDFPluginAnnotation::handleEvent(Event& event)
