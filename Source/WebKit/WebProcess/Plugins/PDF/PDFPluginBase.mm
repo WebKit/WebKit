@@ -114,10 +114,12 @@ void PDFPluginBase::teardown()
 {
     m_data = nil;
 
+#if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalLoader) {
         m_incrementalLoader->clear();
         m_incrementalLoader = nullptr;
     }
+#endif
 
     destroyScrollbar(ScrollbarOrientation::Horizontal);
     destroyScrollbar(ScrollbarOrientation::Vertical);
@@ -262,8 +264,10 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
     pdfLog(makeString("PDFPluginBase::streamDidReceiveData() - received ", buffer.size(), " bytes, total streamed bytes ", m_streamedBytes));
 #endif
 
+#if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalLoader)
         m_incrementalLoader->incrementalPDFStreamDidReceiveData(buffer);
+#endif
 }
 
 void PDFPluginBase::streamDidFinishLoading()
@@ -276,11 +280,15 @@ void PDFPluginBase::streamDidFinishLoading()
     m_documentFinishedLoading = true;
 
     auto incrementalPDFStreamDidFinishLoading = [&]() {
+#if HAVE(INCREMENTAL_PDF_APIS)
         if (!m_incrementalLoader)
             return false;
 
         m_incrementalLoader->incrementalPDFStreamDidFinishLoading();
         return true;
+#else
+        return false;
+#endif
     };
 
     if (!incrementalPDFStreamDidFinishLoading()) {
@@ -294,8 +302,10 @@ void PDFPluginBase::streamDidFinishLoading()
 void PDFPluginBase::streamDidFail()
 {
     m_data = nullptr;
+#if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalLoader)
         m_incrementalLoader->incrementalPDFStreamDidFail();
+#endif
 }
 
 #if HAVE(INCREMENTAL_PDF_APIS)

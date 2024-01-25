@@ -32,6 +32,8 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Threading.h>
 
+OBJC_CLASS PDFDocument;
+
 namespace WebCore {
 class NetscapePlugInStreamLoader;
 }
