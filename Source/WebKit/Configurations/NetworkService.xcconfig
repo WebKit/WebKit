@@ -31,6 +31,9 @@ PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.1*] = $(PRODUCT_NAME);
 PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.2*] = $(PRODUCT_NAME);
 PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.3*] = $(PRODUCT_NAME);
 PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator18.0*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=watchsimulator*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvsimulator*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=xrsimulator*] = $(PRODUCT_NAME);
 
 INFOPLIST_FILE[sdk=embedded*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist;
