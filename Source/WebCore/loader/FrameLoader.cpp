@@ -4423,6 +4423,11 @@ NetworkingContext* FrameLoader::networkingContext() const
     return m_networkingContext.get();
 }
 
+RefPtr<NetworkingContext> FrameLoader::protectedNetworkingContext() const
+{
+    return m_networkingContext;
+}
+
 void FrameLoader::loadProgressingStatusChanged()
 {
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {

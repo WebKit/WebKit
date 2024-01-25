@@ -310,6 +310,7 @@ public:
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     WEBCORE_EXPORT NetworkingContext* networkingContext() const;
+    WEBCORE_EXPORT RefPtr<NetworkingContext> protectedNetworkingContext() const;
 
     void loadProgressingStatusChanged();
 
