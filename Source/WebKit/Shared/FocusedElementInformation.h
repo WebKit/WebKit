@@ -104,7 +104,6 @@ struct FocusedElementInformation {
     bool allowsUserScaling { false };
     bool allowsUserScalingIgnoringAlwaysScalable { false };
     bool insideFixedPosition { false };
-    bool hasPlainText { false };
     WebCore::AutocapitalizeType autocapitalizeType { WebCore::AutocapitalizeType::Default };
     InputType elementType { InputType::None };
     WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };

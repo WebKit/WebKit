@@ -3646,7 +3646,6 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.elementType = InputType::TextArea;
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
-        information.hasPlainText = !information.value.isEmpty();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
         information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
@@ -3717,7 +3716,6 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.enterKeyHint = element.canonicalEnterKeyHint();
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
-        information.hasPlainText = !information.value.isEmpty();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
         information.nonAutofillCredentialType = element.autofillData().nonAutofillCredentialType;
@@ -3735,7 +3733,6 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             information.autocapitalizeType = WebCore::AutocapitalizeType::Default;
         }
         information.isReadOnly = false;
-        information.hasPlainText = hasAnyPlainText(makeRangeSelectingNodeContents(*focusedElement));
     }
 
     if (focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
