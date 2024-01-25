@@ -374,6 +374,12 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 
     const Type* result = nullptr;
     std::optional<ConstantValue>* value = nullptr;
+
+    const auto& error = [&](auto... arguments) {
+        typeError(InferBottom::No, variable.span(), arguments...);
+        introduceValue(variable.name(), m_types.bottomType(), std::nullopt);
+    };
+
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
@@ -397,18 +403,23 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         } else if (unify(result, initializerType))
             variable.maybeInitializer()->m_inferredType = result;
         else {
-            typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
-            result = m_types.bottomType();
+            return error("cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
         }
     }
 
-    if (value && !isBottom(result))
-        convertValue(variable.span(), result, *value);
-
-    if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
-        value = nullptr;
-
-    if (variable.flavor() == AST::VariableFlavor::Var) {
+    switch (variable.flavor()) {
+    case AST::VariableFlavor::Let:
+        if (variableKind == VariableKind::Global)
+            return error("module-scope 'let' is invalid, use 'const'");
+        RELEASE_ASSERT(variable.maybeInitializer());
+        break;
+    case AST::VariableFlavor::Const:
+        RELEASE_ASSERT(variable.maybeInitializer());
+        break;
+    case AST::VariableFlavor::Override:
+        RELEASE_ASSERT(variableKind == VariableKind::Global);
+        break;
+    case AST::VariableFlavor::Var:
         AddressSpace addressSpace;
         AccessMode accessMode;
         if (auto* maybeQualifier = variable.maybeQualifier()) {
@@ -423,7 +434,35 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         }
         variable.m_addressSpace = addressSpace;
         variable.m_accessMode = accessMode;
-        result = m_types.referenceType(addressSpace, result, accessMode);
+
+        if (addressSpace == AddressSpace::Function && variableKind == VariableKind::Global)
+            return error("module-scope 'var' must not use address space 'function'");
+        if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
+            return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
+        if (addressSpace == AddressSpace::Handle) {
+            auto* primitive = std::get_if<Types::Primitive>(result);
+            bool isTypeAllowed = std::holds_alternative<Types::Texture>(*result)
+                || std::holds_alternative<Types::TextureStorage>(*result)
+                || std::holds_alternative<Types::TextureDepth>(*result)
+                || (primitive && (
+                    primitive->kind == Types::Primitive::TextureExternal
+                    || primitive->kind == Types::Primitive::Sampler
+                    || primitive->kind == Types::Primitive::SamplerComparison
+                ));
+            if (!isTypeAllowed)
+                return error("module-scope 'var' declarations that are not of texture or sampler types must provide an address space");
+        }
+        break;
+    }
+
+    if (value && !isBottom(result))
+        convertValue(variable.span(), result, *value);
+
+    if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
+        value = nullptr;
+
+    if (variable.flavor() == AST::VariableFlavor::Var) {
+        result = m_types.referenceType(*variable.addressSpace(), result, *variable.accessMode());
         auto* typeName = variable.maybeTypeName();
         if (!typeName)
             typeName = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(result->toString()));

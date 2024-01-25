@@ -96,7 +96,7 @@ fn testPrimitiveStructAccess()
 // Attribute constants
 const group = 0;
 const binding = 1;
-@group(group) @binding(binding) var w: i32;
+@group(group) @binding(binding) var<storage> w: i32;
 
 const x = 8;
 const y = 4;

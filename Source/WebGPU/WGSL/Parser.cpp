@@ -975,6 +975,9 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
 
     AccessMode accessMode;
     if (current().type == TokenType::Comma) {
+        if (addressSpace != AddressSpace::Storage)
+            FAIL("only variables in the <storage> address space may specify an access mode"_s);
+
         consume();
         PARSE(actualAccessMode, AccessMode);
         accessMode = actualAccessMode;
