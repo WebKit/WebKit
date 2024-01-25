@@ -238,6 +238,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, copy) NSString *contextBeforeSelection;
 @property (nonatomic, copy) NSString *selectedText;
 @property (nonatomic, copy) NSString *contextAfterSelection;
+@property (nonatomic, copy) NSString *markedText;
+@property (nonatomic) NSRange rangeInMarkedText;
 @end
 
 typedef NS_ENUM(NSInteger, UIWKGestureType) {

@@ -58,6 +58,8 @@ struct AutocorrectionContext {
     String contextBeforeSelection;
     String selectedText;
     String contextAfterSelection;
+    String markedText;
+    NSRange selectedRangeInMarkedText;
 };
 
 } // namespace TestWebKitAPI
