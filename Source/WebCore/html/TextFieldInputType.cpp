@@ -108,9 +108,9 @@ bool TextFieldInputType::isEmptyValue() const
 {
     auto innerText = innerTextElement();
     if (!innerText) {
-        // Since we always create the shadow subtree if a value is set, we know
-        // that the value is empty.
-        return true;
+        if (element()->shadowRoot())
+            return true; // Shadow tree is empty
+        return visibleValue().isEmpty();
     }
 
     for (Text* text = TextNodeTraversal::firstWithin(*innerText); text; text = TextNodeTraversal::next(*text, innerText.get())) {
@@ -357,11 +357,13 @@ void TextFieldInputType::createShadowSubtree()
     if (!createsContainer) {
         element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerText);
         updatePlaceholderText();
+        updateInnerTextValue();
         return;
     }
 
     createContainer(PreserveSelectionRange::No);
     updatePlaceholderText();
+    updateInnerTextValue();
 
     if (shouldHaveSpinButton) {
         m_innerSpinButton = SpinButtonElement::create(document, *this);
@@ -435,7 +437,7 @@ void TextFieldInputType::removeShadowSubtree()
 void TextFieldInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == valueAttr || name == placeholderAttr) {
-        if (element())
+        if (element() && element()->shadowRoot())
             updateInnerTextValue();
     }
     InputType::attributeChanged(name);
