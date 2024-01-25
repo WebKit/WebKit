@@ -12,7 +12,7 @@
 	<true/>
 	<key>com.apple.private.webkit.adattributiond.testing</key>
 	<true/>
-	<key>com.apple.private.web-browser-engine.host</key>
+	<key>com.apple.runningboard.launch_extensions</key>
 	<true/>
 </dict>
 </plist>
