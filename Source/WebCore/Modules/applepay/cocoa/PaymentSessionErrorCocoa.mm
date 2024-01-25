@@ -68,9 +68,9 @@ ApplePaySessionError PaymentSessionError::sessionError() const
     return unknownError();
 }
 
-NSError *PaymentSessionError::platformError() const
+RetainPtr<NSError> PaymentSessionError::platformError() const
 {
-    return m_platformError.get();
+    return m_platformError;
 }
 
 ApplePaySessionError PaymentSessionError::unknownError() const

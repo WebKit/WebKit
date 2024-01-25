@@ -110,6 +110,10 @@ enum class WebCore::ApplePaySessionPaymentRequestShippingType : uint8_t {
     ServicePickup,
 };
 
+class WebCore::PaymentSessionError {
+    [SecureCodingAllowed=[NSError.class]] RetainPtr<NSError> platformError();
+};
+
 headers: <pal/cocoa/PassKitSoftLink.h>
 class WebCore::PaymentMethod {
     [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;

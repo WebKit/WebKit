@@ -382,20 +382,6 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities>
     return true;
 }
 
-void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const WebCore::PaymentSessionError& error)
-{
-    encoder << error.platformError();
-}
-
-std::optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionError>::decode(Decoder& decoder)
-{
-    auto platformError = decoder.decode<RetainPtr<NSError>>();
-    if (!platformError)
-        return std::nullopt;
-
-    return { WTFMove(*platformError) };
-}
-
 #endif // ENABLE(APPLEPAY)
 
 void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const WebCore::Font& font)

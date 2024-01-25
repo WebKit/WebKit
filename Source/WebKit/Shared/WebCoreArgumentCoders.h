@@ -249,11 +249,6 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::Merchant
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
-    static void encode(Encoder&, const WebCore::PaymentSessionError&);
-    static std::optional<WebCore::PaymentSessionError> decode(Decoder&);
-};
-
 #endif
 
 #if ENABLE(VIDEO)
