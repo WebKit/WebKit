@@ -190,6 +190,8 @@ bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointC
 
 bool RenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
+    if (m_shapeType == ShapeType::Empty)
+        return false;
     if (m_shapeType != ShapeType::Rectangle)
         return RenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());
