@@ -172,10 +172,18 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
     WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
-WebLocalFrameLoaderClient* WebFrame::frameLoaderClient() const
+WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    return localFrame ? static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client()) : nullptr;
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
+        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+    return nullptr;
+}
+
+WebFrameLoaderClient* WebFrame::frameLoaderClient() const
+{
+    if (m_coreFrame)
+        return static_cast<WebFrameLoaderClient*>(&m_coreFrame->loaderClient());
+    return nullptr;
 }
 
 WebFrame::~WebFrame()
@@ -344,7 +352,7 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
         return;
     }
 
-    auto* frameLoaderClient = this->frameLoaderClient();
+    auto* frameLoaderClient = this->localFrameLoaderClient();
     if (!frameLoaderClient) {
         ASSERT_NOT_REACHED();
         return;
@@ -476,11 +484,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
 
-    if (forNavigationAction && frameLoaderClient() && policyDecision.websitePoliciesData) {
+    if (forNavigationAction && localFrameLoaderClient() && policyDecision.websitePoliciesData) {
         ASSERT(page());
         if (page())
             page()->setAllowsContentJavaScriptFromMostRecentNavigation(policyDecision.websitePoliciesData->allowsContentJavaScript);
-        frameLoaderClient()->applyToDocumentLoader(WTFMove(*policyDecision.websitePoliciesData));
+        localFrameLoaderClient()->applyToDocumentLoader(WTFMove(*policyDecision.websitePoliciesData));
     }
 
     m_policyDownloadID = policyDecision.downloadID;

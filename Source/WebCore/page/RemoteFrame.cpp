@@ -105,6 +105,11 @@ FrameView* RemoteFrame::virtualView() const
     return m_view.get();
 }
 
+FrameLoaderClient& RemoteFrame::loaderClient()
+{
+    return m_client.get();
+}
+
 void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
 {
     m_view = WTFMove(view);

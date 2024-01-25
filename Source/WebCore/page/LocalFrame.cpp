@@ -992,6 +992,11 @@ FrameView* LocalFrame::virtualView() const
     return m_view.get();
 }
 
+FrameLoaderClient& LocalFrame::loaderClient()
+{
+    return loader().client();
+}
+
 String LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)

@@ -78,7 +78,7 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
         return false;
 
     if (frame) {
-        if (frame->frameLoaderClient()->hasFrameSpecificStorageAccess())
+        if (frame->localFrameLoaderClient()->hasFrameSpecificStorageAccess())
             return false;
         if (auto* page = frame->page()) {
             if (page->hasPageLevelStorageAccess(firstPartyDomain, resourceDomain))

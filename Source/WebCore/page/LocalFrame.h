@@ -331,6 +331,7 @@ private:
     void setOpener(Frame*) final;
     const Frame* opener() const final;
     Frame* opener();
+    FrameLoaderClient& loaderClient() final;
 
     WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 

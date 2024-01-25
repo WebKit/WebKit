@@ -76,6 +76,7 @@ private:
     FrameView* virtualView() const final;
     void disconnectView() final;
     DOMWindow* virtualWindow() const final;
+    FrameLoaderClient& loaderClient() final;
 
     Ref<RemoteDOMWindow> m_window;
     RefPtr<Frame> m_opener;

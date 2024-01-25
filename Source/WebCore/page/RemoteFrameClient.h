@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameLoaderClient.h"
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ enum class RenderAsTextFlag : uint16_t;
 
 struct MessageWithMessagePorts;
 
-class RemoteFrameClient {
+class RemoteFrameClient : public FrameLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual void frameDetached() = 0;
