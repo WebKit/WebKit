@@ -1,0 +1,41 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function main() {
+        try { v45 = x23.parentElement; } catch { }
+        try { v45.addEventListener("DOMNodeInserted", f2); } catch { }
+        try { x48.textContent = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; } catch { }
+    }
+    function f1() {
+        try { v34 = x1.attachShadow({ mode: "closed", delegatesFocus: true }); } catch { }
+        try { v34.prepend(x27); } catch { }
+    }
+    function f2() {
+        var x27 = document.getElementById("x27");
+        try { v1 = document.createElement("thead"); } catch { }
+        try { v1.addEventListener("DOMSubtreeModified", f1); } catch { }
+        try { v1.setAttribute("lang", "id"); } catch { }
+        try { v84 = x33.farthestViewportElement; } catch { }
+        try { x27.insertBefore(x11, null); } catch { }
+        try { v84.replaceWith("AAAA"); } catch { }
+    }
+</script>
+<p>Test passes if no crash.</p>
+
+<body onload="main()">
+    <svg id="x11" meet">
+        <symbol id="x33" onclick="f3()">
+            <animateTransform id="x23" calcMode="paced">
+                <mpath id="x48" href="#x17" />
+                <polygon fill-rule="evenodd">
+                    <animateMotion id="x27" 0">
+                        <mpath href="#x17" />
+                    </animateMotion>
+                </polygon>
+                <path id="x17" stroke-width="0em">
+                    <div id="x1" slot="foo" />
+                </path>
+            </animateTransform>
+        </symbol>
+    </svg>
+</body>
