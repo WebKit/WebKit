@@ -50,8 +50,6 @@ public:
 
     WebCore::GraphicsContext& context() const final;
 
-    static WebCore::DynamicContentScalingResourceCache createResourceCache();
-
 protected:
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() final;
 

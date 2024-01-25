@@ -38,14 +38,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-#include "DynamicContentScalingResourceCache.h"
-#endif
-
-#if HAVE(IOSURFACE)
-#include "IOSurface.h"
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -57,6 +49,7 @@ class DynamicContentScalingDisplayList;
 class Filter;
 class GraphicsClient;
 #if HAVE(IOSURFACE)
+class IOSurface;
 class IOSurfacePool;
 #endif
 class ScriptExecutionContext;
@@ -73,12 +66,9 @@ struct ImageBufferCreationContext {
     IOSurfacePool* surfacePool { nullptr };
     PlatformDisplayID displayID { 0 };
 #endif
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    DynamicContentScalingResourceCache dynamicContentScalingResourceCache;
-#endif
-    ProcessIdentity resourceOwner;
+    WebCore::ProcessIdentity resourceOwner;
 
-    ImageBufferCreationContext() = default;
+    ImageBufferCreationContext() = default; // To guarantee order in presence of ifdefs, use individual .property to initialize them.
 };
 
 struct ImageBufferParameters {
