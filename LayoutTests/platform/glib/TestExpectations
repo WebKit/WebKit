@@ -1272,13 +1272,15 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 http/tests/push-api [ Skip ]
 
 # <CR>same-origin<CR> seems to be parsed as same-origin instead of failing
-webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
+# Uncomment when webkit.org/b/268068 is fixed
+#webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
 
 # Slight difference where the failure happens in relation to mac's baseline
-webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
-webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?7-8 [ Failure ]
-webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?5-6 [ Failure ]
-webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
+# Uncomment when webkit.org/b/268068 is fixed
+#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
+#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?7-8 [ Failure ]
+#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?5-6 [ Failure ]
+#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
@@ -3559,7 +3561,8 @@ webkit.org/b/258157 fast/hidpi/filters-drop-shadow.html [ Crash ImageOnlyFailure
 webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
 webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html [ Failure ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Failure Pass ]
+# Uncomment when webkit.org/b/268068 is fixed
+#webkit.org/b/252878 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.sharedworker.html [ Failure Pass ]
@@ -3739,16 +3742,7 @@ webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
 
 webrtc/datachannel/multiple-connections.html [ Timeout ]
 
-webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Pass Failure Crash ]
-webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?7-8 [ Pass Failure Crash ]
-webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?7-8 [ Pass Failure Crash ]
-webkit.org/b/267988 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?17-last [ Pass Failure Crash ]
-
-webkit.org/b/267990 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?12-last [ Pass Failure Crash ]
-webkit.org/b/267990 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?5-6 [ Pass Failure Crash ]
-
-webkit.org/b/267992 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html?11-12 [ Pass Failure Crash ]
-webkit.org/b/267992 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-cross-origin.https.html [ Pass Failure Crash ]
+webkit.org/b/268068 imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
 
 # End: Common failures between GTK and WPE.
 
