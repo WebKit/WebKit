@@ -136,6 +136,20 @@ else ifeq ($(WK_LTO_MODE),none)
 CONFIG_OPTIONS += --lto-mode=none
 endif
 
+ANALYZER_XCODE_SETTINGS = RUN_CLANG_STATIC_ANALYZER=YES CLANG_STATIC_ANALYZER_MODE=deep CLANG_ANALYZER_OUTPUT=html
+ifneq (,$(ANALYZER_EXEC))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_EXEC="$(ANALYZER_EXEC)"
+endif
+ifneq (,$(ANALYZER_FLAGS))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_OTHER_FLAGS="$(ANALYZER_FLAGS)"
+endif
+ifneq (,$(ANALYZER_OUTPUT))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_OUTPUT_DIR="$(ANALYZER_OUTPUT)"
+endif
+ifeq (,$(PATH_TO_SCAN_BUILD))
+	PATH_TO_SCAN_BUILD = scan-build
+endif
+
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 
 define set_webkit_configuration
@@ -148,40 +162,42 @@ define invoke_xcode
 		echo "===== BUILDING $(BUILD_GOAL) ====="; \
 		echo; \
 		eval build_webkit_options=(`perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_BASE) $(BUILD_WEBKIT_OPTIONS)`); \
-		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) "$${build_webkit_options[@]}" $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		xcodebuild $1 $(OTHER_OPTIONS) $(XCODE_TARGET) "$${build_webkit_options[@]}" $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
 all:
 	@$(call set_webkit_configuration,)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 debug d: force
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 release r: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 release+assert ra: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 release+assert ra: override GCC_PREPROCESSOR_ADDITIONS += ASSERT_ENABLED=1
 
 testing t: force
 	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,CLANG_STATIC_ANALYZER_MODE=deep)
+	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
+	find $(ANALYZER_OUTPUT) -name 'report-*.html' -exec mv {} $(ANALYZER_OUTPUT)/ \;
+	$(PATH_TO_SCAN_BUILD) --generate-index-only $(ANALYZER_OUTPUT)
 
 clean:
 ifndef XCODE_TARGET
-	@$(call invoke_xcode,,,-alltargets clean)
+	@$(call invoke_xcode,,-alltargets clean)
 else
-	@$(call invoke_xcode,,,clean)
+	@$(call invoke_xcode,,clean)
 endif
 
 installsrc:
