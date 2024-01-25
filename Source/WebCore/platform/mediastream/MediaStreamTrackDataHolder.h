@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CaptureDevice.h"
+#include "MediaStreamTrackHintValue.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/FastMalloc.h>
 
@@ -37,21 +38,22 @@ class PreventSourceFromEndingObserverWrapper;
 struct MediaStreamTrackDataHolder {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    WEBCORE_EXPORT MediaStreamTrackDataHolder(bool isProducingData, bool enabled, bool ended, bool muted, bool interrupted, String&& trackId, String&& label, RealtimeMediaSource::Type, CaptureDevice::DeviceType, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&, Ref<RealtimeMediaSource>&&);
+    WEBCORE_EXPORT MediaStreamTrackDataHolder(String&& trackId, String&& label, RealtimeMediaSource::Type, CaptureDevice::DeviceType, bool isEnabled, bool isEnded, MediaStreamTrackHintValue, bool isProducingData, bool isMuted, bool isInterrupted, RealtimeMediaSourceSettings, RealtimeMediaSourceCapabilities, Ref<RealtimeMediaSource>&&);
     WEBCORE_EXPORT ~MediaStreamTrackDataHolder();
 
     MediaStreamTrackDataHolder(const MediaStreamTrackDataHolder &) = delete;
     MediaStreamTrackDataHolder &operator=(const MediaStreamTrackDataHolder &) = delete;
 
-    bool isProducingData { false };
-    bool enabled { false };
-    bool ended { false };
-    bool muted { false };
-    bool interrupted { false };
     String trackId;
     String label;
     RealtimeMediaSource::Type type;
     CaptureDevice::DeviceType deviceType;
+    bool isEnabled { true };
+    bool isEnded { false };
+    MediaStreamTrackHintValue contentHint { MediaStreamTrackHintValue::Empty };
+    bool isProducingData { false };
+    bool isMuted { false };
+    bool isInterrupted { false };
     RealtimeMediaSourceSettings settings;
     RealtimeMediaSourceCapabilities capabilities;
     Ref<RealtimeMediaSource> source;

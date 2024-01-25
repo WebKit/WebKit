@@ -181,6 +181,44 @@ promise_test(async test => {
     } while (++videoCounter < 40 && internals.pageMediaState() !== "IsNotPlaying")
     assert_equals(internals.pageMediaState(), "IsNotPlaying");
 }, "Page state gets updated when clones of transferred tracks get stopped");
+
+promise_test(async test => {
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            if (event.data.type === "getVideoTrack") {
+                 const generator = new VideoTrackGenerator();
+                 generator.track.contentHint = event.data.hint;
+                 self.postMessage({ track: generator.track }, [generator.track]);
+                 return;
+            }
+            const track = event.data.track;
+            self.postMessage(track.contentHint);
+        }
+   `);
+    test.add_cleanup(() => worker.terminate());
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    for (let hint of ["motion", "detail", "text"]) {
+        const track = stream.getVideoTracks()[0].clone();
+        track.contentHint = hint;
+        worker.postMessage({ track }, [track]);
+        assert_equals(await new Promise(resolve => worker.onmessage = e => resolve(e.data)), hint);
+    }
+
+    for (let hint of ["speech", "music"]) {
+        const track = stream.getAudioTracks()[0].clone();
+        track.contentHint = hint;
+        worker.postMessage({ track }, [track]);
+        assert_equals(await new Promise(resolve => worker.onmessage = e => resolve(e.data)), hint);
+    }
+
+    for (let hint of ["motion", "detail", "text"]) {
+        worker.postMessage({ type: "getVideoTrack", hint });
+        const track = await new Promise(resolve => worker.onmessage = e => resolve(e.data.track));
+        assert_equals(track.contentHint, hint);
+    }
+}, "Content hint is preserved when transferring a track");
 </script>
 </body>
 </html>

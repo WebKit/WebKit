@@ -29,6 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamTrackHintValue.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
@@ -78,9 +79,8 @@ public:
 
     bool ended() const { return m_isEnded; }
 
-    enum class HintValue { Empty, Speech, Music, Motion, Detail, Text };
-    HintValue contentHint() const { return m_contentHint; }
-    void setContentHint(HintValue);
+    MediaStreamTrackHintValue contentHint() const { return m_contentHint; }
+    void setContentHint(MediaStreamTrackHintValue);
     
     void startProducingData();
     void stopProducingData();
@@ -186,7 +186,7 @@ private:
     bool m_isEnded { false };
     bool m_captureDidFail { false };
     bool m_hasStartedProducingData { false };
-    HintValue m_contentHint { HintValue::Empty };
+    MediaStreamTrackHintValue m_contentHint { MediaStreamTrackHintValue::Empty };
     Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;

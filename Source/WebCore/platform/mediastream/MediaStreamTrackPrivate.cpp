@@ -338,13 +338,14 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Uni
     , m_deviceType(dataHolder->deviceType)
     , m_isCaptureTrack(false)
     , m_captureDidFail(false)
+    , m_contentHint(dataHolder->contentHint)
     , m_logger(WTFMove(logger))
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_isProducingData(dataHolder->isProducingData)
-    , m_isMuted(dataHolder->muted)
-    , m_isInterrupted(dataHolder->interrupted)
+    , m_isMuted(dataHolder->isMuted)
+    , m_isInterrupted(dataHolder->isInterrupted)
     , m_settings(WTFMove(dataHolder->settings))
     , m_capabilities(WTFMove(dataHolder->capabilities))
 #if ASSERT_ENABLED
@@ -394,7 +395,7 @@ void MediaStreamTrackPrivate::removeObserver(MediaStreamTrackPrivate::Observer& 
     m_observers.remove(observer);
 }
 
-void MediaStreamTrackPrivate::setContentHint(HintValue hintValue)
+void MediaStreamTrackPrivate::setContentHint(MediaStreamTrackHintValue hintValue)
 {
     m_contentHint = hintValue;
 }
@@ -648,15 +649,16 @@ void MediaStreamTrackPrivate::updateReadyState()
 UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrackPrivate::toDataHolder()
 {
     return makeUniqueRef<MediaStreamTrackDataHolder>(
-        m_isProducingData,
-        m_isEnabled,
-        m_isEnded,
-        m_isMuted,
-        m_isInterrupted,
         m_id.isolatedCopy(),
         m_label.isolatedCopy(),
         m_type,
         m_deviceType,
+        m_isEnabled,
+        m_isEnded,
+        m_contentHint,
+        m_isProducingData,
+        m_isMuted,
+        m_isInterrupted,
         m_settings.isolatedCopy(),
         m_capabilities.isolatedCopy(),
         Ref { m_sourceObserver->source() });

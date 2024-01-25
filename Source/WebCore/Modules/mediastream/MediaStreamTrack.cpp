@@ -135,20 +135,20 @@ const String& MediaStreamTrack::label() const
     return m_private->label();
 }
 
-static AtomString contentHintToAtomString(MediaStreamTrackPrivate::HintValue hint)
+static AtomString contentHintToAtomString(MediaStreamTrackHintValue hint)
 {
     switch (hint) {
-    case MediaStreamTrackPrivate::HintValue::Empty:
+    case MediaStreamTrackHintValue::Empty:
         return emptyAtom();
-    case MediaStreamTrackPrivate::HintValue::Speech:
+    case MediaStreamTrackHintValue::Speech:
         return "speech"_s;
-    case MediaStreamTrackPrivate::HintValue::Music:
+    case MediaStreamTrackHintValue::Music:
         return "music"_s;
-    case MediaStreamTrackPrivate::HintValue::Motion:
+    case MediaStreamTrackHintValue::Motion:
         return "motion"_s;
-    case MediaStreamTrackPrivate::HintValue::Detail:
+    case MediaStreamTrackHintValue::Detail:
         return "detail"_s;
-    case MediaStreamTrackPrivate::HintValue::Text:
+    case MediaStreamTrackHintValue::Text:
         return "text"_s;
     default:
         return emptyAtom();
@@ -159,30 +159,31 @@ const AtomString& MediaStreamTrack::contentHint() const
 {
     if (m_contentHint.isNull())
         m_contentHint = contentHintToAtomString(m_private->contentHint());
+
     return m_contentHint;
 }
 
 void MediaStreamTrack::setContentHint(const String& hintValue)
 {
-    MediaStreamTrackPrivate::HintValue value;
+    MediaStreamTrackHintValue value;
     if (m_private->isAudio()) {
         if (hintValue.isEmpty())
-            value = MediaStreamTrackPrivate::HintValue::Empty;
+            value = MediaStreamTrackHintValue::Empty;
         else if (hintValue == "speech"_s)
-            value = MediaStreamTrackPrivate::HintValue::Speech;
+            value = MediaStreamTrackHintValue::Speech;
         else if (hintValue == "music"_s)
-            value = MediaStreamTrackPrivate::HintValue::Music;
+            value = MediaStreamTrackHintValue::Music;
         else
             return;
     } else {
         if (hintValue.isEmpty())
-            value = MediaStreamTrackPrivate::HintValue::Empty;
+            value = MediaStreamTrackHintValue::Empty;
         else if (hintValue == "detail"_s)
-            value = MediaStreamTrackPrivate::HintValue::Detail;
+            value = MediaStreamTrackHintValue::Detail;
         else if (hintValue == "motion"_s)
-            value = MediaStreamTrackPrivate::HintValue::Motion;
+            value = MediaStreamTrackHintValue::Motion;
         else if (hintValue == "text"_s)
-            value = MediaStreamTrackPrivate::HintValue::Text;
+            value = MediaStreamTrackHintValue::Text;
         else
             return;
     }
@@ -629,18 +630,13 @@ UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrack::detach()
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, UniqueRef<MediaStreamTrackDataHolder>&& dataHolder)
 {
-    RefPtr<MediaStreamTrackPrivate> privateTrack;
-    if (RefPtr document = dynamicDowncast<Document>(context))
-        privateTrack = MediaStreamTrackPrivate::create(document->logger(), WTFMove(dataHolder->source), WTFMove(dataHolder->trackId));
-    else {
-        privateTrack = MediaStreamTrackPrivate::create(Logger::create(&context), WTFMove(dataHolder), [identifier = context.identifier()](Function<void()>&& task) {
-            ScriptExecutionContext::postTaskTo(identifier, [task = WTFMove(task)] (auto&) mutable {
-                task();
-            });
+    auto privateTrack = MediaStreamTrackPrivate::create(Logger::create(&context), WTFMove(dataHolder), [identifier = context.identifier()](Function<void()>&& task) {
+        ScriptExecutionContext::postTaskTo(identifier, [task = WTFMove(task)] (auto&) mutable {
+            task();
         });
-    }
+    });
 
-    return MediaStreamTrack::create(context, privateTrack.releaseNonNull(), RegisterCaptureTrackToOwner::No);
+    return MediaStreamTrack::create(context, WTFMove(privateTrack), RegisterCaptureTrackToOwner::No);
 }
 
 #if !RELEASE_LOG_DISABLED
