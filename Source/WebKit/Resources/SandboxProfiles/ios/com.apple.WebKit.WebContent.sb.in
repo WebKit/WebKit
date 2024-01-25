@@ -872,6 +872,12 @@
 (deny mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))
 
+(allow mach-lookup (with telemetry)
+    (require-all
+        (require-not (webcontent-process-launched))
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.mobilegestalt.xpc")))
+
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
@@ -922,8 +928,7 @@
 (define (mach-extension-list)
     (global-name
         "com.apple.iconservices"
-        "com.apple.mobileassetd.v2"
-        "com.apple.mobilegestalt.xpc"))
+        "com.apple.mobileassetd.v2"))
 
 (allow mach-lookup (with telemetry-backtrace)
     (require-all
