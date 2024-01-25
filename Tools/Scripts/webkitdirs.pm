@@ -592,9 +592,7 @@ sub determineXcodeDestination
     # a device.
     
     my @architectures = split(' ', $architecture);
-    my $generic = '';
-    $generic = 'generic/' if $xcodeSDKPlatformName =~ /os$/ || (scalar @architectures) > 1;
-    $destination = "$generic";
+    my $generic = $xcodeSDKPlatformName =~ /os$/ || (scalar @architectures) > 1;
     
     if (willUseIOSDeviceSDK()) {
         $destination .= 'platform=iOS';
@@ -614,19 +612,24 @@ sub determineXcodeDestination
         $destination .= 'platform=visionOS Simulator';
     } else {
         $destination .= 'platform=macOS';
-        $destination .= ',arch=' . $architectures[0] if !$generic;
+        $destination .= ',arch=' . $architectures[0] unless $generic;
         $destination .= ',variant=Mac Catalyst' if willUseMacCatalystSDK();
     }
         
     if (!$generic && $xcodeSDKPlatformName =~ /simulator$/) {
-        my $runtime = iosSimulatorRuntime();
+        my $runtime = simulatorRuntime($portName);
         for my $device (iOSSimulatorDevices()) {
             if ($device->{runtime} eq $runtime) {
                 $destination .= ',id=' . $device->{UDID};
-                last;
+                return;
             }
         }
+        warn "Unable to find a simulator target for $xcodeSDKPlatformName. " .
+            "Building for a generic device, which may build unwanted additional architectures";
+        $generic = 1;
     }
+    
+    $destination = 'generic/' . $destination if $generic;
 }
 
 
@@ -3135,18 +3138,20 @@ sub iosSimulatorDeviceByUDID($)
     return undef;
 }
 
-sub iosSimulatorRuntime()
+sub iosSimulatorRuntime
 {
-    my $xcodeSDKVersion = xcodeSDKVersion();
-    $xcodeSDKVersion =~ s/\./-/;
-    my $runtime = "com.apple.CoreSimulator.SimRuntime.iOS-$xcodeSDKVersion";
+    return simulatorRuntime(iOS);
+}
 
-    open(TEST, "-|", "xcrun --sdk iphonesimulator simctl list 2>&1") or die "Failed to run find simulator runtime";
-    while ( my $line = <TEST> ) {
-        $runtime = $1 if ($line =~ m/.+ - (com.apple.CoreSimulator.SimRuntime.iOS-\S+)/);
+sub simulatorRuntime($)
+{
+    my $platformName = shift;
+    my $xcodeSDKVersion = xcodeSDKVersion();
+
+    my $output = `xcrun --sdk $xcodeSDK simctl list runtimes $platformName --json` or die "Failed to run find simulator runtime";
+    for my $runtime (@{decode_json($output)->{runtimes}}) {
+        return $runtime->{identifier} if $runtime->{version} eq $xcodeSDKVersion;
     }
-    close(TEST);
-    return $runtime;
 }
 
 sub findOrCreateSimulatorForIOSDevice($)
