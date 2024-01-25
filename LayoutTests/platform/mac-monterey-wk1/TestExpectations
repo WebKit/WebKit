@@ -18,3 +18,5 @@ imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-r
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-in-shadow-root.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/animations/animate-elem-16-t-drt.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass Failure ]
+
+webkit.org/b/267710 imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
