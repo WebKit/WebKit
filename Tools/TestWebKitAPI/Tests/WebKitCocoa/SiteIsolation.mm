@@ -27,14 +27,19 @@
 #import "DragAndDropSimulator.h"
 #import "FrameTreeChecks.h"
 #import "HTTPServer.h"
+#import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 
 namespace TestWebKitAPI {
@@ -1536,7 +1541,7 @@ TEST(SiteIsolation, SetFocusedFrame)
     EXPECT_FALSE(mainFrameInfo.get()._isFocused);
     EXPECT_FALSE(childFrameInfo.get()._isFocused);
 
-    done = false;
+    __block bool done = false;
     [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:^(id value, NSError *error) {
         done = true;
     }];
