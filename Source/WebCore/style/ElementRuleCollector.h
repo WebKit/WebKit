@@ -24,6 +24,7 @@
 #include "MatchResult.h"
 #include "MediaQueryEvaluator.h"
 #include "PropertyAllowlist.h"
+#include "PseudoElementRequest.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleScopeOrdinal.h"
@@ -37,28 +38,6 @@ class ScopeRuleSets;
 struct MatchRequest;
 struct SelectorMatchingState;
 enum class CascadeLevel : uint8_t;
-
-class PseudoElementRequest {
-public:
-    PseudoElementRequest(PseudoId pseudoId, std::optional<StyleScrollbarState> scrollbarState = std::nullopt)
-        : pseudoId(pseudoId)
-        , scrollbarState(scrollbarState)
-    {
-    }
-
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
-        : pseudoId(pseudoId)
-        , nameIdentifier(nameIdentifier)
-    {
-        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
-    }
-
-    PseudoId pseudoId;
-    std::optional<StyleScrollbarState> scrollbarState;
-
-    // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString nameIdentifier;
-};
 
 struct MatchedRule {
     const RuleData* ruleData { nullptr };
