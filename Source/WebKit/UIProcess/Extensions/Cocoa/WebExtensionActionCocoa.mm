@@ -333,6 +333,8 @@ void WebExtensionAction::readyToPresentPopup()
     if (m_popupPresented || !m_respondsToPresentPopup)
         return;
 
+    setHasUnreadBadgeText(false);
+
     m_popupPresented = true;
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
@@ -425,7 +427,44 @@ void WebExtensionAction::setBadgeText(String badgeText)
 
     m_customBadgeText = badgeText;
 
+    if (!badgeText.isNull())
+        m_hasUnreadBadgeText = !badgeText.isEmpty();
+    else
+        m_hasUnreadBadgeText = std::nullopt;
+
     propertiesDidChange();
+}
+
+bool WebExtensionAction::hasUnreadBadgeText() const
+{
+    if (!extensionContext())
+        return false;
+
+    if (m_hasUnreadBadgeText)
+        return m_hasUnreadBadgeText.value();
+
+    if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get())->hasUnreadBadgeText();
+
+    if (m_window)
+        return extensionContext()->defaultAction().hasUnreadBadgeText();
+
+    return false;
+}
+
+void WebExtensionAction::setHasUnreadBadgeText(bool hasUnreadBadgeText)
+{
+    m_hasUnreadBadgeText = !badgeText().isEmpty() ? std::optional(hasUnreadBadgeText) : std::nullopt;
+
+    // Only propagate the change if we're setting it to false.
+    if (hasUnreadBadgeText)
+        return;
+
+    if (m_tab)
+        extensionContext()->getAction(m_tab->window().get())->setHasUnreadBadgeText(false);
+
+    if (m_window)
+        extensionContext()->defaultAction().setHasUnreadBadgeText(false);
 }
 
 void WebExtensionAction::incrementBlockedResourceCount(ssize_t amount)
@@ -434,6 +473,9 @@ void WebExtensionAction::incrementBlockedResourceCount(ssize_t amount)
 
     if (m_blockedResourceCount < 0)
         m_blockedResourceCount = 0;
+
+    if (!badgeText().isEmpty())
+        m_hasUnreadBadgeText = true;
 
     propertiesDidChange();
 }

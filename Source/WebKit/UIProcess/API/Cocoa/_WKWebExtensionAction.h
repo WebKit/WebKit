@@ -89,8 +89,19 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 /*! @abstract The localized display label for the action. */
 @property (nonatomic, readonly, copy) NSString *label;
 
-/*! @abstract The badge text for the action. */
+/*!
+ @abstract The badge text for the action.
+ @discussion This property represents the text that appears on the badge for the action. An empty string signifies that no badge should be shown.
+ */
 @property (nonatomic, readonly, copy) NSString *badgeText;
+
+/*!
+ @abstract A Boolean value indicating whether the badge text is unread.
+ @discussion This property is automatically set to `YES` when `badgeText` changes and is not empty. If `badgeText` becomes empty or the
+ popup associated with the action is presented, this property is automatically set to `NO`. Additionally, it should be set to `NO` by the app when the badge
+ has been presented to the user. This property is useful for higher-level notification badges when extensions might be hidden behind an action sheet.
+ */
+@property (nonatomic) BOOL hasUnreadBadgeText;
 
 /*! @abstract A Boolean value indicating whether the action is enabled. */
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;

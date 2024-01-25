@@ -99,6 +99,16 @@ using CocoaMenuItem = UIMenuElement;
     return _webExtensionAction->badgeText();
 }
 
+- (BOOL)hasUnreadBadgeText
+{
+    return _webExtensionAction->hasUnreadBadgeText();
+}
+
+- (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
+{
+    return _webExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
+}
+
 - (BOOL)isEnabled
 {
     return _webExtensionAction->isEnabled();
@@ -161,6 +171,15 @@ using CocoaMenuItem = UIMenuElement;
 - (NSString *)badgeText
 {
     return nil;
+}
+
+- (BOOL)hasUnreadBadgeText
+{
+    return NO;
+}
+
+- (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
+{
 }
 
 - (BOOL)isEnabled
