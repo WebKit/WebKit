@@ -437,6 +437,7 @@ public:
     bool cannotBlitToWindow() const;
 
     inline bool isTransparent() const; // FIXME: This function is incorrectly named. It's isNotOpaque, sometimes called hasOpacity, not isEntirelyTransparent.
+    inline bool isFullyTransparent() const;
 
     bool hasReflection() const { return renderer().hasReflection(); }
     bool isReflection() const { return renderer().isRenderReplica(); }
