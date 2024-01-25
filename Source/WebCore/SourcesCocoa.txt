@@ -551,7 +551,7 @@ platform/ios/UIFoundationSoftLink.mm
 platform/ios/UIViewControllerUtilities.mm
 platform/ios/UserAgentIOS.mm
 platform/ios/ValidationBubbleIOS.mm
-platform/ios/VideoFullscreenInterfaceIOS.mm @no-unify
+platform/ios/VideoPresentationInterfaceIOS.mm @no-unify
 platform/ios/WebAVPlayerController.mm
 platform/ios/WebBackgroundTaskController.mm
 platform/ios/WebCoreMotionManager.mm
@@ -604,7 +604,7 @@ platform/mac/ThreadCheck.mm @no-unify
 platform/mac/UserActivityMac.mm
 platform/mac/UserAgentMac.mm
 platform/mac/ValidationBubbleMac.mm
-platform/mac/VideoFullscreenInterfaceMac.mm
+platform/mac/VideoPresentationInterfaceMac.mm
 platform/mac/WebCoreFullScreenPlaceholderView.mm
 platform/mac/WebCoreFullScreenWarningView.mm
 platform/mac/WebCoreFullScreenWindow.mm

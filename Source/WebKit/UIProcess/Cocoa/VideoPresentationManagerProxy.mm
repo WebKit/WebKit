@@ -41,10 +41,10 @@
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
-#import <WebCore/NullVideoFullscreenInterface.h>
+#import <WebCore/NullVideoPresentationInterface.h>
 #import <WebCore/TimeRanges.h>
-#import <WebCore/VideoFullscreenInterfaceIOS.h>
-#import <WebCore/VideoFullscreenInterfaceMac.h>
+#import <WebCore/VideoPresentationInterfaceIOS.h>
+#import <WebCore/VideoPresentationInterfaceMac.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -520,7 +520,7 @@ bool VideoPresentationManagerProxy::isPlayingVideoInEnhancedFullscreen() const
 }
 #endif
 
-PlatformVideoFullscreenInterface* VideoPresentationManagerProxy::controlsManagerInterface()
+PlatformVideoPresentationInterface* VideoPresentationManagerProxy::controlsManagerInterface()
 {
     if (auto contextId = m_playbackSessionManagerProxy->controlsManagerContextId())
         return &ensureInterface(contextId);
@@ -545,7 +545,7 @@ VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy
     Ref playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
     auto model = VideoPresentationModelContext::create(*this, playbackSessionModel, contextId);
     Ref playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
-    Ref<PlatformVideoFullscreenInterface> interface = PlatformVideoFullscreenInterface::create(playbackSessionInterface);
+    Ref<PlatformVideoPresentationInterface> interface = PlatformVideoPresentationInterface::create(playbackSessionInterface);
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setVideoPresentationModel(model.ptr());
@@ -566,12 +566,12 @@ VideoPresentationModelContext& VideoPresentationManagerProxy::ensureModel(Playba
     return *std::get<0>(ensureModelAndInterface(contextId));
 }
 
-PlatformVideoFullscreenInterface& VideoPresentationManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
+PlatformVideoPresentationInterface& VideoPresentationManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
 {
     return *std::get<1>(ensureModelAndInterface(contextId));
 }
 
-PlatformVideoFullscreenInterface* VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
+PlatformVideoPresentationInterface* VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
 {
     auto it = m_contextMap.find(contextId);
     if (it == m_contextMap.end())
@@ -614,14 +614,14 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
     m_clientCounts.set(contextId, clientCount);
 }
 
-void VideoPresentationManagerProxy::forEachSession(Function<void(VideoPresentationModelContext&, PlatformVideoFullscreenInterface&)>&& callback)
+void VideoPresentationManagerProxy::forEachSession(Function<void(VideoPresentationModelContext&, PlatformVideoPresentationInterface&)>&& callback)
 {
     if (m_contextMap.isEmpty())
         return;
 
     for (auto& value : copyToVector(m_contextMap.values())) {
         RefPtr<VideoPresentationModelContext> model;
-        RefPtr<PlatformVideoFullscreenInterface> interface;
+        RefPtr<PlatformVideoPresentationInterface> interface;
         std::tie(model, interface) = value;
 
         ASSERT(model);
@@ -751,7 +751,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
 }
 
 #if PLATFORM(IOS_FAMILY)
-PlatformVideoFullscreenInterface* VideoPresentationManagerProxy::returningToStandbyInterface() const
+PlatformVideoPresentationInterface* VideoPresentationManagerProxy::returningToStandbyInterface() const
 {
     if (m_contextMap.isEmpty())
         return nullptr;

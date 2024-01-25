@@ -61,14 +61,14 @@ namespace WebCore {
 class FloatRect;
 class FloatSize;
 
-class VideoFullscreenInterfaceIOS final
+class VideoPresentationInterfaceIOS final
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoFullscreenInterfaceIOS, WTF::DestructionThread::MainRunLoop> {
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop> {
 public:
-    WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceIOS> create(PlaybackSessionInterfaceAVKit&);
-    WEBCORE_EXPORT virtual ~VideoFullscreenInterfaceIOS();
+    WEBCORE_EXPORT static Ref<VideoPresentationInterfaceIOS> create(PlaybackSessionInterfaceAVKit&);
+    WEBCORE_EXPORT virtual ~VideoPresentationInterfaceIOS();
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
     PlaybackSessionInterfaceAVKit& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
@@ -166,12 +166,12 @@ public:
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
-    const char* logClassName() const { return "VideoFullscreenInterfaceIOS"; };
+    const char* logClassName() const { return "VideoPresentationInterfaceIOS"; };
     WTFLogChannel& logChannel() const;
 #endif
 
 private:
-    WEBCORE_EXPORT VideoFullscreenInterfaceIOS(PlaybackSessionInterfaceAVKit&);
+    WEBCORE_EXPORT VideoPresentationInterfaceIOS(PlaybackSessionInterfaceAVKit&);
 
     void doSetup();
     void finalizeSetup();

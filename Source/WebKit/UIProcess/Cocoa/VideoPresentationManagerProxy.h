@@ -34,7 +34,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformLayer.h>
-#include <WebCore/PlatformVideoFullscreenInterface.h>
+#include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/PlatformView.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
@@ -177,16 +177,16 @@ public:
 
     bool isPlayingVideoInEnhancedFullscreen() const;
 
-    WebCore::PlatformVideoFullscreenInterface* controlsManagerInterface();
+    WebCore::PlatformVideoPresentationInterface* controlsManagerInterface();
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
-    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
+    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&&);
 
     void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::PlatformVideoFullscreenInterface* returningToStandbyInterface() const;
+    WebCore::PlatformVideoPresentationInterface* returningToStandbyInterface() const;
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 #endif
@@ -201,12 +201,12 @@ private:
     explicit VideoPresentationManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoFullscreenInterface>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoPresentationInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     VideoPresentationModelContext& ensureModel(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier) const;
+    WebCore::PlatformVideoPresentationInterface& ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlatformVideoPresentationInterface* findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);

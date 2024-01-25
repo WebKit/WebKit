@@ -27,16 +27,16 @@
 
 namespace WebCore {
 
-class NullVideoFullscreenInterface;
-class VideoFullscreenInterfaceIOS;
-class VideoFullscreenInterfaceMac;
+class NullVideoPresentationInterface;
+class VideoPresentationInterfaceIOS;
+class VideoPresentationInterfaceMac;
 
 #if PLATFORM(WATCHOS)
-using PlatformVideoFullscreenInterface = NullVideoFullscreenInterface;
+using PlatformVideoPresentationInterface = NullVideoPresentationInterface;
 #elif PLATFORM(IOS_FAMILY)
-using PlatformVideoFullscreenInterface = VideoFullscreenInterfaceIOS;
+using PlatformVideoPresentationInterface = VideoPresentationInterfaceIOS;
 #elif PLATFORM(MAC)
-using PlatformVideoFullscreenInterface = VideoFullscreenInterfaceMac;
+using PlatformVideoPresentationInterface = VideoPresentationInterfaceMac;
 #endif
 
 } // namespace WebCore

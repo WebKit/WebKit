@@ -47,7 +47,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/VideoFullscreenInterfaceIOS.h>
+#import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <WebCore/VideoPresentationModel.h>
 #import <WebCore/ViewportArguments.h>
 #import <objc/runtime.h>
@@ -1081,11 +1081,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
                     });
                     videoPresentationManager->addVideoInPictureInPictureDidChangeObserver(*_pipObserver);
                 }
-                if (auto* videoFullscreenInterface = videoPresentationManager ? videoPresentationManager->returningToStandbyInterface() : nullptr) {
+                if (auto* videoPresentationInterface = videoPresentationManager ? videoPresentationManager->returningToStandbyInterface() : nullptr) {
                     if (_returnToFullscreenFromPictureInPicture)
-                        videoFullscreenInterface->preparedToReturnToStandby();
-                    else if (videoFullscreenInterface->inPictureInPicture()) {
-                        if (auto model = videoFullscreenInterface->videoPresentationModel()) {
+                        videoPresentationInterface->preparedToReturnToStandby();
+                    else if (videoPresentationInterface->inPictureInPicture()) {
+                        if (auto model = videoPresentationInterface->videoPresentationModel()) {
                             _enterFullscreenNeedsExitPictureInPicture = YES;
                             model->requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
                         }
@@ -1254,8 +1254,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         manager->didExitFullScreen();
     }
 
-    auto* videoFullscreenInterface = self._videoPresentationManager ? self._videoPresentationManager->controlsManagerInterface() : nullptr;
-    _shouldReturnToFullscreenFromPictureInPicture = videoFullscreenInterface && videoFullscreenInterface->inPictureInPicture();
+    auto* videoPresentationInterface = self._videoPresentationManager ? self._videoPresentationManager->controlsManagerInterface() : nullptr;
+    _shouldReturnToFullscreenFromPictureInPicture = videoPresentationInterface && videoPresentationInterface->inPictureInPicture();
 
     [_window setHidden:YES];
     _window = nil;
@@ -1338,12 +1338,12 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 - (void)didExitPictureInPicture
 {
     if (!_enterFullscreenNeedsExitPictureInPicture && _shouldReturnToFullscreenFromPictureInPicture) {
-        auto* videoFullscreenInterface = self._videoPresentationManager ? self._videoPresentationManager->returningToStandbyInterface() : nullptr;
-        if (videoFullscreenInterface && videoFullscreenInterface->returningToStandby()) {
+        auto* videoPresentationInterface = self._videoPresentationManager ? self._videoPresentationManager->returningToStandbyInterface() : nullptr;
+        if (videoPresentationInterface && videoPresentationInterface->returningToStandby()) {
             OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, "returning to standby");
             if (!_exitingFullScreen) {
                 if (_fullScreenState == WebKit::InFullScreen)
-                    videoFullscreenInterface->preparedToReturnToStandby();
+                    videoPresentationInterface->preparedToReturnToStandby();
                 else
                     [self requestRestoreFullScreen];
             } else

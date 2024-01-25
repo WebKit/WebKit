@@ -39,7 +39,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSWindow;
-OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
+OBJC_CLASS WebVideoPresentationInterfaceMacObjC;
 
 namespace WebCore {
 
@@ -47,18 +47,18 @@ class IntRect;
 class FloatSize;
 class PlaybackSessionInterfaceMac;
 
-class VideoFullscreenInterfaceMac
+class VideoPresentationInterfaceMac
     : public VideoPresentationModelClient
     , private PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public RefCounted<VideoFullscreenInterfaceMac> {
+    , public RefCounted<VideoPresentationInterfaceMac> {
 
 public:
-    static Ref<VideoFullscreenInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
+    static Ref<VideoPresentationInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
     {
-        return adoptRef(*new VideoFullscreenInterfaceMac(playbackSessionInterface));
+        return adoptRef(*new VideoPresentationInterfaceMac(playbackSessionInterface));
     }
-    virtual ~VideoFullscreenInterfaceMac();
+    virtual ~VideoPresentationInterfaceMac();
     PlaybackSessionInterfaceMac& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
@@ -95,7 +95,7 @@ public:
     bool mayAutomaticallyShowVideoPictureInPicture() const { return false; }
     void applicationDidBecomeActive() { }
 
-    WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();
+    WEBCORE_EXPORT WebVideoPresentationInterfaceMacObjC *videoPresentationInterfaceObjC();
 
     WEBCORE_EXPORT void requestHideAndExitPiP();
 
@@ -104,17 +104,17 @@ public:
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;
-    const char* logClassName() const { return "VideoFullscreenInterfaceMac"; };
+    const char* logClassName() const { return "VideoPresentationInterfaceMac"; };
     WTFLogChannel& logChannel() const;
 #endif
 
 private:
-    WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
+    WEBCORE_EXPORT VideoPresentationInterfaceMac(PlaybackSessionInterfaceMac&);
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
-    RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
+    RetainPtr<WebVideoPresentationInterfaceMacObjC> m_webVideoPresentationInterfaceObjC;
 };
 
 } // namespace WebCore

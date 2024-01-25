@@ -33,18 +33,18 @@
 
 namespace WebCore {
 
-class NullVideoFullscreenInterface final
+class NullVideoPresentationInterface final
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public RefCounted<NullVideoFullscreenInterface> {
+    , public RefCounted<NullVideoPresentationInterface> {
 public:
-    static Ref<NullVideoFullscreenInterface> create(NullPlaybackSessionInterface& playbackSessionInterface)
+    static Ref<NullVideoPresentationInterface> create(NullPlaybackSessionInterface& playbackSessionInterface)
     {
-        return adoptRef(*new NullVideoFullscreenInterface(playbackSessionInterface));
+        return adoptRef(*new NullVideoPresentationInterface(playbackSessionInterface));
     }
 
-    virtual ~NullVideoFullscreenInterface() = default;
+    virtual ~NullVideoPresentationInterface() = default;
     NullPlaybackSessionInterface& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
@@ -82,7 +82,7 @@ public:
     void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&) final { }
 
 private:
-    NullVideoFullscreenInterface(NullPlaybackSessionInterface& playbackSessionInterface)
+    NullVideoPresentationInterface(NullPlaybackSessionInterface& playbackSessionInterface)
         : m_playbackSessionInterface(playbackSessionInterface)
     {
     }

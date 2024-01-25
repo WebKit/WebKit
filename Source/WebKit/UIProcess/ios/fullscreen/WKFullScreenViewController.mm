@@ -39,7 +39,7 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/VideoFullscreenInterfaceIOS.h>
+#import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -333,8 +333,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
     auto page = [self._webView _page];
     auto* videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
-    auto* videoFullscreenInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
-    auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
+    auto* videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
+    auto* playbackSessionInterface = videoPresentationInterface ? &videoPresentationInterface->playbackSessionInterface() : nullptr;
 
     _playbackClient.setInterface(playbackSessionInterface);
 
