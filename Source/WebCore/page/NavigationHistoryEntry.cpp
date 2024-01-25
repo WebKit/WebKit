@@ -34,8 +34,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context)
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, const URL& url)
     : ContextDestructionObserver(context)
+    , m_url(url)
+    , m_key(WTF::UUID::createVersion4())
+    , m_id(WTF::UUID::createVersion4())
 {
 }
 

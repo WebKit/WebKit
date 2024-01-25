@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Navigation.h"
 
+#include "HistoryItem.h"
 #include "JSNavigationHistoryEntry.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -37,6 +38,29 @@ Navigation::Navigation(ScriptExecutionContext* context, LocalDOMWindow& window)
     : ContextDestructionObserver(context)
     , LocalDOMWindowProperty(&window)
 {
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#initialize-the-navigation-api-entries-for-a-new-document
+void Navigation::initializeEntries(const Ref<HistoryItem>& currentItem, const Vector<Ref<HistoryItem>>& items)
+{
+    for (Ref item : items)
+        m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), item->url()));
+    m_currentEntryIndex = items.find(currentItem);
+}
+
+const Vector<Ref<NavigationHistoryEntry>>& Navigation::entries() const
+{
+    static NeverDestroyed<Vector<Ref<NavigationHistoryEntry>>> emptyEntries;
+    if (hasEntriesAndEventsDisabled())
+        return emptyEntries;
+    return m_entries;
+}
+
+NavigationHistoryEntry* Navigation::currentEntry() const
+{
+    if (!hasEntriesAndEventsDisabled() && m_currentEntryIndex > -1)
+        return m_entries.at(m_currentEntryIndex).ptr();
+    return nullptr;
 }
 
 Navigation::~Navigation() = default;
@@ -54,7 +78,7 @@ EventTargetInterface Navigation::eventTargetInterface() const
 Navigation::Result Navigation::navigate(const String& /* url */, NavigateOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     // FIXME: keep track of promises to resolve later.
-    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -65,7 +89,7 @@ Navigation::Result Navigation::navigate(const String& /* url */, NavigateOptions
 Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     // FIXME: keep track of promises to resolve later.
-    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -76,7 +100,7 @@ Navigation::Result Navigation::reload(ReloadOptions&&, Ref<DeferredPromise>&& co
 Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     // FIXME: keep track of promises to resolve later.
-    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -87,7 +111,7 @@ Navigation::Result Navigation::traverseTo(const String& /* key */, Options&&, Re
 Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     // FIXME: keep track of promises to resolve later.
-    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -98,7 +122,7 @@ Navigation::Result Navigation::back(Options&&, Ref<DeferredPromise>&& committed,
 Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     // FIXME: keep track of promises to resolve later.
-    auto entry = NavigationHistoryEntry::create(scriptExecutionContext());
+    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
     auto globalObject = committed->globalObject();
     Navigation::Result result = { DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(committed->promise())), DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise())) };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -108,6 +132,14 @@ Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committ
 
 void Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&&)
 {
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#has-entries-and-events-disabled
+bool Navigation::hasEntriesAndEventsDisabled() const
+{
+    if (window()->securityOrigin() && window()->securityOrigin()->isOpaque())
+        return true;
+    return false;
 }
 
 

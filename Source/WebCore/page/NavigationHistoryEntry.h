@@ -29,6 +29,7 @@
 #include "EventHandler.h"
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
+#include <wtf/UUID.h>
 
 namespace JSC {
 class JSValue;
@@ -42,26 +43,26 @@ public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
-    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context) { return adoptRef(*new NavigationHistoryEntry(context)); }
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, const URL& url) { return adoptRef(*new NavigationHistoryEntry(context, url)); }
 
-    const String& url() const { return m_url; };
-    const String& key() const { return m_key; };
-    const String& id() const { return m_id; };
+    const String& url() const { return m_url.string(); };
+    String key() const { return m_key.toString(); };
+    String id() const { return m_id.toString(); };
     uint64_t index() const { return m_index; };
     bool sameDocument() const { return m_sameDocument; };
     const JSC::JSValue& getState() const { return m_state; };
 
 private:
-    NavigationHistoryEntry(ScriptExecutionContext*);
+    NavigationHistoryEntry(ScriptExecutionContext*, const URL&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    String m_url;
-    String m_key;
-    String m_id;
+    const URL m_url;
+    const WTF::UUID m_key;
+    const WTF::UUID m_id;
     uint64_t m_index;
     JSC::JSValue m_state;
     bool m_sameDocument;

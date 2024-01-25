@@ -386,6 +386,7 @@ public:
 
     // Navigation API
     Navigation& navigation();
+    Ref<Navigation> protectedNavigation();
 
     // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its

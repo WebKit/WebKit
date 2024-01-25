@@ -692,8 +692,13 @@ History& LocalDOMWindow::history()
 Navigation& LocalDOMWindow::navigation()
 {
     if (!m_navigation)
-        m_navigation = Navigation::create(scriptExecutionContext(), *this);
+        m_navigation = Navigation::create(protectedScriptExecutionContext().get(), *this);
     return *m_navigation;
+}
+
+Ref<Navigation> LocalDOMWindow::protectedNavigation()
+{
+    return navigation();
 }
 
 Crypto& LocalDOMWindow::crypto() const

@@ -93,6 +93,7 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
+#include "Navigation.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "Node.h"
@@ -820,6 +821,8 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
+
+    updateNavigationAPIEntries();
 
     updateFirstPartyForCookies();
     document->initContentSecurityPolicy();
@@ -4650,6 +4653,26 @@ RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDo
     if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)
         loader = documentLoader();
     return loader;
+}
+
+void FrameLoader::updateNavigationAPIEntries()
+{
+    if (!m_frame->document() || !m_frame->document()->settings().navigationAPIEnabled())
+        return;
+    RefPtr domWindow = m_frame->document()->domWindow();
+    if (!domWindow)
+        return;
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+    if (RefPtr currentItem = page->backForward().currentItem()) {
+        Vector<Ref<HistoryItem>> historyItems;
+        for (int index = -1 * static_cast<int>(page->backForward().backCount()); index <= static_cast<int>(page->backForward().forwardCount()); index++) {
+            if (RefPtr item = page->backForward().itemAtIndex(index))
+                historyItems.append(item.releaseNonNull());
+        }
+        domWindow->protectedNavigation()->initializeEntries(*currentItem, historyItems);
+    }
 }
 
 } // namespace WebCore

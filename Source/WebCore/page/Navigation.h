@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-template<typename IDLType> class DOMPromiseDeferred;
+class HistoryItem;
 
 class Navigation final : public RefCounted<Navigation>, public EventTarget, public ContextDestructionObserver, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Navigation);
@@ -75,12 +75,14 @@ public:
         RefPtr<DOMPromise> finished;
     };
 
-    Vector<Ref<NavigationHistoryEntry>> entries() { return m_entries; };
-    RefPtr<NavigationHistoryEntry> currentEntry() { return m_currentEntry; };
+    const Vector<Ref<NavigationHistoryEntry>>& entries() const;
+    NavigationHistoryEntry* currentEntry() const;
     RefPtr<NavigationTransition> transition() { return m_transition; };
 
     bool canGoBack() const { return m_canGoBack; };
     bool canGoForward() const { return m_canGoForward; };
+
+    void initializeEntries(const Ref<HistoryItem>& currentItem, const Vector<Ref<HistoryItem>> &items);
 
     Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -100,7 +102,9 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    RefPtr<NavigationHistoryEntry> m_currentEntry;
+    bool hasEntriesAndEventsDisabled() const;
+
+    int m_currentEntryIndex { -1 };
     RefPtr<NavigationTransition> m_transition;
     bool m_canGoBack { false };
     bool m_canGoForward { false };
