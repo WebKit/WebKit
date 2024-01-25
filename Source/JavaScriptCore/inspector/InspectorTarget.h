@@ -64,16 +64,3 @@ private:
 };
 
 } // namespace Inspector
-
-namespace WTF {
-
-template<> struct EnumTraits<Inspector::InspectorTargetType> {
-    using values = EnumValues<
-        Inspector::InspectorTargetType,
-        Inspector::InspectorTargetType::Page,
-        Inspector::InspectorTargetType::DedicatedWorker,
-        Inspector::InspectorTargetType::ServiceWorker
-    >;
-};
-
-} // namespace WTF

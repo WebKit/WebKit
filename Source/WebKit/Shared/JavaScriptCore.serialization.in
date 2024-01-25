@@ -56,3 +56,13 @@ enum class JSC::SourceTaintedOrigin : uint8_t {
     IndirectlyTainted,
     KnownTainted
 };
+
+header: <JavaScriptCore/InspectorFrontendChannel.h>
+[Nested] enum class Inspector::FrontendChannel::ConnectionType : bool;
+
+header: <JavaScriptCore/InspectorTarget.h>
+enum class Inspector::InspectorTargetType : uint8_t {
+    Page,
+    DedicatedWorker,
+    ServiceWorker,
+};
