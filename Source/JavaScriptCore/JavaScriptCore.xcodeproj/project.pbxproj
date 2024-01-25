@@ -1970,8 +1970,6 @@
 		E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F507F1B8429A400413856 /* JSInternalPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3400EC122A1CC7B009DED54 /* FunctionExecutableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3400EC022A1CC78009DED54 /* FunctionExecutableInlines.h */; };
 		E3443E3128E9711700C0020C /* ArrayPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3443E3028E9711700C0020C /* ArrayPrototypeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E34565A72B4753D800ED9B78 /* DFGDesiredObjectProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E34565A42B4753D700ED9B78 /* DFGDesiredObjectProperties.cpp */; };
-		E34565A82B4753D800ED9B78 /* DFGDesiredObjectProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = E34565A52B4753D800ED9B78 /* DFGDesiredObjectProperties.h */; };
 		E348876228F516C600527E5E /* ObjectPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E348876128F516C600527E5E /* ObjectPrototypeInlines.h */; };
 		E349A7812491F161001BA336 /* DFGCodeOriginPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E349A7802491F15A001BA336 /* DFGCodeOriginPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34D4FAA2984F25B00CE5F9F /* WasmCallsiteCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E34D4FA92984F25A00CE5F9F /* WasmCallsiteCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5624,8 +5622,6 @@
 		E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InternalPromiseConstructor.js; sourceTree = "<group>"; };
 		E3400EC022A1CC78009DED54 /* FunctionExecutableInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionExecutableInlines.h; sourceTree = "<group>"; };
 		E3443E3028E9711700C0020C /* ArrayPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototypeInlines.h; sourceTree = "<group>"; };
-		E34565A42B4753D700ED9B78 /* DFGDesiredObjectProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredObjectProperties.cpp; path = dfg/DFGDesiredObjectProperties.cpp; sourceTree = "<group>"; };
-		E34565A52B4753D800ED9B78 /* DFGDesiredObjectProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredObjectProperties.h; path = dfg/DFGDesiredObjectProperties.h; sourceTree = "<group>"; };
 		E348876128F516C600527E5E /* ObjectPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPrototypeInlines.h; sourceTree = "<group>"; };
 		E349A77F2491F159001BA336 /* DFGCodeOriginPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCodeOriginPool.cpp; path = dfg/DFGCodeOriginPool.cpp; sourceTree = "<group>"; };
 		E349A7802491F15A001BA336 /* DFGCodeOriginPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGCodeOriginPool.h; path = dfg/DFGCodeOriginPool.h; sourceTree = "<group>"; };
@@ -9034,8 +9030,6 @@
 				E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */,
 				0F8F2B97172F04FD007DBDA5 /* DFGDesiredIdentifiers.cpp */,
 				0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */,
-				E34565A42B4753D700ED9B78 /* DFGDesiredObjectProperties.cpp */,
-				E34565A52B4753D800ED9B78 /* DFGDesiredObjectProperties.h */,
 				C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */,
 				C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */,
 				0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */,
@@ -10630,7 +10624,6 @@
 				0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */,
 				E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */,
 				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
-				E34565A82B4753D800ED9B78 /* DFGDesiredObjectProperties.h in Headers */,
 				C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */,
 				0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */,
 				C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */,
@@ -13155,7 +13148,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E34565A72B4753D800ED9B78 /* DFGDesiredObjectProperties.cpp in Sources */,
 				52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

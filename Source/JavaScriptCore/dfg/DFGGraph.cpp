@@ -1354,8 +1354,8 @@ JSValue Graph::tryGetConstantProperty(
     if (!result)
         return JSValue();
 
-    // If all structures are watched, we don't need to check them in the main thread because they already registered watchpoints
-    // for transitions. If the object gets transition while compiling, then it invalidates the code.
+    // If all structures are watched, we don't need to consider whether object transitions and changes the value.
+    // If the object gets transition while compiling, then it invalidates the code.
     bool allAreWatched = true;
     for (unsigned i = structureSet.size(); i--;) {
         RegisteredStructure structure = structureSet[i];
@@ -1371,11 +1371,6 @@ JSValue Graph::tryGetConstantProperty(
     // But we can still optimize it if StructureSet is only one: in that case, there is no way to fulfill Structure requirement while changing the property
     // and avoiding the replacement watchpoint firing.
     if (structureSet.size() != 1)
-        return JSValue();
-
-    m_plan.weakReferences().addLazily(object);
-    m_plan.weakReferences().addLazily(result);
-    if (!m_plan.objectProperties().addLazily(object, offset, result, set.onlyStructure()))
         return JSValue();
 
     return result;

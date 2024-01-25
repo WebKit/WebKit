@@ -183,7 +183,6 @@ void Plan::cancel()
     m_identifiers = DesiredIdentifiers();
     m_weakReferences = DesiredWeakReferences();
     m_transitions = DesiredTransitions();
-    m_objectProperties = DesiredObjectProperties();
     m_callback = nullptr;
 }
 
@@ -543,11 +542,7 @@ void Plan::reallyAdd(CommonData* commonData)
 
 bool Plan::isStillValidOnMainThread()
 {
-    if (!m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers))
-        return false;
-    if (!m_objectProperties.areStillValidOnMainThread(*m_vm))
-        return false;
-    return true;
+    return m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers);
 }
 
 CompilationResult Plan::finalize()
