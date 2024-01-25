@@ -1468,16 +1468,6 @@ int LocalDOMWindow::scrollY() const
     return viewAfterLayout->mapFromLayoutToCSSUnits(viewAfterLayout->contentsScrollPosition().y());
 }
 
-bool LocalDOMWindow::closed() const
-{
-    RefPtr frame = this->frame();
-    if (!frame)
-        return true;
-
-    RefPtr page = frame->page();
-    return !page || page->isClosing();
-}
-
 unsigned LocalDOMWindow::length() const
 {
     if (!isCurrentlyDisplayedInFrame())

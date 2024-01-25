@@ -419,12 +419,27 @@ TEST(SiteIsolation, CloseAfterWindowOpen)
 
     auto [opener, opened] = openerAndOpenedViews(server);
     pid_t webKitPid = findFramePID(frameTrees(opener.webView.get()).get(), FrameType::Remote);
+
+    __block bool done = false;
+    [opener.webView evaluateJavaScript:@"w.closed" completionHandler:^(id result, NSError *) {
+        EXPECT_FALSE([result boolValue]);
+        done = true;
+    }];
+    Util::run(&done);
+
     [opener.webView evaluateJavaScript:@"w.close()" completionHandler:nil];
     [opened.uiDelegate waitForDidClose];
     opened.webView = nullptr;
     while (processStillRunning(webKitPid))
         Util::spinRunLoop();
     checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
+
+    done = false;
+    [opener.webView evaluateJavaScript:@"w.closed" completionHandler:^(id result, NSError *) {
+        EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+    Util::run(&done);
 }
 
 // FIXME: <rdar://117383420> Add a test that deallocates the opened WKWebView without being asked to by JS.

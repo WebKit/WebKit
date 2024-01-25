@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "HTTPParsers.h"
 #include "Location.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
@@ -66,6 +67,16 @@ Location& DOMWindow::location()
     if (!m_location)
         m_location = Location::create(*this);
     return *m_location;
+}
+
+bool DOMWindow::closed() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return true;
+
+    RefPtr page = frame->page();
+    return !page || page->isClosing();
 }
 
 RefPtr<Frame> DOMWindow::protectedFrame() const

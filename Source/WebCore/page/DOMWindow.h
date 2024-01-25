@@ -59,6 +59,8 @@ public:
     WEBCORE_EXPORT Location& location();
     virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState) = 0;
 
+    bool closed() const;
+
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&);
 

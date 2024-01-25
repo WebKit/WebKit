@@ -31,6 +31,7 @@
 #include "LocalDOMWindow.h"
 #include "MessagePort.h"
 #include "NavigationScheduler.h"
+#include "Page.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
 #include "SecurityOrigin.h"
@@ -62,14 +63,18 @@ void RemoteDOMWindow::close(Document&)
 {
     // FIXME: <rdar://117381050> Add security checks here equivalent to LocalDOMWindow::close (both with and without Document& parameter).
     // Or refactor to share code.
-    if (m_frame && m_frame->isMainFrame())
-        m_frame->client().close();
-}
+    if (!m_frame)
+        return;
 
-bool RemoteDOMWindow::closed() const
-{
-    // FIXME: This is probably not completely correct. <rdar://116203970>
-    return !m_frame;
+    if (!m_frame->isMainFrame())
+        return;
+
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+
+    page->setIsClosing();
+    m_frame->client().close();
 }
 
 void RemoteDOMWindow::focus(LocalDOMWindow&)

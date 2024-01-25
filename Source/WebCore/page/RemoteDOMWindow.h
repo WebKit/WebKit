@@ -61,7 +61,6 @@ public:
     // DOM API exposed cross-origin.
     WindowProxy* self() const;
     void close(Document&);
-    bool closed() const;
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;

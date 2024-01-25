@@ -220,8 +220,6 @@ public:
     int scrollX() const;
     int scrollY() const;
 
-    bool closed() const;
-
     unsigned length() const;
 
     AtomString name() const;
