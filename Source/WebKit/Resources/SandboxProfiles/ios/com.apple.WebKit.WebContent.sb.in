@@ -111,19 +111,6 @@
         "com.apple.mobileipod")
 )
 
-(define-once (media-capture-support)
-    ;; Media capture, microphone access
-    (with-filter (extension "com.apple.webkit.microphone")
-        (allow device-microphone))
-
-    ;; Media capture, camera access
-    (with-filter (extension "com.apple.webkit.camera")
-        (allow user-preference-read
-            (preference-domain "com.apple.coremedia"))
-        (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-        (allow device-camera))
-)
-
 (define-once (accessibility-support)
     (allow mach-register
         (local-name "com.apple.iphone.axserver"))
@@ -985,8 +972,6 @@
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name-prefix "com.apple.AGXCompilerService")))
 #endif // HAVE(AGX_COMPILER_SERVICE)
-
-(media-capture-support)
 
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
