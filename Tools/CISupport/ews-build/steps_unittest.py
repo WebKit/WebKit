@@ -4733,6 +4733,8 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.configureStep()
+        self.assertEqual(UploadFileToS3.haltOnFailure, True)
+        self.assertEqual(UploadFileToS3.flunkOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         env=dict(UPLOAD_URL='https://test-s3-url'),
@@ -4742,7 +4744,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='upload-file-to-s3')
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded archive to S3')
         with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
@@ -4760,13 +4762,13 @@ response: <Response [403]>, 403, Forbidden
 exit 1''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='upload-file-to-s3 (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to upload archive to S3. Please inform an admin.')
         with current_hostname(EWS_BUILD_HOSTNAME):
             return self.runStep()
 
     def test_skipped(self):
         self.configureStep()
-        self.expectOutcome(result=SKIPPED, state_string='upload-file-to-s3 (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped upload to S3')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
 

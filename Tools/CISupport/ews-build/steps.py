@@ -4924,8 +4924,8 @@ class UploadBuiltProduct(transfer.FileUpload):
 class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     name = 'upload-file-to-s3'
     descriptionDone = name
-    haltOnFailure = False
-    flunkOnFailure = False
+    haltOnFailure = True
+    flunkOnFailure = True
 
     def __init__(self, **kwargs):
         super().__init__(timeout=31 * 60, logEnviron=False, **kwargs)
@@ -4933,11 +4933,9 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     @defer.inlineCallbacks
     def run(self):
         s3url = self.build.s3url
-        steps_to_add = [UploadBuiltProduct(), TransferToS3()]
         if not s3url:
             rc = FAILURE
             yield self._addToLog('stdio', f'Failed to get s3url: {s3url}')
-            self.build.addStepsAfterCurrentStep(steps_to_add)
             return defer.returnValue(rc)
 
         self.env = dict(UPLOAD_URL=s3url)
@@ -4946,12 +4944,19 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
 
         self.command = ['python3', 'Tools/Scripts/upload-file-to-url', '--filename', workersrc]
         rc = yield super().run()
-        if rc in [FAILURE, EXCEPTION]:
-            self.build.addStepsAfterCurrentStep(steps_to_add)
         return defer.returnValue(rc)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to upload archive to S3. Please inform an admin.'}
+        if self.results == SKIPPED:
+            return {'step': 'Skipped upload to S3'}
+        if self.results in [SUCCESS, WARNINGS]:
+            return {'step': 'Uploaded archive to S3'}
+        return super().getResultSummary()
 
 
 class GenerateS3URL(master.MasterShellCommandNewStyle):
