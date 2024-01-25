@@ -155,7 +155,7 @@ crypto/mac/CommonCryptoDERUtilities.cpp
 crypto/mac/CryptoAlgorithmAES_CBCMac.cpp
 crypto/mac/CryptoAlgorithmAES_CFBMac.cpp
 crypto/mac/CryptoAlgorithmAES_CTRMac.cpp
-crypto/mac/CryptoAlgorithmAES_GCMMac.cpp
+crypto/mac/CryptoAlgorithmAES_GCMMac.mm
 crypto/mac/CryptoAlgorithmAES_KWMac.cpp
 crypto/mac/CryptoAlgorithmECDHMac.cpp
 crypto/mac/CryptoAlgorithmECDSAMac.cpp

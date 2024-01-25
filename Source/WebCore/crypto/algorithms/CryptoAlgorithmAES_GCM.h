@@ -37,6 +37,7 @@ public:
     static constexpr ASCIILiteral s_name = "AES-GCM"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_GCM;
     static Ref<CryptoAlgorithm> create();
+    static constexpr size_t DefaultTagLength = 128;
 
 private:
     CryptoAlgorithmAES_GCM() = default;
@@ -49,7 +50,7 @@ private:
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&, bool useCryptoKit);
     static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
 };
 

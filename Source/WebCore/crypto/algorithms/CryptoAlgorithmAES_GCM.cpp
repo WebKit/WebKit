@@ -29,6 +29,7 @@
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
@@ -40,7 +41,6 @@ static constexpr auto ALG256 = "A256GCM"_s;
 #if CPU(ADDRESS64)
 static const uint64_t PlainTextMaxLength = 549755813632ULL; // 2^39 - 256
 #endif
-static const uint8_t DefaultTagLength = 128;
 static const uint8_t ValidTagLengths[] = { 32, 64, 96, 104, 112, 120, 128 };
 }
 
@@ -90,16 +90,17 @@ void CryptoAlgorithmAES_GCM::encrypt(const CryptoAlgorithmParameters& parameters
     }
 #endif
 
-    aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : DefaultTagLength;
+    aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : CryptoAlgorithmAES_GCM::DefaultTagLength;
     if (!tagLengthIsValid(*(aesParameters.tagLength))) {
         exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
+    bool useCryptoKit = context.settingsValues().cryptoKitEnabled;
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText);
-        });
+        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText), useCryptoKit] {
+            return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText, useCryptoKit);
+    });
 }
 
 void CryptoAlgorithmAES_GCM::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
@@ -108,7 +109,7 @@ void CryptoAlgorithmAES_GCM::decrypt(const CryptoAlgorithmParameters& parameters
 
     auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(parameters);
 
-    aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : DefaultTagLength;
+    aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : CryptoAlgorithmAES_GCM::DefaultTagLength;
     if (!tagLengthIsValid(*(aesParameters.tagLength))) {
         exceptionCallback(ExceptionCode::OperationError);
         return;

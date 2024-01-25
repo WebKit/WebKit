@@ -5,7 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Generating a key...
 Encrypting...
-PASS bytesToASCIIString(cipherText) is not ""
+PASS bytesToHexString(ccresult) is bytesToHexString(ckresult)
+PASS bytesToASCIIString(ccresult) is not ""
 Decrypting...
 PASS bytesToASCIIString(decryptedText) is plainText
 PASS successfullyParsed is true

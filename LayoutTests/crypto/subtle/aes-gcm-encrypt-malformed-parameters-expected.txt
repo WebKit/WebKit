@@ -7,6 +7,8 @@ PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLI
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: -1}, key, plainText) rejected promise  with TypeError: Value -1 is outside the range [0, 255].
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 129}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS crypto.subtle.encrypt({name: "aes-gcm", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd"), tagLength: 70}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-gcm", tagLength: 16}, key, plainText) rejected promise  with TypeError: Member AesGcmParams.iv is required and must be an instance of (ArrayBufferView or ArrayBuffer).
+PASS [object Promise] rejected promise  with DataError: Data provided to an operation does not meet requirements.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -62,6 +62,42 @@ crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then
 }).then(function(result) {
     cipherText = result;
     shouldBe("bytesToHexString(cipherText)", "expectedCipherText128");
+    if (window.internals)
+        internals.settings.setCryptoKitEnabled(true);
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 32 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText32");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 64 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText64");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 96 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText96");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 104 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText104");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 112 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText112");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 120 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText120");
+
+    return crypto.subtle.encrypt({ name: "aes-gcm", iv: iv, tagLength: 128 }, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText128");
 
     finishJSTest();
 });

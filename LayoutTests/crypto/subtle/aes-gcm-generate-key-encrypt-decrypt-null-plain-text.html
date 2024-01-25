@@ -24,10 +24,17 @@ crypto.subtle.generateKey({name: "aes-gcm", length: 256}, true, ["decrypt", "enc
     debug("Encrypting...");
     return crypto.subtle.encrypt(aesGcmParams, key, asciiToUint8Array(plainText));
 }).then(function(result) {
-    cipherText = result;
-    shouldNotBeEqualToString("bytesToASCIIString(cipherText)", plainText);
+    ccresult = result;
+    if (window.internals)
+        internals.settings.setCryptoKitEnabled(true);
+    return crypto.subtle.encrypt(aesGcmParams, key, asciiToUint8Array(plainText));
+}).then(function(result) {
+    ckresult = result;
+    
+    shouldBe("bytesToHexString(ccresult)", "bytesToHexString(ckresult)");
+    shouldNotBeEqualToString("bytesToASCIIString(ccresult)", plainText);
     debug("Decrypting...");
-    return crypto.subtle.decrypt(aesGcmParams, key, cipherText);
+    return crypto.subtle.decrypt(aesGcmParams, key, ccresult);
 }).then(function(result) {
     decryptedText = result;
 

@@ -1922,6 +1922,20 @@ CrossOriginOpenerPolicyEnabled:
     WebCore:
       default: false
 
+CryptoKitEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Enable CryptoKit for supported Algorithms."
+  humanReadableDescription: "Enable CryptoKit for supported Algorithms."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CursiveFontFamily:
   type: String
   status: embedder
