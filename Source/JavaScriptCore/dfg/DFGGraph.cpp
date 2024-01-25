@@ -1956,6 +1956,24 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
     return allGood;
 }
 
+bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue& value)
+{
+    auto& structureSet = value.m_structure;
+    if (!structureSet.isFinite())
+        return false;
+
+    if (structureSet.isClear())
+        return false;
+
+    bool allAreNonResizable = true;
+    structureSet.forEach(
+        [&](RegisteredStructure structure) {
+            if (isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()))
+                allAreNonResizable = false;
+        });
+    return allAreNonResizable;
+}
+
 void Graph::clearCPSCFGData()
 {
     m_cpsNaturalLoops = nullptr;
