@@ -91,6 +91,7 @@ public:
     void cookiesDeleted(const String& host, Vector<WebCore::Cookie>&&);
     void allCookiesDeleted();
 #endif
+    void updateCachedCookiesEnabled();
 
     void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
 

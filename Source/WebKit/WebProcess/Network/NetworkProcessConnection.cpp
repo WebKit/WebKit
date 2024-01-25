@@ -276,6 +276,11 @@ void NetworkProcessConnection::allCookiesDeleted()
 }
 #endif
 
+void NetworkProcessConnection::updateCachedCookiesEnabled()
+{
+    WebProcess::singleton().updateCachedCookiesEnabled();
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, ShareableResource::Handle&& handle)
 {

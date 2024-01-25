@@ -2113,7 +2113,11 @@ void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& disp
 
 void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
+    if (m_thirdPartyCookieBlockingMode != thirdPartyCookieBlockingMode) {
+        m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
+        if (m_thirdPartyCookieBlockingMode != ThirdPartyCookieBlockingMode::All)
+            updateCachedCookiesEnabled();
+    }
     completionHandler();
 }
 
@@ -2342,6 +2346,12 @@ void WebProcess::removeWebTransportSession(WebTransportSessionIdentifier identif
 {
     ASSERT(m_webTransportSessions.contains(identifier));
     m_webTransportSessions.remove(identifier);
+}
+
+void WebProcess::updateCachedCookiesEnabled()
+{
+    for (auto& document : Document::allDocuments())
+        document->updateCachedCookiesEnabled();
 }
 
 } // namespace WebKit

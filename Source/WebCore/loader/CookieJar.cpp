@@ -132,13 +132,27 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
         ASSERT_NOT_REACHED();
 }
 
-bool CookieJar::cookiesEnabled(const Document&) const
+bool CookieJar::cookiesEnabled(Document& document)
 {
+    auto cookieURL = document.cookieURL();
+    if (cookieURL.isEmpty())
+        return false;
+
+    auto pageID = document.pageID();
+    std::optional<FrameIdentifier> frameID;
+    if (auto* frame = document.frame())
+        frameID = frame->loader().frameID();
+
     if (auto* session = m_storageSessionProvider->storageSession())
-        return session->cookieAcceptPolicy() != HTTPCookieAcceptPolicy::Never;
+        return session->cookiesEnabled(document.firstPartyForCookies(), cookieURL, frameID, pageID, shouldRelaxThirdPartyCookieBlocking(document));
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void CookieJar::remoteCookiesEnabled(const Document&, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    completionHandler(false);
 }
 
 std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const

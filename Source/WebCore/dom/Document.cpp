@@ -6342,8 +6342,33 @@ void Document::setCookieURL(const URL& url)
 {
     if (m_cookieURL == url)
         return;
+
     m_cookieURL = url;
     invalidateDOMCookieCache();
+    updateCachedCookiesEnabled();
+}
+
+void Document::setFirstPartyForCookies(const URL& url)
+{
+    if (m_firstPartyForCookies == url)
+        return;
+
+    m_firstPartyForCookies = url;
+    updateCachedCookiesEnabled();
+}
+
+void Document::updateCachedCookiesEnabled()
+{
+    RefPtr page = this->page();
+    if (!page || !page->settings().cookieEnabled() || canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No) {
+        setCachedCookiesEnabled(false);
+        return;
+    }
+
+    page->cookieJar().remoteCookiesEnabled(*this, [weakDocument = WeakPtr { *this }](bool enabled) mutable {
+        if (RefPtr document = weakDocument.get())
+            document->setCachedCookiesEnabled(enabled);
+    });
 }
 
 static bool isValidNameNonASCII(const LChar* characters, unsigned length)

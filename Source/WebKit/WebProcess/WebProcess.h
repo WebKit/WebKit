@@ -441,6 +441,7 @@ public:
     FileSystem::Salt mediaKeysStorageSalt() const { return m_mediaKeysStorageSalt; }
 
     bool haveStorageAccessQuirksForDomain(const WebCore::RegistrableDomain&);
+    void updateCachedCookiesEnabled();
 
 private:
     WebProcess();

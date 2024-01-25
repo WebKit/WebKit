@@ -59,7 +59,8 @@ public:
     virtual String cookies(Document&, const URL&) const;
     virtual void setCookies(Document&, const URL&, const String& cookieString);
 
-    virtual bool cookiesEnabled(const Document&) const;
+    virtual bool cookiesEnabled(Document&);
+    virtual void remoteCookiesEnabled(const Document&, CompletionHandler<void(bool)>&&) const;
     virtual std::pair<String, SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies) const;
     virtual bool getRawCookies(const Document&, const URL&, Vector<Cookie>&) const;
     virtual void setRawCookie(const Document&, const Cookie&);

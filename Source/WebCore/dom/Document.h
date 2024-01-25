@@ -1133,7 +1133,10 @@ public:
     //       domain.
     //
     const URL& firstPartyForCookies() const { return m_firstPartyForCookies; }
-    void setFirstPartyForCookies(const URL& url) { m_firstPartyForCookies = url; }
+    void setFirstPartyForCookies(const URL&);
+    std::optional<bool> cachedCookiesEnabled() const { return m_cachedCookiesEnabled; }
+    void setCachedCookiesEnabled(bool enabled) { m_cachedCookiesEnabled = enabled; }
+    WEBCORE_EXPORT void updateCachedCookiesEnabled();
 
     WEBCORE_EXPORT bool isFullyActive() const;
 
@@ -2568,6 +2571,7 @@ private:
     RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
 
     const std::optional<FrameIdentifier> m_frameIdentifier;
+    std::optional<bool> m_cachedCookiesEnabled;
 };
 
 Element* eventTargetElementForDocument(Document*);

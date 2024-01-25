@@ -40,6 +40,7 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -100,6 +101,12 @@ public:
     virtual void allCookiesDeleted() = 0;
 };
 #endif
+
+class CookiesEnabledStateObserver : public CanMakeWeakPtr<CookiesEnabledStateObserver> {
+public:
+    virtual ~CookiesEnabledStateObserver() { }
+    virtual void cookieEnabledStateMayHaveChanged() = 0;
+};
 
 class NetworkStorageSession : public CanMakeWeakPtr<NetworkStorageSession> {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -181,6 +188,7 @@ public:
     WEBCORE_EXPORT std::optional<Vector<Cookie>> cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, CookieStoreGetOptions&&) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
+    WEBCORE_EXPORT bool cookiesEnabled(const URL& firstParty, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ShouldRelaxThirdPartyCookieBlocking) const;
 
     WEBCORE_EXPORT Vector<Cookie> domCookiesForHost(const String& host);
 
@@ -188,6 +196,9 @@ public:
     WEBCORE_EXPORT void startListeningForCookieChangeNotifications(CookieChangeObserver&, const String& host);
     WEBCORE_EXPORT void stopListeningForCookieChangeNotifications(CookieChangeObserver&, const HashSet<String>& hosts);
 #endif
+    WEBCORE_EXPORT void addCookiesEnabledStateObserver(CookiesEnabledStateObserver&);
+    WEBCORE_EXPORT void removeCookiesEnabledStateObserver(CookiesEnabledStateObserver&);
+    void cookieEnabledStateMayHaveChanged();
 
     WEBCORE_EXPORT void setTrackingPreventionEnabled(bool);
     WEBCORE_EXPORT bool trackingPreventionEnabled() const;
@@ -281,6 +292,7 @@ private:
     RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
     MemoryCompactRobinHoodHashMap<String, HashSet<CheckedPtr<CookieChangeObserver>>> m_cookieChangeObservers;
 #endif
+    WeakHashSet<CookiesEnabledStateObserver> m_cookiesEnabledStateObservers;
 
     CredentialStorage m_credentialStorage;
 

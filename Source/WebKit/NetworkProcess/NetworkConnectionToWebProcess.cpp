@@ -190,6 +190,8 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     if (auto* networkStorageSession = storageSession())
         networkStorageSession->stopListeningForCookieChangeNotifications(*this, m_hostsWithCookieListeners);
 #endif
+    if (auto* networkStorageSession = storageSession())
+        networkStorageSession->removeCookiesEnabledStateObserver(*this);
 
 #if USE(LIBWEBRTC)
     if (m_rtcProvider)
@@ -786,6 +788,25 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, con
 #endif
 }
 
+void NetworkConnectionToWebProcess::cookiesEnabledSync(const URL& firstParty, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&& completionHandler)
+{
+    cookiesEnabled(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking, WTFMove(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::cookiesEnabled(const URL& firstParty, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&& completionHandler)
+{
+    NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(false));
+
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession) {
+        completionHandler(false);
+        return;
+    }
+
+    networkStorageSession->addCookiesEnabledStateObserver(*this);
+    completionHandler(networkStorageSession->cookiesEnabled(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking));
+}
+
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(String, bool)>&& completionHandler)
 {
     NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }, false));
@@ -910,6 +931,11 @@ void NetworkConnectionToWebProcess::allCookiesDeleted()
 }
 
 #endif
+
+void NetworkConnectionToWebProcess::cookieEnabledStateMayHaveChanged()
+{
+    protectedConnection()->send(Messages::NetworkProcessConnection::UpdateCachedCookiesEnabled(), 0);
+}
 
 void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {

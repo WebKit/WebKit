@@ -30,6 +30,7 @@ messages -> NetworkProcessConnection LegacyReceiver {
     DidFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, WebCore::ResourceError error)
     SetOnLineState(bool isOnLine);
     CookieAcceptPolicyChanged(enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy);
+    UpdateCachedCookiesEnabled();
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     CookiesAdded(String host, Vector<WebCore::Cookie> cookies);

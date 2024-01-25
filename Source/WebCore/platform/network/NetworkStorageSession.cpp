@@ -210,18 +210,24 @@ void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const 
 {
     m_registrableDomainsToBlockAndDeleteCookiesFor.clear();
     m_registrableDomainsToBlockAndDeleteCookiesFor.add(domains.begin(), domains.end());
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy)
+        cookieEnabledStateMayHaveChanged();
 }
 
 void NetworkStorageSession::setPrevalentDomainsToBlockButKeepCookiesFor(const Vector<RegistrableDomain>& domains)
 {
     m_registrableDomainsToBlockButKeepCookiesFor.clear();
     m_registrableDomainsToBlockButKeepCookiesFor.add(domains.begin(), domains.end());
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy)
+        cookieEnabledStateMayHaveChanged();
 }
 
 void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vector<RegistrableDomain>& domains)
 {
     m_registrableDomainsWithUserInteractionAsFirstParty.clear();
     m_registrableDomainsWithUserInteractionAsFirstParty.add(domains.begin(), domains.end());
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction)
+        cookieEnabledStateMayHaveChanged();
 }
 
 void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, SubResourceDomain>& domains)
@@ -373,11 +379,15 @@ void NetworkStorageSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBloc
 void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
 {
     m_appBoundDomains = WTFMove(domains);
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains)
+        cookieEnabledStateMayHaveChanged();
 }
 
 void NetworkStorageSession::resetAppBoundDomains()
 {
     m_appBoundDomains.clear();
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains)
+        cookieEnabledStateMayHaveChanged();
 }
 #endif
 
@@ -385,11 +395,15 @@ void NetworkStorageSession::resetAppBoundDomains()
 void NetworkStorageSession::setManagedDomains(HashSet<RegistrableDomain>&& domains)
 {
     m_managedDomains = WTFMove(domains);
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptManagedDomains)
+        cookieEnabledStateMayHaveChanged();
 }
 
 void NetworkStorageSession::resetManagedDomains()
 {
     m_managedDomains.clear();
+    if (m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::AllExceptManagedDomains)
+        cookieEnabledStateMayHaveChanged();
 }
 #endif
 
@@ -518,5 +532,26 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     deleteCookiesForHostnames(Vector { origin.clientOrigin.host() }, WTFMove(completionHandler));
 }
 #endif
+
+bool NetworkStorageSession::cookiesEnabled(const URL& firstParty, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+{
+    return !shouldBlockCookies(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
+}
+
+void NetworkStorageSession::addCookiesEnabledStateObserver(CookiesEnabledStateObserver& observer)
+{
+    m_cookiesEnabledStateObservers.add(observer);
+}
+
+void NetworkStorageSession::removeCookiesEnabledStateObserver(CookiesEnabledStateObserver& observer)
+{
+    m_cookiesEnabledStateObservers.remove(observer);
+}
+
+void NetworkStorageSession::cookieEnabledStateMayHaveChanged()
+{
+    for (auto& observer : m_cookiesEnabledStateObservers)
+        observer.cookieEnabledStateMayHaveChanged();
+}
 
 }
