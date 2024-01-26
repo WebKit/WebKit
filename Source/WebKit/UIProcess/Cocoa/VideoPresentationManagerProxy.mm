@@ -725,7 +725,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
         model->setLayerHostView(view);
 
 #if USE(EXTENSIONKIT)
-        auto hostingView = adoptNS([[_SEHostingView alloc] init]);
+        auto hostingView = adoptNS([alloc_SEHostingViewInstance() init]);
         view->_hostingView = hostingView;
         [view addSubview:hostingView.get()];
         auto layer = [hostingView layer];

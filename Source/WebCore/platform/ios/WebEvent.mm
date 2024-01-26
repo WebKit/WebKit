@@ -38,27 +38,19 @@
 #import "WAKAppKitStubs.h"
 #import "WebEventPrivate.h"
 #import "WindowsKeyboardCodes.h"
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ServiceExtensionsAdditions.h>
-#endif
-
-#if HAVE(UI_ASYNC_TEXT_INTERACTION) && SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
-@interface WebSEKeyEntry (Staging_121227027)
-@property (nonatomic, readonly) WebSEKeyPressState state;
-@end
-#endif
+#import <pal/ios/UIKitSoftLink.h>
 
 using WebCore::windowsKeyCodeForKeyCode;
 using WebCore::windowsKeyCodeForCharCode;
 
 @implementation WebEvent {
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    RetainPtr<WebSEKeyEntry> _originalKeyEntry;
+#if USE(BROWSERENGINEKIT)
+    RetainPtr<BEKeyEntry> _originalKeyEntry;
 #endif
 }
 
@@ -504,16 +496,16 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 @end
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
 
-@implementation WebEvent (WebSEKeyEntrySupport)
+@implementation WebEvent (BEKeyEntrySupport)
 
-static inline WebEventType webEventType(WebSEKeyPressState type)
+static inline WebEventType webEventType(BEKeyPressState type)
 {
     switch (type) {
-    case WebSEKeyPressStateKeyDown:
+    case BEKeyPressStateDown:
         return WebEventKeyDown;
-    case WebSEKeyPressStateKeyUp:
+    case BEKeyPressStateUp:
         return WebEventKeyUp;
     }
     ASSERT_NOT_REACHED();
@@ -536,13 +528,9 @@ static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
     return modifiers;
 }
 
-static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
+static inline bool isChangingKeyModifiers(BEKeyEntry *event)
 {
-#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
     auto keyCode = event.key.keyCode;
-#else
-    auto keyCode = event.keyCode;
-#endif
     switch (keyCode) {
     case VK_LWIN:
     case VK_APPS:
@@ -559,17 +547,15 @@ static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
     }
 }
 
-- (instancetype)initWithKeyEntry:(WebSEKeyEntry *)event
+- (instancetype)initWithKeyEntry:(BEKeyEntry *)event
 {
     if (!(self = [super init]))
         return nil;
 
-    _type = webEventType([&]() -> WebSEKeyPressState {
-#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
+    _type = webEventType([&]() -> BEKeyPressState {
         static bool supportsStateProperty = [event.class instancesRespondToSelector:@selector(state)];
         if (supportsStateProperty)
             return event.state;
-#endif
         return event.type;
     }());
     _timestamp = static_cast<CFTimeInterval>(event.timestamp);
@@ -579,11 +565,7 @@ static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
     if (event.keyRepeating)
         _keyboardFlags |= WebEventKeyboardInputRepeat;
 
-#if SERVICE_EXTENSIONS_KEY_ENTRY_IS_AVAILABLE
     auto keyInfo = event.key;
-#else
-    auto keyInfo = event;
-#endif
     _modifierFlags = webEventModifierFlags(keyInfo.modifierFlags);
     _keyCode = static_cast<uint16_t>(keyInfo.keyCode);
     _characters = [keyInfo.characters retain];
@@ -595,13 +577,13 @@ static inline bool isChangingKeyModifiers(WebSEKeyEntry *event)
     return self;
 }
 
-- (WebSEKeyEntry *)originalKeyEntry
+- (BEKeyEntry *)originalKeyEntry
 {
     return _originalKeyEntry.get();
 }
 
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif // USE(BROWSERENGINEKIT)
 
 #endif // PLATFORM(IOS_FAMILY)

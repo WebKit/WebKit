@@ -27,7 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
 #import "WebWheelEvent.h"
@@ -35,7 +35,7 @@
 #import <WebCore/FloatSize.h>
 #import <WebCore/WebEvent.h>
 
-OBJC_CLASS WKSEScrollViewScrollUpdate;
+OBJC_CLASS WKBEScrollViewScrollUpdate;
 
 namespace WebKit {
 
@@ -45,8 +45,8 @@ public:
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    static WebKit::WebWheelEvent createWebWheelEvent(WKSEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
-    static WebCore::FloatSize translationInView(WKSEScrollViewScrollUpdate *, UIView *);
+    static WebKit::WebWheelEvent createWebWheelEvent(WKBEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
+    static WebCore::FloatSize translationInView(WKBEScrollViewScrollUpdate *, UIView *);
 #endif
 
     static OptionSet<WebKit::WebEventModifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags);

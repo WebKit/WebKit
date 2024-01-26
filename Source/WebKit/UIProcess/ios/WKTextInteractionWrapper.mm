@@ -34,8 +34,8 @@
 @implementation WKTextInteractionWrapper {
     __weak WKContentView *_view;
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    RetainPtr<WKSETextInteraction> _asyncTextInteraction;
+#if USE(BROWSERENGINEKIT)
+    RetainPtr<BETextInteraction> _asyncTextInteraction;
     RetainPtr<NSTimer> _showEditMenuTimer;
     BOOL _showEditMenuAfterNextSelectionChange;
 #endif
@@ -47,24 +47,24 @@
     if (!(self = [super init]))
         return nil;
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _view = view;
+
+#if USE(BROWSERENGINEKIT)
     if (view.shouldUseAsyncInteractions) {
-        _asyncTextInteraction = adoptNS([[WKSETextInteraction alloc] init]);
+        _asyncTextInteraction = adoptNS([[BETextInteraction alloc] init]);
         [_asyncTextInteraction setDelegate:view];
         [view addInteraction:_asyncTextInteraction.get()];
-    } else
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
-    {
-        _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
+        return self;
     }
+#endif
 
-    _view = view;
+    _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
     return self;
 }
 
 - (void)dealloc
 {
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     [self stopShowEditMenuTimer];
     if (_asyncTextInteraction)
         [_view removeInteraction:_asyncTextInteraction.get()];
@@ -81,7 +81,7 @@
 - (void)activateSelection
 {
     [_textInteractionAssistant activateSelection];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
 #endif
 }
@@ -89,7 +89,7 @@
 - (void)deactivateSelection
 {
     [_textInteractionAssistant deactivateSelection];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
     _showEditMenuAfterNextSelectionChange = NO;
     [self stopShowEditMenuTimer];
@@ -99,23 +99,19 @@
 - (void)selectionChanged
 {
     [_textInteractionAssistant selectionChanged];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction refreshKeyboardUI];
-#else
-    [_asyncTextInteraction selectionChanged];
-#endif
 
     [self stopShowEditMenuTimer];
     if (std::exchange(_showEditMenuAfterNextSelectionChange, NO))
         _showEditMenuTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(showEditMenuTimerFired) userInfo:nil repeats:NO];
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif
 }
 
 - (void)setGestureRecognizers
 {
     [_textInteractionAssistant setGestureRecognizers];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction editabilityChanged];
 #endif
 }
@@ -123,7 +119,7 @@
 - (void)willStartScrollingOverflow
 {
     [_textInteractionAssistant willStartScrollingOverflow];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
@@ -133,7 +129,7 @@
 - (void)didEndScrollingOverflow
 {
     [_textInteractionAssistant didEndScrollingOverflow];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
         [_asyncTextInteraction presentEditMenuForSelection];
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
@@ -143,7 +139,7 @@
 - (void)willStartScrollingOrZooming
 {
     [_textInteractionAssistant willStartScrollingOrZooming];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
 #endif
@@ -152,112 +148,80 @@
 - (void)didEndScrollingOrZooming
 {
     [_textInteractionAssistant didEndScrollingOrZooming];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
         [_asyncTextInteraction presentEditMenuForSelection];
 #endif
 }
 
-- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKSEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKSESelectionFlags)flags
+- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKBEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKBESelectionFlags)flags
 {
     [_textInteractionAssistant selectionChangedWithGestureAt:point withGesture:static_cast<UIWKGestureType>(gestureType) withState:gestureState withFlags:static_cast<UIWKSelectionFlags>(flags)];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction selectionChangedWithGestureAtPoint:point gesture:gestureType state:gestureState flags:flags];
-#else
-    [_asyncTextInteraction selectionChangedWithGestureAt:point withGesture:gestureType withState:gestureState withFlags:flags];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouchPhase)touch withFlags:(WKSESelectionFlags)flags
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKBESelectionTouchPhase)touch withFlags:(WKBESelectionFlags)flags
 {
     [_textInteractionAssistant selectionChangedWithTouchAt:point withSelectionTouch:static_cast<UIWKSelectionTouch>(touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction selectionBoundaryAdjustedToPoint:point touchPhase:touch flags:flags];
-#else
-    [_asyncTextInteraction selectionChangedWithTouchAt:point withSelectionTouch:touch withFlags:flags];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant lookup:textWithContext withRange:range fromRect:presentationRect];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction showDictionaryForTextInContext:textWithContext definingTextInRange:range fromRect:presentationRect];
-#else
-    [_asyncTextInteraction lookup:textWithContext withRange:range fromRect:presentationRect];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant showShareSheetFor:selectedTerm fromRect:presentationRect];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction shareText:selectedTerm fromRect:presentationRect];
-#else
-    [_asyncTextInteraction showShareSheetFor:selectedTerm fromRect:presentationRect];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant showTextServiceFor:selectedTerm fromRect:presentationRect];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction addShortcutForText:selectedTerm fromRect:presentationRect];
-#else
-    [_asyncTextInteraction showTextServiceFor:selectedTerm fromRect:presentationRect];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)scheduleReplacementsForText:(NSString *)text
 {
     [_textInteractionAssistant scheduleReplacementsForText:text];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction showReplacementsForText:text];
-#else
-    [_asyncTextInteraction scheduleReplacementsForText:text];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)scheduleChineseTransliterationForText:(NSString *)text
 {
     [_textInteractionAssistant scheduleChineseTransliterationForText:text];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction transliterateChineseForText:text];
-#else
-    [_asyncTextInteraction scheduleChineseTransliterationForText:text];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)translate:(NSString *)text fromRect:(CGRect)presentationRect
 {
     [_textInteractionAssistant translate:text fromRect:presentationRect];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction translateText:text fromRect:presentationRect];
-#else
-    [_asyncTextInteraction translate:text fromRect:presentationRect];
 #endif
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 }
 
 - (void)selectWord
 {
     [_textInteractionAssistant selectWord];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     _showEditMenuAfterNextSelectionChange = YES;
 #endif
 }
@@ -265,12 +229,12 @@
 - (void)selectAll:(id)sender
 {
     [_textInteractionAssistant selectAll:sender];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     _showEditMenuAfterNextSelectionChange = YES;
 #endif
 }
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
 
 - (void)showEditMenuTimerFired
 {
@@ -283,13 +247,13 @@
     [std::exchange(_showEditMenuTimer, nil) invalidate];
 }
 
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif // USE(BROWSERENGINEKIT)
 
 #if USE(UICONTEXTMENU)
 
 - (UIContextMenuInteraction *)contextMenuInteraction
 {
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     if (_asyncTextInteraction)
         return [_asyncTextInteraction contextMenuInteraction];
 #endif
@@ -299,7 +263,7 @@
 - (void)setExternalContextMenuInteractionDelegate:(id<UIContextMenuInteractionDelegate>)delegate
 {
     [_textInteractionAssistant setExternalContextMenuInteractionDelegate:delegate];
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     [_asyncTextInteraction setContextMenuInteractionDelegate:delegate];
 #endif
 }

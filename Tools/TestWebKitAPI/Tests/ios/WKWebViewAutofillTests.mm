@@ -32,14 +32,10 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/BlockPtr.h>
-
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
-#import <BrowserEngineKit/BETextSuggestion_Private.h>
-#import <BrowserEngineKit/BrowserEngineKit.h>
-#endif
 
 @interface CustomTextSuggestion : UITextSuggestion
 @end
@@ -244,7 +240,7 @@ TEST(WKWebViewAutoFillTests, AutoFillRequiresInputSession)
     EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
 }
 
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
 
 TEST(WKWebViewAutoFillTests, AutoFillPreservesTextSuggestion)
 {
@@ -271,7 +267,7 @@ TEST(WKWebViewAutoFillTests, AutoFillPreservesTextSuggestion)
     EXPECT_TRUE(insertedSuggestion);
 }
 
-#endif // SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#endif // USE(BROWSERENGINEKIT)
 
 #if PLATFORM(WATCHOS)
 

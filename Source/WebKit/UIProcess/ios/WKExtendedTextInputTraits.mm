@@ -57,7 +57,7 @@
     return _insertionPointColor.get();
 }
 
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
 
 - (void)setSelectionHandleColor:(UIColor *)color
 {
@@ -98,7 +98,7 @@
     static constexpr auto selectionHighlightAlphaComponent = 0.2;
     BOOL shouldUseTintColor = tintColor && tintColor != UIColor.systemBlueColor;
     self.insertionPointColor = shouldUseTintColor ? tintColor : nil;
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     self.selectionHandleColor = shouldUseTintColor ? tintColor : nil;
 #else
     self.selectionBarColor = shouldUseTintColor ? tintColor : nil;

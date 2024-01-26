@@ -40,10 +40,10 @@
 #if PLATFORM(IOS_FAMILY)
 #import "DynamicViewportSizeUpdate.h"
 #import "UIKitSPI.h"
+#import "WKBrowserEngineDefinitions.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
-#import "WKSEDefinitions.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntDegrees.h>
 #import <WebCore/LengthBox.h>
@@ -52,7 +52,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#define WK_WEB_VIEW_PROTOCOLS <WKSEScrollViewDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate>
 #endif
 
 #if PLATFORM(MAC)

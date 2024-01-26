@@ -1674,20 +1674,8 @@
 #define HAVE_UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING 1
 #endif
 
-#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIAsyncDragInteraction.h>)
-#define HAVE_UI_ASYNC_DRAG_INTERACTION 1
-#endif
-
-#if !PLATFORM(WATCHOS) && __has_include(<UIKit/_UIContextMenuAsyncConfiguration.h>)
-#define HAVE_UI_CONTEXT_MENU_ASYNC_CONFIGURATION 1
-#endif
-
 #if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/UITextCursorDropPositionAnimator.h>)
 #define HAVE_UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR 1
-#endif
-
-#if __has_include(<UIKit/UIAsyncTextInteraction.h>)
-#define HAVE_UI_ASYNC_TEXT_INTERACTION 1
 #endif
 
 #if CPU(ARM64)

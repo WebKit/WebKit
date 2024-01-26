@@ -28,8 +28,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
-@class PlatformTextAlternatives;
-
 namespace WebCore {
 
 class AlternativeTextContextController {

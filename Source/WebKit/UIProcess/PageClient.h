@@ -56,8 +56,8 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
+#include "WKBrowserEngineDefinitions.h"
 #include "WKFoundation.h"
-#include "WKSEDefinitions.h"
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/InspectorOverlay.h>
@@ -81,7 +81,7 @@ OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS WKBaseScrollView;
-OBJC_CLASS WKSEScrollViewScrollUpdate;
+OBJC_CLASS WKBEScrollViewScrollUpdate;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -526,7 +526,7 @@ public:
     virtual void handleAutocorrectionContext(const WebAutocorrectionContext&) = 0;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    virtual void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKSEScrollViewScrollUpdate *, void (^completion)(BOOL handled)) = 0;
+    virtual void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKBEScrollViewScrollUpdate *, void (^completion)(BOOL handled)) = 0;
 #endif
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;

@@ -28,15 +28,12 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
-#import "WKSEDefinitions.h"
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/ServiceExtensionsAdditions.h>
-#endif
+#import "WKBrowserEngineDefinitions.h"
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 
 @interface WKExtendedTextInputTraits : NSObject
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    <WKSEExtendedTextInputTraits>
+#if USE(BROWSERENGINEKIT)
+    <BEExtendedTextInputTraits>
 #endif
 
 @property (nonatomic) UITextAutocapitalizationType autocapitalizationType;
@@ -50,7 +47,7 @@
 @property (nonatomic) UIReturnKeyType returnKeyType;
 @property (nonatomic, getter=isSecureTextEntry) BOOL secureTextEntry;
 @property (nonatomic, getter=isSingleLineDocument) BOOL singleLineDocument;
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
 @property (nonatomic, getter=isTypingAdaptationEnabled) BOOL typingAdaptationEnabled;
 #else
 @property (nonatomic) BOOL typingAdaptationDisabled;
@@ -58,7 +55,7 @@
 @property (nonatomic, copy) UITextContentType textContentType;
 
 @property (nonatomic, strong) UIColor *insertionPointColor;
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
 @property (nonatomic, strong) UIColor *selectionHandleColor;
 #else
 @property (nonatomic, strong) UIColor *selectionBarColor;

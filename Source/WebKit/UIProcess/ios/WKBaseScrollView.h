@@ -27,10 +27,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
 #import <UIKit/UIKit.h>
 
-@class WKSEScrollViewScrollUpdate;
+@class WKBEScrollViewScrollUpdate;
 @class WKBaseScrollView;
 
 @protocol WKBaseScrollViewDelegate <NSObject>
@@ -39,7 +39,7 @@
 
 @end
 
-@interface WKBaseScrollView : WKSEScrollView
+@interface WKBaseScrollView : WKBEScrollView
 
 @property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
 @property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;

@@ -32,7 +32,7 @@
 
 @interface WKScrollView : WKVelocityTrackingScrollView
 
-@property (nonatomic, assign) WKWebView <WKSEScrollViewDelegate> *internalDelegate;
+@property (nonatomic, assign) WKWebView <WKBEScrollViewDelegate> *internalDelegate;
 
 - (void)_setBackgroundColorInternal:(UIColor *)backgroundColor;
 - (void)_setIndicatorStyleInternal:(UIScrollViewIndicatorStyle)indicatorStyle;

@@ -25,12 +25,10 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PlatformTextAlternativesAdditions.h>
-#endif
-
-#if !defined(SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE)
+#if USE(BROWSERENGINEKIT)
+OBJC_CLASS BETextAlternatives;
+#define PlatformTextAlternatives BETextAlternatives
+#else
 OBJC_CLASS NSTextAlternatives;
 #define PlatformTextAlternatives NSTextAlternatives
-#define SERVICE_EXTENSIONS_TEXT_ALTERNATIVES_ARE_AVAILABLE 0
 #endif

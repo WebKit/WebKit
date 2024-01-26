@@ -83,7 +83,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 + (instancetype)textSuggestionWithInputText:(NSString *)inputText
 {
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     return [[[super alloc] initWithInputText:inputText] autorelease];
 #else
     return [super textSuggestionWithInputText:inputText];

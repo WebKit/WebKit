@@ -61,7 +61,7 @@
     return self;
 }
 
-#if !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#if !USE(BROWSERENGINEKIT)
 
 - (UIScrollView *)_actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView
 {
@@ -187,26 +187,26 @@
     return axesToPrevent;
 }
 
-#pragma mark - WKSEScrollViewDelegate
+#pragma mark - WKBEScrollViewDelegate
 
-- (WKSEScrollView *)parentScrollViewForScrollView:(WKSEScrollView *)scrollView
+- (WKBEScrollView *)parentScrollViewForScrollView:(WKBEScrollView *)scrollView
 {
     // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
-    return dynamic_objc_cast<WKSEScrollView>(_scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
+    return dynamic_objc_cast<WKBEScrollView>(_scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 
-#if !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#if !USE(BROWSERENGINEKIT)
 
-- (void)_scrollView:(WKChildScrollView *)scrollView asynchronouslyHandleScrollEvent:(WKSEScrollViewScrollUpdate *)scrollEvent completion:(void (^)(BOOL handled))completion
+- (void)_scrollView:(WKChildScrollView *)scrollView asynchronouslyHandleScrollEvent:(WKBEScrollViewScrollUpdate *)scrollEvent completion:(void (^)(BOOL handled))completion
 {
     [self scrollView:scrollView handleScrollUpdate:scrollEvent completion:completion];
 }
 
-#endif // !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#endif // !USE(BROWSERENGINEKIT)
 
-- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKSEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion
+- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKBEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion
 {
     _scrollingTreeNodeDelegate->handleAsynchronousCancelableScrollEvent(scrollView, update, completion);
 }
@@ -359,7 +359,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKSEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
+void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKBEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
 {
     auto* scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
     if (scrollingCoordinatorProxy)

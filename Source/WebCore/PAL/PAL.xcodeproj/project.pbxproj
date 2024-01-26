@@ -306,6 +306,7 @@
 		F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */; };
 		F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0875A266ACA53000F814A /* DataDetectorsSoftLink.mm */; };
 		F4EC01B22A85432D00DA295D /* NetworkSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EC01B12A85432D00DA295D /* NetworkSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4F0A5502B634D88001A54E5 /* BrowserEngineKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F0A54B2B634D88001A54E5 /* BrowserEngineKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -707,6 +708,7 @@
 		F4E08759266ACA53000F814A /* DataDetectorsSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSoftLink.h; sourceTree = "<group>"; };
 		F4E0875A266ACA53000F814A /* DataDetectorsSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsSoftLink.mm; sourceTree = "<group>"; };
 		F4EC01B12A85432D00DA295D /* NetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSPI.h; path = pal/spi/cocoa/NetworkSPI.h; sourceTree = SOURCE_ROOT; };
+		F4F0A54B2B634D88001A54E5 /* BrowserEngineKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserEngineKitSPI.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -849,6 +851,7 @@
 			isa = PBXGroup;
 			children = (
 				3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */,
+				F4F0A54B2B634D88001A54E5 /* BrowserEngineKitSPI.h */,
 				CDF91112220E4EEC001EA39E /* CelestialSPI.h */,
 				0C5AF90F1F43A4C7002EAC02 /* CoreUISPI.h */,
 				7AA1E2CD29EF5921002D4455 /* DataDetectorsUISoftLink.h */,
@@ -1296,6 +1299,7 @@
 				DD20DDDD27BC90D70093D175 /* AVStreamDataParserSPI.h in Headers */,
 				DD20DDDE27BC90D70093D175 /* AXSpeechManagerSPI.h in Headers */,
 				3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */,
+				F4F0A5502B634D88001A54E5 /* BrowserEngineKitSPI.h in Headers */,
 				DD20DE0F27BC90D80093D175 /* CelestialSPI.h in Headers */,
 				DD20DDC927BC90D70093D175 /* CFLocaleSPI.h in Headers */,
 				DD20DDCA27BC90D70093D175 /* CFNetworkConnectionCacheSPI.h in Headers */,

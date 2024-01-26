@@ -427,3 +427,7 @@
     || PLATFORM(VISION)
 #define USE_SANDBOX_VERSION_3 1
 #endif
+
+#if !defined(USE_BROWSERENGINEKIT) && PLATFORM(IOS) && __has_include(<BrowserEngineKit/BETextInput.h>)
+#define USE_BROWSERENGINEKIT 1
+#endif

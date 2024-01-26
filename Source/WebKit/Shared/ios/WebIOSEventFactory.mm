@@ -151,22 +151,22 @@ WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-static WebWheelEvent::Phase toWebPhase(WKSEScrollViewScrollUpdatePhase phase)
+static WebWheelEvent::Phase toWebPhase(WKBEScrollViewScrollUpdatePhase phase)
 {
     switch (phase) {
-#if !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#if !USE(BROWSERENGINEKIT)
     case UIScrollPhaseNone:
         return WebWheelEvent::PhaseNone;
     case UIScrollPhaseMayBegin:
         return WebWheelEvent::PhaseMayBegin;
-#endif // !SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
-    case WKSEScrollViewScrollUpdatePhaseBegan:
+#endif // !USE(BROWSERENGINEKIT)
+    case WKBEScrollViewScrollUpdatePhaseBegan:
         return WebWheelEvent::PhaseBegan;
-    case WKSEScrollViewScrollUpdatePhaseChanged:
+    case WKBEScrollViewScrollUpdatePhaseChanged:
         return WebWheelEvent::PhaseChanged;
-    case WKSEScrollViewScrollUpdatePhaseEnded:
+    case WKBEScrollViewScrollUpdatePhaseEnded:
         return WebWheelEvent::PhaseEnded;
-    case WKSEScrollViewScrollUpdatePhaseCancelled:
+    case WKBEScrollViewScrollUpdatePhaseCancelled:
         return WebWheelEvent::PhaseCancelled;
     default:
         ASSERT_NOT_REACHED();
@@ -174,9 +174,9 @@ static WebWheelEvent::Phase toWebPhase(WKSEScrollViewScrollUpdatePhase phase)
     }
 }
 
-WebCore::FloatSize WebIOSEventFactory::translationInView(WKSEScrollViewScrollUpdate *update, UIView *view)
+WebCore::FloatSize WebIOSEventFactory::translationInView(WKBEScrollViewScrollUpdate *update, UIView *view)
 {
-#if SERVICE_EXTENSIONS_SCROLL_VIEW_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     auto delta = [update translationInView:view];
     return { static_cast<float>(delta.x), static_cast<float>(delta.y) };
 #else
@@ -185,7 +185,7 @@ WebCore::FloatSize WebIOSEventFactory::translationInView(WKSEScrollViewScrollUpd
 #endif
 }
 
-WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKSEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
+WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([update locationInView:contentView]);
     auto delta = translationInView(update, contentView);

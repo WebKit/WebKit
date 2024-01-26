@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
 #import <UIKit/UIScrollView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
@@ -34,8 +34,8 @@
 @class CALayer;
 @class UIScrollView;
 @class WKBaseScrollView;
-@class WKSEScrollViewScrollUpdate;
-@class WKSEScrollView;
+@class WKBEScrollViewScrollUpdate;
+@class WKBEScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 
 namespace WebCore {
@@ -73,7 +73,7 @@ public:
     void repositionScrollingLayers();
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKSEScrollViewScrollUpdate *, void (^completion)(BOOL handled));
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKBEScrollViewScrollUpdate *, void (^completion)(BOOL handled));
 #endif
 
     OptionSet<WebCore::TouchAction> activeTouchActions() const { return m_activeTouchActions; }
@@ -104,7 +104,7 @@ private:
 
 } // namespace WebKit
 
-@interface WKScrollingNodeScrollViewDelegate : NSObject <WKSEScrollViewDelegate> {
+@interface WKScrollingNodeScrollViewDelegate : NSObject <WKBEScrollViewDelegate> {
     WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
 }
 

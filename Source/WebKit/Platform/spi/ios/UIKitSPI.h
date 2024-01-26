@@ -118,23 +118,6 @@
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#import <UIKit/UIAsyncTextInput.h>
-#import <UIKit/UIAsyncTextInputClient.h>
-#import <UIKit/UIAsyncTextInteraction.h>
-#import <UIKit/UIAsyncTextInteractionDelegate.h>
-#import <UIKit/UIKeyEventContext.h>
-#endif
-
-#if HAVE(UI_ASYNC_DRAG_INTERACTION)
-#import <UIKit/UIDragInteraction_AsyncSupport.h>
-#import <UIKit/_UIAsyncDragInteraction.h>
-#endif
-
-#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-#import <UIKit/_UIContextMenuAsyncConfiguration.h>
-#endif
-
 #if HAVE(UIFINDINTERACTION)
 #import <UIKit/UIFindSession_Private.h>
 #import <UIKit/_UIFindInteraction.h>
@@ -1199,55 +1182,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-
-@interface UIAsyncTextInteraction (Staging_117831560)
-
-- (void)presentEditMenuForSelection;
-- (void)dismissEditMenuForSelection;
-
-- (void)selectionChanged;
-- (void)editabilityChanged;
-
-@property (nonatomic, readonly) UITextSelectionDisplayInteraction *textSelectionDisplayInteraction;
-
-#if USE(UICONTEXTMENU)
-@property (nonatomic, weak) id<UIContextMenuInteractionDelegate> contextMenuInteractionDelegate;
-@property (nonatomic, readonly) UIContextMenuInteraction *contextMenuInteraction;
-#endif
-
-@end
-
-#if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
-
-typedef struct {
-    NSInteger offset;
-    NSInteger length;
-} UIDirectionalTextRange;
-
-#endif // !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
-
-@interface UIKeyEventContext (Staging_118307536)
-@property (nonatomic, assign, readwrite) BOOL shouldEvaluateForInputSystemHandling;
-@end
-
-@protocol UIAsyncTextInputDelegate_Staging<UIAsyncTextInputDelegate>
-- (void)deferReplaceTextActionToSystem:(id)sender; // Added in rdar://118307558.
-@end
-
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
-
-#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-
-@interface _UIContextMenuAsyncConfiguration (Staging_119442063)
-- (BOOL)fulfillUsingConfiguration:(UIContextMenuConfiguration *)configuration;
-@end
-
-#endif
-
 @interface UIResponder (Staging_118307086)
 
 - (void)addShortcut:(id)sender;
+- (void)lookup:(id)sender;
 - (void)define:(id)sender;
 - (void)promptForReplace:(id)sender;
 - (void)share:(id)sender;
@@ -1259,16 +1197,6 @@ typedef struct {
 #endif
 
 @end
-
-#if !defined(UI_SHIFT_KEY_STATE_ENUM)
-
-typedef NS_ENUM(NSInteger, UIShiftKeyState) {
-    UIShiftKeyStateNone = 0,
-    UIShiftKeyStateShifted,
-    UIShiftKeyStateCapsLocked
-};
-
-#endif
 
 @interface UIResponder (Internal)
 - (BOOL)_requiresKeyboardWhenFirstResponder;

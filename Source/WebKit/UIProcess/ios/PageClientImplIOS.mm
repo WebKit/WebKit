@@ -1097,7 +1097,7 @@ void PageClientImpl::showMediaControlsContextMenu(FloatRect&& targetFrame, Vecto
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-void PageClientImpl::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKSEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
+void PageClientImpl::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKBEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
 {
     [webView() scrollView:scrollView handleScrollUpdate:update completion:completion];
 }
