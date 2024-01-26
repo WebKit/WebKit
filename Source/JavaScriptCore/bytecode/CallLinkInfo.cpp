@@ -104,7 +104,7 @@ void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
             auto target = newCodeBlock->jitCode()->addressForCall(arityCheck);
             u.dataIC.m_codeBlock = newCodeBlock;
             u.dataIC.m_monomorphicCallDestination = target;
-            newCodeBlock->linkIncomingCall(owner(), this); // This is just relinking. So owner and caller frame can be nullptr.
+            newCodeBlock->linkIncomingCall(nullptr, this); // This is just relinking. So owner and caller frame can be nullptr.
             return;
         }
         dataLogLnIf(Options::dumpDisassembly(), "Unlinking CallLinkInfo: ", RawPointer(this));
