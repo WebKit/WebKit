@@ -37,6 +37,7 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteImageBufferSetProxy.h"
+#include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
@@ -140,6 +141,7 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
         bufferSet.value->remoteBufferSetWasDestroyed();
         send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet.value->identifier(), bufferSet.value->displayListResourceIdentifier()));
     }
+    m_bufferSetsInDisplay.clear();
 }
 
 void RemoteRenderingBackendProxy::disconnectGPUProcess()
@@ -358,12 +360,10 @@ void RemoteRenderingBackendProxy::releaseAllImageResources()
 }
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput, CompletionHandler<void(Vector<SwapBuffersResult>&&)> callback)
+Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput)
 {
-    if (prepareBuffersInput.isEmpty()) {
-        callback(Vector<SwapBuffersResult>());
-        return;
-    }
+    if (prepareBuffersInput.isEmpty())
+        return Vector<SwapBuffersDisplayRequirement>();
 
     bool needsSync = false;
 
@@ -378,6 +378,9 @@ void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerP
         perLayerData.bufferSet->clearVolatilityUntilAfter(m_currentVolatilityRequest);
         perLayerData.bufferSet->willPrepareForDisplay();
 
+        auto addResult = m_bufferSetsInDisplay.add(perLayerData.bufferSet->identifier(), perLayerData.bufferSet);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
         return ImageBufferSetPrepareBufferForDisplayInputData {
             perLayerData.bufferSet->identifier(),
             perLayerData.dirtyRegion,
@@ -389,23 +392,28 @@ void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerP
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay - input buffers  " << inputData);
 
-    m_prepareReply = streamConnection().sendWithAsyncReply(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), [prepareBuffersInput = WTFMove(prepareBuffersInput), callback = WTFMove(callback)](Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&& outputData) mutable {
-        Vector<SwapBuffersResult> result;
-        for (auto& data : outputData)
-            result.append(SwapBuffersResult { WTFMove(data.backendHandle), data.displayRequirement, data.bufferCacheIdentifiers });
-        callback(WTFMove(result));
-    }, renderingBackendIdentifier(), defaultTimeout);
-
-    if (needsSync)
-        ensurePrepareCompleted();
+    Vector<SwapBuffersDisplayRequirement> result;
+    if (needsSync) {
+        auto sendResult = streamConnection().sendSync(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplaySync(inputData, m_renderingUpdateID), renderingBackendIdentifier(), defaultTimeout);
+        if (!sendResult.succeeded()) {
+            result.grow(inputData.size());
+            for (auto& displayRequirement : result)
+                displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
+        } else
+            std::tie(result) = sendResult.takeReply();
+    } else {
+        streamConnection().send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData, m_renderingUpdateID), renderingBackendIdentifier(), defaultTimeout);
+        result.grow(inputData.size());
+        for (auto& displayRequirement : result)
+            displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
+    }
+    return result;
 }
 
-void RemoteRenderingBackendProxy::ensurePrepareCompleted()
+void RemoteRenderingBackendProxy::didPrepareForDisplay(RemoteImageBufferSetProxy& bufferSet)
 {
-    if (m_prepareReply) {
-        streamConnection().waitForAsyncReplyAndDispatchImmediately<Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay>(m_prepareReply, defaultTimeout);
-        m_prepareReply = { };
-    }
+    bool success = m_bufferSetsInDisplay.remove(bufferSet.identifier());
+    ASSERT_UNUSED(success, success);
 }
 #endif
 
@@ -462,6 +470,13 @@ bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, I
         if (imageBuffer)
             imageBuffer->didReceiveMessage(connection, decoder);
         // Messages to already removed instances are ok.
+        return true;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteImageBufferSetProxy::messageReceiverName()) {
+        RefPtr bufferSet = m_bufferSetsInDisplay.get(RemoteImageBufferSetIdentifier { decoder.destinationID() });
+        ASSERT(bufferSet);
+        if (bufferSet)
+            bufferSet->didReceiveMessage(connection, decoder);
         return true;
     }
     return false;
