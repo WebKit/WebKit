@@ -80,9 +80,6 @@ class Bug(object):
     def is_closed(self):
         return not self.is_open()
 
-    def duplicate_of(self):
-        return self.bug_dictionary.get('dup_id', None)
-
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
         attachments = self.bug_dictionary["attachments"]
@@ -95,9 +92,6 @@ class Bug(object):
         return [patch for patch in self.attachments(include_obsolete)
                                    if patch.is_patch()]
 
-    def unreviewed_patches(self):
-        return [patch for patch in self.patches() if patch.review() == "?"]
-
     def reviewed_patches(self, include_invalid=False):
         patches = [patch for patch in self.patches() if patch.review() == "+"]
         if include_invalid:
@@ -105,15 +99,6 @@ class Bug(object):
         # Checking reviewer() ensures that it was both reviewed and has a valid
         # reviewer.
         return list(filter(lambda patch: patch.reviewer(), patches))
-
-    def commit_queued_patches(self, include_invalid=False):
-        patches = [patch for patch in self.patches()
-                                      if patch.commit_queue() == "+"]
-        if include_invalid:
-            return patches
-        # Checking committer() ensures that it was both commit-queue+'d and has
-        # a valid committer.
-        return list(filter(lambda patch: patch.committer(), patches))
 
     def comments(self):
         return self.bug_dictionary["comments"]
@@ -123,13 +108,3 @@ class Bug(object):
             if message in comment["text"]:
                 return True
         return False
-
-    def commit_revision(self):
-        # Sort the comments in reverse order as we want the latest committed revision.
-        r = re.compile(r"Committed r(?P<svn_revision>\d+)")
-        for comment in sorted(self.comments(), key=lambda comment: comment['text'], reverse=True):
-            rev = r.search(comment['text'])
-            if rev:
-                return int(rev.group('svn_revision'))
-
-        return None

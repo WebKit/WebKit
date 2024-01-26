@@ -57,75 +57,6 @@ else:
 _log = logging.getLogger(__name__)
 
 
-class EditUsersParser(object):
-    def __init__(self):
-        self._group_name_to_group_string_cache = {}
-
-    def _login_and_uid_from_row(self, row):
-        first_cell = row.find("td")
-        # The first row is just headers, we skip it.
-        if not first_cell:
-            return None
-        # When there were no results, we have a fake "<none>" entry in the table.
-        if first_cell.find(text="<none>"):
-            return None
-        # Otherwise the <td> contains a single <a> which contains the login name or a single <i> with the string "<none>".
-        anchor_tag = first_cell.find("a")
-        login = unicode(anchor_tag.string).strip()
-        user_id = int(re.search(r"userid=(\d+)", str(anchor_tag['href'])).group(1))
-        return (login, user_id)
-
-    def login_userid_pairs_from_edit_user_results(self, results_page):
-        soup = BeautifulSoup(results_page, convertEntities=BeautifulSoup.HTML_ENTITIES)
-        results_table = soup.find(id="admin_table")
-        login_userid_pairs = [self._login_and_uid_from_row(row) for row in results_table('tr')]
-        # Filter out None from the logins.
-        return list(filter(lambda pair: bool(pair), login_userid_pairs))
-
-    def _group_name_and_string_from_row(self, row):
-        label_element = row.find('label')
-        group_string = unicode(label_element['for'])
-        group_name = unicode(label_element.find('strong').string).rstrip(':')
-        return (group_name, group_string)
-
-    def user_dict_from_edit_user_page(self, page):
-        soup = BeautifulSoup(page, convertEntities=BeautifulSoup.HTML_ENTITIES)
-        user_table = soup.find("table", {'class': 'main'})
-        user_dict = {}
-        for row in user_table('tr'):
-            label_element = row.find('label')
-            if not label_element:
-                continue  # This must not be a row we know how to parse.
-            if row.find('table'):
-                continue  # Skip the <tr> holding the groups table.
-
-            key = label_element['for']
-            if "group" in key:
-                key = "groups"
-                value = user_dict.get('groups', set())
-                # We must be parsing a "tr" inside the inner group table.
-                (group_name, _) = self._group_name_and_string_from_row(row)
-                if row.find('input', {'type': 'checkbox', 'checked': 'checked'}):
-                    value.add(group_name)
-            else:
-                value = unicode(row.find('td').string).strip()
-            user_dict[key] = value
-        return user_dict
-
-    def _group_rows_from_edit_user_page(self, edit_user_page):
-        soup = BeautifulSoup(edit_user_page, convertEntities=BeautifulSoup.HTML_ENTITIES)
-        return soup('td', {'class': 'groupname'})
-
-    def group_string_from_name(self, edit_user_page, group_name):
-        # Bugzilla uses "group_NUMBER" strings, which may be different per install
-        # so we just look them up once and cache them.
-        if not self._group_name_to_group_string_cache:
-            rows = self._group_rows_from_edit_user_page(edit_user_page)
-            name_string_pairs = map(self._group_name_and_string_from_row, rows)
-            self._group_name_to_group_string_cache = dict(name_string_pairs)
-        return self._group_name_to_group_string_cache[group_name]
-
-
 def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
@@ -136,24 +67,6 @@ class BugzillaQueries(object):
     def __init__(self, bugzilla):
         self._bugzilla = bugzilla
 
-    def _is_xml_bugs_form(self, form):
-        # ClientForm.HTMLForm.find_control throws if the control is not found,
-        # so we do a manual search instead:
-        return "xml" in [control.id for control in form.controls]
-
-    # This is kinda a hack.  There is probably a better way to get this information from bugzilla.
-    def _parse_result_count(self, results_page):
-        result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'})
-        if result_count_text is None or result_count_text.string is None:
-            _log.warn("BeautifulSoup returned None while finding class: bz_result_count in:\n{}".format(results_page))
-            return 0
-        result_count_parts = result_count_text.string.strip().split(" ")
-        if result_count_parts[0] == "Zarro":
-            return 0
-        if result_count_parts[0] == "One":
-            return 1
-        return int(result_count_parts[0])
-
     # Note: _load_query, _fetch_bug and _fetch_bugs_from_advanced_query
     # are the only methods which access self._bugzilla.
 
@@ -162,64 +75,6 @@ class BugzillaQueries(object):
         full_url = "%s%s" % (config_urls.bug_server_url, query)
         return self._bugzilla.browser.open(full_url)
 
-    def _fetch_bugs_from_advanced_query(self, query):
-        results_page = self._load_query(query)
-        # Some simple searches can return a single result.
-        results_url = results_page.geturl()
-        if results_url.find("/show_bug.cgi?id=") != -1:
-            bug_id = int(results_url.split("=")[-1])
-            return [self._fetch_bug(bug_id)]
-        if not self._parse_result_count(results_page):
-            _log.warn('Failed to find bugs for {}'.format(results_url))
-            return []
-        # Bugzilla results pages have an "XML" submit button at the bottom
-        # which can be used to get an XML page containing all of the <bug> elements.
-        # This is slighty lame that this assumes that _load_query used
-        # self._bugzilla.browser and that it's in an acceptable state.
-        self._bugzilla.browser.select_form(predicate=self._is_xml_bugs_form)
-        bugs_xml = self._bugzilla.browser.submit()
-        return self._bugzilla._parse_bugs_from_xml(bugs_xml)
-
-    def _fetch_bug(self, bug_id):
-        return self._bugzilla.fetch_bug(bug_id)
-
-    def _fetch_bug_ids_advanced_query(self, query):
-        soup = BeautifulSoup(self._load_query(query))
-        # The contents of the <a> inside the cells in the first column happen
-        # to be the bug id.
-        return [int(bug_link_cell.find("a").string)
-                for bug_link_cell in soup('td', "first-child")]
-
-    def _parse_attachment_ids_request_query(self, page, since=None):
-        # Formats
-        digits = re.compile(r"\d+")
-        attachment_href = re.compile(r"attachment.cgi\?id=\d+&action=review")
-        # if no date is given, return all ids
-        if not since:
-            attachment_links = SoupStrainer("a", href=attachment_href)
-            return [int(digits.search(tag["href"]).group(0))
-                for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
-
-        # Parse the main table only
-        date_format = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
-        mtab = SoupStrainer("table", {"class": "requests"})
-        soup = BeautifulSoup(page, parseOnlyThese=mtab)
-        patch_ids = []
-
-        for row in soup.findAll("tr"):
-            patch_tag = row.find("a", {"href": attachment_href})
-            if not patch_tag:
-                continue
-            patch_id = int(digits.search(patch_tag["href"]).group(0))
-            date_tag = row.find("td", text=date_format)
-            if date_tag and datetime.strptime(date_format.search(unicode(date_tag)).group(0), "%Y-%m-%d %H:%M") < since:
-                continue
-            patch_ids.append(patch_id)
-        return patch_ids
-
-    def _fetch_attachment_ids_request_query(self, query, since=None):
-        return self._parse_attachment_ids_request_query(self._load_query(query), since)
-
     def _parse_quips(self, page):
         soup = BeautifulSoup(page, convertEntities=BeautifulSoup.HTML_ENTITIES)
         quips = soup.find(text=re.compile(r"Existing quips:")).findNext("ul").findAll("li")
@@ -227,73 +82,6 @@ class BugzillaQueries(object):
 
     def fetch_quips(self):
         return self._parse_quips(self._load_query("/quips.cgi?action=show"))
-
-    # List of all r+'d bugs.
-    def fetch_bug_ids_from_pending_commit_list(self):
-        needs_commit_query_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
-        return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
-
-    def fetch_bugs_matching_quicksearch(self, search_string):
-        # We may want to use a more explicit query than "quicksearch".
-        # If quicksearch changes we should probably change to use
-        # a normal buglist.cgi?query_format=advanced query.
-        quicksearch_url = "buglist.cgi?quicksearch=%s" % urlquote(search_string)
-        return self._fetch_bugs_from_advanced_query(quicksearch_url)
-
-    # Currently this returns all bugs across all components.
-    # In the future we may wish to extend this API to construct more restricted searches.
-    def fetch_bugs_matching_search(self, search_string):
-        query = "buglist.cgi?query_format=advanced"
-        if search_string:
-            query += "&short_desc_type=allwordssubstr&short_desc=%s" % urlquote(search_string)
-        return self._fetch_bugs_from_advanced_query(query)
-
-    def fetch_patches_from_pending_commit_list(self):
-        return sum([self._fetch_bug(bug_id).reviewed_patches()
-            for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
-
-    def fetch_bugs_from_review_queue(self, cc_email=None):
-        query = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
-
-        if cc_email:
-            query += "&emailcc1=1&emailtype1=substring&email1=%s" % urlquote(cc_email)
-
-        return self._fetch_bugs_from_advanced_query(query)
-
-    def fetch_bug_ids_from_commit_queue(self):
-        commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B&order=Last+Changed"
-        return self._fetch_bug_ids_advanced_query(commit_queue_url)
-
-    def fetch_patches_from_commit_queue(self):
-        # This function will only return patches which have valid committers
-        # set.  It won't reject patches with invalid committers/reviewers.
-        return sum([self._fetch_bug(bug_id).commit_queued_patches()
-                    for bug_id in self.fetch_bug_ids_from_commit_queue()], [])
-
-    def fetch_bug_ids_from_review_queue(self):
-        review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
-        return self._fetch_bug_ids_advanced_query(review_queue_url)
-
-    # This method will make several requests to bugzilla.
-    def fetch_patches_from_review_queue(self, limit=None):
-        # [:None] returns the whole array.
-        return sum([self._fetch_bug(bug_id).unreviewed_patches()
-            for bug_id in self.fetch_bug_ids_from_review_queue()[:limit]], [])
-
-    # NOTE: This is the only client of _fetch_attachment_ids_request_query
-    # This method only makes one request to bugzilla.
-    def fetch_attachment_ids_from_review_queue(self, since=None):
-        review_queue_url = "request.cgi?action=queue&type=review&group=type"
-        return self._fetch_attachment_ids_request_query(review_queue_url, since)
-
-    # This only works if your account has edituser privileges.
-    # We could easily parse https://bugs.webkit.org/userprefs.cgi?tab=permissions to
-    # check permissions, but bugzilla will just return an error if we don't have them.
-    def fetch_login_userid_pairs_matching_substring(self, search_string):
-        review_queue_url = "editusers.cgi?action=list&matchvalue=login_name&matchstr=%s&matchtype=substr" % urlquote(search_string)
-        results_page = self._load_query(review_queue_url)
-        # We could pull the EditUsersParser off Bugzilla if needed.
-        return EditUsersParser().login_userid_pairs_from_edit_user_results(results_page)
 
     def is_invalid_bugzilla_email(self, search_string):
         review_queue_url = "request.cgi?action=queue&requester=%s&product=&type=review&requestee=&component=&group=requestee" % urlquote(search_string)
@@ -315,7 +103,6 @@ class Bugzilla(object):
         self.queries = BugzillaQueries(self)
         self.committers = committers
         self.cached_quips = []
-        self.edit_user_parser = EditUsersParser()
         self._browser = None
 
     def _get_browser(self):
@@ -337,20 +124,6 @@ class Bugzilla(object):
     def open_url(self, url):
         return NetworkTransaction().run(lambda: self.browser.open(url), url)
 
-    def fetch_user(self, user_id):
-        self.authenticate()
-        edit_user_page = self.open_url(self.edit_user_url_for_id(user_id))
-        return self.edit_user_parser.user_dict_from_edit_user_page(edit_user_page)
-
-    def add_user_to_groups(self, user_id, group_names):
-        self.authenticate()
-        user_edit_page = self.open_url(self.edit_user_url_for_id(user_id))
-        self.browser.select_form(nr=1)
-        for group_name in group_names:
-            group_string = self.edit_user_parser.group_string_from_name(user_edit_page, group_name)
-            self.browser.find_control(group_string).items[0].selected = True
-        self.browser.submit()
-
     def quips(self):
         # We only fetch and parse the list of quips once per instantiation
         # so that we do not burden bugs.webkit.org.
@@ -364,11 +137,6 @@ class Bugzilla(object):
         content_type = "&ctype=xml&excludefield=attachmentdata" if xml else ""
         return "%sshow_bug.cgi?id=%s%s" % (config_urls.bug_server_url, bug_id, content_type)
 
-    def short_bug_url_for_bug_id(self, bug_id):
-        if not bug_id:
-            return None
-        return "http://webkit.org/b/%s" % bug_id
-
     def add_attachment_url(self, bug_id):
         return "%sattachment.cgi?action=enter&bugid=%s" % (config_urls.bug_server_url, bug_id)
 
@@ -381,9 +149,6 @@ class Bugzilla(object):
         return "%sattachment.cgi?id=%s%s" % (config_urls.bug_server_url,
                                              attachment_id,
                                              action_param)
-
-    def edit_user_url_for_id(self, user_id):
-        return "%seditusers.cgi?action=edit&userid=%s" % (config_urls.bug_server_url, user_id)
 
     def _parse_attachment_flag(self,
                                element,
@@ -452,12 +217,6 @@ class Bugzilla(object):
         comment['comment_date'] = self._date_contents(element.find('bug_when'))
         comment['text'] = self._string_contents(element.find('thetext'))
         return comment
-
-    def _parse_bugs_from_xml(self, page):
-        soup = BeautifulSoup(page)
-        # Without the unicode() call, BeautifulSoup occasionally complains of being
-        # passed None for no apparent reason.
-        return [Bug(self._parse_bug_dictionary_from_xml(unicode(bug_xml)), self) for bug_xml in soup('bug')]
 
     def _parse_bug_dictionary_from_xml(self, page):
         soup = BeautifulStoneSoup(page, convertEntities=BeautifulStoneSoup.XML_ENTITIES)
@@ -634,19 +393,6 @@ class Bugzilla(object):
             return file_object.name
         return "bug-%s-%s.%s" % (bug_id, timestamp(), extension)
 
-    def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
-        self.authenticate()
-        _log.info('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
-        self.open_url(self.add_attachment_url(bug_id))
-        self.browser.select_form(name="entryform")
-        file_object = self._file_object_for_upload(file_or_string)
-        filename = filename or self._filename_for_upload(file_object, bug_id)
-        self._fill_attachment_form(description, file_object, filename=filename, mimetype=mimetype)
-        if comment_text:
-            _log.info(comment_text)
-            self.browser['comment'] = comment_text
-        self.browser.submit()
-
     @staticmethod
     def _parse_attachment_id_from_add_patch_to_bug_response(response_html):
         response_html = string_utils.decode(response_html, target_type=str)
@@ -792,25 +538,6 @@ class Bugzilla(object):
         self.browser.set_value(comment_text, name='comment', nr=1)
         self._find_select_element_for_flag('review').value = ("X",)
         self._find_select_element_for_flag('commit-queue').value = ("X",)
-        self.browser.submit()
-
-    def set_flag_on_attachment(self,
-                               attachment_id,
-                               flag_name,
-                               flag_value,
-                               comment_text=None):
-        # FIXME: We need a way to test this function on a live bugzilla
-        # instance.
-
-        self.authenticate()
-        _log.info(comment_text)
-        self.open_url(self.attachment_url_for_id(attachment_id, 'edit'))
-        self.browser.select_form(nr=1)
-
-        if comment_text:
-            self.browser.set_value(comment_text, name='comment', nr=1)
-
-        self._find_select_element_for_flag(flag_name).value = (flag_value,)
         self.browser.submit()
 
     # FIXME: All of these bug editing methods have a ridiculous amount of

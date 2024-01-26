@@ -87,8 +87,6 @@ from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
 
-CHANGESET_NOT_AVAILABLE = 'Not Available'
-
 _log = logging.getLogger(__name__)
 
 

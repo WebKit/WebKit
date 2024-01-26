@@ -281,55 +281,6 @@ class MockBugzillaQueries(object):
     def __init__(self, bugzilla):
         self._bugzilla = bugzilla
 
-    def _all_bugs(self):
-        return map(lambda bug_dictionary: Bug(bug_dictionary, self._bugzilla),
-                   self._bugzilla.bug_cache.values())
-
-    def fetch_bug_ids_from_commit_queue(self):
-        bugs_with_commit_queued_patches = filter(
-                lambda bug: bug.commit_queued_patches(),
-                self._all_bugs())
-        return list(map(lambda bug: bug.id(), bugs_with_commit_queued_patches))
-
-    def fetch_attachment_ids_from_review_queue(self, since=None):
-        unreviewed_patches = sum([bug.unreviewed_patches()
-                                  for bug in self._all_bugs()], [])
-        if since:
-            unreviewed_patches = [patch for patch in unreviewed_patches
-                                        if patch.attach_date() >= since]
-        return list(map(lambda patch: patch.id(), unreviewed_patches))
-
-    def fetch_patches_from_commit_queue(self):
-        return sum([bug.commit_queued_patches()
-                    for bug in self._all_bugs()], [])
-
-    def fetch_bug_ids_from_pending_commit_list(self):
-        bugs_with_reviewed_patches = filter(lambda bug: bug.reviewed_patches(),
-                                            self._all_bugs())
-        bug_ids = list(map(lambda bug: bug.id(), bugs_with_reviewed_patches))
-        # NOTE: This manual hack here is to allow testing logging in
-        # test_assign_to_committer the real pending-commit query on bugzilla
-        # will return bugs with patches which have r+, but are also obsolete.
-        return bug_ids + [50002]
-
-    def fetch_bugs_from_review_queue(self, cc_email=None):
-        unreviewed_bugs = [bug for bug in self._all_bugs() if bug.unreviewed_patches()]
-
-        if cc_email:
-            return [bug for bug in unreviewed_bugs if cc_email in bug.cc_emails()]
-
-        return unreviewed_bugs
-
-    def fetch_patches_from_pending_commit_list(self):
-        return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
-
-    def fetch_bugs_matching_search(self, search_string):
-        return [self._bugzilla.fetch_bug(50004), self._bugzilla.fetch_bug(50003)]
-
-    def fetch_bugs_matching_quicksearch(self, search_string):
-        return [self._bugzilla.fetch_bug(50001), self._bugzilla.fetch_bug(50002),
-                self._bugzilla.fetch_bug(50003), self._bugzilla.fetch_bug(50004)]
-
 
 _mock_reviewers = [Reviewer("Foo Bar", "foo@bar.com"),
                    Reviewer("Reviewer2", "reviewer2@webkit.org")]
@@ -390,9 +341,6 @@ class MockBugzilla(object):
     def fetch_bug(self, bug_id):
         return Bug(self.bug_cache.get(int(bug_id)), self)
 
-    def set_override_patch(self, patch):
-        self._override_patch = patch
-
     def fetch_attachment(self, attachment_id):
         if self._override_patch:
             return self._override_patch
@@ -425,25 +373,9 @@ class MockBugzilla(object):
             _log.info(comment_text)
             _log.info("-- End comment --")
 
-    def set_flag_on_attachment(self,
-                               attachment_id,
-                               flag_name,
-                               flag_value,
-                               comment_text=None):
-        _log.info("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s'" % (
-                  flag_name, flag_value, attachment_id, comment_text))
-
     def post_comment_to_bug(self, bug_id, comment_text, cc=None, see_also=None):
         _log.info("MOCK bug comment: bug_id=%s, cc=%s, see_also=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
                   bug_id, sorted(cc or []) or None, see_also, comment_text))
-
-    def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
-        _log.info("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %
-                  (bug_id, description, filename, mimetype))
-        if comment_text:
-            _log.info("-- Begin comment --")
-            _log.info(comment_text)
-            _log.info("-- End comment --")
 
     def add_patch_to_bug(self,
                          bug_id,

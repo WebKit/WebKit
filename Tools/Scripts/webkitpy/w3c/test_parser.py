@@ -185,9 +185,6 @@ class TestParser(object):
     def is_slow_test(self):
         return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
 
-    def has_fuzzy_metadata(self):
-        return any([match['name'] == 'fuzzy' for match in self.test_doc.findAll('meta')])
-
     def fuzzy_metadata(self):
         fuzzy_nodes = self.test_doc.findAll('meta', attrs={"name": "fuzzy"})
         if not fuzzy_nodes:

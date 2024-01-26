@@ -142,13 +142,6 @@ class TestImporterTest(unittest.TestCase):
     def import_downloaded_tests(self, args, files, test_port=False):
         # files are passed as parameter as we cannot clone/fetch/checkout a repo in mock system.
 
-        class TestDownloaderMock(TestDownloader):
-            def __init__(self, repository_directory, port, options):
-                TestDownloader.__init__(self, repository_directory, port, options)
-
-            def _git_submodules_status(self, repository_directory):
-                return 'adb4d391a69877d4a1eaaf51d1725c99a5b8ed84 tools/resources'
-
         host = MockHost()
         if test_port:
             port = TestPort(host)
@@ -160,7 +153,7 @@ class TestImporterTest(unittest.TestCase):
 
         options, test_paths = parse_args(args)
         importer = TestImporter(port, test_paths, options)
-        importer._test_downloader = TestDownloaderMock(importer.tests_download_path, port, importer.options)
+        importer._test_downloader = TestDownloader(importer.tests_download_path, port, importer.options)
         importer.do_import()
         return host.filesystem
 
