@@ -108,6 +108,8 @@ if sys.version_info > (3, 0):
         # This is synced with the logic for installing pyOpenSSL at Tools/Scripts/webkitpy/autoinstalled/twisted.py
         if sys.version_info >= (3, 11):
             AutoInstall.register(Package('cryptography', Version(40, 0, 2), wheel=True, implicit_deps=['cffi']))
+        elif sys.version_info >= (3, 9):
+            AutoInstall.register(Package('cryptography', Version(38, 0, 2), wheel=True, implicit_deps=['cffi']))
         else:
             AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi']))
 
