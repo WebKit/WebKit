@@ -26368,6 +26368,9 @@
 		};
 		444A6F0C2AEAE064005FE121 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
 			target = 444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */;
 			targetProxy = 444A6F0B2AEAE064005FE121 /* PBXContainerItemProxy */;
 		};
@@ -26418,6 +26421,9 @@
 		};
 		446359E02AEA14F000551EEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
 			target = 446359B62AEA108C00551EEE /* vp8_replay_fuzzer */;
 			targetProxy = 446359DF2AEA14F000551EEE /* PBXContainerItemProxy */;
 		};
