@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDF_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
 
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -136,4 +136,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)

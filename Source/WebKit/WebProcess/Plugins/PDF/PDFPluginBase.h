@@ -286,11 +286,9 @@ protected:
     bool hudEnabled() const;
 #endif
 
-#if HAVE(INCREMENTAL_PDF_APIS)
 #if !LOG_DISABLED
     void pdfLog(const String&);
     void verboseLog();
-#endif
 #endif
 
     SingleThreadWeakPtr<PluginView> m_view;

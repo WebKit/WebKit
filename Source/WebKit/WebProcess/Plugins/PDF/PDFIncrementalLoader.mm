@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PDFIncrementalLoader.h"
 
-#if ENABLE(PDF_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
 
 #import "Logging.h"
 #import "PDFKitSPI.h"
@@ -849,4 +849,4 @@ void PDFIncrementalLoader::logState(TextStream& ts)
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
