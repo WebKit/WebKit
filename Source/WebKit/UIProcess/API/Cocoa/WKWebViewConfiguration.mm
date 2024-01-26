@@ -56,6 +56,10 @@
 #import "UIKitSPI.h"
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "_WKWebExtensionControllerInternal.h"
+#endif
+
 template<typename T> class LazyInitialized {
 public:
     typedef typename WTF::GetPtrHelper<T>::PtrType PtrType;
@@ -121,11 +125,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
-#if ENABLE(WK_WEB_EXTENSIONS)
-    RetainPtr<NSURL> _requiredWebExtensionBaseURL;
-    RetainPtr<_WKWebExtensionController> _webExtensionController;
-    WeakObjCPtr<_WKWebExtensionController> _weakWebExtensionController;
-#endif
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
     LazyInitialized<RetainPtr<WKWebpagePreferences>> _defaultWebpagePreferences;
@@ -412,16 +411,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-    configuration._requiredWebExtensionBaseURL = self._requiredWebExtensionBaseURL;
-
-    if (auto *controller = self->_webExtensionController.get())
-        configuration._webExtensionController = controller;
-
-    if (auto controller = self->_weakWebExtensionController.get())
-        configuration->_weakWebExtensionController = controller.get();
-#endif
-
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
@@ -531,7 +520,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSURL *)_requiredWebExtensionBaseURL
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _requiredWebExtensionBaseURL.get();
+    return _pageConfiguration->requiredWebExtensionBaseURL();
 #else
     return nil;
 #endif
@@ -540,14 +529,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setRequiredWebExtensionBaseURL:(NSURL *)baseURL
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _requiredWebExtensionBaseURL = baseURL;
+    _pageConfiguration->setRequiredWebExtensionBaseURL(baseURL);
 #endif
 }
 
 - (_WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _webExtensionController.get();
+    return wrapper(_pageConfiguration->webExtensionController());
 #else
     return nil;
 #endif
@@ -556,7 +545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (_WKWebExtensionController *)_webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return self._weakWebExtensionController ?: _webExtensionController.get();
+    return self._weakWebExtensionController ?: self._strongWebExtensionController;
 #else
     return nil;
 #endif
@@ -565,14 +554,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setWebExtensionController:(_WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _webExtensionController = webExtensionController;
+    _pageConfiguration->setWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
 #endif
 }
 
 - (_WKWebExtensionController *)_weakWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return _weakWebExtensionController.getAutoreleased();
+    return wrapper(_pageConfiguration->weakWebExtensionController());
 #else
     return nil;
 #endif
@@ -581,7 +570,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setWeakWebExtensionController:(_WKWebExtensionController *)webExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    _weakWebExtensionController = webExtensionController;
+    _pageConfiguration->setWeakWebExtensionController(webExtensionController ? &webExtensionController._webExtensionController : nullptr);
 #endif
 }
 
@@ -1457,7 +1446,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     allowed |= WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
-    allowed |= !!_requiredWebExtensionBaseURL;
+    allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();
 #endif
 
     if (!allowed)

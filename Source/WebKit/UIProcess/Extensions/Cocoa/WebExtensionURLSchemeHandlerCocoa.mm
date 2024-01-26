@@ -92,13 +92,12 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
 
         bool loadingExtensionMainFrame = false;
         if (task.frameInfo().isMainFrame() && requestURL == frameDocumentURL) {
-            loadingExtensionMainFrame = true;
-
-            auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
-            if (!requiredBaseURL || !extensionContext->isURLForThisExtension(requiredBaseURL)) {
+            if (!extensionContext->isURLForThisExtension(page.configuration().requiredWebExtensionBaseURL())) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:nil]);
                 return;
             }
+
+            loadingExtensionMainFrame = true;
         }
 
         auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
@@ -108,10 +107,8 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         }
 
         if (loadingExtensionMainFrame) {
-            if (auto tab = extensionContext->getTab(page.identifier())) {
-                auto window = tab->window();
-                page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt), extensionContext->identifier());
-            }
+            if (auto tab = extensionContext->getTab(page.identifier()))
+                extensionContext->addExtensionTabPage(page, *tab);
         }
 
         auto *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;

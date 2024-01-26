@@ -35,6 +35,7 @@
 #import "APIArray.h"
 #import "APIContentRuleList.h"
 #import "APIContentRuleListStore.h"
+#import "APIPageConfiguration.h"
 #import "CocoaHelpers.h"
 #import "ContextMenuContextData.h"
 #import "InjectUserScriptImmediately.h"
@@ -398,7 +399,7 @@ void WebExtensionContext::setBaseURL(URL&& url)
 
 bool WebExtensionContext::isURLForThisExtension(const URL& url) const
 {
-    return protocolHostAndPortAreEqual(baseURL(), url);
+    return url.isValid() && protocolHostAndPortAreEqual(baseURL(), url);
 }
 
 bool WebExtensionContext::extensionCanAccessWebPage(WebPageProxyIdentifier webPageProxyIdentifier)
@@ -440,15 +441,11 @@ void WebExtensionContext::setInspectable(bool inspectable)
 
     m_backgroundWebView.get().inspectable = inspectable;
 
-    for (auto entry : m_actionTabMap) {
-        if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            webView.inspectable = inspectable;
-    }
+    for (auto entry : m_extensionPageTabMap)
+        entry.key.cocoaView().get().inspectable = inspectable;
 
-    if (m_defaultAction) {
-        if (auto *webView = m_defaultAction->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            webView.inspectable = inspectable;
-    }
+    for (auto entry : m_popupPageActionMap)
+        entry.key.cocoaView().get().inspectable = inspectable;
 }
 
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
@@ -1331,7 +1328,7 @@ bool WebExtensionContext::hasAccessToAllHosts()
     return false;
 }
 
-Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWindow *delegate)
+Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWindow *delegate) const
 {
     ASSERT(delegate);
 
@@ -1348,7 +1345,7 @@ Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWi
     return window.releaseNonNull();
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (!isValid(identifier))
         return nullptr;
@@ -1390,7 +1387,7 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
     return result;
 }
 
-Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate)
+Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate) const
 {
     ASSERT(delegate);
 
@@ -1407,7 +1404,7 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     return tab.releaseNonNull();
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (!isValid(identifier))
         return nullptr;
@@ -1430,7 +1427,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier id
     return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier, IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (identifier)
         return getTab(identifier.value());
@@ -1440,16 +1437,25 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
 
     RefPtr<WebExtensionTab> result;
 
-    for (auto& tab : openTabs()) {
-        for (WKWebView *webView in tab->webViews()) {
-            if (webView._page->identifier() == webPageProxyIdentifier) {
-                result = tab.ptr();
-                break;
-            }
-        }
-
-        if (result)
+    for (auto entry : m_extensionPageTabMap) {
+        if (entry.key.identifier() == webPageProxyIdentifier) {
+            result = m_tabMap.get(entry.value);
             break;
+        }
+    }
+
+    if (!result) {
+        for (Ref tab : openTabs()) {
+            for (WKWebView *webView in tab->webViews()) {
+                if (webView._page->identifier() == webPageProxyIdentifier) {
+                    result = tab.ptr();
+                    break;
+                }
+            }
+
+            if (result)
+                break;
+        }
     }
 
     if (!result) {
@@ -1469,7 +1475,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
     return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier()) {
         if (RefPtr window = frontmostWindow())
@@ -1477,34 +1483,29 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
         return nullptr;
     }
 
+    RefPtr<WebExtensionTab> result;
+
+    // Search actions for the page.
+    for (auto entry : m_popupPageActionMap) {
+        if (entry.key.identifier() != webPageProxyIdentifier)
+            continue;
+
+        RefPtr tab = entry.value->tab();
+        RefPtr window = tab ? tab->window() : entry.value->window();
+
+        if (!tab && window)
+            tab = window->activeTab();
+
+        if (!tab)
+            continue;
+
+        result = tab;
+        break;
+    }
+
     // Search open tabs for the page.
-    RefPtr<WebExtensionTab> result = getTab(webPageProxyIdentifier, std::nullopt, ignoreExtensionAccess);
-    if (result)
-        return result;
-
-    // Search tab actions for the page.
-    for (auto entry : m_actionTabMap) {
-        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
-        if (!webView)
-            continue;
-
-        if (webView._page->identifier() == webPageProxyIdentifier) {
-            result = &entry.key;
-            break;
-        }
-    }
-
-    // Search window actions for the page.
-    for (auto entry : m_actionWindowMap) {
-        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
-        if (!webView)
-            continue;
-
-        if (webView._page->identifier() == webPageProxyIdentifier) {
-            result = entry.key.activeTab();
-            break;
-        }
-    }
+    if (!result)
+        result = getTab(webPageProxyIdentifier, std::nullopt, ignoreExtensionAccess);
 
     if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
@@ -1560,14 +1561,14 @@ WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
     });
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (m_focusedWindowIdentifier)
         return getWindow(m_focusedWindowIdentifier.value(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess)
+RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     if (!m_openWindowIdentifiers.isEmpty())
         return getWindow(m_openWindowIdentifiers.first(), std::nullopt, ignoreExtensionAccess);
@@ -2354,25 +2355,15 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageI
 {
     Vector<PageIdentifierTuple> result;
 
-    auto addWebViewPageIdentifier = [&](auto& action) {
-        auto *webView = action->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
-        if (!webView)
-            return;
+    for (auto entry : m_popupPageActionMap) {
+        RefPtr tab = entry.value->tab();
+        RefPtr window = tab ? tab->window() : entry.value->window();
 
-        RefPtr tab = action->tab();
-        RefPtr window = tab ? tab->window() : action->window();
+        auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
+        auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ webView._page->webPageID(), tab ? std::optional(tab->identifier()) : std::nullopt, window ? std::optional(window->identifier()) : std::nullopt });
-    };
-
-    for (auto entry : m_actionWindowMap)
-        addWebViewPageIdentifier(entry.value);
-
-    for (auto entry : m_actionTabMap)
-        addWebViewPageIdentifier(entry.value);
-
-    if (m_defaultAction)
-        addWebViewPageIdentifier(m_defaultAction);
+        result.append({ entry.key.webPageID(), tabIdentifier, windowIdentifier });
+    }
 
     return result;
 }
@@ -2381,13 +2372,41 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIde
 {
     Vector<PageIdentifierTuple> result;
 
-    for (auto& tab : openTabs()) {
-        auto window = tab->window();
-        for (WKWebView *webView in tab->webViews())
-            result.append({ webView._page->webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt });
+    for (auto entry : m_extensionPageTabMap) {
+        RefPtr tab = getTab(entry.value);
+        if (!tab)
+            continue;
+
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+        result.append({ entry.key.webPageID(), tab->identifier(), windowIdentifier });
     }
 
     return result;
+}
+
+void WebExtensionContext::addPopupPage(WebPageProxy& page, WebExtensionAction& action)
+{
+    m_popupPageActionMap.set(page, action);
+
+    RefPtr tab = action.tab();
+    RefPtr window = tab ? tab->window() : action.window();
+
+    auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
+    auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+    page.process().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(page.webPageID(), tabIdentifier, windowIdentifier), identifier());
+}
+
+void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTab& tab)
+{
+    m_extensionPageTabMap.set(page, tab.identifier());
+
+    RefPtr window = tab.window();
+    auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+    page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab.identifier(), windowIdentifier), identifier());
 }
 
 WKWebView *WebExtensionContext::relatedWebView()
@@ -2398,10 +2417,8 @@ WKWebView *WebExtensionContext::relatedWebView()
         return m_backgroundWebView.get();
 
     for (auto& page : extensionController()->allPages()) {
-        if (auto* mainFrame = page.mainFrame()) {
-            if (isURLForThisExtension(mainFrame->url()))
-                return page.cocoaView().get();
-        }
+        if (isURLForThisExtension(page.configuration().requiredWebExtensionBaseURL()))
+            return page.cocoaView().get();
     }
 
     return nil;

@@ -153,7 +153,9 @@ public:
 
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
     using TabIdentifierMap = HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
-    using TabMapValueIterator = TabIdentifierMap::ValuesConstIteratorRange;
+    using TabMapValueIterator = TabIdentifierMap::ValuesIteratorRange;
+    using PageTabIdentifierMap = WeakHashMap<WebPageProxy, WebExtensionTabIdentifier>;
+    using PopupPageActionMap = WeakHashMap<WebPageProxy, Ref<WebExtensionAction>>;
 
     using WindowVector = Vector<Ref<WebExtensionWindow>>;
     using TabSet = HashSet<Ref<WebExtensionTab>>;
@@ -306,19 +308,19 @@ public:
 
     void clearCachedPermissionStates();
 
-    Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *);
-    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *) const;
+    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
 
-    Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
-    RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
-    RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
-    RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *) const;
+    RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
 
     WindowVector openWindows() const;
     TabMapValueIterator openTabs() const { return m_tabMap.values(); }
 
-    RefPtr<WebExtensionWindow> focusedWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No);
-    RefPtr<WebExtensionWindow> frontmostWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    RefPtr<WebExtensionWindow> focusedWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    RefPtr<WebExtensionWindow> frontmostWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
 
     void didOpenWindow(const WebExtensionWindow&);
     void didCloseWindow(const WebExtensionWindow&);
@@ -401,6 +403,9 @@ public:
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
     Vector<PageIdentifierTuple> popupPageIdentifiers() const;
     Vector<PageIdentifierTuple> tabPageIdentifiers() const;
+
+    void addExtensionTabPage(WebPageProxy&, WebExtensionTab&);
+    void addPopupPage(WebPageProxy&, WebExtensionAction&);
 
     WKWebView *relatedWebView();
     NSString *processDisplayName();
@@ -769,11 +774,13 @@ private:
     PortQueuedMessageMap m_portQueuedMessages;
     NativePortMap m_nativePortMap;
 
-    WindowIdentifierMap m_windowMap;
+    mutable WindowIdentifierMap m_windowMap;
     Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;
     std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
 
-    TabIdentifierMap m_tabMap;
+    mutable TabIdentifierMap m_tabMap;
+    PageTabIdentifierMap m_extensionPageTabMap;
+    PopupPageActionMap m_popupPageActionMap;
 
     CommandsVector m_commands;
     bool m_populatedCommands { false };

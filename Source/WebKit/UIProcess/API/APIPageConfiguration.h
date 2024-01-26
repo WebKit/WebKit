@@ -92,10 +92,13 @@ public:
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    WebKit::WebExtensionController* webExtensionController();
+    const WTF::URL& requiredWebExtensionBaseURL() const;
+    void setRequiredWebExtensionBaseURL(WTF::URL&&);
+
+    WebKit::WebExtensionController* webExtensionController() const;
     void setWebExtensionController(RefPtr<WebKit::WebExtensionController>&&);
 
-    WebKit::WebExtensionController* weakWebExtensionController();
+    WebKit::WebExtensionController* weakWebExtensionController() const;
     void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
@@ -236,6 +239,7 @@ private:
         RefPtr<WebKit::WebProcessPool> processPool { };
         RefPtr<WebKit::WebUserContentControllerProxy> userContentController { };
 #if ENABLE(WK_WEB_EXTENSIONS)
+        WTF::URL requiredWebExtensionBaseURL { };
         RefPtr<WebKit::WebExtensionController> webExtensionController { };
         WeakPtr<WebKit::WebExtensionController> weakWebExtensionController { };
 #endif

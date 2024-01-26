@@ -79,14 +79,9 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
     WebExtensionControllerParameters parameters;
 
     parameters.identifier = identifier();
-
-    Vector<WebExtensionContextParameters> contextParameters;
-    contextParameters.reserveInitialCapacity(extensionContexts().size());
-
-    for (auto& context : extensionContexts())
-        contextParameters.append(context->parameters());
-
-    parameters.contextParameters = contextParameters;
+    parameters.contextParameters = WTF::map(extensionContexts(), [](auto& context) {
+        return context->parameters();
+    });
 
     return parameters;
 }

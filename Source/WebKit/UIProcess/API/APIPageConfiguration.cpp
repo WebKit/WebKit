@@ -94,7 +94,17 @@ void PageConfiguration::setUserContentController(RefPtr<WebUserContentController
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-WebExtensionController* PageConfiguration::webExtensionController()
+const WTF::URL& PageConfiguration::requiredWebExtensionBaseURL() const
+{
+    return m_data.requiredWebExtensionBaseURL;
+}
+
+void PageConfiguration::setRequiredWebExtensionBaseURL(WTF::URL&& baseURL)
+{
+    m_data.requiredWebExtensionBaseURL = WTFMove(baseURL);
+}
+
+WebExtensionController* PageConfiguration::webExtensionController() const
 {
     return m_data.webExtensionController.get();
 }
@@ -104,7 +114,7 @@ void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>
     m_data.webExtensionController = WTFMove(webExtensionController);
 }
 
-WebExtensionController* PageConfiguration::weakWebExtensionController()
+WebExtensionController* PageConfiguration::weakWebExtensionController() const
 {
     return m_data.weakWebExtensionController.get();
 }

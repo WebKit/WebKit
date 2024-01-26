@@ -151,13 +151,17 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
     manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_TRUE(action.isEnabled);
-        EXPECT_NULL(action.badgeText);
+        EXPECT_NS_EQUAL(action.badgeText, @"");
 
         EXPECT_NS_EQUAL(action.label, @"Test Action");
 
         auto *smallIcon = [action iconForSize:CGSizeMake(16, 16)];
         EXPECT_NOT_NULL(smallIcon);
+#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(smallIcon.size, CGSizeMake(16, 16)));
+#else
+        EXPECT_TRUE(CGSizeEqualToSize(smallIcon.size, CGSizeMake(32, 32)));
+#endif
 
         auto *largeIcon = [action iconForSize:CGSizeMake(32, 32)];
         EXPECT_NOT_NULL(largeIcon);
@@ -171,6 +175,8 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
         EXPECT_NS_EQUAL(webViewURL.path, @"/popup.html");
 
         [action closePopupWebView];
+
+        [manager done];
     };
 
     [manager loadAndRun];
@@ -178,6 +184,8 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Popup Action");
 
     [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIAction, GetCurrentTabAndWindowFromPopupPage)
@@ -210,8 +218,6 @@ TEST(WKWebExtensionAPIAction, GetCurrentTabAndWindowFromPopupPage)
     manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_NOT_NULL(action.popupWebView);
-
-        [action closePopupWebView];
     };
 
     [manager loadAndRun];
@@ -219,6 +225,8 @@ TEST(WKWebExtensionAPIAction, GetCurrentTabAndWindowFromPopupPage)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Popup Action");
 
     [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)

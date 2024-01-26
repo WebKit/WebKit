@@ -208,6 +208,20 @@ void WebExtensionAction::propertiesDidChange()
     }).get());
 }
 
+WebExtensionAction* WebExtensionAction::fallbackAction() const
+{
+    // Tab actions fallback to the window action.
+    if (m_tab)
+        return extensionContext()->getAction(m_tab->window().get()).ptr();
+
+    // Window actions fallback to the default action.
+    if (m_window)
+        return &extensionContext()->defaultAction();
+
+    // Default actions have no fallback.
+    return nullptr;
+}
+
 CocoaImage *WebExtensionAction::icon(CGSize idealSize)
 {
     if (!extensionContext())
@@ -216,12 +230,10 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
     if (m_customIcons)
         return extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height);
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->icon(idealSize);
+    if (RefPtr fallback = fallbackAction())
+        return fallback->icon(idealSize);
 
-    if (m_window)
-        return extensionContext()->defaultAction().icon(idealSize);
-
+    // Default
     return extensionContext()->extension().actionIcon(idealSize);
 }
 
@@ -240,12 +252,10 @@ String WebExtensionAction::popupPath() const
     if (!m_customPopupPath.isNull())
         return m_customPopupPath;
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->popupPath();
+    if (RefPtr fallback = fallbackAction())
+        return fallback->popupPath();
 
-    if (m_window)
-        return extensionContext()->defaultAction().popupPath();
-
+    // Default
     return extensionContext()->extension().actionPopupPath();
 }
 
@@ -297,10 +307,7 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
     ]];
 #endif // USE(APPKIT)
 
-    auto popupPage = m_popupWebView.get()._page;
-    auto tabIdentifier = m_tab ? std::optional(m_tab->identifier()) : std::nullopt;
-    auto windowIdentifier = m_window ? std::optional(m_window->identifier()) : std::nullopt;
-    popupPage->process().send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(popupPage->webPageID(), tabIdentifier, windowIdentifier), extensionContext()->identifier());
+    extensionContext()->addPopupPage(*m_popupWebView.get()._page.get(), *this);
 
     auto url = URL { extensionContext()->baseURL(), popupPath() };
     [m_popupWebView loadRequest:[NSURLRequest requestWithURL:url]];
@@ -378,12 +385,10 @@ String WebExtensionAction::label(FallbackWhenEmpty fallback) const
         return extensionContext()->extension().displayName();
     }
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->label();
+    if (RefPtr fallback = fallbackAction())
+        return fallback->label();
 
-    if (m_window)
-        return extensionContext()->defaultAction().label();
-
+    // Default
     if (auto *defaultLabel = extensionContext()->extension().displayActionLabel(); defaultLabel.length || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
@@ -411,12 +416,10 @@ String WebExtensionAction::badgeText() const
     if (m_blockedResourceCount)
         return String::number(m_blockedResourceCount);
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->badgeText();
+    if (RefPtr fallback = fallbackAction())
+        return fallback->badgeText();
 
-    if (m_window)
-        return extensionContext()->defaultAction().badgeText();
-
+    // Default
     return emptyString();
 }
 
@@ -488,12 +491,10 @@ bool WebExtensionAction::isEnabled() const
     if (m_customEnabled)
         return m_customEnabled.value();
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->isEnabled();
+    if (RefPtr fallback = fallbackAction())
+        return fallback->isEnabled();
 
-    if (m_window)
-        return extensionContext()->defaultAction().isEnabled();
-
+    // Default
     return true;
 }
 

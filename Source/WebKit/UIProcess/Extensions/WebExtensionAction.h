@@ -111,6 +111,8 @@ public:
 #endif
 
 private:
+    WebExtensionAction* fallbackAction() const;
+
     WeakPtr<WebExtensionContext> m_extensionContext;
     RefPtr<WebExtensionTab> m_tab;
     RefPtr<WebExtensionWindow> m_window;
