@@ -77,7 +77,7 @@ public:
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const override { return m_source->size(orientation); }
     ImageOrientation orientation() const override { return m_source->orientation(); }
     Color singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
-    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
+    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
     DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source->frameDecodingStatusAtIndex(index); }
     bool frameIsCompleteAtIndex(size_t index) const { return frameDecodingStatusAtIndex(index) == DecodingStatus::Complete; }
     bool frameHasAlphaAtIndex(size_t index) const { return m_source->frameHasAlphaAtIndex(index); }
@@ -95,14 +95,13 @@ public:
     ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrameIndex()); }
     bool canAnimate() const;
 
-    bool shouldUseAsyncDecodingForTesting() const { return m_source->frameDecodingDurationForTesting() > 0_s; }
-    void setFrameDecodingDurationForTesting(Seconds duration) { m_source->setFrameDecodingDurationForTesting(duration); }
+    void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
     bool canUseAsyncDecodingForLargeImages() const;
     bool shouldUseAsyncDecodingForAnimatedImages() const;
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
     void setAsyncDecodingEnabledForTesting(bool enabled) { m_asyncDecodingEnabledForTesting = enabled; }
     bool isAsyncDecodingEnabledForTesting() const { return m_asyncDecodingEnabledForTesting; }
-    void stopAsyncDecodingQueue() { m_source->stopAsyncDecodingQueue(); }
+    void stopWorkQueue() { m_source->stopWorkQueue(); }
 
     DestinationColorSpace colorSpace() final;
 

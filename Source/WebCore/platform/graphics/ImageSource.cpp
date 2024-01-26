@@ -63,7 +63,7 @@ ImageSource::ImageSource(Ref<NativeImage>&& nativeImage)
 
 ImageSource::~ImageSource()
 {
-    ASSERT(!hasAsyncDecodingQueue());
+    ASSERT(!hasWorkQueue());
     assertIsCurrent(m_runLoop);
 }
 
@@ -87,7 +87,7 @@ bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
     // Changing the decoder has to stop the decoding thread. The current frame will
     // continue decoding safely because the decoding thread has its own
     // reference of the old decoder.
-    stopAsyncDecodingQueue();
+    stopWorkQueue();
     return true;
 }
 
@@ -276,7 +276,7 @@ void ImageSource::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplin
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
 }
 
-void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
+void ImageSource::cacheNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, RefPtr<NativeImage>&& nativeImage)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -292,7 +292,7 @@ void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, si
     auto decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
 
     // Move the new image to the cache.
-    frame.m_nativeImage = NativeImage::create(WTFMove(platformImage));
+    frame.m_nativeImage = WTFMove(nativeImage);
     frame.m_decodingOptions = decodingOptions;
     frame.m_decodingStatus = decodingStatus;
     cacheMetadataAtIndex(index, subsamplingLevel);
@@ -301,7 +301,7 @@ void ImageSource::cachePlatformImageAtIndex(PlatformImagePtr&& platformImage, si
     decodedSizeIncreased(frame.frameBytes());
 }
 
-void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
+void ImageSource::cacheNativeImageAtIndexAsync(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, RefPtr<NativeImage>&& nativeImage)
 {
     if (!isDecoderAvailable())
         return;
@@ -309,7 +309,7 @@ void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImag
     ASSERT(index < m_frames.size());
 
     // Clean the old native image and set a new one
-    cachePlatformImageAtIndex(WTFMove(platformImage), index, subsamplingLevel, decodingOptions);
+    cacheNativeImageAtIndex(index, subsamplingLevel, decodingOptions, WTFMove(nativeImage));
     LOG(Images, "ImageSource::%s - %p - url: %s [frame %ld has been cached]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
 
     // Notify the image with the readiness of the new frame NativeImage.
@@ -317,20 +317,14 @@ void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImag
         m_image->imageFrameAvailableAtIndex(index);
 }
 
-WorkQueue& ImageSource::decodingQueue()
+void ImageSource::clearFrameAtIndex(size_t index)
 {
-    if (!m_decodingQueue)
-        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::QOS::Default);
+    if (index >= m_frames.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    return *m_decodingQueue;
-}
-
-ImageSource::FrameRequestQueue& ImageSource::frameRequestQueue()
-{
-    if (!m_frameRequestQueue)
-        m_frameRequestQueue = FrameRequestQueue::create();
-
-    return *m_frameRequestQueue;
+    m_frames[index].clear();
 }
 
 bool ImageSource::canUseAsyncDecoding()
@@ -341,95 +335,35 @@ bool ImageSource::canUseAsyncDecoding()
     return size().area() * sizeof(uint32_t) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
 }
 
-void ImageSource::startAsyncDecodingQueue()
+ImageFrameWorkQueue& ImageSource::workQueue()
 {
-    if (hasAsyncDecodingQueue() || !isDecoderAvailable())
-        return;
+    if (!m_workQueue)
+        m_workQueue = ImageFrameWorkQueue::create(*this);
 
-    // Async decoding is only enabled for HTMLImageElement and CSS background images.
-    ASSERT(isMainThread());
-
-    // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue().dispatch([protectedThis = Ref { *this }, protectedDecodingQueue = Ref { decodingQueue() }, protectedFrameRequestQueue = Ref { frameRequestQueue() }, protectedDecoder = Ref { *m_decoder }, sourceURL = sourceURL().string().isolatedCopy()] () mutable {
-        ImageFrameRequest frameRequest;
-        Seconds minDecodingDuration = protectedThis->frameDecodingDurationForTesting();
-
-        while (protectedFrameRequestQueue->dequeue(frameRequest)) {
-            TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
-
-            MonotonicTime startingTime;
-            if (minDecodingDuration > 0_s)
-                startingTime = MonotonicTime::now();
-
-            // Get the frame NativeImage on the decoding thread.
-            auto platformImage = protectedDecoder->createFrameImageAtIndex(frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
-            if (platformImage)
-                LOG(Images, "ImageSource::%s - %p - url: %s [frame %ld has been decoded]", __FUNCTION__, protectedThis.ptr(), sourceURL.utf8().data(), frameRequest.index);
-            else {
-                LOG(Images, "ImageSource::%s - %p - url: %s [decoding for frame %ld has failed]", __FUNCTION__, protectedThis.ptr(), sourceURL.utf8().data(), frameRequest.index);
-                continue;
-            }
-
-            // Pretend as if the decoding takes minDecodingDuration.
-            if (minDecodingDuration > 0_s)
-                sleep(minDecodingDuration - (MonotonicTime::now() - startingTime));
-
-            // Update the cached frames on the creation thread to avoid updating the MemoryCache from a different thread.
-            callOnMainThread([protectedThis, protectedDecodingQueue, protectedDecoder, sourceURL = WTFMove(sourceURL).isolatedCopy(), platformImage = WTFMove(platformImage), frameRequest] () mutable {
-                // The queue may have been closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called.
-                if (protectedDecodingQueue.ptr() == protectedThis->m_decodingQueue && protectedDecoder.ptr() == protectedThis->m_decoder) {
-                    ASSERT(protectedThis->m_frameCommitQueue.first() == frameRequest);
-                    protectedThis->m_frameCommitQueue.removeFirst();
-                    protectedThis->cachePlatformImageAtIndexAsync(WTFMove(platformImage), frameRequest.index, frameRequest.subsamplingLevel, frameRequest.decodingOptions);
-                } else
-                    LOG(Images, "ImageSource::%s - %p - url: %s [frame %ld will not cached]", __FUNCTION__, protectedThis.ptr(), sourceURL.utf8().data(), frameRequest.index);
-            });
-        }
-
-        // Ensure destruction happens on creation thread.
-        callOnMainThread([protectedThis = WTFMove(protectedThis), protectedQueue = WTFMove(protectedDecodingQueue), protectedDecoder = WTFMove(protectedDecoder)] () mutable { });
-    });
+    return *m_workQueue;
 }
 
-void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
+void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageAnimatingState animatingState, const DecodingOptions& options)
 {
     ASSERT(isDecoderAvailable());
-    if (!hasAsyncDecodingQueue())
-        startAsyncDecodingQueue();
-
     ASSERT(index < m_frames.size());
-
-    LOG(Images, "ImageSource::%s - %p - url: %s [enqueuing frame %ld for decoding]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
-    DecodingOptions decodingOptions = { DecodingMode::Asynchronous, sizeForDrawing };
-    m_frameRequestQueue->enqueue({ index, subsamplingLevel, decodingOptions });
-    m_frameCommitQueue.append({ index, subsamplingLevel, decodingOptions });
+    workQueue().dispatch({ static_cast<unsigned>(index), subsamplingLevel, animatingState, options });
 }
 
-bool ImageSource::isAsyncDecodingQueueIdle() const
+void ImageSource::stopWorkQueue()
 {
-    return m_frameCommitQueue.isEmpty();
-}
-
-void ImageSource::stopAsyncDecodingQueue()
-{
-    if (!hasAsyncDecodingQueue())
+    if (!m_workQueue)
         return;
 
-    std::for_each(m_frameCommitQueue.begin(), m_frameCommitQueue.end(), [this](const ImageFrameRequest& frameRequest) {
-        ImageFrame& frame = m_frames[frameRequest.index];
-        if (!frame.isInvalid()) {
-            LOG(Images, "ImageSource::%s - %p - url: %s [decoding has been cancelled for frame %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), frameRequest.index);
-            frame.clear();
-        }
-    });
+    LOG(Images, "ImageSource::%s - %p - url: %s. Decoding work queue will be stopped.", __FUNCTION__, this, sourceUTF8());
 
-    // Close m_frameRequestQueue then set it to nullptr. A new decoding thread might start and a
-    // new m_frameRequestQueue will be created. So the terminating thread will not have access to it.
-    m_frameRequestQueue->close();
-    m_frameRequestQueue = nullptr;
-    m_frameCommitQueue.clear();
-    m_decodingQueue = nullptr;
-    LOG(Images, "ImageSource::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().string().utf8().data());
+    m_workQueue->stop();
+    m_workQueue = nullptr;
+}
+
+void ImageSource::setMinimumDecodingDurationForTesting(Seconds duration)
+{
+    workQueue().setMinimumDecodingDurationForTesting(duration);
 }
 
 const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
@@ -438,17 +372,18 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
         return ImageFrame::defaultFrame();
 
     ImageFrame& frame = m_frames[index];
-    if (!isDecoderAvailable() || frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, DecodingOptions(DecodingMode::Asynchronous)))
+    SubsamplingLevel currentSubsamplingLevel = subsamplingLevel ? subsamplingLevel.value() : frame.subsamplingLevel();
+
+    if (!isDecoderAvailable() || frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous)))
         return frame;
 
-    SubsamplingLevel subsamplingLevelValue = subsamplingLevel ? subsamplingLevel.value() : frame.subsamplingLevel();
 
     switch (caching) {
     case ImageFrame::Caching::Metadata:
         // Retrieve the metadata from ImageDecoder if the ImageFrame isn't complete.
         if (frame.isComplete())
             break;
-        cacheMetadataAtIndex(index, subsamplingLevelValue);
+        cacheMetadataAtIndex(index, currentSubsamplingLevel);
         break;
 
     case ImageFrame::Caching::MetadataAndImage:
@@ -457,9 +392,13 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
             break;
 
         // We have to perform synchronous image decoding in this code.
-        auto platformImage = m_decoder->createFrameImageAtIndex(index, subsamplingLevelValue, decodingOptions);
+        auto platformImage = m_decoder->createFrameImageAtIndex(index, currentSubsamplingLevel, decodingOptions);
+        auto nativeImage = NativeImage::create(WTFMove(platformImage));
+        if (!nativeImage)
+            break;
+
         // Clean the old native image and set a new one.
-        cachePlatformImageAtIndex(WTFMove(platformImage), index, subsamplingLevelValue, DecodingOptions(DecodingMode::Synchronous));
+        cacheNativeImageAtIndex(index, currentSubsamplingLevel, DecodingOptions(DecodingMode::Synchronous), WTFMove(nativeImage));
         break;
     }
 
@@ -481,6 +420,11 @@ void ImageSource::clearMetadata()
 URL ImageSource::sourceURL() const
 {
     return m_image ? m_image->sourceURL() : URL();
+}
+
+const char* ImageSource::sourceUTF8() const
+{
+    return sourceURL().string().utf8().data();
 }
 
 String ImageSource::mimeType() const
@@ -644,12 +588,12 @@ SubsamplingLevel ImageSource::maximumSubsamplingLevel()
     return m_maximumSubsamplingLevel;
 }
 
-bool ImageSource::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions)
+bool ImageSource::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
 {
-    auto it = std::find_if(m_frameCommitQueue.begin(), m_frameCommitQueue.end(), [index, &decodingOptions](const ImageFrameRequest& frameRequest) {
-        return frameRequest.index == index && frameRequest.decodingOptions.isCompatibleWith(decodingOptions);
-    });
-    return it != m_frameCommitQueue.end();
+    if (!m_workQueue)
+        return false;
+
+    return m_workQueue->isPendingDecodingAtIndex(index, subsamplingLevel, decodingOptions);
 }
 
 DecodingStatus ImageSource::frameDecodingStatusAtIndex(size_t index)

@@ -60,7 +60,7 @@ BitmapImage::~BitmapImage()
 {
     clearTimer();
     m_source->clearImage();
-    m_source->stopAsyncDecodingQueue();
+    m_source->stopWorkQueue();
 }
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
@@ -81,7 +81,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (!destroyAll || m_source->hasAsyncDecodingQueue())
+    if (!destroyAll || m_source->hasWorkQueue())
         m_source->clearFrameBufferCache(m_currentFrame);
     else
         m_source->resetData(data());
@@ -217,13 +217,13 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         ASSERT(!m_currentFrame);
 
         bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
-        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
 
         // If the current frame is incomplete, a new request for decoding this frame has to be made even if
         // it is currently being decoded. New data may have been received since the previous request was made.
         if ((!frameIsCompatible && !frameIsBeingDecoded) || m_currentFrameDecodingStatus == DecodingStatus::Invalid) {
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
-            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, sizeForDrawing);
+            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, ImageAnimatingState::No, { DecodingMode::Asynchronous, sizeForDrawing });
             m_currentFrameDecodingStatus = DecodingStatus::Decoding;
         }
 
@@ -253,8 +253,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             m_source->destroyIncompleteDecodedData();
 
         bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
-        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
-
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous, sizeForDrawing));
         if (frameIsCompatible) {
             image = nativeImageAtIndex(m_currentFrame);
             LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded frame will reused for synchronous drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
@@ -397,7 +396,7 @@ SubsamplingLevel BitmapImage::subsamplingLevelForScaleFactor(GraphicsContext& co
 bool BitmapImage::canDestroyDecodedData()
 {
     // Animated images should preserve the current frame till the next one finishes decoding.
-    if (m_source->hasAsyncDecodingQueue())
+    if (m_source->hasWorkQueue())
         return false;
 
     // Small image should be decoded synchronously. Deleting its decoded frame is fine.
@@ -419,7 +418,7 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation(ImagePaint
 
     // Don't start a new animation until we draw the frame that is currently being decoded.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
-    if (frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(nextFrame, DecodingOptions(DecodingMode::Asynchronous))) {
+    if (frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(nextFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous))) {
         LOG(Images, "BitmapImage::%s - %p - url: %s [nextFrame = %ld is being decoded]", __FUNCTION__, this, sourceURL().string().utf8().data(), nextFrame);
         return StartAnimationStatus::DecodingActive;
     }
@@ -465,7 +464,7 @@ BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation(ImagePaint
         if (frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(nextFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous))
             LOG(Images, "BitmapImage::%s - %p - url: %s [cachedFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_cachedFrameCount, nextFrame);
         else {
-            m_source->requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel);
+            m_source->requestFrameAsyncDecodingAtIndex(nextFrame, m_currentSubsamplingLevel, ImageAnimatingState::Yes, DecodingMode::Asynchronous);
             m_currentFrameDecodingStatus = DecodingStatus::Decoding;
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting async decoding for nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), nextFrame);
         }
@@ -485,7 +484,7 @@ void BitmapImage::advanceAnimation()
 
     // Don't advance to nextFrame unless its decoding has finished or was not required.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
-    if (!frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(nextFrame, DecodingOptions(DecodingMode::Asynchronous)))
+    if (!frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(nextFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous)))
         internalAdvanceAnimation();
     else
         LOG(Images, "BitmapImage::%s - %p - url: %s [lateFrameCount = %ld nextFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), ++m_lateFrameCount, nextFrame);
@@ -494,7 +493,7 @@ void BitmapImage::advanceAnimation()
 void BitmapImage::internalAdvanceAnimation()
 {
     m_currentFrame = (m_currentFrame + 1) % frameCount();
-    ASSERT(!frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(DecodingMode::Asynchronous)));
+    ASSERT(!frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(DecodingMode::Asynchronous)));
 
     destroyDecodedDataIfNecessary(false);
 
@@ -520,7 +519,7 @@ void BitmapImage::stopAnimation()
     // the timer unless all renderers have stopped drawing.
     clearTimer();
     if (canAnimate())
-        m_source->stopAsyncDecodingQueue();
+        m_source->stopWorkQueue();
 }
 
 void BitmapImage::resetAnimation()
@@ -550,24 +549,23 @@ void BitmapImage::decode(Function<void()>&& callback)
 
         // The animated image has not been displayed. In this case, either the first frame has not been decoded yet or the animation has not started yet.
         bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous);
-        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous);
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous);
 
         if (frameIsCompatible)
             internalStartAnimation({ DecodingMode::Asynchronous });
         else if (!frameIsBeingDecoded) {
-            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+            m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, ImageAnimatingState::Yes, DecodingMode::Asynchronous);
             m_currentFrameDecodingStatus = DecodingStatus::Decoding;
         }
         return;
     }
 
     bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous);
-    bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous);
-
+    bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous);
     if (frameIsCompatible)
         callDecodingCallbacks();
     else if (!frameIsBeingDecoded) {
-        m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+        m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, ImageAnimatingState::No, DecodingMode::Asynchronous);
         m_currentFrameDecodingStatus = DecodingStatus::Decoding;
     }
 }
@@ -603,8 +601,8 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
     }
 
     ASSERT((!index && !m_currentFrame) || !canAnimate());
-    if (m_source->isAsyncDecodingQueueIdle())
-        m_source->stopAsyncDecodingQueue();
+    if (m_source->isWorkQueueIdle())
+        m_source->stopWorkQueue();
 
     DecodingStatus decodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
     setCurrentFrameDecodingStatusIfNecessary(decodingStatus);

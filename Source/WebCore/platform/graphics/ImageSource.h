@@ -26,12 +26,11 @@
 #pragma once
 
 #include "ImageFrame.h"
+#include "ImageFrameWorkQueue.h"
 
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
-#include <wtf/SynchronizedFixedQueue.h>
 #include <wtf/ThreadSafeWeakPtr.h>
-#include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -44,6 +43,7 @@ class FragmentedSharedBuffer;
 class ImageSource final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
     friend class BitmapImage;
+    friend class ImageFrameWorkQueue;
 public:
     ~ImageSource();
 
@@ -76,13 +76,11 @@ public:
 
     // Asynchronous image decoding
     bool canUseAsyncDecoding();
-    void startAsyncDecodingQueue();
-    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>& = { });
-    void stopAsyncDecodingQueue();
-    bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
-    bool isAsyncDecodingQueueIdle() const;
-    void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
-    Seconds frameDecodingDurationForTesting() const { return m_frameDecodingDurationForTesting; }
+    ImageFrameWorkQueue& workQueue();
+    bool hasWorkQueue() const { return m_workQueue; }
+    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, ImageAnimatingState, const DecodingOptions& = { });
+    bool isWorkQueueIdle() const { return m_workQueue && m_workQueue->isIdle(); }
+    void stopWorkQueue();
 
     // Image metadata which is calculated either by the ImageDecoder or directly
     // from the NativeImage if this class was created for a memory image.
@@ -108,7 +106,7 @@ public:
     SubsamplingLevel maximumSubsamplingLevel();
 
     // ImageFrame metadata which does not require caching the ImageFrame.
-    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
+    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, SubsamplingLevel, const DecodingOptions&);
     DecodingStatus frameDecodingStatusAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t);
     bool frameHasImageAtIndex(size_t);
@@ -125,6 +123,10 @@ public:
     RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     RefPtr<NativeImage> frameImageAtIndex(size_t);
     RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
+
+    // Testing support
+    const char* sourceUTF8() const;
+    WEBCORE_EXPORT void setMinimumDecodingDurationForTesting(Seconds);
 
 private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
@@ -163,13 +165,9 @@ private:
 
     void setNativeImage(Ref<NativeImage>&&);
     void cacheMetadataAtIndex(size_t, SubsamplingLevel);
-    void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
-    void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
-
-    struct ImageFrameRequest;
-    static const int BufferSize = 8;
-    WorkQueue& decodingQueue();
-    SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
+    void cacheNativeImageAtIndex(size_t, SubsamplingLevel, const DecodingOptions&, RefPtr<NativeImage>&&);
+    void cacheNativeImageAtIndexAsync(size_t, SubsamplingLevel, const DecodingOptions&, RefPtr<NativeImage>&&);
+    void clearFrameAtIndex(size_t);
 
     const ImageFrame& frameAtIndex(size_t index) { return index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame(); }
     const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { }, const DecodingOptions& = { });
@@ -184,20 +182,6 @@ private:
     unsigned m_decodedSize { 0 };
     unsigned m_decodedPropertiesSize { 0 };
     Vector<ImageFrame, 1> m_frames;
-
-    // Asynchronous image decoding.
-    struct ImageFrameRequest {
-        size_t index;
-        SubsamplingLevel subsamplingLevel;
-        DecodingOptions decodingOptions;
-        friend bool operator==(const ImageFrameRequest&, const ImageFrameRequest&) = default;
-    };
-    using FrameRequestQueue = SynchronizedFixedQueue<ImageFrameRequest, BufferSize>;
-    using FrameCommitQueue = Deque<ImageFrameRequest, BufferSize>;
-    RefPtr<FrameRequestQueue> m_frameRequestQueue;
-    FrameCommitQueue m_frameCommitQueue;
-    RefPtr<WorkQueue> m_decodingQueue;
-    Seconds m_frameDecodingDurationForTesting;
 
     // Image metadata.
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
@@ -219,6 +203,8 @@ private:
     OptionSet<MetadataType> m_cachedMetadata;
 
     RunLoop& m_runLoop;
+
+    RefPtr<ImageFrameWorkQueue> m_workQueue;
 };
 
 } // namespace WebCore
