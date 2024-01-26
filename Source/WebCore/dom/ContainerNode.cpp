@@ -141,7 +141,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
             if (is<Element>(*child))
                 hadElementChild = true;
 
-            removeBetween(nullptr, child->nextSibling(), *child);
+            removeBetween(nullptr, child->protectedNextSibling().get(), *child);
             auto subtreeObservability = notifyChildNodeRemoved(*this, *child);
             if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
                 willCreatePossiblyOrphanedTreeByRemoval(*child);
@@ -378,8 +378,10 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    if (!isDocumentNode())
+    if (!isDocumentNode()) {
+        // Unable to ref the document as it may have started destruction.
         willBeDeletedFrom(document());
+    }
     removeDetachedChildren();
 }
 
@@ -397,18 +399,18 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
 
 static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
-    const Node* currentNode = &node;
+    RefPtr<const Node> currentNode = &node;
     do {
         if (currentNode == &possibleAncestor)
             return true;
-        const ContainerNode* parent = currentNode->parentNode();
+        RefPtr<const ContainerNode> parent = currentNode->parentNode();
         if (!parent) {
-            if (auto shadowRoot = dynamicDowncast<ShadowRoot>(currentNode))
+            if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*currentNode))
                 parent = shadowRoot->host();
-            else if (auto fragment = dynamicDowncast<TemplateContentDocumentFragment>(*currentNode))
+            else if (auto* fragment = dynamicDowncast<TemplateContentDocumentFragment>(*currentNode))
                 parent = fragment->host();
         }
-        currentNode = parent;
+        currentNode = WTFMove(parent);
     } while (currentNode);
 
     return false;
@@ -502,7 +504,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
             return checkAcceptResult.releaseException();
     }
 
-    InspectorInstrumentation::willInsertDOMNode(document(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
 
     ChildListMutationScope mutation(*this);
     for (auto& child : targets) {
@@ -635,7 +637,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
         }
     }
 
-    InspectorInstrumentation::willInsertDOMNode(document(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
 
     // Add the new child(ren).
     for (auto& child : targets) {
@@ -698,6 +700,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& oldChild)
 {
+    // Unable to ref the document as it may have started destruction.
     InspectorInstrumentation::didRemoveDOMNode(oldChild.document(), oldChild);
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -762,7 +765,7 @@ void ContainerNode::replaceAll(Node* node)
     auto replacedAllChildren = is<Element>(*node) || didRemoveElements == DidRemoveElements::Yes ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
 
     executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
-        InspectorInstrumentation::willInsertDOMNode(document(), *this);
+        InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
         node->setTreeScopeRecursively(treeScope());
         appendChildCommon(*node);
     });
@@ -970,6 +973,7 @@ static void dispatchChildInsertionEvents(Node& child)
 static void dispatchChildRemovalEvents(Ref<Node>& child)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(child));
+    // Unable to ref the document as it may have started destruction.
     InspectorInstrumentation::willRemoveDOMNode(child->document(), child.get());
 
     if (child->isInShadowTree())
