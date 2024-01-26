@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -67,8 +67,9 @@ from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
-# Prevent unit-tests from talking to live bugzilla server
+# Prevent unit-tests from talking to live bugzilla and github servers
 BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
+GitHubMixin.fetch_data_from_url_with_authentication_github = lambda x, y: None
 
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
