@@ -41,6 +41,13 @@
 
 namespace WebCore {
 
+const WTF::BitSet<256> isHTMLLineBreakBitSet = ([]() -> WTF::BitSet<256> {
+    WTF::BitSet<256> bitSet;
+    bitSet.set('\n');
+    bitSet.set('\r');
+    return bitSet;
+})();
+
 String serializeForNumberType(const Decimal& number)
 {
     if (number.isZero()) {

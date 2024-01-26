@@ -25,6 +25,7 @@
 #pragma once
 
 #include <unicode/uchar.h>
+#include <wtf/BitSet.h>
 #include <wtf/Expected.h>
 #include <wtf/text/StringView.h>
 
@@ -33,9 +34,12 @@ namespace WebCore {
 class Decimal;
 class QualifiedName;
 
+
+extern WEBCORE_EXPORT const WTF::BitSet<256> isHTMLLineBreakBitSet;
+
 template<typename CharacterType> bool isComma(CharacterType);
 template<typename CharacterType> bool isHTMLSpaceOrComma(CharacterType);
-bool isHTMLLineBreak(UChar);
+template<typename CharacterType> bool isHTMLLineBreak(CharacterType);
 bool isHTMLSpaceButNotLineBreak(UChar);
 
 // 2147483647 is 2^31 - 1.
@@ -91,9 +95,13 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView);
 
 // Inline implementations of some of the functions declared above.
 
-inline bool isHTMLLineBreak(UChar character)
+template<typename CharacterType>
+inline bool isHTMLLineBreak(CharacterType character)
 {
-    return character <= '\r' && (character == '\n' || character == '\r');
+    if constexpr (sizeof(CharacterType) == 1)
+        return isHTMLLineBreakBitSet.get(character);
+    else
+        return character <= 0xff && isHTMLLineBreakBitSet.get(character);
 }
 
 template<typename CharacterType> inline bool isComma(CharacterType character)
