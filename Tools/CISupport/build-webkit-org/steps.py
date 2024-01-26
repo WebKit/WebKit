@@ -249,7 +249,7 @@ class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommandNewStyle):
     descriptionDone = ["pruned coresymbolicationd cache"]
     flunkOnFailure = False
     haltOnFailure = False
-    command = ["python3", "Tools/Scripts/delete-if-too-large",
+    command = ["sudo", "python3", "Tools/Scripts/delete-if-too-large",
                "/System/Library/Caches/com.apple.coresymbolicationd"]
 
 
