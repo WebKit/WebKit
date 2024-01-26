@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +30,44 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesGcmParams;
+class CryptoAlgorithmAesCtrParams;
 class CryptoKeyAES;
 
-class CryptoAlgorithmAES_GCM final : public CryptoAlgorithm {
+class CryptoAlgorithmAESCTR final : public CryptoAlgorithm {
 public:
-    static constexpr ASCIILiteral s_name = "AES-GCM"_s;
-    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_GCM;
+    class CounterBlockHelper {
+    public:
+        CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength);
+
+        size_t countToOverflowSaturating() const;
+        Vector<uint8_t> counterVectorAfterOverflow() const;
+
+    private:
+        // 128 bits integer with miminum required operators.
+        struct CounterBlockBits {
+            void set();
+            bool all() const;
+            bool any() const;
+
+            CounterBlockBits operator&(const CounterBlockBits&) const;
+            CounterBlockBits operator~() const;
+            CounterBlockBits& operator <<=(unsigned);
+            CounterBlockBits& operator &=(const CounterBlockBits&);
+
+            uint64_t m_hi { 0 };
+            uint64_t m_lo { 0 };
+        };
+
+        CounterBlockBits m_bits;
+        const size_t m_counterLength;
+    };
+
+    static constexpr ASCIILiteral s_name = "AES-CTR"_s;
+    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CTR;
     static Ref<CryptoAlgorithm> create();
-    static constexpr size_t DefaultTagLength = 128;
 
 private:
-    CryptoAlgorithmAES_GCM() = default;
+    CryptoAlgorithmAESCTR() = default;
     CryptoAlgorithmIdentifier identifier() const final;
 
     void encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
@@ -50,8 +77,8 @@ private:
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&, bool useCryptoKit);
-    static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCtrParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesCtrParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

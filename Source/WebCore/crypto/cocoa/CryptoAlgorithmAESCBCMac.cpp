@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CBC.h"
+#include "CryptoAlgorithmAESCBC.h"
 
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoKeyAES.h"
@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data, CryptoAlgorithmAES_CBC::Padding padding)
+static ExceptionOr<Vector<uint8_t>> transformAESCBC(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data, CryptoAlgorithmAESCBC::Padding padding)
 {
-    CCOptions options = padding == CryptoAlgorithmAES_CBC::Padding::Yes ? kCCOptionPKCS7Padding : 0;
+    CCOptions options = padding == CryptoAlgorithmAESCBC::Padding::Yes ? kCCOptionPKCS7Padding : 0;
     CCCryptorRef cryptor;
     CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, options, key.data(), key.size(), iv.data(), &cryptor);
     if (status)
@@ -48,7 +48,7 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
         return Exception { ExceptionCode::OperationError };
 
     uint8_t* p = result.data() + bytesWritten;
-    if (padding == CryptoAlgorithmAES_CBC::Padding::Yes) {
+    if (padding == CryptoAlgorithmAESCBC::Padding::Yes) {
         status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
         p += bytesWritten;
         if (status)
@@ -63,18 +63,18 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     ASSERT(padding == Padding::Yes || !(plainText.size() % kCCBlockSizeAES128));
-    return transformAES_CBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText, padding);
+    return transformAESCBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText, padding);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding padding)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     ASSERT(padding == Padding::Yes || !(cipherText.size() % kCCBlockSizeAES128));
-    auto result = transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, Padding::No);
+    auto result = transformAESCBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, Padding::No);
     if (result.hasException())
         return result.releaseException();
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CTR.h"
+#include "CryptoAlgorithmAESCTR.h"
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
@@ -68,7 +68,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
         return std::nullopt;
 
     // Calculate capacity before overflow
-    CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
+    CryptoAlgorithmAESCTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
     size_t capacity = counterBlockHelper.countToOverflowSaturating();
 
     // Divide data into two parts if necessary
@@ -122,7 +122,7 @@ static std::optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>
     return outputText;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
     auto output = crypt(1, key.key(), parameters.counterVector(), parameters.length, plainText);
     if (!output)
@@ -130,7 +130,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const Crypt
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
     auto output = crypt(0, key.key(), parameters.counterVector(), parameters.length, cipherText);
     if (!output)

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CFB.h"
+#include "CryptoAlgorithmAESCFB.h"
 
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoKeyAES.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> transformAES_CFB(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> transformAESCFB(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     CCCryptorRef cryptor;
     CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCFB8, kCCAlgorithmAES, ccNoPadding, iv.data(), key.data(), key.size(), 0, 0, 0, 0, &cryptor);
@@ -60,16 +60,16 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CFB(CCOperation operation, cons
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCFB::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
-    return transformAES_CFB(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
+    return transformAESCFB(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCFB::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
-    return transformAES_CFB(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
+    return transformAESCFB(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
 }
 
 } // namespace WebCore

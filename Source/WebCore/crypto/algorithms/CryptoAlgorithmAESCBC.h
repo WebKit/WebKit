@@ -29,27 +29,31 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmAesCbcCfbParams;
 class CryptoKeyAES;
 
-class CryptoAlgorithmAES_KW final : public CryptoAlgorithm {
+class CryptoAlgorithmAESCBC final : public CryptoAlgorithm {
 public:
-    static constexpr ASCIILiteral s_name = "AES-KW"_s;
-    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_KW;
+    enum class Padding : bool { No, Yes };
+
+    static constexpr ASCIILiteral s_name = "AES-CBC"_s;
+    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
     static Ref<CryptoAlgorithm> create();
 
+    // Operations can be performed directly.
+    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
+    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
+
 private:
-    CryptoAlgorithmAES_KW() = default;
+    CryptoAlgorithmAESCBC() = default;
     CryptoAlgorithmIdentifier identifier() const final;
 
+    void encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
+    void decrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
     void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext&) final;
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
-    void wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&) final;
-    void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
-
-    static ExceptionOr<Vector<uint8_t>> platformWrapKey(const CryptoKeyAES&, const Vector<uint8_t>&);
-    static ExceptionOr<Vector<uint8_t>> platformUnwrapKey(const CryptoKeyAES&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

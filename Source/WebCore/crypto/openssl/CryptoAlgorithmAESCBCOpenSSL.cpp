@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CBC.h"
+#include "CryptoAlgorithmAESCBC.h"
 
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoKeyAES.h"
@@ -115,7 +115,7 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
     return plainText;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding)
 {
     auto output = cryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText));
     if (!output)
@@ -123,7 +123,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const Crypt
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding)
 {
     auto output = cryptDecrypt(key.key(), parameters.ivVector(), cipherText);
     if (!output)

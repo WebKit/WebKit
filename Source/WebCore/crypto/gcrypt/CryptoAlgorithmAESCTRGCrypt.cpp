@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CTR.h"
+#include "CryptoAlgorithmAESCTR.h"
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
@@ -67,7 +67,7 @@ static std::optional<Vector<uint8_t>> callOperation(PAL::GCrypt::CipherOperation
     return output;
 }
 
-static std::optional<Vector<uint8_t>> gcryptAES_CTR(PAL::GCrypt::CipherOperation operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
+static std::optional<Vector<uint8_t>> gcryptAESCTR(PAL::GCrypt::CipherOperation operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
 {
     constexpr size_t blockSize = 16;
     auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
@@ -193,17 +193,17 @@ static std::optional<Vector<uint8_t>> gcryptAES_CTR(PAL::GCrypt::CipherOperation
     return output;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    auto output = gcryptAES_CTR(gcry_cipher_encrypt, key.key(), parameters.counterVector(), parameters.length, plainText);
+    auto output = gcryptAESCTR(gcry_cipher_encrypt, key.key(), parameters.counterVector(), parameters.length, plainText);
     if (!output)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    auto output = gcryptAES_CTR(gcry_cipher_decrypt, key.key(), parameters.counterVector(), parameters.length, cipherText);
+    auto output = gcryptAESCTR(gcry_cipher_decrypt, key.key(), parameters.counterVector(), parameters.length, cipherText);
     if (!output)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);

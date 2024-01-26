@@ -781,11 +781,11 @@ crypto/CryptoAlgorithm.cpp
 crypto/CryptoAlgorithmRegistry.cpp
 crypto/CryptoKey.cpp
 crypto/SubtleCrypto.cpp
-crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
-crypto/algorithms/CryptoAlgorithmAES_CFB.cpp
-crypto/algorithms/CryptoAlgorithmAES_CTR.cpp
-crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
-crypto/algorithms/CryptoAlgorithmAES_KW.cpp
+crypto/algorithms/CryptoAlgorithmAESCBC.cpp
+crypto/algorithms/CryptoAlgorithmAESCFB.cpp
+crypto/algorithms/CryptoAlgorithmAESCTR.cpp
+crypto/algorithms/CryptoAlgorithmAESGCM.cpp
+crypto/algorithms/CryptoAlgorithmAESKW.cpp
 crypto/algorithms/CryptoAlgorithmECDH.cpp
 crypto/algorithms/CryptoAlgorithmECDSA.cpp
 crypto/algorithms/CryptoAlgorithmEd25519.cpp

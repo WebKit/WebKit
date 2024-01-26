@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +24,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CryptoAlgorithmAESCTR.h"
 
-#include "ExceptionOr.h"
-#include <CommonCrypto/CommonCryptoError.h>
-#include <wtf/Vector.h>
-
-typedef uint32_t CCDigestAlgorithm;
-typedef uint32_t CCHmacAlgorithm;
-typedef uint32_t CCOperation;
+#include "CryptoAlgorithmAesCtrParams.h"
+#include "CryptoKeyAES.h"
+#include "CryptoUtilitiesCocoa.h"
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, const uint8_t* data, size_t dataSize);
-CCStatus keyDerivationHMAC(CCDigestAlgorithm, const void *, size_t, const void *, size_t, const void *, size_t, void *, size_t);
-ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm, const uint8_t* key, size_t keySize, const uint8_t* salt, size_t saltSize, const uint8_t* info, size_t infoSize, size_t length);
-ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(const uint8_t* key, size_t keySize, const uint8_t* salt, size_t saltSize, const uint8_t* info, size_t infoSize, size_t length);
-Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t);
-Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, const uint8_t* data, size_t);
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+{
+    ASSERT(parameters.counterVector().size() == kCCBlockSizeAES128);
+    return transformAESCTR(kCCEncrypt, parameters.counterVector(), parameters.length, key.key(), plainText.data(), plainText.size());
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+{
+    ASSERT(parameters.counterVector().size() == kCCBlockSizeAES128);
+    return transformAESCTR(kCCDecrypt, parameters.counterVector(), parameters.length, key.key(), cipherText.data(), cipherText.size());
+}
+
 
 } // namespace WebCore

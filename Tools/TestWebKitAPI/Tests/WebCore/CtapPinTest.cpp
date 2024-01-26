@@ -31,7 +31,7 @@
 #include "PlatformUtilities.h"
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
-#include <WebCore/CryptoAlgorithmAES_CBC.h>
+#include <WebCore/CryptoAlgorithmAESCBC.h>
 #include <WebCore/CryptoAlgorithmAesCbcCfbParams.h>
 #include <WebCore/CryptoAlgorithmECDH.h>
 #include <WebCore/CryptoKeyAES.h>
@@ -241,7 +241,7 @@ TEST(CtapPinTest, TestTokenRequest)
 
     const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kPinHashEnc)));
     EXPECT_NE(it6, responseMap.end());
-    auto pinHashResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAES_CBC::Padding::No);
+    auto pinHashResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAESCBC::Padding::No);
     EXPECT_FALSE(pinHashResult.hasException());
     auto pinHash = pinHashResult.releaseReturnValue();
     const uint8_t expectedPinHash[] = { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };

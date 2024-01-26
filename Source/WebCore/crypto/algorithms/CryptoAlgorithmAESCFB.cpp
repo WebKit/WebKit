@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CFB.h"
+#include "CryptoAlgorithmAESCFB.h"
 
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
@@ -33,31 +33,31 @@
 
 namespace WebCore {
 
-namespace CryptoAlgorithmAES_CFBInternal {
+namespace CryptoAlgorithmAESCFBInternal {
 static constexpr auto ALG128 = "A128CFB8"_s;
 static constexpr auto ALG192 = "A192CFB8"_s;
 static constexpr auto ALG256 = "A256CFB8"_s;
 static const size_t IVSIZE = 16;
 }
 
-static inline bool usagesAreInvalidForCryptoAlgorithmAES_CFB(CryptoKeyUsageBitmap usages)
+static inline bool usagesAreInvalidForCryptoAlgorithmAESCFB(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }
 
-Ref<CryptoAlgorithm> CryptoAlgorithmAES_CFB::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmAESCFB::create()
 {
-    return adoptRef(*new CryptoAlgorithmAES_CFB);
+    return adoptRef(*new CryptoAlgorithmAESCFB);
 }
 
-CryptoAlgorithmIdentifier CryptoAlgorithmAES_CFB::identifier() const
+CryptoAlgorithmIdentifier CryptoAlgorithmAESCFB::identifier() const
 {
     return s_identifier;
 }
 
-void CryptoAlgorithmAES_CFB::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAESCFB::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    using namespace CryptoAlgorithmAES_CFBInternal;
+    using namespace CryptoAlgorithmAESCFBInternal;
 
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -71,9 +71,9 @@ void CryptoAlgorithmAES_CFB::encrypt(const CryptoAlgorithmParameters& parameters
         });
 }
 
-void CryptoAlgorithmAES_CFB::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAESCFB::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    using namespace CryptoAlgorithmAES_CFBInternal;
+    using namespace CryptoAlgorithmAESCFBInternal;
 
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -87,11 +87,11 @@ void CryptoAlgorithmAES_CFB::decrypt(const CryptoAlgorithmParameters& parameters
         });
 }
 
-void CryptoAlgorithmAES_CFB::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmAESCFB::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     const auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
 
-    if (usagesAreInvalidForCryptoAlgorithmAES_CFB(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESCFB(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -105,11 +105,11 @@ void CryptoAlgorithmAES_CFB::generateKey(const CryptoAlgorithmParameters& parame
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESCFB::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_CFBInternal;
+    using namespace CryptoAlgorithmAESCFBInternal;
     
-    if (usagesAreInvalidForCryptoAlgorithmAES_CFB(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESCFB(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -146,9 +146,9 @@ void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, c
     callback(*result);
 }
 
-void CryptoAlgorithmAES_CFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESCFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_CFBInternal;
+    using namespace CryptoAlgorithmAESCFBInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
@@ -187,7 +187,7 @@ void CryptoAlgorithmAES_CFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
     callback(format, WTFMove(result));
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAES_CFB::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<size_t> CryptoAlgorithmAESCFB::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }

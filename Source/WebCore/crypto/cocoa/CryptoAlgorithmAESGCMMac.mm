@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_GCM.h"
+#include "CryptoAlgorithmAESGCM.h"
 
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
+static ExceptionOr<Vector<uint8_t>> encryptAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
@@ -49,19 +49,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return WTFMove(cipherText);
 }
 
-static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
+static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     // Protect against underflow in the subtraction below.
-    if (desiredTagLengthInBytes > CryptoAlgorithmAES_GCM::DefaultTagLength / 8)
+    if (desiredTagLengthInBytes > CryptoAlgorithmAESGCM::DefaultTagLength / 8)
         return Exception { ExceptionCode::OperationError };
-    Vector<uint8_t> cipherText(plainText.size() + CryptoAlgorithmAES_GCM::DefaultTagLength);
+    Vector<uint8_t> cipherText(plainText.size() + CryptoAlgorithmAESGCM::DefaultTagLength);
     if (WebCryptoAesGcmErrorCodesSuccess != [WebCryptoAesGcm encrypt:key.data() keySize:key.size() iv:iv.data() ivSize:iv.size() additionalData:additionalData.data() additionalDataSize:additionalData.size() plainText:plainText.data() plainTextSize:plainText.size() cipherText:cipherText.data()])
         return Exception { ExceptionCode::OperationError };
-    cipherText.resize(cipherText.size() - (CryptoAlgorithmAES_GCM::DefaultTagLength - desiredTagLengthInBytes));
+    cipherText.resize(cipherText.size() - (CryptoAlgorithmAESGCM::DefaultTagLength - desiredTagLengthInBytes));
     return WTFMove(cipherText);
 }
 
-static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
+static ExceptionOr<Vector<uint8_t>> decyptAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> plainText(cipherText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
@@ -81,17 +81,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return WTFMove(plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, bool useCryptoKit)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, bool useCryptoKit)
 {
     if (useCryptoKit)
-        return encryptCryptoKitAES_GCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
+        return encryptCryptoKitAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 
-    return encryptAES_GCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
+    return encryptAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    return decyptAES_GCM(parameters.ivVector(), key.key(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
+    return decyptAESGCM(parameters.ivVector(), key.key(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
 
 } // namespace WebCore

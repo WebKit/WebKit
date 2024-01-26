@@ -26,12 +26,12 @@
 #include "config.h"
 #include "CryptoUtilitiesCocoa.h"
 
-#include "CryptoAlgorithmAES_CTR.h"
+#include "CryptoAlgorithmAESCTR.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, const uint8_t* data, size_t dataSize)
+ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, const uint8_t* data, size_t dataSize)
 {
     // FIXME: We should remove the following hack once <rdar://problem/31361050> is fixed.
     // counter = nonce + counter
@@ -45,7 +45,7 @@ ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vecto
         return Exception { ExceptionCode::OperationError };
 
     // Calculate capacity before overflow
-    CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
+    CryptoAlgorithmAESCTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
     size_t capacity = counterBlockHelper.countToOverflowSaturating();
 
     // Divide data into two parts if necessary.

@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_KW.h"
+#include "CryptoAlgorithmAESKW.h"
 
 #include "CryptoKeyAES.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
-static ExceptionOr<Vector<uint8_t>> wrapKeyAES_KW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> wrapKeyAESKW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     Vector<uint8_t> result(CCSymmetricWrappedSize(kCCWRAPAES, data.size()));
     size_t resultSize = result.size();
@@ -42,7 +42,7 @@ static ExceptionOr<Vector<uint8_t>> wrapKeyAES_KW(const Vector<uint8_t>& key, co
     return WTFMove(result);
 }
 
-static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, data.size()));
     size_t resultSize = result.size();
@@ -57,14 +57,14 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, 
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    return wrapKeyAES_KW(key.key(), data);
+    return wrapKeyAESKW(key.key(), data);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    return unwrapKeyAES_KW(key.key(), data);
+    return unwrapKeyAESKW(key.key(), data);
 }
 
 } // namespace WebCore

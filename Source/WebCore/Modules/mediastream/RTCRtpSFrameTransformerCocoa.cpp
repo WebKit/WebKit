@@ -71,12 +71,12 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(const uint8_t* data, size_t size, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
 {
-    return transformAES_CTR(kCCDecrypt, iv, iv.size(), key, data, size);
+    return transformAESCTR(kCCDecrypt, iv, iv.size(), key, data, size);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t* data, size_t size, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
 {
-    return transformAES_CTR(kCCEncrypt, iv, iv.size(), key, data, size);
+    return transformAESCTR(kCCEncrypt, iv, iv.size(), key, data, size);
 }
 
 static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)

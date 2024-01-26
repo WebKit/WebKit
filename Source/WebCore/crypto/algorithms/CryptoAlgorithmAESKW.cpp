@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_KW.h"
+#include "CryptoAlgorithmAESKW.h"
 
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
@@ -32,30 +32,30 @@
 
 namespace WebCore {
 
-namespace CryptoAlgorithmAES_KWInternal {
+namespace CryptoAlgorithmAESKWInternal {
 static constexpr auto ALG128 = "A128KW"_s;
 static constexpr auto ALG192 = "A192KW"_s;
 static constexpr auto ALG256 = "A256KW"_s;
 }
 
-static inline bool usagesAreInvalidForCryptoAlgorithmAES_KW(CryptoKeyUsageBitmap usages)
+static inline bool usagesAreInvalidForCryptoAlgorithmAESKW(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
 }
 
-Ref<CryptoAlgorithm> CryptoAlgorithmAES_KW::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmAESKW::create()
 {
-    return adoptRef(*new CryptoAlgorithmAES_KW);
+    return adoptRef(*new CryptoAlgorithmAESKW);
 }
 
-CryptoAlgorithmIdentifier CryptoAlgorithmAES_KW::identifier() const
+CryptoAlgorithmIdentifier CryptoAlgorithmAESKW::identifier() const
 {
     return s_identifier;
 }
 
-void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmAESKW::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
-    if (usagesAreInvalidForCryptoAlgorithmAES_KW(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESKW(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -69,11 +69,11 @@ void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& paramet
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_KWInternal;
+    using namespace CryptoAlgorithmAESKWInternal;
 
-    if (usagesAreInvalidForCryptoAlgorithmAES_KW(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESKW(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -109,9 +109,9 @@ void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, co
     callback(*result);
 }
 
-void CryptoAlgorithmAES_KW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_KWInternal;
+    using namespace CryptoAlgorithmAESKWInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
@@ -150,7 +150,7 @@ void CryptoAlgorithmAES_KW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& k
     callback(format, WTFMove(result));
 }
 
-void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     if (data.size() % 8) {
         exceptionCallback(ExceptionCode::OperationError);
@@ -166,7 +166,7 @@ void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data
     callback(result.releaseReturnValue());
 }
 
-void CryptoAlgorithmAES_KW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
     if (result.hasException()) {
@@ -177,7 +177,7 @@ void CryptoAlgorithmAES_KW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& da
     callback(result.releaseReturnValue());
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAES_KW::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<size_t> CryptoAlgorithmAESKW::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }

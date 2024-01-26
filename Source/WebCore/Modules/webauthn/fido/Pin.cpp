@@ -34,7 +34,7 @@
 
 #include "CBORReader.h"
 #include "CBORWriter.h"
-#include "CryptoAlgorithmAES_CBC.h"
+#include "CryptoAlgorithmAESCBC.h"
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmECDH.h"
 #include "CryptoAlgorithmHMAC.h"
@@ -202,7 +202,7 @@ std::optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& s
         return std::nullopt;
     const auto& encryptedToken = it->second.getByteString();
 
-    auto tokenResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, sharedKey, encryptedToken, CryptoAlgorithmAES_CBC::Padding::No);
+    auto tokenResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, sharedKey, encryptedToken, CryptoAlgorithmAESCBC::Padding::No);
     if (tokenResult.hasException())
         return std::nullopt;
     auto token = tokenResult.releaseReturnValue();
@@ -282,7 +282,7 @@ const CryptoKeyAES& TokenRequest::sharedKey() const
 
 Vector<uint8_t> encodeAsCBOR(const TokenRequest& request)
 {
-    auto result = CryptoAlgorithmAES_CBC::platformEncrypt({ }, request.sharedKey(), request.m_pinHash, CryptoAlgorithmAES_CBC::Padding::No);
+    auto result = CryptoAlgorithmAESCBC::platformEncrypt({ }, request.sharedKey(), request.m_pinHash, CryptoAlgorithmAESCBC::Padding::No);
     ASSERT(!result.hasException());
 
     return encodePinCommand(Subcommand::kGetPinToken, [coseKey = WTFMove(request.m_coseKey), encryptedPin = result.releaseReturnValue()] (CBORValue::MapValue* map) mutable {

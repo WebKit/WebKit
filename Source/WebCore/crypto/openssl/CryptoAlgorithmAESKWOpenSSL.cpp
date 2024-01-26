@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_KW.h"
+#include "CryptoAlgorithmAESKW.h"
 
 #include "CryptoKeyAES.h"
 #include "OpenSSLUtilities.h"
@@ -63,7 +63,7 @@ static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key,
     return plainText;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
     auto output = cryptWrapKey(key.key(), data);
     if (!output)
@@ -71,7 +71,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const Crypto
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
     auto output = cryptUnwrapKey(key.key(), data);
     if (!output)

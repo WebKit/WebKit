@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,23 +29,18 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesCbcCfbParams;
+class CryptoAlgorithmAesGcmParams;
 class CryptoKeyAES;
 
-class CryptoAlgorithmAES_CBC final : public CryptoAlgorithm {
+class CryptoAlgorithmAESGCM final : public CryptoAlgorithm {
 public:
-    enum class Padding : bool { No, Yes };
-
-    static constexpr ASCIILiteral s_name = "AES-CBC"_s;
-    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
+    static constexpr ASCIILiteral s_name = "AES-GCM"_s;
+    static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_GCM;
     static Ref<CryptoAlgorithm> create();
-
-    // Operations can be performed directly.
-    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
-    WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);
+    static constexpr size_t DefaultTagLength = 128;
 
 private:
-    CryptoAlgorithmAES_CBC() = default;
+    CryptoAlgorithmAESGCM() = default;
     CryptoAlgorithmIdentifier identifier() const final;
 
     void encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
@@ -54,6 +49,9 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
+
+    static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&, bool useCryptoKit);
+    static ExceptionOr<Vector<uint8_t>> platformDecrypt(const CryptoAlgorithmAesGcmParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

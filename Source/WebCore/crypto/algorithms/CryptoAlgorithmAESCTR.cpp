@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmAES_CTR.h"
+#include "CryptoAlgorithmAESCTR.h"
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-namespace CryptoAlgorithmAES_CTRInternal {
+namespace CryptoAlgorithmAESCTRInternal {
 static constexpr auto ALG128 = "A128CTR"_s;
 static constexpr auto ALG192 = "A192CTR"_s;
 static constexpr auto ALG256 = "A256CTR"_s;
@@ -43,14 +43,14 @@ static const size_t CounterSize = 16;
 static const uint64_t AllBitsSet = ~(uint64_t)0;
 }
 
-static inline bool usagesAreInvalidForCryptoAlgorithmAES_CTR(CryptoKeyUsageBitmap usages)
+static inline bool usagesAreInvalidForCryptoAlgorithmAESCTR(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }
 
 static bool parametersAreValid(const CryptoAlgorithmAesCtrParams& parameters)
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
     if (parameters.counterVector().size() != CounterSize)
         return false;
     if (!parameters.length || parameters.length > 128)
@@ -58,17 +58,17 @@ static bool parametersAreValid(const CryptoAlgorithmAesCtrParams& parameters)
     return true;
 }
 
-Ref<CryptoAlgorithm> CryptoAlgorithmAES_CTR::create()
+Ref<CryptoAlgorithm> CryptoAlgorithmAESCTR::create()
 {
-    return adoptRef(*new CryptoAlgorithmAES_CTR);
+    return adoptRef(*new CryptoAlgorithmAESCTR);
 }
 
-CryptoAlgorithmIdentifier CryptoAlgorithmAES_CTR::identifier() const
+CryptoAlgorithmIdentifier CryptoAlgorithmAESCTR::identifier() const
 {
     return s_identifier;
 }
 
-void CryptoAlgorithmAES_CTR::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAESCTR::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(parameters);
     if (!parametersAreValid(aesParameters)) {
@@ -82,7 +82,7 @@ void CryptoAlgorithmAES_CTR::encrypt(const CryptoAlgorithmParameters& parameters
         });
 }
 
-void CryptoAlgorithmAES_CTR::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAESCTR::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(parameters);
     if (!parametersAreValid(aesParameters)) {
@@ -96,11 +96,11 @@ void CryptoAlgorithmAES_CTR::decrypt(const CryptoAlgorithmParameters& parameters
         });
 }
 
-void CryptoAlgorithmAES_CTR::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
+void CryptoAlgorithmAESCTR::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)
 {
     const auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
 
-    if (usagesAreInvalidForCryptoAlgorithmAES_CTR(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESCTR(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -114,11 +114,11 @@ void CryptoAlgorithmAES_CTR::generateKey(const CryptoAlgorithmParameters& parame
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_CTR::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESCTR::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
 
-    if (usagesAreInvalidForCryptoAlgorithmAES_CTR(usages)) {
+    if (usagesAreInvalidForCryptoAlgorithmAESCTR(usages)) {
         exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
@@ -155,9 +155,9 @@ void CryptoAlgorithmAES_CTR::importKey(CryptoKeyFormat format, KeyData&& data, c
     callback(*result);
 }
 
-void CryptoAlgorithmAES_CTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAESCTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
@@ -196,15 +196,15 @@ void CryptoAlgorithmAES_CTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
     callback(format, WTFMove(result));
 }
 
-ExceptionOr<size_t> CryptoAlgorithmAES_CTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
+ExceptionOr<size_t> CryptoAlgorithmAESCTR::getKeyLength(const CryptoAlgorithmParameters& parameters)
 {
     return CryptoKeyAES::getKeyLength(parameters);
 }
 
-CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength)
+CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength)
     : m_counterLength(counterLength)
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
 
     ASSERT(counterVector.size() == CounterSize);
     ASSERT(counterLength <= CounterSize * 8);
@@ -215,7 +215,7 @@ CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockHelper(const Vector<uint
     m_bits.m_lo = flipBytesIfLittleEndian(m_bits.m_lo, littleEndian);
 }
 
-size_t CryptoAlgorithmAES_CTR::CounterBlockHelper::countToOverflowSaturating() const
+size_t CryptoAlgorithmAESCTR::CounterBlockHelper::countToOverflowSaturating() const
 {
     CounterBlockBits counterMask;
     counterMask.set();
@@ -243,9 +243,9 @@ size_t CryptoAlgorithmAES_CTR::CounterBlockHelper::countToOverflowSaturating() c
     return countMinusOne.m_lo + 1;
 }
 
-Vector<uint8_t> CryptoAlgorithmAES_CTR::CounterBlockHelper::counterVectorAfterOverflow() const
+Vector<uint8_t> CryptoAlgorithmAESCTR::CounterBlockHelper::counterVectorAfterOverflow() const
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
 
     CounterBlockBits nonceMask;
     nonceMask.set();
@@ -262,35 +262,35 @@ Vector<uint8_t> CryptoAlgorithmAES_CTR::CounterBlockHelper::counterVectorAfterOv
     return counterVector;
 }
 
-void CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::set()
+void CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::set()
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
     m_hi = AllBitsSet;
     m_lo = AllBitsSet;
 }
 
-bool CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::all() const
+bool CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::all() const
 {
-    using namespace CryptoAlgorithmAES_CTRInternal;
+    using namespace CryptoAlgorithmAESCTRInternal;
     return m_hi == AllBitsSet && m_lo == AllBitsSet;
 }
 
-bool CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::any() const
+bool CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::any() const
 {
     return m_hi || m_lo;
 }
 
-auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator&(const CounterBlockBits& rhs) const -> CounterBlockBits
+auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator&(const CounterBlockBits& rhs) const -> CounterBlockBits
 {
     return { m_hi & rhs.m_hi, m_lo & rhs.m_lo };
 }
 
-auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator~() const -> CounterBlockBits
+auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator~() const -> CounterBlockBits
 {
     return { ~m_hi, ~m_lo };
 }
 
-auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator <<=(unsigned shift) -> CounterBlockBits&
+auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator <<=(unsigned shift) -> CounterBlockBits&
 {
     if (shift < 64) {
         m_hi = (m_hi << shift) | m_lo >> (64 - shift);
@@ -306,7 +306,7 @@ auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator <<=(
     return *this;
 }
 
-auto CryptoAlgorithmAES_CTR::CounterBlockHelper::CounterBlockBits::operator &=(const CounterBlockBits& rhs) -> CounterBlockBits&
+auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator &=(const CounterBlockBits& rhs) -> CounterBlockBits&
 {
     m_hi &= rhs.m_hi;
     m_lo &= rhs.m_lo;

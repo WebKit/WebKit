@@ -26,11 +26,11 @@
 #include "config.h"
 #include "CryptoAlgorithmRegistry.h"
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmAES_CFB.h"
-#include "CryptoAlgorithmAES_CTR.h"
-#include "CryptoAlgorithmAES_GCM.h"
-#include "CryptoAlgorithmAES_KW.h"
+#include "CryptoAlgorithmAESCBC.h"
+#include "CryptoAlgorithmAESCFB.h"
+#include "CryptoAlgorithmAESCTR.h"
+#include "CryptoAlgorithmAESGCM.h"
+#include "CryptoAlgorithmAESKW.h"
 #include "CryptoAlgorithmECDH.h"
 #include "CryptoAlgorithmECDSA.h"
 #include "CryptoAlgorithmEd25519.h"
@@ -52,11 +52,11 @@ namespace WebCore {
 
 void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
-    registerAlgorithm<CryptoAlgorithmAES_CBC>();
-    registerAlgorithm<CryptoAlgorithmAES_CFB>();
-    registerAlgorithm<CryptoAlgorithmAES_CTR>();
-    registerAlgorithm<CryptoAlgorithmAES_GCM>();
-    registerAlgorithm<CryptoAlgorithmAES_KW>();
+    registerAlgorithm<CryptoAlgorithmAESCBC>();
+    registerAlgorithm<CryptoAlgorithmAESCFB>();
+    registerAlgorithm<CryptoAlgorithmAESCTR>();
+    registerAlgorithm<CryptoAlgorithmAESGCM>();
+    registerAlgorithm<CryptoAlgorithmAESKW>();
     registerAlgorithm<CryptoAlgorithmECDH>();
     registerAlgorithm<CryptoAlgorithmECDSA>();
     registerAlgorithm<CryptoAlgorithmEd25519>();
