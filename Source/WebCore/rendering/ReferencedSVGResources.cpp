@@ -30,6 +30,7 @@
 #include "PathOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"

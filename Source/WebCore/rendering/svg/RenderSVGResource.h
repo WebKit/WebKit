@@ -22,6 +22,7 @@
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GlyphDisplayListCacheRemoval.h"
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "TextFlags.h"
@@ -95,6 +96,7 @@ struct Box {
         Last  = 1 << 1
     };
     Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, OptionSet<PositionWithinInlineLevelBox> = { });
+    ~Box();
 
     bool isText() const { return m_type == Type::Text || isWordSeparator(); }
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
@@ -197,6 +199,9 @@ struct Box {
     void setIsFirstForLayoutBox(bool isFirstBox) { m_isFirstForLayoutBox = isFirstBox; }
     void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
+    void setIsInGlyphDisplayListCache() { m_isInGlyphDisplayListCache = true; }
+    void removeFromGlyphDisplayListCache();
+
 private:
     CheckedRef<const Layout::Box> m_layoutBox;
     FloatRect m_unflippedVisualRect;
@@ -214,6 +219,7 @@ private:
     bool m_isFirstForLayoutBox : 1 { false };
     bool m_isLastForLayoutBox : 1 { false };
     bool m_isFullyTruncated : 1 { false };
+    bool m_isInGlyphDisplayListCache : 1 { false };
 
     Text m_text;
 };
@@ -235,6 +241,12 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
 {
 }
 
+inline Box::~Box()
+{
+    if (m_isInGlyphDisplayListCache)
+        removeBoxFromGlyphDisplayListCache(*this);
+}
+
 inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
@@ -254,6 +266,14 @@ inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const Fl
     visualRectIgnoringBlockDirection.shiftMaxXEdgeTo(visibleBoxRight);
 
     return visualRectIgnoringBlockDirection;
+}
+
+inline void Box::removeFromGlyphDisplayListCache()
+{
+    if (m_isInGlyphDisplayListCache) {
+        removeBoxFromGlyphDisplayListCache(*this);
+        m_isInGlyphDisplayListCache = false;
+    }
 }
 
 inline bool operator==(const Box::Text& a, const Box::Text& b)

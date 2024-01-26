@@ -28,6 +28,7 @@
 #include "LineInlineHeaders.h"
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
+#include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderTable.h"
