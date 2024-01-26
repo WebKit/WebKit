@@ -105,7 +105,7 @@ private:
     void wakeUpServer(WakeUpServer);
 
     Ref<Connection> m_connection;
-    class DedicatedConnectionClient final : public Connection::Client {
+    class DedicatedConnectionClient final : public Connection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DedicatedConnectionClient> {
         WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
     public:
         DedicatedConnectionClient(Connection::Client&);
@@ -114,6 +114,10 @@ private:
         bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName) final;
+
+        void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+        void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+        ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
     private:
         Connection::Client& m_receiver;
     };

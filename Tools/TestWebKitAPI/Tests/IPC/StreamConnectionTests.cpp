@@ -131,8 +131,12 @@ protected:
     Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
 };
 
-class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin {
+class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockMessageReceiver> {
 public:
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
     {

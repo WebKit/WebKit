@@ -2644,7 +2644,7 @@ private:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
+    RefPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

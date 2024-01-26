@@ -68,7 +68,7 @@ struct StreamServerConnectionParameters {
 //   void didReceiveStreamMessage(StreamServerConnection&, Decoder&);
 //
 // The StreamServerConnection does not trust the StreamClientConnection.
-class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
+class StreamServerConnection final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
@@ -105,6 +105,10 @@ public:
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
 private:
     StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&);

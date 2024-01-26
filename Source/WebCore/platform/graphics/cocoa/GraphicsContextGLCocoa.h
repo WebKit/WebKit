@@ -54,11 +54,14 @@ class GraphicsContextGLCVCocoa;
 class ImageRotationSessionVT;
 #endif
 
-class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
+class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, public RefCounted<GraphicsContextGLCocoa> {
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
     IOSurface* displayBufferSurface();
+
+    void ref() const final;
+    void deref() const final;
 
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
 

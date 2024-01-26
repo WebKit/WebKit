@@ -44,8 +44,8 @@ public:
 
         virtual bool mayBecomeUnresponsive() = 0;
 
-        virtual void ref() = 0;
-        virtual void deref() = 0;
+        virtual void ref() const = 0;
+        virtual void deref() const = 0;
     };
 
     static constexpr Seconds defaultResponsivenessTimeout = 3_s;

@@ -121,6 +121,10 @@ public:
     };
     void addClient(const Client& client) { m_clients.add(client); }
 
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
     static constexpr Seconds defaultTimeout = 3_s;
 private:
     GPUProcessConnection(IPC::Connection::Identifier&&);

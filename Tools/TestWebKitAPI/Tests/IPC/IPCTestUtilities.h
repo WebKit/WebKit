@@ -68,11 +68,15 @@ struct MockTestMessageWithAsyncReply1 {
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
 };
 
-class MockConnectionClient final : public IPC::Connection::Client {
+class MockConnectionClient final : public IPC::Connection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockConnectionClient> {
 public:
     ~MockConnectionClient()
     {
     }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
     Vector<MessageInfo> takeMessages()
     {

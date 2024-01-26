@@ -71,7 +71,7 @@ struct GPUProcessPreferencesForWebProcess;
 struct GPUProcessSessionParameters;
 class RemoteAudioSessionProxyManager;
 
-class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
+class GPUProcess : public AuxiliaryProcess {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
     explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);

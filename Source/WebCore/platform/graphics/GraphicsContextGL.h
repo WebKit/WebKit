@@ -120,8 +120,11 @@ enum class GraphicsContextGLSurfaceBuffer : bool {
 };
 
 // Base class for graphics context for implementing WebGL rendering model.
-class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
+class GraphicsContextGL {
 public:
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
     // WebGL 1 constants.
     static constexpr GCGLenum DEPTH_BUFFER_BIT = 0x00000100;
     static constexpr GCGLenum STENCIL_BUFFER_BIT = 0x00000400;

@@ -39,10 +39,13 @@ namespace WebCore {
 
 class TextureMapperGCGLPlatformLayer;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE {
+class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE, public RefCounted<GraphicsContextGLTextureMapperANGLE> {
 public:
     static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();
+
+    void ref() const final;
+    void deref() const final;
 
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;

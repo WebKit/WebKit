@@ -58,7 +58,7 @@ class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
 struct AuxiliaryProcessCreationParameters;
 
-class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
+class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AuxiliaryProcess> {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
 
 public:
@@ -108,9 +108,13 @@ public:
     bool parentProcessHasEntitlement(ASCIILiteral entitlement);
 #endif
 
+    void ref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
+    virtual ~AuxiliaryProcess();
 protected:
     explicit AuxiliaryProcess();
-    virtual ~AuxiliaryProcess();
 
     virtual void initializeProcess(const AuxiliaryProcessInitializationParameters&);
     virtual void initializeProcessName(const AuxiliaryProcessInitializationParameters&);

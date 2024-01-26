@@ -134,7 +134,7 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
@@ -153,6 +153,9 @@ public:
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
     static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::Network;
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     template <typename T>
     T* supplement()
@@ -331,9 +334,6 @@ public:
 #endif
 
     const String& uiProcessBundleIdentifier() const;
-
-    void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
-    void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);

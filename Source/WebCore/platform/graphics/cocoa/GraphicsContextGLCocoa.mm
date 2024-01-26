@@ -587,6 +587,16 @@ void GraphicsContextGLCocoa::freeDrawingBuffers()
     }
 }
 
+void GraphicsContextGLCocoa::ref() const
+{
+    RefCounted::ref();
+}
+
+void GraphicsContextGLCocoa::deref() const
+{
+    RefCounted::deref();
+}
+
 bool GraphicsContextGLANGLE::makeCurrent(GCGLDisplay display, GCGLContext context)
 {
     currentContext = nullptr;

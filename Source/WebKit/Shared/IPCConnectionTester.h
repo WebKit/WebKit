@@ -40,13 +40,18 @@ class Connection;
 namespace WebKit {
 
 // Interface to test various IPC::Connection related activities.
-class IPCConnectionTester final : public RefCounted<IPCConnectionTester>, private IPC::Connection::Client {
+class IPCConnectionTester final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<IPCConnectionTester>, private IPC::Connection::Client {
 public:
     ~IPCConnectionTester();
     static Ref<IPCConnectionTester> create(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
     void stopListeningForIPC(Ref<IPCConnectionTester>&& refFromConnection);
 
     void sendAsyncMessages(uint32_t messageCount);
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
 private:
     IPCConnectionTester(Ref<IPC::Connection>&&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
     void initialize();

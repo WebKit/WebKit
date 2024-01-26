@@ -142,12 +142,16 @@ private:
     IPC::Connection::Handle m_handle;
 };
 
-class JSIPCConnection : public RefCounted<JSIPCConnection>, private IPC::Connection::Client {
+class JSIPCConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<JSIPCConnection>, private IPC::Connection::Client {
 public:
     static Ref<JSIPCConnection> create(IPC::Connection::Identifier&& testedConnectionIdentifier)
     {
         return adoptRef(*new JSIPCConnection(WTFMove(testedConnectionIdentifier)));
     }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
 
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCConnection* toWrapped(JSContextRef, JSValueRef);
@@ -226,13 +230,18 @@ private:
     // Current tests expect that actions and their induced messages are waited on during same
     // run loop invocation (in JS). This means that messages of interest do not ever enter here.
     // Due to JSIPCStreamClientConnection supporting WeakPtr and IPC::MessageReceiver forcing WeakPtr, we store this as a member.
-    class MessageReceiver : public IPC::Connection::Client {
+    class MessageReceiver : public IPC::Connection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MessageReceiver> {
     public:
         // IPC::MessageReceiver overrides.
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
         bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
         void didClose(IPC::Connection&) final { }
         void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
+
+        void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+        void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+        ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
     } m_dummyMessageReceiver;
 };
 
