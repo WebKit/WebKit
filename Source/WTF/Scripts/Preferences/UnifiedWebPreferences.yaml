@@ -4543,7 +4543,7 @@ MediaStreamEnabled:
 
 MediaStreamTrackProcessingEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "MediaStreamTrack Processing"
   humanReadableDescription: "Enable MediaStreamTrack Processing"
@@ -4552,8 +4552,10 @@ MediaStreamTrackProcessingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 MediaUserGestureInheritsFromDocument:
