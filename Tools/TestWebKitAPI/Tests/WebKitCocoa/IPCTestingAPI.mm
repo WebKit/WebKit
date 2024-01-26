@@ -463,18 +463,33 @@ TEST(IPCTestingAPI, CanInterceptFindString)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPage_FindString.name); messages.length"].UTF8String, "1");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPage_FindString.name); messages.length"].UTF8String, "2");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[0].description"].UTF8String, "WebPage_FindString");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args = messages[0].arguments; args.length"].intValue, 3);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].type"].UTF8String, "String");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].value"].UTF8String, "hello");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[1].type"].UTF8String, "uint16_t");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1].value"].intValue, 0x11);
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1].isOptionSet"].boolValue, YES);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "uint32_t");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[2].value"].intValue, 1);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[1].description"].UTF8String, "WebPage_FindString");
+
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs = messages[0].arguments; firstMessageArgs.length"].intValue, 3);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[0].type"].UTF8String, "String");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[0].value"].UTF8String, "hello");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].type"].UTF8String, "uint16_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].value"].intValue, 0x811);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].isOptionSet"].boolValue, YES);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[2].type"].UTF8String, "uint32_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[2].value"].intValue, 1);
+
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs = messages[1].arguments; secondMessageArgs.length"].intValue, 3);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[0].type"].UTF8String, "String");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[0].value"].UTF8String, "hello");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].type"].UTF8String, "uint16_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].value"].intValue, 0x11);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].isOptionSet"].boolValue, YES);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[2].type"].UTF8String, "uint32_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[2].value"].intValue, 1);
+
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[0].syncRequestID)"].UTF8String, "undefined");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[1].syncRequestID)"].UTF8String, "undefined");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID"].intValue,
+        [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[1].destinationID"].intValue,
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
