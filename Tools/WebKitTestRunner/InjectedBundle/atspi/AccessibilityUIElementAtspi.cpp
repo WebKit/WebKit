@@ -69,15 +69,17 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
     return otherElement && m_element.get() == otherElement->platformUIElement();
 }
 
-void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& children)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
 {
+    return { };
 }
 
-void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& children, unsigned location, unsigned length)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned location, unsigned length) const
 {
+    return { };
 }
 
-int AccessibilityUIElement::childrenCount()
+unsigned AccessibilityUIElement::childrenCount()
 {
     m_element->updateBackingStore();
     return m_element->childCount();

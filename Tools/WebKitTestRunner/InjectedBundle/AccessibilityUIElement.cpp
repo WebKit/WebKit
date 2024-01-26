@@ -90,12 +90,26 @@ bool AccessibilityUIElement::supportsExpanded() const { return false; }
 #endif
 
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
+
 #if PLATFORM(COCOA)
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return nullptr; }
-#endif
+
+unsigned AccessibilityUIElement::childrenCount()
+{
+    return getChildren().size();
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
+{
+    auto children = getChildrenInRange(index, 1);
+    return children.size() == 1 ? children[0] : nullptr;
+}
+
+#endif // PLATFORM(COCOA)
 
 #if !PLATFORM(MAC)
 bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* marker) { return !isTextMarkerValid(marker); }

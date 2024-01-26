@@ -383,20 +383,22 @@ JSValueRef AccessibilityUIElement::children() const
     return nullptr;
 }
 
-void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
 {
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(NSAccessibilityChildrenAttribute).get());
+    return makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(NSAccessibilityChildrenAttribute).get());
 }
 
-void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned location, unsigned length) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     RetainPtr<NSArray> children;
     s_controller->executeOnAXThreadAndWait([&children, location, length, this] {
         children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     });
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children.get());
+    return makeVector<RefPtr<AccessibilityUIElement>>(children.get());
     END_AX_OBJC_EXCEPTIONS
+
+    return { };
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
@@ -448,14 +450,6 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     END_AX_OBJC_EXCEPTIONS
 }
 
-int AccessibilityUIElement::childrenCount()
-{
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildren(children);
-    
-    return children.size();
-}
-
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
     RetainPtr<id> element;
@@ -477,16 +471,6 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
         index = [m_element accessibilityIndexOfChild:platformElement];
     });
     return index;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
-{
-    Vector<RefPtr<AccessibilityUIElement>> children;
-    getChildrenWithRange(children, index, 1);
-
-    if (children.size() == 1)
-        return children[0];
-    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementForAttribute(NSString* attribute) const
@@ -652,9 +636,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 {
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildren(children);
-    return descriptionOfElements(children);
+    return descriptionOfElements(getChildren());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()

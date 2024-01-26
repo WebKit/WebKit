@@ -126,7 +126,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString lineRectsAndText;
 
     readonly attribute object children;
-    readonly attribute long childrenCount;
+    readonly attribute unsigned long childrenCount;
     readonly attribute long selectedChildrenCount;
     readonly attribute long rowCount;
     readonly attribute long columnCount;
