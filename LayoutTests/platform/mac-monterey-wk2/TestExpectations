@@ -52,3 +52,4 @@ http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html
 
 webkit.org/b/268095 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
 
+webkit.org/b/268124 imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_document_cookie.https.window.html [ Failure ]
