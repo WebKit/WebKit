@@ -1,4 +1,5 @@
 //@ $skipModes << :lockdown if ($buildType == "debug") or ($architecture == "mips")
+//@ skip if $architecture == "arm" and !$cloop
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

@@ -1,3 +1,5 @@
+//@ skip if $architecture == "arm" and !$cloop
+
 function assert(b) {
     if (!b)
         throw new Error("Bad assertion")

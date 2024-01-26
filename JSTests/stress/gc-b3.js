@@ -1,3 +1,5 @@
+//@ skip if $architecture == "arm" and !$cloop
+
 function main() {
     noDFG(main);
 

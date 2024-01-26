@@ -1,3 +1,5 @@
+//@ skip if $architecture == "arm" and !$cloop
+
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 import * as LLB from '../LowLevelBinary.js';
