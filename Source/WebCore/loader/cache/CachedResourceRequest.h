@@ -105,6 +105,7 @@ public:
     RefPtr<SecurityOrigin> releaseOrigin() { return WTFMove(m_origin); }
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
+    RefPtr<SecurityOrigin> protectedOrigin() const { return m_origin; }
 
     bool hasFragmentIdentifier() const { return !m_fragmentIdentifier.isEmpty(); }
     String&& releaseFragmentIdentifier() { return WTFMove(m_fragmentIdentifier); }

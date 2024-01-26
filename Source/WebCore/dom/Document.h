@@ -1559,6 +1559,7 @@ public:
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     inline Ref<SecurityOrigin> protectedSecurityOrigin() const; // Defined in DocumentInlines.h.
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
+    Ref<SecurityOrigin> protectedTopOrigin() const;
     inline ClientOrigin clientOrigin() const;
 
     inline bool isSameOriginAsTopDocument() const;

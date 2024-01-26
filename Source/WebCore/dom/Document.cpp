@@ -969,6 +969,11 @@ FullscreenManager& Document::ensureFullscreenManager()
 }
 #endif
 
+Ref<SecurityOrigin> Document::protectedTopOrigin() const
+{
+    return topOrigin();
+}
+
 inline DocumentFontLoader& Document::fontLoader()
 {
     ASSERT(m_constructionDidFinish);

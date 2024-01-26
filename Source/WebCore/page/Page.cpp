@@ -756,6 +756,11 @@ const String& Page::groupName() const
     return m_group ? m_group->name() : nullAtom().string();
 }
 
+Ref<Settings> Page::protectedSettings() const
+{
+    return *m_settings;
+}
+
 Ref<BroadcastChannelRegistry> Page::protectedBroadcastChannelRegistry() const
 {
     return m_broadcastChannelRegistry;
@@ -2127,7 +2132,7 @@ void Page::prioritizeVisibleResources()
     if (!localMainFrame->document())
         return;
 
-    Vector<CachedResource*> toPrioritize;
+    Vector<CachedResourceHandle<CachedResource>> toPrioritize;
 
     forEachDocument([&] (Document& document) {
         toPrioritize.appendVector(document.cachedResourceLoader().visibleResourcesToPrioritize());
@@ -2155,7 +2160,7 @@ void Page::prioritizeVisibleResources()
     if (toPrioritize.isEmpty())
         return;
 
-    auto resourceLoaders = toPrioritize.map([](auto* resource) {
+    auto resourceLoaders = toPrioritize.map([](auto& resource) {
         return resource->loader();
     });
 
@@ -3381,6 +3386,11 @@ void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
 
     m_navigationToLogWhenVisible = std::nullopt;
     logNavigation(navigation);
+}
+
+Ref<CookieJar> Page::protectedCookieJar() const
+{
+    return m_cookieJar;
 }
 
 PluginInfoProvider& Page::pluginInfoProvider()

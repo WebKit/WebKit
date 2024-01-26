@@ -306,6 +306,11 @@ void CachedResource::loadFrom(const CachedResource& resource)
     setLoading(false);
 }
 
+RefPtr<SecurityOrigin> CachedResource::protectedOrigin() const
+{
+    return m_origin;
+}
+
 void CachedResource::setBodyDataFrom(const CachedResource& resource)
 {
     m_data = resource.m_data;

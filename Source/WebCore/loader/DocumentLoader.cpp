@@ -193,6 +193,11 @@ FrameLoader* DocumentLoader::frameLoader() const
     return &m_frame->loader();
 }
 
+CheckedPtr<FrameLoader> DocumentLoader::checkedFrameLoader() const
+{
+    return frameLoader();
+}
+
 SubresourceLoader* DocumentLoader::mainResourceLoader() const
 {
     if (!m_mainResource)
