@@ -58,7 +58,8 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForColumns);
     m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForRows);
 
-    // 2.4 Masonry Layout Algorithm
+    // 2.3 Masonry Layout Algorithm
+    // https://drafts.csswg.org/css-grid-3/#masonry-layout-algorithm
     
     // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
     m_autoFlowNextCursor = 0;
