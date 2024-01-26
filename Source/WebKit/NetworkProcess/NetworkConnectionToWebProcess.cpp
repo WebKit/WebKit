@@ -917,17 +917,17 @@ void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(con
 
 void NetworkConnectionToWebProcess::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
-    connection().send(Messages::NetworkProcessConnection::CookiesAdded(host, cookies), 0);
+    protectedConnection()->send(Messages::NetworkProcessConnection::CookiesAdded(host, cookies), 0);
 }
 
 void NetworkConnectionToWebProcess::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
-    connection().send(Messages::NetworkProcessConnection::CookiesDeleted(host, cookies), 0);
+    protectedConnection()->send(Messages::NetworkProcessConnection::CookiesDeleted(host, cookies), 0);
 }
 
 void NetworkConnectionToWebProcess::allCookiesDeleted()
 {
-    connection().send(Messages::NetworkProcessConnection::AllCookiesDeleted(), 0);
+    protectedConnection()->send(Messages::NetworkProcessConnection::AllCookiesDeleted(), 0);
 }
 
 #endif
@@ -1371,7 +1371,7 @@ void NetworkConnectionToWebProcess::entangleLocalPortInThisProcessToRemote(const
 
     RefPtr channel = networkProcess().messagePortChannelRegistry().existingChannelContainingPort(local);
     if (channel && channel->hasAnyMessagesPendingOrInFlight())
-        connection().send(Messages::NetworkProcessConnection::MessagesAvailableForPort(local), 0);
+        protectedConnection()->send(Messages::NetworkProcessConnection::MessagesAvailableForPort(local), 0);
 }
 
 void NetworkConnectionToWebProcess::messagePortDisentangled(const MessagePortIdentifier& port)
@@ -1417,15 +1417,15 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
         ASSERT(channel);
         auto processIdentifier = channel->processForPort(port);
         if (processIdentifier) {
-            if (auto* connectionToWebProcess = networkProcess().webProcessConnection(*processIdentifier))
-                connectionToWebProcess->connection().send(Messages::NetworkProcessConnection::MessagesAvailableForPort(port), 0);
+            if (RefPtr connectionToWebProcess = networkProcess().webProcessConnection(*processIdentifier))
+                connectionToWebProcess->protectedConnection()->send(Messages::NetworkProcessConnection::MessagesAvailableForPort(port), 0);
         }
     }
 }
 
 void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message)
 {
-    connection().send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);
+    protectedConnection()->send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);
 }
 
 void NetworkConnectionToWebProcess::setCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String>&& patterns)
@@ -1507,7 +1507,7 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&&
 
 void NetworkConnectionToWebProcess::addAllowedFirstPartyForCookies(const RegistrableDomain& firstPartyForCookies)
 {
-    connection().send(Messages::NetworkProcessConnection::AddAllowedFirstPartyForCookies(firstPartyForCookies), 0);
+    protectedConnection()->send(Messages::NetworkProcessConnection::AddAllowedFirstPartyForCookies(firstPartyForCookies), 0);
 }
 
 void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceResponse&& response)
