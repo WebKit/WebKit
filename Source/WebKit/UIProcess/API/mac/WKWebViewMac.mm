@@ -1057,6 +1057,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
+#endif
+
 @end
 
 #pragma mark -

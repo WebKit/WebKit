@@ -5986,6 +5986,18 @@ void WebViewImpl::updateTextTouchBar()
     }
 }
 
+bool WebViewImpl::isContentRichlyEditable() const
+{
+    return m_page->editorState().isContentRichlyEditable;
+}
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+void WebViewImpl::insertMultiRepresentationHEIC(NSData *data)
+{
+    m_page->insertMultiRepresentationHEIC(data);
+}
+#endif
+
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 bool WebViewImpl::isPictureInPictureActive()

@@ -590,6 +590,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void characterIndexForPoint(NSPoint, void(^)(NSUInteger));
     void typingAttributesWithCompletionHandler(void(^)(NSDictionary<NSString *, id> *));
 
+    bool isContentRichlyEditable() const;
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    void insertMultiRepresentationHEIC(NSData *);
+#endif
+
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *);
     void mouseUp(NSEvent *);

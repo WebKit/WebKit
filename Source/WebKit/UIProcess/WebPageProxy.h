@@ -305,6 +305,7 @@ using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierTy
 OBJC_CLASS AMSUIEngagementTask;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
+OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSFileWrapper;
@@ -1327,6 +1328,10 @@ public:
     RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
     void assistiveTechnologyMakeFirstResponder();
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    void insertMultiRepresentationHEIC(NSData *);
+#endif
 #endif
 
     void pageScaleFactorDidChange(double);

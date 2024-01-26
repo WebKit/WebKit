@@ -187,6 +187,10 @@
 #import "PepperUICoreSPI.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
+#endif
+
 #if HAVE(AVKIT)
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
@@ -13018,6 +13022,10 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 }
 
 #endif // USE(BROWSERENGINEKIT)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#endif
 
 @end
 
