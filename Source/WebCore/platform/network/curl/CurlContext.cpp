@@ -48,6 +48,10 @@
 #include <shlwapi.h>
 #endif
 
+#if !defined(ENABLE_CURL_HTTP3)
+#define ENABLE_CURL_HTTP3 0
+#endif
+
 namespace WebCore {
 
 class EnvironmentVariableReader {
@@ -125,8 +129,7 @@ CurlContext::CurlContext()
     RELEASE_ASSERT(info->features & CURL_VERSION_LARGEFILE);
     m_isAltSvcEnabled = info->features & CURL_VERSION_ALTSVC;
     m_isHttp2Enabled = info->features & CURL_VERSION_HTTP2;
-    // HTTP/3 backend is supported in cURL since 8.5.0
-#if LIBCURL_VERSION_NUM >= 0x080500
+#if ENABLE_CURL_HTTP3
     m_isHttp3Enabled = (info->features & CURL_VERSION_HTTP3) && m_isAltSvcEnabled;
 #endif
 
