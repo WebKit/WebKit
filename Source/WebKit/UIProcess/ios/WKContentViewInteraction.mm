@@ -6030,11 +6030,11 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     [_twoFingerSingleTapGestureRecognizer setEnabled:!self.webView._editable];
 }
 
-- (void)insertTextSuggestion:(WKSETextSuggestion *)textSuggestion
+- (void)insertTextSuggestion:(id)textSuggestion
 {
     _autocorrectionContextNeedsUpdate = YES;
 
-    if (RetainPtr autoFillSuggestion = dynamic_objc_cast<UITextAutofillSuggestion>(static_cast<id>(textSuggestion))) {
+    if (RetainPtr autoFillSuggestion = dynamic_objc_cast<UITextAutofillSuggestion>(textSuggestion)) {
         // Maintain binary compatibility with UITextAutofillSuggestion, even when using the ServiceExtensions text input.
         _page->autofillLoginCredentials([autoFillSuggestion username], [autoFillSuggestion password]);
         return;
@@ -6056,11 +6056,13 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 #endif
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)]) {
+        auto uiTextSuggestion = [&]() -> RetainPtr<UITextSuggestion> {
 #if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
-        RetainPtr uiTextSuggestion = [textSuggestion _uikitTextSuggestion];
-#else
-        RetainPtr uiTextSuggestion = textSuggestion;
+            if (auto beTextSuggestion = dynamic_objc_cast<BETextSuggestion>(textSuggestion))
+                return beTextSuggestion._uikitTextSuggestion;
 #endif
+            return textSuggestion;
+        }();
         [inputDelegate _webView:self.webView insertTextSuggestion:uiTextSuggestion.get() inInputSession:_formInputSession.get()];
     }
 }
