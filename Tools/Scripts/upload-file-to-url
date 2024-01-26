@@ -36,39 +36,39 @@ import requests
 
 def upload(filename, url, max_attempts=3):
     if not os.path.isfile(filename):
-        print(f'ERROR: File not found: {filename}')
+        sys.stderr.write(f'ERROR: File not found: {filename}\n')
         return -1
 
     if not url: 
-        print(f'Error: missing url, either pass --url or set UPLOAD_URL environment variable.')
+        sys.stderr.write(f'Error: missing url, either pass --url or set UPLOAD_URL environment variable.\n')
         return -1
 
     filesize = os.stat(filename).st_size / 1024 / 1024;
-    print(f'Uploading {filename}, size: {filesize:.2f} MB')
+    sys.stderr.write(f'Uploading {filename}, size: {filesize:.2f} MB\n')
 
     with open(filename, 'rb') as f:
         try:
             data = f.read()
         except Exception as e:
-            print(f'Exception: {e}')
+            sys.stderr.write(f'Exception: {e}\n')
             return -1
 
         for attempt in range(1, max_attempts + 1):
             try:
                 response = requests.put(url, data=data, timeout=10*60)
-                print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
+                sys.stderr.write(f'Response: {response}, status_code: {response.status_code}, {response.reason}\n')
                 if response and response.status_code // 100 == 2:
                     return 0
             except Exception as e:
-                print(f'Exception: {e}')
+                sys.stderr.write(f'Exception: {e}\n')
 
             if attempt < max_attempts:
-                print(f'Retrying, attempt {attempt + 1} of {max_attempts}')
+                sys.stderr.write(f'Retrying, attempt {attempt + 1} of {max_attempts}\n')
         return -1
 
 
 def main():
-    print(f'Starting to upload')
+    sys.stderr.write(f'Starting to upload\n')
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--filename', action="store", required=True, help='Path to the file. [path/to/123456.zip]')
     parser.add_argument('--url', action="store", required=False, help='url to upload to')
