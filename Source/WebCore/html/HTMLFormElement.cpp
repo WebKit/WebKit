@@ -93,7 +93,7 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
 }
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
     ASSERT(hasTagName(formTag));
 }

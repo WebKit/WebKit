@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMaybeFormAssociatedCustomElement);
 using namespace HTMLNames;
 
 HTMLMaybeFormAssociatedCustomElement::HTMLMaybeFormAssociatedCustomElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement { tagName, document }
+    : HTMLElement { tagName, document, TypeFlag::HasDidMoveToNewDocument }
 {
     ASSERT(Document::validateCustomElementName(tagName.localName()) == CustomElementNameValidationStatus::Valid);
 }

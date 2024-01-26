@@ -147,11 +147,11 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
 
 static bool hasRelevantEventListener(Document& document, const Event& event)
 {
-    if (document.hasEventListnersOfType(event.type()))
+    if (document.hasEventListenersOfType(event.type()))
         return true;
 
     auto legacyType = EventTarget::legacyTypeForEvent(event);
-    if (!legacyType.isNull() && document.hasEventListnersOfType(legacyType))
+    if (!legacyType.isNull() && document.hasEventListenersOfType(legacyType))
         return true;
 
     return false;

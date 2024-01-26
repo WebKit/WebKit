@@ -72,7 +72,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModelElement);
 
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , ActiveDOMObject(document)
     , m_readyPromise { makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve) }
 {
