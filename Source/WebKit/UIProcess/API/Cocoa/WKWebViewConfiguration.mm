@@ -829,6 +829,21 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setClientNavigationsRunAtForegroundPriority(clientNavigationsRunAtForegroundPriority);
 }
 
+- (NSArray<NSNumber *> *)_portsForUpgradingInsecureSchemeForTesting
+{
+    auto ports = _pageConfiguration->portsForUpgradingInsecureSchemeForTesting();
+    if (ports)
+        return @[@(ports->first), @(ports->second)];
+    return nil;
+}
+
+- (void)_setPortsForUpgradingInsecureSchemeForTesting:(NSArray<NSNumber *> *)ports
+{
+    if (ports.count != 2 || ports[0].unsignedIntegerValue > std::numeric_limits<uint16_t>::max() || ports[1].unsignedIntegerValue > std::numeric_limits<uint16_t>::max())
+        return;
+    _pageConfiguration->setPortsForUpgradingInsecureSchemeForTesting((uint16_t)ports[0].unsignedIntegerValue, (uint16_t)ports[1].unsignedIntegerValue);
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {

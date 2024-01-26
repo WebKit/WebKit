@@ -223,6 +223,9 @@ public:
     void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
 
+    void setPortsForUpgradingInsecureSchemeForTesting(uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort) { m_data.portsForUpgradingInsecureSchemeForTesting = { upgradeFromInsecurePort, upgradeToSecurePort }; }
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting() const { return m_data.portsForUpgradingInsecureSchemeForTesting; }
+
     void setDelaysWebProcessLaunchUntilFirstLoad(bool);
     bool delaysWebProcessLaunchUntilFirstLoad() const;
 
@@ -264,6 +267,7 @@ private:
         bool allowTestOnlyIPC { false };
         std::optional<bool> delaysWebProcessLaunchUntilFirstLoad { };
         std::optional<double> cpuLimit { };
+        std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting { };
 
         WTF::String overrideContentSecurityPolicy { };
 

@@ -324,6 +324,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     }
     
     [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
+    [copiedConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
 
     m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);

@@ -189,6 +189,7 @@ headers: "ArgumentCoders.h"
     bool userScriptsShouldWaitUntilNotification;
     bool loadsSubresources;
     std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
     bool crossOriginAccessControlCheckEnabled;
     String processDisplayName;

@@ -183,6 +183,7 @@ public:
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
     UniqueRef<StorageProvider> storageProvider;
 

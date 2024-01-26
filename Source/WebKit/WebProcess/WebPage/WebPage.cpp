@@ -711,6 +711,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.allowedNetworkHosts = parameters.allowedNetworkHosts;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
     pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
+    pageConfiguration.portsForUpgradingInsecureSchemeForTesting = parameters.portsForUpgradingInsecureSchemeForTesting;
 
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);

@@ -9856,6 +9856,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.loadsSubresources = m_configuration->loadsSubresources();
     parameters.crossOriginAccessControlCheckEnabled = m_configuration->crossOriginAccessControlCheckEnabled();
     parameters.hasResourceLoadClient = !!m_resourceLoadClient;
+    parameters.portsForUpgradingInsecureSchemeForTesting = m_configuration->portsForUpgradingInsecureSchemeForTesting();
 
     std::reference_wrapper<WebUserContentControllerProxy> userContentController(m_userContentController.get());
     if (auto* userContentControllerFromWebsitePolicies = websitePolicies ? websitePolicies->userContentController() : nullptr)

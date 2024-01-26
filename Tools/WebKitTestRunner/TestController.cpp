@@ -786,6 +786,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
     m_userContentController = adoptWK(WKUserContentControllerCreate());
     WKPageConfigurationSetUserContentController(pageConfiguration.get(), userContentController());
+    WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(pageConfiguration.get(), options.insecureUpgradePort(), options.secureUpgradePort());
     return pageConfiguration;
 }
 

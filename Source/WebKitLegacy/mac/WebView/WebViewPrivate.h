@@ -847,6 +847,8 @@ Could be worth adding to the API.
  */
 + (void)_setHTTPPipeliningEnabled:(BOOL)enabled;
 
+- (void)_setPortsForUpgradingInsecureSchemeForTesting:(uint16_t)insecureUpgradePort withSecurePort:(uint16_t)secureUpgradePort;
+
 @property (nonatomic, copy, getter=_sourceApplicationAuditData, setter=_setSourceApplicationAuditData:) NSData *sourceApplicationAuditData;
 
 - (void)_setFontFallbackPrefersPictographs:(BOOL)flag;

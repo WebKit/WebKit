@@ -51,6 +51,8 @@ public:
     std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes", { }); }
     std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions", { }); }
     std::string captionDisplayMode() const { return stringTestRunnerFeatureValue("captionDisplayMode", { }); }
+    uint16_t insecureUpgradePort() const { return uint16TestRunnerFeatureValue("insecureUpgradePort", 80); };
+    uint16_t secureUpgradePort() const { return uint16TestRunnerFeatureValue("secureUpgradePort", 443); };
 
     const auto& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
     const auto& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
@@ -67,6 +69,7 @@ public:
 private:
     bool boolTestRunnerFeatureValue(std::string key, bool defaultValue) const;
     std::string stringTestRunnerFeatureValue(std::string key, std::string defaultValue) const;
+    uint16_t uint16TestRunnerFeatureValue(std::string key, uint16_t defaultValue) const;
 
     TestFeatures m_features;
 };

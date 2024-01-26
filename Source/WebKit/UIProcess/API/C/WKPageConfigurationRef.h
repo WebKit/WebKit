@@ -60,6 +60,8 @@ WK_EXPORT void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef c
 
 WK_EXPORT void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration, bool allowTestOnlyIPC);
 
+WK_EXPORT void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort);
+
 #ifdef __cplusplus
 }
 #endif

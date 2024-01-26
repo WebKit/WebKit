@@ -4674,6 +4674,15 @@ IGNORE_WARNINGS_END
     WebCore::ResourceRequest::setHTTPPipeliningEnabled(enabled);
 }
 
+- (void)_setPortsForUpgradingInsecureSchemeForTesting:(uint16_t)insecureUpgradePort withSecurePort:(uint16_t)secureUpgradePort
+{
+    auto* page = core(self);
+    if (!page)
+        return;
+
+    page->setPortsForUpgradingInsecureSchemeForTesting(insecureUpgradePort, secureUpgradePort);
+}
+
 - (void)_didScrollDocumentInFrameView:(WebFrameView *)frameView
 {
     [self hideFormValidationMessage];

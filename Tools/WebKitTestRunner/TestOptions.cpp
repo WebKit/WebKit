@@ -204,6 +204,10 @@ const TestFeatures& TestOptions::defaults()
             { "viewHeight", 600 },
             { "viewWidth", 800 },
         };
+        features.uint16TestRunnerFeatures = {
+            { "insecureUpgradePort", 80 },
+            { "secureUpgradePort", 443 },
+        };
         features.stringTestRunnerFeatures = {
             { "additionalSupportedImageTypes", { } },
             { "applicationBundleIdentifier", { } },
@@ -269,6 +273,9 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "viewHeight", TestHeaderKeyType::DoubleTestRunner },
         { "viewWidth", TestHeaderKeyType::DoubleTestRunner },
 
+        { "insecureUpgradePort", TestHeaderKeyType::UInt16TestRunner },
+        { "secureUpgradePort", TestHeaderKeyType::UInt16TestRunner },
+
         { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
         { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
         { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
@@ -317,6 +324,11 @@ bool TestOptions::boolTestRunnerFeatureValue(std::string key) const
 double TestOptions::doubleTestRunnerFeatureValue(std::string key) const
 {
     return testRunnerFeatureValue(key, m_features.doubleTestRunnerFeatures);
+}
+
+uint16_t TestOptions::uint16TestRunnerFeatureValue(std::string key) const
+{
+    return testRunnerFeatureValue(key, m_features.uint16TestRunnerFeatures);
 }
 
 std::string TestOptions::stringTestRunnerFeatureValue(std::string key) const

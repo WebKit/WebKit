@@ -1076,6 +1076,9 @@ public:
 #endif
     WEBCORE_EXPORT String sceneIdentifier() const;
 
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting() const;
+    WEBCORE_EXPORT void setPortsForUpgradingInsecureSchemeForTesting(uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort);
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1417,6 +1420,8 @@ private:
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
+
+    std::optional<std::pair<uint16_t, uint16_t>> m_portsForUpgradingInsecureSchemeForTesting;
 
     UniqueRef<StorageProvider> m_storageProvider;
     UniqueRef<ModelPlayerProvider> m_modelPlayerProvider;

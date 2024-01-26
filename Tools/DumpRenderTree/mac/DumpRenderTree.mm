@@ -1955,6 +1955,8 @@ static void runTest(const std::string& inputLine)
     gTestRunner->setCustomTimeout(command.timeout.milliseconds());
     gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
 
+    [[mainFrame webView] _setPortsForUpgradingInsecureSchemeForTesting:options.insecureUpgradePort() withSecurePort:options.secureUpgradePort()];
+
 #if ENABLE(VIDEO)
     [mainFrame _createCaptionPreferencesTestingModeToken];
 #endif

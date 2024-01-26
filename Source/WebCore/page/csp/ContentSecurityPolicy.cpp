@@ -1045,6 +1045,13 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
 
     if (url.port() == 80)
         url.setPort(std::nullopt);
+    else if (auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get()); document && document->page()) {
+        auto portsForUpgradingInsecureScheme = document->page()->portsForUpgradingInsecureSchemeForTesting();
+        if (portsForUpgradingInsecureScheme) {
+            if (url.port() == portsForUpgradingInsecureScheme->first)
+                url.setPort(portsForUpgradingInsecureScheme->second);
+        }
+    }
 }
 
 void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureRequests)
