@@ -368,7 +368,9 @@ bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const Lo
 ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
 {
     static ScrollingNodeID uniqueScrollingNodeID = 1;
-    return uniqueScrollingNodeID++;
+    auto returnID = uniqueScrollingNodeID;
+    uniqueScrollingNodeID = ProcessQualified(returnID.object() + 1);
+    return returnID;
 }
 
 void ScrollingCoordinator::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
@@ -388,7 +390,7 @@ void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeI
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object()), reason);
 }
 
 void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
@@ -398,7 +400,7 @@ void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(Scrol
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object()), reason);
 }
 
 String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const

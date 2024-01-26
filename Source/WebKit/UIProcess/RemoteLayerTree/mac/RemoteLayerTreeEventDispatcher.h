@@ -44,7 +44,7 @@ namespace WebCore {
 class PlatformWheelEvent;
 class WheelEventDeltaFilter;
 struct WheelEventHandlingResult;
-using ScrollingNodeID = uint64_t;
+using ScrollingNodeID = ProcessQualified<uint64_t>;
 enum class WheelScrollGestureState : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 };

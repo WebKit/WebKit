@@ -3165,7 +3165,7 @@ ExceptionOr<uint64_t> Internals::scrollingNodeIDForNode(Node* node)
     if (areaOrException.hasException())
         return areaOrException.releaseException();
     auto* scrollableArea = areaOrException.releaseReturnValue();
-    return scrollableArea->scrollingNodeID();
+    return scrollableArea->scrollingNodeID().object();
 }
 
 static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)

@@ -56,6 +56,12 @@ public:
     {
     }
 
+    ProcessQualified(const T& object)
+        : m_object(object)
+        , m_processIdentifier(Process::identifier())
+    {
+    }
+
     ProcessQualified(WTF::HashTableDeletedValueType)
         : m_processIdentifier(WTF::HashTableDeletedValue)
     {

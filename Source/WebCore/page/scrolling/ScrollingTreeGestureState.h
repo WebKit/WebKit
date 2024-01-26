@@ -51,8 +51,8 @@ private:
     void clearAllNodes();
 
     ScrollingTree& m_scrollingTree;
-    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_mayBeginNodeID;
-    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_activeNodeID;
+    Markable<ScrollingNodeID> m_mayBeginNodeID;
+    Markable<ScrollingNodeID> m_activeNodeID;
 };
 
 }
