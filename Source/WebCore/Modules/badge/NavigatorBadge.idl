@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=BADGING,
     EnabledBySetting=AppBadgeEnabled
 ] interface mixin NavigatorBadge {
     [SecureContext] Promise<undefined> setAppBadge(optional [EnforceRange] unsigned long long contents);

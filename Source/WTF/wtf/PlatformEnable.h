@@ -148,10 +148,6 @@
 #define ENABLE_AUTOCAPITALIZE 0
 #endif
 
-#if !defined(ENABLE_BADGING)
-#define ENABLE_BADGING 1
-#endif
-
 #if !defined(ENABLE_CONTENT_CHANGE_OBSERVER)
 #define ENABLE_CONTENT_CHANGE_OBSERVER 0
 #endif

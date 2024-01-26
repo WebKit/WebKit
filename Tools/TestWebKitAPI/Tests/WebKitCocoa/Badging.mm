@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if ENABLE(BADGING)
-
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
@@ -586,4 +584,3 @@ TEST(Badging, ServiceWorkerOverride)
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
     EXPECT_EQ(badgeDelegate.get().clientBadgeIndex, 0);
 }
-#endif // ENABLE(BADGING)

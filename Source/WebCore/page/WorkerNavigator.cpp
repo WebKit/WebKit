@@ -89,7 +89,6 @@ GPU* WorkerNavigator::gpu()
 #endif
 }
 
-#if ENABLE(BADGING)
 void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -116,7 +115,5 @@ void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
 {
     setAppBadge(0, WTFMove(promise));
 }
-#endif
-
 
 } // namespace WebCore

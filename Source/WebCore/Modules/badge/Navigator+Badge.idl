@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=BADGING,
     EnabledBySetting=ClientBadgeEnabled
 ] partial interface Navigator {
     [SecureContext] Promise<undefined> setClientBadge(optional [EnforceRange] unsigned long long contents);

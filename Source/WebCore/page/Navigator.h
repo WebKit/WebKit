@@ -77,13 +77,11 @@ public:
 
     Document* document();
 
-#if ENABLE(BADGING)
     void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(Ref<DeferredPromise>&&);
 
     void setClientBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearClientBadge(Ref<DeferredPromise>&&);
-#endif
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     void ref() const final { RefCounted::ref(); }
