@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    EnabledBySetting=WebAuthenticationEnabled,
-    Exposed=Window,
-    SecureContext,
-] interface CredentialsContainer {
-    Promise<BasicCredential?> get(optional CredentialRequestOptions options);
-    Promise<BasicCredential> store(BasicCredential credential);
-    Promise<BasicCredential?> create(optional CredentialCreationOptions options);
-    Promise<undefined> preventSilentAccess();
-    [EnabledBySetting=DigitalCredentialsEnabled] Promise<DigitalCredential> requestIdentity(IdentityRequestOptions options);
+#pragma once
+
+#include "IDLTypes.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+
+class DigitalCredential;
+template<typename IDLType> class DOMPromiseDeferred;
+
+using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredential>>;
+
+class DigitalCredential : public RefCounted<DigitalCredential> {
+public:
+    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& response);
+
+    virtual ~DigitalCredential();
+
+    ArrayBuffer* response() const
+    {
+        return m_response.get();
+    };
+
+private:
+    DigitalCredential(Ref<ArrayBuffer>&& response);
+
+    RefPtr<ArrayBuffer> m_response;
 };
+
+} // namespace WebCore

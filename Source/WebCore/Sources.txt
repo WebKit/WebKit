@@ -112,6 +112,7 @@ Modules/cookie-store/CookieStore.cpp
 Modules/cookie-store/CookieStoreManager.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
+Modules/credentialmanagement/DigitalCredential.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
 Modules/entriesapi/DOMFileSystem.cpp
 Modules/entriesapi/ErrorCallback.cpp
@@ -3441,6 +3442,7 @@ JSDetectedText.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
+JSDigitalCredential.cpp
 JSDistanceModelType.cpp
 JSDocument.cpp
 JSDocumentAndElementEventHandlers.cpp
@@ -3789,6 +3791,9 @@ JSIDBTransaction.cpp
 JSIDBTransactionDurability.cpp
 JSIDBTransactionMode.cpp
 JSIDBVersionChangeEvent.cpp
+JSIdentityCredentialProtocol.cpp
+JSIdentityRequestOptions.cpp
+JSIdentityRequestProvider.cpp
 JSIdleDeadline.cpp
 JSIdleRequestCallback.cpp
 JSIdleRequestOptions.cpp

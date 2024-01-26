@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    EnabledBySetting=WebAuthenticationEnabled,
-    Exposed=Window,
-    SecureContext,
-] interface CredentialsContainer {
-    Promise<BasicCredential?> get(optional CredentialRequestOptions options);
-    Promise<BasicCredential> store(BasicCredential credential);
-    Promise<BasicCredential?> create(optional CredentialCreationOptions options);
-    Promise<undefined> preventSilentAccess();
-    [EnabledBySetting=DigitalCredentialsEnabled] Promise<DigitalCredential> requestIdentity(IdentityRequestOptions options);
-};
+#include "config.h"
+#include "DigitalCredential.h"
+
+namespace WebCore {
+
+Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& response)
+{
+    return adoptRef(*new DigitalCredential(WTFMove(response)));
+}
+
+DigitalCredential::~DigitalCredential() = default;
+
+DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& response)
+    : m_response(WTFMove(response))
+{
+}
+
+} // namespace WebCore

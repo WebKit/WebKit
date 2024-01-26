@@ -2367,6 +2367,20 @@ DiagnosticLoggingEnabled:
     WebCore:
       default: false
 
+DigitalCredentialsEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Digital Credentials API"
+  humanReadableDescription: "Enable the experimental Digital Credentials API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DirectoryUploadEnabled:
   type: bool
   status: embedder
