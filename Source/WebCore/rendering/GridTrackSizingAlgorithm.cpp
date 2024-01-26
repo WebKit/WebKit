@@ -1363,28 +1363,22 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         // https://drafts.csswg.org/css-grid-3/#track-sizing
         // We should only compute track sizes on a subset of items.
         //
-        // - Items placed at the first implicit line in the masonry axis.
-        // - Items that have a specified definite placement in the grid axis.
-        // - Items that span all grid axis tracks.
+        // - Items explicitly placed in that track contribute.
+        // - Items without an explicit placement contribute (regardless of whether they are ultimately placed in that track).
         if (m_renderGrid->isMasonry()) {
             bool skipTrackSizing = true;
 
             // m_direction shall always be the gridAxisDirection.
             ASSERT(!isDirectionInMasonryDirection());
             auto gridAxisDirection = m_direction;
-            auto masonryAxisDirection = m_renderGrid->areMasonryRows() ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns;
             auto span = GridPositionsResolver::resolveGridPositionsFromStyle(*m_renderGrid, *gridItem, gridAxisDirection);
 
-            // Items placed at the first implicit line in the masonry axis.
-            if (!m_renderGrid->gridSpanForChild(*gridItem, masonryAxisDirection).startLine())
+            // Items specifically placed in this track.
+            if (m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).startLine() == trackIndex)
                 skipTrackSizing = false;
 
-            // Items that have a specified definite placement in the grid axis.
-            if (!span.isIndefinite())
-                skipTrackSizing = false;
-
-            // Items that span all grid axis tracks.
-            if (m_renderGrid->gridSpanForChild(*gridItem, gridAxisDirection).integerSpan() == tracks(gridAxisDirection).size())
+            // Items that have an indefinite placement in the grid axis.
+            if (span.isIndefinite())
                 skipTrackSizing = false;
 
             if (skipTrackSizing)
