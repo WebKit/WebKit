@@ -628,7 +628,6 @@ class Tracker(GenericTracker):
             result.assign(self.me())
         return result
 
-    # FIXME: This function is untested because it doesn't have a mock.
     def search(self, query):
         if not query or len(query) == 0:
             raise ValueError('Query must be provided')
