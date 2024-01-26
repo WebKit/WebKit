@@ -38,6 +38,7 @@
 
 #if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
 #import <BrowserEngineKit/BETextSuggestion_Private.h>
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #endif
 
 @interface CustomTextSuggestion : UITextSuggestion
