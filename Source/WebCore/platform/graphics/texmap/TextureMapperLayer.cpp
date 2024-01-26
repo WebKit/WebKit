@@ -986,19 +986,6 @@ void TextureMapperLayer::setFilters(const FilterOperations& filters)
     m_state.filters = filters;
 }
 
-void TextureMapperLayer::setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth)
-{
-    m_state.showDebugBorders = showDebugBorders;
-    m_state.debugBorderColor = debugBorderColor;
-    m_state.debugBorderWidth = debugBorderWidth;
-}
-
-void TextureMapperLayer::setRepaintCounter(bool showRepaintCounter, int repaintCount)
-{
-    m_state.showRepaintCounter = showRepaintCounter;
-    m_state.repaintCount = repaintCount;
-}
-
 void TextureMapperLayer::setContentsLayer(TextureMapperPlatformLayer* platformLayer)
 {
     m_contentsLayer = platformLayer;

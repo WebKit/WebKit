@@ -515,11 +515,16 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & BackingStoreChange)
         m_layer.setBackingStore(m_backingStore.get());
 
-    if (m_changeMask & DebugVisualsChange)
-        m_layer.setDebugVisuals(isShowingDebugBorder(), debugBorderColor(), debugBorderWidth());
+    if (m_changeMask & DebugVisualsChange) {
+        m_layer.setShowDebugBorder(isShowingDebugBorder());
+        m_layer.setDebugBorderColor(debugBorderColor());
+        m_layer.setDebugBorderWidth(debugBorderWidth());
+    }
 
-    if (m_changeMask & RepaintCountChange)
-        m_layer.setRepaintCounter(isShowingRepaintCounter(), repaintCount());
+    if (m_changeMask & RepaintCountChange) {
+        m_layer.setShowRepaintCounter(isShowingRepaintCounter());
+        m_layer.setRepaintCount(repaintCount());
+    }
 
     if (m_changeMask & ContentChange)
         m_layer.setContentsLayer(platformLayer());

@@ -322,11 +322,16 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setPreserves3D(layerState.flags.preserves3D);
                         }
 
-                        if (layerState.delta.repaintCounterChanged)
-                            layer.setRepaintCounter(layerState.repaintCounter.visible, layerState.repaintCounter.count);
+                        if (layerState.delta.repaintCounterChanged) {
+                            layer.setShowRepaintCounter(layerState.repaintCounter.visible);
+                            layer.setRepaintCount(layerState.repaintCounter.count);
+                        }
 
-                        if (layerState.delta.debugBorderChanged)
-                            layer.setDebugVisuals(layerState.debugBorder.visible, layerState.debugBorder.color, layerState.debugBorder.width);
+                        if (layerState.delta.debugBorderChanged) {
+                            layer.setShowDebugBorder(layerState.debugBorder.visible);
+                            layer.setDebugBorderColor(layerState.debugBorder.color);
+                            layer.setDebugBorderWidth(layerState.debugBorder.width);
+                        }
 
                         if (layerState.backingStore) {
                             layersByBacking.backingStore.append(

@@ -170,10 +170,15 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
         }
         if (layerUpdate.changes & WCLayerChange::SolidColor)
             layer->texmapLayer.setSolidColor(layerUpdate.solidColor);
-        if (layerUpdate.changes & WCLayerChange::DebugVisuals)
-            layer->texmapLayer.setDebugVisuals(layerUpdate.showDebugBorder, layerUpdate.debugBorderColor, layerUpdate.debugBorderWidth);
-        if (layerUpdate.changes & WCLayerChange::RepaintCount)
-            layer->texmapLayer.setRepaintCounter(layerUpdate.showRepaintCounter, layerUpdate.repaintCount);
+        if (layerUpdate.changes & WCLayerChange::DebugVisuals) {
+            layer->texmapLayer.setShowDebugBorder(layerUpdate.showDebugBorder);
+            layer->texmapLayer.setDebugBorderColor(layerUpdate.debugBorderColor);
+            layer->texmapLayer.setDebugBorderWidth(layerUpdate.debugBorderWidth);
+        }
+        if (layerUpdate.changes & WCLayerChange::RepaintCount) {
+            layer->texmapLayer.setShowRepaintCounter(layerUpdate.showRepaintCounter);
+            layer->texmapLayer.setRepaintCount(layerUpdate.repaintCount);
+        }
         if (layerUpdate.changes & WCLayerChange::Opacity)
             layer->texmapLayer.setOpacity(layerUpdate.opacity);
         if (layerUpdate.changes & WCLayerChange::Transform)
