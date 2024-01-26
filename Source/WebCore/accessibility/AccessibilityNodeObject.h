@@ -55,6 +55,7 @@ public:
 
     bool isBusy() const override;
     bool isControl() const override;
+    bool isRadioInput() const override;
     bool isFieldset() const override;
     bool isHovered() const override;
     bool isInputImage() const override;
@@ -122,10 +123,8 @@ public:
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
     RefPtr<Element> popoverTargetElement() const final;
-    AccessibilityObject* internalLinkElement() const;
-    void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
-    void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
-    AccessibilityChildrenVector linkedObjects() const override;
+    AXCoreObject* internalLinkElement() const final;
+    AccessibilityChildrenVector radioButtonGroup() const final;
     AccessibilityObject* menuForMenuButton() const;
    
     virtual void changeValueByPercent(float percentChange);

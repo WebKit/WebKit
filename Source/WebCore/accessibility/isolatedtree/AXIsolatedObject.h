@@ -146,6 +146,7 @@ private:
     bool isAttachment() const final { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isInputImage() const final { return boolAttributeValue(AXPropertyName::IsInputImage); }
     bool isControl() const final { return boolAttributeValue(AXPropertyName::IsControl); }
+    bool isRadioInput() const final { return boolAttributeValue(AXPropertyName::IsRadioInput); }
 
     bool isList() const final { return boolAttributeValue(AXPropertyName::IsList); }
     bool isKeyboardFocusable() const final { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
@@ -254,7 +255,8 @@ private:
     Vector<String> determineDropEffects() const final;
     AXIsolatedObject* accessibilityHitTest(const IntPoint&) const final;
     AXIsolatedObject* focusedUIElement() const final;
-    AccessibilityChildrenVector linkedObjects() const final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
+    AXCoreObject* internalLinkElement() const final { return objectAttributeValue(AXPropertyName::InternalLinkElement); }
+    AccessibilityChildrenVector radioButtonGroup() const { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::RadioButtonGroup)); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
     const String placeholderValue() const final { return stringAttributeValue(AXPropertyName::PlaceholderValue); }
     String expandedTextValue() const final { return stringAttributeValue(AXPropertyName::ExpandedTextValue); }

@@ -126,6 +126,7 @@ public:
     bool isInputImage() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
     bool isControl() const override { return false; }
+    bool isRadioInput() const override { return false; }
     bool isLabel() const { return isAccessibilityLabelInstance() || labelForObjects().size(); }
 
     bool isList() const override { return false; }
@@ -348,9 +349,10 @@ public:
     Vector<String> performTextOperation(const AccessibilityTextOperation&) override;
 
     virtual AccessibilityObject* observableObject() const { return nullptr; }
-    AccessibilityChildrenVector linkedObjects() const override { return { }; }
     virtual AccessibilityObject* controlForLabelElement() const { return nullptr; }
     AccessibilityObject* scrollBar(AccessibilityOrientation) override { return nullptr; }
+    AXCoreObject* internalLinkElement() const override { return nullptr; }
+    AccessibilityChildrenVector radioButtonGroup() const override { return { }; }
 
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     bool hasExplicitGenericRole() const { return ariaRoleAttribute() == AccessibilityRole::Generic; }

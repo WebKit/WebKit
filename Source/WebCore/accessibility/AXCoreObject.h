@@ -833,6 +833,7 @@ public:
     bool isProgressIndicator() const { return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter; }
     bool isSlider() const { return roleValue() == AccessibilityRole::Slider; }
     virtual bool isControl() const = 0;
+    virtual bool isRadioInput() const = 0;
     // lists support (l, ul, ol, dl)
     virtual bool isList() const = 0;
     virtual bool isFileUploadButton() const = 0;
@@ -1026,6 +1027,11 @@ public:
     AccessibilityChildrenVector owners() const { return relatedObjects(AXRelationType::OwnedBy); }
     virtual AccessibilityChildrenVector relatedObjects(AXRelationType) const = 0;
 
+    virtual AXCoreObject* internalLinkElement() const = 0;
+    void appendRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
+    void appendRadioButtonDescendants(AXCoreObject&, AccessibilityChildrenVector&) const;
+    virtual AccessibilityChildrenVector radioButtonGroup() const = 0;
+
     bool hasPopup() const;
     virtual String popupValue() const = 0;
     virtual bool supportsHasPopup() const = 0;
@@ -1082,7 +1088,7 @@ public:
     virtual Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const = 0;
     virtual Vector<String> performTextOperation(const AccessibilityTextOperation&) = 0;
 
-    virtual AccessibilityChildrenVector linkedObjects() const = 0;
+    AccessibilityChildrenVector linkedObjects() const;
     virtual AXCoreObject* titleUIElement() const;
     virtual AXCoreObject* scrollBar(AccessibilityOrientation) = 0;
 

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<input id="combobox1" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="listbox1">
+<ul id="listbox1" role="listbox" aria-label="Items" style="display: none;">
+    <li id="li-1" role="option">Apple</li>
+    <li id="li-2" role="option">Banana</li>
+    <li id="li-3" role="option">Carrot</li>
+</ul>
+
+<input id="combobox2" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="listbox2">
+<ul id="listbox2" role="listbox" aria-label="Items" style="display: none;">
+    <li id="li-4" role="option">Apple</li>
+    <li id="li-5" role="option">Banana</li>
+    <li id="li-6" role="option">Carrot</li>
+</ul>
+
+<input type="text" id="input2" />
+
+<script>
+var output = "This verifies that when a listbox ax object is destroyed, the new object maintains the aria-controls/aria-owns relationship.\n\n";
+
+var combobox1 = document.getElementById("combobox1");
+var combobox2 = document.getElementById("combobox2");
+var outsideElement = document.getElementById("input2");
+
+combobox1.addEventListener("focusin", function() {
+    document.getElementById("listbox1").style.display = "block";
+});
+combobox1.addEventListener("focusout", function() {
+    document.getElementById("listbox1").style.display = "none";
+});
+combobox2.addEventListener("focusin", function() {
+    document.getElementById("listbox2").style.display = "block";
+});
+combobox2.addEventListener("focusout", function() {
+    document.getElementById("listbox2").style.display = "none";
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var linkedListbox1 = accessibilityController.accessibleElementById("combobox1").linkedUIElementAtIndex(0);
+    var linkedListbox2 = accessibilityController.accessibleElementById("combobox2").linkedUIElementAtIndex(0);
+    combobox1.focus();
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            linkedListbox1 = accessibilityController.accessibleElementById("combobox1").linkedUIElementAtIndex(0);
+            return linkedListbox1 != null;
+        });
+        output += expect("linkedListbox1.role", "'AXRole: AXList'");
+
+        output += "\nHiding List Box #1:\n";
+        outsideElement.focus();
+
+        await waitFor(() => {
+            linkedListbox1 = accessibilityController.accessibleElementById("combobox1").linkedUIElementAtIndex(0);
+            return linkedListbox1 == null;
+        });
+        output += expect("!linkedListbox1", "true");
+
+        output += "\Showing List Box #1:\n";
+        combobox1.focus();
+        await waitFor(() => {
+            linkedListbox1 = accessibilityController.accessibleElementById("combobox1").linkedUIElementAtIndex(0);
+            return linkedListbox1 != null;
+        });
+        output += expect("linkedListbox1.role", "'AXRole: AXList'");
+
+        output += "\Showing List Box #2:\n";
+        combobox2.focus();
+
+        await waitFor(() => {
+            linkedListbox2 = accessibilityController.accessibleElementById("combobox2").linkedUIElementAtIndex(0);
+            return linkedListbox2 != null;
+        });
+        output += expect("linkedListbox2.role", "'AXRole: AXList'");
+
+        output += "\nHiding List Box #2:\n";
+        outsideElement.focus();
+
+        await waitFor(() => {
+            linkedListbox2 = accessibilityController.accessibleElementById("combobox2").linkedUIElementAtIndex(0);
+            return linkedListbox2 == null;
+        });
+        output += expect("!linkedListbox2", "true");
+
+        output += "\Showing List Box #2:\n";
+        combobox2.focus();
+        await waitFor(() => {
+            linkedListbox2 = accessibilityController.accessibleElementById("combobox2").linkedUIElementAtIndex(0);
+            return linkedListbox2 != null;
+        });
+        output += expect("linkedListbox2.role", "'AXRole: AXList'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

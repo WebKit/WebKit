@@ -587,6 +587,11 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::IdentifierAttribute:
             propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
             break;
+        case AXPropertyName::InternalLinkElement: {
+            auto* linkElement = axObject.internalLinkElement();
+            propertyMap.set(AXPropertyName::InternalLinkElement, linkElement ? linkElement->objectID() : AXID());
+            break;
+        }
         case AXPropertyName::IsChecked:
             ASSERT(axObject.supportsCheckedState());
             propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());

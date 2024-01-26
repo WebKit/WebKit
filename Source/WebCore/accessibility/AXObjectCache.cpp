@@ -793,7 +793,16 @@ void AXObjectCache::cacheAndInitializeWrapper(AccessibilityObject* newObject, DO
     ASSERT(axID.isValid());
 
     WTF::switchOn(domObject,
-        [&axID, this] (RenderObject* typedValue) { m_renderObjectMapping.set(typedValue, axID); },
+        [&axID, this] (RenderObject* typedValue) {
+            m_renderObjectMapping.set(typedValue, axID);
+            if (auto* node = typedValue->node()) {
+                // If this node existed in the m_nodeObjectMapping (ie. it is replacing an old object), we should
+                // update the object mapping so it is up to date the next time it is replaced.
+                auto objectMapIterator = m_nodeObjectMapping.find(node);
+                if (objectMapIterator != m_nodeObjectMapping.end())
+                    objectMapIterator->value = axID;
+            }
+        },
         [&axID, this] (Node* typedValue) { m_nodeObjectMapping.set(typedValue, axID); },
         [&axID, this] (Widget* typedValue) { m_widgetObjectMapping.set(typedValue, axID); },
         [] (auto&) { }
@@ -3984,7 +3993,9 @@ void AXObjectCache::performDeferredCacheUpdate()
     AXLOGDeferredCollection("ReplacedObjectsList"_s, m_deferredReplacedObjects);
     for (AXID axID : m_deferredReplacedObjects) {
         // If the replaced object was part of any relation, we need to make sure the relations are updated.
-        if (m_relations.contains(axID))
+        // Relations for this object may have been removed already (via the renderer being destroyed), so
+        // we should check if this axID was recently removed so we can dirty relations.
+        if (m_relations.contains(axID) || m_recentlyRemovedRelations.contains(axID))
             markRelationsDirty();
         remove(axID);
     }
@@ -4333,7 +4344,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::TextInputMarkedTextMarkerRange });
             break;
         case AXURLChanged:
-            tree->queueNodeUpdate(*notification.first, { AXPropertyName::URL });
+            tree->queueNodeUpdate(*notification.first, { { AXPropertyName::URL, AXPropertyName::InternalLinkElement } });
             break;
         case AXKeyShortcutsChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::KeyShortcuts });
@@ -4794,6 +4805,8 @@ void AXObjectCache::removeAllRelations(AXID axID)
     if (it == m_relations.end())
         return;
 
+    m_recentlyRemovedRelations.add(axID, it->value);
+
     for (auto relationType : it->value.keys()) {
         auto symmetric = symmetricRelation(static_cast<AXRelationType>(relationType));
         if (symmetric == AXRelationType::None)
@@ -4858,6 +4871,7 @@ void AXObjectCache::updateRelationsIfNeeded()
         return;
     relationsNeedUpdate(false);
     m_relations.clear();
+    m_recentlyRemovedRelations.clear();
     m_relationTargets.clear();
     updateRelationsForTree(m_document->rootNode());
 }

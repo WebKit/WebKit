@@ -248,8 +248,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
     }
 
-    if (object.isRadioButton())
+    if (object.isRadioButton()) {
         setProperty(AXPropertyName::NameAttribute, object.nameAttribute().isolatedCopy());
+        // FIXME: This property doesn't get updated when a page changes dynamically.
+        setObjectVectorProperty(AXPropertyName::RadioButtonGroup, object.radioButtonGroup());
+        setProperty(AXPropertyName::IsRadioInput, object.isRadioInput());
+    }
 
     if (object.canHaveSelectedChildren())
         setObjectVectorProperty(AXPropertyName::SelectedChildren, object.selectedChildren());
@@ -260,8 +264,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     // On macOS, we only advertise support for the visible children attribute for listboxes.
     if (object.isListBox())
         setObjectVectorProperty(AXPropertyName::VisibleChildren, object.visibleChildren());
-
-    setObjectVectorProperty(AXPropertyName::LinkedObjects, object.linkedObjects());
 
     if (object.isSpinButton()) {
         // FIXME: These properties get out of date every time AccessibilitySpinButton::{clearChildren, addChildren} is called. We should probably just not cache these properties.
@@ -371,6 +373,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
 #endif
+
+    setObjectProperty(AXPropertyName::InternalLinkElement, object.internalLinkElement());
 
     initializePlatformProperties(axObject);
 }

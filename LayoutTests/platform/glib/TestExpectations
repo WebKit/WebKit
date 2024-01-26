@@ -612,6 +612,9 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 # Times out due to missing AccessibilityUIElement::takeFocus
 http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
 
+# Times out due to missing AccessibilityUIElement::linkedUIElementAtIndex() implementation.
+accessibility/combobox-linked-listbox-destroyed.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

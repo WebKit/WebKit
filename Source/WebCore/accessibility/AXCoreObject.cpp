@@ -550,4 +550,49 @@ AXCoreObject* AXCoreObject::titleUIElement() const
 #endif
 }
 
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::linkedObjects() const
+{
+    auto linkedObjects = flowToObjects();
+
+    if (isLink()) {
+        if (auto* linkedAXElement = internalLinkElement())
+            linkedObjects.append(linkedAXElement);
+    } else if (isRadioButton())
+        appendRadioButtonGroupMembers(linkedObjects);
+
+    linkedObjects.appendVector(controlledObjects());
+    linkedObjects.appendVector(ownedObjects());
+
+    return linkedObjects;
+}
+
+void AXCoreObject::appendRadioButtonDescendants(AXCoreObject& parent, AccessibilityChildrenVector& linkedUIElements) const
+{
+    for (const auto& child : parent.children()) {
+        if (child->isRadioButton())
+            linkedUIElements.append(child);
+        else
+            appendRadioButtonDescendants(*child, linkedUIElements);
+    }
+}
+
+void AXCoreObject::appendRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
+{
+    if (!isRadioButton())
+        return;
+
+    if (isRadioInput()) {
+        for (auto& radioSibling : radioButtonGroup())
+            linkedUIElements.append(radioSibling);
+    } else {
+        // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
+        for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->roleValue() == AccessibilityRole::RadioGroup) {
+                appendRadioButtonDescendants(*parent, linkedUIElements);
+                break;
+            }
+        }
+    }
+}
+
 } // namespace WebCore

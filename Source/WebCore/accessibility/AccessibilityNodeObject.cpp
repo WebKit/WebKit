@@ -925,6 +925,23 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     }
 }
 
+AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::radioButtonGroup() const
+{
+    AccessibilityChildrenVector result;
+
+    if (auto* input = dynamicDowncast<HTMLInputElement>(node())) {
+        auto radioButtonGroup = input->radioButtonGroup();
+        result.reserveInitialCapacity(radioButtonGroup.size());
+
+        for (auto& radioSibling : radioButtonGroup) {
+            if (auto* object = axObjectCache()->getOrCreate(radioSibling.ptr()))
+                result.append(object);
+        }
+    }
+
+    return result;
+}
+
 unsigned AccessibilityNodeObject::headingLevel() const
 {
     // headings can be in block flow and non-block flow
@@ -1066,6 +1083,12 @@ bool AccessibilityNodeObject::isControl() const
     return is<HTMLFormControlElement>(*node) || AccessibilityObject::isARIAControl(ariaRoleAttribute()) || roleValue() == AccessibilityRole::Button;
 }
 
+bool AccessibilityNodeObject::isRadioInput() const
+{
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(node());
+    return inputElement ? inputElement->isRadioButton() : false;
+}
+
 bool AccessibilityNodeObject::isFieldset() const
 {
     Node* node = this->node();
@@ -1109,7 +1132,7 @@ RefPtr<Element> AccessibilityNodeObject::popoverTargetElement() const
     return formControlElement ? formControlElement->popoverTargetElement() : nullptr;
 }
 
-AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
+AXCoreObject* AccessibilityNodeObject::internalLinkElement() const
 {
     // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.
     WeakPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());
@@ -1132,52 +1155,6 @@ AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
 
     // The element we find may not be accessible, so find the first accessible object.
     return firstAccessibleObjectFromNode(linkedNode.get());
-}
-
-void AccessibilityNodeObject::addRadioButtonGroupChildren(AXCoreObject& parent, AccessibilityChildrenVector& linkedUIElements) const
-{
-    for (const auto& child : parent.children()) {
-        if (child->roleValue() == AccessibilityRole::RadioButton)
-            linkedUIElements.append(child);
-        else
-            addRadioButtonGroupChildren(*child, linkedUIElements);
-    }
-}
-
-void AccessibilityNodeObject::addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
-{
-    if (roleValue() != AccessibilityRole::RadioButton)
-        return;
-
-    WeakPtr node = this->node();
-    if (auto* input = dynamicDowncast<HTMLInputElement>(node.get())) {
-        for (auto& radioSibling : input->radioButtonGroup()) {
-            if (auto* object = axObjectCache()->getOrCreate(radioSibling.ptr()))
-                linkedUIElements.append(object);
-        }
-    } else {
-        // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
-        for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->roleValue() == AccessibilityRole::RadioGroup)
-                addRadioButtonGroupChildren(*parent, linkedUIElements);
-        }
-    }
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::linkedObjects() const
-{
-    auto linkedObjects = flowToObjects();
-
-    if (isLink()) {
-        if (auto* linkedAXElement = internalLinkElement())
-            linkedObjects.append(linkedAXElement);
-    }
-
-    if (roleValue() == AccessibilityRole::RadioButton)
-        addRadioButtonGroupMembers(linkedObjects);
-
-    linkedObjects.appendVector(controlledObjects());
-    return linkedObjects;
 }
 
 bool AccessibilityNodeObject::toggleDetailsAncestor()
