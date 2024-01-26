@@ -49,6 +49,7 @@ public:
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
     virtual void close() = 0;
     virtual void focus() = 0;
+    virtual void unfocus() = 0;
     virtual ~RemoteFrameClient() { }
 };
 

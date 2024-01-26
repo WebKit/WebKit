@@ -114,6 +114,12 @@ void WebRemoteFrameClient::focus()
         page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID()));
 }
 
+void WebRemoteFrameClient::unfocus()
+{
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::SetFocus(false));
+}
+
 void WebRemoteFrameClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
     FormState* formState, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<HitTestResult>&& hitTestResult, bool hasOpener, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {

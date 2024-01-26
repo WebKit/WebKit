@@ -1692,6 +1692,36 @@ TEST(SiteIsolation, FocusOpenedWindow)
     EXPECT_FALSE([openerInfo _isFocused]);
 }
 
+#if PLATFORM(MAC)
+TEST(SiteIsolation, OpenedWindowFocusDelegates)
+{
+    auto openerHTML = "<script>"
+        "    let w = window.open('https://domain2.com/opened');"
+        "</script>"_s;
+    HTTPServer server({
+        { "/example"_s, { openerHTML } },
+        { "/opened"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openerAndOpenedViews(server);
+
+    __block bool calledFocusWebView = false;
+    [opened.uiDelegate setFocusWebView:^(WKWebView *viewToFocus) {
+        calledFocusWebView = true;
+    }];
+
+    __block bool calledUnfocusWebView = false;
+    [opened.uiDelegate setUnfocusWebView:^(WKWebView *viewToFocus) {
+        calledUnfocusWebView = true;
+    }];
+
+    [opener.webView.get() evaluateJavaScript:@"w.focus()" completionHandler:nil];
+    Util::run(&calledFocusWebView);
+
+    [opener.webView.get() evaluateJavaScript:@"w.blur()" completionHandler:nil];
+    Util::run(&calledUnfocusWebView);
+}
+#endif
+
 TEST(SiteIsolation, FindStringInFrame)
 {
     HTTPServer server({

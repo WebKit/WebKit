@@ -87,6 +87,12 @@
     if (_focusWebView)
         _focusWebView(webView);
 }
+
+- (void)_unfocusWebView:(WKWebView *)webView
+{
+    if (_unfocusWebView)
+        _unfocusWebView(webView);
+}
 #endif // PLATFORM(MAC)
 
 - (void)webViewDidClose:(WKWebView *)webView

@@ -37,6 +37,7 @@
 #endif
 @property (nonatomic, copy) void (^saveDataToFile)(WKWebView *, NSData *, NSString *, NSString *, NSURL *);
 @property (nonatomic, copy) void (^focusWebView)(WKWebView *);
+@property (nonatomic, copy) void (^unfocusWebView)(WKWebView *);
 @property (nonatomic, copy) void (^webViewDidClose)(WKWebView *);
 
 - (NSString *)waitForAlert;
