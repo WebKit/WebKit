@@ -1320,8 +1320,10 @@ void TypeChecker::visit(AST::AbstractFloatLiteral& literal)
 // Types
 void TypeChecker::visit(AST::ArrayTypeExpression& array)
 {
-    // FIXME: handle the case where there is no element type
-    ASSERT(array.maybeElementType());
+    if (!array.maybeElementType()) {
+        typeError(array.span(), "'array' requires at least 1 template argument");
+        return;
+    }
 
     auto* elementType = resolve(*array.maybeElementType());
     if (isBottom(elementType)) {

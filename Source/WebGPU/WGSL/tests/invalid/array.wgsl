@@ -1,5 +1,8 @@
 // RUN: %not %wgslc | %check
 
+// CHECK-L: 'array' requires at least 1 template argument
+var<private> a:array;
+
 fn testArrayLengthMismatch() {
   // CHECK-L: array count must be greater than 0
   let x1 = array<i32, 0>();
