@@ -30,6 +30,7 @@
 
 #include "VideoFrame.h"
 #include "VideoFrameMetadata.h"
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
@@ -52,6 +53,13 @@ const PlatformTimeRanges& MediaPlayerPrivateInterface::seekable() const
         return PlatformTimeRanges::emptyRanges();
     m_seekable = { minMediaTimeSeekable(), maxMediaTimeSeekable() };
     return m_seekable;
+}
+
+auto MediaPlayerPrivateInterface::asyncVideoPlaybackQualityMetrics() -> Ref<VideoPlaybackQualityMetricsPromise>
+{
+    if (auto metrics = videoPlaybackQualityMetrics())
+        return VideoPlaybackQualityMetricsPromise::createAndResolve(WTFMove(*metrics));
+    return VideoPlaybackQualityMetricsPromise::createAndReject(PlatformMediaError::NotSupportedError);
 }
 
 }

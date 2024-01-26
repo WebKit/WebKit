@@ -35,6 +35,16 @@ struct VideoPlaybackQualityMetrics {
     uint32_t corruptedVideoFrames { 0 };
     double totalFrameDelay { 0 };
     uint32_t displayCompositedVideoFrames { 0 };
+
+    VideoPlaybackQualityMetrics& operator+=(const VideoPlaybackQualityMetrics& other)
+    {
+        totalVideoFrames += other.totalVideoFrames;
+        droppedVideoFrames += other.droppedVideoFrames;
+        corruptedVideoFrames += other.corruptedVideoFrames;
+        totalFrameDelay += other.totalFrameDelay;
+        displayCompositedVideoFrames += other.displayCompositedVideoFrames;
+        return *this;
+    }
 };
 
 } // namespace WebCore

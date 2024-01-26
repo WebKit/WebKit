@@ -398,6 +398,7 @@ private:
 
     Seconds m_videoPlaybackMetricsUpdateInterval;
     MonotonicTime m_nextPlaybackQualityMetricsUpdateTime;
+    bool m_hasPlaybackMetricsUpdatePending { false };
 
     float m_videoContentScale { 1.0 };
     WebCore::LayoutRect m_playerContentBoxRect;
