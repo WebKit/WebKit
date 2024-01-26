@@ -66,10 +66,10 @@ class Revert(Command):
         )
 
         parser.add_argument(
-            '--pr',
-            default=False,
-            action='store_true',
-            help='Create a pull request at the same time'
+            '--pr', '--no-pr',
+            default=True,
+            action=arguments.NoAction,
+            help='Create a pull request (or do not) after reverting'
         )
 
     @classmethod
@@ -92,7 +92,8 @@ class Revert(Command):
     def get_issue_info(cls, args, repository, commit_objects, commit_bugs, **kwargs):
         # Can give either a bug URL or a title of the new issue
         if not args.issue and not args.reason:
-            prompt = 'Enter issue URL or reason for the revert: '
+            print('This issue will track the revert and should not be the issue of the commit(s) to be reverted.')
+            prompt = 'Enter issue URL or title of new issue (reason for the revert): '
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
         elif args.reason:
             args.issue = args.reason
@@ -251,6 +252,6 @@ class Revert(Command):
 
         if not args.pr:
             return result
-        else:
-            return PullRequest.create_pull_request(repository, args, branch_point)
+
+        return PullRequest.create_pull_request(repository, args, branch_point)
 
