@@ -1,0 +1,8 @@
+
+PASS dialog.show() should fire beforetoggle and toggle events.
+PASS dialog.show() should fire cancelable beforetoggle which does not open dialog if canceled
+PASS dialog.show() should coalesce asynchronous toggle events.
+PASS dialog.showModal() should fire beforetoggle and toggle events.
+PASS dialog.showModal() should fire cancelable beforetoggle which does not open dialog if canceled
+PASS dialog.showModal() should coalesce asynchronous toggle events.
+

@@ -29,8 +29,19 @@
 
 namespace WebCore {
 
+enum class DialogState : bool {
+    Open,
+    Closed,
+};
+
+struct DialogToggleEventData {
+    DialogState oldState;
+    DialogState newState;
+};
+
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDialogElement);
+
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
 
@@ -49,6 +60,12 @@ public:
 
     void runFocusingSteps();
 
+    void queueDialogToggleEventTask(DialogState oldState, DialogState newState);
+
+    std::optional<DialogToggleEventData> queuedToggleEventData() const { return m_queuedToggleEventData; }
+    void setQueuedToggleEventData(DialogToggleEventData data) { m_queuedToggleEventData = data; }
+    void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }
+
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
@@ -58,6 +75,8 @@ private:
     String m_returnValue;
     bool m_isModal { false };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
+
+    std::optional<DialogToggleEventData> m_queuedToggleEventData;
 };
 
 } // namespace WebCore
