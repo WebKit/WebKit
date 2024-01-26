@@ -818,7 +818,7 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
     if (!page || !page->isTakingSnapshotsForApplicationSuspension())
         return false;
 
-    return isDomain("nytimes.com"_s) || isDomain("twitter.com"_s) || isDomain("zillow.com"_s);
+    return isDomain("nytimes.com"_s) || isDomain("twitter.com"_s) || isDomain("zillow.com"_s) || isDomain("365scores.com"_s);
 #else
     return false;
 #endif
