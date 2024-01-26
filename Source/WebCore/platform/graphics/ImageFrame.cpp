@@ -96,11 +96,6 @@ unsigned ImageFrame::clear()
     return frameBytes;
 }
 
-IntSize ImageFrame::size() const
-{
-    return m_size;
-}
-
 bool ImageFrame::hasNativeImage(const std::optional<SubsamplingLevel>& subsamplingLevel) const
 {
     return m_nativeImage && (!subsamplingLevel || *subsamplingLevel >= m_subsamplingLevel);
@@ -114,14 +109,6 @@ bool ImageFrame::hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& s
 bool ImageFrame::hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
 {
     return isComplete() && hasNativeImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);
-}
-
-Color ImageFrame::singlePixelSolidColor() const
-{
-    if (!hasNativeImage() || m_size != IntSize(1, 1))
-        return Color();
-
-    return m_nativeImage->singlePixelSolidColor();
 }
 
 } // namespace WebCore

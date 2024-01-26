@@ -76,7 +76,7 @@ public:
     // FloatSize due to override.
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const override { return m_source->size(orientation); }
     ImageOrientation orientation() const override { return m_source->orientation(); }
-    Color singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
+    std::optional<Color> singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
     DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source->frameDecodingStatusAtIndex(index); }
     bool frameIsCompleteAtIndex(size_t index) const { return frameDecodingStatusAtIndex(index) == DecodingStatus::Complete; }
@@ -104,13 +104,13 @@ public:
     bool isAsyncDecodingEnabledForTesting() const { return m_asyncDecodingEnabledForTesting; }
     void stopAsyncDecodingQueue() { m_source->stopAsyncDecodingQueue(); }
 
-    DestinationColorSpace colorSpace() final;
+    DestinationColorSpace colorSpace() final { return m_source->colorSpace(); }
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
 
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) override;
     RefPtr<NativeImage> nativeImageForCurrentFrame() override;
-    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation) override;
+    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(ImageOrientation) override;
 
     void imageFrameAvailableAtIndex(size_t);
     void decode(Function<void()>&&);
@@ -157,7 +157,7 @@ private:
     void resetAnimation() override;
 
 #if ASSERT_ENABLED
-    bool notSolidColor() override;
+    bool notSolidColor() override { return m_source->notSolidColor(); }
 #endif
 
     void clearTimer();

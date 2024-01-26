@@ -1843,6 +1843,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/CopyImageOptions.h
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
+    platform/graphics/BitmapImageMetadata.h
     platform/graphics/ByteArrayPixelBuffer.h
     platform/graphics/CachedSubimage.h
     platform/graphics/Color.h

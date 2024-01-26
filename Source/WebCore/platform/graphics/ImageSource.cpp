@@ -40,25 +40,18 @@ ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndCo
     : m_image(image)
     , m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
+    , m_metadata(*this)
     , m_runLoop(RunLoop::current())
 {
 }
 
 ImageSource::ImageSource(Ref<NativeImage>&& nativeImage)
-    : m_runLoop(RunLoop::current())
+    : m_metadata(*this)
+    , m_runLoop(RunLoop::current())
 {
-    m_frameCount = 1;
-    m_encodedDataStatus = EncodedDataStatus::Complete;
-    m_cachedMetadata.add({ MetadataType::EncodedDataStatus, MetadataType::FrameCount });
-    growFrames();
-
+    m_frames.grow(1);
     setNativeImage(WTFMove(nativeImage));
-
     m_decodedSize = m_frames[0].frameBytes();
-
-    m_size = m_frames[0].size();
-    m_orientation = ImageOrientation(ImageOrientation::Orientation::None);
-    m_cachedMetadata.add({ MetadataType::Orientation, MetadataType::Size });
 }
 
 ImageSource::~ImageSource()
@@ -108,7 +101,7 @@ void ImageSource::resetData(FragmentedSharedBuffer* data)
 EncodedDataStatus ImageSource::dataChanged(FragmentedSharedBuffer* data, bool allDataReceived)
 {
     setData(data, allDataReceived);
-    clearMetadata();
+    m_metadata.clear();
     EncodedDataStatus status = encodedDataStatus();
     if (status >= EncodedDataStatus::SizeAvailable)
         growFrames();
@@ -158,13 +151,10 @@ void ImageSource::clearFrameBufferCache(size_t beforeFrame)
 
 void ImageSource::encodedDataStatusChanged(EncodedDataStatus status)
 {
-    if (status == m_encodedDataStatus)
-        return;
-
-    m_encodedDataStatus = status;
-
-    if (status >= EncodedDataStatus::SizeAvailable)
+    if (status >= EncodedDataStatus::SizeAvailable) {
+        ASSERT(isDecoderAvailable());
         growFrames();
+    }
 
     if (!m_image)
         return;
@@ -466,18 +456,6 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
     return frame;
 }
 
-void ImageSource::clearMetadata()
-{
-    m_cachedMetadata.remove({
-        MetadataType::EncodedDataStatus,
-        MetadataType::FrameCount,
-        MetadataType::PrimaryFrameIndex,
-        MetadataType::RepetitionCount,
-        MetadataType::SinglePixelSolidColor,
-        MetadataType::UTI
-    });
-}
-
 URL ImageSource::sourceURL() const
 {
     return m_image ? m_image->sourceURL() : URL();
@@ -493,155 +471,56 @@ long long ImageSource::expectedContentLength() const
     return m_image ? m_image->expectedContentLength() : 0;
 }
 
-template<typename T>
-T ImageSource::metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, MetadataType metadataType, T (ImageDecoder::*functor)() const)
+EncodedDataStatus ImageSource::encodedDataStatus() const
 {
-    if (m_cachedMetadata.contains(metadataType))
-        return cachedValue;
-
-    if (!isDecoderAvailable() || !m_decoder->isSizeAvailable())
-        return defaultValue;
-
-    cachedValue = (*m_decoder.*functor)();
-    m_cachedMetadata.add(metadataType);
-    didDecodeProperties(m_decoder->bytesDecodedToDetermineProperties());
-    return cachedValue;
+    return isDecoderAvailable() ? m_metadata.encodedDataStatus() : (!m_frames.isEmpty() ? EncodedDataStatus::Complete : EncodedDataStatus::Unknown);
 }
 
-template<typename T>
-T ImageSource::firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType metadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel)
+IntSize ImageSource::size(ImageOrientation orientation) const
 {
-    if (m_cachedMetadata.contains(metadataType))
-        return cachedValue;
-
-    const ImageFrame& frame = frameAtIndexCacheIfNeeded(0, caching, subsamplingLevel);
-
-    // Don't cache any unavailable frame metadata.
-    if (!frame.hasMetadata())
-        return (frame.*functor)();
-
-    cachedValue = (frame.*functor)();
-    m_cachedMetadata.add(metadataType);
-    return cachedValue;
-}
-
-EncodedDataStatus ImageSource::encodedDataStatus()
-{
-    return metadataCacheIfNeeded(m_encodedDataStatus, EncodedDataStatus::Unknown, MetadataType::EncodedDataStatus, &ImageDecoder::encodedDataStatus);
-}
-
-size_t ImageSource::frameCount()
-{
-    return metadataCacheIfNeeded(m_frameCount, m_frames.size(), MetadataType::FrameCount, &ImageDecoder::frameCount);
-}
-
-size_t ImageSource::primaryFrameIndex()
-{
-    return metadataCacheIfNeeded(m_primaryFrameIndex, static_cast<size_t>(0), MetadataType::PrimaryFrameIndex, &ImageDecoder::primaryFrameIndex);
-}
-
-RepetitionCount ImageSource::repetitionCount()
-{
-    return metadataCacheIfNeeded(m_repetitionCount, static_cast<RepetitionCount>(RepetitionCountNone), MetadataType::RepetitionCount, &ImageDecoder::repetitionCount);
-}
-
-String ImageSource::uti()
-{
-#if USE(CG)
-    return metadataCacheIfNeeded(m_uti, String(), MetadataType::UTI, &ImageDecoder::uti);
-#else
-    return String();
-#endif
-}
-
-String ImageSource::filenameExtension()
-{
-    return metadataCacheIfNeeded(m_filenameExtension, String(), MetadataType::FileNameExtension, &ImageDecoder::filenameExtension);
-}
-
-String ImageSource::accessibilityDescription()
-{
-    return metadataCacheIfNeeded(m_accessibilityDescription, String(), MetadataType::AccessibilityDescription, &ImageDecoder::accessibilityDescription);
-}
-
-std::optional<IntPoint> ImageSource::hotSpot()
-{
-    return metadataCacheIfNeeded(m_hotSpot, { }, MetadataType::HotSpot, &ImageDecoder::hotSpot);
-}
-
-ImageOrientation ImageSource::orientation()
-{
-    return firstFrameMetadataCacheIfNeeded(m_orientation, MetadataType::Orientation, &ImageFrame::orientation, ImageFrame::Caching::Metadata);
-}
-
-std::optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation)
-{
-    auto size = firstFrameMetadataCacheIfNeeded(m_densityCorrectedSize, MetadataType::DensityCorrectedSize, &ImageFrame::densityCorrectedSize, ImageFrame::Caching::Metadata);
-    if (!size)
-        return std::nullopt;
+    auto densityCorrectedSize = m_metadata.densityCorrectedSize();
+    if (!densityCorrectedSize)
+        return sourceSize(orientation);
 
     if (orientation == ImageOrientation::Orientation::FromImage)
-        orientation = this->orientation();
+        orientation = m_metadata.orientation();
 
-    return orientation.usesWidthAsHeight() ? std::optional<IntSize>(size.value().transposedSize()) : size;
+    return orientation.usesWidthAsHeight() ? densityCorrectedSize->transposedSize() : *densityCorrectedSize;
 }
 
-IntSize ImageSource::size(ImageOrientation orientation)
+IntSize ImageSource::sourceSize(ImageOrientation orientation) const
 {
-    auto preferredSize = densityCorrectedSize(orientation);
-    return preferredSize ? preferredSize.value() : sourceSize(orientation);
-}
-
-IntSize ImageSource::sourceSize(ImageOrientation orientation)
-{
-    IntSize size;
 #if !USE(CG)
     // It's possible that we have decoded the metadata, but not frame contents yet. In that case ImageDecoder claims to
     // have the size available, but the frame cache is empty. Return the decoder size without caching in such case.
     if (m_frames.isEmpty() && isDecoderAvailable())
-        size = m_decoder->size();
-    else
+        return m_decoder->size();
 #endif
-        size = firstFrameMetadataCacheIfNeeded(m_size, MetadataType::Size, &ImageFrame::size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
+
+    auto size = m_metadata.size();
 
     if (orientation == ImageOrientation::Orientation::FromImage)
-        orientation = this->orientation();
+        orientation = m_metadata.orientation();
 
     return orientation.usesWidthAsHeight() ? size.transposedSize() : size;
 }
 
-Color ImageSource::singlePixelSolidColor()
+unsigned ImageSource::frameCount() const
 {
-    if (!m_cachedMetadata.contains(MetadataType::SinglePixelSolidColor) && (size() != IntSize(1, 1) || frameCount() != 1)) {
-        m_singlePixelSolidColor = Color();
-        m_cachedMetadata.add(MetadataType::SinglePixelSolidColor);
-    }
-
-    return firstFrameMetadataCacheIfNeeded(m_singlePixelSolidColor, MetadataType::SinglePixelSolidColor, &ImageFrame::singlePixelSolidColor, ImageFrame::Caching::MetadataAndImage);
+    return isDecoderAvailable() ? m_metadata.frameCount() : m_frames.size();
 }
 
-SubsamplingLevel ImageSource::maximumSubsamplingLevel()
+bool ImageSource::notSolidColor() const
 {
-    if (m_cachedMetadata.contains(MetadataType::MaximumSubsamplingLevel))
-        return m_maximumSubsamplingLevel;
+    return const_cast<ImageSource&>(*this).size() != IntSize(1, 1) || const_cast<ImageSource&>(*this).frameCount() != 1;
+}
 
-    if (!isDecoderAvailable() || !m_decoder->frameAllowSubsamplingAtIndex(0))
-        return SubsamplingLevel::Default;
+std::optional<Color> ImageSource::singlePixelSolidColor() const
+{
+    if (notSolidColor())
+        return std::nullopt;
 
-    // FIXME: this value was chosen to be appropriate for iOS since the image
-    // subsampling is only enabled by default on iOS. Choose a different value
-    // if image subsampling is enabled on other platform.
-    const int maximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
-    SubsamplingLevel level = SubsamplingLevel::First;
-
-    for (; level < SubsamplingLevel::Last; ++level) {
-        if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
-            break;
-    }
-
-    m_maximumSubsamplingLevel = level;
-    m_cachedMetadata.add(MetadataType::MaximumSubsamplingLevel);
-    return m_maximumSubsamplingLevel;
+    return m_metadata.singlePixelSolidColor();
 }
 
 bool ImageSource::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions)

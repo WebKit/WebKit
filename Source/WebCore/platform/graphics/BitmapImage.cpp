@@ -146,37 +146,31 @@ RefPtr<NativeImage> BitmapImage::nativeImageForCurrentFrame()
     return nativeImageAtIndexCacheIfNeeded(m_currentFrame, SubsamplingLevel::Default);
 }
 
-RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool respectOrientation)
+RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(ImageOrientation orientation)
 {
-    auto image = nativeImageForCurrentFrame();
-    if (!image)
-        return image;
+    auto nativeImage = nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return nullptr;
 
-    auto orientation = respectOrientation ? orientationForCurrentFrame() : ImageOrientation(ImageOrientation::Orientation::None);
-    auto correctedSize = m_source->densityCorrectedSize(orientation);
-    if (orientation == ImageOrientation::Orientation::None && !correctedSize)
-        return image;
+    auto size =  m_source->size();
+    auto sourceSize = m_source->sourceSize();
 
-    auto correctedSizeFloat = correctedSize ? FloatSize(correctedSize.value()) : size();
-    auto buffer = ImageBuffer::create(correctedSizeFloat, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (orientation == ImageOrientation::Orientation::None && size == sourceSize)
+        return nativeImage;
+
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        orientation = orientationForCurrentFrame();
+
+    auto buffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
-        return image;
+        return nativeImage;
 
-    auto sourceSize = this->sourceSize();
+    auto destinationRect = FloatRect { FloatPoint(), size };
+    auto sourceRect = FloatRect { FloatPoint(), sourceSize };
 
-    FloatRect destRect(FloatPoint(), correctedSizeFloat);
-    FloatRect sourceRect(FloatPoint(), sourceSize);
-
-    buffer->context().drawNativeImage(*image, destRect, sourceRect, { orientation });
+    buffer->context().drawNativeImage(*nativeImage, destinationRect, sourceRect, { orientation });
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
 }
-
-#if ASSERT_ENABLED
-bool BitmapImage::notSolidColor()
-{
-    return size().width() != 1 || size().height() != 1 || frameCount() > 1;
-}
-#endif // ASSERT_ENABLED
 
 static inline void drawNativeImage(NativeImage& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, ImagePaintingOptions options)
 {
@@ -278,9 +272,8 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     }
 
     ASSERT(image);
-    Color color = singlePixelSolidColor();
-    if (color.isValid()) {
-        fillWithSolidColor(context, destRect, color, options.compositeOperator());
+    if (auto color = singlePixelSolidColor()) {
+        fillWithSolidColor(context, destRect, *color, options.compositeOperator());
         return result;
     }
 
@@ -618,13 +611,6 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 
     if (auto observer = imageObserver())
         observer->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
-}
-
-DestinationColorSpace BitmapImage::colorSpace()
-{
-    if (auto nativeImage = this->nativeImage())
-        return nativeImage->colorSpace();
-    return DestinationColorSpace::SRGB();
 }
 
 unsigned BitmapImage::decodeCountForTesting() const

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BitmapImageMetadata.h"
 #include "ImageFrame.h"
 
 #include <wtf/Forward.h>
@@ -44,6 +45,7 @@ class FragmentedSharedBuffer;
 class ImageSource final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
     friend class BitmapImage;
+    friend class BitmapImageMetadata;
 public:
     ~ImageSource();
 
@@ -68,7 +70,6 @@ public:
     void clearFrameBufferCache(size_t beforeFrame);
 
     void growFrames();
-    void clearMetadata();
     void clearImage() { m_image = nullptr; }
     URL sourceURL() const;
     String mimeType() const;
@@ -84,28 +85,28 @@ public:
     void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
     Seconds frameDecodingDurationForTesting() const { return m_frameDecodingDurationForTesting; }
 
+    EncodedDataStatus encodedDataStatus() const;
+    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
+    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
+    bool hasDensityCorrectedSize() const { return m_metadata.densityCorrectedSize().has_value(); }
+    ImageOrientation orientation() const { return m_metadata.orientation(); }
+    WEBCORE_EXPORT unsigned frameCount() const;
+    RepetitionCount repetitionCount() const { return m_metadata.repetitionCount(); }
+    DestinationColorSpace colorSpace() const { return m_metadata.colorSpace(); }
+    bool notSolidColor() const;
+    std::optional<Color> singlePixelSolidColor() const;
+
+    String uti() const { return m_metadata.uti(); }
+    String filenameExtension() const { return m_metadata.filenameExtension(); }
+    String accessibilityDescription() const { return m_metadata.accessibilityDescription(); }
+    std::optional<IntPoint> hotSpot() const { return m_metadata.hotSpot(); }
+    SubsamplingLevel maximumSubsamplingLevel() { return m_metadata.maximumSubsamplingLevel(); }
+
+    unsigned primaryFrameIndex() const { return m_metadata.primaryFrameIndex(); }
+
     // Image metadata which is calculated either by the ImageDecoder or directly
     // from the NativeImage if this class was created for a memory image.
-    EncodedDataStatus encodedDataStatus();
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
-    WEBCORE_EXPORT size_t frameCount();
-    size_t primaryFrameIndex();
-    RepetitionCount repetitionCount();
-    String uti();
-    String filenameExtension();
-    String accessibilityDescription();
-    std::optional<IntPoint> hotSpot();
-    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    bool hasDensityCorrectedSize() { return densityCorrectedSize().has_value(); }
-
-    ImageOrientation orientation();
-
-    // Image metadata which is calculated from the first ImageFrame.
-    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    IntSize sizeRespectingOrientation();
-    Color singlePixelSolidColor();
-    SubsamplingLevel maximumSubsamplingLevel();
 
     // ImageFrame metadata which does not require caching the ImageFrame.
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
@@ -129,28 +130,6 @@ public:
 private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     ImageSource(Ref<NativeImage>&&);
-
-    enum class MetadataType {
-        AccessibilityDescription    = 1 << 0,
-        DensityCorrectedSize        = 1 << 1,
-        EncodedDataStatus           = 1 << 2,
-        FileNameExtension           = 1 << 3,
-        FrameCount                  = 1 << 4,
-        PrimaryFrameIndex           = 1 << 5,
-        HotSpot                     = 1 << 6,
-        MaximumSubsamplingLevel     = 1 << 7,
-        Orientation                 = 1 << 8,
-        RepetitionCount             = 1 << 9,
-        SinglePixelSolidColor       = 1 << 10,
-        Size                        = 1 << 11,
-        UTI                         = 1 << 12
-    };
-
-    template<typename T>
-    T metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, MetadataType, T (ImageDecoder::*functor)() const);
-
-    template<typename T>
-    T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
     bool ensureDecoderAvailable(FragmentedSharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
@@ -181,6 +160,8 @@ private:
     AlphaOption m_alphaOption { AlphaOption::Premultiplied };
     GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
 
+    BitmapImageMetadata m_metadata;
+
     unsigned m_decodedSize { 0 };
     unsigned m_decodedPropertiesSize { 0 };
     Vector<ImageFrame, 1> m_frames;
@@ -198,25 +179,6 @@ private:
     FrameCommitQueue m_frameCommitQueue;
     RefPtr<WorkQueue> m_decodingQueue;
     Seconds m_frameDecodingDurationForTesting;
-
-    // Image metadata.
-    EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
-    size_t m_frameCount { 0 };
-    size_t m_primaryFrameIndex { 0 };
-    RepetitionCount m_repetitionCount { RepetitionCountNone };
-    String m_uti;
-    String m_filenameExtension;
-    String m_accessibilityDescription;
-    std::optional<IntPoint> m_hotSpot;
-
-    // Image metadata which is calculated from the first ImageFrame.
-    IntSize m_size;
-    std::optional<IntSize> m_densityCorrectedSize;
-    ImageOrientation m_orientation;
-    Color m_singlePixelSolidColor;
-    SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
-
-    OptionSet<MetadataType> m_cachedMetadata;
 
     RunLoop& m_runLoop;
 };

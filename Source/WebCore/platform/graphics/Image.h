@@ -147,7 +147,7 @@ public:
 
     virtual RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) { return nullptr; }
     virtual RefPtr<NativeImage> nativeImageForCurrentFrame() { return nativeImage(); }
-    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true) { return nativeImageForCurrentFrame(); }
+    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(ImageOrientation = ImageOrientation::Orientation::FromImage) { return nativeImageForCurrentFrame(); }
     virtual RefPtr<NativeImage> nativeImageAtIndex(size_t) { return nativeImage(); }
     virtual RefPtr<NativeImage> nativeImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { }) { return nativeImageAtIndex(index); }
 
@@ -171,7 +171,7 @@ protected:
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions = { });
 
     // Supporting tiled drawing
-    virtual Color singlePixelSolidColor() const { return Color(); }
+    virtual std::optional<Color> singlePixelSolidColor() const { return std::nullopt; }
 
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;

@@ -65,7 +65,8 @@ public:
     bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
     bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
-    IntSize size() const;
+    IntSize size() const { return m_size; }
+
     unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).value() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
@@ -87,8 +88,6 @@ public:
     bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
     bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
-
-    Color singlePixelSolidColor() const;
 
 private:
     DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
