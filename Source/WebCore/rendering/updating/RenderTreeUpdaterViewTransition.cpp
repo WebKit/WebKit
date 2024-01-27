@@ -92,7 +92,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
     auto* currentGroup = documentElementRenderer.view().viewTransitionRoot()->firstChild();
     for (auto& name : activeViewTransition->namedElements().keys()) {
         ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoId::ViewTransitionGroup);
-        if (currentGroup && name == currentGroup->style().functionalPseudoElementArgument()) {
+        if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
             auto style = documentElementRenderer.getUncachedPseudoStyle({ PseudoId::ViewTransitionGroup, name }, &documentElementRenderer.style());
             if (!style || style->display() == DisplayType::None)
                 descendantsToDelete.append(currentGroup);
@@ -146,7 +146,7 @@ void RenderTreeUpdater::ViewTransition::buildPseudoElementGroup(const AtomString
 void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderStyle& groupStyle, RenderElement& group, RenderElement& documentElementRenderer)
 {
     auto& documentElementStyle = documentElementRenderer.style();
-    auto name = groupStyle.functionalPseudoElementArgument();
+    auto name = groupStyle.pseudoElementNameArgument();
 
     auto newGroupStyle = RenderStyle::clone(groupStyle);
     group.setStyle(WTFMove(newGroupStyle));

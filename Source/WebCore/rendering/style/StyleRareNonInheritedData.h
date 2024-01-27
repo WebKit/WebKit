@@ -186,7 +186,7 @@ public:
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };
 
     float zoom;
-    AtomString functionalPseudoElementArgument;
+    AtomString pseudoElementNameArgument;
 
     std::optional<Length> blockStepSize;
     unsigned blockStepInsert : 1; // BlockStepInsert

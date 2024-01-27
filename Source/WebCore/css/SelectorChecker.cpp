@@ -1219,7 +1219,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return true;
             if (checkingContext.pseudoId != PseudoId::Highlight || !selector.argumentList())
                 return false;
-            return selector.argumentList()->first() == checkingContext.nameIdentifier;
+            return selector.argumentList()->first() == checkingContext.pseudoElementNameArgument;
 
         case CSSSelector::PseudoElement::ViewTransitionGroup:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
@@ -1233,7 +1233,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
             // Wildcard always matches.
             auto& argument = selector.argumentList()->first();
-            return argument == starAtom() || argument == checkingContext.nameIdentifier;
+            return argument == starAtom() || argument == checkingContext.pseudoElementNameArgument;
         }
 
         default:

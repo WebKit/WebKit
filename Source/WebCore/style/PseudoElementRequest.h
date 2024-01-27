@@ -38,9 +38,9 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& pseudoElementNameArgument)
         : pseudoId(pseudoId)
-        , nameIdentifier(nameIdentifier)
+        , pseudoElementNameArgument(pseudoElementNameArgument)
     {
         ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
     }
@@ -49,7 +49,7 @@ public:
     std::optional<StyleScrollbarState> scrollbarState;
 
     // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString nameIdentifier;
+    AtomString pseudoElementNameArgument;
 };
 
 } // namespace WebCore
