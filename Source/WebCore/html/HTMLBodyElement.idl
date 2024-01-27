@@ -43,10 +43,10 @@
     [WindowEventHandler] attribute EventHandler onfocusout;
 
     // Non-standard
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
-    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onwebkitmouseforceup;
 };
 
 HTMLBodyElement includes WindowEventHandlers;

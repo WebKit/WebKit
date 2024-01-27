@@ -2331,7 +2331,6 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
 
-#if ENABLE(MOUSE_FORCE_EVENTS)
 bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
 {
     Ref frame = m_frame.get();
@@ -2365,12 +2364,6 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
 
     return swallowedEvent;
 }
-#else
-bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& )
-{
-    return false;
-}
-#endif // #if ENABLE(MOUSE_FORCE_EVENTS)
 
 bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platformMouseEvent)
 {

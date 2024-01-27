@@ -23,8 +23,8 @@
 ] interface MouseEvent : UIEvent {
     constructor([AtomString] DOMString type, optional MouseEventInit eventInitDict);
 
-    [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_MOUSE_DOWN = 1;
-    [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN = 2;
+    const double WEBKIT_FORCE_AT_MOUSE_DOWN = 1;
+    const double WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN = 2;
 
     readonly attribute long screenX;
     readonly attribute long screenY;
@@ -42,7 +42,7 @@
 
     readonly attribute double movementX;
     readonly attribute double movementY;
-    [Conditional=MOUSE_FORCE_EVENTS, ImplementedAs=force]readonly attribute double webkitForce;
+    [ImplementedAs=force] readonly attribute double webkitForce;
 
     // FIXME: relatedTarget should be of type EventTarget? but we need to use any to support a quirk for iAd Producer (rdar://problem/30640101).
     [CallWith=CurrentGlobalObject&CurrentScriptExecutionContext, ImplementedAs=initMouseEventQuirk] undefined initMouseEvent([AtomString] DOMString type,

@@ -3721,7 +3721,6 @@ void Element::dispatchWebKitImageReadyEventForTesting()
 
 bool Element::dispatchMouseForceWillBegin()
 {
-#if ENABLE(MOUSE_FORCE_EVENTS)
     if (!document().hasListenerType(Document::ListenerType::ForceWillBegin))
         return false;
 
@@ -3736,7 +3735,6 @@ bool Element::dispatchMouseForceWillBegin()
 
     if (mouseForceWillBeginEvent->defaultHandled() || mouseForceWillBeginEvent->defaultPrevented())
         return true;
-#endif
 
     return false;
 }
