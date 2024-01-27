@@ -311,8 +311,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentialmanagement/CredentialRequestOptions.idl
     Modules/credentialmanagement/CredentialsContainer.idl
     Modules/credentialmanagement/DigitalCredential.idl
+    Modules/credentialmanagement/DigitalCredentialRequestOptions.idl
     Modules/credentialmanagement/IdentityCredentialProtocol.idl
-    Modules/credentialmanagement/IdentityRequestOptions.idl
     Modules/credentialmanagement/IdentityRequestProvider.idl
     Modules/credentialmanagement/Navigator+Credentials.idl
 

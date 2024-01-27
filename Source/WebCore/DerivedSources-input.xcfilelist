@@ -434,8 +434,8 @@ $(PROJECT_DIR)/Modules/credentialmanagement/CredentialMediationRequirement.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialsContainer.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/DigitalCredential.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/DigitalCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/IdentityCredentialProtocol.idl
-$(PROJECT_DIR)/Modules/credentialmanagement/IdentityRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/IdentityRequestProvider.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/Navigator+Credentials.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl

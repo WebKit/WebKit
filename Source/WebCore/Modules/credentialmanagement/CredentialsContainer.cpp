@@ -33,9 +33,9 @@
 #include "CredentialCreationOptions.h"
 #include "CredentialRequestOptions.h"
 #include "DigitalCredential.h"
+#include "DigitalCredentialRequestOptions.h"
 #include "Document.h"
 #include "ExceptionOr.h"
-#include "IdentityRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "Page.h"
@@ -144,7 +144,7 @@ void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promis
     promise.resolve();
 }
 
-void CredentialsContainer::requestIdentity(IdentityRequestOptions&& options, DigitalCredentialPromise&& promise)
+void CredentialsContainer::requestIdentity(DigitalCredentialRequestOptions&& options, DigitalCredentialPromise&& promise)
 {
     if (options.signal && options.signal->aborted()) {
         promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });

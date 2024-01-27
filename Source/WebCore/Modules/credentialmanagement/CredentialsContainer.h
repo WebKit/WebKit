@@ -44,7 +44,7 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 struct CredentialCreationOptions;
 struct CredentialRequestOptions;
-struct IdentityRequestOptions;
+struct DigitalCredentialRequestOptions;
 
 class CredentialsContainer : public RefCounted<CredentialsContainer> {
 public:
@@ -58,7 +58,7 @@ public:
 
     void preventSilentAccess(DOMPromiseDeferred<void>&&) const;
 
-    void requestIdentity(IdentityRequestOptions&&, DigitalCredentialPromise&&);
+    void requestIdentity(DigitalCredentialRequestOptions&&, DigitalCredentialPromise&&);
 
 private:
     CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&&);

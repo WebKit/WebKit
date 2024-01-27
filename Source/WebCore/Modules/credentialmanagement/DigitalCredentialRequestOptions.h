@@ -23,7 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dictionary IdentityRequestOptions {
-    AbortSignal signal;
-    required sequence<IdentityRequestProvider> providers;
+#pragma once
+
+#include "AbortSignal.h"
+#include "IdentityRequestProvider.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+struct IdentityRequestProvider;
+
+struct DigitalCredentialRequestOptions {
+    RefPtr<AbortSignal> signal;
+    Vector<IdentityRequestProvider> providers;
 };
+
+} // namespace WebCore
