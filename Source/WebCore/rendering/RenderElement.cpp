@@ -463,6 +463,14 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
             }
         }
 
+        if (diff > StyleDifference::RepaintLayer && oldStyle.effectiveContentVisibility() != newStyle.effectiveContentVisibility() && isOutOfFlowPositioned()) {
+            if (CheckedPtr enclosingLayer = this->enclosingLayer()) {
+                bool rendererWillBeHidden = isSkippedContent();
+                if (rendererWillBeHidden && enclosingLayer->hasVisibleContent() && (this == &enclosingLayer->renderer() || enclosingLayer->renderer().style().visibility() != Visibility::Visible))
+                    return RequiredRepaint::RendererOnly;
+            }
+        }
+
         return RequiredRepaint::None;
     }();
 
@@ -473,6 +481,12 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
     }
 
     if (shouldRepaintBeforeStyleChange == RequiredRepaint::RendererOnly) {
+        if (isOutOfFlowPositioned() && downcast<RenderLayerModelObject>(*this).checkedLayer()->isSelfPaintingLayer()) {
+            if (auto cachedClippedOverflowRect = downcast<RenderLayerModelObject>(*this).checkedLayer()->cachedClippedOverflowRect()) {
+                repaintUsingContainer(containerForRepaint().renderer.get(), *cachedClippedOverflowRect);
+                return true;
+            }
+        }
         repaint();
         return true;
     }
