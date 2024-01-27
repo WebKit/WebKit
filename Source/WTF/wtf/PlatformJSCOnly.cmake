@@ -123,7 +123,11 @@ else ()
     )
 endif ()
 
-if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
+if (WIN32)
+    list(APPEND WTF_SOURCES
+        win/RunLoopWin.cpp
+    )
+elseif (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND WTF_SOURCES
         glib/GRefPtr.cpp
         glib/RunLoopGLib.cpp
