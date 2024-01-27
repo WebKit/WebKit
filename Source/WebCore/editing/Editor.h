@@ -550,6 +550,10 @@ public:
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&);
+#endif
+
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif

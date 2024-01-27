@@ -494,6 +494,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    InsertMultiRepresentationHEIC(IPC::DataReference data)
+#endif
+
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
 
     SetTextAsync(String text)

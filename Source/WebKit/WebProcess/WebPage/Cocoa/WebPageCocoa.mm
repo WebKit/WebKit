@@ -733,6 +733,16 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+void WebPage::insertMultiRepresentationHEIC(const IPC::DataReference& data)
+{
+    Ref frame = m_page->focusController().focusedOrMainFrame();
+    if (frame->selection().isNone())
+        return;
+    frame->editor().insertMultiRepresentationHEIC(data);
+}
+#endif
+
 std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWithResult(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
