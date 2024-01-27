@@ -609,6 +609,10 @@ if (APPLE)
     )
 endif ()
 
+if (MSVC AND WTF_CPU_X86_64)
+    list(APPEND WTF_SOURCES win/AsmStubsMSVC64.asm)
+endif ()
+
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WTF_DERIVED_SOURCES_DIR}"
