@@ -1971,3 +1971,5 @@ webkit.org/b/268018 [ Sonoma+ Release ] fast/images/text-recognition/mac/select-
 webkit.org/b/268047 [ Monterey+ ] http/wpt/webrtc/video-script-transform-simulcast.html [ Pass Failure ]
 
 webkit.org/b/268098 [ Monterey+ ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
+
+webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
