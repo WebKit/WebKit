@@ -61,11 +61,16 @@ MediaList& CSSImportRule::media() const
 
 String CSSImportRule::layerName() const
 {
-    auto name = m_importRule.get().cascadeLayerName();
+    auto name = m_importRule->cascadeLayerName();
     if (!name)
         return { };
 
     return stringFromCascadeLayerName(*name);
+}
+
+String CSSImportRule::supportsText() const
+{
+    return m_importRule->supportsText();
 }
 
 String CSSImportRule::cssTextInternal(const String& urlString) const
@@ -79,6 +84,10 @@ String CSSImportRule::cssTextInternal(const String& urlString) const
         else
             builder.append(" layer(", layerName, ')');
     }
+
+    auto supports = supportsText();
+    if (!supports.isNull())
+        builder.append(" supports(", WTFMove(supports), ')');
 
     if (!mediaQueries().isEmpty()) {
         builder.append(' ');

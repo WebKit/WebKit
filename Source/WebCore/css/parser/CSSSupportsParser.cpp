@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, SupportsParsingMode mode, CSSParserEnum::IsNestedContext isNestedContext)
+CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, ParsingMode mode, CSSParserEnum::IsNestedContext isNestedContext)
 {
     // FIXME: The spec allows leading whitespace in @supports but not CSS.supports,
     // but major browser vendors allow it in CSS.supports also.
@@ -46,7 +46,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParser
     CSSSupportsParser supportsParser(parser, isNestedContext);
 
     auto result = supportsParser.consumeCondition(range);
-    if (mode != ForWindowCSS || result != Invalid)
+    if (mode != ParsingMode::AllowBareDeclarationAndGeneralEnclosed || result != Invalid)
         return result;
 
     // window.CSS.supports requires parsing as-if the condition was wrapped in

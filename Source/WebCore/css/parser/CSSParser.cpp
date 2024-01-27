@@ -87,7 +87,7 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     CSSParserImpl parser(m_context, condition);
     if (!parser.tokenizer())
         return false;
-    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS, CSSParserEnum::IsNestedContext::No) == CSSSupportsParser::Supported;
+    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ParsingMode::AllowBareDeclarationAndGeneralEnclosed, CSSParserEnum::IsNestedContext::No) == CSSSupportsParser::Supported;
 }
 
 static Color color(RefPtr<CSSValue>&& value)
