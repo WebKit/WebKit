@@ -181,6 +181,7 @@ public:
     bool createsGroup() const { return createsGroupForStyle(style()); }
 
     inline bool isTransparent() const; // FIXME: This function is incorrectly named. It's isNotOpaque, sometimes called hasOpacity, not isEntirelyTransparent.
+    inline bool isFullyTransparent() const;
     inline float opacity() const;
 
     inline bool visibleToHitTesting(const std::optional<HitTestRequest>& = std::nullopt) const;

@@ -408,11 +408,11 @@ private:
     void cacheAcceleratedCompositingFlagsAfterLayout();
 
     // Whether the given RL needs a compositing layer.
-    bool needsToBeComposited(const RenderLayer&, RequiresCompositingData&) const;
+    bool needsToBeComposited(const RenderLayer&, RequiresCompositingData&, const CompositingState* = nullptr) const;
     // Whether the layer has an intrinsic need for compositing layer.
     bool requiresCompositingLayer(const RenderLayer&, RequiresCompositingData&) const;
     // Whether the layer could ever be composited.
-    bool canBeComposited(const RenderLayer&) const;
+    bool canBeComposited(const RenderLayer&, const CompositingState*) const;
 
     // Make or destroy the backing for this layer; returns true if backing changed.
     enum class BackingRequired { No, Yes, Unknown };
@@ -428,8 +428,8 @@ private:
     void computeExtent(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
     void computeClippingScopes(const RenderLayer&, OverlapExtent&) const;
     void addToOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
-    void addDescendantsToOverlapMapRecursive(LayerOverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr) const;
-    void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
+    void addDescendantsToOverlapMapRecursive(LayerOverlapMap&, const RenderLayer&, const CompositingState&, const RenderLayer* ancestorLayer = nullptr) const;
+    void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, const CompositingState&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
     bool layerOverlaps(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
 
     void updateBackingSharingBeforeDescendantTraversal(BackingSharingState&, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, bool willBeComposited, RenderLayer* stackingContextAncestor);
@@ -451,6 +451,7 @@ private:
 
     bool layerHas3DContent(const RenderLayer&) const;
     bool isRunningTransformAnimation(RenderLayerModelObject&) const;
+    bool isRunningOpacityAnimation(RenderLayerModelObject&) const;
 
     void appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>&);
 
