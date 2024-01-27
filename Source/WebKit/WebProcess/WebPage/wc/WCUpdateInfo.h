@@ -46,27 +46,35 @@ struct WCTileUpdate {
 };
 
 enum class WCLayerChange : uint32_t {
-    Children                = 1 <<  0,
-    MaskLayer               = 1 <<  1,
-    ReplicaLayer            = 1 <<  2,
-    Geometry                = 1 <<  3,
-    Preserves3D             = 1 <<  4,
-    ContentsVisible         = 1 <<  5,
-    BackfaceVisibility      = 1 <<  6,
-    MasksToBounds           = 1 <<  7,
-    SolidColor              = 1 <<  8,
-    DebugVisuals            = 1 <<  9,
-    RepaintCount            = 1 << 10,
-    ContentsRect            = 1 << 11,
-    ContentsClippingRect    = 1 << 12,
-    Opacity                 = 1 << 13,
-    Background              = 1 << 14,
-    Transform               = 1 << 15,
-    ChildrenTransform       = 1 << 16,
-    Filters                 = 1 << 17,
-    BackdropFilters         = 1 << 18,
-    PlatformLayer           = 1 << 19,
-    RemoteFrame             = 1 << 20,
+    Children                     = 1 <<  0,
+    MaskLayer                    = 1 <<  1,
+    ReplicaLayer                 = 1 <<  2,
+    Position                     = 1 <<  3,
+    AnchorPoint                  = 1 <<  4,
+    Size                         = 1 <<  5,
+    BoundsOrigin                 = 1 <<  6,
+    MasksToBounds                = 1 <<  7,
+    ContentsRectClipsDescendants = 1 <<  8,
+    ShowDebugBorder              = 1 <<  9,
+    ShowRepaintCounter           = 1 << 10,
+    ContentsVisible              = 1 << 11,
+    BackfaceVisibility           = 1 << 12,
+    Preserves3D                  = 1 << 13,
+    SolidColor                   = 1 << 14,
+    DebugBorderColor             = 1 << 15,
+    Opacity                      = 1 << 16,
+    DebugBorderWidth             = 1 << 17,
+    RepaintCount                 = 1 << 18,
+    ContentsRect                 = 1 << 19,
+    Background                   = 1 << 20,
+    Transform                    = 1 << 21,
+    ChildrenTransform            = 1 << 22,
+    Filters                      = 1 << 23,
+    BackdropFilters              = 1 << 24,
+    BackdropFiltersRect          = 1 << 25,
+    ContentsClippingRect         = 1 << 26,
+    PlatformLayer                = 1 << 27,
+    RemoteFrame                  = 1 << 28,
 };
 
 struct WCLayerUpdateInfo {
@@ -116,8 +124,14 @@ struct WCLayerUpdateInfo {
             encoder << maskLayer;
         if (changes & WCLayerChange::ReplicaLayer)
             encoder << replicaLayer;
-        if (changes & WCLayerChange::Geometry)
-            encoder << position << anchorPoint << size << boundsOrigin;
+        if (changes & WCLayerChange::Position)
+            encoder << position;
+        if (changes & WCLayerChange::AnchorPoint)
+            encoder << anchorPoint;
+        if (changes & WCLayerChange::Size)
+            encoder << size;
+        if (changes & WCLayerChange::BoundsOrigin)
+            encoder << boundsOrigin;
         if (changes & WCLayerChange::Preserves3D)
             encoder << preserves3D;
         if (changes & WCLayerChange::ContentsVisible)
@@ -128,16 +142,22 @@ struct WCLayerUpdateInfo {
             encoder << masksToBounds;
         if (changes & WCLayerChange::SolidColor)
             encoder << solidColor;
-        if (changes & WCLayerChange::DebugVisuals)
-            encoder << showDebugBorder << debugBorderColor << debugBorderWidth;
+        if (changes & WCLayerChange::ShowDebugBorder)
+            encoder << showDebugBorder;
+        if (changes & WCLayerChange::DebugBorderColor)
+            encoder << debugBorderColor;
+        if (changes & WCLayerChange::DebugBorderWidth)
+            encoder << debugBorderWidth;
+        if (changes & WCLayerChange::ShowRepaintCounter)
+            encoder << showRepaintCounter;
         if (changes & WCLayerChange::RepaintCount)
-            encoder << showRepaintCounter << repaintCount;
+            encoder << repaintCount;
         if (changes & WCLayerChange::ContentsRect)
             encoder << contentsRect;
-        if (changes & WCLayerChange::ContentsClippingRect) {
+        if (changes & WCLayerChange::ContentsClippingRect)
             encoder << contentsClippingRect;
+        if (changes & WCLayerChange::ContentsRectClipsDescendants)
             encoder << contentsRectClipsDescendants;
-        }
         if (changes & WCLayerChange::Opacity)
             encoder << opacity;
         if (changes & WCLayerChange::Background)
@@ -149,7 +169,9 @@ struct WCLayerUpdateInfo {
         if (changes & WCLayerChange::Filters)
             encoder << filters;
         if (changes & WCLayerChange::BackdropFilters)
-            encoder << backdropFilters << backdropFiltersRect;
+            encoder << backdropFilters;
+        if (changes & WCLayerChange::BackdropFiltersRect)
+            encoder << backdropFiltersRect;
         if (changes & WCLayerChange::PlatformLayer)
             encoder << hasPlatformLayer << contentBufferIdentifiers;
         if (changes & WCLayerChange::RemoteFrame)
@@ -175,13 +197,19 @@ struct WCLayerUpdateInfo {
             if (!decoder.decode(result.replicaLayer))
                 return false;
         }
-        if (result.changes & WCLayerChange::Geometry) {
+        if (result.changes & WCLayerChange::Position) {
             if (!decoder.decode(result.position))
                 return false;
+        }
+        if (result.changes & WCLayerChange::AnchorPoint) {
             if (!decoder.decode(result.anchorPoint))
                 return false;
+        }
+        if (result.changes & WCLayerChange::Size) {
             if (!decoder.decode(result.size))
                 return false;
+        }
+        if (result.changes & WCLayerChange::BoundsOrigin) {
             if (!decoder.decode(result.boundsOrigin))
                 return false;
         }
@@ -205,17 +233,23 @@ struct WCLayerUpdateInfo {
             if (!decoder.decode(result.solidColor))
                 return false;
         }
-        if (result.changes & WCLayerChange::DebugVisuals) {
+        if (result.changes & WCLayerChange::ShowDebugBorder) {
             if (!decoder.decode(result.showDebugBorder))
                 return false;
+        }
+        if (result.changes & WCLayerChange::DebugBorderColor) {
             if (!decoder.decode(result.debugBorderColor))
                 return false;
+        }
+        if (result.changes & WCLayerChange::DebugBorderWidth) {
             if (!decoder.decode(result.debugBorderWidth))
                 return false;
         }
-        if (result.changes & WCLayerChange::RepaintCount) {
+        if (result.changes & WCLayerChange::ShowRepaintCounter) {
             if (!decoder.decode(result.showRepaintCounter))
                 return false;
+        }
+        if (result.changes & WCLayerChange::RepaintCount) {
             if (!decoder.decode(result.repaintCount))
                 return false;
         }
@@ -226,6 +260,8 @@ struct WCLayerUpdateInfo {
         if (result.changes & WCLayerChange::ContentsClippingRect) {
             if (!decoder.decode(result.contentsClippingRect))
                 return false;
+        }
+        if (result.changes & WCLayerChange::ContentsRectClipsDescendants) {
             if (!decoder.decode(result.contentsRectClipsDescendants))
                 return false;
         }
@@ -256,6 +292,8 @@ struct WCLayerUpdateInfo {
         if (result.changes & WCLayerChange::BackdropFilters) {
             if (!decoder.decode(result.backdropFilters))
                 return false;
+        }
+        if (result.changes & WCLayerChange::BackdropFiltersRect) {
             if (!decoder.decode(result.backdropFiltersRect))
                 return false;
         }
@@ -286,27 +324,34 @@ struct WCUpdateInfo {
 namespace WTF {
 
 template<> struct EnumTraits<WebKit::WCLayerChange> {
-    using values = EnumValues<
-        WebKit::WCLayerChange,
+    using values = EnumValues < WebKit::WCLayerChange,
         WebKit::WCLayerChange::Children,
         WebKit::WCLayerChange::MaskLayer,
         WebKit::WCLayerChange::ReplicaLayer,
-        WebKit::WCLayerChange::Geometry,
-        WebKit::WCLayerChange::Preserves3D,
+        WebKit::WCLayerChange::Position,
+        WebKit::WCLayerChange::AnchorPoint,
+        WebKit::WCLayerChange::Size,
+        WebKit::WCLayerChange::BoundsOrigin,
+        WebKit::WCLayerChange::MasksToBounds,
+        WebKit::WCLayerChange::ContentsRectClipsDescendants,
+        WebKit::WCLayerChange::ShowDebugBorder,
+        WebKit::WCLayerChange::ShowRepaintCounter,
         WebKit::WCLayerChange::ContentsVisible,
         WebKit::WCLayerChange::BackfaceVisibility,
-        WebKit::WCLayerChange::MasksToBounds,
+        WebKit::WCLayerChange::Preserves3D,
         WebKit::WCLayerChange::SolidColor,
-        WebKit::WCLayerChange::DebugVisuals,
+        WebKit::WCLayerChange::DebugBorderColor,
+        WebKit::WCLayerChange::Opacity,
+        WebKit::WCLayerChange::DebugBorderWidth,
         WebKit::WCLayerChange::RepaintCount,
         WebKit::WCLayerChange::ContentsRect,
-        WebKit::WCLayerChange::ContentsClippingRect,
-        WebKit::WCLayerChange::Opacity,
         WebKit::WCLayerChange::Background,
         WebKit::WCLayerChange::Transform,
         WebKit::WCLayerChange::ChildrenTransform,
         WebKit::WCLayerChange::Filters,
         WebKit::WCLayerChange::BackdropFilters,
+        WebKit::WCLayerChange::BackdropFiltersRect,
+        WebKit::WCLayerChange::ContentsClippingRect,
         WebKit::WCLayerChange::PlatformLayer,
         WebKit::WCLayerChange::RemoteFrame
     >;
