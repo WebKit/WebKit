@@ -38,19 +38,19 @@ using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredenti
 
 class DigitalCredential : public RefCounted<DigitalCredential> {
 public:
-    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& response);
+    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data);
 
     virtual ~DigitalCredential();
 
-    ArrayBuffer* response() const
+    ArrayBuffer* data() const
     {
-        return m_response.get();
+        return m_data.get();
     };
 
 private:
-    DigitalCredential(Ref<ArrayBuffer>&& response);
+    DigitalCredential(Ref<ArrayBuffer>&& data);
 
-    RefPtr<ArrayBuffer> m_response;
+    RefPtr<ArrayBuffer> m_data;
 };
 
 } // namespace WebCore

@@ -28,15 +28,15 @@
 
 namespace WebCore {
 
-Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& response)
+Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& data)
 {
-    return adoptRef(*new DigitalCredential(WTFMove(response)));
+    return adoptRef(*new DigitalCredential(WTFMove(data)));
 }
 
 DigitalCredential::~DigitalCredential() = default;
 
-DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& response)
-    : m_response(WTFMove(response))
+DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& data)
+    : m_data(WTFMove(data))
 {
 }
 
