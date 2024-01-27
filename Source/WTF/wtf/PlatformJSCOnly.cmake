@@ -17,6 +17,7 @@ if (WIN32)
         win/PathWalker.cpp
         win/SignalsWin.cpp
         win/ThreadingWin.cpp
+        win/Win32Handle.cpp
     )
     list(APPEND WTF_PUBLIC_HEADERS
         text/win/WCharStringExtras.h
