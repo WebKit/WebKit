@@ -260,12 +260,9 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
     m_instrumentingAgents.setEnabledAnimationAgent(this);
 
     const auto existsInCurrentPage = [&] (ScriptExecutionContext* scriptExecutionContext) {
-        if (!is<Document>(scriptExecutionContext))
-            return false;
-
         // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
-        auto* document = downcast<Document>(scriptExecutionContext);
-        return document->page() == &m_inspectedPage;
+        RefPtr document = dynamicDowncast<Document>(scriptExecutionContext);
+        return document && document->page() == &m_inspectedPage;
     };
 
     {
@@ -299,13 +296,11 @@ Protocol::ErrorStringOr<Ref<Protocol::DOM::Styleable>> InspectorAnimationAgent::
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
-    auto* effect = animation->effect();
-    if (!is<KeyframeEffect>(effect))
+    RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect());
+    if (!keyframeEffect)
         return makeUnexpected("Animation for given animationId does not have an effect"_s);
 
-    auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
-
-    auto target = keyframeEffect.targetStyleable();
+    auto target = keyframeEffect->targetStyleable();
     if (!target)
         return makeUnexpected("Animation for given animationId does not have a target"_s);
 
@@ -382,10 +377,11 @@ static bool isDelayed(const ComputedEffectTiming& computedTiming)
 void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& keyframeEffect, const ComputedEffectTiming& computedTiming)
 {
     auto* animation = keyframeEffect.animation();
-    if (!is<StyleOriginatedAnimation>(animation))
+    RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation);
+    if (!styleOriginatedAnimation)
         return;
 
-    auto ensureResult = m_trackedStyleOriginatedAnimationData.ensure(downcast<StyleOriginatedAnimation>(animation), [&] () -> UniqueRef<TrackedStyleOriginatedAnimationData> {
+    auto ensureResult = m_trackedStyleOriginatedAnimationData.ensure(styleOriginatedAnimation.get(), [&] () -> UniqueRef<TrackedStyleOriginatedAnimationData> {
         return makeUniqueRef<TrackedStyleOriginatedAnimationData>(TrackedStyleOriginatedAnimationData { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming });
     });
     auto& trackingData = ensureResult.iterator->value.get();
@@ -526,10 +522,8 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
 
     Vector<String> animationIdsToRemove;
     for (auto& [animationId, animation] : m_animationIdMap) {
-        if (auto* scriptExecutionContext = animation->scriptExecutionContext()) {
-            if (is<Document>(scriptExecutionContext) && downcast<Document>(*scriptExecutionContext).frame() == &frame)
-                animationIdsToRemove.append(animationId);
-        }
+        if (RefPtr document = dynamicDowncast<Document>(animation->scriptExecutionContext()); document && document->frame() == &frame)
+            animationIdsToRemove.append(animationId);
     }
     for (const auto& animationId : animationIdsToRemove)
         unbindAnimation(animationId);

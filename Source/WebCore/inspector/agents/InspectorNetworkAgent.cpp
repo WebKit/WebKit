@@ -563,8 +563,8 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     bool isNotModified = response.httpStatusCode() == 304;
 
     CachedResource* cachedResource = nullptr;
-    if (is<SubresourceLoader>(resourceLoader) && !isNotModified)
-        cachedResource = downcast<SubresourceLoader>(resourceLoader)->cachedResource();
+    if (auto* subresourceLoader = dynamicDowncast<SubresourceLoader>(resourceLoader); subresourceLoader && !isNotModified)
+        cachedResource = subresourceLoader->cachedResource();
     if (!cachedResource && loader)
         cachedResource = InspectorPageAgent::cachedResource(loader->frame(), response.url());
 
@@ -871,10 +871,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
         Locker locker { WebSocket::allActiveWebSocketsLock() };
 
         for (auto* webSocket : activeWebSockets()) {
-            if (!is<Document>(webSocket->scriptExecutionContext()))
+            RefPtr document = dynamicDowncast<Document>(webSocket->scriptExecutionContext());
+            if (!document)
                 continue;
 
-            auto& document = downcast<Document>(*webSocket->scriptExecutionContext());
             auto channel = webSocket->channel();
 
             auto identifier = channel->progressIdentifier();
@@ -1078,10 +1078,10 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAg
         return makeUnexpected("Missing web socket for given requestId"_s);
 
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
-    if (!is<Document>(webSocket->scriptExecutionContext()))
+    RefPtr document = dynamicDowncast<Document>(webSocket->scriptExecutionContext());
+    if (!document)
         return makeUnexpected("Not supported"_s);
 
-    auto* document = downcast<Document>(webSocket->scriptExecutionContext());
     auto* frame = document->frame();
     if (!frame)
         return makeUnexpected("Missing frame of web socket for given requestId"_s);

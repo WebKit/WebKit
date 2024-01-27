@@ -518,14 +518,11 @@ const char* CookieStore::activeDOMObjectName() const
 void CookieStore::stop()
 {
     // FIXME: This should work for service worker contexts as well.
-    if (!is<Document>(scriptExecutionContext()))
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document)
         return;
 
     if (!m_hasChangeEventListener)
-        return;
-
-    RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (!document)
         return;
 
     WeakPtr page = document->page();
