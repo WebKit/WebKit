@@ -2054,6 +2054,7 @@ page/scrolling/ScrollingTreeStickyNode.cpp
 page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 page/scrolling/ThreadedScrollingTreeScrollingNodeDelegate.cpp
+page/text-extraction/TextExtraction.cpp
 platform/AudioDecoder.cpp
 platform/AudioEncoder.cpp
 platform/CaretAnimator.cpp

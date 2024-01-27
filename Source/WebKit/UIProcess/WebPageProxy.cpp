@@ -221,6 +221,7 @@
 #include <WebCore/SleepDisabler.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TextExtractionTypes.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
@@ -13538,6 +13539,13 @@ void WebPageProxy::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t bas
 
     auto [result] = sendResult.takeReply();
     completionHandler(WTFMove(result));
+}
+
+void WebPageProxy::requestTextExtraction(CompletionHandler<void(WebCore::TextExtraction::Item&&)>&& completion)
+{
+    if (!hasRunningProcess())
+        return completion({ });
+    sendWithAsyncReply(Messages::WebPage::RequestTextExtraction(), WTFMove(completion));
 }
 
 } // namespace WebKit

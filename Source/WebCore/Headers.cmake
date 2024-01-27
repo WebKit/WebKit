@@ -1628,6 +1628,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ScrollingTreeStickyNode.h
     page/scrolling/ThreadedScrollingTree.h
 
+    page/text-extraction/TextExtraction.h
+    page/text-extraction/TextExtractionTypes.h
+
     platform/AbortableTaskQueue.h
     platform/AudioSampleFormat.h
     platform/CaretAnimator.h

@@ -275,6 +275,10 @@ struct ViewportArguments;
 struct WheelEventHandlingResult;
 struct WindowFeatures;
 
+namespace TextExtraction {
+struct Item;
+}
+
 template<typename> class ProcessQualified;
 template<typename> class RectEdges;
 
@@ -2318,6 +2322,8 @@ public:
     const std::optional<MediaCapability>& mediaCapability() const;
     void updateMediaCapability();
 #endif
+
+    void requestTextExtraction(CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

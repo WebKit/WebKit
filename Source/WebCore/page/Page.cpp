@@ -158,6 +158,7 @@
 #include "StyleScope.h"
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
+#include "TextExtraction.h"
 #include "TextIterator.h"
 #include "TextRecognitionResult.h"
 #include "TextResourceDecoder.h"

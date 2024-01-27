@@ -286,6 +286,7 @@
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/SubstituteData.h>
+#include <WebCore/TextExtraction.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/TextRecognitionOptions.h>
 #include <WebCore/TranslationContextMenuInfo.h>
@@ -9078,6 +9079,11 @@ void WebPage::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseInde
     ts.setIndent(baseIndent);
     WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
     completionHandler(ts.release());
+}
+
+void WebPage::requestTextExtraction(CompletionHandler<void(TextExtraction::Item&&)>&& completion)
+{
+    completion(TextExtraction::extractItem(Ref { *corePage() }));
 }
 
 } // namespace WebKit

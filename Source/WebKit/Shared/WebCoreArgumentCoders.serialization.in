@@ -5938,6 +5938,45 @@ header: <WebCore/RenderTreeAsText.h>
     ShowLayoutState
 };
 
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::TextItemData {
+    String content;
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::ScrollableItemData {
+    WebCore::FloatSize contentSize;
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::EditableItemData {
+    bool isFocused;
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::ImageItemData {
+    String name;
+    String altText;
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::InteractiveItemData {
+    bool isEnabled;
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] enum class WebCore::TextExtraction::ContainerType : uint8_t {
+    Root,
+    ViewportConstrained
+};
+
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::Item {
+    std::variant<WebCore::TextExtraction::ContainerType, WebCore::TextExtraction::TextItemData, WebCore::TextExtraction::ScrollableItemData, WebCore::TextExtraction::EditableItemData, WebCore::TextExtraction::ImageItemData, WebCore::TextExtraction::InteractiveItemData> data;
+    WebCore::FloatRect rectInRootView;
+    Vector<WebCore::TextExtraction::Item> children;
+};
+
 header: <WebCore/WebGPUTextureFormat.h>
 enum class WebCore::WebGPU::TextureFormat : uint8_t {
     R8unorm,
