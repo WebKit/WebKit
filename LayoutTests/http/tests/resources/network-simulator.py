@@ -6,6 +6,7 @@
 import os
 import sys
 import tempfile
+import time
 from datetime import datetime
 from portabilityLayer import get_state, set_state
 from urllib.parse import parse_qs
@@ -13,6 +14,13 @@ from urllib.parse import parse_qs
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 test = query.get('test', [None])[0]
 command = query.get('command', [None])[0]
+initial_delay_arg = query.get('initialdelay', [None])[0]
+chunk_size_arg = query.get('chunksize', [None])[0]
+chunk_delay_arg = query.get('chunkdelay', [None])[0]
+
+initial_delay = None
+chunk_size = None
+chunk_delay = None
 
 if test is None:
     sys.stdout.write(
@@ -49,7 +57,8 @@ def content_type(path):
         'xsl': 'application/xslt+xml',
         'gif': 'image/gif',
         'jpg': 'image/jpeg',
-        'png': 'image/png'
+        'png': 'image/png',
+        'pdf': 'application/pdf'
     }.get(path.split('.')[-1], 'text/plain')
 
 
@@ -63,7 +72,7 @@ def generate_response(path):
             'Intentionally incorrect response.'.format(os.environ.get('REQUEST_URI', ''))
         )
     else:
-        # A little securuty checking can't hurt.
+        # A little security checking can't hurt.
         if '..' in path:
             sys.stdout.write('Content-Type: text/html\r\n\r\n')
             sys.exit(0)
@@ -74,20 +83,43 @@ def generate_response(path):
         if 'allow-caching' not in query.keys():
             generate_no_cache_http_header()
 
+        if initial_delay:
+            time.sleep(initial_delay / 1000)
+
         if os.path.isfile(path):
             sys.stdout.write(
                 'Last-Modified: {} GMT\r\n'
                 'Content-Type: {}\r\n\r\n'.format(datetime.utcfromtimestamp(os.stat(path).st_mtime).strftime('%a, %d %b %Y %H:%M:%S'), content_type(path))
             )
 
-            with open(path, 'rb') as open_file:
-                sys.stdout.flush()
-                sys.stdout.buffer.write(open_file.read())
+            file_to_stdout(path)
         else:
             sys.stdout.write('status: 404\r\n\r\n')
 
 
-def handle_increate_resource_count_command(path):
+def file_to_stdout(path):
+    if chunk_size:
+        chunked_file_to_stdout(path, chunk_size, chunk_delay)
+        return
+
+    with open(path, 'rb') as open_file:
+        sys.stdout.flush()
+        sys.stdout.buffer.write(open_file.read())
+
+
+def chunked_file_to_stdout(path, size, delay):
+    with open(path, 'rb') as open_file:
+        sys.stdout.flush()
+        while True:
+            chunk = open_file.read(size)
+            if not chunk:
+                break
+            sys.stdout.buffer.write(chunk)
+            if delay:
+                time.sleep(delay / 1000)
+
+
+def handle_increase_resource_count_command(path):
     resource_count_file = temp_path_base() + '-count'
     resource_count = get_state(resource_count_file)
     pieces = resource_count.split(' ')
@@ -146,6 +178,15 @@ def handle_log_resource_request(path):
     sys.stdout.write('Content-Type: text/html\r\n\r\n')
 
 
+if initial_delay_arg is not None:
+    initial_delay = int(initial_delay_arg)
+
+if chunk_size_arg is not None:
+    chunk_size = int(chunk_size_arg)
+
+if chunk_delay_arg is not None:
+    chunk_delay = int(chunk_delay_arg)
+
 if command is not None:
     if command == 'connect':
         set_state(state_file, 'Online')
@@ -154,14 +195,14 @@ if command is not None:
         set_state(state_file, 'Offline')
         sys.stdout.write('Content-Type: text/html\r\n\r\n')
     elif command == 'increase-resource-count':
-        handle_increate_resource_count_command(query.get('path', [''])[0])
+        handle_increase_resource_count_command(query.get('path', [''])[0])
     elif command == 'reset-resource-count':
         handle_reset_resource_count_command()
     elif command == 'get-resource-count':
         handle_get_resource_count_command(query.get('path', [''])[0])
     elif command == 'start-resource-request-log':
         handle_start_resource_requests_log()
-    elif command == 'lear-resource-request-log':
+    elif command == 'clear-resource-request-log':
         handle_start_resource_requests_log()
     elif command == 'get-resource-request-log':
         handle_get_resource_requests_log()
