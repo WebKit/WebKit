@@ -358,6 +358,7 @@ void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& stre
         return;
 
     auto resourceRequest = documentLoader->request();
+    resourceRequest.setRequester(ResourceRequestRequester::Unspecified);
     resourceRequest.setURL(m_view->mainResourceURL());
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
