@@ -173,7 +173,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::LayoutSize baseLayoutViewportSize;
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
-    WebCore::ResourceRequest decidePolicyForResponseRequest;
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
     WebCore::IntSize fixedLayoutSize;
