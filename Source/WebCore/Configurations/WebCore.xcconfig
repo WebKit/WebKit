@@ -165,12 +165,13 @@ WK_APPLEJPEGXL_LDFLAGS = $(WK_APPLEJPEGXL_LDFLAGS_$(WK_USE_APPLEJPEGXL));
 WK_APPLEJPEGXL_LDFLAGS_YES = -weak_framework AppleJPEGXL;
 
 // Tomorrow me will be smart enough to figure out how to do this properly.
-JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework ServiceExtensionsCore;
+JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.0*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.1*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.2*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
+JSC_SEC_LD_FLAGS[sdk=iphoneos18*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;
