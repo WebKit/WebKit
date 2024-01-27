@@ -626,7 +626,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 #if ENABLE(FULLSCREEN_API)
     // Elements which are not descendants of the current fullscreen element cannot be main content.
     if (CheckedPtr fullsreenManager = m_element.document().fullscreenManagerIfExists()) {
-        auto* fullscreenElement = fullsreenManager->currentFullscreenElement();
+        auto* fullscreenElement = fullsreenManager->fullscreenElement();
         if (fullscreenElement && !m_element.isDescendantOf(*fullscreenElement)) {
             INFO_LOG(LOGIDENTIFIER, "returning FALSE: outside of full screen");
             return false;
@@ -1334,7 +1334,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     bool isOutsideOfFullscreen = false;
 #if ENABLE(FULLSCREEN_API)
     if (CheckedPtr fullscreenManager = document.fullscreenManagerIfExists()) {
-        if (auto* fullscreenElement = document.fullscreenManager().currentFullscreenElement())
+        if (auto* fullscreenElement = document.fullscreenManager().fullscreenElement())
             isOutsideOfFullscreen = m_element.isDescendantOf(*fullscreenElement);
     }
 #endif

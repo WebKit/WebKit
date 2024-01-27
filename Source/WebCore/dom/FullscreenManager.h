@@ -61,9 +61,8 @@ public:
     WEBCORE_EXPORT void exitFullscreen(RefPtr<DeferredPromise>&&);
 
     // Mozilla versions.
-    bool isFullscreen() const { return m_fullscreenElement.get(); }
-    bool isFullscreenKeyboardInputAllowed() const { return m_fullscreenElement.get() && m_areKeysEnabledInFullscreen; }
-    Element* currentFullscreenElement() const { return m_fullscreenElement.get(); }
+    bool isFullscreen() const { return fullscreenElement(); }
+    bool isFullscreenKeyboardInputAllowed() const { return fullscreenElement() && m_areKeysEnabledInFullscreen; }
     WEBCORE_EXPORT void cancelFullscreen();
 
     enum FullscreenCheckType {
