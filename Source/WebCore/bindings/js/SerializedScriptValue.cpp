@@ -2974,7 +2974,37 @@ public:
             );
         if (!deserializer.isValid())
             return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
-        return deserializer.deserialize();
+        
+        auto result = deserializer.deserialize();
+        // Deserialize again if data may have wrong version number, see rdar://118775332.
+        if (UNLIKELY(result.second != SerializationReturnCode::SuccessfullyCompleted && deserializer.version() == 14)) {
+        CloneDeserializer newDeserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, deserializer.takeDetachedImageBitmaps()
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+            , deserializer.takeDetachedOffscreenCanvases()
+            , inMemoryOffscreenCanvases
+#endif
+            , inMemoryMessagePorts
+#if ENABLE(WEB_RTC)
+            , deserializer.takeDetachedRTCDataChannels()
+#endif
+#if ENABLE(WEBASSEMBLY)
+            , wasmModules
+            , wasmMemoryHandles
+#endif
+#if ENABLE(WEB_CODECS)
+            , deserializer.takeSerializedVideoChunks()
+            , deserializer.takeSerializedVideoFrames()
+            , deserializer.takeSerializedAudioChunks()
+            , deserializer.takeSerializedAudioData()
+#endif
+#if ENABLE(MEDIA_STREAM)
+            , deserializer.takeSerializedMediaStreamTracks()
+#endif
+            );
+            newDeserializer.upgradeVersion();
+            result = newDeserializer.deserialize();
+        }
+        return result;
     }
 
 private:
@@ -3155,7 +3185,30 @@ private:
 
     DeserializationResult deserialize();
 
+    Vector<std::optional<DetachedImageBitmap>> takeDetachedImageBitmaps() { return std::exchange(m_detachedImageBitmaps, { }); }
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    Vector<std::unique_ptr<DetachedOffscreenCanvas>> takeDetachedOffscreenCanvases() { return std::exchange(m_detachedOffscreenCanvases, { }); }
+#endif
+#if ENABLE(WEB_RTC)
+    Vector<std::unique_ptr<DetachedRTCDataChannel>> takeDetachedRTCDataChannels() { return std::exchange(m_detachedRTCDataChannels, { }); }
+#endif
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> takeSerializedVideoChunks() { return std::exchange(m_serializedVideoChunks, { }); }
+    Vector<WebCodecsVideoFrameData> takeSerializedVideoFrames() { return std::exchange(m_serializedVideoFrames, { }); }
+    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> takeSerializedAudioChunks() { return std::exchange(m_serializedAudioChunks, { }); }
+    Vector<WebCodecsAudioInternalData> takeSerializedAudioData() { return std::exchange(m_serializedAudioData, { }); }
+#endif
+#if ENABLE(MEDIA_STREAM)
+    Vector<std::unique_ptr<MediaStreamTrackDataHolder>> takeSerializedMediaStreamTracks() { return std::exchange(m_serializedMediaStreamTracks, { }); }
+#endif
+
     bool isValid() const { return m_version <= CurrentVersion; }
+    unsigned version() const { return m_version; }
+    void upgradeVersion()
+    {
+        RELEASE_ASSERT(m_version == 14);
+        ++m_version;
+    }
 
     template<SerializationTag tag>
     inline void addToObjectPool(JSValue object)
