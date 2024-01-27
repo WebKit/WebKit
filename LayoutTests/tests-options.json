@@ -4373,6 +4373,9 @@
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_plain-text-unsafe.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_quirks01.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_ruby.html": [
         "slow"
     ],
