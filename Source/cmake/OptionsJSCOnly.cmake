@@ -52,9 +52,7 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE TRUE)
 endif ()
 
-# FIXME: JSCOnly on WIN32 seems to only work with fully static build
-# https://bugs.webkit.org/show_bug.cgi?id=172862
-if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
+if (NOT ENABLE_STATIC_JSC)
     set(JavaScriptCore_LIBRARY_TYPE SHARED)
     set(bmalloc_LIBRARY_TYPE OBJECT)
     set(WTF_LIBRARY_TYPE OBJECT)
