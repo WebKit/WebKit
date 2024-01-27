@@ -3794,14 +3794,14 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders.xcfilelist",
+				"$(SDK_DIR_WebKitSDKAdditions_$(PLATFORM_NAME):default=Scripts)/SymlinkedHeaders.xcfilelist",
 			);
 			inputPaths = (
 				"$(SRCROOT)/Scripts/symlink-public-sdk-headers-for-embedded-platforms",
 			);
 			name = "Symlink public SDK headers";
 			outputFileListPaths = (
-				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders-output.xcfilelist",
+				"$(SDK_DIR_WebKitSDKAdditions_$(PLATFORM_NAME):default=Scripts)/SymlinkedHeaders-output.xcfilelist",
 			);
 			outputPaths = (
 				"$(WK_DERIVED_SDK_HEADERS_DIR)",
