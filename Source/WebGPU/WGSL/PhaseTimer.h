@@ -100,7 +100,7 @@ public:
     }
 
 private:
-    const char* m_phaseName;
+    const char* m_phaseName { nullptr };
     PhaseTimes& m_phaseTimes;
     MonotonicTime m_start;
 };
