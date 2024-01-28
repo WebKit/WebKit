@@ -285,7 +285,7 @@ void PDFPluginBase::streamDidFinishLoading()
             return false;
 
         m_incrementalLoader->incrementalPDFStreamDidFinishLoading();
-        return true;
+        return m_incrementalPDFLoadingEnabled.load();
 #else
         return false;
 #endif
