@@ -613,7 +613,7 @@ void TextManipulationController::scheduleObservationUpdate()
         }
 
         Position start;
-        if (auto* element = downcast<Element>(commonAncestor.get())) {
+        if (RefPtr element = dynamicDowncast<Element>(commonAncestor.get())) {
             // Ensure to include the element in the range.
             if (canPerformTextManipulationByReplacingEntireTextContent(*element))
                 start = positionBeforeNode(commonAncestor.get());
