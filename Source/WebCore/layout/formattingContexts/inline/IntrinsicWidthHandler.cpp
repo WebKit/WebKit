@@ -179,7 +179,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
                 m_maximumIntrinsicWidthResultForSingleLine = { };
                 if (mayCacheLayoutResult == MayCacheLayoutResult::No)
                     return;
-                m_maximumIntrinsicWidthResultForSingleLine = LineBreakingResult { ceiledLayoutUnit(maximumContentWidth), WTFMove(lineLayoutResult) };
+                m_maximumIntrinsicWidthResultForSingleLine = WTFMove(lineLayoutResult);
             };
             cacheLineBreakingResultForSubsequentLayoutIfApplicable();
             break;
@@ -243,7 +243,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMaximumWidth(MayCacheLayoutRes
     line.appendTextFast(inlineTextItem, style, contentLogicalWidth);
     auto lineContent = line.close();
     ASSERT(contentLogicalWidth == lineContent.contentLogicalWidth);
-    m_maximumIntrinsicWidthResultForSingleLine = LineBreakingResult { ceiledLayoutUnit(contentLogicalWidth), { { 0, 1 }, WTFMove(lineContent.runs), { }, { { }, lineContent.contentLogicalWidth, lineContent.contentLogicalRight, { } } } };
+    m_maximumIntrinsicWidthResultForSingleLine = LineLayoutResult { { 0, 1 }, WTFMove(lineContent.runs), { }, { { }, lineContent.contentLogicalWidth, lineContent.contentLogicalRight, { } } };
     return contentLogicalWidth;
 }
 

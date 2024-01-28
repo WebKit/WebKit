@@ -42,11 +42,7 @@ public:
     InlineLayoutUnit minimumContentSize();
     InlineLayoutUnit maximumContentSize();
 
-    struct LineBreakingResult {
-        InlineLayoutUnit constraint;
-        LineLayoutResult result;
-    };
-    std::optional<LineBreakingResult>& maximumIntrinsicWidthResult() { return m_maximumIntrinsicWidthResultForSingleLine; }
+    std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() { return m_maximumIntrinsicWidthResultForSingleLine; }
 
 private:
     enum class MayCacheLayoutResult : bool { No, Yes };
@@ -65,7 +61,7 @@ private:
     const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
 
     std::optional<InlineLayoutUnit> m_maximumContentWidthBetweenLineBreaks { };
-    std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
+    std::optional<LineLayoutResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
 }
