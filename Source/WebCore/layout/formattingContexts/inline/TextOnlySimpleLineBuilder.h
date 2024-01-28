@@ -26,12 +26,12 @@
 #pragma once
 
 #include "AbstractLineBuilder.h"
+#include "InlineContentCache.h"
 
 namespace WebCore {
 namespace Layout {
 
 class InlineContentBreaker;
-class InlineContentCache;
 struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 
@@ -40,7 +40,7 @@ public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
-    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache&, const PlacedFloats* = nullptr);
+    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache::InlineItems&, const PlacedFloats* = nullptr);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);

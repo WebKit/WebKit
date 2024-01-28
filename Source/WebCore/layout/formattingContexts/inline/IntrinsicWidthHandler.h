@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InlineContentCache.h"
 #include "LineLayoutResult.h"
 
 namespace WebCore {
@@ -32,12 +33,10 @@ namespace Layout {
 
 class AbstractLineBuilder;
 class InlineFormattingContext;
-class InlineContentCache;
-struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(InlineFormattingContext&, const InlineItemList&, bool mayUseSimplifiedTextOnlyInlineLayout);
+    IntrinsicWidthHandler(InlineFormattingContext&, const InlineContentCache::InlineItems&);
 
     InlineLayoutUnit minimumContentSize();
     InlineLayoutUnit maximumContentSize();
@@ -54,10 +53,11 @@ private:
     const InlineFormattingContext& formattingContext() const;
     const InlineContentCache& formattingState() const;
     const ElementBox& root() const;
+    const InlineItemList& inlineItemList() const { return m_inlineItems.content(); }
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;
-    const InlineItemList& m_inlineItemList;
+    const InlineContentCache::InlineItems& m_inlineItems;
     const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
 
     std::optional<InlineLayoutUnit> m_maximumContentWidthBetweenLineBreaks { };

@@ -142,7 +142,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
             layoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
     }
 
-    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache(), &placedFloats)) {
+    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache().inlineItems(), &placedFloats)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItemList };
         return lineLayout(simplifiedLineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
     }
@@ -160,10 +160,10 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
         return { ceiledLayoutUnit(*minimumContentSize), ceiledLayoutUnit(*maximumContentSize) };
 
     rebuildInlineItemListIfNeeded(lineDamage);
-    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    auto& inlineItems = inlineContentCache.inlineItems();
 
-    if (!isEmptyInlineContent(inlineItemList)) {
-        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) };
+    if (!isEmptyInlineContent(inlineItems.content())) {
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems };
 
         if (!minimumContentSize)
             minimumContentSize = intrinsicWidthHandler.minimumContentSize();
@@ -188,10 +188,10 @@ LayoutUnit InlineFormattingContext::minimumContentSize(const InlineDamage* lineD
         return ceiledLayoutUnit(*inlineContentCache.minimumContentSize());
 
     rebuildInlineItemListIfNeeded(lineDamage);
-    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    auto& inlineItems = inlineContentCache.inlineItems();
     auto minimumContentSize = InlineLayoutUnit { };
-    if (!isEmptyInlineContent(inlineItemList))
-        minimumContentSize = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) }.minimumContentSize();
+    if (!isEmptyInlineContent(inlineItems.content()))
+        minimumContentSize = IntrinsicWidthHandler { *this, inlineItems }.minimumContentSize();
     inlineContentCache.setMinimumContentSize(minimumContentSize);
     return ceiledLayoutUnit(minimumContentSize);
 }
@@ -203,10 +203,10 @@ LayoutUnit InlineFormattingContext::maximumContentSize(const InlineDamage* lineD
         return ceiledLayoutUnit(*inlineContentCache.maximumContentSize());
 
     rebuildInlineItemListIfNeeded(lineDamage);
-    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    auto& inlineItems = inlineContentCache.inlineItems();
     auto maximumContentSize = InlineLayoutUnit { };
-    if (!isEmptyInlineContent(inlineItemList)) {
-        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) };
+    if (!isEmptyInlineContent(inlineItems.content())) {
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItems };
 
         maximumContentSize = intrinsicWidthHandler.maximumContentSize();
         if (intrinsicWidthHandler.maximumIntrinsicWidthLineContent())

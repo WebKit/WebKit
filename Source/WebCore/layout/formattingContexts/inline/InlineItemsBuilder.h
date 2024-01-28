@@ -63,7 +63,8 @@ private:
     const ElementBox& m_root;
 
     bool m_contentRequiresVisualReordering { false };
-    bool m_isNonBidiTextAndForcedLineBreakOnlyContent { true };
+    bool m_isTextAndForcedLineBreakOnlyContent { true };
+    size_t m_inlineBoxCount { 0 };
 };
 
 }
