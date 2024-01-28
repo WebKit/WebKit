@@ -48,7 +48,6 @@ public:
 private:
     void processNonBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
-    void processFloatBoxes(const LineLayoutResult&);
     void collectInkOverflowForInlineBoxes(InlineDisplay::Boxes&);
     void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&);
     void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
@@ -99,6 +98,7 @@ private:
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
     bool m_hasSeenRubyBase { false };
+    bool m_hasSeenTextDecoration { false };
 };
 
 }

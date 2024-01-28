@@ -103,7 +103,6 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& 
         processBidiContent(lineLayoutResult, boxes);
     else
         processNonBidiContent(lineLayoutResult, boxes);
-    processFloatBoxes(lineLayoutResult);
     processRubyContent(boxes, lineLayoutResult);
 
     collectInkOverflowForTextDecorations(boxes);
@@ -166,6 +165,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto& content = inlineTextBox.content();
     auto& text = lineRun.textContent();
     auto isContentful = true;
+
+    m_hasSeenTextDecoration = m_hasSeenTextDecoration || (!lineIndex() ? inlineTextBox.parent().firstLineStyle().textDecorationsInEffect() : inlineTextBox.parent().style().textDecorationsInEffect());
 
     auto inkOverflow = [&] {
         auto inkOverflow = textRunRect;
@@ -861,14 +862,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
     handleTrailingOpenInlineBoxes();
 }
 
-void InlineDisplayContentBuilder::processFloatBoxes(const LineLayoutResult&)
-{
-    // Float boxes are not part of the inline content so we don't construct inline display boxes for them.
-    // However box geometry still needs flipping from logical to visual.
-    // FIXME: Figure out how to preserve logical coordinates for subsequent layout frames and have visual output the same time. For the time being
-    // this is done at LineLayout::constructContent.  
-}
-
 void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(InlineDisplay::Boxes& boxes)
 {
     if (!m_contentHasInkOverflow)
@@ -989,6 +982,9 @@ static float logicalBottomForTextDecorationContent(const InlineDisplay::Boxes& b
 
 void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDisplay::Boxes& boxes)
 {
+    if (!m_hasSeenTextDecoration)
+        return;
+
     auto logicalBottomForTextDecoration = std::optional<float> { };
     auto writingMode = root().style().writingMode();
     auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
