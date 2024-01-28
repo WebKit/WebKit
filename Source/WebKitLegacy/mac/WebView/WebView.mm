@@ -3302,7 +3302,7 @@ IGNORE_WARNINGS_END
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = core([frame DOMDocument]); document) {
         if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
-            if (RefPtr element = fullscreenManager->currentFullscreenElement()) {
+            if (RefPtr element = fullscreenManager->fullscreenElement()) {
                 SEL selector = @selector(webView:closeFullScreenWithListener:);
                 if ([_private->UIDelegate respondsToSelector:selector]) {
                     auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element.get()]);

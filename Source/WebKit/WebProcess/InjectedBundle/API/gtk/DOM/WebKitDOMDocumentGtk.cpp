@@ -1850,7 +1850,7 @@ WebKitDOMElement* webkit_dom_document_get_webkit_current_fullscreen_element(WebK
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
 #if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->fullscreenManager().currentFullscreenElement());
+    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->fullscreenManager().fullscreenElement());
     return WebKit::kit(gobjectResult.get());
 #else
     return NULL;

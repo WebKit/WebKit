@@ -419,15 +419,15 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
 {
     CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
-    if (!fullscreenManager || &element != fullscreenManager->currentFullscreenElement())
+    if (!fullscreenManager || &element != fullscreenManager->fullscreenElement())
         return false;
     return fullscreenManager->isAnimatingFullscreen();
 }
 
 ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
 {
-    auto* currentFullscreenElement = element.document().fullscreenManager().currentFullscreenElement();
-    return currentFullscreenElement && currentFullscreenElement->isDescendantOrShadowDescendantOf(element);
+    auto* fullscreenElement = element.document().fullscreenManager().fullscreenElement();
+    return fullscreenElement && fullscreenElement->isDescendantOrShadowDescendantOf(element);
 }
 
 ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)

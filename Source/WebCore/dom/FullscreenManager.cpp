@@ -778,8 +778,6 @@ void FullscreenManager::addDocumentToFullscreenChangeEventQueue(Document& docume
 {
     Node* target = document.fullscreenManager().fullscreenElement();
     if (!target)
-        target = document.fullscreenManager().currentFullscreenElement();
-    if (!target)
         target = &document;
     m_fullscreenChangeEventTargetQueue.append(GCReachableRef(*target));
 }
