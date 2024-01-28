@@ -57,10 +57,12 @@ public:
 private:
     ImageCapture(Document&, Ref<MediaStreamTrack>);
 
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "ImageCapture"; }
     WTFLogChannel& logChannel() const;
+#endif
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const final;

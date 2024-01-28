@@ -54,8 +54,10 @@ ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<Medi
 ImageCapture::ImageCapture(Document& document, Ref<MediaStreamTrack> track)
     : ActiveDOMObject(document)
     , m_track(track)
+#if !RELEASE_LOG_DISABLED
     , m_logger(track->logger())
     , m_logIdentifier(track->logIdentifier())
+#endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 }
@@ -124,10 +126,12 @@ const char* ImageCapture::activeDOMObjectName() const
     return "ImageCapture";
 }
 
+#if !RELEASE_LOG_DISABLED
 WTFLogChannel& ImageCapture::logChannel() const
 {
     return LogWebRTC;
 }
+#endif
 
 } // namespace WebCore
 
