@@ -114,10 +114,11 @@ static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
 static bool elementCannotHaveEndTag(const Node& node)
 {
     using namespace ElementNames;
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    switch (downcast<Element>(node).elementName()) {
+    switch (element->elementName()) {
         // https://html.spec.whatwg.org/#void-elements
     case HTML::area:
     case HTML::base:
@@ -214,14 +215,14 @@ String MarkupAccumulator::serializeNodes(Node& targetNode, SerializedNodes root)
 
 bool MarkupAccumulator::appendContentsForNode(StringBuilder& result, const Node& targetNode)
 {
-    if (!targetNode.hasTagName(styleTag))
+    RefPtr styleElement = dynamicDowncast<HTMLStyleElement>(targetNode);
+    if (!styleElement)
         return false;
 
     if (m_replacementURLStrings.isEmpty() && m_replacementURLStringsForCSSStyleSheet.isEmpty())
         return false;
 
-    auto& styleElement = downcast<HTMLStyleElement>(targetNode);
-    RefPtr cssStyleSheet = styleElement.sheet();
+    RefPtr cssStyleSheet = styleElement->sheet();
     if (!cssStyleSheet)
         return false;
 
@@ -246,7 +247,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     RefPtr<const Node> current = &targetNode;
     do {
         bool shouldSkipNode = false;
-        if (is<Element>(current) && shouldExcludeElement(downcast<Element>(*current)))
+        if (RefPtr element = dynamicDowncast<const Element>(current); element && shouldExcludeElement(*element))
             shouldSkipNode = true;
 
         bool shouldAppendNode = !shouldSkipNode && !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
@@ -266,7 +267,8 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
             }
 
             bool shouldSkipChidren = appendContentsForNode(m_markup, *current);
-            auto firstChild = current->hasTagName(templateTag) ? downcast<HTMLTemplateElement>(*current).content().firstChild() : current->firstChild();
+            RefPtr currentTemplate = dynamicDowncast<HTMLTemplateElement>(*current);
+            auto firstChild = currentTemplate ? currentTemplate->content().firstChild() : current->firstChild();
             if (!shouldSkipChidren && firstChild) {
                 current = firstChild;
                 namespaceStack.append(namespaceStack.last());
@@ -310,8 +312,8 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
-    if (!m_replacementURLStringsForCSSStyleSheet.isEmpty() && is<HTMLLinkElement>(element)) {
-        if (RefPtr cssStyleSheet = downcast<HTMLLinkElement>(element).sheet()) {
+    if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element); link && !m_replacementURLStringsForCSSStyleSheet.isEmpty()) {
+        if (RefPtr cssStyleSheet = link->sheet()) {
             auto replacementURLString = m_replacementURLStringsForCSSStyleSheet.get(cssStyleSheet);
             if (!replacementURLString.isEmpty())
                 return replacementURLString;
@@ -336,17 +338,20 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const Strin
 
 RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
 {
-    if (!m_shouldIncludeShadowDOM || !node.isShadowRoot())
+    if (!m_shouldIncludeShadowDOM)
         return nullptr;
 
-    auto& shadowRoot = downcast<ShadowRoot>(node);
-    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+    RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(node);
+    if (!shadowRoot)
+        return nullptr;
+
+    if (shadowRoot->mode() == ShadowRootMode::UserAgent)
         return nullptr;
 
     auto element = HTMLTemplateElement::create(HTMLNames::templateTag, node.document());
-    if (shadowRoot.mode() == ShadowRootMode::Open)
+    if (shadowRoot->mode() == ShadowRootMode::Open)
         element->setShadowRootMode(AtomString { "open"_s });
-    else if (shadowRoot.mode() == ShadowRootMode::Closed)
+    else if (shadowRoot->mode() == ShadowRootMode::Closed)
         element->setShadowRootMode(AtomString { "closed"_s });
 
     return element;
@@ -354,8 +359,8 @@ RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)
 {
-    if (is<Element>(node))
-        appendStartTag(m_markup, downcast<Element>(node), namespaces);
+    if (RefPtr element = dynamicDowncast<Element>(node))
+        appendStartTag(m_markup, *element, namespaces);
     else if (auto element = replacementElement(node))
         appendStartTag(m_markup, *element, namespaces);
     else
@@ -631,12 +636,11 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
     if (inXMLFragmentSerialization() || m_replacementURLStrings.isEmpty())
         return nullptr;
 
-    auto* currentElement = const_cast<Element*>(&element);
-    if (!is<HTMLFrameElementBase>(currentElement))
+    RefPtr frameElement = dynamicDowncast<HTMLFrameElementBase>(element);
+    if (!frameElement)
         return nullptr;
 
-    auto& frameElement = downcast<HTMLFrameElementBase>(*currentElement);
-    return dynamicDowncast<LocalFrame>(frameElement.contentFrame());
+    return dynamicDowncast<LocalFrame>(frameElement->contentFrame());
 }
 
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
