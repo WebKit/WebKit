@@ -43,7 +43,7 @@ Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& t
 
 ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, const AtomString& type, Init&& eventInit)
 {
-    URL validationURL { document.url(), eventInit.validationURL };
+    auto validationURL = document.completeURL(eventInit.validationURL, ScriptExecutionContext::ForceUTF8::Yes);
     if (!validationURL.isValid())
         return Exception { ExceptionCode::TypeError };
 

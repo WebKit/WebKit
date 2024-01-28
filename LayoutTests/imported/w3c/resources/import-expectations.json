@@ -237,7 +237,7 @@
     "web-platform-tests/mediacapture-region": "skip",
     "web-platform-tests/mediacapture-streams": "import",
     "web-platform-tests/mediasession": "import",
-    "web-platform-tests/merchant-validation": "skip",
+    "web-platform-tests/merchant-validation": "import",
     "web-platform-tests/mimesniff": "import",
     "web-platform-tests/mixed-content": "import",
     "web-platform-tests/mst-content-hint": "import",
