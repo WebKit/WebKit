@@ -966,7 +966,6 @@ imported/blink/fast/forms/label/label-contains-other-interactive-content.html [ 
 fast/dom/Window/post-message-user-action.html [ Skip ]
 fast/images/image-usemap-parsing.html [ Skip ]
 fast/shadow-dom/fullscreen-in-shadow-event-should-propagate.html [ Skip ]
-fast/shadow-dom/fullscreen-in-shadow-full-screen-ancestor.html [ Skip ]
 fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Skip ]
 fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html [ Skip ]
 fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Skip ]

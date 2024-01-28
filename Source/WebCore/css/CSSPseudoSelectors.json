@@ -68,11 +68,6 @@
             "comment": "Currently has no standard equivalent.",
             "status": "non-standard"
         },
-        "-webkit-full-screen-ancestor": {
-            "comment": "For compatibility.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
-        },
         "-webkit-full-screen-document": {
             "comment": "For UA stylesheet use.",
             "conditional": "ENABLE(FULLSCREEN_API)",
