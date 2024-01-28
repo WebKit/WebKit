@@ -25,31 +25,18 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
-#include <wtf/text/AtomString.h>
+#include "ScrollTypes.h"
 
-namespace WebCore::Style {
+namespace WebCore {
 
-class PseudoElementRequest {
-public:
-    PseudoElementRequest(PseudoId pseudoId, std::optional<StyleScrollbarState> scrollbarState = std::nullopt)
-        : pseudoId(pseudoId)
-        , scrollbarState(scrollbarState)
-    {
-    }
-
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& pseudoElementNameArgument)
-        : pseudoId(pseudoId)
-        , pseudoElementNameArgument(pseudoElementNameArgument)
-    {
-        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
-    }
-
-    PseudoId pseudoId;
-    std::optional<StyleScrollbarState> scrollbarState;
-
-    // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString pseudoElementNameArgument;
+struct StyleScrollbarState {
+    ScrollbarPart scrollbarPart { NoPart };
+    ScrollbarPart hoveredPart { NoPart };
+    ScrollbarPart pressedPart { NoPart };
+    ScrollbarOrientation orientation { ScrollbarOrientation::Vertical };
+    ScrollbarButtonsPlacement buttonsPlacement { ScrollbarButtonsNone };
+    bool enabled { false };
+    bool scrollCornerIsVisible { false };
 };
 
 } // namespace WebCore
