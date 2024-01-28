@@ -159,7 +159,7 @@ dialog::backdrop {
 
 /* media elements */
 
-body:-webkit-full-page-media {
+body:-internal-media-document {
     background-color: rgb(38, 38, 38);
 }
 

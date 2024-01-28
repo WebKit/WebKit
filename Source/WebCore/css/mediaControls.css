@@ -52,13 +52,13 @@
     text-align: right;
 }
 
-video:-webkit-full-page-media {
+video:-internal-media-document {
     margin: auto;
     position: absolute;
     inset: 0;
 }
 
-video:-webkit-full-page-media::-webkit-media-controls-panel {
+video:-internal-media-document::-webkit-media-controls-panel {
     bottom: 0px;
 }
 

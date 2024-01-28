@@ -46,6 +46,7 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-html-document": {},
+        "-internal-media-document": {},
         "-webkit-any": {
             "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",
@@ -65,10 +66,6 @@
         },
         "-webkit-drag": {
             "comment": "Currently has no standard equivalent.",
-            "status": "non-standard"
-        },
-        "-webkit-full-page-media": {
-            "comment": "For UA stylesheet use.",
             "status": "non-standard"
         },
         "-webkit-full-screen-ancestor": {

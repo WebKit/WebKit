@@ -1021,8 +1021,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClass::Enabled:
             return matchesEnabledPseudoClass(element);
-        case CSSSelector::PseudoClass::WebKitFullPageMedia:
-            return isMediaDocument(element);
         case CSSSelector::PseudoClass::Default:
             return matchesDefaultPseudoClass(element);
         case CSSSelector::PseudoClass::Disabled:
@@ -1128,6 +1126,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #endif
         case CSSSelector::PseudoClass::InternalHTMLDocument:
             return matchesHtmlDocumentPseudoClass(element);
+
+        case CSSSelector::PseudoClass::InternalMediaDocument:
+            return isMediaDocument(element);
 
         case CSSSelector::PseudoClass::PopoverOpen:
             return matchesPopoverOpenPseudoClass(element);
