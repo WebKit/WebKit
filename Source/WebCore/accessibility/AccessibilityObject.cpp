@@ -1289,7 +1289,7 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
 bool AccessibilityObject::press()
 {
     // The presence of the actionElement will confirm whether we should even attempt a press.
-    Element* actionElem = actionElement();
+    RefPtr actionElem = actionElement();
     if (!actionElem)
         return false;
     if (auto* frame = actionElem->document().frame())
@@ -1297,41 +1297,40 @@ bool AccessibilityObject::press()
     
     // Hit test at this location to determine if there is a sub-node element that should act
     // as the target of the action.
-    Element* hitTestElement = nullptr;
-    Document* document = this->document();
+    RefPtr<Element> hitTestElement;
+    RefPtr document = this->document();
     if (document) {
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
         HitTestResult hitTestResult { clickPoint() };
         document->hitTest(hitType, hitTestResult);
-        if (auto* innerNode = hitTestResult.innerNode()) {
-            if (auto* shadowHost = innerNode->shadowHost())
-                hitTestElement = shadowHost;
-            else if (is<Element>(*innerNode))
-                hitTestElement = &downcast<Element>(*innerNode);
+        if (RefPtr innerNode = hitTestResult.innerNode()) {
+            if (RefPtr shadowHost = innerNode->shadowHost())
+                hitTestElement = WTFMove(shadowHost);
+            else if (RefPtr element = dynamicDowncast<Element>(*innerNode))
+                hitTestElement = WTFMove(element);
             else
                 hitTestElement = innerNode->parentElement();
         }
     }
 
     // Prefer the actionElement instead of this node, if the actionElement is inside this node.
-    Element* pressElement = this->element();
+    RefPtr pressElement = this->element();
     if (!pressElement || actionElem->isDescendantOf(*pressElement))
-        pressElement = actionElem;
-    
+        pressElement = WTFMove(actionElem);
+
     ASSERT(pressElement);
     // Prefer the hit test element, if it is inside the target element.
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
-        pressElement = hitTestElement;
-    
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document);
-    
+        pressElement = WTFMove(hitTestElement);
+
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document.get());
+
     bool dispatchedEvent = false;
 #if PLATFORM(IOS_FAMILY)
     if (hasTouchEventListener())
         dispatchedEvent = dispatchTouchEvent();
 #endif
-    
-    Ref protectedPressElement { *pressElement };
+
     return dispatchedEvent || pressElement->accessKeyAction(true) || pressElement->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents);
 }
     

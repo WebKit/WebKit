@@ -847,7 +847,8 @@ protected: // FIXME: Make the data members private.
 
 inline bool AccessibilityObject::hasDisplayContents() const
 {
-    return is<Element>(node()) && downcast<Element>(node())->hasDisplayContents();
+    RefPtr element = this->element();
+    return element && element->hasDisplayContents();
 }
 
 inline void AccessibilityObject::recomputeIsIgnored()
