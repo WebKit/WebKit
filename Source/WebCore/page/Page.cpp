@@ -3799,17 +3799,6 @@ void Page::setFullscreenAutoHideDuration(Seconds duration)
     });
 }
 
-void Page::setFullscreenControlsHidden(bool hidden)
-{
-#if ENABLE(FULLSCREEN_API)
-    forEachDocument([&] (Document& document) {
-        document.fullscreenManager().setFullscreenControlsHidden(hidden);
-    });
-#else
-    UNUSED_PARAM(hidden);
-#endif
-}
-
 Document* Page::outermostFullscreenDocument() const
 {
 #if ENABLE(FULLSCREEN_API)

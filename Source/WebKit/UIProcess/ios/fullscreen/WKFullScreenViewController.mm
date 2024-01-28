@@ -260,8 +260,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor];
         [_topConstraint setActive:YES];
-        if (auto* manager = self._manager)
-            manager->setFullscreenControlsHidden(false);
     }];
 }
 
@@ -287,8 +285,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_stackView setAlpha:0];
         self.prefersStatusBarHidden = YES;
         self.prefersHomeIndicatorAutoHidden = YES;
-        if (auto* manager = self._manager)
-            manager->setFullscreenControlsHidden(true);
     } completion:^(BOOL finished) {
         if (!finished)
             return;

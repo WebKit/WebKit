@@ -87,9 +87,6 @@ public:
     WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);
 
-    WEBCORE_EXPORT bool areFullscreenControlsHidden() const;
-    WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
-
     void clear();
     void emptyEventQueue();
 
@@ -127,7 +124,6 @@ private:
 
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
-    bool m_areFullscreenControlsHidden { false };
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;

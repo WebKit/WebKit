@@ -458,11 +458,6 @@ void WebFullScreenManager::setFullscreenAutoHideDuration(Seconds duration)
     m_page->corePage()->setFullscreenAutoHideDuration(duration);
 }
 
-void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)
-{
-    m_page->corePage()->setFullscreenControlsHidden(hidden);
-}
-
 void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context, WebCore::Event& event)
 {
 #if ENABLE(VIDEO)

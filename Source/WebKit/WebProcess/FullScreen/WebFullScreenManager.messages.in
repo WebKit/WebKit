@@ -33,6 +33,5 @@ messages -> WebFullScreenManager LegacyReceiver {
     RestoreScrollPosition()
     SetFullscreenInsets(WebCore::RectEdges<float> insets)
     SetFullscreenAutoHideDuration(Seconds duration)
-    SetFullscreenControlsHidden(bool hidden)
 }
 #endif

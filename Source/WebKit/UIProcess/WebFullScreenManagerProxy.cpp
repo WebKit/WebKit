@@ -163,11 +163,6 @@ void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
     m_page.send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration));
 }
 
-void WebFullScreenManagerProxy::setFullscreenControlsHidden(bool hidden)
-{
-    m_page.send(Messages::WebFullScreenManager::SetFullscreenControlsHidden(hidden));
-}
-
 void WebFullScreenManagerProxy::close()
 {
     m_client.closeFullScreenManager();

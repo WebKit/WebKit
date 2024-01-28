@@ -1057,8 +1057,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesFullScreenAncestorPseudoClass(element);
         case CSSSelector::PseudoClass::WebKitFullScreenDocument:
             return matchesFullScreenDocumentPseudoClass(element);
-        case CSSSelector::PseudoClass::WebKitFullScreenControlsHidden:
-            return matchesFullScreenControlsHiddenPseudoClass(element);
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
         case CSSSelector::PseudoClass::PictureInPicture:

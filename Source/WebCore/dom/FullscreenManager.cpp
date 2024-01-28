@@ -743,24 +743,6 @@ void FullscreenManager::setAnimatingFullscreen(bool flag)
     m_isAnimatingFullscreen = flag;
 }
 
-bool FullscreenManager::areFullscreenControlsHidden() const
-{
-    return m_areFullscreenControlsHidden;
-}
-
-void FullscreenManager::setFullscreenControlsHidden(bool flag)
-{
-    if (m_areFullscreenControlsHidden == flag)
-        return;
-
-    INFO_LOG(LOGIDENTIFIER, flag);
-
-    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
-    if (m_fullscreenElement)
-        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClass::WebKitFullScreenControlsHidden, flag } });
-    m_areFullscreenControlsHidden = flag;
-}
-
 void FullscreenManager::clear()
 {
     m_fullscreenElement = nullptr;

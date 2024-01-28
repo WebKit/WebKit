@@ -78,11 +78,6 @@
             "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
-        "-webkit-full-screen-controls-hidden": {
-            "comment": "For compatibility.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
-        },
         "active": {},
         "any-link": {
             "aliases": [

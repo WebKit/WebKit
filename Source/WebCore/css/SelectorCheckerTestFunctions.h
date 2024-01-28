@@ -438,14 +438,6 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
     return fullscreenManager && fullscreenManager->fullscreenElement();
 }
 
-ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
-{
-    CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
-    if (!fullscreenManager || &element != fullscreenManager->fullscreenElement())
-        return false;
-    return fullscreenManager->areFullscreenControlsHidden();
-}
-
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

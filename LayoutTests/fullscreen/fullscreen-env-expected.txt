@@ -20,10 +20,5 @@ RUN(internals.setFullscreenAutoHideDuration(30))
 EXPECTED (window.getComputedStyle(target).transitionDuration == '30s') OK
 RUN(internals.setFullscreenAutoHideDuration(0))
 EXPECTED (window.getComputedStyle(target).transitionDuration == '0s') OK
-EVENT(webkitfullscreenchange)
-RUN(internals.setFullscreenControlsHidden(true))
-EXPECTED (document.querySelector("#target:-webkit-full-screen-controls-hidden") == '[object HTMLDivElement]') OK
-RUN(internals.setFullscreenControlsHidden(false))
-EXPECTED (document.querySelector("#target:-webkit-full-screen-controls-hidden") == 'null') OK
 END OF TEST
 

@@ -640,7 +640,6 @@ void Internals::resetToConsistentState(Page& page)
 
     page.setFullscreenAutoHideDuration(0_s);
     page.setFullscreenInsets({ });
-    page.setFullscreenControlsHidden(false);
 
     MediaEngineConfigurationFactory::disableMock();
 
@@ -3790,14 +3789,6 @@ void Internals::setFullscreenAutoHideDuration(double duration)
     ASSERT(page);
 
     page->setFullscreenAutoHideDuration(Seconds(duration));
-}
-
-void Internals::setFullscreenControlsHidden(bool hidden)
-{
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
-
-    page->setFullscreenControlsHidden(hidden);
 }
 
 #if ENABLE(VIDEO)

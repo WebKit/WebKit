@@ -99,7 +99,6 @@ public:
     void restoreScrollPosition();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
-    void setFullscreenControlsHidden(bool);
     void closeWithCallback(CompletionHandler<void()>&&);
     bool lockFullscreenOrientation(WebCore::ScreenOrientationType);
     void unlockFullscreenOrientation();
