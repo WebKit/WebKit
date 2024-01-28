@@ -745,7 +745,8 @@ RefPtr<Node> StyledMarkupAccumulator::traverseNodesForSerialization(Node& startN
                 return false;
         }
 
-        bool isDisplayContents = is<Element>(node) && downcast<Element>(node).hasDisplayContents();
+        RefPtr element = dynamicDowncast<Element>(node);
+        bool isDisplayContents = element && element->hasDisplayContents();
         if (!node.renderer() && !isDisplayContents && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
             return false;
 
@@ -916,12 +917,12 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
 
 static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
 {
-    if (!is<HTMLElement>(node))
+    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    if (!element)
         return nullptr;
 
-    Ref element = downcast<HTMLElement>(node);
-    auto style = EditingStyle::create(element->inlineStyle());
-    style->mergeStyleFromRules(element);
+    Ref style = EditingStyle::create(element->inlineStyle());
+    style->mergeStyleFromRules(*element);
     return style;
 }
 
