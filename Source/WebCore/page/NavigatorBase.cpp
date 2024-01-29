@@ -163,7 +163,7 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(!scriptExecutionContext() || scriptExecutionContext()->settingsValues().serviceWorkersEnabled);
     if (!m_serviceWorkerContainer)
-        m_serviceWorkerContainer = ServiceWorkerContainer::create(scriptExecutionContext(), *this).moveToUniquePtr();
+        m_serviceWorkerContainer = ServiceWorkerContainer::create(protectedScriptExecutionContext().get(), *this).moveToUniquePtr();
     return *m_serviceWorkerContainer;
 }
 

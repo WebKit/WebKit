@@ -50,6 +50,7 @@ WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PA
     , m_referrerPolicy(referrerPolicy)
     , m_noiseInjectionHashSalt(noiseInjectionHashSalt)
 {
+    relaxAdoptionRequirement();
 }
 
 WorkerOrWorkletGlobalScope::~WorkerOrWorkletGlobalScope() = default;
