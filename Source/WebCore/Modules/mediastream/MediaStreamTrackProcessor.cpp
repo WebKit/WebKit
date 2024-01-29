@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
 
 #include "JSWebCodecsVideoFrame.h"
+#include "Logging.h"
 #include "ReadableStream.h"
 #include <wtf/Seconds.h>
 
@@ -169,8 +170,10 @@ void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFra
     {
         Locker lock(m_videoFramesLock);
         m_videoFrames.append(frame);
-        if (m_videoFrames.size() > m_maxVideoFramesCount)
+        if (m_videoFrames.size() > m_maxVideoFramesCount) {
+            RELEASE_LOG_DEBUG(WebRTC, "MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable buffer is full");
             m_videoFrames.takeFirst();
+        }
     }
     ScriptExecutionContext::postTaskTo(m_contextIdentifier, [processor = m_processor] (auto&) mutable {
         if (RefPtr protectedProcessor = processor.get())
