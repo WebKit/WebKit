@@ -3152,14 +3152,8 @@ void Element::removeAllEventListeners()
         shadowRoot->removeAllEventListeners();
 }
 
-void Element::beginParsingChildren()
-{
-    clearIsParsingChildrenFinished();
-}
-
 void Element::finishParsingChildren()
 {
-    ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
 
     Style::ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(*this);

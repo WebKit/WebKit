@@ -868,9 +868,9 @@ private:
         parseAttributes(element);
         if (parsingFailed())
             return element;
+        parent.parserAppendChild(element);
         element->beginParsingChildren();
         element->finishParsingChildren();
-        parent.parserAppendChild(element);
         return WTFMove(element);
     }
 };

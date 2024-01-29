@@ -505,8 +505,9 @@ public:
     virtual void didStopBeingFullscreenElement() { }
 
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
-    void finishParsingChildren() override;
-    void beginParsingChildren() final;
+    // Overriding these functions to make parsing a special case should be avoided if possible.
+    void beginParsingChildren() { clearIsParsingChildrenFinished(); }
+    virtual void finishParsingChildren();
 
     PseudoElement& ensurePseudoElement(PseudoId);
     WEBCORE_EXPORT PseudoElement* beforePseudoElement() const;
