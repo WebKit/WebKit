@@ -3,13 +3,11 @@ From: Philippe Normand <philn@igalia.com>
 Date: Mon, 15 Jan 2024 09:27:07 +0000
 Subject: [PATCH] gstreamer: Additional patches
 
-decodebin3 patch will ship in 1.24 and vpxdec patch will ship in 1.22.9.
+decodebin3 patch will ship in 1.24.
 ---
  ...x-clean-up-of-EOS-d-parsebin-src-pad.patch | 81 +++++++++++++++++++
- ...priate-domain-and-code-for-decoding-.patch | 38 +++++++++
- 2 files changed, 119 insertions(+)
+ 1 files changed, 119 insertions(+)
  create mode 100644 patches/gstreamer/0001-decodebin3-Fix-clean-up-of-EOS-d-parsebin-src-pad.patch
- create mode 100644 patches/gstreamer/0001-vpxdec-Use-appropriate-domain-and-code-for-decoding-.patch
 
 diff --git a/patches/gstreamer/0001-decodebin3-Fix-clean-up-of-EOS-d-parsebin-src-pad.patch b/patches/gstreamer/0001-decodebin3-Fix-clean-up-of-EOS-d-parsebin-src-pad.patch
 new file mode 100644
@@ -95,50 +93,6 @@ index 0000000..8541e2a
 +     gst_element_set_state (input->identity, GST_STATE_NULL);
 +     gst_bin_remove (GST_BIN (dbin), input->identity);
 +     gst_clear_object (&input->identity);
-+-- 
-+2.43.0
-+
-diff --git a/patches/gstreamer/0001-vpxdec-Use-appropriate-domain-and-code-for-decoding-.patch b/patches/gstreamer/0001-vpxdec-Use-appropriate-domain-and-code-for-decoding-.patch
-new file mode 100644
-index 0000000..4a08e0a
---- /dev/null
-+++ b/patches/gstreamer/0001-vpxdec-Use-appropriate-domain-and-code-for-decoding-.patch
-@@ -0,0 +1,38 @@
-+From 36518d81e75712c71df0e92ed9c2d46410554f9c Mon Sep 17 00:00:00 2001
-+From: Philippe Normand <philn@igalia.com>
-+Date: Fri, 12 Jan 2024 12:51:27 +0000
-+Subject: [PATCH] vpxdec: Use appropriate domain and code for decoding errors
-+
-+STREAM domain and DECODE error is commonly used in other decoders. ENCODE is for
-+encoders.
-+
-+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/5918>
-+---
-+ subprojects/gst-plugins-good/ext/vpx/gstvpxdec.c | 4 ++--
-+ 1 file changed, 2 insertions(+), 2 deletions(-)
-+
-+diff --git a/subprojects/gst-plugins-good/ext/vpx/gstvpxdec.c b/subprojects/gst-plugins-good/ext/vpx/gstvpxdec.c
-+index d5351b839a..091207d957 100644
-+--- a/subprojects/gst-plugins-good/ext/vpx/gstvpxdec.c
-++++ b/subprojects/gst-plugins-good/ext/vpx/gstvpxdec.c
-+@@ -725,7 +725,7 @@ gst_vpx_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * frame)
-+   if (status) {
-+     GstVideoDecoderRequestSyncPointFlags flags = 0;
-+ 
-+-    GST_VIDEO_DECODER_ERROR (decoder, 1, LIBRARY, ENCODE,
-++    GST_VIDEO_DECODER_ERROR (decoder, 1, STREAM, DECODE,
-+         ("Failed to decode frame"), ("%s", gst_vpx_error_name (status)), ret);
-+ 
-+     if (gst_video_decoder_get_needs_sync_point (decoder))
-+@@ -740,7 +740,7 @@ gst_vpx_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * frame)
-+   if (img) {
-+     if (vpxclass->get_frame_format (dec, img, &fmt) == FALSE) {
-+       vpx_img_free (img);
-+-      GST_ELEMENT_ERROR (decoder, LIBRARY, ENCODE,
-++      GST_ELEMENT_ERROR (decoder, STREAM, DECODE,
-+           ("Failed to decode frame"), ("Unsupported color format %d",
-+               img->fmt));
-+       gst_video_codec_frame_unref (frame);
 +-- 
 +2.43.0
 +

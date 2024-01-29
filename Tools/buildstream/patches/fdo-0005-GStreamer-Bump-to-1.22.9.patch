@@ -1,7 +1,7 @@
 From 627bd29a83425c1cf7a75be3e7ad2efce9605dc0 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Thu, 21 Dec 2023 10:42:51 +0000
-Subject: [PATCH] GStreamer: Bump to 1.22.8
+Subject: [PATCH] GStreamer: Bump to 1.22.9
 
 ---
  .../components/gstreamer-plugins-good.bst     |  1 +
@@ -33,7 +33,7 @@ index f36b91e..8fdb4f6 100644
    url: freedesktop:gstreamer/gstreamer.git
    track: 1.*[02468].*
 -  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
-+  ref: 1.22.8-0-g4af14db10e8355f980bbf79733af004e59d255fc
++  ref: 1.22.9-0-g3e41b8f18b7d19b0ca98a3437c2e27aa0cfe12bb
  - kind: patch_queue
    path: patches/gstreamer
 diff --git a/patches/gstreamer/graceful-error-noopenh264.patch b/patches/gstreamer/graceful-error-noopenh264.patch
