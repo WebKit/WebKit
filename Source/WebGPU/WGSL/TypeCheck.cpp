@@ -1125,18 +1125,25 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             elementType = resolve(*array.maybeElementType());
-            if (isBottom(elementType)) {
+            auto* elementCountType = infer(*array.maybeElementCount());
+
+            if (isBottom(elementType) || isBottom(elementCountType)) {
                 inferred(m_types.bottomType());
                 return;
             }
 
-            auto elementCountType = infer(*array.maybeElementCount());
             if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
                 typeError(array.span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
                 return;
             }
 
-            elementCount = array.maybeElementCount()->constantValue()->integerValue();
+            auto constantValue = array.maybeElementCount()->constantValue();
+            if (!constantValue) {
+                typeError(call.span(), "array must have constant size in order to be constructed");
+                return;
+            }
+
+            elementCount = constantValue->integerValue();
             if (!elementCount) {
                 typeError(call.span(), "array count must be greater than 0");
                 return;

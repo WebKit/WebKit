@@ -38,3 +38,14 @@ fn testBottomElementType() {
   // CHECK-L: unresolved type 'i2'
   let xl = array<i2, 1>(0.0);
 }
+
+fn testBottomElementCount() {
+  // CHECK-L: unresolved identifier 'c'
+  let xl = array<i32, c>(0.0);
+}
+
+override elementCount = 4;
+fn testOverrideElementCount() {
+  // CHECK-L: array must have constant size in order to be constructed
+  let xl = array<i32, elementCount>(0.0);
+}
