@@ -930,7 +930,6 @@ def generate_one_impl(type, template_argument):
 
 
 def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl):
-    serialized_types = resolve_inheritance(serialized_types)
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1104,7 +1103,13 @@ def generate_one_serialized_type_info(type):
         result.append('        } },')
         return result
 
+
     serialized_members = type.members_for_serialized_type_info()
+    parent_class = type.parent_class
+    while parent_class is not None:
+        serialized_members = parent_class.members_for_serialized_type_info() + serialized_members
+        parent_class = parent_class.parent_class
+
     optional_tuple_state = None
     for member in serialized_members:
         if member.condition is not None:
@@ -1455,7 +1460,6 @@ def generate_one_dictionary_member_validation(member):
 
 
 def generate_webkit_secure_coding_impl(serialized_types, headers):
-    serialized_types = resolve_inheritance(serialized_types)
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1529,7 +1533,6 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
 
 
 def generate_webkit_secure_coding_header(serialized_types):
-    serialized_types = resolve_inheritance(serialized_types)
     result = []
     result.append(_license_header)
     result.append('#pragma once')
@@ -1619,6 +1622,8 @@ def main(argv):
             for declaration in new_additional_forward_declarations:
                 additional_forward_declarations_set.add(declaration)
     headers = sorted(header_set)
+
+    serialized_types = resolve_inheritance(serialized_types)
 
     with open('GeneratedSerializers.h', "w+") as output:
         output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_set))

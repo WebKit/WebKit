@@ -162,11 +162,23 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "WebCore::InheritsFrom"_s, {
             {
+                "int"_s,
+                "a"_s
+            },
+            {
                 "float"_s,
                 "b"_s
             },
         } },
         { "WebCore::InheritanceGrandchild"_s, {
+            {
+                "int"_s,
+                "a"_s
+            },
+            {
+                "float"_s,
+                "b"_s
+            },
             {
                 "double"_s,
                 "c"_s
