@@ -2239,6 +2239,35 @@ TEST(SiteIsolation, NavigateOpener)
     checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
 }
 
+TEST(SiteIsolation, CustomUserAgent)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(1UL, mainFrame.childFrames.count);
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    webView.get().customUserAgent = @"Custom UserAgent";
+
+    [webView evaluateJavaScript:@"navigator.userAgent" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *) {
+        EXPECT_WK_STREQ(@"Custom UserAgent", (NSString *)result);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 // FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
 
 }

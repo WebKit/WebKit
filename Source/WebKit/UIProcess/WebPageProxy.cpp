@@ -4586,8 +4586,10 @@ void WebPageProxy::setUserAgent(String&& userAgent, IsCustomUserAgent isCustomUs
 
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::SetUserAgent(m_userAgent));
-    send(Messages::WebPage::SetHasCustomUserAgent(isCustomUserAgent == IsCustomUserAgent::Yes));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetUserAgent(m_userAgent), pageID);
+        webProcess.send(Messages::WebPage::SetHasCustomUserAgent(isCustomUserAgent == IsCustomUserAgent::Yes), pageID);
+    });
 }
 
 void WebPageProxy::setApplicationNameForUserAgent(const String& applicationName)
