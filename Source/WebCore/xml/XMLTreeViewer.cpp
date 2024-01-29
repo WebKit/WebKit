@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +62,6 @@ void XMLTreeViewer::transformDocumentToTreeView()
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
     auto text = m_document.createTextNode(WTFMove(cssString));
     m_document.getElementById(String("xml-viewer-style"_s))->appendChild(text);
-    m_document.styleScope().didChangeActiveStyleSheetCandidates();
 }
 
 } // namespace WebCore
