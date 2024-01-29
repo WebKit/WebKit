@@ -1051,10 +1051,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClass::Fullscreen:
             return matchesFullscreenPseudoClass(element);
-        case CSSSelector::PseudoClass::InternalAnimatingFullScreenTransition:
-            return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
-        case CSSSelector::PseudoClass::WebKitFullScreenDocument:
-            return matchesFullScreenDocumentPseudoClass(element);
+        case CSSSelector::PseudoClass::InternalAnimatingFullscreenTransition:
+            return matchesAnimatingFullscreenTransitionPseudoClass(element);
+        case CSSSelector::PseudoClass::InternalFullscreenDocument:
+            return matchesFullscreenDocumentPseudoClass(element);
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
         case CSSSelector::PseudoClass::PictureInPicture:

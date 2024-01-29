@@ -45,7 +45,7 @@
   object-fit: contain;
 }
 
-*|*:root:-webkit-full-screen-document:not(:fullscreen) {
+*|*:root:-internal-fullscreen-document:not(:fullscreen) {
     overflow: hidden !important;
 }
 

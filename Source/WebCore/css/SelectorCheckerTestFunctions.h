@@ -416,7 +416,7 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
     return false;
 }
 
-ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesAnimatingFullscreenTransitionPseudoClass(const Element& element)
 {
     CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
     if (!fullscreenManager || &element != fullscreenManager->currentFullscreenElement())
@@ -424,7 +424,7 @@ ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(con
     return fullscreenManager->isAnimatingFullscreen();
 }
 
-ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.

@@ -42,7 +42,10 @@
             "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
             "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
-        "-internal-animating-full-screen-transition": {
+        "-internal-animating-fullscreen-transition": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-fullscreen-document": {
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-html-document": {},
@@ -66,11 +69,6 @@
         },
         "-webkit-drag": {
             "comment": "Currently has no standard equivalent.",
-            "status": "non-standard"
-        },
-        "-webkit-full-screen-document": {
-            "comment": "For UA stylesheet use.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "active": {},
