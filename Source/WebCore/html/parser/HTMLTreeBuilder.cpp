@@ -3030,7 +3030,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
         default:
             break;
         }
-        const AtomString& currentNamespace = adjustedCurrentNode.namespaceURI();
+        auto& currentNamespace = adjustedCurrentNode.namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
         if (currentNamespace == SVGNames::svgNamespaceURI) {
@@ -3038,6 +3038,15 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
             adjustSVGAttributes(token);
         }
         adjustForeignAttributes(token);
+
+        if (token.tagName() == TagName::script && token.selfClosing() && currentNamespace == SVGNames::svgNamespaceURI) {
+            token.setSelfClosingToFalse();
+            m_tree.insertForeignElement(WTFMove(token), currentNamespace);
+            AtomHTMLToken fakeToken(HTMLToken::Type::EndTag, TagName::script);
+            processTokenInForeignContent(WTFMove(fakeToken));
+            return;
+        }
+
         m_tree.insertForeignElement(WTFMove(token), currentNamespace);
         break;
     }

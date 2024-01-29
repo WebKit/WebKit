@@ -66,6 +66,7 @@ public:
 
     TagName tagName() const;
     bool selfClosing() const;
+    void setSelfClosingToFalse();
     const Vector<Attribute>& attributes() const;
 
     // Characters
@@ -136,6 +137,14 @@ inline bool AtomHTMLToken::selfClosing() const
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
     return m_selfClosing;
+}
+
+inline void AtomHTMLToken::setSelfClosingToFalse()
+{
+    ASSERT(m_selfClosing);
+    ASSERT(m_type == Type::StartTag);
+    ASSERT(m_tagName == TagName::script);
+    m_selfClosing = false;
 }
 
 inline Vector<Attribute>& AtomHTMLToken::attributes()
