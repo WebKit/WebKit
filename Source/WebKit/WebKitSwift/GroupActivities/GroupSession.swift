@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(GroupActivities)
+#if canImport(GroupActivities_Private)
 
 import AVFoundation
 import Combine
@@ -160,4 +160,4 @@ public class GroupSessionObserver : NSObject {
     }
 }
 
-#endif // canImport(GroupActivities)
+#endif // canImport(GroupActivities_Private)

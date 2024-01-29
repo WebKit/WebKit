@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2255,7 +2255,7 @@
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
 		CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */; };
-		CDF1B915266F396A0007EC10 /* WKGroupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */; };
+		CDF1B915266F396A0007EC10 /* GroupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF1B90D266F395E0007EC10 /* GroupSession.swift */; };
 		CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF1B91A267021D60007EC10 /* WebKitSwiftSoftLink.mm */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
@@ -7575,7 +7575,7 @@
 		CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDE5552F2406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
+		CDF1B90D266F395E0007EC10 /* GroupSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSession.swift; sourceTree = "<group>"; };
 		CDF1B90E266F395E0007EC10 /* GroupActivitiesSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupActivitiesSession.h; sourceTree = "<group>"; };
 		CDF1B90F266F395E0007EC10 /* GroupActivitiesCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GroupActivitiesCoordinator.mm; sourceTree = "<group>"; };
 		CDF1B910266F395E0007EC10 /* WKGroupSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKGroupSession.h; sourceTree = "<group>"; };
@@ -8332,29 +8332,30 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				1A4F9769100E7B6600637A18 /* Configurations */,
+				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				5750F3292032D4E300389347 /* Frameworks */,
+				2D9FB1FF2375209D0049F936 /* GPUProcess */,
+				A16E66012581930800EE1749 /* MediaFormatReaderPlugIn */,
+				84120B2828258B82002988E2 /* Modules */,
+				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
+				BC2E6E74114196F000A63B1E /* Platform */,
+				034768DFFF38A50411DB9C8B /* Products */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				C0CE73351247F70E00BC0EC4 /* Scripts */,
+				1AADDF4B10D82AF000D3D63D /* Shared */,
+				BC032DC310F438260058C15A /* UIProcess */,
+				A1071FAD2B643ED100E9FC57 /* WebKitSwift */,
+				BC032D5C10F436D50058C15A /* WebProcess */,
 				5C157A0A2717C9F100ED5280 /* webpushd */,
 				B396EA5512E0ED2D00F4FEB7 /* config.h */,
-				2D7DEBE021269D5F00B9F73C /* Sources.txt */,
-				2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */,
-				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				DDC907B7298B43D700ECA4D6 /* MigratedHeaders-input.xcfilelist */,
 				DDC907B6298B43D700ECA4D6 /* MigratedHeaders-output.xcfilelist */,
-				A16E66012581930800EE1749 /* MediaFormatReaderPlugIn */,
-				BC2E6E74114196F000A63B1E /* Platform */,
-				1AADDF4B10D82AF000D3D63D /* Shared */,
-				84120B2828258B82002988E2 /* Modules */,
-				BC032DC310F438260058C15A /* UIProcess */,
-				BC032D5C10F436D50058C15A /* WebProcess */,
-				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
-				2D9FB1FF2375209D0049F936 /* GPUProcess */,
-				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
-				089C1665FE841158C02AAC07 /* Resources */,
-				C0CE73351247F70E00BC0EC4 /* Scripts */,
-				1A4F9769100E7B6600637A18 /* Configurations */,
-				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
-				034768DFFF38A50411DB9C8B /* Products */,
-				5750F3292032D4E300389347 /* Frameworks */,
+				2D7DEBE021269D5F00B9F73C /* Sources.txt */,
+				2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */,
+				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 			);
 			name = WebKit2;
 			sourceTree = "<group>";
@@ -9094,7 +9095,6 @@
 				7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */,
 				A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */,
 				A1DF631018E0B7C8003A3E2A /* LegacyDownloadClient.mm */,
-				EB0FBFA62B66C61E00269CC1 /* MarketplaceKitWrapper.swift */,
 				9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */,
 				411286EF21C8A90C003A8550 /* MediaUtilities.h */,
 				411286F021C8A90D003A8550 /* MediaUtilities.mm */,
@@ -12828,6 +12828,31 @@
 			name = EncryptedMedia;
 			sourceTree = "<group>";
 		};
+		A1071FAD2B643ED100E9FC57 /* WebKitSwift */ = {
+			isa = PBXGroup;
+			children = (
+				A1071FAE2B643FB400E9FC57 /* GroupActivities */,
+				A14F9B332B68467F00AD9C56 /* MarketplaceKit */,
+			);
+			path = WebKitSwift;
+			sourceTree = "<group>";
+		};
+		A1071FAE2B643FB400E9FC57 /* GroupActivities */ = {
+			isa = PBXGroup;
+			children = (
+				CDF1B90D266F395E0007EC10 /* GroupSession.swift */,
+			);
+			path = GroupActivities;
+			sourceTree = "<group>";
+		};
+		A14F9B332B68467F00AD9C56 /* MarketplaceKit */ = {
+			isa = PBXGroup;
+			children = (
+				EB0FBFA62B66C61E00269CC1 /* MarketplaceKitWrapper.swift */,
+			);
+			path = MarketplaceKit;
+			sourceTree = "<group>";
+		};
 		A15799AC2584433100528236 /* MediaFormatReader */ = {
 			isa = PBXGroup;
 			children = (
@@ -14875,7 +14900,6 @@
 				CDF1B914266F395F0007EC10 /* GroupActivitiesSessionNotifier.h */,
 				CDF1B913266F395E0007EC10 /* GroupActivitiesSessionNotifier.mm */,
 				CDF1B910266F395E0007EC10 /* WKGroupSession.h */,
-				CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */,
 			);
 			path = GroupActivities;
 			sourceTree = "<group>";
@@ -18942,8 +18966,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDF1B915266F396A0007EC10 /* GroupSession.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,
-				CDF1B915266F396A0007EC10 /* WKGroupSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19024,7 +19048,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
@@ -19043,7 +19066,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
@@ -19052,7 +19074,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
@@ -19061,7 +19082,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
