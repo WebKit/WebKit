@@ -2875,11 +2875,11 @@ void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, cons
     });
 }
 
-void WebPageProxy::clearSelection()
+void WebPageProxy::clearSelection(std::optional<FrameIdentifier> frameID)
 {
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::ClearSelection());
+    sendToProcessContainingFrame(frameID, Messages::WebPage::ClearSelection());
 }
 
 void WebPageProxy::restoreSelectionInFocusedEditableElement()

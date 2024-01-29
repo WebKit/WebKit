@@ -86,21 +86,24 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
                 break;
         }
         // FIXME(267905): This should have support for backwards traversal.
-        // FIXME(267904): This probably shouldn't always wrap if FindOptions::WrapAround is not in m_options.
-        targetFrame = targetFrame->traverseNext(CanWrap::Yes).frame;
+        auto canWrap = m_options.contains(FindOptions::WrapAround) ? CanWrap::Yes : CanWrap::No;
+        targetFrame = targetFrame->traverseNext(canWrap).frame;
     } while (targetFrame && targetFrame != focusedFrame);
 
+    auto message = Messages::WebPage::FindString(m_string, m_options, m_maxMatchCount);
     if (!targetFrame) {
-        m_completionHandler(false);
+        focusedFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), [completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier>, bool) mutable {
+            completionHandler(false);
+        }, protectedPage->webPageID());
         return;
     }
 
-    targetFrame->process().sendWithAsyncReply(Messages::WebPage::FindString(m_string, m_options, m_maxMatchCount), [completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, bool) mutable {
+    targetFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), [completionHandler = WTFMove(m_completionHandler)](std::optional<FrameIdentifier> frameID, bool) mutable {
         completionHandler(frameID.has_value());
     }, protectedPage->webPageID());
 
     if (focusedFrame && focusedFrame->process() != targetFrame->process())
-        focusedFrame->process().send(Messages::WebPage::ClearSelection(), protectedPage->webPageID());
+        protectedPage->clearSelection(focusedFrame->frameID());
 }
 
 FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)

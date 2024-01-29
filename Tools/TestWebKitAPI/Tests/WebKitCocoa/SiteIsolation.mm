@@ -1876,6 +1876,49 @@ TEST(SiteIsolation, FindStringSelectionWithEmptyFrames)
         findStringAndValidateResults(webView.get(), offsets);
 }
 
+TEST(SiteIsolation, FindStringSelectionNoWrap)
+{
+    auto mainframeHTML = "<p>Hello world</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>Hello world</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findConfiguration = adoptNS([[WKFindConfiguration alloc] init]);
+    findConfiguration.get().wraps = NO;
+    using SelectionOffsets = std::array<std::pair<int, int>, 2>;
+    auto findStringAndValidateResults = [findConfiguration](TestWKWebView *webView, const SelectionOffsets& offsets) {
+        __block RetainPtr<_WKFrameTreeNode> mainFrameNode;
+        __block bool done = false;
+        [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+            EXPECT_EQ(1UL, mainFrame.childFrames.count);
+            mainFrameNode = mainFrame;
+            done = true;
+        }];
+        Util::run(&done);
+        done = false;
+
+        [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[0].first endOffset:offsets[0].second inFrame:mainFrameNode.get().info]);
+        EXPECT_TRUE([webView selectionRangeHasStartOffset:offsets[1].first endOffset:offsets[1].second inFrame:mainFrameNode.get().childFrames[0].info]);
+    };
+
+    std::array<SelectionOffsets, 3> selectionOffsetsForFrames = { {
+        { { { 0, 11 }, { 0, 0 } } },
+        { { { 0, 0 }, { 0, 11 } } },
+        { { { 0, 0 }, { 0, 0 } } }
+    } };
+    for (auto& offsets : selectionOffsetsForFrames)
+        findStringAndValidateResults(webView.get(), offsets);
+}
+
 TEST(SiteIsolation, FindStringSelectionSameOriginFrames)
 {
     auto mainframeHTML = "<p>Hello world</p>"
