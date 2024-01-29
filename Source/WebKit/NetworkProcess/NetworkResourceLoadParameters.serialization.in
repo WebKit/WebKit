@@ -44,7 +44,7 @@ class WebKit::NetworkLoadParameters {
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool needsCertificateInfo;
     bool isMainFrameNavigation;
-    bool isMainResourceNavigationForAnyFrame;
+    std::optional<WebKit::NavigationActionData> mainResourceNavigationDataForAnyFrame;
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking;
     [NotSerialized] Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     WebKit::PreconnectOnly shouldPreconnectOnly;

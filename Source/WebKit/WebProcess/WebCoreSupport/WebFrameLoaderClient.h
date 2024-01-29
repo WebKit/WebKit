@@ -25,14 +25,26 @@
 
 #pragma once
 
-#include <WebCore/FrameLoaderClient.h>
+#include <wtf/Ref.h>
+
+namespace WebCore {
+enum class PolicyAction : uint8_t;
+enum class PolicyDecisionMode;
+class FormState;
+class HitTestResult;
+class NavigationAction;
+class ResourceRequest;
+class ResourceResponse;
+using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
+using SandboxFlags = int;
+}
 
 namespace WebKit {
 
 class WebFrame;
 struct NavigationActionData;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
+class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
@@ -41,7 +53,7 @@ public:
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&);
 
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, uint64_t, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) override;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, uint64_t, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
     void broadcastFrameRemovalToOtherProcesses();
 
     Ref<WebFrame> m_frame;

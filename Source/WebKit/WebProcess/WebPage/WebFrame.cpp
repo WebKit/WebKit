@@ -181,8 +181,10 @@ WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
 
 WebFrameLoaderClient* WebFrame::frameLoaderClient() const
 {
-    if (m_coreFrame)
-        return static_cast<WebFrameLoaderClient*>(&m_coreFrame->loaderClient());
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
+        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+    if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(m_coreFrame.get()))
+        return static_cast<WebRemoteFrameClient*>(&remoteFrame->client());
     return nullptr;
 }
 

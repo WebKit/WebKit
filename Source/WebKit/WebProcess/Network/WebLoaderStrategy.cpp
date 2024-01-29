@@ -60,6 +60,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
@@ -433,10 +434,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (resourceLoader.options().crossOriginEmbedderPolicy)
         loadParameters.crossOriginEmbedderPolicy = *resourceLoader.options().crossOriginEmbedderPolicy;
     
-#if ENABLE(APP_BOUND_DOMAINS) || ENABLE(CONTENT_EXTENSIONS)
     auto* webFrameLoaderClient = frame ? toWebLocalFrameLoaderClient(frame->loader().client()) : nullptr;
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
-#endif
+    RefPtr webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (webFrame)
@@ -496,8 +495,14 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (loadParameters.isMainFrameNavigation && document)
         loadParameters.sourceCrossOriginOpenerPolicy = document->crossOriginOpenerPolicy();
 
-    loadParameters.isMainResourceNavigationForAnyFrame = resourceLoader.frame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
-    if (loadParameters.isMainResourceNavigationForAnyFrame) {
+    if (resourceLoader.frame()
+        && resourceLoader.options().mode == FetchOptions::Mode::Navigate
+        && webFrame
+        && webFrame->frameLoaderClient()) {
+        // FIXME: Gather more parameters here like we have in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction.
+        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, { }, { }, { }, { }, { });
+    }
+    if (loadParameters.mainResourceNavigationDataForAnyFrame) {
         if (auto documentLoader = resourceLoader.documentLoader()) {
             loadParameters.navigationID = documentLoader->navigationID();
             loadParameters.navigationRequester = documentLoader->triggeringAction().requester();
