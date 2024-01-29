@@ -27,6 +27,7 @@
 #import "Editor.h"
 
 #import "ArchiveResource.h"
+#import "Blob.h"
 #import "CSSValueList.h"
 #import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
@@ -403,8 +404,8 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
 
     auto source = HTMLSourceElement::create(document);
-    source->setAttributeWithoutSynchronization(srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), Vector<uint8_t> { data }, primaryType)) });
-    source->setAttributeWithoutSynchronization(typeAttr, AtomString { primaryType });
+    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), Vector<uint8_t> { data }, primaryType)) });
+    source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
     picture->appendChild(WTFMove(source));
 
     auto image = HTMLImageElement::create(document);
