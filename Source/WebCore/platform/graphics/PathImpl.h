@@ -57,6 +57,7 @@ public:
     virtual void add(PathBezierCurveTo) = 0;
     virtual void add(PathArcTo) = 0;
     virtual void add(PathArc) = 0;
+    virtual void add(PathClosedArc) = 0;
     virtual void add(PathEllipse) = 0;
     virtual void add(PathEllipseInRect) = 0;
     virtual void add(PathRect) = 0;
@@ -74,6 +75,7 @@ public:
     virtual std::optional<PathSegment> singleSegment() const { return std::nullopt; }
     virtual std::optional<PathDataLine> singleDataLine() const { return std::nullopt; }
     virtual std::optional<PathArc> singleArc() const { return std::nullopt; }
+    virtual std::optional<PathClosedArc> singleClosedArc() const { return std::nullopt; }
     virtual std::optional<PathDataQuadCurve> singleQuadCurve() const { return std::nullopt; }
     virtual std::optional<PathDataBezierCurve> singleBezierCurve() const { return std::nullopt; }
 

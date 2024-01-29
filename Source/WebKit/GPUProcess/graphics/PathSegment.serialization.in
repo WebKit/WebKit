@@ -60,6 +60,11 @@ header: <WebCore/PathSegmentData.h>
 };
 
 header: <WebCore/PathSegmentData.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathClosedArc {
+    WebCore::PathArc arc;
+};
+
+header: <WebCore/PathSegmentData.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathEllipse {
     WebCore::FloatPoint center;
     float radiusX;

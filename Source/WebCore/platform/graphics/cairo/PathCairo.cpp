@@ -255,6 +255,12 @@ void PathCairo::add(PathArc arc)
     m_elementsStream = nullptr;
 }
 
+void PathCairo::add(PathClosedArc closedArc)
+{
+    add(closedArc.arc);
+    add(PathCloseSubpath());
+}
+
 void PathCairo::add(PathEllipse ellipse)
 {
     cairo_t* cr = platformPath();

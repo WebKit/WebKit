@@ -165,6 +165,24 @@ struct PathArc {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArc&);
 
+struct PathClosedArc {
+    PathArc arc;
+
+    static constexpr bool canApplyElements = false;
+    static constexpr bool canTransform = false;
+
+    bool operator==(const PathClosedArc&) const = default;
+
+    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
+
+    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathClosedArc&);
+
 struct PathEllipse {
     FloatPoint center;
     float radiusX;

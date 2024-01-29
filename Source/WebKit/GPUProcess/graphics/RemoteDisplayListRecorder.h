@@ -106,6 +106,7 @@ public:
 #if ENABLE(INLINE_PATH_DATA)
     void fillLine(const WebCore::PathDataLine&);
     void fillArc(const WebCore::PathArc&);
+    void fillClosedArc(const WebCore::PathClosedArc&);
     void fillQuadCurve(const WebCore::PathDataQuadCurve&);
     void fillBezierCurve(const WebCore::PathDataBezierCurve&);
 #endif
@@ -120,6 +121,7 @@ public:
     void strokeLine(const WebCore::PathDataLine&);
     void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&);
     void strokeArc(const WebCore::PathArc&);
+    void strokeClosedArc(const WebCore::PathClosedArc&);
     void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
     void strokeBezierCurve(const WebCore::PathDataBezierCurve&);
 #endif

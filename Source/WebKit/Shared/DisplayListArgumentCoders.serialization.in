@@ -263,6 +263,10 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::PathArc arc();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillClosedArc {
+    WebCore::PathClosedArc closedArc();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillQuadCurve {
     WebCore::PathDataQuadCurve quadCurve();
 };
@@ -308,6 +312,10 @@ headers: <WebCore/DisplayListItems.h>
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeArc {
     WebCore::PathArc arc();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeClosedArc {
+    WebCore::PathClosedArc closedArc();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeQuadCurve {
