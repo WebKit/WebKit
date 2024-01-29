@@ -45,6 +45,8 @@ namespace WebKit {
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
+enum class RestrictedOpenerType : uint8_t;
+
 void configureForAdvancedPrivacyProtections(NSURLSession *);
 void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>&&);
 
@@ -166,6 +168,23 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks;
     WeakHashSet<StorageAccessUserAgentStringQuirkObserver> m_observers;
+};
+
+class RestrictedOpenerDomainsController {
+public:
+    static RestrictedOpenerDomainsController& shared();
+
+    RestrictedOpenerType lookup(const WebCore::RegistrableDomain&) const;
+
+private:
+    friend class NeverDestroyed<RestrictedOpenerDomainsController, MainThreadAccessTraits>;
+    RestrictedOpenerDomainsController();
+    void scheduleNextUpdate(uint64_t);
+    void update();
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
+    uint64_t m_nextScheduledUpdateTime { 0 };
 };
 
 void configureForAdvancedPrivacyProtections(NSURLSession *);

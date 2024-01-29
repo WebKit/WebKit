@@ -29,15 +29,18 @@
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 #import "Logging.h"
+#import "RestrictedOpenerType.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
+#import <time.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/WeakRandom.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/WebPrivacySoftLink.h>
@@ -98,6 +101,7 @@ static NSString *notificationUserInfoResourceTypeKey()
     BlockPtr<void()> _linkFilteringDataCallback;
     BlockPtr<void()> _storageAccessPromptQuirksDataCallback;
     BlockPtr<void()> _storageAccessUserAgentStringQuirksDataCallback;
+    BlockPtr<void()> _restrictedOpenerDomainsCallback;
 }
 
 - (instancetype)init
@@ -125,6 +129,11 @@ static NSString *notificationUserInfoResourceTypeKey()
     _storageAccessUserAgentStringQuirksDataCallback = callback;
 }
 
+- (void)listenForRestrictedOpenerDomainsChanges:(void(^)())callback
+{
+    _restrictedOpenerDomainsCallback = callback;
+}
+
 - (void)dealloc
 {
     if (WebKit::canUseWebPrivacyFramework())
@@ -147,6 +156,9 @@ static NSString *notificationUserInfoResourceTypeKey()
 
     if (_storageAccessUserAgentStringQuirksDataCallback && type.integerValue == WPResourceTypeStorageAccessUserAgentStringQuirksData)
         _storageAccessUserAgentStringQuirksDataCallback();
+
+    if (_restrictedOpenerDomainsCallback && type.integerValue == WPResourceTypeRestrictedOpenerDomains)
+        _restrictedOpenerDomainsCallback();
 }
 
 @end
@@ -412,6 +424,89 @@ void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
             completionHandler();
     }];
+}
+
+static uint64_t approximateContinuousTimeNanoseconds()
+{
+    return clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW_APPROX);
+}
+
+RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::shared()
+{
+    static MainThreadNeverDestroyed<RestrictedOpenerDomainsController> sharedInstance;
+    return sharedInstance.get();
+}
+
+RestrictedOpenerDomainsController::RestrictedOpenerDomainsController()
+{
+    scheduleNextUpdate(approximateContinuousTimeNanoseconds());
+    update();
+
+    m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
+    [m_notificationListener listenForRestrictedOpenerDomainsChanges:^{
+        update();
+    }];
+}
+
+static RestrictedOpenerType restrictedOpenerType(WPRestrictedOpenerType type)
+{
+    switch (type) {
+    case WPRestrictedOpenerTypeNoOpener: return RestrictedOpenerType::NoOpener;
+    case WPRestrictedOpenerTypePostMessageAndClose: return RestrictedOpenerType::PostMessageAndClose;
+    default: return RestrictedOpenerType::Unrestricted;
+    }
+}
+
+void RestrictedOpenerDomainsController::scheduleNextUpdate(uint64_t now)
+{
+    // Allow the list to be re-requested from the server sometime between [24, 26) hours from now.
+    static WeakRandom random;
+    static constexpr int64_t oneDay = 24 * 60 * 60 * NSEC_PER_SEC;
+    int64_t zeroToTwoHours = random.get() * (2 * 60 * 60 * NSEC_PER_SEC);
+
+    m_nextScheduledUpdateTime = now + oneDay + zeroToTwoHours;
+}
+
+void RestrictedOpenerDomainsController::update()
+{
+    ASSERT(RunLoop::isMain());
+    if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
+        return;
+
+    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClass() sharedInstance] requestRestrictedOpenerDomains:options.get() completionHandler:^(NSArray<WPRestrictedOpenerDomain *> *domains, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request restricted opener domains from WebPrivacy");
+            return;
+        }
+
+        HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> restrictedOpenerTypes;
+        restrictedOpenerTypes.reserveInitialCapacity(domains.count);
+
+        for (WPRestrictedOpenerDomain *domainInfo in domains) {
+            auto registrableDomain = WebCore::RegistrableDomain::fromRawString(makeString("https://", String { domainInfo.domain }));
+            if (registrableDomain.isEmpty())
+                continue;
+            restrictedOpenerTypes.add(registrableDomain, restrictedOpenerType(domainInfo.openerType));
+        }
+
+        m_restrictedOpenerTypes = WTFMove(restrictedOpenerTypes);
+    }];
+}
+
+RestrictedOpenerType RestrictedOpenerDomainsController::lookup(const WebCore::RegistrableDomain& domain) const
+{
+    auto now = approximateContinuousTimeNanoseconds();
+    if (now > m_nextScheduledUpdateTime) {
+        auto mutableThis = const_cast<RestrictedOpenerDomainsController*>(this);
+        mutableThis->scheduleNextUpdate(now);
+        mutableThis->update();
+    }
+
+    auto it = m_restrictedOpenerTypes.find(domain);
+    return it == m_restrictedOpenerTypes.end() ? RestrictedOpenerType::Unrestricted : it->value;
 }
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)

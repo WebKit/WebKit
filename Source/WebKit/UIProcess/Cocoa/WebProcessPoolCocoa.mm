@@ -307,6 +307,11 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
         for (const auto& pool : WebProcessPool::allProcessPools())
             logProcessPoolState(pool.get());
     });
+
+    PAL::registerNotifyCallback("com.apple.WebKit.restrictedDomains"_s, ^{
+        RestrictedOpenerDomainsController::shared();
+    });
+
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()

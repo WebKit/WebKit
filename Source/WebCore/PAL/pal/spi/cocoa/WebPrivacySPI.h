@@ -105,7 +105,7 @@ constexpr NSInteger WPResourceTypeStorageAccessPromptQuirksData = 7;
 
 typedef void (^WPStorageAccessPromptQuirksDataCompletionHandler)(WPStorageAccessPromptQuirksData *, NSError *);
 
-@interface WPResources (Staging_119342418)
+@interface WPResources (Staging_119342418_PromptQuirks)
 - (void)requestStorageAccessPromptQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessPromptQuirksDataCompletionHandler)completion;
 @end
 #endif
@@ -123,7 +123,7 @@ constexpr NSInteger WPResourceTypeStorageAccessUserAgentStringQuirksData = 6;
 
 typedef void (^WPStorageAccessUserAgentStringQuirksDataCompletionHandler)(WPStorageAccessUserAgentStringQuirksData *, NSError *);
 
-@interface WPStorageAccessUserAgentStringQuirk (Staging_119342418)
+@interface WPResources (Staging_119342418_UAQuirks)
 - (void)requestStorageAccessUserAgentStringQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessUserAgentStringQuirksDataCompletionHandler)completion;
 @end
 #endif
@@ -131,6 +131,26 @@ typedef void (^WPStorageAccessUserAgentStringQuirksDataCompletionHandler)(WPStor
 #if !defined(HAS_WEB_PRIVACY_LINK_FILTERING_RULE_PATH) && HAVE(WEB_PRIVACY_FRAMEWORK)
 @interface WPLinkFilteringRule (Staging_119590894)
 @property (nonatomic, readonly) NSString *path;
+@end
+#endif
+
+#if !defined(HAS_WEB_PRIVACY_RESTRICTED_OPENER_DOMAIN_CLASS)
+constexpr NSInteger WPResourceTypeRestrictedOpenerDomains = 8;
+
+typedef NS_ENUM(NSInteger, WPRestrictedOpenerType) {
+    WPRestrictedOpenerTypeNoOpener = 1,
+    WPRestrictedOpenerTypePostMessageAndClose,
+};
+
+@interface WPRestrictedOpenerDomain : NSObject
+@property (nonatomic, readonly) NSString *domain;
+@property (nonatomic, readonly) WPRestrictedOpenerType openerType;
+@end
+
+typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedOpenerDomain *> *, NSError *);
+
+@interface WPResources (Staging_118208263)
+- (void)requestRestrictedOpenerDomains:(WPResourceRequestOptions *)options completionHandler:(WPRestrictedOpenerDomainsCompletionHandler)completion;
 @end
 #endif
 
