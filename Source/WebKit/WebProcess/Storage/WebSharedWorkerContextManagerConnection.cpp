@@ -115,6 +115,8 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
         WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
         page->settings().setStorageBlockingPolicy(static_cast<WebCore::StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
     }
+    if (WebProcess::singleton().isLockdownModeEnabled())
+        WebPage::adjustSettingsForLockdownMode(page->settings(), m_preferencesStore ? &m_preferencesStore.value() : nullptr);
 
     if (!initializationData.userAgent.isEmpty())
         initializationData.userAgent = m_userAgent;
