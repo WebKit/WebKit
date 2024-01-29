@@ -478,6 +478,13 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
+- (void)_isJITDisabledInAllRemoteWorkerProcesses:(void(^)(BOOL))completionHandler
+{
+    _processPool->isJITDisabledInAllRemoteWorkerProcesses([completionHandler = makeBlockPtr(completionHandler)] (bool result) {
+        completionHandler(result);
+    });
+}
+
 + (void)_forceGameControllerFramework
 {
 #if ENABLE(GAMEPAD)

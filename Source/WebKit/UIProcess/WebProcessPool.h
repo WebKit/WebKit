@@ -368,6 +368,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     size_t serviceWorkerProxiesCount() const;
+    void isJITDisabledInAllRemoteWorkerProcesses(CompletionHandler<void(bool)>&&) const;
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
