@@ -35,4 +35,9 @@ PACKAGES+=(
     v4l-utils
     wayland
     xorg-xrandr
+
+    # These are dependencies necessary for building Cog.
+    libportal
+    libportal-gtk4
+    xcb-util-cursor
 )

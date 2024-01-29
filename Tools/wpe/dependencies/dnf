@@ -19,4 +19,9 @@ PACKAGES+=(
     libXrandr-devel
     luajit
     luajit-devel
+
+    # These are dependencies necessary for building Cog.
+    libportal-devel
+    libportal-gtk4-devel
+    xcb-util-cursor-devel
 )
