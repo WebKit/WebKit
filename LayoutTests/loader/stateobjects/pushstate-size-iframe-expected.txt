@@ -26,5 +26,19 @@ iFrame successfully added item: 7 times
 iFrame successfully added item: 8 times
 iFrame successfully added item: 9 times
 iFrame successfully added item: 10 times
+iFrame successfully added item: 11 times
+iFrame successfully added item: 12 times
+iFrame successfully added item: 13 times
+iFrame successfully added item: 14 times
+iFrame successfully added item: 15 times
+iFrame successfully added item: 16 times
+iFrame successfully added item: 17 times
+iFrame successfully added item: 18 times
+iFrame successfully added item: 19 times
+iFrame successfully added item: 20 times
+iFrame successfully added item: 21 times
+iFrame successfully added item: 22 times
+iFrame successfully added item: 23 times
+iFrame successfully added item: 24 times
 Expected exception: QuotaExceededError: Attempt to store more data than allowed using history.pushState()
 

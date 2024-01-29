@@ -76,7 +76,6 @@ public:
     HistoryItem* currentItem() const { return m_currentItem.get(); }
     RefPtr<HistoryItem> protectedCurrentItem() const;
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
-    void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(RefPtr<HistoryItem>&&);
 
@@ -88,8 +87,8 @@ public:
     RefPtr<HistoryItem> protectedProvisionalItem() const;
     void setProvisionalItem(RefPtr<HistoryItem>&&);
 
-    void pushState(RefPtr<SerializedScriptValue>&&, const String& title, const String& url);
-    void replaceState(RefPtr<SerializedScriptValue>&&, const String& title, const String& url);
+    void pushState(RefPtr<SerializedScriptValue>&&, const String& url);
+    void replaceState(RefPtr<SerializedScriptValue>&&, const String& url);
 
     void setDefersLoading(bool);
 

@@ -50,11 +50,9 @@ int64_t HistoryItem::generateSequenceNumber()
     return ++next;
 }
 
-HistoryItem::HistoryItem(Client& client, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier> identifier)
+HistoryItem::HistoryItem(Client& client, const String& urlString, std::optional<BackForwardItemIdentifier> identifier)
     : m_urlString(urlString)
     , m_originalURLString(urlString)
-    , m_title(title)
-    , m_displayTitle(alternateTitle)
     , m_pruningReason(PruningReason::None)
     , m_identifier(identifier ? *identifier : BackForwardItemIdentifier::generate())
     , m_client(client)
@@ -73,8 +71,6 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_originalURLString(item.m_originalURLString)
     , m_referrer(item.m_referrer)
     , m_target(item.m_target)
-    , m_title(item.m_title)
-    , m_displayTitle(item.m_displayTitle)
     , m_scrollPosition(item.m_scrollPosition)
     , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_children(item.m_children.map([](auto& child) { return child->copy(); }))
@@ -106,8 +102,6 @@ void HistoryItem::reset()
     m_originalURLString = String();
     m_referrer = String();
     m_target = nullAtom();
-    m_title = String();
-    m_displayTitle = String();
 
     m_lastVisitWasFailure = false;
     m_isTargetItem = false;
@@ -133,16 +127,6 @@ const String& HistoryItem::urlString() const
 const String& HistoryItem::originalURLString() const
 {
     return m_originalURLString;
-}
-
-const String& HistoryItem::title() const
-{
-    return m_title;
-}
-
-const String& HistoryItem::alternateTitle() const
-{
-    return m_displayTitle;
 }
 
 bool HistoryItem::hasCachedPageExpired() const
@@ -186,12 +170,6 @@ const AtomString& HistoryItem::target() const
     return m_target;
 }
 
-void HistoryItem::setAlternateTitle(const String& alternateTitle)
-{
-    m_displayTitle = alternateTitle;
-    notifyChanged();
-}
-
 void HistoryItem::setURLString(const String& urlString)
 {
     m_urlString = urlString;
@@ -214,12 +192,6 @@ void HistoryItem::setOriginalURLString(const String& urlString)
 void HistoryItem::setReferrer(const String& referrer)
 {
     m_referrer = referrer;
-    notifyChanged();
-}
-
-void HistoryItem::setTitle(const String& title)
-{
-    m_title = title;
     notifyChanged();
 }
 
