@@ -30,6 +30,7 @@
 
     [Reflect] attribute DOMString rel;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+    [CEReactions=Needed] attribute DOMString text;
 };
 
 SVGAElement includes SVGURIReference;

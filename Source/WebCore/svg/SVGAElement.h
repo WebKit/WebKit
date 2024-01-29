@@ -42,6 +42,9 @@ public:
 
     DOMTokenList& relList();
 
+    WEBCORE_EXPORT String text();
+    void setText(String&&);
+
 private:
     SVGAElement(const QualifiedName&, Document&);
 

@@ -239,4 +239,14 @@ DOMTokenList& SVGAElement::relList()
     return *m_relList;
 }
 
+String SVGAElement::text()
+{
+    return textContent();
+}
+
+void SVGAElement::setText(String&& text)
+{
+    setTextContent(WTFMove(text));
+}
+
 } // namespace WebCore

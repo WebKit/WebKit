@@ -197,6 +197,7 @@ tableValues
 target
 targetX
 targetY
+text
 text-anchor
 text-decoration
 text-rendering
