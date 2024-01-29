@@ -58,7 +58,8 @@ private:
 private:
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineContentCache::InlineItems& m_inlineItems;
-    const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
+    InlineItemRange m_inlineItemRange;
+    bool m_mayUseSimplifiedTextOnlyInlineLayoutInRange { false };
 
     std::optional<InlineLayoutUnit> m_maximumContentWidthBetweenLineBreaks { };
     std::optional<LineLayoutResult> m_maximumIntrinsicWidthResultForSingleLine { };

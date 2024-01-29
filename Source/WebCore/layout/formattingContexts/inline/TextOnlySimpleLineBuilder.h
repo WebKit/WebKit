@@ -40,7 +40,8 @@ public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
-    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineContentCache::InlineItems&, const PlacedFloats* = nullptr);
+    static bool isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const PlacedFloats&);
+    static bool isEligibleForSimplifiedInlineLayoutByStyle(const ElementBox& root);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);

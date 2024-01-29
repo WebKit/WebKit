@@ -83,17 +83,49 @@ static bool mayUseContentWidthBetweenLineBreaksAsMaximumSize(const ElementBox& r
 IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineContentCache::InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineItems(inlineItems)
-    , m_mayUseSimplifiedTextOnlyInlineLayout(TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineItems))
 {
+    auto initializeRangeAndTextOnlyBuilderEligibility = [&] {
+        m_inlineItemRange = { 0, inlineItems.content().size() };
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root());
+        if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
+            return;
+
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = inlineItems.hasTextAndLineBreakOnlyContent() && !inlineItems.requiresVisualReordering();
+        if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
+            return;
+        // Non-bidi text only content maybe nested inside inline boxes e.g. <div>simple text</div>, <div><span>simple text inside inline box</span></div> or
+        // <div>some text<span>and some more inside inline box</span></div>
+        auto inlineBoxCount = inlineItems.inlineBoxCount();
+        if (!inlineBoxCount)
+            return;
+
+        auto& inlineItemList = inlineItems.content();
+        auto inlineBoxStartAndEndInlineItemsCount = 2 * inlineBoxCount;
+        ASSERT(inlineBoxStartAndEndInlineItemsCount <= inlineItemList.size());
+
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = inlineBoxStartAndEndInlineItemsCount < inlineItemList.size();
+        if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
+            return;
+
+        for (size_t index = 0; index < inlineBoxCount; ++index) {
+            auto& inlineItem = inlineItemList[index];
+            auto isNestingInlineBox = inlineItem.isInlineBoxStart() && inlineItemList[inlineItems.size() - 1 - index].isInlineBoxEnd();
+            m_mayUseSimplifiedTextOnlyInlineLayoutInRange = isNestingInlineBox && !formattingContext().geometryForBox(inlineItem.layoutBox()).horizontalMarginBorderAndPadding();
+            if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
+                return;
+        }
+        m_inlineItemRange = { inlineBoxCount, inlineItemList.size() - inlineBoxCount };
+    };
+    initializeRangeAndTextOnlyBuilderEligibility();
 }
 
 InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 {
     auto minimumContentSize = InlineLayoutUnit { };
 
-    if (isContentEligibleForNonLineBuilderMinimumWidth(root(), m_mayUseSimplifiedTextOnlyInlineLayout))
+    if (isContentEligibleForNonLineBuilderMinimumWidth(root(), m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
         minimumContentSize = simplifiedMinimumWidth(root());
-    else if (m_mayUseSimplifiedTextOnlyInlineLayout) {
+    else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineItemList() };
         minimumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
     } else {
@@ -106,12 +138,12 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 
 InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
 {
-    auto mayCacheLayoutResult = m_mayUseSimplifiedTextOnlyInlineLayout ? MayCacheLayoutResult::Yes : MayCacheLayoutResult::No;
+    auto mayCacheLayoutResult = m_mayUseSimplifiedTextOnlyInlineLayoutInRange && !m_inlineItemRange.startIndex() ? MayCacheLayoutResult::Yes : MayCacheLayoutResult::No;
     auto maximumContentSize = InlineLayoutUnit { };
 
     if (isContentEligibleForNonLineBuilderMaximumWidth(root(), inlineItemList()))
         maximumContentSize = simplifiedMaximumWidth(mayCacheLayoutResult);
-    else if (m_mayUseSimplifiedTextOnlyInlineLayout) {
+    else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
         if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(root(), inlineItemList())) {
             maximumContentSize = *m_maximumContentWidthBetweenLineBreaks;
 #ifndef NDEBUG
@@ -135,7 +167,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     auto horizontalConstraints = HorizontalConstraints { };
     if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
         horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
-    auto layoutRange = InlineItemRange { 0 , inlineItemList().size() };
+    auto layoutRange = m_inlineItemRange;
     if (layoutRange.isEmpty())
         return { };
 
