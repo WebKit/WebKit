@@ -800,26 +800,6 @@ template<> struct ArgumentCoder<StringView> {
     static void encode(Encoder&, StringView);
 };
 
-template<> struct ArgumentCoder<SHA1::Digest> {
-    static void encode(Encoder& encoder, const SHA1::Digest& digest)
-    {
-        encoder.encodeSpan(std::span(digest.data(), digest.size()));
-    }
-
-    static std::optional<SHA1::Digest> decode(Decoder& decoder)
-    {
-        constexpr size_t size = std::tuple_size_v<SHA1::Digest>;
-        auto data = decoder.template decodeSpan<uint8_t>(size);
-        if (!data.data())
-            return std::nullopt;
-
-        SHA1::Digest digest;
-        static_assert(sizeof(typename decltype(data)::element_type) == 1);
-        memcpy(digest.data(), data.data(), data.size_bytes());
-        return digest;
-    }
-};
-
 template<> struct ArgumentCoder<std::monostate> {
     template<typename Encoder>
     static void encode(Encoder&, const std::monostate&) { }
