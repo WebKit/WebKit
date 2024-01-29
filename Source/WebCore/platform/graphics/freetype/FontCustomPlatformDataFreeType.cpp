@@ -187,10 +187,10 @@ bool FontCustomPlatformData::supportsTechnology(const FontTechnology& technology
     case FontTechnology::ColorSvg:
     case FontTechnology::FeaturesAat:
     case FontTechnology::FeaturesOpentype:
-    case FontTechnology::Incremental:
     case FontTechnology::Palettes:
     case FontTechnology::Variations:
         return true;
+    case FontTechnology::Incremental:
     case FontTechnology::Invalid:
         return false;
     case FontTechnology::FeaturesGraphite:
