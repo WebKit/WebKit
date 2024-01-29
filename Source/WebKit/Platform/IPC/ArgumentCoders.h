@@ -781,13 +781,6 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     }
 };
 
-template<> struct ArgumentCoder<CString> {
-    template<typename Encoder>
-    static void encode(Encoder&, const CString&);
-    template<typename Decoder>
-    static std::optional<CString> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<String> {
     template<typename Encoder>
     static void encode(Encoder&, const String&);

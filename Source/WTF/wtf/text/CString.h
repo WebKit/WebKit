@@ -64,6 +64,7 @@ public:
     WTF_EXPORT_PRIVATE CString(const char*);
     WTF_EXPORT_PRIVATE CString(const char*, size_t length);
     CString(const uint8_t* data, size_t length) : CString(reinterpret_cast<const char*>(data), length) { }
+    CString(std::span<const uint8_t> bytes) : CString(reinterpret_cast<const char*>(bytes.data()), bytes.size()) { }
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
