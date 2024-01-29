@@ -46,7 +46,6 @@ SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const Worke
     , m_name(name)
 {
     SCOPE_RELEASE_LOG("SharedWorkerGlobalScope:");
-    relaxAdoptionRequirement();
     applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
 }
 

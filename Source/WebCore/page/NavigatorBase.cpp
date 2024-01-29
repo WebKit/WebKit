@@ -163,8 +163,10 @@ WebLockManager& NavigatorBase::locks()
 ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(!scriptExecutionContext() || scriptExecutionContext()->settingsValues().serviceWorkersEnabled);
-    if (!m_serviceWorkerContainer)
-        m_serviceWorkerContainer = ServiceWorkerContainer::create(scriptExecutionContext(), *this).moveToUniquePtr();
+    if (!m_serviceWorkerContainer) {
+        RefPtr protectedContext { scriptExecutionContext() };
+        m_serviceWorkerContainer = ServiceWorkerContainer::create(protectedContext.get(), *this).moveToUniquePtr();
+    }
     return *m_serviceWorkerContainer;
 }
 
