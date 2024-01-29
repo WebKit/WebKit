@@ -1257,7 +1257,7 @@ private:
 
     StateBitfields m_stateBitfields;
 
-    CheckedRef<Node> m_node;
+    WeakRef<Node, WeakPtrImplWithEventTargetData> m_node;
 
     SingleThreadWeakPtr<RenderElement> m_parent;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;

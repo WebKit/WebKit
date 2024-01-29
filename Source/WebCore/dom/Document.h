@@ -391,7 +391,8 @@ private:
 };
 
 class Document
-    : public ContainerNode
+    : public CanMakeCheckedPtr
+    , public ContainerNode
     , public TreeScope
     , public ScriptExecutionContext
     , public FontSelectorClient
@@ -413,13 +414,13 @@ public:
     virtual ~Document();
 
     // Resolve ambiguity for CanMakeCheckedPtr.
-    void incrementPtrCount() const { static_cast<const ContainerNode*>(this)->incrementPtrCount(); }
-    void decrementPtrCount() const { static_cast<const ContainerNode*>(this)->decrementPtrCount(); }
+    using CanMakeCheckedPtr::incrementPtrCount;
+    using CanMakeCheckedPtr::decrementPtrCount;
 #if CHECKED_POINTER_DEBUG
-    void registerCheckedPtr(const void* pointer) const { static_cast<const ContainerNode*>(this)->registerCheckedPtr(pointer); }
-    void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const ContainerNode*>(this)->copyCheckedPtr(source, destination); }
-    void moveCheckedPtr(const void* source, const void* destination) const { static_cast<const ContainerNode*>(this)->moveCheckedPtr(source, destination); }
-    void unregisterCheckedPtr(const void* pointer) const { static_cast<const ContainerNode*>(this)->unregisterCheckedPtr(pointer); }
+    using CanMakeCheckedPtr::registerCheckedPtr;
+    using CanMakeCheckedPtr::copyCheckedPtr;
+    using CanMakeCheckedPtr::moveCheckedPtr;
+    using CanMakeCheckedPtr::unregisterCheckedPtr;
 #endif // CHECKED_POINTER_DEBUG
 
     // Nodes belonging to this document increase referencingNodeCount -

@@ -157,7 +157,7 @@ static bool canIncludeElementInPriorityCandidateChain(Element& element, Element&
 {
     auto candidateResult = parentController.examineAnchorCandidate(element);
     auto elementsController = scrollAnchoringControllerForElement(element);
-    return !(candidateResult == CandidateExaminationResult::Exclude || (element == priorityCandidateElement && candidateResult == CandidateExaminationResult::Skip) || (elementsController && elementsController->anchorElement()));
+    return !(candidateResult == CandidateExaminationResult::Exclude || (&element == &priorityCandidateElement && candidateResult == CandidateExaminationResult::Skip) || (elementsController && elementsController->anchorElement()));
 }
 
 bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)

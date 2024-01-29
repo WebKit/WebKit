@@ -87,7 +87,7 @@ using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
-class Node : public EventTarget, public CanMakeCheckedPtr {
+class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
@@ -141,11 +141,11 @@ public:
     inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
-    Node* previousSibling() const { return m_previous.get(); }
-    RefPtr<Node> protectedPreviousSibling() const { return m_previous.get(); }
+    Node* previousSibling() const { return m_previous; }
+    RefPtr<Node> protectedPreviousSibling() const { return m_previous; }
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
-    Node* nextSibling() const { return m_next.get(); }
-    RefPtr<Node> protectedNextSibling() const { return m_next.get(); }
+    Node* nextSibling() const { return m_next; }
+    RefPtr<Node> protectedNextSibling() const { return m_next; }
     static ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
     Node* firstChild() const;
@@ -754,10 +754,10 @@ private:
     const uint16_t m_typeBitFields;
     mutable OptionSet<StateFlag> m_stateFlags;
 
-    CheckedPtr<ContainerNode> m_parentNode;
+    ContainerNode* m_parentNode { nullptr };
     CheckedPtr<TreeScope> m_treeScope;
-    CheckedPtr<Node> m_previous;
-    CheckedPtr<Node> m_next;
+    Node* m_previous { nullptr };
+    Node* m_next { nullptr };
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
     CompactUniquePtrTuple<NodeRareData, uint16_t> m_rareDataWithBitfields;
 };
@@ -842,7 +842,7 @@ inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 inline ContainerNode* Node::parentNode() const
 {
     ASSERT(isMainThreadOrGCThread());
-    return m_parentNode.get();
+    return m_parentNode;
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const

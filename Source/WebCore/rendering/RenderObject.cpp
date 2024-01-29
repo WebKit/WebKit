@@ -117,7 +117,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
     unsigned m_debugBitfields : 2;
 #endif
     unsigned m_stateBitfields;
-    CheckedRef<Node> node;
+    WeakRef<Node, WeakPtrImplWithEventTargetData> node;
     SingleThreadWeakPtr<RenderObject> pointers;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;
     uint16_t m_typeFlags;
