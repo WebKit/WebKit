@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -336,6 +336,36 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
     if (updatePreference(m_preferences.mediaCapabilityGrantsEnabled, preferences.mediaCapabilityGrantsEnabled))
         PlatformMediaSessionManager::setMediaCapabilityGrantsEnabled(*m_preferences.mediaCapabilityGrantsEnabled);
 #endif
+
+#if ENABLE(VP9)
+    if (updatePreference(m_preferences.vp8DecoderEnabled, preferences.vp8DecoderEnabled)) {
+        PlatformMediaSessionManager::setShouldEnableVP8Decoder(*m_preferences.vp8DecoderEnabled);
+#if PLATFORM(COCOA)
+        if (!m_haveEnabledVP8Decoder && *m_preferences.vp8DecoderEnabled) {
+            m_haveEnabledVP8Decoder = true;
+            WebCore::registerWebKitVP8Decoder();
+        }
+#endif
+    }
+    if (updatePreference(m_preferences.vp9DecoderEnabled, preferences.vp9DecoderEnabled)) {
+        PlatformMediaSessionManager::setShouldEnableVP9Decoder(*m_preferences.vp9DecoderEnabled);
+#if PLATFORM(COCOA)
+        if (!m_haveEnabledVP9Decoder && *m_preferences.vp9DecoderEnabled) {
+            m_haveEnabledVP9Decoder = true;
+            WebCore::registerSupplementalVP9Decoder();
+        }
+#endif
+    }
+    if (updatePreference(m_preferences.vp9SWDecoderEnabled, preferences.vp9SWDecoderEnabled)) {
+        PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(*m_preferences.vp9SWDecoderEnabled);
+#if PLATFORM(COCOA)
+        if (!m_haveEnabledVP9SWDecoder && *m_preferences.vp9SWDecoderEnabled) {
+            m_haveEnabledVP9SWDecoder = true;
+            WebCore::registerWebKitVP9Decoder();
+        }
+#endif
+    }
+#endif
 }
 
 bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference)
@@ -555,30 +585,6 @@ WorkQueue& GPUProcess::libWebRTCCodecsQueue()
     if (!m_libWebRTCCodecsQueue)
         m_libWebRTCCodecsQueue = WorkQueue::create("LibWebRTCCodecsQueue", WorkQueue::QOS::UserInitiated);
     return *m_libWebRTCCodecsQueue;
-}
-#endif
-
-#if ENABLE(VP9)
-void GPUProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
-{
-    if (shouldEnableVP9Decoder && !m_enableVP9Decoder) {
-        m_enableVP9Decoder = true;
-#if PLATFORM(COCOA)
-        WebCore::registerSupplementalVP9Decoder();
-#endif
-    }
-    if (shouldEnableVP8Decoder && !m_enableVP8Decoder) {
-        m_enableVP8Decoder = true;
-#if PLATFORM(COCOA)
-        WebCore::registerWebKitVP8Decoder();
-#endif
-    }
-    if (shouldEnableVP9SWDecoder && !m_enableVP9SWDecoder) {
-        m_enableVP9SWDecoder = true;
-#if PLATFORM(COCOA)
-        WebCore::registerWebKitVP9Decoder();
-#endif
-    }
 }
 #endif
 
