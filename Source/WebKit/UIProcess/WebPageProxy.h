@@ -1643,6 +1643,7 @@ public:
 #if ENABLE(POINTER_LOCK)
     void didAllowPointerLock();
     void didDenyPointerLock();
+    void requestPointerUnlock();
 #endif
 
     void setSuppressVisibilityUpdates(bool flag);
@@ -2420,7 +2421,6 @@ private:
 
 #if ENABLE(POINTER_LOCK)
     void requestPointerLock();
-    void requestPointerUnlock();
 #endif
 
     void didCreateMainFrame(WebCore::FrameIdentifier);
