@@ -138,6 +138,14 @@ void PDFPluginBase::setView(PluginView& view)
     m_view = view;
 }
 
+void PDFPluginBase::startLoading()
+{
+#if HAVE(INCREMENTAL_PDF_APIS)
+    if (incrementalPDFLoadingEnabled())
+        m_incrementalLoader = PDFIncrementalLoader::create(*this);
+#endif
+}
+
 void PDFPluginBase::destroy()
 {
     ASSERT(!m_isBeingDestroyed);

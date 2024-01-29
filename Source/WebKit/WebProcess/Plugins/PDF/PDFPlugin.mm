@@ -561,11 +561,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     
     if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
         [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
-
-#if HAVE(INCREMENTAL_PDF_APIS)
-    if (incrementalPDFLoadingEnabled())
-        m_incrementalLoader = PDFIncrementalLoader::create(*this);
-#endif
 }
 
 void PDFPlugin::updateScrollbars()

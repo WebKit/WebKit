@@ -85,6 +85,7 @@ public:
     using WebKit::PDFScriptEvaluator::Client::WeakValueType;
     using WebKit::PDFScriptEvaluator::Client::WeakPtrImplType;
 
+    void startLoading();
     void destroy();
 
     virtual bool isUnifiedPDFPlugin() const { return false; }
