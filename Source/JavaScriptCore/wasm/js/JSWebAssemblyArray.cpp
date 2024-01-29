@@ -75,6 +75,14 @@ JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::Field
 {
 }
 
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<v128_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
+    , m_elementType(elementType)
+    , m_size(size)
+    , m_payload128(WTFMove(payload))
+{
+}
+
 JSWebAssemblyArray::~JSWebAssemblyArray()
 {
     if (m_elementType.type.is<Wasm::PackedType>()) {
@@ -93,6 +101,9 @@ JSWebAssemblyArray::~JSWebAssemblyArray()
     case Wasm::TypeKind::I32:
     case Wasm::TypeKind::F32:
         m_payload32.~FixedVector<uint32_t>();
+        break;
+    case Wasm::TypeKind::V128:
+        m_payload128.~FixedVector<v128_t>();
         break;
     default:
         m_payload64.~FixedVector<uint64_t>();
@@ -125,11 +136,19 @@ void JSWebAssemblyArray::fill(uint32_t offset, uint64_t value, uint32_t size)
     case Wasm::TypeKind::F32:
         std::fill(m_payload32.begin() + offset, m_payload32.begin() + offset + size, static_cast<uint32_t>(value));
         return;
-    // FIXME: support v128
+    case Wasm::TypeKind::V128:
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
     default:
         std::fill(m_payload64.begin() + offset, m_payload64.begin() + offset + size, value);
         return;
     }
+}
+
+void JSWebAssemblyArray::fill(uint32_t offset, v128_t value, uint32_t size)
+{
+    ASSERT(m_elementType.type.unpacked().isV128());
+    std::fill(m_payload128.begin() + offset, m_payload128.begin() + offset + size, value);
 }
 
 void JSWebAssemblyArray::copy(JSWebAssemblyArray& dst, uint32_t dstOffset, uint32_t srcOffset, uint32_t size)
@@ -165,7 +184,9 @@ void JSWebAssemblyArray::copy(JSWebAssemblyArray& dst, uint32_t dstOffset, uint3
     case Wasm::TypeKind::F32:
         std::copy(m_payload32.begin() + srcOffset, m_payload32.begin() + srcOffset + size, dst.m_payload32.begin() + dstOffset);
         return;
-    // FIXME: support v128
+    case Wasm::TypeKind::V128:
+        std::copy(m_payload128.begin() + srcOffset, m_payload128.begin() + srcOffset + size, dst.m_payload128.begin() + dstOffset);
+        return;
     default:
         std::copy(m_payload64.begin() + srcOffset, m_payload64.begin() + srcOffset + size, dst.m_payload64.begin() + dstOffset);
         return;

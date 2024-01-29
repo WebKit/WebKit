@@ -2918,11 +2918,23 @@ auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> Pa
 
 Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size)
 {
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
+
     // FIXME: Emit this inline.
     // https://bugs.webkit.org/show_bug.cgi?id=245405
-    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNew,
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue);
+    Value* resultValue;
+    if (!elementType.unpacked().isV128()) {
+        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNew,
+            instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+            get(size), initValue);
+    } else {
+        Value* lane0 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 0 }, initValue);
+        Value* lane1 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 1 }, initValue);
+        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNewVector,
+            instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+            get(size), lane0, lane1);
+    }
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
@@ -2999,16 +3011,11 @@ Variable* B3IRGenerator::pushArrayNewFromSegment(arraySegmentOperation operation
 
 auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    StorageType elementType;
-    getArrayElementType(typeIndex, elementType);
+    Type resultType;
+    getArrayRefType(typeIndex, resultType);
 
-    Value* initValue;
-    if (Wasm::isRefType(elementType))
-        initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
-    else
-        initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
-
-    result = pushArrayNew(typeIndex, initValue, size);
+    result = push(callWasmOperation(m_currentBlock, toB3Type(resultType), operationWasmArrayNewEmpty,
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex), get(size)));
 
     return { };
 }
@@ -3211,11 +3218,21 @@ auto B3IRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result)
 
 auto B3IRGenerator::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size) -> PartialResult
 {
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
+
     emitArrayNullCheck(get(arrayref), ExceptionType::NullArrayFill);
 
-    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(arrayref), get(offset), get(value), get(size));
+    Value* resultValue;
+    if (!elementType.unpacked().isV128()) {
+        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
+            instanceValue(), get(arrayref), get(offset), get(value), get(size));
+    } else {
+        Value* lane0 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 0 }, get(value));
+        Value* lane1 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 1 }, get(value));
+        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFillVector,
+            instanceValue(), get(arrayref), get(offset), lane0, lane1, get(size));
+    }
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),

@@ -1591,6 +1591,51 @@ Value BBQJIT::marshallToI64(Value value)
     return value;
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType initValue, ExpressionType& result)
+{
+    result = topValue(TypeKind::Arrayref);
+
+    if (initValue.type() != TypeKind::V128) {
+        initValue = marshallToI64(initValue);
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(typeIndex),
+            size,
+            initValue,
+        };
+        emitCCall(operationWasmArrayNew, arguments, result);
+    } else {
+        ASSERT(!initValue.isConst());
+        Location valueLocation = loadIfNecessary(initValue);
+
+        Value lane0, lane1;
+        {
+            ScratchScope<2, 0> scratches(*this);
+            lane0 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(0)));
+            lane1 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(1)));
+
+            m_jit.vectorExtractLaneInt64(TrustedImm32(0), valueLocation.asFPR(), scratches.gpr(0));
+            m_jit.vectorExtractLaneInt64(TrustedImm32(1), valueLocation.asFPR(), scratches.gpr(1));
+        }
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(typeIndex),
+            size,
+            lane0,
+            lane1,
+        };
+        emitCCall(operationWasmArrayNewVector, arguments, result);
+    }
+
+    Location resultLocation = loadIfNecessary(result);
+    emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
+
+    LOG_INSTRUCTION("ArrayNew", typeIndex, size, initValue, RESULT(result));
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
 {
     // Allocate an uninitialized array whose length matches the argument count
@@ -1691,13 +1736,16 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayGet(ExtGCOpType arrayGetKind, u
             case TypeKind::F64:
                 m_jit.loadDouble(fieldAddress, resultLocation.asFPR());
                 break;
+            case TypeKind::V128:
+                m_jit.loadVector(fieldAddress, resultLocation.asFPR());
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
         }
     } else {
-        auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(elementType.elementSize()) - 1);
+        auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(std::min(size_t { 8 }, elementType.elementSize()) - 1));
         auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType));
         auto fieldBaseIndex = fieldAddress.indexedBy(indexLocation.asGPR(), scale);
 
@@ -1724,6 +1772,11 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayGet(ExtGCOpType arrayGetKind, u
                 break;
             case TypeKind::F64:
                 m_jit.loadDouble(fieldBaseIndex, resultLocation.asFPR());
+                break;
+            case TypeKind::V128:
+                // For V128, the index computation above doesn't work so we index differently.
+                m_jit.mul32(Imm32(4), indexLocation.asGPR(), indexLocation.asGPR());
+                m_jit.loadVector(fieldAddress.indexedBy(indexLocation.asGPR(), MacroAssembler::Scale::TimesFour), resultLocation.asFPR());
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1815,6 +1868,9 @@ void BBQJIT::emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value ind
             case TypeKind::F64:
                 m_jit.storeDouble(valueLocation.asFPR(), fieldAddress);
                 break;
+            case TypeKind::V128:
+                m_jit.storeVector(valueLocation.asFPR(), fieldAddress);
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -1822,7 +1878,7 @@ void BBQJIT::emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value ind
         }
     } else {
         Location indexLocation = loadIfNecessary(index);
-        auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(elementType.elementSize()) - 1);
+        auto scale = static_cast<MacroAssembler::Scale>(std::bit_width(std::min(size_t { 8 }, elementType.elementSize())) - 1);
         auto fieldAddress = MacroAssembler::Address(wasmScratchGPR, JSWebAssemblyArray::offsetOfElements(elementType));
         auto fieldBaseIndex = fieldAddress.indexedBy(indexLocation.asGPR(), scale);
 
@@ -1862,6 +1918,11 @@ void BBQJIT::emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value ind
                 break;
             case TypeKind::F64:
                 m_jit.storeDouble(valueLocation.asFPR(), fieldBaseIndex);
+                break;
+            case TypeKind::V128:
+                // For V128, the index computation above doesn't work so we index differently.
+                m_jit.mul32(Imm32(4), indexLocation.asGPR(), indexLocation.asGPR());
+                m_jit.storeVector(valueLocation.asFPR(), fieldAddress.indexedBy(indexLocation.asGPR(), MacroAssembler::Scale::TimesFour));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1927,6 +1988,62 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayLen(ExpressionType arrayref, Ex
     return { };
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size)
+{
+    if (arrayref.isConst()) {
+        ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+        emitThrowException(ExceptionType::NullArrayFill);
+        return { };
+    }
+
+    emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
+
+    Value shouldThrow = topValue(TypeKind::I32);
+    if (value.type() != TypeKind::V128) {
+        value = marshallToI64(value);
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            arrayref,
+            offset,
+            value,
+            size
+        };
+        emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
+    } else {
+        ASSERT(!value.isConst());
+        Location valueLocation = loadIfNecessary(value);
+
+        Value lane0, lane1;
+        {
+            ScratchScope<2, 0> scratches(*this);
+            lane0 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(0)));
+            lane1 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(1)));
+
+            m_jit.vectorExtractLaneInt64(TrustedImm32(0), valueLocation.asFPR(), scratches.gpr(0));
+            m_jit.vectorExtractLaneInt64(TrustedImm32(1), valueLocation.asFPR(), scratches.gpr(1));
+        }
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            arrayref,
+            offset,
+            lane0,
+            lane1,
+            size,
+        };
+        emitCCall(operationWasmArrayFillVector, arguments, shouldThrow);
+    }
+    Location shouldThrowLocation = allocate(shouldThrow);
+
+    LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
+
+    throwExceptionIf(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+    consume(shouldThrow);
+
+    return { };
+}
+
 void BBQJIT::emitStructPayloadSet(GPRReg payloadGPR, const StructType& structType, uint32_t fieldIndex, Value value)
 {
     unsigned fieldOffset = *structType.offsetOfField(fieldIndex);
@@ -1966,7 +2083,11 @@ void BBQJIT::emitStructPayloadSet(GPRReg payloadGPR, const StructType& structTyp
         return;
     }
 
-    Location valueLocation = loadIfNecessary(value);
+    Location valueLocation;
+    if (value.isPinned())
+        valueLocation = locationOf(value);
+    else
+        valueLocation = loadIfNecessary(value);
     switch (kind) {
     case TypeKind::I32:
         if (structType.field(fieldIndex).type.is<PackedType>()) {
@@ -1990,6 +2111,9 @@ void BBQJIT::emitStructPayloadSet(GPRReg payloadGPR, const StructType& structTyp
         break;
     case TypeKind::F64:
         m_jit.storeDouble(valueLocation.asFPR(), MacroAssembler::Address(payloadGPR, fieldOffset));
+        break;
+    case TypeKind::V128:
+        m_jit.storeVector(valueLocation.asFPR(), MacroAssembler::Address(payloadGPR, fieldOffset));
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -2016,7 +2140,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNewDefault(uint32_t typeIndex,
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         if (Wasm::isRefType(structType.field(i).type))
             emitStructPayloadSet(wasmScratchGPR, structType, i, Value::fromRef(TypeKind::RefNull, JSValue::encode(jsNull())));
-        else
+        else if (structType.field(i).type.unpacked().isV128()) {
+            materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
+            emitStructPayloadSet(wasmScratchGPR, structType, i, Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR)));
+        } else
             emitStructPayloadSet(wasmScratchGPR, structType, i, Value::fromI64(0));
     }
 
@@ -2122,6 +2249,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructGet(ExtGCOpType structGetKind,
         break;
     case TypeKind::F64:
         m_jit.loadDouble(MacroAssembler::Address(wasmScratchGPR, fieldOffset), resultLocation.asFPR());
+        break;
+    case TypeKind::V128:
+        m_jit.loadVector(MacroAssembler::Address(wasmScratchGPR, fieldOffset), resultLocation.asFPR());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

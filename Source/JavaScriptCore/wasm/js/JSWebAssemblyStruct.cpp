@@ -99,6 +99,8 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return JSValue::encode(bitwise_cast<WriteBarrierBase<Unknown>*>(targetPointer)->get());
+    case TypeKind::V128:
+        // V128 is not supported in LLInt.
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -162,6 +164,14 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
     }
 
     ASSERT_NOT_REACHED();
+}
+
+void JSWebAssemblyStruct::set(uint32_t fieldIndex, v128_t argument)
+{
+    uint8_t* targetPointer = fieldPointer(fieldIndex);
+    ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
+    ASSERT(fieldType(fieldIndex).type.as<Wasm::Type>().kind == Wasm::TypeKind::V128);
+    *bitwise_cast<v128_t*>(targetPointer) = argument;
 }
 
 template<typename Visitor>

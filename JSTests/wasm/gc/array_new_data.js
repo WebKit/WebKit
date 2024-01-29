@@ -355,7 +355,8 @@ function testSingletonArray() {
 
 function testTypeErrors() {
     let notArray = "WebAssembly.Module doesn't validate: array.new_data index 0 does not reference an array definition, in function at index 0";
-    let refType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found RefNull";
+    let refFuncType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found (ref null func)";
+    let refExternType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found (ref null extern)";
     let erroneousCase = (ty, msg) => {
         assert.throws(() => compile (`
           (module
@@ -374,8 +375,8 @@ function testTypeErrors() {
      */
     for (const [badType, message] of [["(struct (field i64) (field i32))", notArray],
                            ["(func (result i32))", notArray],
-                           ["(array (mut funcref))", refType],
-                           ["(array (mut externref))", refType]]) {
+                           ["(array (mut funcref))", refFuncType],
+                           ["(array (mut externref))", refExternType]]) {
         erroneousCase(badType, message);
     }
 }

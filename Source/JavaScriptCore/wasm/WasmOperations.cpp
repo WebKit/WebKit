@@ -1044,12 +1044,20 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void
 }
 #endif // USE(JSVALUE64)
 
-JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t value))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return arrayNew(instance, typeIndex, size, encValue);
+    return arrayNew(instance, typeIndex, size, value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewVector, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t lane0, uint64_t lane1))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return arrayNew(instance, typeIndex, size, v128_t { lane0, lane1 });
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset))
@@ -1078,36 +1086,61 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (Instance* 
     JSGlobalObject* globalObject = instance->globalObject();
     auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
 
-    // Get the element type
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
-    // Create a zero-initialized array with the right element type and length
+    size_t elementSize = fieldType.type.elementSize();
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+        return JSValue::encode(jsNull());
+
+    // Create a default-initialized array with the right element type and length
     JSWebAssemblyArray* array = nullptr;
-    switch (fieldType.type.elementSize()) {
-    case sizeof(uint8_t): {
-        FixedVector<uint8_t> v(size);
-        v.fill(0); // Prevent GC from tracing uninitialized array slots
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
-        break;
+    if (fieldType.type.is<PackedType>()) {
+        switch (fieldType.type.as<PackedType>()) {
+        case Wasm::PackedType::I8: {
+            FixedVector<uint8_t> v(size);
+            v.fill(0); // Prevent GC from tracing uninitialized array slots
+            array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+            break;
+        }
+        case Wasm::PackedType::I16: {
+            FixedVector<uint16_t> v(size);
+            v.fill(0);
+            array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+            break;
+        }
+        }
+        return JSValue::encode(array);
     }
-    case sizeof(uint16_t): {
-        FixedVector<uint16_t> v(size);
-        v.fill(0);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
-        break;
-    }
-    case sizeof(uint32_t): {
+
+    ASSERT(fieldType.type.is<Type>());
+    switch (fieldType.type.as<Type>().kind) {
+    case Wasm::TypeKind::I32:
+    case Wasm::TypeKind::F32: {
         FixedVector<uint32_t> v(size);
         v.fill(0);
         array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
         break;
     }
-    case sizeof(uint64_t): {
+    case Wasm::TypeKind::I64:
+    case Wasm::TypeKind::F64: {
         FixedVector<uint64_t> v(size);
         v.fill(0);
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull: {
+        FixedVector<uint64_t> v(size);
+        v.fill(JSValue::encode(jsNull()));
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case Wasm::TypeKind::V128: {
+        FixedVector<v128_t> v(size);
+        v.fill(vectorAllZeros());
         array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
         break;
     }
@@ -1134,12 +1167,20 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint3
     return arraySet(instance, typeIndex, arrayValue, index, value);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t offset, EncodedJSValue value, uint32_t size))
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t value, uint32_t size))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return toUCPUStrictInt32(arrayFill(instance, typeIndex, arrayValue, offset, value, size));
+    return toUCPUStrictInt32(arrayFill(arrayValue, offset, value, size));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (Instance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t lane0, uint64_t lane1, uint32_t size))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return toUCPUStrictInt32(arrayFill(arrayValue, offset, v128_t { lane0, lane1 }, size));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (Instance* instance, EncodedJSValue dst, uint32_t dstOffset, EncodedJSValue src, uint32_t srcOffset, uint32_t size))

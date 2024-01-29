@@ -432,6 +432,12 @@ WASM_SLOW_PATH_DECL(array_new)
     case Wasm::ArrayGetKind::NewDefault: {
         if (Wasm::isRefType(elementType))
             value = JSValue::encode(jsNull());
+        else if (elementType.unpacked().isV128()) {
+            EncodedJSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, vectorAllZeros());
+            if (JSValue::decode(result).isNull())
+                WASM_THROW(Wasm::ExceptionType::BadArrayNew);
+            WASM_RETURN(result);
+        }
         break;
     }
     case Wasm::ArrayGetKind::NewFixed: {
@@ -441,6 +447,7 @@ WASM_SLOW_PATH_DECL(array_new)
         WASM_RETURN(Wasm::arrayNewFixed(instance, instruction.m_typeIndex, size, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_value))));
     }
     }
+    ASSERT(!elementType.unpacked().isV128());
     EncodedJSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, value);
     if (JSValue::decode(result).isNull())
         WASM_THROW(Wasm::ExceptionType::BadArrayNew);
@@ -508,7 +515,7 @@ WASM_SLOW_PATH_DECL(array_fill)
     EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
 
-    if (!Wasm::arrayFill(instance, instruction.m_typeIndex, arrayref, offset, value, size))
+    if (!Wasm::arrayFill(arrayref, offset, value, size))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayFill);
     WASM_END_IMPL();
 }

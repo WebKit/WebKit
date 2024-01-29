@@ -59,6 +59,7 @@ public:
 
     uint64_t get(uint32_t) const;
     void set(uint32_t, uint64_t);
+    void set(uint32_t, v128_t);
     const Wasm::StructType* structType() const { return m_type->as<Wasm::StructType>(); }
     Wasm::FieldType fieldType(uint32_t fieldIndex) const { return structType()->field(fieldIndex); }
 

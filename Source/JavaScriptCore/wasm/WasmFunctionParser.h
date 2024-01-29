@@ -2044,6 +2044,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.new value to type ", value.type(), " expected ", unpackedElementType);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new index to type ", size.type(), " expected ", TypeKind::I32);
 
+            if (unpackedElementType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNew(typeIndex, size, value, result));
 
@@ -2102,6 +2108,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // We already checked that the expression stack was deep enough, so it's safe to assert this
             RELEASE_ASSERT(argc == args.size());
 
+            if (elementType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewFixed(typeIndex, args, result));
             m_expressionStack.constructAndAppend(arrayRefType, result);
@@ -2113,25 +2125,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             Type arrayRefType;
             WASM_FAIL_IF_HELPER_FAILS(parseArrayTypeDefinition("array.new_data", false, typeIndex, fieldType, arrayRefType));
 
-            // Array element type must be numeric, vector or packed
             const StorageType storageType = fieldType.type;
-            if (storageType.is<Type>()) {
-                // Check that type is numeric
-                const Type elementType = storageType.as<Type>();
-                switch (elementType.kind) {
-                case Wasm::TypeKind::I32:
-                case Wasm::TypeKind::I64:
-                case Wasm::TypeKind::F32:
-                case Wasm::TypeKind::F64:
-                    break;
-                case Wasm::TypeKind::V128:
-                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251330
-                    WASM_VALIDATOR_FAIL_IF(true, "array.new_data of vector type not yet implemented");
-                default:
-                    WASM_VALIDATOR_FAIL_IF(true, "array.new_data expected numeric, packed, or vector type; found ", elementType.kind);
-                }
-            }
-            // Otherwise, it's packed, which is type-correct
+            WASM_VALIDATOR_FAIL_IF(storageType.is<Type>() && isRefType(storageType.as<Type>()), "array.new_data expected numeric, packed, or vector type; found ", storageType.as<Type>());
 
             uint32_t dataIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataIndex), "can't get data segment index for array.new_data");
@@ -2223,6 +2218,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), arrayRefType), opName, " arrayref to type ", arrayref.type(), " expected ", arrayRefType);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.get index to type ", index.type(), " expected ", TypeKind::I32);
 
+            if (resultType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayGet(op, typeIndex, arrayref, index, result));
 
@@ -2247,6 +2248,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), arrayRefType), "array.set arrayref to type ", arrayref.type(), " expected ", arrayRefType);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.set index to type ", index.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.set value to type ", value.type(), " expected ", unpackedElementType);
+
+            if (unpackedElementType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
 
             WASM_TRY_ADD_TO_CONTEXT(addArraySet(typeIndex, arrayref, index, value));
 
@@ -2281,6 +2288,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != offset.type().kind, "array.fill offset to type ", offset.type(), " expected ", TypeKind::I32);
             WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), unpackedElementType), "array.fill value to type ", value.type(), " expected ", unpackedElementType);
             WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.fill size to type ", size.type(), " expected ", TypeKind::I32);
+
+            if (unpackedElementType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
 
             WASM_TRY_ADD_TO_CONTEXT(addArrayFill(typeIndex, arrayref, offset, value, size));
             return { };
@@ -2382,15 +2395,24 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new ", structType->fieldCount(), " values");
             args.grow(structType->fieldCount());
 
+            bool hasV128Args = false;
             for (size_t i = 0; i < structType->fieldCount(); ++i) {
                 TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
                 const auto& fieldType = structType->field(StructFieldCount(structType->fieldCount() - i - 1)).type.unpacked();
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), fieldType), "argument type mismatch in struct.new, got ", arg.type(), ", expected ", fieldType);
+                if (fieldType.isV128())
+                    hasV128Args = true;
                 args[args.size() - i - 1] = arg;
                 m_context.didPopValueFromStack(arg, "StructNew*"_s);
             }
             m_expressionStack.shrink(firstArgumentIndex);
             RELEASE_ASSERT(structType->fieldCount() == args.size());
+
+            if (hasV128Args) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addStructNew(typeIndex, args, result));
@@ -2426,6 +2448,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             if (op == ExtGCOpType::StructGet)
                 WASM_PARSER_FAIL_IF(structGetInput.field.type.template is<PackedType>(), opName, " applied to packed array of ", structGetInput.field.type.template as<PackedType>(), " -- use struct.get_s or struct.get_u");
 
+            if (structGetInput.field.type.unpacked().isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+
             ExpressionType result;
             const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->expand().template as<StructType>();
             WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
@@ -2443,6 +2471,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             const auto& field = structSetInput.field;
             WASM_PARSER_FAIL_IF(field.mutability != Mutability::Mutable, "the field ", structSetInput.indices.fieldIndex, " can't be set because it is immutable");
             WASM_PARSER_FAIL_IF(!isSubtype(value.type(), field.type.unpacked()), "type mismatch in struct.set");
+
+            if (field.type.unpacked().isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
 
             const auto& structType = *m_info.typeSignatures[structSetInput.indices.structTypeIndex]->expand().template as<StructType>();
             WASM_TRY_ADD_TO_CONTEXT(addStructSet(structSetInput.structReference, structType, structSetInput.indices.fieldIndex, value));

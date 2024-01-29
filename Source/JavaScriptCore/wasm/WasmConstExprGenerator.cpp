@@ -53,18 +53,24 @@ public:
     // If a constant expression allocates an object, it should be put in a Strong handle.
     struct ConstExprValue {
         enum ConstExprValueType : uint8_t {
-            NonObject,
+            Numeric,
+            Vector,
             Object,
         };
 
         ConstExprValue()
-            : m_type(ConstExprValueType::NonObject)
+            : m_type(ConstExprValueType::Numeric)
             , m_bits(0)
         { }
 
         ConstExprValue(uint64_t value)
-            : m_type(ConstExprValueType::NonObject)
+            : m_type(ConstExprValueType::Numeric)
             , m_bits(value)
+        { }
+
+        ConstExprValue(v128_t value)
+            : m_type(ConstExprValueType::Vector)
+            , m_vector(value)
         { }
 
         ConstExprValue(Strong<JSObject> object)
@@ -72,11 +78,18 @@ public:
             , m_object(object)
         { }
 
-        EncodedJSValue getValue()
+        uint64_t getValue()
         {
-            if (m_type == ConstExprValueType::NonObject)
+            if (m_type == ConstExprValueType::Numeric)
                 return m_bits;
+            ASSERT(m_type == ConstExprValueType::Object);
             return JSValue::encode(JSValue(m_object.get()));
+        }
+
+        v128_t getVector()
+        {
+            ASSERT(m_type == ConstExprValueType::Vector);
+            return m_vector;
         }
 
         ConstExprValueType type()
@@ -86,25 +99,28 @@ public:
 
         ConstExprValue operator+(ConstExprValue value)
         {
-            ASSERT(m_type == ConstExprValueType::NonObject);
+            ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits + value.getValue());
         }
 
         ConstExprValue operator-(ConstExprValue value)
         {
-            ASSERT(m_type == ConstExprValueType::NonObject);
+            ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits - value.getValue());
         }
 
         ConstExprValue operator*(ConstExprValue value)
         {
-            ASSERT(m_type == ConstExprValueType::NonObject);
+            ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits * value.getValue());
         }
 
     private:
         ConstExprValueType m_type;
-        uint64_t m_bits;
+        union {
+            uint64_t m_bits;
+            v128_t m_vector;
+        };
         Strong<JSObject> m_object;
     };
 
@@ -273,7 +289,11 @@ public:
     ExpressionType createNewArray(uint32_t typeIndex, uint32_t size, ExpressionType value)
     {
         VM& vm = m_instance->vm();
-        EncodedJSValue obj = arrayNew(m_instance.get(), typeIndex, size, value.getValue());
+        EncodedJSValue obj;
+        if (value.type() == ConstExprValue::Vector)
+            obj = arrayNew(m_instance.get(), typeIndex, size, value.getVector());
+        else
+            obj = arrayNew(m_instance.get(), typeIndex, size, value.getValue());
         return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
     }
 
@@ -294,8 +314,13 @@ public:
         if (m_mode == Mode::Evaluate) {
             Ref<TypeDefinition> typeDef = m_info.typeSignatures[typeIndex];
             const TypeDefinition& arraySignature = typeDef->expand();
-            uint64_t elementValue = isRefType(arraySignature.as<ArrayType>()->elementType().type) ? JSValue::encode(jsNull()) : 0;
-            result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), elementValue);
+            auto elementType = arraySignature.as<ArrayType>()->elementType().type.unpacked();
+            ExpressionType initValue = { 0 };
+            if (isRefType(elementType))
+                initValue = { static_cast<uint64_t>(JSValue::encode(jsNull())) };
+            if (elementType == Wasm::Types::V128)
+                initValue = { vectorAllZeros() };
+            result = createNewArray(typeIndex, static_cast<uint32_t>(size.getValue()), initValue);
         }
 
         return { };
@@ -306,10 +331,18 @@ public:
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
 
         if (m_mode == Mode::Evaluate) {
-            result = createNewArray(typeIndex, args.size(), { });
-            JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
-            for (size_t i = 0; i < args.size(); i++)
-                arrayObject->set(i, args[i].getValue());
+            auto* arrayType = m_info.typeSignatures[typeIndex]->expand().as<ArrayType>();
+            if (arrayType->elementType().type.unpacked().isV128()) {
+                result = createNewArray(typeIndex, args.size(), { vectorAllZeros() });
+                JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
+                for (size_t i = 0; i < args.size(); i++)
+                    arrayObject->set(i, args[i].getVector());
+            } else {
+                result = createNewArray(typeIndex, args.size(), { });
+                JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
+                for (size_t i = 0; i < args.size(); i++)
+                    arrayObject->set(i, args[i].getValue());
+            }
         }
 
         return { };
@@ -350,8 +383,12 @@ public:
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
             JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(result.getValue()));
-            for (size_t i = 0; i < args.size(); i++)
-                structObject->set(i, args[i].getValue());
+            for (size_t i = 0; i < args.size(); i++) {
+                if (args[i].type() == ConstExprValue::Vector)
+                    structObject->set(i, args[i].getVector());
+                else
+                    structObject->set(i, args[i].getValue());
+            }
         }
 
         return { };
@@ -366,7 +403,7 @@ public:
     {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
         if (m_mode == Mode::Evaluate) {
-            if (reference.type() == ConstExprValue::ConstExprValueType::NonObject)
+            if (reference.type() == ConstExprValue::Numeric)
                 result = ConstExprValue(externInternalize(reference.getValue()));
             else
                 // To avoid creating a new Strong handle, we pass the original reference.
@@ -629,14 +666,12 @@ public:
     PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&) CONST_EXPR_STUB
-    ExpressionType WARN_UNUSED_RETURN addConstant(v128_t)
+    ExpressionType WARN_UNUSED_RETURN addConstant(v128_t vector)
     {
-        // While v128 constants may appear in extended constant expressions, currently
-        // there is no valid expression other than (v128.const x), which is handled
-        // in a separate codepath.
+        RELEASE_ASSERT(Options::useWebAssemblySIMD());
         if (m_mode == Mode::Evaluate)
-            RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+            return ConstExprValue(vector);
+        return { };
     }
     PartialResult WARN_UNUSED_RETURN addExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
@@ -683,14 +718,17 @@ Expected<void, String> parseExtendedConstExpr(const uint8_t* source, size_t leng
     return { };
 }
 
-Expected<EncodedJSValue, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, RefPtr<Instance> instance, const ModuleInformation& info, Type expectedType)
+Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, RefPtr<Instance> instance, const ModuleInformation& info, Type expectedType)
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
     FunctionParser<ConstExprGenerator> parser(generator, constantExpression.data(), constantExpression.size(), *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 
-    return { generator.result().getValue() };
+    ConstExprGenerator::ExpressionType result = generator.result();
+    ASSERT(result.type() != ConstExprGenerator::ExpressionType::Vector);
+
+    return { result.getValue() };
 }
 
 } } // namespace JSC::Wasm

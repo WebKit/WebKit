@@ -1476,6 +1476,27 @@ Value BBQJIT::marshallToI64(Value value)
     }
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType initValue, ExpressionType& result)
+{
+    result = topValue(TypeKind::Arrayref);
+
+    initValue = marshallToI64(initValue);
+
+    Vector<Value, 8> arguments = {
+        instanceValue(),
+        Value::fromI32(typeIndex),
+        size,
+        initValue,
+    };
+    emitCCall(operationWasmArrayNew, arguments, result);
+
+    Location resultLocation = loadIfNecessary(result);
+    emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
+
+    LOG_INSTRUCTION("ArrayNew", typeIndex, size, initValue, RESULT(result));
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
 {
     // Allocate an uninitialized array whose length matches the argument count
@@ -1819,6 +1840,37 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayLen(ExpressionType arrayref, Ex
     m_jit.load32(MacroAssembler::Address(arrayLocation.asGPRlo(), JSWebAssemblyArray::offsetOfSize()), resultLocation.asGPR());
 
     LOG_INSTRUCTION("ArrayLen", arrayref, RESULT(result));
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size)
+{
+    if (arrayref.isConst()) {
+        ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+        emitThrowException(ExceptionType::NullArrayFill);
+        return { };
+    }
+
+    emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
+
+    Value shouldThrow = topValue(TypeKind::I32);
+    value = marshallToI64(value);
+    Vector<Value, 8> arguments = {
+        instanceValue(),
+        arrayref,
+        offset,
+        value,
+        size
+    };
+    emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
+    Location shouldThrowLocation = allocate(shouldThrow);
+
+    LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
+
+    throwExceptionIf(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+    consume(shouldThrow);
+
     return { };
 }
 

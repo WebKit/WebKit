@@ -1380,42 +1380,15 @@ StorageType BBQJIT::getArrayElementType(uint32_t typeIndex)
     return arrayType->elementType().type;
 }
 
-// This will replace the existing value with a new value. Note that if this is an F32 then the top bits may be garbage but that's ok for our current usage.
-
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType initValue, ExpressionType& result)
-{
-    initValue = marshallToI64(initValue);
-
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(typeIndex),
-        size,
-        initValue,
-    };
-    result = topValue(TypeKind::Arrayref);
-    emitCCall(operationWasmArrayNew, arguments, result);
-
-    Location resultLocation = loadIfNecessary(result);
-    emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
-
-    LOG_INSTRUCTION("ArrayNew", typeIndex, size, initValue, RESULT(result));
-    return { };
-}
-
 PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result)
 {
-    StorageType arrayElementType = getArrayElementType(typeIndex);
-    Value initValue = Value::fromI64(isRefType(arrayElementType) ? JSValue::encode(jsNull()) : 0);
-
     Vector<Value, 8> arguments = {
         instanceValue(),
         Value::fromI32(typeIndex),
         size,
-        initValue,
     };
     result = topValue(TypeKind::Arrayref);
-    emitCCall(&operationWasmArrayNew, arguments, result);
+    emitCCall(&operationWasmArrayNewEmpty, arguments, result);
 
     Location resultLocation = loadIfNecessary(result);
     emitThrowOnNullReference(ExceptionType::BadArrayNew, resultLocation);
@@ -1452,38 +1425,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewElem(uint32_t typeIndex, uin
 {
     pushArrayNewFromSegment(operationWasmArrayNewElem, typeIndex, elemSegmentIndex, arraySize, offset, ExceptionType::OutOfBoundsElementSegmentAccess, result);
     LOG_INSTRUCTION("ArrayNewElem", typeIndex, elemSegmentIndex, arraySize, offset, RESULT(result));
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size)
-{
-    if (arrayref.isConst()) {
-        ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
-        emitThrowException(ExceptionType::NullArrayFill);
-        return { };
-    }
-
-    emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
-
-    value = marshallToI64(value);
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(typeIndex),
-        arrayref,
-        offset,
-        value,
-        size
-    };
-    Value shouldThrow = topValue(TypeKind::I32);
-    emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
-    Location shouldThrowLocation = allocate(shouldThrow);
-
-    LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
-
-    throwExceptionIf(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
-
-    consume(shouldThrow);
-
     return { };
 }
 
