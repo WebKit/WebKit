@@ -55,7 +55,7 @@ public:
 #endif
     );
 #if USE(CG)
-    ShareableBitmapConfiguration(WebCore::NativeImage&);
+    ShareableBitmapConfiguration(const WebCore::NativeImage&);
 #endif
 
     WebCore::IntSize size() const { return m_size; }
@@ -127,12 +127,11 @@ public:
     // Create a shareable bitmap from an already existing shared memory block.
     static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
-    // Create a shareable bitmap from a NativeImage.
-#if USE(CG)
-    static RefPtr<ShareableBitmap> createFromImagePixels(WebCore::NativeImage&);
-#endif
-    static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&);
-    static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
+    // Create a shareable bitmap with contents of NativeImage.
+    static RefPtr<ShareableBitmap> create(WebCore::NativeImage&);
+
+    // Create a shareable bitmap with contents of NativeImage in DestinationColorSpace.
+    static RefPtr<ShareableBitmap> create(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
 
     // Create a shareable bitmap from a handle.
     static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
@@ -185,8 +184,8 @@ public:
 
 private:
     ShareableBitmap(ShareableBitmapConfiguration, Ref<SharedMemory>&&);
-
 #if USE(CG)
+    static RefPtr<ShareableBitmap> createFromPixelsIfPossible(const WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
 #endif
