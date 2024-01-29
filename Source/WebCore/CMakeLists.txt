@@ -930,6 +930,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSRule.idl
     css/CSSRuleList.idl
     css/CSSScopeRule.idl
+    css/CSSStartingStyleRule.idl
     css/CSSStyleDeclaration.idl
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl

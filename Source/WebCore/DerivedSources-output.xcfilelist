@@ -473,6 +473,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewX.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewX.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration.cpp

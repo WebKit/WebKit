@@ -91,6 +91,7 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
     case StyleRuleType::Supports:
     case StyleRuleType::LayerBlock:
     case StyleRuleType::Container:
+    case StyleRuleType::StartingStyle:
         // These rules MUST be handled by the static `isValidRuleHeaderText`, `protocolGroupingTypeForStyleRuleType`,
         // and `asCSSRuleList` in order to provide functionality in Web Inspector. Additionally, they MUST have a CSSOM
         // representation created in `StyleRuleBase::createCSSOMWrapper`, otherwise we will end up with a mismatched
@@ -100,7 +101,6 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
     // FIXME: implement support for this and move this case up.
     // https://bugs.webkit.org/show_bug.cgi?id=264496
     case StyleRuleType::Scope:
-    case StyleRuleType::StartingStyle:
 
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:

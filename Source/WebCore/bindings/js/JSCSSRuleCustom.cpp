@@ -41,6 +41,7 @@
 #include "CSSPageRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
+#include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "JSCSSContainerRule.h"
@@ -58,6 +59,7 @@
 #include "JSCSSPageRule.h"
 #include "JSCSSPropertyRule.h"
 #include "JSCSSScopeRule.h"
+#include "JSCSSStartingStyleRule.h"
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
@@ -116,8 +118,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case StyleRuleType::Scope:
         return createWrapper<CSSScopeRule>(globalObject, WTFMove(rule));
     case StyleRuleType::StartingStyle:
-        // FIXME: Implement.
-        return createWrapper<CSSRule>(globalObject, WTFMove(rule));
+        return createWrapper<CSSStartingStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

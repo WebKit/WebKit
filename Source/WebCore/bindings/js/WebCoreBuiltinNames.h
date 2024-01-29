@@ -156,6 +156,7 @@ namespace WebCore {
     macro(CSSSkew) \
     macro(CSSSkewX) \
     macro(CSSSkewY) \
+    macro(CSSStartingStyleRule) \
     macro(CSSStyleValue) \
     macro(CSSTransformComponent) \
     macro(CSSTransformValue) \
