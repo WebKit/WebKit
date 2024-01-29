@@ -29,6 +29,9 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterImage.h"
+#import "IOSurface.h"
+#import "ImageBuffer.h"
+#import "NativeImage.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>

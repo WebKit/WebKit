@@ -368,7 +368,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
     platform/mac/PowerObserverMac.cpp
-    platform/mac/PublicSuffixMac.mm
     platform/mac/RevealUtilities.mm
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollingEffectsController.mm
@@ -601,6 +600,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/PowerSourceNotifier.h
+    platform/cocoa/PublicSuffixCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.h
     platform/cocoa/SharedVideoFrameInfo.h
     platform/cocoa/SystemBattery.h

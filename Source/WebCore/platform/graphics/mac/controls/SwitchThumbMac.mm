@@ -27,7 +27,14 @@
 
 #if PLATFORM(MAC)
 
+#import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
+#import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "SwitchMacUtilities.h"
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 

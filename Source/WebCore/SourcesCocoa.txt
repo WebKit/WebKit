@@ -307,6 +307,7 @@ platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @no-unify
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
+platform/cocoa/PublicSuffixCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
@@ -586,7 +587,6 @@ platform/mac/PlatformPasteboardMac.mm
 platform/mac/PlatformScreenMac.mm
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/PowerObserverMac.cpp
-platform/mac/PublicSuffixMac.mm
 platform/mac/RevealUtilities.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm

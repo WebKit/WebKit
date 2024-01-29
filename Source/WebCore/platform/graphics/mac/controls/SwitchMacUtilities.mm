@@ -27,17 +27,11 @@
 
 #if PLATFORM(MAC)
 
-#import "ControlFactoryMac.h"
-#import "FloatRoundedRect.h"
-#import "GraphicsContext.h"
-#import "LocalCurrentGraphicsContext.h"
-#import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/CoreUISPI.h>
-#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore::SwitchMacUtilities {
 
-static IntSize cellSize(NSControlSize controlSize)
+IntSize cellSize(NSControlSize controlSize)
 {
     static const std::array<IntSize, 4> sizes =
     {
@@ -49,7 +43,7 @@ static IntSize cellSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
-static FloatSize visualCellSize(NSControlSize controlSize, const ControlStyle& style)
+FloatSize visualCellSize(NSControlSize controlSize, const ControlStyle& style)
 {
     auto size = cellSize(controlSize);
     if (style.states.contains(ControlStyle::State::VerticalWritingMode))
@@ -58,7 +52,7 @@ static FloatSize visualCellSize(NSControlSize controlSize, const ControlStyle& s
     return size;
 }
 
-static IntOutsets cellOutsets(NSControlSize controlSize)
+IntOutsets cellOutsets(NSControlSize controlSize)
 {
     static const IntOutsets margins[] =
     {
@@ -71,7 +65,7 @@ static IntOutsets cellOutsets(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static IntOutsets visualCellOutsets(NSControlSize controlSize, bool isVertical)
+IntOutsets visualCellOutsets(NSControlSize controlSize, bool isVertical)
 {
     auto outsets = cellOutsets(controlSize);
     if (isVertical)
@@ -79,13 +73,13 @@ static IntOutsets visualCellOutsets(NSControlSize controlSize, bool isVertical)
     return outsets;
 }
 
-static FloatRect rectForBounds(const FloatRect& bounds)
+FloatRect rectForBounds(const FloatRect& bounds)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return bounds;
 }
 
-static NSString *coreUISizeForControlSize(const NSControlSize controlSize)
+NSString *coreUISizeForControlSize(const NSControlSize controlSize)
 {
     if (controlSize == NSControlSizeMini)
         return (__bridge NSString *)kCUISizeMini;
@@ -94,12 +88,12 @@ static NSString *coreUISizeForControlSize(const NSControlSize controlSize)
     return (__bridge NSString *)kCUISizeRegular;
 }
 
-static float easeInOut(const float progress)
+float easeInOut(const float progress)
 {
     return -2.0f * pow(progress, 3.0f) + 3.0f * pow(progress, 2.0f);
 }
 
-static FloatRect rectWithTransposedSize(const FloatRect& rect, bool isVertical)
+FloatRect rectWithTransposedSize(const FloatRect& rect, bool isVertical)
 {
     auto logicalRect = rect;
     if (isVertical)
@@ -107,13 +101,13 @@ static FloatRect rectWithTransposedSize(const FloatRect& rect, bool isVertical)
     return logicalRect;
 }
 
-static FloatRect trackRectForBounds(const FloatRect& bounds, const FloatSize& size)
+FloatRect trackRectForBounds(const FloatRect& bounds, const FloatSize& size)
 {
     auto offsetY = std::max(((bounds.height() - size.height()) / 2.0f), 0.0f);
     return { FloatPoint { bounds.x(), bounds.y() + offsetY }, size };
 }
 
-static void rotateContextForVerticalWritingMode(GraphicsContext& context, const FloatRect& rect)
+void rotateContextForVerticalWritingMode(GraphicsContext& context, const FloatRect& rect)
 {
     context.translate(rect.height(), 0);
     context.translate(rect.location());
