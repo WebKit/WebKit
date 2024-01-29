@@ -303,7 +303,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");
             return reply({ });
@@ -316,11 +316,11 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         }
 
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        reply(NetworkProcessConnectionInfo { WTFMove(*identifier), cookieAcceptPolicy });
+        reply(NetworkProcessConnectionInfo { WTFMove(*identifier) });
         UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
         MESSAGE_CHECK(*identifier);
-        reply(NetworkProcessConnectionInfo { WTFMove(*identifier) , cookieAcceptPolicy, connection()->getAuditToken() });
+        reply(NetworkProcessConnectionInfo { WTFMove(*identifier), connection()->getAuditToken() });
 #else
         notImplemented();
 #endif

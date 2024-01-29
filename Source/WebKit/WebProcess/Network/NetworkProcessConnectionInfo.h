@@ -36,7 +36,6 @@ namespace WebKit {
 
 struct NetworkProcessConnectionInfo {
     IPC::Connection::Handle connection;
-    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
     std::optional<CoreIPCAuditToken> auditToken;
 #endif

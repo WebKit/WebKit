@@ -278,7 +278,6 @@ private:
 #elif USE(SOUP)
     static void cookiesDidChange(NetworkStorageSession*);
 
-    HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
     GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
 #elif USE(CURL)
