@@ -111,10 +111,18 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
-bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology& tech)
 {
-    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
-    return true;
+    switch (tech) {
+    case FontTechnology::ColorCbdt:
+    case FontTechnology::ColorColrv0:
+    case FontTechnology::ColorSbix:
+    case FontTechnology::ColorSvg:
+    case FontTechnology::FeaturesOpentype:
+        return true;
+    default:
+        return false;
+    }
 }
 
 }
