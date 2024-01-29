@@ -281,6 +281,7 @@ public:
     void windowDidDeminiaturize();
     void windowDidMove();
     void windowDidResize();
+    void windowWillBeginSheet();
     void windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor);
     void windowDidChangeScreen();
     void windowDidChangeLayerHosting();
