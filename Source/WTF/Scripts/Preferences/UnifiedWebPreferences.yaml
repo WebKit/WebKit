@@ -1114,17 +1114,17 @@ CSSInputSecurityEnabled:
 
 CSSLightDarkEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS light-dark()"
   humanReadableDescription: "Enable support for CSS light-dark() defined in CSS Color 5"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSMarginTrimEnabled:
   type: bool
