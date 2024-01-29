@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "JSDOMMapLike.h"
+#include "JSRTCIceTcpCandidateType.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCUtils.h"
 #include "Performance.h"
@@ -128,11 +129,19 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
         stats.totalFreezesDuration = *rtcStats.total_freezes_duration;
     if (rtcStats.last_packet_received_timestamp.is_defined())
         stats.lastPacketReceivedTimestamp = *rtcStats.last_packet_received_timestamp;
+
+    if (rtcStats.fec_packets_received.is_defined())
+        stats.fecPacketsReceived = *rtcStats.fec_packets_received;
+    if (rtcStats.fec_bytes_received.is_defined())
+        stats.fecBytesReceived = *rtcStats.fec_bytes_received;
+    if (rtcStats.fec_packets_discarded.is_defined())
+        stats.fecPacketsDiscarded = *rtcStats.fec_packets_discarded;
+    if (rtcStats.fec_ssrc.is_defined())
+        stats.fecSsrc = *rtcStats.fec_ssrc;
     if (rtcStats.header_bytes_received.is_defined())
         stats.headerBytesReceived = *rtcStats.header_bytes_received;
-    // Not Implemented
-    // if (rtcStats.fec_bytes_received.is_defined())
-    //     stats.fecBytesReceived = *rtcStats.fec_bytes_received;
+    if (rtcStats.rtx_ssrc.is_defined())
+        stats.rtxSsrc = *rtcStats.rtx_ssrc;
     if (rtcStats.packets_discarded.is_defined())
         stats.packetsDiscarded = *rtcStats.packets_discarded;
     if (rtcStats.fec_packets_received.is_defined())
@@ -195,12 +204,6 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
         stats.retransmittedPacketsReceived = *rtcStats.retransmitted_packets_received;
     if (rtcStats.retransmitted_bytes_received.is_defined())
         stats.retransmittedBytesReceived = *rtcStats.retransmitted_bytes_received;
-
-    // Not implemented
-    // if (rtcStats.frames_received.is_defined())
-    //     stats.rtxSsrc = *rtcStats.frames_received;
-    // if (rtcStats.frames_received.is_defined())
-    //     stats.fecSsrc = *rtcStats.frames_received;
 }
 
 static inline void fillRemoteInboundRtpStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const webrtc::RTCRemoteInboundRtpStreamStats& rtcStats)
@@ -258,9 +261,6 @@ static inline void fillOutboundRtpStreamStats(RTCStatsReport::OutboundRtpStreamS
         stats.retransmittedPacketsSent = *rtcStats.retransmitted_packets_sent;
     if (rtcStats.retransmitted_bytes_sent.is_defined())
         stats.retransmittedBytesSent = *rtcStats.retransmitted_bytes_sent;
-    // Not Implemented
-    // if (rtcStats.ssrc.is_defined())
-    //     stats.rtxSsrc = *rtcStats.ssrc;
     if (rtcStats.target_bitrate.is_defined())
         stats.targetBitrate = *rtcStats.target_bitrate;
     if (rtcStats.total_encoded_bytes_target.is_defined())
@@ -310,6 +310,8 @@ static inline void fillOutboundRtpStreamStats(RTCStatsReport::OutboundRtpStreamS
         stats.active = *rtcStats.active;
     if (rtcStats.scalability_mode.is_defined())
         stats.scalabilityMode = fromStdString(*rtcStats.scalability_mode);
+    if (rtcStats.rtx_ssrc.is_defined())
+        stats.rtxSsrc = *rtcStats.rtx_ssrc;
 }
 
 
@@ -340,7 +342,7 @@ static inline void fillRTCDataChannelStats(RTCStatsReport::DataChannelStats& sta
     if (rtcStats.protocol.is_defined())
         stats.protocol = fromStdString(*rtcStats.protocol);
     if (rtcStats.data_channel_identifier.is_defined())
-        stats.datachannelid = *rtcStats.data_channel_identifier;
+        stats.dataChannelIdentifier = *rtcStats.data_channel_identifier;
     if (rtcStats.state.is_defined())
         stats.state = fromStdString(*rtcStats.state);
     if (rtcStats.messages_sent.is_defined())
@@ -459,6 +461,14 @@ static inline void fillRTCIceCandidateStats(RTCStatsReport::IceCandidateStats& s
         stats.priority = *rtcStats.priority;
     if (rtcStats.url.is_defined())
         stats.url = fromStdString(*rtcStats.url);
+    if (rtcStats.foundation.is_defined())
+        stats.foundation = fromStdString(*rtcStats.foundation);
+    if (rtcStats.username_fragment.is_defined())
+        stats.usernameFragment = fromStdString(*rtcStats.username_fragment);
+    if (rtcStats.tcp_type.is_defined()) {
+        if (auto tcpType = parseEnumerationFromString<RTCIceTcpCandidateType>(fromStdString(*rtcStats.tcp_type)))
+            stats.tcpType = *tcpType;
+    }
 }
 
 static inline void fillRTCCertificateStats(RTCStatsReport::CertificateStats& stats, const webrtc::RTCCertificateStats& rtcStats)

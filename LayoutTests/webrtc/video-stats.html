@@ -259,9 +259,22 @@ promise_test(async (test) => {
     assert_greater_than_equal(instats.totalSamplesReceived, 0, "totalSamplesReceived");
 }, "Receiver stats");
 
+async function getStatsIf(connection, type, match)
+{
+    let cptr = 0;
+    let stats = await getStatsOfType(connection, type);
+    while (!match(stats) && ++cptr < 100) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        stats = await getStatsOfType(connection, type);
+    }
+    if (cptr >= 100)
+        throw "unable to get matching stats";
+    return stats;
+}
+
 promise_test(async (test) => {
     const report = await secondConnection.getReceivers()[0].getStats();
-    let stats = await getStatsOfType(secondConnection, "transport");
+    let stats = await getStatsIf(secondConnection, "transport", (stats) => stats.dtlsState === "connected");
 
     assert_equals(stats.dtlsState, "connected");
     assert_true(!!stats.dtlsCipher, "dtlsCipher");
@@ -287,6 +300,30 @@ promise_test(async (test) => {
     });
     assert_equals(instats1.ssrc, instats2.ssrc);
 }, "Check ssrc is not changing in inbound rtp stats");
+
+promise_test(async (test) => {
+    let stats = await getStatsOfType(secondConnection, "local-candidate");
+
+    assert_true(!!stats.foundation, "foundation");
+}, "Local candidate stats");
+
+promise_test(async (test) => {
+    let stats = await getStatsOfType(secondConnection, "remote-candidate");
+
+    assert_true(!!stats.foundation, "foundation");
+}, "Remote candidate stats");
+
+promise_test(async (test) => {
+    const stats = await getStatsIf(secondConnection, "inbound-rtp", (stats) => stats.rtxSsrc !== undefined);
+    assert_equals(typeof stats.rtxSsrc, "number");
+    assert_not_equals(stats.rtxSsrc, 0);
+}, "Outbound rtp stats - rtx");
+
+promise_test(async (test) => {
+    const stats = await getStatsIf(secondConnection, "inbound-rtp", (stats) => stats.rtxSsrc !== undefined);
+    assert_equals(typeof stats.rtxSsrc, "number");
+    assert_not_equals(stats.rtxSsrc, 0);
+}, "Inbound rtp stats - rtx");
 
 promise_test(async (test) => {
     const pc = new RTCPeerConnection();

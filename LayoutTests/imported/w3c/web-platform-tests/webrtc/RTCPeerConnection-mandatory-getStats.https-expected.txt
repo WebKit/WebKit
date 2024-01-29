@@ -32,7 +32,7 @@ PASS RTCPeerConnectionStats's dataChannelsOpened
 PASS RTCPeerConnectionStats's dataChannelsClosed
 PASS RTCDataChannelStats's label
 PASS RTCDataChannelStats's protocol
-FAIL RTCDataChannelStats's dataChannelIdentifier assert_true: Is dataChannelIdentifier present expected true got false
+PASS RTCDataChannelStats's dataChannelIdentifier
 PASS RTCDataChannelStats's state
 PASS RTCDataChannelStats's messagesSent
 PASS RTCDataChannelStats's bytesSent

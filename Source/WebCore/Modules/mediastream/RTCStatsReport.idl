@@ -253,7 +253,7 @@ dictionary RTCPeerConnectionStats : RTCStats {
 dictionary RTCDataChannelStats : RTCStats {
     DOMString label;
     DOMString protocol;
-    long datachannelid;
+    long dataChannelIdentifier;
     DOMString state;
     unsigned long messagesSent;
     unsigned long long bytesSent;

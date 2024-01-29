@@ -212,7 +212,7 @@ public:
 
         String label;
         String protocol;
-        std::optional<int> datachannelid;
+        std::optional<int> dataChannelIdentifier;
         String state;
         std::optional<uint32_t> messagesSent;
         std::optional<uint64_t> bytesSent;
