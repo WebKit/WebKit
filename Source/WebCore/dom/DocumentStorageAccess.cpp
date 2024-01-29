@@ -266,11 +266,12 @@ void DocumentStorageAccess::requestStorageAccessQuirk(RegistrableDomain&& reques
 {
     Ref document = m_document.get();
     RELEASE_ASSERT(document->frame() && document->frame()->page());
+    RefPtr page = document->frame()->page();
 
-    auto topFrameDomain = RegistrableDomain(document->topDocument().url());
+    auto topFrameDomain = RegistrableDomain(page->mainFrameURL());
 
     RefPtr frame = document->frame();
-    frame->protectedPage()->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *frame, m_storageAccessScope, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
+    page->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *frame, m_storageAccessScope, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)
             return;
 

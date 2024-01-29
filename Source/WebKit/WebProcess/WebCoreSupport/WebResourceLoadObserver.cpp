@@ -147,6 +147,10 @@ void WebResourceLoadObserver::logFontLoad(const Document& document, const String
     if (isEphemeral())
         return;
 
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -158,7 +162,7 @@ void WebResourceLoadObserver::logFontLoad(const Document& document, const String
         if (statistics.fontsSuccessfullyLoaded.add(familyName).isNewEntry)
             shouldCallNotificationCallback = true;
     }
-    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    RegistrableDomain mainFrameRegistrableDomain { page->mainFrameURL() };
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
@@ -175,10 +179,14 @@ void WebResourceLoadObserver::logCanvasRead(const Document& document)
     if (isEphemeral())
         return;
 
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
-    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    RegistrableDomain mainFrameRegistrableDomain { page->mainFrameURL() };
     statistics.canvasActivityRecord.wasDataRead = true;
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
         scheduleNotificationIfNeeded();
@@ -192,11 +200,15 @@ void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, 
     if (isEphemeral())
         return;
 
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
     bool shouldCallNotificationCallback = false;
-    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    RegistrableDomain mainFrameRegistrableDomain { page->mainFrameURL() };
     if (statistics.canvasActivityRecord.recordWrittenOrMeasuredText(textWritten))
         shouldCallNotificationCallback = true;
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
@@ -214,6 +226,10 @@ void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, 
     if (isEphemeral())
         return;
 
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -222,7 +238,7 @@ void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, 
         statistics.navigatorFunctionsAccessed.add(functionName);
         shouldCallNotificationCallback = true;
     }
-    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    RegistrableDomain mainFrameRegistrableDomain { page->mainFrameURL() };
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
@@ -238,6 +254,10 @@ void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, con
     if (isEphemeral())
         return;
 
+    RefPtr page = document.page();
+    if (!page)
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -246,7 +266,7 @@ void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, con
         statistics.screenFunctionsAccessed.add(functionName);
         shouldCallNotificationCallback = true;
     }
-    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    RegistrableDomain mainFrameRegistrableDomain { page->mainFrameURL() };
     if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)

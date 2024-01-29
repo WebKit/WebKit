@@ -1072,18 +1072,14 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     if (!documentFrame)
         return false;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(documentFrame->mainFrame());
-    if (!localFrame)
+    RefPtr mainFrameView = documentFrame->mainFrame().virtualView();
+    if (!mainFrameView)
         return false;
 
-    if (!localFrame->view())
-        return false;
+    auto maxVisibleClientWidth = std::min(renderer->clientWidth().toInt(), mainFrameView->visibleWidth());
+    auto maxVisibleClientHeight = std::min(renderer->clientHeight().toInt(), mainFrameView->visibleHeight());
 
-    auto& mainFrameView = *localFrame->view();
-    auto maxVisibleClientWidth = std::min(renderer->clientWidth().toInt(), mainFrameView.visibleWidth());
-    auto maxVisibleClientHeight = std::min(renderer->clientHeight().toInt(), mainFrameView.visibleHeight());
-
-    return maxVisibleClientWidth * maxVisibleClientHeight > minimumPercentageOfMainFrameAreaForMainContent * mainFrameView.visibleWidth() * mainFrameView.visibleHeight();
+    return maxVisibleClientWidth * maxVisibleClientHeight > minimumPercentageOfMainFrameAreaForMainContent * mainFrameView->visibleWidth() * mainFrameView->visibleHeight();
 }
 
 static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, MediaSessionMainContentPurpose purpose)

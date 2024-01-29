@@ -3998,13 +3998,11 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     switch (disposition) {
     case XFrameOptionsDisposition::SameOrigin: {
         Ref origin = SecurityOrigin::create(url);
-        if (topFrame && !origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
+        if (!topFrame || !origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
             return true;
         for (auto* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-            if (!localFrame)
-                continue;
-            if (!origin->isSameSchemeHostPort(localFrame->document()->securityOrigin()))
+            if (!localFrame || !origin->isSameSchemeHostPort(localFrame->document()->securityOrigin()))
                 return true;
         }
         return false;
@@ -4075,7 +4073,7 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
         return nullptr;
 
     RefPtr frame = m_frame->tree().findBySpecifiedName(name, activeDocument->frame() ? *activeDocument->protectedFrame() : protectedFrame().get());
-    if (!activeDocument->canNavigate(dynamicDowncast<LocalFrame>(frame.get())))
+    if (!activeDocument->canNavigate(frame.get()))
         return nullptr;
 
     return frame;

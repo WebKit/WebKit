@@ -440,10 +440,10 @@ static void drawCheckbox(const String& text, GraphicsContext& context, const Fon
 
 FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index) const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
+    RefPtr mainFrameView = m_page.mainFrame().virtualView();
+    if (!mainFrameView)
         return FloatRect();
-    auto viewSize = localMainFrame->view()->layoutSize();
+    auto viewSize = mainFrameView->layoutSize();
     static constexpr float settingsWidth = 150;
     static constexpr float rowHeight = 16;
     return {
