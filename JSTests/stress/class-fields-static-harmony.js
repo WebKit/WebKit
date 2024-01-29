@@ -266,6 +266,20 @@ load("./resources/harmony-support.js");
   assertTrue(C.c instanceof C);
 }
 
+{
+  class C {
+    static c = new C();
+  }
+
+  assertTrue(C.c instanceof C);
+}
+
+assertThrows(() => {
+  eval(`class C {
+    static c = "foo", "bar";
+  }`);
+}, SyntaxError);
+
 (function test() {
   function makeC() {
     var x = 1;

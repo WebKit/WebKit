@@ -414,7 +414,7 @@ public:
         return node;
     }
 
-    DefineFieldNode* createDefineField(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, DefineFieldNode::Type type)
+    DefineFieldNode* createDefineField(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* initializer, DefineFieldNode::Type type)
     {
         return new (m_parserArena) DefineFieldNode(location, ident, initializer, type);
     }

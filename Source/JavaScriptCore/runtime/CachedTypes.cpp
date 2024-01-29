@@ -1768,6 +1768,51 @@ private:
     CachedRefPtr<CachedTDZEnvironmentLink> m_parent;
 };
 
+class CachedJSTextPosition : public CachedObject<JSTextPosition> {
+public:
+    void encode(Encoder&, const JSTextPosition& position)
+    {
+        m_line = position.line;
+        m_offset = position.offset;
+        m_lineStartOffset = position.lineStartOffset;
+    }
+
+    JSTextPosition decode(Decoder&) const
+    {
+        return JSTextPosition { m_line, m_offset, m_lineStartOffset };
+    }
+
+private:
+    int m_line;
+    int m_offset;
+    int m_lineStartOffset;
+};
+
+class CachedClassElementDefinition : public CachedObject<UnlinkedFunctionExecutable::ClassElementDefinition> {
+public:
+    void encode(Encoder& encoder, const UnlinkedFunctionExecutable::ClassElementDefinition& definition)
+    {
+        m_ident.encode(encoder, definition.ident);
+        m_position.encode(encoder, definition.position);
+        m_initializerPosition.encode(encoder, definition.initializerPosition);
+        m_kind = static_cast<uint8_t>(definition.kind);
+    }
+
+    void decode(Decoder& decoder, UnlinkedFunctionExecutable::ClassElementDefinition& definition) const
+    {
+        definition.ident = m_ident.decode(decoder);
+        definition.position = m_position.decode(decoder);
+        definition.initializerPosition = m_initializerPosition.decode(decoder);
+        definition.kind = static_cast<UnlinkedFunctionExecutable::ClassElementDefinition::Kind>(m_kind);
+    }
+
+private:
+    CachedIdentifier m_ident;
+    CachedJSTextPosition m_position;
+    CachedOptional<CachedJSTextPosition> m_initializerPosition;
+    uint8_t m_kind;
+};
+
 class CachedFunctionExecutableRareData : public CachedObject<UnlinkedFunctionExecutable::RareData> {
 public:
     void encode(Encoder& encoder, const UnlinkedFunctionExecutable::RareData& rareData)
@@ -1775,7 +1820,7 @@ public:
         m_classSource.encode(encoder, rareData.m_classSource);
         m_parentScopeTDZVariables.encode(encoder, rareData.m_parentScopeTDZVariables);
         m_generatorOrAsyncWrapperFunctionParameterNames.encode(encoder, rareData.m_generatorOrAsyncWrapperFunctionParameterNames);
-        m_classFieldLocations.encode(encoder, rareData.m_classFieldLocations);
+        m_classElementDefinitions.encode(encoder, rareData.m_classElementDefinitions);
         m_parentPrivateNameEnvironment.encode(encoder, rareData.m_parentPrivateNameEnvironment);
     }
 
@@ -1785,7 +1830,7 @@ public:
         m_classSource.decode(decoder, rareData->m_classSource);
         m_parentScopeTDZVariables.decode(decoder, rareData->m_parentScopeTDZVariables);
         m_generatorOrAsyncWrapperFunctionParameterNames.decode(decoder, rareData->m_generatorOrAsyncWrapperFunctionParameterNames);
-        m_classFieldLocations.decode(decoder, rareData->m_classFieldLocations);
+        m_classElementDefinitions.decode(decoder, rareData->m_classElementDefinitions);
         m_parentPrivateNameEnvironment.decode(decoder, rareData->m_parentPrivateNameEnvironment);
         return rareData;
     }
@@ -1794,7 +1839,7 @@ private:
     CachedSourceCodeWithoutProvider m_classSource;
     CachedRefPtr<CachedTDZEnvironmentLink> m_parentScopeTDZVariables;
     CachedVector<CachedIdentifier> m_generatorOrAsyncWrapperFunctionParameterNames;
-    CachedVector<JSTextPosition> m_classFieldLocations;
+    CachedVector<CachedClassElementDefinition> m_classElementDefinitions;
     CachedPrivateNameEnvironment m_parentPrivateNameEnvironment;
 };
 

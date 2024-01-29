@@ -257,7 +257,7 @@ public:
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }
     int createFuncDeclStatement(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return StatementResult; }
-    int createDefineField(const JSTokenLocation&, const Identifier*, int, DefineFieldNode::Type) { return 0; }
+    int createDefineField(const JSTokenLocation&, const Identifier&, int, DefineFieldNode::Type) { return 0; }
     int createClassDeclStatement(const JSTokenLocation&, ClassExpression,
         const JSTextPosition&, const JSTextPosition&, int, int) { return StatementResult; }
     int createBlockStatement(const JSTokenLocation&, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }

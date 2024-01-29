@@ -583,8 +583,26 @@ void PropertyListNode::emitDeclarePrivateFieldNames(BytecodeGenerator& generator
     }
 }
 
-RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dstOrConstructor, RegisterID* prototype, Vector<JSTextPosition>* instanceFieldLocations, Vector<JSTextPosition>* staticFieldLocations)
+RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dstOrConstructor, RegisterID* prototype, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>* instanceElementDefinitions, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>* staticElementDefinitions)
 {
+    auto makeClassElementDefinition = [](const PropertyListNode* p) {
+        using Kind = UnlinkedFunctionExecutable::ClassElementDefinition::Kind;
+
+        std::optional<JSTextPosition> initializerPosition = std::nullopt;
+        if (ExpressionNode* initializer = p->m_node->m_assign)
+            initializerPosition = initializer->position();
+
+        Kind kind = Kind::FieldWithLiteralPropertyKey;
+        if (p->m_node->isStaticClassBlock())
+            kind = Kind::StaticInitializationBlock;
+        else if (p->m_node->hasComputedName())
+            kind = Kind::FieldWithComputedPropertyKey;
+        else if (p->m_node->isPrivate())
+            kind = Kind::FieldWithPrivatePropertyKey;
+
+        return UnlinkedFunctionExecutable::ClassElementDefinition { *p->m_node->name(), p->position(), initializerPosition, kind };
+    };
+
     using GetterSetterPair = std::pair<PropertyNode*, PropertyNode*>;
     using GetterSetterMap = HashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash>;
 
@@ -650,14 +668,14 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             emitSaveComputedFieldName(generator, *p->m_node);
 
         if (p->isInstanceClassField() && !(p->m_node->type() & PropertyNode::PrivateMethod)) {
-            ASSERT(instanceFieldLocations);
-            instanceFieldLocations->append(p->position());
+            ASSERT(instanceElementDefinitions);
+            instanceElementDefinitions->append(makeClassElementDefinition(p));
             continue;
         }
 
         if (p->isStaticClassElement()) {
-            ASSERT(staticFieldLocations);
-            staticFieldLocations->append(p->position());
+            ASSERT(staticElementDefinitions);
+            staticElementDefinitions->append(makeClassElementDefinition(p));
             continue;
         }
 
@@ -719,15 +737,15 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 continue;
 
             if (p->isInstanceClassField()) {
-                ASSERT(instanceFieldLocations);
+                ASSERT(instanceElementDefinitions);
                 ASSERT(node->m_type & PropertyNode::Constant);
-                instanceFieldLocations->append(p->position());
+                instanceElementDefinitions->append(makeClassElementDefinition(p));
                 continue;
             }
 
             if (p->isStaticClassElement()) {
-                ASSERT(staticFieldLocations);
-                staticFieldLocations->append(p->position());
+                ASSERT(staticElementDefinitions);
+                staticElementDefinitions->append(makeClassElementDefinition(p));
                 continue;
             }
 
@@ -5194,25 +5212,25 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     else {
         generator.emitNode(value.get(), m_assign);
         shouldSetFunctionName = generator.shouldSetFunctionName(m_assign);
-        if (m_ident && shouldSetFunctionName && m_type != DefineFieldNode::Type::ComputedName)
-            generator.emitSetFunctionName(value.get(), *m_ident);
+        if (shouldSetFunctionName && m_type != DefineFieldNode::Type::ComputedName)
+            generator.emitSetFunctionName(value.get(), m_ident);
     }
 
     switch (m_type) {
     case DefineFieldNode::Type::Name: {
         StrictModeScope strictModeScope(generator);
-        if (auto index = parseIndex(*m_ident)) {
+        if (auto index = parseIndex(m_ident)) {
             RefPtr<RegisterID> propertyName = generator.emitLoad(nullptr, jsNumber(index.value()));
             generator.emitDirectPutByVal(generator.thisRegister(), propertyName.get(), value.get());
         } else
-            generator.emitDirectPutById(generator.thisRegister(), *m_ident, value.get());
+            generator.emitDirectPutById(generator.thisRegister(), m_ident, value.get());
         break;
     }
     case DefineFieldNode::Type::PrivateName: {
-        Variable var = generator.variable(*m_ident);
+        Variable var = generator.variable(m_ident);
         ASSERT_WITH_MESSAGE(!var.local(), "Private Field names must be stored in captured variables");
 
-        generator.emitExpressionInfo(position(), position(), position() + m_ident->length());
+        generator.emitExpressionInfo(position(), position(), position() + m_ident.length());
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         RefPtr<RegisterID> privateName = generator.newTemporary();
         generator.emitGetFromScope(privateName.get(), scope.get(), var, DoNotThrowIfNotFound);
@@ -5222,7 +5240,7 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     case DefineFieldNode::Type::ComputedName: {
         // For ComputedNames, the expression has already been evaluated earlier during evaluation of a ClassExprNode.
         // Here, `m_ident` refers to private symbol ID in a class lexical scope, containing the value already converted to an Expression.
-        Variable var = generator.variable(*m_ident);
+        Variable var = generator.variable(m_ident);
         ASSERT_WITH_MESSAGE(!var.local(), "Computed names must be stored in captured variables");
 
         generator.emitExpressionInfo(position(), position(), position() + 1);
@@ -5231,7 +5249,7 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.emitGetFromScope(privateName.get(), scope.get(), var, ThrowIfNotFound);
         if (shouldSetFunctionName)
             generator.emitSetFunctionName(value.get(), privateName.get());
-        generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident->length());
+        generator.emitProfileType(privateName.get(), var, m_position, m_position + m_ident.length());
         {
             StrictModeScope strictModeScope(generator);
             generator.emitDirectPutByVal(generator.thisRegister(), privateName.get(), value.get());
@@ -5324,14 +5342,14 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RefPtr<RegisterID> prototypeNameRegister = generator.emitLoad(nullptr, propertyNames.prototype);
     generator.emitCallDefineProperty(constructor.get(), prototypeNameRegister.get(), prototype.get(), nullptr, nullptr, 0, m_position);
 
-    Vector<JSTextPosition> staticFieldLocations;
+    Vector<UnlinkedFunctionExecutable::ClassElementDefinition> staticElementDefinitions;
     if (m_classElements) {
         m_classElements->emitDeclarePrivateFieldNames(generator, generator.scopeRegister());
 
-        Vector<JSTextPosition> instanceFieldLocations;
-        generator.emitDefineClassElements(m_classElements, constructor.get(), prototype.get(), instanceFieldLocations, staticFieldLocations);
-        if (!instanceFieldLocations.isEmpty()) {
-            RefPtr<RegisterID> instanceFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(instanceFieldLocations), m_classHeritage);
+        Vector<UnlinkedFunctionExecutable::ClassElementDefinition> instanceElementDefinitions;
+        generator.emitDefineClassElements(m_classElements, constructor.get(), prototype.get(), instanceElementDefinitions, staticElementDefinitions);
+        if (!instanceElementDefinitions.isEmpty()) {
+            RefPtr<RegisterID> instanceFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(instanceElementDefinitions), m_classHeritage);
 
             // FIXME: Skip this if the initializer function isn't going to need a home object (no eval or super properties)
             // https://bugs.webkit.org/show_bug.cgi?id=196867
@@ -5351,8 +5369,8 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     if (shouldInstallBrandOnConstructor)
         generator.emitInstallPrivateClassBrand(constructor.get());
 
-    if (!staticFieldLocations.isEmpty()) {
-        RefPtr<RegisterID> staticFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(staticFieldLocations), m_classHeritage);
+    if (!staticElementDefinitions.isEmpty()) {
+        RefPtr<RegisterID> staticFieldInitializer = generator.emitNewClassFieldInitializerFunction(generator.newTemporary(), WTFMove(staticElementDefinitions), m_classHeritage);
         // FIXME: Skip this if the initializer function isn't going to need a home object (no eval or super properties)
         // https://bugs.webkit.org/show_bug.cgi?id=196867
         emitPutHomeObject(generator, staticFieldInitializer.get(), constructor.get());

@@ -224,6 +224,22 @@ public:
 
     void finalizeUnconditionally(VM&, CollectionScope);
 
+    struct ClassElementDefinition {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        enum class Kind : uint8_t {
+            FieldWithLiteralPropertyKey = 0,
+            FieldWithComputedPropertyKey = 1,
+            FieldWithPrivatePropertyKey = 2,
+            StaticInitializationBlock = 3,
+        };
+
+        Identifier ident { };
+        JSTextPosition position { };
+        std::optional<JSTextPosition> initializerPosition { std::nullopt };
+        Kind kind { Kind::FieldWithLiteralPropertyKey };
+    };
+
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -232,24 +248,24 @@ public:
         String m_sourceMappingURLDirective;
         RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
         FixedVector<Identifier> m_generatorOrAsyncWrapperFunctionParameterNames;
-        FixedVector<JSTextPosition> m_classFieldLocations;
+        FixedVector<ClassElementDefinition> m_classElementDefinitions;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
     };
 
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
 
-    const FixedVector<JSTextPosition>* classFieldLocations() const
+    const FixedVector<ClassElementDefinition>* classElementDefinitions() const
     {
         if (m_rareData)
-            return &m_rareData->m_classFieldLocations;
+            return &m_rareData->m_classElementDefinitions;
         return nullptr;
     }
 
-    void setClassFieldLocations(Vector<JSTextPosition>&& classFieldLocations)
+    void setClassElementDefinitions(Vector<ClassElementDefinition>&& classElementDefinitions)
     {
-        if (classFieldLocations.isEmpty())
+        if (classElementDefinitions.isEmpty())
             return;
-        ensureRareData().m_classFieldLocations = FixedVector<JSTextPosition>(WTFMove(classFieldLocations));
+        ensureRareData().m_classElementDefinitions = FixedVector<ClassElementDefinition>(WTFMove(classElementDefinitions));
     }
 
 private:

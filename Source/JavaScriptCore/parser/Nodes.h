@@ -35,6 +35,7 @@
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
+#include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SmallSet.h>
@@ -832,7 +833,7 @@ namespace JSC {
 
         static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*, Vector<JSTextPosition>*);
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*);
 
         void emitDeclarePrivateFieldNames(BytecodeGenerator&, RegisterID* scope);
 
@@ -2421,14 +2422,14 @@ namespace JSC {
     class DefineFieldNode final : public StatementNode {
     public:
         enum class Type { Name, PrivateName, ComputedName };
-        DefineFieldNode(const JSTokenLocation&, const Identifier*, ExpressionNode*, Type);
+        DefineFieldNode(const JSTokenLocation&, const Identifier&, ExpressionNode*, Type);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* destination = nullptr) final;
 
         bool isDefineFieldNode() const final { return true; }
 
-        const Identifier* m_ident;
+        Identifier m_ident;
         ExpressionNode* m_assign;
         Type m_type;
     };

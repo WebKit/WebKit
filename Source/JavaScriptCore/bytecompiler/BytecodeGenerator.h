@@ -548,14 +548,14 @@ namespace JSC {
             return emitNodeInTailPosition(nullptr, n);
         }
 
-        RegisterID* emitDefineClassElements(PropertyListNode* n, RegisterID* constructor, RegisterID* prototype, Vector<JSTextPosition>& instanceFieldLocations, Vector<JSTextPosition>& staticFieldLocations)
+        RegisterID* emitDefineClassElements(PropertyListNode* n, RegisterID* constructor, RegisterID* prototype, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>& instanceElementDefinitions, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>& staticElementDefinitions)
         {
             ASSERT(constructor->refCount() && prototype->refCount());
             if (UNLIKELY(!m_vm.isSafeToRecurse()))
                 return emitThrowExpressionTooDeepException();
             if (UNLIKELY(n->needsDebugHook()))
                 emitDebugHook(n);
-            return n->emitBytecode(*this, constructor, prototype, &instanceFieldLocations, &staticFieldLocations);
+            return n->emitBytecode(*this, constructor, prototype, &instanceElementDefinitions, &staticElementDefinitions);
         }
 
         RegisterID* emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
@@ -730,7 +730,7 @@ namespace JSC {
         RegisterID* emitNewFunction(RegisterID* dst, FunctionMetadataNode*);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode*);
         RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name, const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer, PrivateBrandRequirement);
-        RegisterID* emitNewClassFieldInitializerFunction(RegisterID* dst, Vector<JSTextPosition>&& classFieldLocations, bool isDerived);
+        RegisterID* emitNewClassFieldInitializerFunction(RegisterID* dst, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>&&, bool isDerived);
         RegisterID* emitNewArrowFunctionExpression(RegisterID*, ArrowFuncExprNode*);
         RegisterID* emitNewMethodDefinition(RegisterID* dst, MethodDefinitionNode*);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);

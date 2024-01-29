@@ -960,12 +960,6 @@ test/language/expressions/call/tco-non-eval-global.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-with.js:
   default: 'RangeError: Maximum call stack size exceeded.'
-test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-yield-expression.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-test/language/expressions/class/cpn-class-expr-fields-methods-computed-property-name-from-yield-expression.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1147,12 +1141,6 @@ test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
 test/language/statements/async-generator/yield-star-return-then-getter-ticks.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get then, tick 3, get return, get then] and [start, tick 1, get then, tick 2, get return, get then, tick 3] to have the same contents. Ticks for return with thenable getter'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get then, tick 3, get return, get then] and [start, tick 1, get then, tick 2, get return, get then, tick 3] to have the same contents. Ticks for return with thenable getter'
-test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-yield-expression.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-test/language/statements/class/cpn-class-decl-fields-methods-computed-property-name-from-yield-expression.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
 test/language/statements/class/definition/fn-length-static-precedence-order.js:
   default: 'Test262Error: Expected [name, prototype, method, length] and [length, name, prototype, method] to have the same contents. '
   strict mode: 'Test262Error: Expected [name, prototype, method, length] and [length, name, prototype, method] to have the same contents. '
