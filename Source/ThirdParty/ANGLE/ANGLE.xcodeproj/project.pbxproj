@@ -371,6 +371,8 @@
 		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
 		3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */; };
 		3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2232988C96D0080D728 /* renderermtl_utils.h */; };
+		4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */; };
+		4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
@@ -884,6 +886,13 @@
 			remoteGlobalIDString = 31CDFDF32491819E00486F27;
 			remoteInfo = "ANGLE (dynamic)";
 		};
+		4458D1252B635E0000B64F47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 31DB794F2491C33300982878;
+			remoteInfo = ANGLE;
+		};
 		FF194FF52744331A006A97A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -1071,6 +1080,10 @@
 		3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelLocalStorage.cpp; path = src/libANGLE/PixelLocalStorage.cpp; sourceTree = SOURCE_ROOT; };
 		3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderermtl_utils.cpp; sourceTree = "<group>"; };
 		3AD0D2232988C96D0080D728 /* renderermtl_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderermtl_utils.h; sourceTree = "<group>"; };
+		4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = metal_translator_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4458D1152B634F4200B64F47 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = translator_fuzzer.cpp; sourceTree = "<group>"; };
+		4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = metal_translator_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -1881,6 +1894,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4458D1192B635DCC00B64F47 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -2100,6 +2121,14 @@
 				3A0EBF962980B445002C72BC /* mru_cache.h */,
 			);
 			path = containers;
+			sourceTree = "<group>";
+		};
+		4458D1162B634FC200B64F47 /* fuzz */ = {
+			isa = PBXGroup;
+			children = (
+				4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */,
+			);
+			path = fuzz;
 			sourceTree = "<group>";
 		};
 		5C1BAA931DFB60E2002906BB /* EGL */ = {
@@ -2797,7 +2826,9 @@
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
+				4458D1152B634F4200B64F47 /* BaseTarget.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -3048,6 +3079,7 @@
 			isa = PBXGroup;
 			children = (
 				31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */,
+				4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3055,6 +3087,7 @@
 		FB39D2201200F35A00088E69 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				4458D1162B634FC200B64F47 /* fuzz */,
 				FB39D2441200F35A00088E69 /* preprocessor */,
 				31012D9F18B97B9B0039062F /* translator */,
 			);
@@ -3733,6 +3766,23 @@
 			productReference = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		4458D11B2B635DCC00B64F47 /* metal_translator_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4458D1202B635DCC00B64F47 /* Build configuration list for PBXNativeTarget "metal_translator_fuzzer" */;
+			buildPhases = (
+				4458D1182B635DCC00B64F47 /* Sources */,
+				4458D1192B635DCC00B64F47 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4458D1262B635E0000B64F47 /* PBXTargetDependency */,
+			);
+			name = metal_translator_fuzzer;
+			productName = metal_translator_fuzzer;
+			productReference = 4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFDA50CB269F845100AE11E2 /* Build configuration list for PBXNativeTarget "ANGLEMetalLib" */;
@@ -3764,6 +3814,9 @@
 						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
+					4458D11B2B635DCC00B64F47 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					FFDA50C4269F845100AE11E2 = {
 						CreatedOnToolsVersion = 13.0;
 						ProvisioningStyle = Automatic;
@@ -3785,6 +3838,7 @@
 				31DB794F2491C33300982878 /* ANGLE */,
 				31CDFDF32491819E00486F27 /* ANGLE (dynamic) */,
 				FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */,
+				4458D11B2B635DCC00B64F47 /* metal_translator_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -4203,6 +4257,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4458D1182B635DCC00B64F47 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FFDA50C3269F845100AE11E2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4218,6 +4280,11 @@
 			isa = PBXTargetDependency;
 			target = 31CDFDF32491819E00486F27 /* ANGLE (dynamic) */;
 			targetProxy = 31DB79562491C35400982878 /* PBXContainerItemProxy */;
+		};
+		4458D1262B635E0000B64F47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 31DB794F2491C33300982878 /* ANGLE */;
+			targetProxy = 4458D1252B635E0000B64F47 /* PBXContainerItemProxy */;
 		};
 		FF194FF62744331A006A97A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4264,6 +4331,30 @@
 		};
 		31DB79522491C33300982878 /* Production */ = {
 			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4458D1212B635DCC00B64F47 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4458D1222B635DCC00B64F47 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4458D1232B635DCC00B64F47 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -4332,6 +4423,16 @@
 				31DB79502491C33300982878 /* Debug */,
 				31DB79512491C33300982878 /* Release */,
 				31DB79522491C33300982878 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4458D1202B635DCC00B64F47 /* Build configuration list for PBXNativeTarget "metal_translator_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4458D1212B635DCC00B64F47 /* Debug */,
+				4458D1222B635DCC00B64F47 /* Release */,
+				4458D1232B635DCC00B64F47 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
