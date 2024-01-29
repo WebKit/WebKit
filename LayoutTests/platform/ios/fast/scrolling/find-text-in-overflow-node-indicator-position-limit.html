@@ -3,6 +3,7 @@
   <head>
     <title>Find text in overflow node</title>
     <meta name="viewport" content="width=device-width">
+    <script src="../../../../resources/ui-helper.js"></script>
     <script type="text/javascript">
       if (window.testRunner)
           testRunner.waitUntilDone();
@@ -19,7 +20,7 @@
                 uiController.uiScriptComplete("");
             `, resolve);
         });
-
+        await UIHelper.ensurePresentationUpdate();
         testRunner.notifyDone();
       }
     </script>
