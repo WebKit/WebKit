@@ -202,7 +202,6 @@ quicklook [ Skip ]
 http/tests/quicklook [ Skip ]
 
 # These tests are WebKit2-only
-http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 http/tests/loading/resourceLoadStatistics/ [ Skip ]
 http/tests/resourceLoadStatistics/ [ Skip ]
@@ -2233,8 +2232,6 @@ webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
-webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass Failure ]
-
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
@@ -2648,11 +2645,6 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
 
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
-
-http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/404-resource-with-slow-main-resource.py [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
 
 # PiP tests are only relevant on macOS Sierra and newer.
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]

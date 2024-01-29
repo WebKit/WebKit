@@ -126,7 +126,7 @@ void ApplicationCacheGroup::selectCache(LocalFrame& frame, const URL& passedMani
     ASSERT(frame.page());
     ASSERT(frame.loader().documentLoader());
 
-    if (!frame.settings().offlineWebApplicationCacheEnabled())
+    if (frame.loader().documentLoader() && !frame.loader().documentLoader()->applicationCacheHost().isApplicationCacheEnabled())
         return;
 
     auto& documentLoader = *frame.loader().documentLoader();
@@ -202,7 +202,7 @@ void ApplicationCacheGroup::selectCache(LocalFrame& frame, const URL& passedMani
 
 void ApplicationCacheGroup::selectCacheWithoutManifestURL(LocalFrame& frame)
 {
-    if (!frame.settings().offlineWebApplicationCacheEnabled())
+    if (frame.loader().documentLoader() && !frame.loader().documentLoader()->applicationCacheHost().isApplicationCacheEnabled())
         return;
 
     ASSERT(frame.document());

@@ -1,9 +1,0 @@
-This test passes if the application cache does not load while in private browsing
-
-
-
---------
-Frame: '<!--frame1-->'
---------
-Application cache not loaded
-

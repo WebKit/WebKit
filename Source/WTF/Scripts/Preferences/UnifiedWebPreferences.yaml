@@ -4869,17 +4869,6 @@ NotificationsEnabled:
       "PLATFORM(IOS_FAMILY)": false
       default: true
 
-OfflineWebApplicationCacheEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: WebKit::defaultOfflineWebApplicationCacheEnabled()
-    WebCore:
-      default: false
-
 OffscreenCanvasEnabled:
   type: bool
   status: stable

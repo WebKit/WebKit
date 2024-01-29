@@ -549,7 +549,7 @@ void ApplicationCacheHost::abort()
 
 bool ApplicationCacheHost::isApplicationCacheEnabled()
 {
-    return m_documentLoader->frame() && m_documentLoader->frame()->settings().offlineWebApplicationCacheEnabled() && m_documentLoader->frame()->page() && !m_documentLoader->frame()->page()->usesEphemeralSession();
+    return false;
 }
 
 bool ApplicationCacheHost::isApplicationCacheBlockedForRequest(const ResourceRequest&)

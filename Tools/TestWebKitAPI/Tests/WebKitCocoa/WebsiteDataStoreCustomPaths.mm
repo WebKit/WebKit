@@ -619,40 +619,6 @@ TEST(WebKit, NetworkCacheDirectory)
     EXPECT_FALSE(error);
 }
 
-TEST(WebKit, ApplicationCacheDirectories)
-{
-    TestWebKitAPI::HTTPServer server({
-        { "/index.html"_s, { "<html manifest='test.appcache'>"_s } },
-        { "/test.appcache"_s, { "CACHE MANIFEST\nindex.html\ntest.mp4\n"_s } },
-        { "/test.mp4"_s, { {{ "Content-Type"_s, "video/test"_s }}, "test!"_s }},
-    });
-    
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
-    NSString *path = tempDir.path;
-    NSString *subdirectoryPath = [path stringByAppendingPathComponent:@"testsubdirectory"];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    EXPECT_FALSE([fileManager fileExistsAtPath:subdirectoryPath]);
-
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-
-    [websiteDataStoreConfiguration setApplicationCacheDirectory:tempDir];
-    [websiteDataStoreConfiguration setApplicationCacheFlatFileSubdirectoryName:@"testsubdirectory"];
-    
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
-    
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    [webView.get().configuration.preferences _setOfflineApplicationCacheIsEnabled:YES];
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/index.html", server.port()]]]];
-
-    while (![fileManager fileExistsAtPath:subdirectoryPath])
-        TestWebKitAPI::Util::spinRunLoop();
-
-    NSError *error = nil;
-    [fileManager removeItemAtPath:path error:&error];
-    EXPECT_FALSE(error);
-}
-
 #if HAVE(ALTERNATIVE_SERVICE)
 
 static void checkUntilEntryFound(WKWebsiteDataStore *dataStore, void(^completionHandler)(NSArray<WKWebsiteDataRecord *> *))

@@ -5,7 +5,6 @@ if (window.testRunner) {
 	testRunner.waitUntilDone();
 }
 
-var cachedApplicationCache = window.applicationCache;
 var cachedConsole = window.console;
 var cachedCrypto = window.crypto;
 var cachedHistory = window.history;
@@ -40,7 +39,6 @@ window.onpageshow = function(evt) {
 	
 	// First alert all of the objects to make sure we get a valid toString()-ification
 	// instead of "undefined", "null", or "Object"
-	logMessage(window.applicationCache);
 	logMessage(window.console);
 	logMessage(window.crypto);
 	logMessage(window.history);
@@ -58,8 +56,6 @@ window.onpageshow = function(evt) {
 	logMessage(window.toolbar);
 	
 	// Then make sure the window properties match the cached references from the initial page load
-	if (cachedApplicationCache != window.applicationCache)
-		logErrorMessage("applicationCache");
 	if (cachedConsole != window.console)
 		logErrorMessage("console");
 	if (cachedCrypto != window.crypto)

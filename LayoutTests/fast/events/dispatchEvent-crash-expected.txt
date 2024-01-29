@@ -20,9 +20,4 @@ Exception thrown for undefined: TypeError: Argument 1 ('event') to EventTarget.d
 Exception thrown for string: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
 Exception thrown for 0: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
 Exception thrown for object: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
-Exception thrown for null: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
-Exception thrown for undefined: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
-Exception thrown for string: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
-Exception thrown for 0: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
-Exception thrown for object: TypeError: Argument 1 ('event') to EventTarget.dispatchEvent must be an instance of Event
 
