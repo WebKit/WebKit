@@ -207,8 +207,8 @@ public:
 private:
     UConverter& m_converter;
     bool m_shouldStopOnEncodingErrors;
-    const void* m_savedContext;
-    UConverterToUCallback m_savedAction;
+    const void* m_savedContext { nullptr };
+    UConverterToUCallback m_savedAction { nullptr };
 };
 
 String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
