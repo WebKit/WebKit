@@ -1545,10 +1545,6 @@ fast/images/animated-png.html [ Skip ] # ImageOnlyFailure
 fast/images/async-image-background-image-repeated.html [ Skip ] # Timeout
 fast/images/async-image-body-background-image.html [ Skip ] # Timeout
 fast/images/async-image-multiple-clients-repaint.html [ Skip ] # Timeout
-fast/images/avif-as-image.html [ Skip ] # ImageOnlyFailure
-fast/images/avif-heif-container-as-image.html [ Skip ] # ImageOnlyFailure
-fast/images/avif-image-decoding.html [ Skip ] # Failure
-fast/images/avif-image-document.html [ Skip ] # ImageOnlyFailure
 fast/images/decode-animated-image.html [ Skip ] # ImageOnlyFailure
 fast/images/displaced-non-cached-pdf.html [ Skip ] # ImageOnlyFailure
 fast/images/embed-image.html [ Skip ] # Failure
