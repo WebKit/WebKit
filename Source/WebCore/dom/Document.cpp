@@ -8151,10 +8151,9 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     m_idToClientMap.remove(clientId);
     m_clientToIDMap.remove(it);
 
-    Page* page = this->page();
-    if (!page)
-        return;
-    page->removePlaybackTargetPickerClient(clientId);
+    // Unable to ref the page as it may have started destruction.
+    if (WeakPtr page = this->page())
+        page->removePlaybackTargetPickerClient(clientId);
 }
 
 void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
