@@ -683,14 +683,41 @@ TEST(WebKit, ShowWebView)
 }
 
 @interface PointerLockDelegate : NSObject <WKUIDelegatePrivate>
+- (void)resetState;
+- (void)waitForPointerLockEngaged;
+- (void)waitForPointerLockLost;
 @end
 
-@implementation PointerLockDelegate
+@implementation PointerLockDelegate {
+    bool _didEngagePointerLock;
+    bool _didLosePointerLock;
+}
+
+- (void)resetState
+{
+    _didEngagePointerLock = false;
+    _didLosePointerLock = false;
+}
+
+- (void)waitForPointerLockEngaged
+{
+    TestWebKitAPI::Util::run(&_didEngagePointerLock);
+}
+
+- (void)waitForPointerLockLost
+{
+    TestWebKitAPI::Util::run(&_didLosePointerLock);
+}
 
 - (void)_webViewDidRequestPointerLock:(WKWebView *)webView completionHandler:(void (^)(BOOL))completionHandler
 {
     completionHandler(YES);
-    done = true;
+    _didEngagePointerLock = true;
+}
+
+- (void)_webViewDidLosePointerLock:(WKWebView *)webView
+{
+    _didLosePointerLock = true;
 }
 
 @end
@@ -707,7 +734,34 @@ TEST(WebKit, PointerLock)
         @"</script>"
     ];
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-    TestWebKitAPI::Util::run(&done);
+    [delegate waitForPointerLockEngaged];
+}
+
+TEST(WebKit, ClientDisplaysAlertSheetWhilePointerLockActive)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[PointerLockDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:
+        @"<canvas width='800' height='600'></canvas><script>"
+        @"var canvas = document.querySelector('canvas');"
+        @"canvas.onclick = ()=>{canvas.requestPointerLock()};"
+        @"</script>"
+    ];
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
+    [delegate waitForPointerLockEngaged];
+    [delegate resetState];
+
+    // Check that pointer lock is lost upon sheet presentation.
+    auto alert = adoptNS([[NSAlert alloc] init]);
+    [alert beginSheetModalForWindow:[webView hostWindow] completionHandler:^(NSModalResponse) { }];
+    [delegate waitForPointerLockLost];
+    [[webView hostWindow] endSheet:[alert window]];
+    [delegate resetState];
+
+    // Check that pointer lock can be requested again successfully.
+    [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
+    [delegate waitForPointerLockEngaged];
 }
 
 static bool receivedWindowFrame;
