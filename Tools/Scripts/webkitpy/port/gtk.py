@@ -113,19 +113,6 @@ class GtkPort(GLibPort):
     def _path_to_default_image_diff(self):
         return self._path_to_image_diff()
 
-    def _path_to_webcore_library(self):
-        gtk_library_names = [
-            "libwebkitgtk-1.0.so",
-            "libwebkitgtk-3.0.so",
-            "libwebkit2gtk-1.0.so",
-        ]
-
-        for library in gtk_library_names:
-            full_library = self._built_libraries_path(library)
-            if self._filesystem.isfile(full_library):
-                return full_library
-        return None
-
     def _search_paths(self):
         search_paths = []
 
@@ -167,10 +154,6 @@ class GtkPort(GLibPort):
 
     def check_sys_deps(self):
         return super(GtkPort, self).check_sys_deps() and self._driver_class().check_driver(self)
-
-    def test_expectations_file_position(self):
-        # GTK port baseline search path is gtk -> glib -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
-        return 3
 
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)

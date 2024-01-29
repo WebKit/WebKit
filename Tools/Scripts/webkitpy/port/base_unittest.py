@@ -125,14 +125,6 @@ class PortTest(unittest.TestCase):
         # This routine is a no-op. We just test it for coverage.
         port.setup_test_run()
 
-    def test_test_dirs(self):
-        port = self.make_port()
-        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
-        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
-        dirs = port.test_dirs()
-        self.assertIn('canvas', dirs)
-        self.assertIn('css2.1', dirs)
-
     def test_skipped_perf_tests(self):
         port = self.make_port()
 

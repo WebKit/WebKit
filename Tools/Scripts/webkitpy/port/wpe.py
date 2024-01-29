@@ -99,10 +99,6 @@ class WPEPort(GLibPort):
     def _port_specific_expectations_files(self, **kwargs):
         return list(map(lambda x: self._filesystem.join(self._webkit_baseline_path(x), 'TestExpectations'), reversed(self._search_paths())))
 
-    def test_expectations_file_position(self):
-        # WPE port baseline search path is wpe -> glib -> wk2 -> generic, so port test expectations file is at third to last position.
-        return 3
-
     def configuration_for_upload(self, host=None):
         configuration = super(WPEPort, self).configuration_for_upload(host=host)
         configuration['platform'] = 'WPE'

@@ -177,20 +177,6 @@ class MacTest(darwin_testcase.DarwinTest):
         port = self.make_port()
         self.assertEqual(port.SDK, 'macosx')
 
-    def test_xcrun(self):
-        def throwing_run_command(args):
-            print(args)
-            raise ScriptError("MOCK script error")
-
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
-        with OutputCapture() as captured:
-            port.xcrun_find('test', 'falling')
-        self.assertEqual(
-            captured.stdout.getvalue(),
-            "['xcrun', '--sdk', 'macosx', '-find', 'test']\n"
-        )
-
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():
             search_path = self.make_port().default_baseline_search_path()

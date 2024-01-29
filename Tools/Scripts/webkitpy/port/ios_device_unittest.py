@@ -25,7 +25,6 @@ import time
 from webkitcorepy import Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
-from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
@@ -181,7 +180,6 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         pass
 
     def test_default_upload_configuration(self):
-        clear_cached_configuration()
         port = self.make_port()
         configuration = port.configuration_for_upload()
         self.assertEqual(configuration['architecture'], port.architecture())

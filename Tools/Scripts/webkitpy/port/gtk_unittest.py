@@ -34,7 +34,6 @@ import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port import port_testcase
 from webkitpy.thirdparty.mock import Mock
@@ -90,7 +89,6 @@ class GtkPortTest(port_testcase.PortTestCase):
         pass
 
     def test_default_upload_configuration(self):
-        clear_cached_configuration()
         port = self.make_port()
         configuration = port.configuration_for_upload()
         self.assertEqual(configuration['architecture'], port.architecture())

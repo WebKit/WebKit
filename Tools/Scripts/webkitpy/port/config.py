@@ -38,23 +38,6 @@ from webkitpy.common.memoized import memoized
 
 _log = logging.getLogger(__name__)
 
-#
-# FIXME: This is used to record if we've already hit the filesystem to look
-# for a default configuration. We cache this to speed up the unit tests,
-# but this can be reset with clear_cached_configuration(). This should be
-# replaced with us consistently using MockConfigs() for tests that don't
-# hit the filesystem at all and provide a reliable value.
-#
-_have_determined_configuration = False
-_configuration = "Release"
-
-
-def clear_cached_configuration():
-    global _have_determined_configuration, _configuration
-    _have_determined_configuration = False
-    _configuration = "Release"
-    Config.asan.fget._results_cache = {}
-
 
 @memoized
 def apple_additions():
@@ -123,25 +106,17 @@ class Config(object):
             _log.warn("Scripts may fail.  See 'set-webkit-configuration --help'.")
         return self._default_configuration
 
+    @memoized
     def _determine_configuration(self):
         # This mirrors the logic in webkitdirs.pm:determineConfiguration().
-        #
-        # FIXME: See the comment at the top of the file regarding unit tests
-        # and our use of global mutable static variables.
-        # FIXME: We should just @memoize this method and then this will only
-        # be read once per object lifetime (which should be sufficiently fast).
-        global _have_determined_configuration, _configuration
-        if not _have_determined_configuration:
-            contents = self._read_configuration()
-            if not contents:
-                contents = "Release"
-            if contents == "Deployment":
-                contents = "Release"
-            if contents == "Development":
-                contents = "Debug"
-            _configuration = contents
-            _have_determined_configuration = True
-        return _configuration
+        contents = self._read_configuration()
+        if not contents:
+            contents = "Release"
+        if contents == "Deployment":
+            contents = "Release"
+        if contents == "Development":
+            contents = "Debug"
+        return contents
 
     def _read_configuration(self):
         try:

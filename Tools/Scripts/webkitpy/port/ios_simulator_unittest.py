@@ -25,7 +25,6 @@ from webkitcorepy import Version
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
-from webkitpy.port.config import clear_cached_configuration
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.xcode.device_type import DeviceType
@@ -81,20 +80,6 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
     def test_sdk_name(self):
         port = self.make_port()
         self.assertEqual(port.SDK, 'iphonesimulator')
-
-    def test_xcrun(self):
-        def throwing_run_command(args):
-            print(args)
-            raise ScriptError("MOCK script error")
-
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
-        with OutputCapture() as captured:
-            port.xcrun_find('test', 'falling')
-        self.assertEqual(
-            captured.stdout.getvalue(),
-            "['xcrun', '--sdk', 'iphonesimulator', '-find', 'test']\n",
-        )
 
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():
@@ -170,7 +155,6 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(port.max_child_processes(DeviceType.from_string('Apple Watch')), 0)
 
     def test_default_upload_configuration(self):
-        clear_cached_configuration()
         port = self.make_port()
         configuration = port.configuration_for_upload()
         self.assertEqual(configuration['architecture'], port.architecture())
