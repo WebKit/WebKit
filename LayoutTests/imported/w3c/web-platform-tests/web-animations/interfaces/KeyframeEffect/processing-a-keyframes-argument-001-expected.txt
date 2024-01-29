@@ -15,7 +15,6 @@ PASS non-animatable property 'transitionProperty' is not accessed when using a p
 PASS non-animatable property 'transitionTimingFunction' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'contain' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'direction' is not accessed when using a property-indexed keyframe object
-PASS non-animatable property 'display' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'textCombineUpright' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'textOrientation' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'unicodeBidi' is not accessed when using a property-indexed keyframe object
@@ -40,7 +39,6 @@ PASS non-animatable property 'transitionProperty' is not accessed when using a k
 PASS non-animatable property 'transitionTimingFunction' is not accessed when using a keyframe sequence
 PASS non-animatable property 'contain' is not accessed when using a keyframe sequence
 PASS non-animatable property 'direction' is not accessed when using a keyframe sequence
-PASS non-animatable property 'display' is not accessed when using a keyframe sequence
 PASS non-animatable property 'textCombineUpright' is not accessed when using a keyframe sequence
 PASS non-animatable property 'textOrientation' is not accessed when using a keyframe sequence
 PASS non-animatable property 'unicodeBidi' is not accessed when using a keyframe sequence

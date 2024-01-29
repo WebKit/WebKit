@@ -13,18 +13,18 @@ PASS CSS Transitions with transition: all: property <display> from [none] to [fl
 PASS CSS Transitions with transition: all: property <display> from [none] to [flex] at (0.6) should be [flex]
 PASS CSS Transitions with transition: all: property <display> from [none] to [flex] at (1) should be [flex]
 PASS CSS Transitions with transition: all: property <display> from [none] to [flex] at (1.5) should be [flex]
-PASS CSS Animations: property <display> from [none] to [flex] at (-0.3) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (0) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (0.3) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (0.5) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (0.6) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (1) should be [block]
-PASS CSS Animations: property <display> from [none] to [flex] at (1.5) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (-0.3) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (0) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (0.3) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (0.5) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (0.6) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (1) should be [block]
-PASS Web Animations: property <display> from [none] to [flex] at (1.5) should be [block]
+FAIL CSS Animations: property <display> from [none] to [flex] at (-0.3) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Animations: property <display> from [none] to [flex] at (0) should be [block] assert_equals: expected "block " but got "none "
+FAIL CSS Animations: property <display> from [none] to [flex] at (0.3) should be [block] assert_equals: expected "block " but got "flex "
+FAIL CSS Animations: property <display> from [none] to [flex] at (0.5) should be [block] assert_equals: expected "block " but got "flex "
+FAIL CSS Animations: property <display> from [none] to [flex] at (0.6) should be [block] assert_equals: expected "block " but got "flex "
+FAIL CSS Animations: property <display> from [none] to [flex] at (1) should be [block] assert_equals: expected "block " but got "flex "
+FAIL CSS Animations: property <display> from [none] to [flex] at (1.5) should be [block] assert_equals: expected "block " but got "flex "
+FAIL Web Animations: property <display> from [none] to [flex] at (-0.3) should be [block] assert_equals: expected "block " but got "none "
+FAIL Web Animations: property <display> from [none] to [flex] at (0) should be [block] assert_equals: expected "block " but got "none "
+FAIL Web Animations: property <display> from [none] to [flex] at (0.3) should be [block] assert_equals: expected "block " but got "flex "
+FAIL Web Animations: property <display> from [none] to [flex] at (0.5) should be [block] assert_equals: expected "block " but got "flex "
+FAIL Web Animations: property <display> from [none] to [flex] at (0.6) should be [block] assert_equals: expected "block " but got "flex "
+FAIL Web Animations: property <display> from [none] to [flex] at (1) should be [block] assert_equals: expected "block " but got "flex "
+FAIL Web Animations: property <display> from [none] to [flex] at (1.5) should be [block] assert_equals: expected "block " but got "flex "
 

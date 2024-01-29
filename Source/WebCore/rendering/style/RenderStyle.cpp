@@ -1542,6 +1542,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClear);
         if (first.position != second.position)
             changingProperties.m_properties.set(CSSPropertyPosition);
+        if (first.effectiveDisplay != second.effectiveDisplay)
+            changingProperties.m_properties.set(CSSPropertyDisplay);
         if (first.floating != second.floating)
             changingProperties.m_properties.set(CSSPropertyFloat);
         if (first.tableLayout != second.tableLayout)
@@ -1550,7 +1552,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
 
         // Non animated styles are followings.
-        // effectiveDisplay
         // originalDisplay
         // unicodeBidi
         // usesViewportUnits

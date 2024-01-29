@@ -2303,7 +2303,7 @@ bool KeyframeEffect::ticksContinuouslyWhileActive() const
     auto targetHasDisplayContents = [&]() {
         return m_target && !m_pseudoElementIdentifier && m_target->hasDisplayContents();
     };
-    if (!renderer() && !targetHasDisplayContents())
+    if (!renderer() && !m_blendingKeyframes.properties().contains(CSSPropertyDisplay) && !targetHasDisplayContents())
         return false;
 
     if (isCompletelyAccelerated() && isRunningAccelerated()) {

@@ -201,7 +201,7 @@ void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeli
     WebAnimation::setTimeline(WTFMove(newTimeline));
 }
 
-void StyleOriginatedAnimation::cancel()
+void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
 {
     auto cancelationTime = 0_s;
 
@@ -213,14 +213,14 @@ void StyleOriginatedAnimation::cancel()
         }
     }
 
-    WebAnimation::cancel();
+    WebAnimation::cancel(silently);
 
     invalidateDOMEvents(shouldFireEvents, cancelationTime);
 }
 
-void StyleOriginatedAnimation::cancelFromStyle()
+void StyleOriginatedAnimation::cancelFromStyle(WebAnimation::Silently silently)
 {
-    cancel();
+    cancel(silently);
     disassociateFromOwningElement();
 }
 
