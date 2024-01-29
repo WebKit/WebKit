@@ -451,7 +451,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(NavigationAction
     if (!validateInput(data.frameInfo.frameID, data.navigationID))
         return completionHandler({ });
 
-    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(completionHandler));
+    m_page->decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), WTFMove(data), WTFMove(completionHandler));
 }
 
 void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -503,7 +503,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionD
     }
     ASSERT(m_mainFrame);
 
-    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), m_webPageID, WTFMove(data), WTFMove(reply));
+    m_page->decidePolicyForNavigationActionSyncShared(m_process.copyRef(), WTFMove(data), WTFMove(reply));
 }
 
 void ProvisionalPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)

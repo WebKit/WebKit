@@ -27,4 +27,11 @@
     std::optional<WebKit::DownloadID> downloadID;
     std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;
     std::optional<WebKit::SandboxExtension::Handle> sandboxExtensionHandle;
+    std::optional<WebKit::PolicyDecisionConsoleMessage> consoleMessage;
 }
+
+[CustomHeader] struct WebKit::PolicyDecisionConsoleMessage {
+    JSC::MessageLevel messageLevel;
+    JSC::MessageSource messageSource;
+    String message;
+};

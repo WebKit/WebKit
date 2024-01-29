@@ -469,10 +469,13 @@ void WebFrame::invalidatePolicyListeners()
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
 {
+    if (m_page) {
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (m_page)
         m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, Ref { *this });
 #endif
+        if (auto& message = policyDecision.consoleMessage)
+            m_page->addConsoleMessage(m_frameID, message->messageSource, message->messageLevel, message->message);
+    }
 
     if (!m_coreFrame)
         return;

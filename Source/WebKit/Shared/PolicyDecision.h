@@ -30,7 +30,18 @@
 #include "SandboxExtension.h"
 #include "WebsitePoliciesData.h"
 
+namespace JSC {
+enum class MessageLevel : uint8_t;
+enum class MessageSource : uint8_t;
+}
+
 namespace WebKit {
+
+struct PolicyDecisionConsoleMessage {
+    JSC::MessageLevel messageLevel;
+    JSC::MessageSource messageSource;
+    String message;
+};
 
 struct PolicyDecision {
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
@@ -39,6 +50,7 @@ struct PolicyDecision {
     std::optional<DownloadID> downloadID { std::nullopt };
     std::optional<WebsitePoliciesData> websitePoliciesData { std::nullopt };
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };
+    std::optional<PolicyDecisionConsoleMessage> consoleMessage { std::nullopt };
 };
 
 } // namespace WebKit
