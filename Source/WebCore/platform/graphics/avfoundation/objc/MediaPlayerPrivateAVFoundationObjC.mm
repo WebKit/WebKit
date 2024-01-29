@@ -34,6 +34,7 @@
 #import "AudioSourceProviderAVFObjC.h"
 #import "AudioTrackPrivateAVFObjC.h"
 #import "AuthenticationChallenge.h"
+#import "CDMClearKey.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVFoundationObjC.h"
 #import "CVUtilities.h"
@@ -2155,19 +2156,32 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         return true;
     }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (scheme == "clearkey"_s) {
         String keyID = [[[avRequest request] URL] resourceSpecifier];
         auto encodedKeyId = PAL::TextCodecUTF8::encodeUTF8(keyID);
         auto initData = SharedBuffer::create(WTFMove(encodedKeyId));
 
+#if ENABLE(ENCRYPTED_MEDIA)
+        if (requestKeyHandleForKeyID(keyID, avRequest))
+            return true;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         auto keyData = player->cachedKeyForKeyId(keyID);
         if (keyData) {
             fulfillRequestWithKeyData(avRequest, keyData.get());
             return false;
         }
+#endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+        player->initializationDataEncountered(scheme, initData->tryCreateArrayBuffer());
+        setWaitingForKey(true);
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         player->keyNeeded(initData);
+#endif
 
         if (!player->shouldContinueAfterKeyNeeded())
             return false;
@@ -2175,12 +2189,30 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         m_keyURIToRequestMap.set(keyID, avRequest);
         return true;
     }
-#endif
-#endif
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 
     auto resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest);
     m_resourceLoaderMap.add((__bridge CFTypeRef)avRequest, resourceLoader.copyRef());
     resourceLoader->startLoading();
+    return true;
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::requestKeyHandleForKeyID(const String& keyID, RetainPtr<AVAssetResourceLoadingRequest> avRequest)
+{
+    auto* clearKeyInstance = dynamicDowncast<CDMInstanceClearKey>(m_cdmInstance.get());
+    if (!clearKeyInstance)
+        return false;
+
+    auto encodedKeyId = PAL::TextCodecUTF8::encodeUTF8(keyID);
+
+    auto promise = clearKeyInstance->getKeyHandleValue(encodedKeyId)->whenSettled(RunLoop::main(), [avRequest = WTFMove(avRequest)] (const auto& result) mutable {
+        if (result) {
+            auto resultBuffer = ArrayBuffer::create(*result);
+            fulfillRequestWithKeyData(avRequest.get(), resultBuffer.ptr());
+        } else
+            [avRequest finishLoadingWithError:nil];
+    });
+
     return true;
 }
 
@@ -2918,8 +2950,8 @@ void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternal
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_cdmInstance)
-        m_cdmInstance->outputObscuredDueToInsufficientExternalProtectionChanged(newValue);
+    if (auto cdmInstanceFairPlay = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(m_cdmInstance.get()))
+        cdmInstanceFairPlay->outputObscuredDueToInsufficientExternalProtectionChanged(newValue);
 #elif !ENABLE(LEGACY_ENCRYPTED_MEDIA)
     UNUSED_PARAM(newValue);
 #endif
@@ -2928,21 +2960,31 @@ void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternal
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached(CDMInstance& instance)
 {
-#if HAVE(AVCONTENTKEYSESSION)
-    if (!is<CDMInstanceFairPlayStreamingAVFObjC>(instance))
-        return;
-
-    auto& fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
-    if (&fpsInstance == m_cdmInstance)
+    if (&instance == m_cdmInstance)
         return;
 
     if (m_cdmInstance)
         cdmInstanceDetached(*m_cdmInstance);
 
-    m_cdmInstance = &fpsInstance;
-#else
-    UNUSED_PARAM(instance);
+#if HAVE(AVCONTENTKEYSESSION)
+    if (auto* fpsInstance = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(instance))
+        m_cdmInstance = fpsInstance;
 #endif
+
+    if (auto* clearKeyInstance = dynamicDowncast<CDMInstanceClearKey>(instance)) {
+        m_cdmInstance = clearKeyInstance;
+
+        Vector<String> removedRequests;
+        removedRequests.reserveInitialCapacity(m_keyURIToRequestMap.size());
+
+        for (auto& pair : m_keyURIToRequestMap) {
+            if (requestKeyHandleForKeyID(pair.key, pair.value))
+                removedRequests.append(pair.key);
+        }
+
+        for (auto& keyID : removedRequests)
+            m_keyURIToRequestMap.remove(keyID);
+    }
 }
 
 void MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached(CDMInstance& instance)
@@ -2961,7 +3003,11 @@ void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstanc
     if (!m_keyID || !m_cdmInstance)
         return;
 
-    auto instanceSession = m_cdmInstance->sessionForKeyIDs(Vector<Ref<SharedBuffer>>::from(*m_keyID));
+    auto cdmInstanceFairPlay = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(m_cdmInstance.get());
+    if (!cdmInstanceFairPlay)
+        return;
+
+    auto instanceSession = cdmInstanceFairPlay->sessionForKeyIDs(Vector<Ref<SharedBuffer>>::from(*m_keyID));
     if (!instanceSession)
         return;
 

@@ -368,6 +368,8 @@ private:
     bool containsDisabledTracks() const;
     bool trackIsPlayable(AVAssetTrack*) const;
 
+    bool requestKeyHandleForKeyID(const String&, RetainPtr<AVAssetResourceLoadingRequest>);
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -427,8 +429,8 @@ private:
     bool m_waitingForKey { false };
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
+#if ENABLE(ENCRYPTED_MEDIA)
+    RefPtr<CDMInstance> m_cdmInstance;
 #endif
 
     RetainPtr<AVPlayerItemMetadataCollector> m_metadataCollector;

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>clearkey</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script src="support.js"></script>
+    <script>
+        var encryptedEvent;
+        var keyIdString;
+        var session;
+        var messageEvent;
+        var initData;
+        var responseData;
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+
+        async function runTest()
+        {
+            findMediaElement();
+            run('video.src = "../resources/hls/clearkey/prog_index.m3u8"');
+            encryptedEvent = await waitFor(video, 'encrypted');
+            testExpected('bufferToString(encryptedEvent.initData)', 'crypt0.key');
+
+            if (!video.mediaKeys) {
+                const clearKeyOptions = [{
+                    initDataTypes: ['keyids'],
+                    audioCapabilities: [{ contentType: 'application/x-mpegurl' }],
+                    videoCapabilities: [{ contentType: 'application/x-mpegurl' }],
+                }];
+
+                let access = await navigator.requestMediaKeySystemAccess('org.w3.clearkey', clearKeyOptions);
+
+                await video.setMediaKeys(await access.createMediaKeys());
+            }
+
+            let keyId = base64EncodeBuffer(encryptedEvent.initData);
+            let keyRequest = stringToUInt8Array(JSON.stringify({ kids: [ keyId ] }));
+
+            session = video.mediaKeys.createSession('temporary');
+            session.generateRequest('keyids', keyRequest);
+            messageEvent = await waitFor(session, 'message');
+
+            testExpected('messageEvent.messageType', 'license-request');
+            messageData = JSON.parse(bufferToString(messageEvent.message));
+            testExpected('messageData.kids.length', 1);
+            testExpected('atob(messageData.kids[0])', 'crypt0.key');
+
+            let keyResponse = await fetch(`../resources/hls/clearkey/${atob(messageData.kids[0])}`);
+            let keyData = new Uint8Array(await keyResponse.arrayBuffer());
+
+            var responseObject = {
+                keys: [{
+                    'kty': 'oct',
+                    'alg': 'A128KW',
+                    'kid': keyId,
+                    'k': base64EncodeUint8Array(keyData)
+                }]
+            };
+            var responseString = JSON.stringify(responseObject);
+            responseData = stringToUInt8Array(responseString);
+
+            await shouldResolve(run('session.update(responseData)'));
+            await waitFor(video, 'canplay');
+        }
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

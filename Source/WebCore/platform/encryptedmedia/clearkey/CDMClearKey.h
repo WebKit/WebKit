@@ -53,7 +53,7 @@ enum {
 
 } // namespace ClearKey
 
-class CDMFactoryClearKey final : public CDMFactory {
+class CDMFactoryClearKey final : public CDMFactory, public CDMProxyFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static CDMFactoryClearKey& singleton();
@@ -61,6 +61,7 @@ public:
     virtual ~CDMFactoryClearKey();
 
     std::unique_ptr<CDMPrivate> createCDM(const String&, const CDMPrivateClient&) final;
+    RefPtr<CDMProxy> createCDMProxy(const String&) final { return new CDMProxy(); }
     bool supportsKeySystem(const String&) final;
 
 private:
@@ -103,6 +104,10 @@ public:
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
+
+    using KeyHandleValue = Vector<uint8_t>;
+    using KeyHandleValuePromise = NativePromise<KeyHandleValue, void, PromiseOption::Default | PromiseOption::NonExclusive>;
+    Ref<KeyHandleValuePromise> getKeyHandleValue(const KeyIDType&) const;
 };
 
 class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
