@@ -396,6 +396,7 @@ public:
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 
     size_t serviceWorkerProxiesCount() const;
+    void isJITDisabledInAllRemoteWorkerProcesses(CompletionHandler<void(bool)>&&) const;
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
     void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
