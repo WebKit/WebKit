@@ -2626,6 +2626,20 @@ void FrameSelection::showTreeForThis() const
 
 #endif
 
+std::optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(TextGranularity granularity) const
+{
+    if (m_selection.isNone())
+        return std::nullopt;
+
+    FrameSelection frameSelection;
+    frameSelection.setSelection(m_selection);
+
+    frameSelection.modify(Alteration::Move, SelectionDirection::Backward, granularity);
+    frameSelection.modify(Alteration::Extend, SelectionDirection::Forward, granularity);
+
+    return frameSelection.selection().toNormalizedRange();
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void FrameSelection::expandSelectionToElementContainingCaretSelection()

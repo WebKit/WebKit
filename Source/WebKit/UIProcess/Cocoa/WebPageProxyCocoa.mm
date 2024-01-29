@@ -1090,6 +1090,19 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
 
 #endif // ENABLE(EXTENSION_CAPABILITIES)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPageProxy::didBeginTextReplacementSession(const WTF::UUID& uuid)
+{
+    send(Messages::WebPage::DidBeginTextReplacementSession(uuid));
+}
+
+void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+{
+    send(Messages::WebPage::TextReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished));
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

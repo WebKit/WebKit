@@ -313,6 +313,7 @@ namespace WebKit {
 
 class DrawingArea;
 class FindController;
+class UnifiedTextReplacementController;
 class GPUProcessConnection;
 class GamepadData;
 class GeolocationPermissionRequestManager;
@@ -834,6 +835,8 @@ public:
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 
     bool handlesPageScaleGesture();
+
+    std::optional<WebCore::SimpleRange> rangeSelectionContext() const;
 
 #if PLATFORM(IOS_FAMILY)
     void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
@@ -2167,6 +2170,12 @@ private:
 
     void frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier);
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void didBeginTextReplacementSession(const WTF::UUID&);
+
+    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+#endif
+
     void remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
     void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 
@@ -2687,6 +2696,10 @@ private:
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     String m_mediaEnvironment;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
 #endif
 
     mutable RefPtr<Logger> m_logger;

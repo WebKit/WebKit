@@ -473,6 +473,8 @@ struct WebPageProxyIdentifierType;
 struct WebPopupItem;
 struct WebPreferencesStore;
 struct WebSpeechSynthesisVoice;
+struct WebTextReplacementData;
+struct WebUnifiedTextReplacementContextData;
 struct WebsitePoliciesData;
 #if PLATFORM(WPE) && USE(GBM)
 struct DMABufRendererBufferFormat;
@@ -2326,6 +2328,12 @@ public:
 #endif
 
     void requestTextExtraction(CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void didBeginTextReplacementSession(const WTF::UUID&);
+
+    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

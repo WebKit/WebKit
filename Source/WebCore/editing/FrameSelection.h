@@ -216,6 +216,8 @@ public:
     void showTreeForThis() const;
 #endif
 
+    WEBCORE_EXPORT std::optional<SimpleRange> rangeByExtendingCurrentSelection(TextGranularity) const;
+
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void expandSelectionToElementContainingCaretSelection();
     WEBCORE_EXPORT std::optional<SimpleRange> elementRangeContainingCaretSelection() const;

@@ -435,6 +435,10 @@
 #import <WebCore/AcceleratedTimeline.h>
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#include "UnifiedTextReplacementController.h"
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -588,6 +592,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
     , m_historyItemClient(WebHistoryItemClient::create())
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    , m_unifiedTextReplacementController(makeUniqueRef<UnifiedTextReplacementController>(*this))
+#endif
 {
     ASSERT(m_identifier);
     WEBPAGE_RELEASE_LOG(Loading, "constructor:");

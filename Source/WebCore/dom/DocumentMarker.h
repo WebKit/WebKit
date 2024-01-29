@@ -38,7 +38,7 @@ namespace WebCore {
 // It optionally includes a description that could be displayed in the user interface.
 class DocumentMarker : public CanMakeWeakPtr<DocumentMarker> {
 public:
-    enum class Type : uint16_t {
+    enum class Type : uint32_t {
         Spelling = 1 << 0,
         Grammar = 1 << 1,
         TextMatch = 1 << 2,
@@ -81,6 +81,9 @@ public:
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         // This marker maintains state for the platform text checker.
         PlatformTextChecking = 1 << 15,
+#endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        UnifiedTextReplacement = 1 << 16,
 #endif
     };
 
@@ -157,6 +160,9 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<Type>
 #endif
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         Type::PlatformTextChecking,
+#endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        Type::UnifiedTextReplacement,
 #endif
     };
 }

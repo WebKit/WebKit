@@ -318,6 +318,7 @@ $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionUpdateResult.serialization.in
 $(PROJECT_DIR)/Shared/URLSchemeTaskParameters.serialization.in
 $(PROJECT_DIR)/Shared/UndoOrRedo.serialization.in
+$(PROJECT_DIR)/Shared/UnifiedTextReplacement.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserContentControllerParameters.serialization.in
 $(PROJECT_DIR)/Shared/UserData.serialization.in

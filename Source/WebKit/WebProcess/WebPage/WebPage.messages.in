@@ -758,4 +758,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(EXTENSION_CAPABILITIES)
     SetMediaEnvironment(String mediaEnvironment)
 #endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    DidBeginTextReplacementSession(WTF::UUID uuid)
+
+    TextReplacementSessionDidReceiveReplacements(WTF::UUID uuid, Vector<WebKit::WebTextReplacementData> replacements, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished)
+#endif
 }
