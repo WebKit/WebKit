@@ -1226,6 +1226,223 @@ void RewriteGlobalVariables::finalizeArgumentBufferStruct(unsigned group, Vector
     m_structTypes.add(group, argumentBufferStruct.m_inferredType);
 }
 
+static AddressSpace addressSpaceForBindingMember(const BindGroupLayoutEntry::BindingMember& bindingMember)
+{
+    return WTF::switchOn(bindingMember, [](const BufferBindingLayout& bufferBinding) {
+        switch (bufferBinding.type) {
+        case BufferBindingType::Uniform:
+            return AddressSpace::Uniform;
+        case BufferBindingType::Storage:
+            return AddressSpace::Storage;
+        case BufferBindingType::ReadOnlyStorage:
+            return AddressSpace::Storage;
+        }
+    }, [](const SamplerBindingLayout&) {
+        return AddressSpace::Handle;
+    }, [](const TextureBindingLayout&) {
+        return AddressSpace::Handle;
+    }, [](const StorageTextureBindingLayout&) {
+        return AddressSpace::Handle;
+    }, [](const ExternalTextureBindingLayout&) {
+        return AddressSpace::Uniform;
+    });
+}
+
+static AccessMode accessModeForBindingMember(const BindGroupLayoutEntry::BindingMember& bindingMember)
+{
+    return WTF::switchOn(bindingMember, [](const BufferBindingLayout& bufferBinding) {
+        switch (bufferBinding.type) {
+        case BufferBindingType::Uniform:
+            return AccessMode::Read;
+        case BufferBindingType::Storage:
+            return AccessMode::ReadWrite;
+        case BufferBindingType::ReadOnlyStorage:
+            return AccessMode::Read;
+        }
+    }, [](const SamplerBindingLayout&) {
+        return AccessMode::Read;
+    }, [](const TextureBindingLayout&) {
+        return AccessMode::Read;
+    }, [](const StorageTextureBindingLayout&) {
+        return AccessMode::Read;
+    }, [](const ExternalTextureBindingLayout&) {
+        return AccessMode::Read;
+    });
+}
+
+enum class BindingType {
+    Undefined,
+    Buffer,
+    Texture,
+    TextureMultisampled,
+    TextureStorageReadOnly,
+    TextureStorageReadWrite,
+    TextureStorageWriteOnly,
+    Sampler,
+    SamplerComparison,
+    TextureExternal,
+};
+
+static BindingType bindingTypeForPrimitive(const Types::Primitive& primitive)
+{
+    switch (primitive.kind) {
+    case Types::Primitive::AbstractInt:
+    case Types::Primitive::AbstractFloat:
+    case Types::Primitive::I32:
+    case Types::Primitive::U32:
+    case Types::Primitive::F32:
+    case Types::Primitive::F16:
+    case Types::Primitive::Bool:
+    case Types::Primitive::Void:
+        return BindingType::Buffer;
+    case Types::Primitive::Sampler:
+        return BindingType::Sampler;
+    case Types::Primitive::SamplerComparison:
+        return BindingType::SamplerComparison;
+
+    case Types::Primitive::TextureExternal:
+        return BindingType::TextureExternal;
+
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
+    case Types::Primitive::AddressSpace:
+        return BindingType::Undefined;
+    }
+}
+
+static BindingType bindingTypeForType(const Type* type)
+{
+    if (!type)
+        return BindingType::Undefined;
+
+    return WTF::switchOn(*type,
+        [&](const Types::Primitive& primitive) {
+            return bindingTypeForPrimitive(primitive);
+        },
+        [&](const Types::Vector&) {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Array&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Struct&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::PrimitiveStruct&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Matrix&) {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Reference&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Pointer&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::Function&) -> BindingType {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Texture& texture) {
+        return texture.kind == Types::Texture::Kind::TextureMultisampled2d ? BindingType::TextureMultisampled : BindingType::Texture;
+        },
+        [&](const Types::TextureStorage& storageTexture) {
+        switch (storageTexture.access) {
+        case AccessMode::Read:
+            return BindingType::TextureStorageReadOnly;
+        case AccessMode::ReadWrite:
+            return BindingType::TextureStorageReadWrite;
+        case AccessMode::Write:
+            return BindingType::TextureStorageWriteOnly;
+        }
+        },
+        [&](const Types::TextureDepth& texture) {
+            return texture.kind == Types::TextureDepth::Kind::TextureDepthMultisampled2d ? BindingType::TextureMultisampled : BindingType::Texture;
+        },
+        [&](const Types::Atomic&) -> BindingType {
+            return BindingType::Buffer;
+        },
+        [&](const Types::TypeConstructor&) -> BindingType {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Bottom&) -> BindingType {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+}
+
+static bool isBuffer(const AST::Variable& variable)
+{
+    return bindingTypeForType(variable.storeType()) == BindingType::Buffer;
+}
+
+static bool isSampler(const AST::Variable& variable, SamplerBindingType bindingType)
+{
+    switch (bindingType) {
+    case SamplerBindingType::Filtering:
+    case SamplerBindingType::NonFiltering:
+        return bindingTypeForType(variable.storeType()) == BindingType::Sampler;
+    case SamplerBindingType::Comparison:
+        return bindingTypeForType(variable.storeType()) == BindingType::SamplerComparison;
+    }
+}
+
+static bool isTexture(const AST::Variable& variable, bool isMultisampled)
+{
+    return bindingTypeForType(variable.storeType()) == (isMultisampled ? BindingType::TextureMultisampled : BindingType::Texture);
+}
+
+static bool isStorageTexture(const AST::Variable& variable, StorageTextureAccess textureAccess)
+{
+    switch (bindingTypeForType(variable.storeType())) {
+    case BindingType::TextureStorageReadOnly:
+        return textureAccess == StorageTextureAccess::ReadOnly;
+    case BindingType::TextureStorageReadWrite:
+        return textureAccess == StorageTextureAccess::ReadWrite;
+    case BindingType::TextureStorageWriteOnly:
+        return textureAccess == StorageTextureAccess::WriteOnly || textureAccess == StorageTextureAccess::ReadWrite;
+    default:
+        return false;
+    }
+}
+
+static bool isExternalTexture(const AST::Variable& variable)
+{
+    return bindingTypeForType(variable.storeType()) == BindingType::TextureExternal;
+}
+
+static bool typesMatch(const AST::Variable& variable, const BindGroupLayoutEntry::BindingMember& bindingMember)
+{
+    return WTF::switchOn(bindingMember, [&](const BufferBindingLayout&) {
+        return isBuffer(variable);
+    }, [&](const SamplerBindingLayout& samplerBinding) {
+        return isSampler(variable, samplerBinding.type);
+    }, [&](const TextureBindingLayout& textureBinding) {
+        return isTexture(variable, textureBinding.multisampled);
+    }, [&](const StorageTextureBindingLayout& storageTexture) {
+        return isStorageTexture(variable, storageTexture.access);
+    }, [&](const ExternalTextureBindingLayout&) {
+        return isExternalTexture(variable);
+    });
+}
+
+static bool variableAndEntryMatch(const AST::Variable& variable, const BindGroupLayoutEntry& entry)
+{
+    if (!typesMatch(variable, entry.bindingMember))
+        return false;
+
+    auto variableAddressSpace = variable.addressSpace();
+    auto entryAddressSpace = addressSpaceForBindingMember(entry.bindingMember);
+    if (variableAddressSpace && *variableAddressSpace != entryAddressSpace)
+        return false;
+
+    auto variableAccessMode = variable.accessMode();
+    auto entryAccessMode = accessModeForBindingMember(entry.bindingMember);
+    if (variableAccessMode && *variableAccessMode != entryAccessMode)
+        return false;
+
+    return true;
+}
+
 Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& layout)
 {
     Vector<unsigned> groups;
@@ -1262,6 +1479,8 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& lay
             auto it = m_globalsByBinding.find({ group + 1, entry.binding + 1 });
             if (it != m_globalsByBinding.end()) {
                 variable = it->value;
+                if (!variableAndEntryMatch(*variable, entry))
+                    return Vector<unsigned>();
                 entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
             } else {
                 auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
