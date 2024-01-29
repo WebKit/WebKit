@@ -33,7 +33,7 @@ namespace TestWebKitAPI {
 
 namespace {
 
-enum TestedObjectIdentifierType { };
+enum class TestedObjectIdentifierType { };
 using TestedObjectIdentifier = AtomicObjectIdentifier<TestedObjectIdentifierType>;
 using TestedObjectReadReference = IPC::ObjectIdentifierReadReference<TestedObjectIdentifier>;
 using TestedObjectWriteReference = IPC::ObjectIdentifierWriteReference<TestedObjectIdentifier>;

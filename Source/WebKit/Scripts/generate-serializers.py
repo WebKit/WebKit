@@ -487,6 +487,14 @@ def alias_struct_or_class(alias):
     return match.groups()[0]
 
 
+def get_alias_namespace(alias):
+    match = re.search(r'[ ,()<>]+([A-Za-z0-9_]+)::[A-Za-z0-9_]+', alias)
+    if(match):
+        return match.groups()[0]
+    else:
+        return None
+
+
 def generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations):
     result = []
     result.append('')
@@ -529,10 +537,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
         for type in serialized_types_by_namespace.get(namespace, []):
             if type.condition is not None:
                 result.append('#if ' + type.condition)
-            if type.alias is not None:
-                result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
-                result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
-            elif type.cf_type is None:
+            if type.cf_type is None and type.alias is None:
                 result.append(type.cpp_type_from_struct_or_class() + ' ' + type.cpp_struct_or_class_name() + ';')
             if type.condition is not None:
                 result.append('#endif')
@@ -547,6 +552,22 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
         result.append(declaration.declaration + ';')
         if declaration.condition is not None:
             result.append('#endif')
+    for namespace in sorted(all_namespaces, key=lambda x: (x is None, x)):
+        for type in serialized_types_by_namespace.get(namespace, []):
+            if type.alias is not None:
+                if type.condition is not None:
+                    result.append('#if ' + type.condition)
+                if namespace is not None:
+                    result.append('namespace ' + namespace + ' {')
+
+                if namespace is None or get_alias_namespace(type.alias) is None or get_alias_namespace(type.alias) == type.namespace:
+                    result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
+                result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
+
+                if namespace is not None:
+                    result.append('}')
+                if type.condition is not None:
+                    result.append('#endif')
     return result
 
 
@@ -1365,14 +1386,14 @@ def parse_serialized_types(file):
         if match:
             cf_type, namespace, name = match.groups()
             continue
-        match = re.search(r'using (.*) = ([^;]*)', line)
-        if match:
-            using_statements.append(UsingStatement(match.groups()[0], match.groups()[1], type_condition))
-            continue
         match = re.search(r'additional_forward_declaration: (.*)', line)
         if match:
             declaration = match.groups()[0]
             additional_forward_declarations.append(ConditionalForwardDeclaration(declaration, type_condition))
+            continue
+        match = re.search(r'using (.*) = ([^;]*)', line)
+        if match:
+            using_statements.append(UsingStatement(match.groups()[0], match.groups()[1], type_condition))
             continue
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
@@ -1596,7 +1617,7 @@ def main(argv):
     headers = []
     header_set = set()
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
-    additional_forward_declarations_set = set()
+    additional_forward_declarations_list = []
     file_extension = argv[1]
     skip = False
     directory = None
@@ -1620,13 +1641,13 @@ def main(argv):
             for header in new_headers:
                 header_set.add(header)
             for declaration in new_additional_forward_declarations:
-                additional_forward_declarations_set.add(declaration)
+                additional_forward_declarations_list.append(declaration)
     headers = sorted(header_set)
 
     serialized_types = resolve_inheritance(serialized_types)
 
     with open('GeneratedSerializers.h', "w+") as output:
-        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_set))
+        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
     with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers, False))
     with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:

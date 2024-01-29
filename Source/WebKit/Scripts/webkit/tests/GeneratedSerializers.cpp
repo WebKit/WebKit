@@ -39,6 +39,7 @@
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #include "RValueWithFunctionCalls.h"
+#include "RemoteVideoFrameIdentifier.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -1250,6 +1251,70 @@ std::optional<WebKit::RValueWithFunctionCalls> ArgumentCoder<WebKit::RValueWithF
     return {
         WebKit::RValueWithFunctionCalls {
             WTFMove(*callFunction)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::RemoteVideoFrameReference>::encode(Encoder& encoder, const WebKit::RemoteVideoFrameReference& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.identifier())>, WebKit::RemoteVideoFrameIdentifier>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.version())>, uint64_t>);
+
+    encoder << instance.identifier();
+    encoder << instance.version();
+}
+
+void ArgumentCoder<WebKit::RemoteVideoFrameReference>::encode(StreamConnectionEncoder& encoder, const WebKit::RemoteVideoFrameReference& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.identifier())>, WebKit::RemoteVideoFrameIdentifier>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.version())>, uint64_t>);
+
+    encoder << instance.identifier();
+    encoder << instance.version();
+}
+
+std::optional<WebKit::RemoteVideoFrameReference> ArgumentCoder<WebKit::RemoteVideoFrameReference>::decode(Decoder& decoder)
+{
+    auto identifier = decoder.decode<WebKit::RemoteVideoFrameIdentifier>();
+    auto version = decoder.decode<uint64_t>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::RemoteVideoFrameReference {
+            WTFMove(*identifier),
+            WTFMove(*version)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::RemoteVideoFrameWriteReference>::encode(Encoder& encoder, const WebKit::RemoteVideoFrameWriteReference& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.reference())>, IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.pendingReads())>, uint64_t>);
+
+    encoder << instance.reference();
+    encoder << instance.pendingReads();
+}
+
+void ArgumentCoder<WebKit::RemoteVideoFrameWriteReference>::encode(StreamConnectionEncoder& encoder, const WebKit::RemoteVideoFrameWriteReference& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.reference())>, IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.pendingReads())>, uint64_t>);
+
+    encoder << instance.reference();
+    encoder << instance.pendingReads();
+}
+
+std::optional<WebKit::RemoteVideoFrameWriteReference> ArgumentCoder<WebKit::RemoteVideoFrameWriteReference>::decode(Decoder& decoder)
+{
+    auto reference = decoder.decode<IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier>>();
+    auto pendingReads = decoder.decode<uint64_t>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::RemoteVideoFrameWriteReference {
+            WTFMove(*reference),
+            WTFMove(*pendingReads)
         }
     };
 }
