@@ -4017,6 +4017,16 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
                     KillOldProcesses(),
                     ReRunWebKitTests(),
                 ]
+            else:
+                steps_to_add += [
+                    UnApplyPatch(),
+                    RevertPullRequestChanges(),
+                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    CompileWebKitWithoutChange(retry_build_on_failure=True),
+                    ValidateChange(verifyBugClosed=False, addURLs=False),
+                    KillOldProcesses(),
+                    RunWebKitTestsWithoutChange(),
+                ]
             self.build.addStepsAfterCurrentStep(steps_to_add)
 
         return rc
