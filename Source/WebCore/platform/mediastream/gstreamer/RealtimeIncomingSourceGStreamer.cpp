@@ -65,8 +65,21 @@ const RealtimeMediaSourceCapabilities& RealtimeIncomingSourceGStreamer::capabili
     return RealtimeMediaSourceCapabilities::emptyCapabilities();
 }
 
-int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc)
+bool RealtimeIncomingSourceGStreamer::hasClient(const GRefPtr<GstElement>& appsrc)
 {
+    Locker lock { m_clientLock };
+    for (auto& client : m_clients.values()) {
+        if (client == appsrc)
+            return true;
+    }
+    return false;
+}
+
+std::optional<int> RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc)
+{
+    if (!m_tee)
+        return std::nullopt;
+
     Locker lock { m_clientLock };
     static Atomic<int> counter = 1;
     auto clientId = counter.exchangeAdd(1);

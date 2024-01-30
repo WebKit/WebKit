@@ -1875,9 +1875,6 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 
 webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ Failure ]
 
-# Uncomment when webkit.org/b/268284 is fixed
-#http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Failure ]
-
 # Adding transceivers without tracks is broken.
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
 
@@ -3752,8 +3749,6 @@ webkit.org/b/268281 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/complete-method.tentative.https.html [ Skip ]
 webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/constructor.tentative.https.html [ Skip ]
 webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/onmerchantvalidation-attribute.https.html [ Skip ]
-
-webkit.org/b/268284 http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Failure Crash ]
 
 # End: Common failures between GTK and WPE.
 

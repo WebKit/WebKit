@@ -36,7 +36,8 @@ public:
 
     virtual void setUpstreamBin(const GRefPtr<GstElement>&);
 
-    int registerClient(GRefPtr<GstElement>&&);
+    bool hasClient(const GRefPtr<GstElement>&);
+    std::optional<int> registerClient(GRefPtr<GstElement>&&);
     void unregisterClient(int);
 
     void handleUpstreamEvent(GRefPtr<GstEvent>&&, int clientId);
