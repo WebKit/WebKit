@@ -416,7 +416,10 @@
 #define USE_CORE_TEXT_VARIATIONS_CLAMPING_WORKAROUND 1
 #endif
 
-#if PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR) && __has_include(<ServiceExtensionsCore/SEMemory_Private.h>)
+// FIXME: Once this is forwarded to 18+, we should remove the max check.
+#if PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR) \
+    && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400 \
+    && __IPHONE_OS_VERSION_MAX_ALLOWED < 180000
 #define USE_INLINE_JIT_PERMISSIONS_API 1
 #endif
 
