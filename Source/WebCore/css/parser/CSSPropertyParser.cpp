@@ -739,7 +739,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         if (!eastAsianValue && (eastAsianValue = consumeFontVariantEastAsian(m_range)))
             continue;
 
-        if (!emojiValue && (emojiValue = CSSPropertyParsing::consumeFontVariantEmoji(m_range)))
+        if (m_context.propertySettings.cssFontVariantEmojiEnabled && !emojiValue && (emojiValue = CSSPropertyParsing::consumeFontVariantEmoji(m_range)))
             continue;
 
         // Saw some value that didn't match anything else.
