@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDLTypes.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
