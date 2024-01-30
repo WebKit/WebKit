@@ -104,14 +104,14 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
     [alert setMessageText:alertTitle];
     [alert setInformativeText:informativeText];
     if (accessoryTextList) {
-        NSTextView *accessory = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 200, 15)];
-        auto mutableString = [[accessory textStorage] mutableString];
+        auto accessory = adoptNS([[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 200, 15)]);
+        auto *mutableString = [[accessory textStorage] mutableString];
         [mutableString setString:[accessoryTextList componentsJoinedByString:@"\n"]];
         [[accessory textStorage] setFont:[NSFont systemFontOfSize:[NSFont systemFontSize]]];
         [[accessory textStorage] setForegroundColor:NSColor.whiteColor];
         [accessory setEditable:NO];
         [accessory setDrawsBackground:NO];
-        [alert setAccessoryView:accessory];
+        [alert setAccessoryView:accessory.get()];
         [alert layout];
     }
     [alert addButtonWithTitle:allowButtonString];
