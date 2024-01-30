@@ -218,6 +218,7 @@ public:
         LegacySVGResourceClipper,
         LegacySVGResourceLinearGradient,
         LegacySVGResourceMasker,
+        LegacySVGResourcePattern,
         LegacySVGResourceRadialGradient,
         LegacySVGRoot,
         LegacySVGTransformableContainer,
@@ -575,7 +576,8 @@ public:
     bool isLegacyRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
     bool isLegacyRenderSVGResourceMasker() const { return type() == Type::LegacySVGResourceMasker; }
     bool isRenderSVGResourceGradient() const { return type() == Type::SVGResourceLinearGradient || type() == Type::SVGResourceRadialGradient; }
-    bool isRenderSVGResourcePaintServer() const { return isRenderSVGResourceGradient(); }
+    bool isRenderSVGResourcePaintServer() const { return isRenderSVGResourceGradient() || isRenderSVGResourcePattern(); }
+    bool isRenderSVGResourcePattern() const { return type() == Type::SVGResourcePattern; }
     bool isRenderSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
     bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }
     bool isRenderSVGResourceLinearGradient() const { return type() == Type::SVGResourceLinearGradient; }

@@ -534,17 +534,21 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
     }
 }
 
-SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element)
+SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element, bool condition)
 {
-    m_element = element;
-    auto result = visitedElements().add(*m_element);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    if (condition) {
+        m_element = element;
+        auto result = visitedElements().add(*m_element);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
 }
 
 SVGHitTestCycleDetectionScope::~SVGHitTestCycleDetectionScope()
 {
-    bool result = visitedElements().remove(*m_element);
-    ASSERT_UNUSED(result, result);
+    if (m_element) {
+        bool result = visitedElements().remove(*m_element);
+        ASSERT_UNUSED(result, result);
+    }
 }
 
 SingleThreadWeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()

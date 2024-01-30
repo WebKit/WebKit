@@ -515,8 +515,6 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResource
     if (svgStyle.fillPaintType() < SVGPaintType::URINone)
         return nullptr;
 
-    // FIXME: [LBSE] Implement support for patterns.
-
     if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(treeScopeForSVGReferences(), svgStyle.fillPaintUri())) {
         if (auto* referencedPaintServerRenderer = dynamicDowncast<RenderSVGResourcePaintServer>(referencedElement->renderer()))
             return referencedPaintServerRenderer;
@@ -536,8 +534,6 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
     const auto& svgStyle = style.svgStyle();
     if (svgStyle.strokePaintType() < SVGPaintType::URINone)
         return nullptr;
-
-    // FIXME: [LBSE] Implement support for patterns.
 
     if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(treeScopeForSVGReferences(), svgStyle.strokePaintUri())) {
         if (auto* referencedPaintServerRenderer = dynamicDowncast<RenderSVGResourcePaintServer>(referencedElement->renderer()))

@@ -366,7 +366,7 @@ bool SVGInlineTextBox::acquirePaintingResource(SVGPaintServerHandling& paintServ
             context.setStrokeThickness(context.strokeThickness() * scalingFactor);
     }
 
-    if (context.fillGradient() || context.strokeGradient()) {
+    if (context.fillGradient() || context.strokeGradient() || context.fillPattern() || context.strokePattern()) {
         context.beginTransparencyLayer(1);
         context.setCompositeOperation(CompositeOperator::SourceOver);
     }
@@ -378,7 +378,7 @@ void SVGInlineTextBox::releasePaintingResource(SVGPaintServerHandling& paintServ
 {
     auto& context = paintServerHandling.context();
 
-    if (context.fillGradient() || context.strokeGradient())
+    if (context.fillGradient() || context.strokeGradient() || context.fillPattern() || context.strokePattern())
         context.endTransparencyLayer();
 
     context.restore();
@@ -650,8 +650,9 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
 
         {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            // Optimized code path to support gradient fill/stroke on text without using temporary ImageBuffers / masking.
+            // Optimized code path to support gradient/pattern fill/stroke on text without using temporary ImageBuffers / masking.
             Gradient* gradient { nullptr };
+            RefPtr<Pattern> pattern { nullptr };
             if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
                 auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer());
                 ASSERT(textRootBlock);
@@ -660,13 +661,24 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
                 if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill)) {
                     gradient = usedContext->fillGradient();
                     gradientSpaceTransform = usedContext->fillGradientSpaceTransform();
+                    pattern = usedContext->fillPattern();
                 } else {
                     gradient = usedContext->strokeGradient();
                     gradientSpaceTransform = usedContext->strokeGradientSpaceTransform();
+                    pattern = usedContext->strokePattern();
                 }
 
-                if (gradient) {
-                    usedContext->fillRect(textRootBlock->repaintRectInLocalCoordinates(), *gradient, gradientSpaceTransform);
+                ASSERT(!(gradient && pattern));
+                if (gradient || pattern) {
+                    if (gradient)
+                        usedContext->fillRect(textRootBlock->repaintRectInLocalCoordinates(), *gradient, gradientSpaceTransform);
+                    else {
+                        // FIXME: should be fillRect(const FloatRect&, Pattern&) on GraphicsContext.
+                        GraphicsContextStateSaver stateSaver(*usedContext);
+                        if (usedContext->strokePattern())
+                            usedContext->setFillPattern(*usedContext->strokePattern());
+                        usedContext->fillRect(textRootBlock->repaintRectInLocalCoordinates());
+                    }
                     usedContext->setCompositeOperation(CompositeOperator::DestinationIn);
                     usedContext->beginTransparencyLayer(1);
                 }
@@ -685,7 +697,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
                 usedContext->restore();
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-            if (gradient)
+            if (gradient || pattern)
                 usedContext->endTransparencyLayer();
 #endif
         }

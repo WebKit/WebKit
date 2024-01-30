@@ -2803,6 +2803,7 @@ rendering/svg/RenderSVGResourceGradient.cpp
 rendering/svg/RenderSVGResourceLinearGradient.cpp
 rendering/svg/RenderSVGResourceMasker.cpp
 rendering/svg/RenderSVGResourcePaintServer.cpp
+rendering/svg/RenderSVGResourcePattern.cpp
 rendering/svg/RenderSVGResourceRadialGradient.cpp
 rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGShape.cpp

@@ -162,18 +162,17 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
         }
     }
 
-    // FIXME: [LBSE] Implement support for patterns
     const auto& svgStyle = style.svgStyle();
     if (svgStyle.fillPaintType() >= SVGPaintType::URINone) {
         auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(svgStyle.fillPaintUri(), document);
         if (!resourceID.isEmpty())
-            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag } });
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag } });
     }
 
     if (svgStyle.strokePaintType() >= SVGPaintType::URINone) {
         auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(svgStyle.strokePaintUri(), document);
         if (!resourceID.isEmpty())
-            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag } });
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag } });
     }
 #endif
 
@@ -264,8 +263,7 @@ RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScop
     if (resourceID.isEmpty())
         return nullptr;
 
-    // FIXME: [LBSE] Implement pattern support
-    return elementForResourceIDs(treeScope, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag });
+    return elementForResourceIDs(treeScope, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag });
 }
 #endif
 

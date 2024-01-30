@@ -100,7 +100,7 @@ private:
 class SVGHitTestCycleDetectionScope {
     WTF_MAKE_NONCOPYABLE(SVGHitTestCycleDetectionScope);
 public:
-    explicit SVGHitTestCycleDetectionScope(const RenderElement&);
+    explicit SVGHitTestCycleDetectionScope(const RenderElement&, bool condition = true);
     ~SVGHitTestCycleDetectionScope();
     static bool isEmpty();
     static bool isVisiting(const RenderElement&);

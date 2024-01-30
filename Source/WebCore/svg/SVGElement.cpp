@@ -455,6 +455,7 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::linearGradient:
     case SVG::mask:
     case SVG::path:
+    case SVG::pattern:
     case SVG::polygon:
     case SVG::polyline:
     case SVG::radialGradient:

@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 200px">
+    <defs>
+      <pattern id="pattern" width="50" height="50" patternUnits="userSpaceOnUse">
+        <rect id="patternContent" width="35" height="25" fill="red"></rect>
+      </pattern>
+    </defs>
+    <rect id="target" x="0" y="0" width="100" height="100" fill="url(#pattern)"/>
+</svg>
+<script>
+    function repaintTest() {
+        document.getElementById("patternContent").setAttribute('fill', 'green');
+    }
+</script>
+</body>
+</html>
