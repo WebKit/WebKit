@@ -5,11 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Loading external SVG resources/viewspec-target.svg
-Passing SVGViewSpec: svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7));viewTarget(blub);zoomAndPan(disable))
+Passing SVGViewSpec: svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0, 10) translate(25, 25) rotate(45) translate(-25, -25) scale(0.7, 0.7));viewTarget(blub);zoomAndPan(disable))
 
 
 Check transform value
-PASS currentView.transformString is "translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7)"
+PASS currentView.transformString is "translate(0, 10) translate(25, 25) rotate(45) translate(-25, -25) scale(0.7, 0.7)"
 PASS currentView.transform.numberOfItems is 5
 PASS currentView.transform.getItem(0).type is SVGTransform.SVG_TRANSFORM_TRANSLATE
 PASS currentView.transform.getItem(0).angle is 0

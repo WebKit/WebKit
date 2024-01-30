@@ -43,7 +43,7 @@ Loaded: resources/viewspec-target.svg#svgView(transform(scale(2));x
 Parsed: [initial view] from: svgView(transform(scale(2));x
 
 Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5)))
-Parsed: svgView(transform(scale(0.5 0.5))) from: svgView(transform(scale(.5)))
+Parsed: svgView(transform(scale(0.5, 0.5))) from: svgView(transform(scale(.5)))
 
 Loaded: resources/viewspec-target.svg#svgView(;transform(scale(.5)))
 Parsed: [initial view] from: svgView(;transform(scale(.5)))
@@ -52,7 +52,7 @@ Loaded: resources/viewspec-target.svg#svgView(;;transform(scale(.5)))
 Parsed: [initial view] from: svgView(;;transform(scale(.5)))
 
 Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
-Parsed: svgView(transform(scale(0.5 0.5) scale(2 2) scale(2 2))) from: svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
+Parsed: svgView(transform(scale(0.5, 0.5) scale(2, 2) scale(2, 2))) from: svgView(transform(scale(.5));transform(scale(2));transform(scale(2)))
 
 Loaded: resources/viewspec-target.svg#svgView(viewBoxx(0,%200)
 Parsed: [initial view] from: svgView(viewBoxx(0, 0)
