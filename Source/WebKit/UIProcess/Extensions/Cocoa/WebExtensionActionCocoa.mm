@@ -446,12 +446,10 @@ bool WebExtensionAction::hasUnreadBadgeText() const
     if (m_hasUnreadBadgeText)
         return m_hasUnreadBadgeText.value();
 
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get())->hasUnreadBadgeText();
+    if (RefPtr fallback = fallbackAction())
+        return fallback->hasUnreadBadgeText();
 
-    if (m_window)
-        return extensionContext()->defaultAction().hasUnreadBadgeText();
-
+    // Default
     return false;
 }
 
@@ -460,14 +458,10 @@ void WebExtensionAction::setHasUnreadBadgeText(bool hasUnreadBadgeText)
     m_hasUnreadBadgeText = !badgeText().isEmpty() ? std::optional(hasUnreadBadgeText) : std::nullopt;
 
     // Only propagate the change if we're setting it to false.
-    if (hasUnreadBadgeText)
-        return;
+    if (RefPtr fallback = fallbackAction(); fallback && !hasUnreadBadgeText)
+        fallback->setHasUnreadBadgeText(false);
 
-    if (m_tab)
-        extensionContext()->getAction(m_tab->window().get())->setHasUnreadBadgeText(false);
-
-    if (m_window)
-        extensionContext()->defaultAction().setHasUnreadBadgeText(false);
+    propertiesDidChange();
 }
 
 void WebExtensionAction::incrementBlockedResourceCount(ssize_t amount)

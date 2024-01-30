@@ -1674,7 +1674,7 @@ void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosin
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    auto window = tab.window(WebExtensionTab::SkipContainsCheck::Yes);
+    auto window = tab.window();
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     fireTabsRemovedEventIfNeeded(tab.identifier(), windowIdentifier, windowIsClosing);

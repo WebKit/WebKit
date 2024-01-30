@@ -96,7 +96,6 @@ public:
     using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
-    enum class SkipContainsCheck : bool { No, Yes };
     enum class MainWebViewOnly : bool { No, Yes };
 
     using Error = std::optional<String>;
@@ -125,7 +124,7 @@ public:
     void addChangedProperties(OptionSet<ChangedProperties> properties) { m_changedProperties.add(properties); }
     void clearChangedProperties() { m_changedProperties = { }; }
 
-    RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
+    RefPtr<WebExtensionWindow> window() const;
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;

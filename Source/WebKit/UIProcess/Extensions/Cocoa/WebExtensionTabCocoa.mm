@@ -257,7 +257,7 @@ bool WebExtensionTab::extensionHasPermission() const
     return extensionContext()->hasPermission(url(), const_cast<WebExtensionTab*>(this));
 }
 
-RefPtr<WebExtensionWindow> WebExtensionTab::window(SkipContainsCheck skipCheck) const
+RefPtr<WebExtensionWindow> WebExtensionTab::window() const
 {
     if (!isValid() || !m_respondsToWindow)
         return nullptr;
@@ -268,12 +268,7 @@ RefPtr<WebExtensionWindow> WebExtensionTab::window(SkipContainsCheck skipCheck) 
 
     THROW_UNLESS([window conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by windowForWebExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
 
-    auto result = m_extensionContext->getOrCreateWindow(window);
-
-    if (skipCheck == SkipContainsCheck::No)
-        THROW_UNLESS(result->tabs().contains(*this), @"Window returned by windowForWebExtensionContext: does not contain the tab");
-
-    return result;
+    return m_extensionContext->getOrCreateWindow(window);
 }
 
 size_t WebExtensionTab::index() const
@@ -285,10 +280,7 @@ size_t WebExtensionTab::index() const
     if (!window)
         return notFound;
 
-    auto result = window->tabs().find(*this);
-    THROW_UNLESS(result != notFound, @"Window returned by windowForWebExtensionContext: does not contain the tab");
-
-    return result;
+    return window->tabs().find(*this);
 }
 
 RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
@@ -444,7 +436,7 @@ bool WebExtensionTab::isPrivate() const
     if (!isValid())
         return false;
 
-    auto window = this->window(SkipContainsCheck::Yes);
+    auto window = this->window();
     if (!window)
         return false;
 
