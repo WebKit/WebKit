@@ -214,6 +214,10 @@ header: <wtf/MemoryPressureHandler.h>
     Seconds pollInterval;
 }
 
+header: <variant>
+[AdditionalEncoder=StreamConnectionEncoder, Nested] struct std::monostate {
+}
+
 enum class WTFLogLevel : uint8_t {
     Always,
     Error,

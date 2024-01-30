@@ -793,13 +793,6 @@ template<> struct ArgumentCoder<StringView> {
     static void encode(Encoder&, StringView);
 };
 
-template<> struct ArgumentCoder<std::monostate> {
-    template<typename Encoder>
-    static void encode(Encoder&, const std::monostate&) { }
-    template<typename Decoder>
-    static std::optional<std::monostate> decode(Decoder&) { return std::monostate { }; }
-};
-
 template<> struct ArgumentCoder<std::nullptr_t> {
     static void encode(Encoder&, const std::nullptr_t&) { }
     static std::optional<std::nullptr_t> decode(Decoder&) { return nullptr; }
