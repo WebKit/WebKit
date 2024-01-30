@@ -218,24 +218,6 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
 };
 #endif
 
-#if ENABLE(APPLE_PAY)
-
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest&);
-};
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactFields> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::ContactFields&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::ContactFields&);
-};
-
-template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities> {
-    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
-};
-
-#endif
-
 #if ENABLE(VIDEO)
 template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
     static void encode(Encoder&, const WebCore::SerializedPlatformDataCueValue&);

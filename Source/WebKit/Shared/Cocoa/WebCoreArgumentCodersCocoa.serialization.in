@@ -114,6 +114,73 @@ class WebCore::PaymentSessionError {
     [SecureCodingAllowed=[NSError.class]] RetainPtr<NSError> platformError();
 };
 
+
+[Nested] struct WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities {
+    bool supports3DS;
+    bool supportsEMV;
+    bool supportsCredit;
+    bool supportsDebit;
+}
+
+[Nested] struct WebCore::ApplePaySessionPaymentRequest::ContactFields {
+    bool postalAddress;
+    bool phone;
+    bool email;
+    bool name;
+    bool phoneticName;
+};
+
+[CustomHeader] class WebCore::ApplePaySessionPaymentRequest {
+    String countryCode();
+    String currencyCode();
+    WebCore::ApplePaySessionPaymentRequest::ContactFields requiredBillingContactFields();
+    WebCore::PaymentContact billingContact();
+    WebCore::ApplePaySessionPaymentRequest::ContactFields requiredShippingContactFields();
+    WebCore::PaymentContact shippingContact();
+    Vector<String> supportedNetworks();
+    WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities();
+    WebCore::ApplePaySessionPaymentRequest::ShippingType shippingType();
+    Vector<WebCore::ApplePayShippingMethod> shippingMethods();
+    Vector<WebCore::ApplePayLineItem> lineItems();
+    WebCore::ApplePayLineItem total();
+    String applicationData();
+    Vector<String> supportedCountries();
+    WebCore::ApplePaySessionPaymentRequest::Requester requester();
+
+#if HAVE(PASSKIT_INSTALLMENTS)
+    WebCore::PaymentInstallmentConfiguration installmentConfiguration();
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<WebCore::ApplePayShippingContactEditingMode> shippingContactEditingMode();
+#endif
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> supportsCouponCode();
+    String couponCode();
+#endif
+
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<WebCore::ApplePayRecurringPaymentRequest> recurringPaymentRequest();
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<WebCore::ApplePayAutomaticReloadPaymentRequest> automaticReloadPaymentRequest();
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<WebCore::ApplePayPaymentTokenContext>> multiTokenContexts();
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<WebCore::ApplePayDeferredPaymentRequest> deferredPaymentRequest();
+#endif
+
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    std::optional<WebCore::ApplePayLaterAvailability> applePayLaterAvailability();
+#endif
+};
+
 headers: <pal/cocoa/PassKitSoftLink.h>
 class WebCore::PaymentMethod {
     [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()], Validator='m_pkPaymentMethod'] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
