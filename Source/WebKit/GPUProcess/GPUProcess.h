@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,10 +110,6 @@ public:
 
 #if USE(GRAPHICS_LAYER_WC)
     WCSharedSceneContextHolder& sharedSceneContext() { return m_sharedSceneContext; }
-#endif
-
-#if ENABLE(VP9)
-    void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
     void tryExitIfUnusedAndUnderMemoryPressure();
@@ -240,10 +236,10 @@ private:
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
-#if ENABLE(VP9)
-    bool m_enableVP8Decoder { false };
-    bool m_enableVP9Decoder { false };
-    bool m_enableVP9SWDecoder { false };
+#if ENABLE(VP9) && PLATFORM(COCOA)
+    bool m_haveEnabledVP8Decoder { false };
+    bool m_haveEnabledVP9Decoder { false };
+    bool m_haveEnabledVP9SWDecoder { false };
 #endif
 
 };

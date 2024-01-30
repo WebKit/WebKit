@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1095,13 +1095,6 @@ void GPUConnectionToWebProcess::dispatchDisplayWasReconfigured()
 {
     for (auto& context : m_remoteGraphicsContextGLMap.values())
         context->displayWasReconfigured();
-}
-#endif
-
-#if ENABLE(VP9)
-void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
-{
-    m_gpuProcess->enableVP9Decoders(shouldEnableVP8Decoder, shouldEnableVP9Decoder, shouldEnableVP9SWDecoder);
 }
 #endif
 

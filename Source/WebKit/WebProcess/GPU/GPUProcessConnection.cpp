@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,9 +136,6 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connect
     m_connection->open(*this);
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
-#if ENABLE(VP9)
-        enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
-#endif
     }
 }
 
@@ -367,19 +364,6 @@ void GPUProcessConnection::configureLoggingChannel(const String& channelName, WT
 {
     connection().send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
 }
-
-#if ENABLE(VP9)
-void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder)
-{
-    if (m_enableVP8Decoder == enableVP8Decoder && m_enableVP9Decoder == enableVP9Decoder && m_enableVP9SWDecoder == enableVP9SWDecoder)
-        return;
-
-    m_enableVP8Decoder = enableVP8Decoder;
-    m_enableVP9Decoder = enableVP9Decoder;
-    m_enableVP9SWDecoder = enableVP9SWDecoder;
-    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(enableVP8Decoder, enableVP9Decoder, enableVP9SWDecoder), { });
-}
-#endif
 
 void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
 {

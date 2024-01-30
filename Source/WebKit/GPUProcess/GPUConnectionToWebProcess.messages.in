@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,9 +39,6 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #endif
 #if PLATFORM(IOS_FAMILY)
     EnsureMediaSessionHelper()
-#endif
-#if ENABLE(VP9)
-    EnableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
