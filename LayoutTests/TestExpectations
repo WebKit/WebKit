@@ -4871,6 +4871,10 @@ webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fi
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
 
+webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-col-reverse-001.html [ ImageOnlyFailure ]
+webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-col-wrap-001.html [ ImageOnlyFailure ]
+webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-row-reverse-001.html [ ImageOnlyFailure ]
+webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-row-wrap-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-rtl-001.html [ ImageOnlyFailure ]

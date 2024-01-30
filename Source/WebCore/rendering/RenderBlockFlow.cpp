@@ -580,8 +580,13 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     LayoutUnit alignContentShift = 0_lu;
     // Alignment isn't supported when fragmenting.
     // Table cell alignment is handled in RenderTableCell::computeIntrinsicPadding.
-    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()) && !isRenderTableCell())
+    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()) && !isRenderTableCell()) {
         alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
+        oldClientAfterEdge += alignContentShift;
+        if (alignContentShift < 0)
+            ensureRareBlockFlowData().m_alignContentShift = alignContentShift;
+    } else if (hasRareBlockFlowData())
+        rareBlockFlowData()->m_alignContentShift = 0_lu;
 
     {
         // FIXME: This could be removed once relayoutForPagination() either stop recursing or we manage to
@@ -673,7 +678,7 @@ inline LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogi
     // Calculate alignment shift.
     LayoutUnit computedLogicalHeight = logicalHeight();
     LayoutUnit space = computedLogicalHeight - intrinsicLogicalHeight;
-    if (space <= 0 && (scrollsOverflow() || OverflowAlignment::Unsafe != alignment.overflow()))
+    if (space <= 0 && OverflowAlignment::Unsafe != alignment.overflow())
         return 0_lu; // Floored at zero; we're done
     if (alignment.isCentered())
         space = space / 2;
@@ -4461,28 +4466,28 @@ unsigned RenderBlockFlow::computedColumnCount() const
     return 1;
 }
 
-bool RenderBlockFlow::isTopLayoutOverflowAllowed() const
+LayoutOptionalOutsets RenderBlockFlow::allowedLayoutOverflow() const
 {
-    bool hasTopOverflow = RenderBlock::isTopLayoutOverflowAllowed();
-    if (!multiColumnFlow() || style().columnProgression() == ColumnProgression::Normal)
-        return hasTopOverflow;
-    
-    if (!(isHorizontalWritingMode() ^ !style().hasInlineColumnAxis()))
-        hasTopOverflow = !hasTopOverflow;
+    LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
 
-    return hasTopOverflow;
-}
+    auto alignment = style().alignContent();
+    if (!alignment.isNormal() && OverflowAlignment::Unsafe == alignment.overflow()) {
+        if (hasRareBlockFlowData()) {
+            if (isHorizontalWritingMode())
+                allowance.setTop(-rareBlockFlowData()->m_alignContentShift);
+            else
+                allowance.setLeft(-rareBlockFlowData()->m_alignContentShift);
+        }
+    }
 
-bool RenderBlockFlow::isLeftLayoutOverflowAllowed() const
-{
-    bool hasLeftOverflow = RenderBlock::isLeftLayoutOverflowAllowed();
-    if (!multiColumnFlow() || style().columnProgression() == ColumnProgression::Normal)
-        return hasLeftOverflow;
-    
-    if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
-        hasLeftOverflow = !hasLeftOverflow;
+    if (multiColumnFlow() && style().columnProgression() != ColumnProgression::Normal) {
+        if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
+            allowance = allowance.xFlippedCopy();
+        else
+            allowance = allowance.yFlippedCopy();
+    }
 
-    return hasLeftOverflow;
+    return allowance;
 }
 
 struct InlineMinMaxIterator {

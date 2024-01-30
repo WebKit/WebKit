@@ -73,6 +73,21 @@ public:
     void setBottom(const T& bottom) { setAt(BoxSide::Bottom, bottom); }
     void setLeft(const T& left) { setAt(BoxSide::Left, left); }
 
+    RectEdges<T> xFlippedCopy() const
+    {
+        RectEdges<T> copy { *this };
+        copy.left() = right();
+        copy.right() = left();
+        return copy;
+    }
+    RectEdges<T> yFlippedCopy() const
+    {
+        RectEdges<T> copy { *this };
+        copy.top() = bottom();
+        copy.bottom() = top();
+        return copy;
+    }
+
     T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockStart)); }
     T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockEnd)); }
     T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineStart)); }
@@ -87,6 +102,19 @@ public:
     void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }
     void setStart(const T& start, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->start(writingMode, direction) = start; }
     void setEnd(const T& end, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->end(writingMode, direction) = end; }
+
+    RectEdges<T> blockFlippedCopy(WritingMode writingMode) const
+    {
+        if (isHorizontalWritingMode(writingMode))
+            return yFlippedCopy();
+        return xFlippedCopy();
+    }
+    RectEdges<T> inlineFlippedCopy(WritingMode writingMode) const
+    {
+        if (isHorizontalWritingMode(writingMode))
+            return xFlippedCopy();
+        return yFlippedCopy();
+    }
 
     friend bool operator==(const RectEdges&, const RectEdges&) = default;
 

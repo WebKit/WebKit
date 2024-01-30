@@ -149,6 +149,7 @@ public:
         
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
+        LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
 
         SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
@@ -444,8 +445,7 @@ protected:
     LayoutUnit computedColumnWidth() const;
     unsigned computedColumnCount() const;
     
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
+    LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
     virtual void computeColumnCountAndWidth();
 

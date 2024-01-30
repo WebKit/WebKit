@@ -2347,6 +2347,22 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     }
 }
 
+LayoutOptionalOutsets RenderGrid::allowedLayoutOverflow() const
+{
+    LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
+    if (m_offsetBetweenColumns.positionOffset < 0)
+        allowance.setStart(-m_offsetBetweenColumns.positionOffset, style().writingMode(), style().direction());
+
+    if (m_offsetBetweenRows.positionOffset < 0) {
+        if (isHorizontalWritingMode())
+            allowance.setTop(-m_offsetBetweenRows.positionOffset);
+        else
+            allowance.setLeft(-m_offsetBetweenRows.positionOffset);
+    }
+
+    return allowance;
+}
+
 LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
 {
     LayoutUnit width = borderLogicalLeft() + borderLogicalRight() + clientLogicalWidth();

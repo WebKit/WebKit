@@ -95,8 +95,7 @@ public:
 
     const OrderIterator& orderIterator() const { return m_orderIterator; }
 
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
+    LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
     virtual bool isFlexibleBoxImpl() const { return false; };
     
@@ -124,6 +123,8 @@ public:
     bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
 
     bool isComputingFlexBaseSizes() const { return m_isComputingFlexBaseSizes; }
+
+    static std::optional<TextDirection> leftRightAxisDirectionFromStyle(const RenderStyle&);
 
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;

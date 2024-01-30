@@ -5220,30 +5220,51 @@ void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& d
     addVisualOverflow(*childVisualOverflowRect);
 }
 
+LayoutOptionalOutsets RenderBox::allowedLayoutOverflow() const
+{
+    LayoutOptionalOutsets allowance;
+
+    // Overflow is in the block's coordinate space and thus is flipped
+    // for horizontal-bt and vertical-rl writing modes. This means we can
+    // treat horizontal-tb/bt as the same and vertical-lr/rl as the same.
+
+    if (isHorizontalWritingMode()) {
+        allowance.top() = 0_lu;
+        if (style().isLeftToRightDirection())
+            allowance.left() = 0_lu;
+        else
+            allowance.right() = 0_lu;
+    } else {
+        allowance.left() = 0_lu;
+        if (style().isLeftToRightDirection())
+            allowance.top() = 0_lu;
+        else
+            allowance.bottom() = 0_lu;
+    }
+
+    return allowance;
+}
+
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
     LayoutRect clientBox = flippedClientBoxRect();
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
-    
+
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
     LayoutRect overflowRect(rect);
     if (hasPotentiallyScrollableOverflow() || isRenderView()) {
-        // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
-        // writing modes. At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
-        // and vertical-lr/rl as the same.
-        bool hasTopOverflow = isTopLayoutOverflowAllowed();
-        bool hasLeftOverflow = isLeftLayoutOverflowAllowed();
+        LayoutOptionalOutsets allowance = allowedLayoutOverflow();
+        // Non-negative values indicate a limit, let's apply them.
+        if (allowance.top())
+            overflowRect.shiftYEdgeTo(std::max(overflowRect.y(), clientBox.y() - *allowance.top()));
+        if (allowance.bottom())
+            overflowRect.shiftMaxYEdgeTo(std::min(overflowRect.maxY(), clientBox.maxY() + *allowance.bottom()));
+        if (allowance.left())
+            overflowRect.shiftXEdgeTo(std::max(overflowRect.x(), clientBox.x() - *allowance.left()));
+        if (allowance.right())
+            overflowRect.shiftMaxXEdgeTo(std::min(overflowRect.maxX(), clientBox.maxX() + *allowance.right()));
 
-        if (!hasTopOverflow)
-            overflowRect.shiftYEdgeTo(std::max(overflowRect.y(), clientBox.y()));
-        else
-            overflowRect.shiftMaxYEdgeTo(std::min(overflowRect.maxY(), clientBox.maxY()));
-        if (!hasLeftOverflow)
-            overflowRect.shiftXEdgeTo(std::max(overflowRect.x(), clientBox.x()));
-        else
-            overflowRect.shiftMaxXEdgeTo(std::min(overflowRect.maxX(), clientBox.maxX()));
-        
         // Now re-test with the adjusted rectangle and see if it has become unreachable or fully
         // contained.
         if (clientBox.contains(overflowRect) || overflowRect.isEmpty())

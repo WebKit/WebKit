@@ -161,13 +161,12 @@ public:
     inline LayoutUnit logicalLeftVisualOverflow() const;
     inline LayoutUnit logicalRightVisualOverflow() const;
 
+    // RenderBox's basic implementation accounts for the writing mode (only).
+    virtual LayoutOptionalOutsets allowedLayoutOverflow() const;
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
     void clearOverflow();
-    
-    virtual inline bool isTopLayoutOverflowAllowed() const;
-    virtual inline bool isLeftLayoutOverflowAllowed() const;
-    
+
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
     void addOverflowFromChild(const RenderBox& child) { addOverflowFromChild(child, child.locationOffset()); }
