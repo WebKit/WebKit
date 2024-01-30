@@ -841,7 +841,7 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         if (std::holds_alternative<Types::Vector>(*baseType)) {
             auto& vector = std::get<Types::Vector>(*baseType);
             auto* result = vectorFieldAccess(vector, access);
-            if (canBeReference)
+            if (result && canBeReference)
                 *canBeReference = !std::holds_alternative<Types::Vector>(*result);
             return result;
         }
