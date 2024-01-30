@@ -1424,9 +1424,10 @@ void WebProcess::updatePageScreenProperties()
 
 void WebProcess::unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&& handles)
 {
-    Vector<RefPtr<SandboxExtension>> extensions = WTF::map(WTFMove(handles), [](SandboxExtension::Handle&& handle) {
+    auto extensions = WTF::compactMap(WTFMove(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
         auto extension = SandboxExtension::create(WTFMove(handle));
-        extension->consume();
+        if (extension)
+            extension->consume();
         return extension;
     });
 
