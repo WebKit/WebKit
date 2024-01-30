@@ -62,7 +62,7 @@ private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
     {
-        m_frame = VideoFrameGStreamer::createWrappedSample(platformSample().sample.gstSample, MediaTime::invalidTime());
+        m_frame = VideoFrameGStreamer::createWrappedSample(platformSample().sample.gstSample);
         m_image = m_frame->convertToImage();
     }
 

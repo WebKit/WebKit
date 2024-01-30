@@ -233,7 +233,10 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<
     auto presentationSize = getVideoResolutionFromCaps(caps);
     RELEASE_ASSERT(presentationSize);
     auto colorSpace = videoColorSpaceFromCaps(caps);
-    return adoptRef(*new VideoFrameGStreamer(sample, *presentationSize, presentationTime, videoRotation, WTFMove(colorSpace)));
+    MediaTime timeStamp = presentationTime;
+    if (presentationTime.isInvalid())
+        timeStamp = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(sample.get())));
+    return adoptRef(*new VideoFrameGStreamer(sample, *presentationSize, timeStamp, videoRotation, WTFMove(colorSpace)));
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)
@@ -516,7 +519,7 @@ RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
 
 Ref<VideoFrame> VideoFrameGStreamer::clone()
 {
-    return createWrappedSample(m_sample, presentationTime());
+    return createWrappedSample(m_sample, presentationTime(), rotation());
 }
 
 #undef GST_CAT_DEFAULT
