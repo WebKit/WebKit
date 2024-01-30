@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RangeResponseGenerator.h"
 
+#import "HTTPStatusCodes.h"
 #import "NetworkLoadMetrics.h"
 #import "ParsedRequestRange.h"
 #import "PlatformMediaResourceLoader.h"
@@ -84,8 +85,7 @@ static ResourceResponse synthesizedResponseForRange(const ResourceResponse& orig
     ResourceResponse newResponse = originalResponse;
     newResponse.setHTTPHeaderField(HTTPHeaderName::ContentRange, newContentRange);
     newResponse.setHTTPHeaderField(HTTPHeaderName::ContentLength, newContentLength);
-    constexpr auto partialContent = 206;
-    newResponse.setHTTPStatusCode(partialContent);
+    newResponse.setHTTPStatusCode(httpStatus206PartialContent);
     
     // Values from setHTTPStatusCode and setHTTPHeaderField are not reflected in the newly generated response without this.
     newResponse.initNSURLResponse();
@@ -294,7 +294,7 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
     NSURLRequest *originalRequest = task.originalRequest;
     if (!originalRequest.URL)
         return false;
-    if (response.httpStatusCode() != 200)
+    if (response.httpStatusCode() != httpStatus200OK)
         return false;
     if (!response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty())
         return false;

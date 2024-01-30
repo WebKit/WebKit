@@ -31,6 +31,7 @@
 #import "APINavigationAction.h"
 #import "DataReference.h"
 #import "WebPageProxy.h"
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 
 #define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] RedirectSOAuthorizationSession::" fmt, this, initiatingActionString(), stateString(), ##__VA_ARGS__)
@@ -68,13 +69,13 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     ASSERT(navigationAction);
     RefPtr page = this->page();
     // FIXME: Enable the useRedirectionForCurrentNavigation code path for all redirections.
-    if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200 && !(response.httpStatusCode() == 307 && navigationAction->request().httpMethod() == "POST"_s)) || !page) {
+    if ((response.httpStatusCode() != httpStatus302Found && response.httpStatusCode() != httpStatus200OK && !(response.httpStatusCode() == httpStatus307TemporaryRedirect && navigationAction->request().httpMethod() == "POST"_s)) || !page) {
         AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d page=%d, so falling back to web path.", response.httpStatusCode(), !!page);
         fallBackToWebPathInternal();
         return;
     }
 
-    if (response.httpStatusCode() == 302) {
+    if (response.httpStatusCode() == httpStatus302Found) {
         invokeCallback(true);
 #if PLATFORM(IOS) || PLATFORM(VISION)
         // MobileSafari has a WBSURLSpoofingMitigator, which will not display the provisional URL for navigations without user gestures.
@@ -94,14 +95,14 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         page->loadRequest(ResourceRequest(response.httpHeaderFields().get(HTTPHeaderName::Location)));
         return;
     }
-    if (response.httpStatusCode() == 200) {
+    if (response.httpStatusCode() == httpStatus200OK) {
         invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         page->loadData(IPC::DataReference(static_cast<const uint8_t*>(data.bytes), data.length), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
         return;
     }
 
-    ASSERT(response.httpStatusCode() == 307 && navigationAction->request().httpMethod() == "POST"_s);
+    ASSERT(response.httpStatusCode() == httpStatus307TemporaryRedirect && navigationAction->request().httpMethod() == "POST"_s);
     page->useRedirectionForCurrentNavigation(response);
     invokeCallback(false);
 }

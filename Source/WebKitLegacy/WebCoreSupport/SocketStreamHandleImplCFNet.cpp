@@ -36,6 +36,7 @@
 #include <WebCore/Credential.h>
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/Logging.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ProtectionSpace.h>
@@ -529,10 +530,10 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
 
                 CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
                 switch (proxyResponseCode) {
-                case 200:
+                case httpStatus200OK:
                     // Successful connection.
                     break;
-                case 407:
+                case httpStatus407ProxyAuthenticationRequired:
                     addCONNECTCredentials(proxyResponse.get());
                     return;
                 default:
@@ -613,7 +614,7 @@ void SocketStreamHandleImpl::writeStreamCallback(CFStreamEventType type)
                 // Don't write anything until read stream callback has dealt with CONNECT credentials.
                 // The order of callbacks is not defined, so this can be called before readStreamCallback's kCFStreamEventHasBytesAvailable.
                 CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
-                if (proxyResponseCode != 200)
+                if (proxyResponseCode != httpStatus200OK)
                     return;
             }
             m_connectingSubstate = Connected;

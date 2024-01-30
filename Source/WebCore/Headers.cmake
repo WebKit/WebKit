@@ -2237,6 +2237,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/HTTPHeaderNames.in
     platform/network/HTTPHeaderValues.h
     platform/network/HTTPParsers.h
+    platform/network/HTTPStatusCodes.h
     platform/network/NetworkLoadInformation.h
     platform/network/NetworkLoadMetrics.h
     platform/network/NetworkStateNotifier.h

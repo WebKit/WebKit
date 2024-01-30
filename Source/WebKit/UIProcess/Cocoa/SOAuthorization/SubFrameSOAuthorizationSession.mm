@@ -33,6 +33,7 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/RunLoop.h>
 
@@ -84,7 +85,7 @@ void SubFrameSOAuthorizationSession::abortInternal()
 void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d", response.httpStatusCode());
-    if (response.httpStatusCode() != 200) {
+    if (response.httpStatusCode() != httpStatus200OK) {
         fallBackToWebPathInternal();
         return;
     }

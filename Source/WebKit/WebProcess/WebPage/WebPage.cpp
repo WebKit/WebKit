@@ -219,6 +219,7 @@
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/HandleUserInputEventResult.h>
 #include <WebCore/Highlight.h>
 #include <WebCore/HighlightRegistry.h>
@@ -8947,10 +8948,8 @@ bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&
     if (!m_skipDecidePolicyForResponseIfPossible)
         return false;
 
-    constexpr auto noContent = 204;
-    constexpr auto smallestError = 400;
     auto statusCode = response.httpStatusCode();
-    if (statusCode == noContent || statusCode >= smallestError)
+    if (statusCode == httpStatus204NoContent || statusCode >= httpStatus400BadRequest)
         return false;
 
     if (!equalIgnoringASCIICase(response.mimeType(), "text/html"_s))

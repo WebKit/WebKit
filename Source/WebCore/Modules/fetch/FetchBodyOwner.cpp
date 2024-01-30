@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "FetchLoader.h"
 #include "HTTPParsers.h"
+#include "HTTPStatusCodes.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
@@ -308,7 +309,7 @@ FetchBodyOwner::BlobLoader::BlobLoader(FetchBodyOwner& owner)
 
 void FetchBodyOwner::BlobLoader::didReceiveResponse(const ResourceResponse& response)
 {
-    if (response.httpStatusCode() != 200)
+    if (response.httpStatusCode() != httpStatus200OK)
         didFail({ });
 }
 

@@ -32,6 +32,7 @@
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "PrivateRelayed.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/NavigationPreloadState.h>
 
 namespace WebKit {
@@ -167,7 +168,7 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
     if (response.isRedirection())
         response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
 
-    if (response.httpStatusCode() == 304 && m_cacheEntry) {
+    if (response.httpStatusCode() == httpStatus304NotModified && m_cacheEntry) {
         auto cacheEntry = WTFMove(m_cacheEntry);
         loadWithCacheEntry(*cacheEntry);
         completionHandler(PolicyAction::Ignore);

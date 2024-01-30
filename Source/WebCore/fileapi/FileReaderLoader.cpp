@@ -37,6 +37,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPStatusCodes.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -136,7 +137,7 @@ void FileReaderLoader::cleanup()
 
 void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
-    if (response.httpStatusCode() != 200) {
+    if (response.httpStatusCode() != httpStatus200OK) {
         failed(httpStatusCodeToErrorCode(response.httpStatusCode()));
         return;
     }
@@ -269,7 +270,7 @@ ExceptionCode FileReaderLoader::toErrorCode(BlobResourceHandle::Error error)
 ExceptionCode FileReaderLoader::httpStatusCodeToErrorCode(int httpStatusCode)
 {
     switch (httpStatusCode) {
-    case 403:
+    case httpStatus403Forbidden:
         return ExceptionCode::SecurityError;
     default:
         return ExceptionCode::NotReadableError;

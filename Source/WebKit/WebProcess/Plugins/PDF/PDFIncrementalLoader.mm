@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "PDFKitSPI.h"
 #import "PDFPluginBase.h"
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetscapePlugInStreamLoader.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Identified.h>
@@ -191,11 +192,8 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
 
     ASSERT(request->streamLoader() == streamLoader);
 
-    constexpr int StatusCodePartialContent = 206;
-    constexpr int StatusCodeRangeNotSatisfiable = 416;
-
     // Range success! We'll expect to receive the data in future didReceiveData callbacks.
-    if (response.httpStatusCode() == StatusCodePartialContent)
+    if (response.httpStatusCode() == httpStatus206PartialContent)
         return;
 
     // If the response wasn't a successful range response, we don't need this stream loader anymore.
@@ -205,7 +203,7 @@ void PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInStreamLoader*
 
     // The server might support range requests and explicitly told us this range was not satisfiable.
     // In this case, we can reject the ByteRangeRequest right away.
-    if (response.httpStatusCode() == StatusCodeRangeNotSatisfiable && request) {
+    if (response.httpStatusCode() == httpStatus416RangeNotSatisfiable && request) {
         request->completeWithAccumulatedData(*loader);
         loader->removeOutstandingByteRangeRequest(request->identifier());
     }

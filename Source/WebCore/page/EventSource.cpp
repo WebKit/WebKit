@@ -37,6 +37,7 @@
 #include "ContentSecurityPolicy.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "HTTPStatusCodes.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -174,7 +175,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     // Logs to the console as a side effect.
 
     // To keep the signal-to-noise ratio low, we don't log anything if the status code is not 200.
-    if (response.httpStatusCode() != 200)
+    if (response.httpStatusCode() != httpStatus200OK)
         return false;
 
     if (!equalLettersIgnoringASCIICase(response.mimeType(), "text/event-stream"_s)) {

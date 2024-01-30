@@ -39,6 +39,7 @@
 #import "WebPrivacyHelpers.h"
 #import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/OriginAccessPatterns.h>
@@ -410,7 +411,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
     const auto& previousRequest = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
-    if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
+    if (redirectResponse.httpStatusCode() == httpStatus307TemporaryRedirect || redirectResponse.httpStatusCode() == httpStatus308PermanentRedirect) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         auto body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
@@ -419,7 +420,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
-    } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
+    } else if (redirectResponse.httpStatusCode() == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
@@ -529,7 +530,7 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
             auto credential = m_session->networkStorageSession() ? m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace()) : WebCore::Credential();
             if (!credential.isEmpty() && credential != m_initialCredential) {
                 ASSERT(credential.persistence() == WebCore::CredentialPersistence::None);
-                if (challenge.failureResponse().httpStatusCode() == 401) {
+                if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
                     // Store the credential back, possibly adding it as a default for this directory.
                     if (auto* storageSession = m_session->networkStorageSession())
                         storageSession->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());

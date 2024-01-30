@@ -34,6 +34,7 @@
 #import "FormDataStreamMac.h"
 #import "FrameLoader.h"
 #import "HTTPHeaderNames.h"
+#import "HTTPStatusCodes.h"
 #import "LocalFrame.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
@@ -408,7 +409,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     ASSERT(!redirectResponse.isNull());
 
     const auto& previousRequest = d->m_previousRequest.isNull() ? d->m_firstRequest : d->m_previousRequest;
-    if (redirectResponse.httpStatusCode() == 307) {
+    if (redirectResponse.httpStatusCode() == httpStatus307TemporaryRedirect) {
         String lastHTTPMethod = d->m_lastHTTPMethod;
         if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
@@ -421,7 +422,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
             if (!originalContentType.isEmpty())
                 request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
         }
-    } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
+    } else if (redirectResponse.httpStatusCode() == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
@@ -555,7 +556,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
                 credential = networkStorageSession->credentialStorage().get(d->m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistence::None);
-                if (challenge.failureResponse().httpStatusCode() == 401) {
+                if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
                     // Store the credential back, possibly adding it as a default for this directory.
                     if (auto* networkStorageSession = d->m_context->storageSession())
                         networkStorageSession->credentialStorage().set(d->m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
@@ -598,7 +599,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential, CredentialPersistence::None);
         URL urlToStore;
-        if (challenge.failureResponse().httpStatusCode() == 401)
+        if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
             urlToStore = challenge.failureResponse().url();
         if (auto* networkStorageSession = d->m_context->storageSession())
             networkStorageSession->credentialStorage().set(d->m_partition, webCredential, ProtectionSpace([d->m_currentMacChallenge protectionSpace]), urlToStore);

@@ -31,6 +31,7 @@
 #import "ResourceLoadInfo.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIWebRequest.h"
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -244,7 +245,7 @@ void WebExtensionContextProxy::resourceLoadDidReceiveChallenge(WebExtensionTabId
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     // Firefox only calls onAuthRequired when the status code is 401 or 407.
     // See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onAuthRequired
-    if (httpResponse.statusCode != 401 && httpResponse.statusCode != 407)
+    if (httpResponse.statusCode != httpStatus401Unauthorized && httpResponse.statusCode != httpStatus407ProxyAuthenticationRequired)
         return;
 
     NSMutableDictionary<NSString *, id> *details = webRequestDetailsForResourceLoad(resourceLoad);

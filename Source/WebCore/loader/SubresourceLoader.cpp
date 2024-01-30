@@ -39,6 +39,7 @@
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
+#include "HTTPStatusCodes.h"
 #include "InspectorNetworkAgent.h"
 #include "LinkLoader.h"
 #include "LocalFrame.h"
@@ -416,7 +417,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     // redirection with no or empty Location headers and fetch in manual redirect mode. Or in rare circumstances,
     // cases of too many redirects from CFNetwork (<rdar://problem/30610988>).
 #if !PLATFORM(COCOA)
-    ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || response.httpHeaderField(HTTPHeaderName::Location).isEmpty() || response.type() == ResourceResponse::Type::Opaqueredirect);
+    ASSERT(response.httpStatusCode() < httpStatus300MultipleChoices || response.httpStatusCode() >= httpStatus400BadRequest || response.httpStatusCode() == httpStatus304NotModified || response.httpHeaderField(HTTPHeaderName::Location).isEmpty() || response.type() == ResourceResponse::Type::Opaqueredirect);
 #endif
 
     // Reference the object in this method since the additional processing can do
@@ -433,8 +434,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     }
 
     if (resource && resource->resourceToRevalidate()) {
-        if (response.httpStatusCode() == 304) {
-            // 304 Not modified / Use local copy
+        if (response.httpStatusCode() == httpStatus304NotModified) {
             // Existing resource is ok, just use it updating the expiration time.
             ResourceResponse revalidationResponse = response;
             revalidationResponse.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
@@ -558,7 +558,7 @@ void SubresourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, l
     CachedResourceHandle resource = m_resource.get();
     ASSERT(resource);
 
-    if (resource->response().httpStatusCode() >= 400 && !resource->shouldIgnoreHTTPStatusCodeErrors())
+    if (resource->response().httpStatusCode() >= httpStatus400BadRequest && !resource->shouldIgnoreHTTPStatusCodeErrors())
         return;
     ASSERT(!resource->resourceToRevalidate());
     ASSERT(!resource->errorOccurred());
@@ -580,7 +580,7 @@ void SubresourceLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, l
 bool SubresourceLoader::responseHasHTTPStatusCodeError() const
 {
     CachedResourceHandle resource = m_resource.get();
-    if (resource->response().httpStatusCode() < 400 || resource->shouldIgnoreHTTPStatusCodeErrors())
+    if (resource->response().httpStatusCode() < httpStatus400BadRequest || resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;
     return true;
 }

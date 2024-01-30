@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
 
@@ -149,7 +150,7 @@ void PopUpSOAuthorizationSession::abortInternal()
 void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d", response.httpStatusCode());
-    if (response.httpStatusCode() != 200 || !page()) {
+    if (response.httpStatusCode() != httpStatus200OK || !page()) {
         fallBackToWebPathInternal();
         return;
     }

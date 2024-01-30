@@ -49,6 +49,7 @@
 #import <WebCore/Credential.h>
 #import <WebCore/FormDataStreamMac.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
@@ -1083,7 +1084,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
-        if (statusCode != 304) {
+        if (statusCode != httpStatus304NotModified) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequestRequester::Main;
             WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
         }
@@ -1810,7 +1811,7 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
         if (credential.persistence() == WebCore::CredentialPersistence::ForSession && authenticationChallenge.protectionSpace().isPasswordBased()) {
             WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistence::None);
             URL urlToStore;
-            if (authenticationChallenge.failureResponse().httpStatusCode() == 401)
+            if (authenticationChallenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
                 urlToStore = authenticationChallenge.failureResponse().url();
             if (auto storageSession = networkProcess->storageSession(sessionID))
                 storageSession->credentialStorage().set(partition, nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);

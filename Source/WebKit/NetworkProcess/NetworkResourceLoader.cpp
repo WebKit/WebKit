@@ -63,6 +63,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -829,7 +830,7 @@ static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(c
 
 void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& response)
 {
-    if (response.httpStatusCode() != 103)
+    if (response.httpStatusCode() != httpStatus103EarlyHints)
         return;
 
     if (!m_earlyHintsResourceLoader)
@@ -889,7 +890,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         m_bufferedDataForCache.reset();
 
     if (m_cacheEntryForValidation) {
-        bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
+        bool validationSucceeded = m_response.httpStatusCode() == httpStatus304NotModified;
         LOADER_RELEASE_LOG("didReceiveResponse: Received revalidation response (validationSucceeded=%d, wasOriginalRequestConditional=%d)", validationSucceeded, originalRequest().isConditional());
         if (validationSucceeded) {
             m_cacheEntryForValidation = m_cache->update(originalRequest(), *m_cacheEntryForValidation, m_response, m_privateRelayed);
@@ -1056,8 +1057,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         m_connection->addNetworkLoadInformationMetrics(coreIdentifier(), networkLoadMetrics);
 
     if (m_cacheEntryForValidation) {
-        // 304 Not Modified
-        ASSERT(m_response.httpStatusCode() == 304);
+        ASSERT(m_response.httpStatusCode() == httpStatus304NotModified);
         LOG(NetworkCache, "(NetworkProcess) revalidated");
         didRetrieveCacheEntry(WTFMove(m_cacheEntryForValidation));
         return;
