@@ -107,6 +107,9 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerBaselineCodeBlock->unlinkedCodeBlock();
     JSGlobalObject* globalObject = callerBaselineCodeBlock->globalObject();
 
+    if (UNLIKELY(callFrame->guaranteedJSValueCallee() != globalObject->evalFunction()))
+        return { };
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 

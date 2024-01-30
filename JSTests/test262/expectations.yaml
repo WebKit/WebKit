@@ -941,8 +941,6 @@ test/language/expressions/assignmenttargettype/direct-callexpression-arguments.j
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/assignmenttargettype/parenthesized-callexpression-arguments.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/call/eval-realm-indirect.js:
-  default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
   default: 'Test262Error: Expected SameValue(«local», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«local», «0») to be true'

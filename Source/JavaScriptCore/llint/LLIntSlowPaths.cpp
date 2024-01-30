@@ -2141,12 +2141,13 @@ static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstru
     calleeFrame->setCodeBlock(nullptr);
     callFrame->setCurrentVPC(pc);
     
-    if (!isHostFunction(calleeAsValue, globalFuncEval))
-        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
-    
     JSScope* callerScopeChain = jsCast<JSScope*>(getOperand(callFrame, bytecode.m_scope));
     JSValue thisValue = getOperand(callFrame, bytecode.m_thisValue);
-    vm.encodedHostCallReturnValue = JSValue::encode(eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode));
+    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode);
+    if (!result)
+        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
+
+    vm.encodedHostCallReturnValue = JSValue::encode(result);
     DisallowGC disallowGC;
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
     LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);

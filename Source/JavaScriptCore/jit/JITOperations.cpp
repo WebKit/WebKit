@@ -2034,9 +2034,6 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* f
     CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
     calleeFrame->setCodeBlock(nullptr);
 
-    if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
-        return JSValue::encode(JSValue());
-
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::sloppy()));
 }
 
@@ -2044,9 +2041,6 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* f
 {
     CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
     calleeFrame->setCodeBlock(nullptr);
-
-    if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
-        return JSValue::encode(JSValue());
 
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict()));
 }

@@ -121,14 +121,6 @@ inline TaggedNativeFunction JSFunction::nativeConstructor()
     return static_cast<NativeExecutable*>(executable())->constructor();
 }
 
-inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
-{
-    JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));
-    if (!function || !function->isHostFunction())
-        return false;
-    return function->nativeFunction() == nativeFunction;
-}
-
 inline bool isRemoteFunction(JSValue value)
 {
     return value.inherits<JSRemoteFunction>();
