@@ -1860,6 +1860,9 @@
 		A141DF4F2B06ED0800E80B2D /* MediaCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */; };
 		A141DF502B06ED0F00E80B2D /* MediaCapability.mm in Sources */ = {isa = PBXBuildFile; fileRef = A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */; };
 		A141DF522B07054900E80B2D /* ExtensionCapabilityGrant.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */; };
+		A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B612B686DD200AD9C56 /* WKSLinearMediaTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F9B622B686DD200AD9C56 /* LinearMediaTypes.swift */; };
+		A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B662B686E0200AD9C56 /* WebKitSwift.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A15797642582B1DB00528236 /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A15799B72584433200528236 /* MediaTrackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799AE2584433100528236 /* MediaTrackReader.h */; };
 		A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B32584433100528236 /* CoreMediaWrapped.h */; };
@@ -6767,6 +6770,10 @@
 		A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaCapability.mm; sourceTree = "<group>"; };
 		A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionCapabilityGrant.h; sourceTree = "<group>"; };
 		A141DF532B07069700E80B2D /* ExtensionCapabilityGrant.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtensionCapabilityGrant.mm; sourceTree = "<group>"; };
+		A14F9B612B686DD200AD9C56 /* WKSLinearMediaTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSLinearMediaTypes.h; sourceTree = "<group>"; };
+		A14F9B622B686DD200AD9C56 /* LinearMediaTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearMediaTypes.swift; sourceTree = "<group>"; };
+		A14F9B652B686E0200AD9C56 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		A14F9B662B686E0200AD9C56 /* WebKitSwift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitSwift.h; sourceTree = "<group>"; };
 		A15799AE2584433100528236 /* MediaTrackReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackReader.h; sourceTree = "<group>"; };
 		A15799AF2584433100528236 /* MediaSampleCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSampleCursor.cpp; sourceTree = "<group>"; };
 		A15799B02584433100528236 /* MediaFormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFormatReader.cpp; sourceTree = "<group>"; };
@@ -12832,7 +12839,10 @@
 			isa = PBXGroup;
 			children = (
 				A1071FAE2B643FB400E9FC57 /* GroupActivities */,
+				A14F9B602B686DAE00AD9C56 /* LinearMediaKit */,
 				A14F9B332B68467F00AD9C56 /* MarketplaceKit */,
+				A14F9B652B686E0200AD9C56 /* module.modulemap */,
+				A14F9B662B686E0200AD9C56 /* WebKitSwift.h */,
 			);
 			path = WebKitSwift;
 			sourceTree = "<group>";
@@ -12851,6 +12861,15 @@
 				EB0FBFA62B66C61E00269CC1 /* MarketplaceKitWrapper.swift */,
 			);
 			path = MarketplaceKit;
+			sourceTree = "<group>";
+		};
+		A14F9B602B686DAE00AD9C56 /* LinearMediaKit */ = {
+			isa = PBXGroup;
+			children = (
+				A14F9B622B686DD200AD9C56 /* LinearMediaTypes.swift */,
+				A14F9B612B686DD200AD9C56 /* WKSLinearMediaTypes.h */,
+			);
+			path = LinearMediaKit;
 			sourceTree = "<group>";
 		};
 		A15799AC2584433100528236 /* MediaFormatReader */ = {
@@ -16849,6 +16868,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */,
+				A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18967,6 +18988,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDF1B915266F396A0007EC10 /* GroupSession.swift in Sources */,
+				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
