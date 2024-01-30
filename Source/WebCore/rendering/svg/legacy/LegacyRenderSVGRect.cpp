@@ -187,6 +187,8 @@ bool LegacyRenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, 
 
 bool LegacyRenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
+    if (m_shapeType == ShapeType::Empty)
+        return false;
     if (m_shapeType != ShapeType::Rectangle)
         return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());
