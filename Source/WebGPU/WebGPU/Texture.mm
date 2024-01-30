@@ -2395,13 +2395,11 @@ WGPUTextureFormat Texture::aspectSpecificFormat(WGPUTextureFormat format, WGPUTe
         return format;
     case WGPUTextureAspect_StencilOnly: {
         auto result = stencilSpecificFormat(format);
-        ASSERT(result);
-        return *result;
+        return result ? *result : WGPUTextureFormat_Undefined;
     }
     case WGPUTextureAspect_DepthOnly: {
         auto result = depthSpecificFormat(format);
-        ASSERT(result);
-        return *result;
+        return result ? *result : WGPUTextureFormat_Undefined;
     }
     case WGPUTextureAspect_Force32:
         ASSERT_NOT_REACHED();
