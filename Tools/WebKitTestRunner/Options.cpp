@@ -156,6 +156,11 @@ static bool handleOptionInternalFeature(Options& options, const char*, const cha
     return parseFeature(feature, options.features);
 }
 
+static bool handleOptionAdditionalHeader(Options& options, const char*, const char* feature)
+{
+    return parseFeature(feature, options.features);
+}
+
 static bool handleOptionWebCoreLogging(Options& options, const char*, const char* channels)
 {
     options.webCoreLogChannels = channels;
@@ -212,6 +217,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--no-enable-all-experimental-features", "Do not enable all experimental features by default", handleOptionNoEnableAllExperimentalFeatures));
     optionList.append(Option("--experimental-feature", "Enable experimental feature", handleOptionExperimentalFeature, true));
     optionList.append(Option("--internal-feature", "Enable internal feature", handleOptionInternalFeature, true));
+    optionList.append(Option("--additional-header", "Passes webkit-test-runner header value to tests", handleOptionAdditionalHeader, true));
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     optionList.append(Option("--accessibility-isolated-tree", "Enable accessibility isolated tree mode for tests", handleOptionAccessibilityIsolatedTreeMode));
 #endif

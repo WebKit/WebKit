@@ -82,6 +82,8 @@ class Printer(object):
             self._print_default("Placing new baselines in %s" % self._port.baseline_path())
 
         self._print_default("Using %s build" % self._options.configuration)
+        if self._options.additional_header:
+            self._print_default("Using additional header: '%s'" % self._options.additional_header)
         if self._options.pixel_tests:
             self._print_default("Pixel tests enabled")
         else:

@@ -103,11 +103,13 @@ class  Testprinter(unittest.TestCase):
         printer._options.new_baseline = True
         printer._options.time_out_ms = 6000
         printer._options.slow_time_out_ms = 12000
+        printer._options.additional_header = 'useEphemeralSession=false'
         printer.print_config('/tmp')
         self.assertIn("Using port 'test-mac-leopard'", err.getvalue())
         self.assertIn('Test configuration: <leopard, x86, release>', err.getvalue())
         self.assertIn('Placing test results in /tmp', err.getvalue())
         self.assertIn('Using Release build', err.getvalue())
+        self.assertIn('Using additional header: ', err.getvalue())
         self.assertIn('Pixel tests enabled', err.getvalue())
         self.assertIn('Command line:', err.getvalue())
         self.assertIn('Regular timeout: ', err.getvalue())

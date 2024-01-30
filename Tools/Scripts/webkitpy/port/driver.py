@@ -46,7 +46,7 @@ _log = logging.getLogger(__name__)
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None, self_comparison_header=None, force_dump_pixels=False):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, additional_header=None, args=None, self_comparison_header=None, force_dump_pixels=False):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
@@ -54,10 +54,11 @@ class DriverInput(object):
         self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
         self.args = args or []
         self.self_comparison_header = self_comparison_header
+        self.additional_header = additional_header
         self.force_dump_pixels = force_dump_pixels
 
     def __repr__(self):
-        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, self_comparison_header={}, force_dump_pixels={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.self_comparison_header, self.force_dump_pixels)
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, additional_header={}, self_comparison_header={}, force_dump_pixels={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.additional_header, self.self_comparison_header, self.force_dump_pixels)
 
 
 class DriverOutput(object):
@@ -679,6 +680,8 @@ class Driver(object):
             command += "'--dump-jsconsolelog-in-stderr"
         if driver_input.self_comparison_header:
             command += "'--self-compare-with-header'%s" % driver_input.self_comparison_header
+        if driver_input.additional_header:
+            command += "'--additional-header'%s" % driver_input.additional_header
         if driver_input.force_dump_pixels:
             command += "'--force-dump-pixels"
 

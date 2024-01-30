@@ -311,6 +311,7 @@ def parse_args(args):
             help="Set the maximum number of locked shards"),
         optparse.make_option("--additional-env-var", type="string", action="append", default=[],
             help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),
+        optparse.make_option("--additional-header", help="Passes that webkit-test-runner header value to the tests (--additional-header='KEY=VALUE KEY=VALUE ...')"),
         optparse.make_option("--profile", action="store_true",
             help="Output per-test profile information."),
         optparse.make_option("--profiler", action="store",

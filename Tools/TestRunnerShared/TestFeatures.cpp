@@ -292,15 +292,21 @@ static TestFeatures parseTestHeaderString(const std::string& pairString, std::fi
             pairEnd = pairString.size();
         size_t equalsLocation = pairString.find("=", pairStart);
         if (equalsLocation == std::string::npos) {
-            LOG_ERROR("Malformed option in test header (could not find '=' character) in %s", path.c_str());
+            if (!path.empty())
+                LOG_ERROR("Malformed option in test header (could not find '=' character) in %s", path.c_str());
+            else
+                LOG_ERROR("Malformed option in --additional-header option value (could not find '=' character)");
             break;
         }
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
-        
-        if (!parseTestHeaderFeature(features, key, value, path, keyTypeMap))
-            LOG_ERROR("Unknown key, '%s', in test header in %s", key.c_str(), path.c_str());
-        
+
+        if (!parseTestHeaderFeature(features, key, value, path, keyTypeMap)) {
+            if (!path.empty())
+                LOG_ERROR("Unknown key, '%s', in test header in %s", key.c_str(), path.c_str());
+            else
+                LOG_ERROR("Unknown key, '%s', in --additional-header option value", key.c_str());
+        }
         pairStart = pairEnd + 1;
     }
 
@@ -345,6 +351,13 @@ TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand& command,
     if (command.selfComparisonHeader.empty())
         return { };
     return parseTestHeaderString(command.selfComparisonHeader, command.absolutePath, keyTypeMap);
+}
+
+TestFeatures featureFromAdditionalHeaderOption(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+{
+    if (command.additionalHeader.empty())
+        return { };
+    return parseTestHeaderString(command.additionalHeader, std::filesystem::path(), keyTypeMap);
 }
 
 } // namespace WTF
