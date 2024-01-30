@@ -590,6 +590,7 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
+// https://dom.spec.whatwg.org/#converting-nodes-into-a-node
 ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     if (nodeOrStringVector.isEmpty())
@@ -615,6 +616,42 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
     return RefPtr<Node> { WTFMove(nodeToReturn) };
 }
 
+// https://dom.spec.whatwg.org/#converting-nodes-into-a-node except this returns a NodeVector
+ExceptionOr<NodeVector> Node::convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&& nodeOrStringVector)
+{
+    if (nodeOrStringVector.isEmpty())
+        return NodeVector { };
+
+    Ref document = this->document();
+    NodeVector nodeVector;
+    nodeVector.reserveInitialCapacity(nodeOrStringVector.size());
+    for (auto& variant : nodeOrStringVector) {
+        if (std::holds_alternative<String>(variant)) {
+            nodeVector.append(Text::create(document, WTFMove(std::get<String>(variant))));
+            continue;
+        }
+        ASSERT(std::holds_alternative<RefPtr<Node>>(variant));
+        RefPtr node = WTFMove(std::get<RefPtr<Node>>(variant));
+        ASSERT(node);
+        if (auto* fragment = dynamicDowncast<DocumentFragment>(node.get()); UNLIKELY(fragment)) {
+            for (auto* child = fragment->firstChild(); child; child = child->nextSibling())
+                nodeVector.append(*child);
+        } else
+            nodeVector.append(node.releaseNonNull());
+    }
+
+    if (nodeVector.size() == 1)
+        return nodeVector; // step 3, if nodes contains one node, then set node to nodes[0].
+
+    for (auto& node : nodeVector) {
+        auto result = node->remove();
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    return nodeVector;
+}
+
 ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     RefPtr parent = parentNode();
@@ -624,19 +661,16 @@ ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
-    RefPtr node = result.releaseReturnValue();
-    if (!node)
-        return { };
 
-    if (viablePreviousSibling)
-        viablePreviousSibling = viablePreviousSibling->nextSibling();
-    else
-        viablePreviousSibling = parent->firstChild();
+    auto newChildren = result.releaseReturnValue();
+    if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
+        return checkResult;
 
-    return parent->insertBefore(*node, WTFMove(viablePreviousSibling));
+    RefPtr viableNextSibling = viablePreviousSibling ? viablePreviousSibling->nextSibling() : parent->firstChild();
+    return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren), viableNextSibling.get());
 }
 
 ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
@@ -648,14 +682,15 @@ ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
-    RefPtr node = result.releaseReturnValue();
-    if (!node)
-        return { };
 
-    return parent->insertBefore(*node, WTFMove(viableNextSibling));
+    auto newChildren = result.releaseReturnValue();
+    if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
+        return checkResult;
+
+    return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren), viableNextSibling.get());
 }
 
 ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVector)

@@ -483,6 +483,26 @@ ExceptionOr<void> ContainerNode::ensurePreInsertionValidity(Node& newChild, Node
     return checkAcceptChild(*this, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes);
 }
 
+// https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity when node is a new DocumentFragment created in "converting nodes into a node"
+ExceptionOr<void> ContainerNode::ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild)
+{
+    if (UNLIKELY(is<Document>(*this))) {
+        bool hasSeenElement = false;
+        for (auto& child : newChildren) {
+            if (!is<Element>(child))
+                continue;
+            if (hasSeenElement)
+                return Exception { ExceptionCode::HierarchyRequestError };
+            hasSeenElement = true;
+        }
+    }
+    for (auto& child : newChildren) {
+        if (auto result = checkAcceptChild(*this, child, refChild, Document::AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes); result.hasException())
+            return result;
+    }
+    return { };
+}
+
 // https://dom.spec.whatwg.org/#concept-node-replace
 static inline ExceptionOr<void> checkPreReplacementValidity(ContainerNode& newParent, Node& newChild, Node& oldChild, ShouldValidateChildParent shouldValidateChildParent)
 {
@@ -877,6 +897,45 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
     return { };
 }
 
+ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidityCheck(NodeVector&& newChildren, Node* nextChild)
+{
+    for (auto& child : newChildren) {
+        if (RefPtr oldParent = child->parentNode()) {
+            if (nextChild == child.ptr())
+                nextChild = child->nextSibling();
+            if (auto result = oldParent->removeChild(child); result.hasException())
+                return result.releaseException();
+        }
+    }
+
+    // We need this extra check because removeChild() above can fire mutation events.
+    for (auto& child : newChildren) {
+        auto nodeTypeResult = checkAcceptChildGuaranteedNodeTypes(*this, child);
+        if (nodeTypeResult.hasException())
+            return nodeTypeResult.releaseException();
+    }
+
+    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+
+    ChildListMutationScope mutation(*this);
+    for (auto& child : newChildren) {
+        if (nextChild && nextChild->parentNode() != this) // Event listeners moved nextChild elsewhere.
+            break;
+        if (child->parentNode()) // Event listeners inserted this child elsewhere.
+            break;
+        executeNodeInsertionWithScriptAssertion(*this, child.get(), nextChild, ChildChange::Source::API, ReplacedAllChildren::No, [&] {
+            child->setTreeScopeRecursively(treeScope());
+            if (nextChild)
+                insertBeforeCommon(*nextChild, child.get());
+            else
+                appendChildCommon(child);
+        });
+    }
+
+    dispatchSubtreeModifiedEvent();
+    return { };
+}
+
 void ContainerNode::parserAppendChild(Node& newChild)
 {
     ASSERT(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
@@ -1117,55 +1176,65 @@ unsigned ContainerNode::childElementCount() const
 
 ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrString>&& vector)
 {
-    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
-    auto node = result.releaseReturnValue();
-    if (!node)
-        return { };
+    auto newChildren = result.releaseReturnValue();
+    if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
+        return checkResult;
 
-    return appendChild(*node);
+    Ref protectedThis { *this };
+    ChildListMutationScope mutation(*this);
+    if (auto appendResult = insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren)); appendResult.hasException())
+        return appendResult;
+
+    rebuildSVGExtensionsElementsIfNecessary();
+    dispatchSubtreeModifiedEvent();
+
+    return { };
 }
 
 ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
 {
-    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
-    auto node = result.releaseReturnValue();
-    if (!node)
-        return { };
+    RefPtr nextChild = protectedFirstChild();
+    auto newChildren = result.releaseReturnValue();
+    if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren, nextChild.get()); checkResult.hasException())
+        return checkResult;
 
-    return insertBefore(*node, protectedFirstChild());
+    Ref protectedThis { *this };
+    ChildListMutationScope mutation(*this);
+    if (auto appendResult = insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren), nextChild.get()); appendResult.hasException())
+        return appendResult;
+
+    rebuildSVGExtensionsElementsIfNecessary();
+    dispatchSubtreeModifiedEvent();
+
+    return { };
 }
 
 // https://dom.spec.whatwg.org/#dom-parentnode-replacechildren
 ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vector)
 {
-    // step 1
-    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
-    auto node = result.releaseReturnValue();
+    auto newChildren = result.releaseReturnValue();
 
-    // step 2
-    if (node) {
-        if (auto checkResult = ensurePreInsertionValidity(*node, nullptr); checkResult.hasException())
-            return checkResult;
-    }
+    if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
+        return checkResult;
 
-    // step 3
     Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
     NodeVector removedChildren;
     removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No);
 
-    if (node) {
-        if (auto appendResult = appendChildWithoutPreInsertionValidityCheck(*node); appendResult.hasException())
-            return appendResult;
-    }
+    if (auto appendResult = insertChildrenBeforeWithoutPreInsertionValidityCheck(WTFMove(newChildren)); appendResult.hasException())
+        return appendResult;
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
