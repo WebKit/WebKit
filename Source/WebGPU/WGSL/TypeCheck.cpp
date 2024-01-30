@@ -1904,6 +1904,9 @@ void TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::Te
 std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
 {
     auto* formatType = infer(expression);
+    if (isBottom(formatType))
+        return std::nullopt;
+
     if (!unify(formatType, m_types.texelFormatType())) {
         typeError(InferBottom::No, expression.span(), "cannot use '", *formatType, "' as texel format");
         return std::nullopt;
@@ -1920,6 +1923,9 @@ std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
 std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
 {
     auto* accessType = infer(expression);
+    if (isBottom(accessType))
+        return std::nullopt;
+
     if (!unify(accessType, m_types.accessModeType())) {
         typeError(InferBottom::No, expression.span(), "cannot use '", *accessType, "' as access mode");
         return std::nullopt;
@@ -1936,6 +1942,9 @@ std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
 std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
 {
     auto* addressSpaceType = infer(expression);
+    if (isBottom(addressSpaceType))
+        return std::nullopt;
+
     if (!unify(addressSpaceType, m_types.addressSpaceType())) {
         typeError(InferBottom::No, expression.span(), "cannot use '", *addressSpaceType, "' as address space");
         return std::nullopt;
