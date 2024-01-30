@@ -494,15 +494,15 @@ void TypeChecker::visit(AST::Function& function)
     else
         m_returnType = m_types.voidType();
 
+    {
+        ContextScope functionContext(this);
+        for (unsigned i = 0; i < parameters.size(); ++i)
+            introduceValue(function.parameters()[i].name(), parameters[i]);
+        AST::Visitor::visit(function.body());
+    }
+
     const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType);
     introduceValue(function.name(), functionType);
-
-    ContextScope functionContext(this);
-    for (auto& parameter : function.parameters()) {
-        auto* parameterType = resolve(parameter.typeName());
-        introduceValue(parameter.name(), parameterType);
-    }
-    AST::Visitor::visit(function.body());
 }
 
 // Attributes
@@ -1655,6 +1655,11 @@ bool TypeChecker::convertValue(const SourceSpan& span, const Type* type, std::op
 {
     if (!value)
         return true;
+
+    if (isBottom(type)) {
+        value = std::nullopt;
+        return false;
+    }
 
     if (UNLIKELY(!convertValueImpl(span, type, *value))) {
         StringPrintStream valueString;
