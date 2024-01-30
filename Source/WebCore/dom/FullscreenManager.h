@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FullscreenOptions.h"
 #include "GCReachableRef.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMediaElementEnums.h"
@@ -68,6 +69,10 @@ public:
     bool isFullscreenKeyboardInputAllowed() const { return m_fullscreenElement.get() && m_areKeysEnabledInFullscreen; }
     Element* currentFullscreenElement() const { return m_fullscreenElement.get(); }
     WEBCORE_EXPORT void cancelFullscreen();
+
+    // Fullscreen Keyboard Lock
+    void setKeyboardLockMode(FullscreenOptions::KeyboardLock mode) { m_keyboardLockMode = mode; }
+    bool isBrowserKeyboardLockEnabled() const { return m_keyboardLockMode == FullscreenOptions::KeyboardLock::Browser; }
 
     enum FullscreenCheckType {
         EnforceIFrameAllowFullscreenRequirement,
@@ -134,6 +139,9 @@ private:
 
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
+
+    // Fullscreen Keyboard Lock
+    FullscreenOptions::KeyboardLock m_keyboardLockMode = FullscreenOptions::KeyboardLock::None;
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;

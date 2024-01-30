@@ -388,6 +388,9 @@ EventHandler::EventHandler(LocalFrame& frame)
 #if ENABLE(CURSOR_VISIBILITY)
     , m_autoHideCursorTimer(*this, &EventHandler::autoHideCursorTimerFired)
 #endif
+#if ENABLE(FULLSCREEN_API)
+    , m_holdEscKeyEventTimer(*this, &EventHandler::holdEscKeyEventTimerFired)
+#endif
 {
 }
 
@@ -433,6 +436,9 @@ void EventHandler::clear()
 #endif
 #if ENABLE(IMAGE_ANALYSIS)
     m_textRecognitionHoverTimer.stop();
+#endif
+#if ENABLE(FULLSCREEN_API)
+    m_holdEscKeyEventTimer.stop();
 #endif
     m_resizeLayer = nullptr;
     clearElementUnderMouse();
@@ -1743,6 +1749,14 @@ void EventHandler::autoHideCursorTimerFired()
 
     if (RefPtr page = m_frame->page())
         page->chrome().setCursorHiddenUntilMouseMoves(true);
+}
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+void EventHandler::holdEscKeyEventTimerFired()
+{
+    Ref frame = m_frame.get();
+    frame->protectedDocument()->fullscreenManager().cancelFullscreen();
 }
 #endif
 
@@ -3767,8 +3781,17 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     RefPtr document = frame->document();
     if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isFullscreen()) {
         if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
-            fullscreenManager->cancelFullscreen();
-            return true;
+            if (fullscreenManager->isBrowserKeyboardLockEnabled()) {
+                // check 1.5 ms ESC hold to cancel Full Screen
+                if (!m_holdEscKeyEventTimer.isActive())
+                    m_holdEscKeyEventTimer.startOneShot(1500_ms);
+            } else {
+                fullscreenManager->cancelFullscreen();
+                return true;
+            }
+        } else {
+            if (m_holdEscKeyEventTimer.isActive())
+                m_holdEscKeyEventTimer.stop();
         }
 
         if (!isKeyEventAllowedInFullScreen(initialKeyEvent))

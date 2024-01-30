@@ -32,7 +32,7 @@
 };
 
 [
-    Conditional=FULLSCREEN_API, EnabledBySetting=FullScreenKeyboardLock
+    Conditional=FULLSCREEN_API
 ] enum FullscreenKeyboardLock {
     "none",
     "browser",
@@ -43,5 +43,5 @@
     Conditional=FULLSCREEN_API
 ] dictionary FullscreenOptions {
     FullscreenNavigationUI navigationUI = "auto";
-    [EnabledBySetting=FullScreenKeyboardLock] FullscreenKeyboardLock keyboardLock = "none";
+    FullscreenKeyboardLock keyboardLock = "none";
 };

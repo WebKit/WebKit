@@ -1,0 +1,7 @@
+Test passes if ESC key received by the test case after enter to fullscreen.
+
+EXPECTED (document.fullscreenElement == '[object HTMLDivElement]') OK
+EVENT(keypress)
+EXPECTED (event.key == 'Escape') OK
+END OF TEST
+

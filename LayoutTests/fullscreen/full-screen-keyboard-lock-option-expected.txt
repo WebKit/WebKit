@@ -1,0 +1,5 @@
+Test passes if fullscreen api returns error when keyboardlock option is passed while fullscreen keyboard lock is not enabled.
+
+An error occurred while trying to enter full-screen mode: options.keyboardLock is unavailable. FAIL
+END OF TEST
+
