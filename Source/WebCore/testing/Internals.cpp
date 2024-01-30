@@ -186,7 +186,6 @@
 #include "RenderMenuList.h"
 #include "RenderSearchField.h"
 #include "RenderTheme.h"
-#include "RenderThemeIOS.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
@@ -360,6 +359,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "MediaSessionHelperIOS.h"
+#include "RenderThemeIOS.h"
 #endif
 
 #if PLATFORM(COCOA)

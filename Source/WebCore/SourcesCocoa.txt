@@ -692,10 +692,10 @@ platform/xr/cocoa/PlatformXRPose.cpp
 platform/text/mac/CoreTextChineseCompositionEngine.cpp
 platform/text/mac/CoreTextCompositionEngine.cpp
 rendering/AttachmentLayout.mm
-rendering/RenderThemeCocoa.mm
-rendering/RenderThemeIOS.mm
-rendering/RenderThemeMac.mm
 rendering/TextAutoSizing.cpp
+rendering/cocoa/RenderThemeCocoa.mm
+rendering/ios/RenderThemeIOS.mm
+rendering/mac/RenderThemeMac.mm
 testing/cocoa/WebViewVisualIdentificationOverlay.mm
 
 // The following files aren't unified with others to prevent them from being merged

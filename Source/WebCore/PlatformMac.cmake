@@ -430,9 +430,11 @@ list(APPEND WebCore_SOURCES
     platform/text/mac/TextBoundaries.mm
     platform/text/mac/TextCheckingMac.mm
 
-    rendering/RenderThemeCocoa.mm
-    rendering/RenderThemeMac.mm
     rendering/TextAutoSizing.cpp
+
+    rendering/cocoa/RenderThemeCocoa.mm
+
+    rendering/mac/RenderThemeMac.mm
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
