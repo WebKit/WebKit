@@ -69,6 +69,8 @@ public:
     // They don't send DOM mutation events or handle reparenting.
     // However, arbitrary code may be run by beforeload handlers.
     void parserAppendChild(Node&);
+    void parserAppendChildIntoIsolatedTree(Node&);
+    void parserNotifyChildrenChanged();
     void parserRemoveChild(Node&);
     void parserInsertBefore(Node& newChild, Node& refChild);
 

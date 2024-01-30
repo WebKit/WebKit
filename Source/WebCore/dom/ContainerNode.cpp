@@ -308,6 +308,26 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
         dispatchChildInsertionEvents(child);
 }
 
+template<typename DOMInsertionWork>
+static ALWAYS_INLINE void executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(ContainerNode& containerNode, Node& child, DOMInsertionWork doNodeInsertion)
+{
+    NodeVector postInsertionNotificationTargets;
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+        ASSERT(!containerNode.inRenderedDocument());
+
+        if (UNLIKELY(containerNode.isShadowRoot() || containerNode.isInShadowTree()))
+            containerNode.containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
+        doNodeInsertion();
+        ChildListMutationScope(containerNode).childAdded(child);
+        notifyChildNodeInserted(containerNode, child, postInsertionNotificationTargets);
+    }
+    ASSERT(postInsertionNotificationTargets.isEmpty());
+    containerNode.setHasHeldBackChildrenChanged();
+}
+
 ExceptionOr<void> ContainerNode::removeSelfOrChildNodesForInsertion(Node& child, NodeVector& nodesForInsertion)
 {
     if (auto fragment = dynamicDowncast<DocumentFragment>(child)) {
@@ -871,6 +891,35 @@ void ContainerNode::parserAppendChild(Node& newChild)
         newChild.setTreeScopeRecursively(treeScope());
         newChild.updateAncestorConnectedSubframeCountForInsertion();
     });
+}
+
+void ContainerNode::parserAppendChildIntoIsolatedTree(Node& newChild)
+{
+    ASSERT(!inRenderedDocument());
+    ASSERT(!newChild.traverseToRootNode().wrapper());
+    ASSERT(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(is<Element>(*this) || is<DocumentFragment>(*this)); // Only Element calls parserNotifyChildrenChanged
+    ASSERT(is<DocumentFragment>(*this) || !isParsingChildrenFinished());
+    ASSERT(!newChild.isDocumentFragment());
+    ASSERT(!hasTagName(HTMLNames::templateTag));
+    RELEASE_ASSERT(&newChild.document() == &document());
+
+    executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(*this, newChild, [&] {
+        appendChildCommon(newChild);
+        newChild.setTreeScopeRecursively(treeScope());
+        newChild.updateAncestorConnectedSubframeCountForInsertion();
+    });
+}
+
+void ContainerNode::parserNotifyChildrenChanged()
+{
+    ASSERT(!inRenderedDocument());
+    ASSERT(!traverseToRootNode().wrapper());
+    ASSERT(is<Element>(*this));
+    ASSERT(hasHeldBackChildrenChanged());
+    clearHasHeldBackChildrenChanged();
+    childrenChanged(ChildChange { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, nullptr, ChildChange::Source::Parser,
+        firstElementChild() ? ChildChange::AffectsElements::Yes : ChildChange::AffectsElements::No });
 }
 
 ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& newChild)

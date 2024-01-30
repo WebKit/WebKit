@@ -688,7 +688,7 @@ private:
                 return;
 
             if (!text.isNull())
-                parent.parserAppendChild(Text::create(m_document.get(), WTFMove(text)));
+                parent.parserAppendChildIntoIsolatedTree(Text::create(m_document.get(), WTFMove(text)));
 
             if (m_parsingBuffer.atEnd())
                 return;
@@ -839,7 +839,7 @@ private:
         parseAttributes(element);
         if (parsingFailed())
             return WTFMove(element);
-        parent.parserAppendChild(element);
+        parent.parserAppendChildIntoIsolatedTree(element);
         element->beginParsingChildren();
         parseChildren<Tag>(element);
         if (parsingFailed() || m_parsingBuffer.atEnd())
@@ -868,7 +868,7 @@ private:
         parseAttributes(element);
         if (parsingFailed())
             return element;
-        parent.parserAppendChild(element);
+        parent.parserAppendChildIntoIsolatedTree(element);
         element->beginParsingChildren();
         element->finishParsingChildren();
         return WTFMove(element);

@@ -3154,6 +3154,9 @@ void Element::removeAllEventListeners()
 
 void Element::finishParsingChildren()
 {
+    if (hasHeldBackChildrenChanged())
+        parserNotifyChildrenChanged();
+
     setIsParsingChildrenFinished();
 
     Style::ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(*this);

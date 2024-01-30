@@ -347,6 +347,10 @@ public:
 
     bool isDocumentFragmentForInnerOuterHTML() const { return isDocumentFragment() && hasTypeFlag(TypeFlag::IsSpecialInternalNode); }
 
+    bool hasHeldBackChildrenChanged() const { return hasStateFlag(StateFlag::HasHeldBackChildrenChanged); }
+    void setHasHeldBackChildrenChanged() { setStateFlag(StateFlag::HasHeldBackChildrenChanged); }
+    void clearHasHeldBackChildrenChanged() { clearStateFlag(StateFlag::HasHeldBackChildrenChanged); }
+
     void setChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     void clearChildNeedsStyleRecalc();
 
@@ -606,6 +610,7 @@ protected:
         HasInvalidRenderer = 1 << 10,
         ContainsOnlyASCIIWhitespace = 1 << 11, // Only used on CharacterData.
         ContainsOnlyASCIIWhitespaceIsValid = 1 << 12, // Only used on CharacterData.
+        HasHeldBackChildrenChanged = 1 << 13,
     };
 
     enum class TabIndexState : uint8_t {

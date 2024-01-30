@@ -1048,7 +1048,9 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
     setParserContentPolicy(policy);
     if (this->contentType() == textHTMLContentTypeAtom()) {
         auto body = HTMLBodyElement::create(*this);
+        body->beginParsingChildren();
         if (LIKELY(tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy))) {
+            body->finishParsingChildren();
             auto html = HTMLHtmlElement::create(*this);
             auto head = HTMLHeadElement::create(*this);
             html->appendChild(head);
