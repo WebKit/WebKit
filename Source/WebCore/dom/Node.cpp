@@ -2391,8 +2391,9 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
 bool isTouchRelatedEventType(const EventTypeInfo& eventType, const EventTarget& target)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (auto* node = dynamicDowncast<Node>(target); node && node->document().quirks().shouldDispatchSimulatedMouseEvents(&target))
-        return eventType.isInCategory(EventCategory::ExtendedTouchRelated);
+    if (auto* node = dynamicDowncast<Node>(target); eventType.isInCategory(EventCategory::ExtendedTouchRelated)
+        && node && node->document().quirks().shouldDispatchSimulatedMouseEvents(&target))
+        return true;
 #endif
     UNUSED_PARAM(target);
     return eventType.isInCategory(EventCategory::TouchRelated);
