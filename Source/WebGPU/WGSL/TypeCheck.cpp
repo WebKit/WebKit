@@ -1598,6 +1598,11 @@ const Type* TypeChecker::resolve(AST::Expression& type)
         AST::Visitor::visit(type);
     ASSERT(m_inferredType);
 
+    if (std::holds_alternative<Types::TypeConstructor>(*m_inferredType)) {
+        typeError(InferBottom::No, type.span(), "type '", *m_inferredType, "' requires template arguments");
+        m_inferredType = m_types.bottomType();
+    }
+
     if (shouldDumpInferredTypes) {
         dataLog("> Type inference [type]: ");
         dumpNode(WTF::dataFile(), type);
