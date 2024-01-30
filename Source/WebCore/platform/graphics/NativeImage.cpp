@@ -28,7 +28,14 @@
 
 namespace WebCore {
 
+NativeImageBackend::NativeImageBackend() = default;
+
 NativeImageBackend::~NativeImageBackend() = default;
+
+bool NativeImageBackend::isRemoteNativeImageBackendProxy() const
+{
+    return false;
+}
 
 PlatformImageNativeImageBackend::~PlatformImageNativeImageBackend() = default;
 
@@ -83,9 +90,8 @@ DestinationColorSpace NativeImage::colorSpace() const
     return m_backend->colorSpace();
 }
 
-void NativeImage::replaceContents(PlatformImagePtr platformImage)
+void NativeImage::replaceBackend(UniqueRef<NativeImageBackend> backend)
 {
-    UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(platformImage)) };
     m_backend = WTFMove(backend);
 }
 
