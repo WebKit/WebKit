@@ -326,8 +326,12 @@ void AttributeValidator::visit(AST::StructureMember& member)
             auto sizeValue = constantValue->integerValue();
             if (sizeValue < 0)
                 error(attribute.span(), "@size value must be non-negative");
-            else if (sizeValue < member.type().inferredType()->size())
+            else if (m_errors.isEmpty() && sizeValue < member.type().inferredType()->size()) {
+                // We can't call Type::size() if we already have errors, as we might
+                // try to read the size of a struct, which we will not have computed
+                // if we already encountered errors
                 error(attribute.span(), "@size value must be at least the byte-size of the type of the member");
+            }
             update(attribute.span(), member.m_size, static_cast<unsigned>(sizeValue));
             continue;
         }
