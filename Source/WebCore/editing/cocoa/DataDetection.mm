@@ -179,10 +179,8 @@ bool DataDetection::canBePresentedByDataDetectors(const URL& url)
 
 bool DataDetection::isDataDetectorLink(Element& element)
 {
-    if (!is<HTMLAnchorElement>(element))
-        return false;
-
-    return canBePresentedByDataDetectors(downcast<HTMLAnchorElement>(element).href());
+    RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(element);
+    return anchor && canBePresentedByDataDetectors(anchor->href());
 }
 
 bool DataDetection::requiresExtendedContext(Element& element)
@@ -292,12 +290,11 @@ static void removeResultLinksFromAnchor(Element& element)
 
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
 {
-    for (Node* node = &startNode; node; node = NodeTraversal::next(*node)) {
-        if (is<HTMLAnchorElement>(*node)) {
-            auto& anchor = downcast<HTMLAnchorElement>(*node);
-            if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+    for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
+        if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
+            if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                 return true;
-            removeResultLinksFromAnchor(anchor);
+            removeResultLinksFromAnchor(*anchor);
         }
         
         if (node == &endNode) {
@@ -586,28 +583,28 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             if (!parentNode)
                 continue;
 
-            if (!is<Text>(range.start.container))
+            RefPtr currentTextNode = dynamicDowncast<Text>(range.start.container);
+            if (!currentTextNode)
                 continue;
 
-            auto& currentTextNode = downcast<Text>(range.start.container.get());
-            Document& document = currentTextNode.document();
+            auto& document = currentTextNode->document();
             String textNodeData;
 
-            if (lastTextNodeToUpdate != &currentTextNode) {
+            if (lastTextNodeToUpdate != currentTextNode.get()) {
                 if (lastTextNodeToUpdate)
                     lastTextNodeToUpdate->setData(lastNodeContent);
                 if (range.start.offset > 0)
-                    textNodeData = currentTextNode.data().left(range.start.offset);
+                    textNodeData = currentTextNode->data().left(range.start.offset);
             } else
-                textNodeData = currentTextNode.data().substring(contentOffset, range.start.offset - contentOffset);
+                textNodeData = currentTextNode->data().substring(contentOffset, range.start.offset - contentOffset);
 
             if (!textNodeData.isEmpty())
-                parentNode->insertBefore(Text::create(document, WTFMove(textNodeData)), &currentTextNode);
+                parentNode->insertBefore(Text::create(document, WTFMove(textNodeData)), currentTextNode.get());
 
             // Create the actual anchor node and insert it before the current node.
-            textNodeData = currentTextNode.data().substring(range.start.offset, range.end.offset - range.start.offset);
+            textNodeData = currentTextNode->data().substring(range.start.offset, range.end.offset - range.start.offset);
             auto newTextNode = Text::create(document, WTFMove(textNodeData));
-            parentNode->insertBefore(newTextNode.copyRef(), &currentTextNode);
+            parentNode->insertBefore(newTextNode.copyRef(), currentTextNode.get());
             
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
@@ -644,12 +641,12 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_typeAttr, dataDetectorTypeForCategory(PAL::softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, identifier);
 
-            parentNode->insertBefore(WTFMove(anchorElement), &currentTextNode);
+            parentNode->insertBefore(WTFMove(anchorElement), currentTextNode.get());
 
             contentOffset = range.end.offset;
 
-            lastNodeContent = currentTextNode.data().substring(range.end.offset, currentTextNode.length() - range.end.offset);
-            lastTextNodeToUpdate = &currentTextNode;
+            lastNodeContent = currentTextNode->data().substring(range.end.offset, currentTextNode->length() - range.end.offset);
+            lastTextNodeToUpdate = WTFMove(currentTextNode);
         }        
     }
 

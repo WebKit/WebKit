@@ -252,14 +252,12 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
         if (!m_context) {
             auto scope = DECLARE_THROW_SCOPE(state.vm());
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-            auto* scriptExecutionContext = this->scriptExecutionContext();
-            if (scriptExecutionContext->isWorkerGlobalScope()) {
-                auto& globalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
-                if (auto* gpu = globalScope.navigator().gpu())
+            Ref scriptExecutionContext = *this->scriptExecutionContext();
+            if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
+                if (auto* gpu = globalScope->navigator().gpu())
                     m_context = GPUCanvasContext::create(*this, *gpu);
-            } else if (scriptExecutionContext->isDocument()) {
-                auto& document = downcast<Document>(*scriptExecutionContext);
-                if (auto* domWindow = document.domWindow()) {
+            } else if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+                if (RefPtr domWindow = document->domWindow()) {
                     if (auto* gpu = domWindow->navigator().gpu())
                         m_context = GPUCanvasContext::create(*this, *gpu);
                 }

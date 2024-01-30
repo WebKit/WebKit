@@ -150,10 +150,11 @@ Ref<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const 
 
 static bool isPhrasingContent(const Node& node)
 {
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    switch (downcast<Element>(node).elementName()) {
+    switch (element->elementName()) {
     case ElementNames::HTML::a:
     case ElementNames::HTML::abbr:
     case ElementNames::HTML::area:
@@ -429,20 +430,18 @@ void InsertParagraphSeparatorCommand::doApply()
     Position leadingWhitespace = insertionPosition.leadingWhitespacePosition(VisiblePosition::defaultAffinity);
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
-    if (is<Text>(leadingWhitespace.deprecatedNode())) {
-        auto textNode = downcast<Text>(leadingWhitespace.protectedDeprecatedNode().releaseNonNull());
+    if (RefPtr textNode = dynamicDowncast<Text>(leadingWhitespace.deprecatedNode())) {
         ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
-        replaceTextInNodePreservingMarkers(textNode.get(), leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
+        replaceTextInNodePreservingMarkers(*textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
     Position positionAfterSplit;
-    if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor && is<Text>(*insertionPosition.containerNode())) {
-        Ref<Text> textNode = downcast<Text>(*insertionPosition.containerNode());
+    if (RefPtr textNode = dynamicDowncast<Text>(*insertionPosition.containerNode()); textNode && insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor) {
         bool atEnd = static_cast<unsigned>(insertionPosition.offsetInContainerNode()) >= textNode->length();
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
-            splitTextNode(textNode, insertionPosition.offsetInContainerNode());
-            positionAfterSplit = firstPositionInNode(textNode.ptr());
+            splitTextNode(*textNode, insertionPosition.offsetInContainerNode());
+            positionAfterSplit = firstPositionInNode(textNode.get());
             if (!textNode->previousSibling())
                 return; // Bail out if mutation events detachd the split text node.
             insertionPosition.moveToPosition(textNode->previousSibling(), insertionPosition.offsetInContainerNode());
