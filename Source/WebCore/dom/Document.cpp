@@ -9708,9 +9708,9 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Document::registerAttachmentIdentifier(const String& identifier, const HTMLImageElement& image)
+void Document::registerAttachmentIdentifier(const String& identifier, const AttachmentAssociatedElement& element)
 {
-    editor().registerAttachmentIdentifier(identifier, image);
+    editor().registerAttachmentIdentifier(identifier, element);
 }
 
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)

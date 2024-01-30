@@ -840,6 +840,13 @@ ValidatedFormListedElement* Element::asValidatedFormListedElement()
     return nullptr;
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+AttachmentAssociatedElement* Element::asAttachmentAssociatedElement()
+{
+    return nullptr;
+}
+#endif
+
 bool Element::isUserActionElementHasFocusWithin() const
 {
     ASSERT(isUserActionElement());

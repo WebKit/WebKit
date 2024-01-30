@@ -1308,6 +1308,7 @@ history/BackForwardController.cpp
 history/CachedFrame.cpp
 history/CachedPage.cpp
 history/HistoryItem.cpp
+html/AttachmentAssociatedElement.cpp
 html/Autocapitalize.cpp
 html/Autofill.cpp
 html/BaseButtonInputType.cpp

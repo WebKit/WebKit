@@ -12009,7 +12009,7 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Completio
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferReference(attachment.enclosingImageData())), WTFMove(callback));
+    sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferReference(attachment.associatedElementData())), WTFMove(callback));
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
     requestThumbnail(attachment, attachment.identifier());
@@ -12163,17 +12163,17 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Atta
 
 #endif
 
-void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
+void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType associatedElementType)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
     Ref attachment = ensureAttachment(identifier);
-    attachment->setHasEnclosingImage(hasEnclosingImage);
+    attachment->setAssociatedElementType(associatedElementType);
     attachment->setInsertionState(API::Attachment::InsertionState::Inserted);
     pageClient().didInsertAttachment(attachment, source);
 
-    if (!attachment->isEmpty() && hasEnclosingImage)
+    if (!attachment->isEmpty() && associatedElementType != WebCore::AttachmentAssociatedElementType::None)
         updateAttachmentAttributes(attachment, [] { });
 }
 

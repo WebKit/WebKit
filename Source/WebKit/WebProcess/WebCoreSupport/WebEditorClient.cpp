@@ -170,9 +170,9 @@ void WebEditorClient::cloneAttachmentData(const String& fromIdentifier, const St
     m_page->send(Messages::WebPageProxy::CloneAttachmentData(fromIdentifier, toIdentifier));
 }
 
-void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
+void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType associatedElementType)
 {
-    m_page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source, hasEnclosingImage));
+    m_page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source, associatedElementType));
 }
 
 void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier)

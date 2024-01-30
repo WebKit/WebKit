@@ -85,6 +85,10 @@ class UniqueElementData;
 class ValidatedFormListedElement;
 class WebAnimation;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+class AttachmentAssociatedElement;
+#endif
+
 enum class AnimationImpact : uint8_t;
 enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
@@ -323,6 +327,10 @@ public:
     virtual FormListedElement* asFormListedElement();
     virtual ValidatedFormListedElement* asValidatedFormListedElement();
     virtual bool attributeContainsJavaScriptURL(const Attribute&) const;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual AttachmentAssociatedElement* asAttachmentAssociatedElement();
+#endif
 
     // Remove attributes that might introduce scripting from the vector leaving the element unchanged.
     void stripScriptingAttributes(Vector<Attribute>&) const;

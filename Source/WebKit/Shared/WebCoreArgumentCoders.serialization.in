@@ -1985,6 +1985,14 @@ struct WebCore::SerializedAttachmentData {
     String mimeType;
     Ref<WebCore::SharedBuffer> data;
 };
+
+header: <WebCore/AttachmentAssociatedElement.h>
+[CustomHeader] enum class WebCore::AttachmentAssociatedElementType : uint8_t {
+    None,
+    Image,
+    Source,
+};
+
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 header: <WebCore/FileChooser.h>

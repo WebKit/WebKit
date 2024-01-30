@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "AlternativeTextController.h"
 #include "ApplyStyleCommand.h"
+#include "AttachmentAssociatedElement.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
@@ -4381,14 +4382,18 @@ void Editor::registerAttachments(Vector<SerializedAttachmentData>&& data)
         client->registerAttachments(WTFMove(data));
 }
 
-void Editor::registerAttachmentIdentifier(const String& identifier, const HTMLImageElement& imageElement)
+void Editor::registerAttachmentIdentifier(const String& identifier, const AttachmentAssociatedElement& element)
 {
     auto* client = this->client();
     if (!client)
         return;
 
     auto attachmentInfo = [&]() -> std::optional<std::tuple<String, String, Ref<FragmentedSharedBuffer>>> {
-        auto* renderer = dynamicDowncast<RenderImage>(imageElement.renderer());
+        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element.asHTMLElement());
+        if (!imageElement)
+            return std::nullopt;
+
+        CheckedPtr renderer = dynamicDowncast<RenderImage>(imageElement->renderer());
         if (!renderer)
             return std::nullopt;
 
@@ -4407,9 +4412,9 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const HTMLIm
         if (!imageData)
             return std::nullopt;
 
-        String name = imageElement.alt();
+        String name = imageElement->alt();
         if (name.isEmpty())
-            name = imageElement.document().completeURL(imageElement.imageSourceURL()).lastPathComponent().toString();
+            name = imageElement->document().completeURL(imageElement->imageSourceURL()).lastPathComponent().toString();
 
         if (name.isEmpty())
             return std::nullopt;
@@ -4464,7 +4469,7 @@ void Editor::notifyClientOfAttachmentUpdates()
 
     for (auto& identifier : insertedAttachmentIdentifiers) {
         if (auto attachment = document().attachmentForIdentifier(identifier))
-            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr), attachment->enclosingImageElement());
+            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr), attachment->associatedElementType());
         else
             ASSERT_NOT_REACHED();
     }

@@ -397,25 +397,37 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
     auto document = protectedDocument();
 
     String primaryType = "image/heic"_s;
+    auto primaryBuffer = FragmentedSharedBuffer::create(data.data(), data.size());
 
     String fallbackType = "image/png"_s;
     auto fallbackData = encodeData(data, fallbackType, std::nullopt);
+    auto fallbackBuffer = FragmentedSharedBuffer::create(WTFMove(fallbackData));
 
     auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
 
     auto source = HTMLSourceElement::create(document);
-    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), Vector<uint8_t> { data }, primaryType)) });
+    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType)) });
     source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
     picture->appendChild(WTFMove(source));
 
     auto image = HTMLImageElement::create(document);
-    image->setSrc(AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), WTFMove(fallbackData), fallbackType)) });
+    image->setSrc(AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
     picture->appendChild(WTFMove(image));
 
     auto fragment = document->createDocumentFragment();
     fragment->appendChild(WTFMove(picture));
 
     ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
+
+    auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+    auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
+    registerAttachmentIdentifier(primaryIdentifier, primaryType, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
+    source->setAttachmentElement(WTFMove(primaryAttachment));
+
+    auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+    auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
+    registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTFMove(fallbackBuffer));
+    image->setAttachmentElement(WTFMove(fallbackAttachment));
 }
 #endif
 

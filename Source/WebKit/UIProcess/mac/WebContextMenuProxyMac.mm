@@ -236,7 +236,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     RetainPtr<NSItemProvider> itemProvider;
     if (hasControlledImage) {
         if (attachment)
-            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->enclosingImageNSData() typeIdentifier:attachment->utiType()]);
+            itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData() typeIdentifier:attachment->utiType()]);
         else {
             RefPtr<ShareableBitmap> image = m_context.controlledImage();
             if (!image)
@@ -256,7 +256,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         items = @[ selection.get() ];
     } else if (isPDFAttachment) {
-        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->enclosingImageNSData() typeIdentifier:attachment->utiType()]);
+        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:attachment->associatedElementNSData() typeIdentifier:attachment->utiType()]);
         items = @[ itemProvider.get() ];
     } else {
         LOG_ERROR("No service controlled item represented in the context");

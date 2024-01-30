@@ -26,17 +26,26 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "AttachmentAssociatedElement.h"
 #include "HTMLElement.h"
 #include "MediaQuery.h"
 #include "Timer.h"
 
 namespace WebCore {
 
-class HTMLSourceElement final : public HTMLElement, public ActiveDOMObject {
+class HTMLSourceElement final
+    : public HTMLElement
+#if ENABLE(ATTACHMENT_ELEMENT)
+    , public AttachmentAssociatedElement
+#endif
+    , public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLSourceElement);
 public:
     static Ref<HTMLSourceElement> create(Document&);
     static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
+
+    using HTMLElement::ref;
+    using HTMLElement::deref;
 
     void scheduleErrorEvent();
     void cancelPendingErrorEvent();
@@ -55,6 +64,21 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     void stop() final;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HTMLSourceElement& asHTMLElement() final { return *this; }
+    const HTMLSourceElement& asHTMLElement() const final { return *this; }
+
+    void refAttachmentAssociatedElement() const final { HTMLElement::ref(); }
+    void derefAttachmentAssociatedElement() const final { HTMLElement::deref(); }
+
+    AttachmentAssociatedElement* asAttachmentAssociatedElement() final { return this; }
+
+    AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Source; }
+#endif
+
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;
+    void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

@@ -219,4 +219,22 @@ void HTMLSourceElement::addCandidateSubresourceURLs(ListHashSet<URL>& urls) cons
     getURLsFromSrcsetAttribute(*this, attributeWithoutSynchronization(srcsetAttr), urls);
 }
 
+Ref<Element> HTMLSourceElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+{
+    auto clone = create(targetDocument);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    cloneAttachmentAssociatedElementWithoutAttributesAndChildren(clone, targetDocument);
+#endif
+    return clone;
+}
+
+void HTMLSourceElement::copyNonAttributePropertiesFromElement(const Element& source)
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    auto& sourceElement = checkedDowncast<HTMLSourceElement>(source);
+    copyAttachmentAssociatedPropertiesFromElement(sourceElement);
+#endif
+    Element::copyNonAttributePropertiesFromElement(source);
+}
+
 }

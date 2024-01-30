@@ -34,5 +34,5 @@
     readonly attribute DOMString uniqueIdentifier;
     readonly attribute DOMRectReadOnly? saveButtonClientRect;
 
-    static DOMString getAttachmentIdentifier(HTMLImageElement imageElement);
+    static DOMString getAttachmentIdentifier(HTMLElement associatedElement);
 };

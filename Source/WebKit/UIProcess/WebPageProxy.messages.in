@@ -508,7 +508,7 @@ messages -> WebPageProxy {
     [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifier(String identifier)
     [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
     [EnabledIf='attachmentElementEnabled()'] CloneAttachmentData(String fromIdentifier, String toIdentifier)
-    [EnabledIf='attachmentElementEnabled()'] DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
+    [EnabledIf='attachmentElementEnabled()'] DidInsertAttachmentWithIdentifier(String identifier, String source, enum:uint8_t WebCore::AttachmentAssociatedElementType associatedElementType)
     [EnabledIf='attachmentElementEnabled()'] DidRemoveAttachmentWithIdentifier(String identifier)
     [EnabledIf='attachmentElementEnabled()'] SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
 #if PLATFORM(IOS_FAMILY)

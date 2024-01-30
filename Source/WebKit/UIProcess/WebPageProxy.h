@@ -204,6 +204,10 @@ enum class WillInternallyHandleFailure : bool;
 enum class WindowProxyProperty : uint8_t;
 enum class WritingDirection : uint8_t;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+enum class AttachmentAssociatedElementType : uint8_t;
+#endif
+
 struct AppHighlight;
 struct ApplePayAMSUIRequest;
 struct ApplicationManifest;
@@ -2819,7 +2823,7 @@ private:
     void platformRegisterAttachment(Ref<API::Attachment>&&, const String& filePath);
     void platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment);
 
-    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage);
+    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType);
     void didRemoveAttachmentWithIdentifier(const String& identifier);
     void didRemoveAttachment(API::Attachment&);
     Ref<API::Attachment> ensureAttachment(const String& identifier);

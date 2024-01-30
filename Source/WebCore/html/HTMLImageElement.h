@@ -24,6 +24,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "AttachmentAssociatedElement.h"
 #include "DecodingOptions.h"
 #include "FormAssociatedElement.h"
 #include "GraphicsTypes.h"
@@ -47,7 +48,13 @@ enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 enum class RequestPriority : uint8_t;
 
-class HTMLImageElement : public HTMLElement, public FormAssociatedElement, public ActiveDOMObject {
+class HTMLImageElement
+    : public HTMLElement
+#if ENABLE(ATTACHMENT_ELEMENT)
+    , public AttachmentAssociatedElement
+#endif
+    , public FormAssociatedElement
+    , public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
 public:
     static Ref<HTMLImageElement> create(Document&);
@@ -114,10 +121,7 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void setAttachmentElement(Ref<HTMLAttachmentElement>&&);
-    RefPtr<HTMLAttachmentElement> attachmentElement() const;
-    const String& attachmentIdentifier() const;
-    void didUpdateAttachmentIdentifier();
+    void setAttachmentElement(Ref<HTMLAttachmentElement>&&) final;
 #endif
 
     WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
@@ -223,6 +227,15 @@ private:
     HTMLImageElement& asHTMLElement() final { return *this; }
     const HTMLImageElement& asHTMLElement() const final { return *this; }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void refAttachmentAssociatedElement() const final { HTMLElement::ref(); }
+    void derefAttachmentAssociatedElement() const final { HTMLElement::deref(); }
+
+    AttachmentAssociatedElement* asAttachmentAssociatedElement() final { return this; }
+
+    AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Image; };
+#endif
+
     bool isInteractiveContent() const final;
 
     void selectImageSource(RelevantMutation);
@@ -259,10 +272,6 @@ private:
     WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
 
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    String m_pendingClonedAttachmentID;
-#endif
 
     Image* image() const;
 

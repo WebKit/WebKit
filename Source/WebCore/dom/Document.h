@@ -249,6 +249,10 @@ class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+class AttachmentAssociatedElement;
+#endif
+
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 class ContentChangeObserver;
 class DOMTimerHoldingTank;
@@ -1758,7 +1762,7 @@ public:
     void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
+    void registerAttachmentIdentifier(const String&, const AttachmentAssociatedElement&);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
     WEBCORE_EXPORT RefPtr<HTMLAttachmentElement> attachmentForIdentifier(const String&) const;

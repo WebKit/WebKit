@@ -765,6 +765,7 @@ def headers_for_type(type):
         'WallTime': ['<wtf/WallTime.h>'],
         'WebCore::AlternativeTextType': ['<WebCore/AlternativeTextClient.h>'],
         'WebCore::ApplyTrackingPrevention': ['<WebCore/NetworkStorageSession.h>'],
+        'WebCore::AttachmentAssociatedElementType': ['<WebCore/AttachmentAssociatedElement.h>'],
         'WebCore::AutocorrectionResponse': ['<WebCore/AlternativeTextClient.h>'],
         'WebCore::AutoplayEventFlags': ['<WebCore/AutoplayEvent.h>'],
         'WebCore::BackForwardItemIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/BackForwardItemIdentifier.h>', '<wtf/ObjectIdentifier.h>'],

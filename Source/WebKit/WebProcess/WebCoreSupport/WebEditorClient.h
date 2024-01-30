@@ -31,6 +31,9 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+#if ENABLE(ATTACHMENT_ELEMENT)
+enum class AttachmentAssociatedElementType : uint8_t;
+#endif
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 }
@@ -73,7 +76,7 @@ private:
     void registerAttachmentIdentifier(const String&) final;
     void registerAttachments(Vector<WebCore::SerializedAttachmentData>&&) final;
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier) final;
-    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage) final;
+    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source, WebCore::AttachmentAssociatedElementType) final;
     void didRemoveAttachmentWithIdentifier(const String& identifier) final;
     bool supportsClientSideAttachmentData() const final { return true; }
     Vector<WebCore::SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<String>&) final;

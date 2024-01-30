@@ -1432,7 +1432,7 @@ public:
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CompletionHandler<void()>&&);
-    void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& enclosingImageData, CompletionHandler<void()>&&);
+    void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& associatedElementData, CompletionHandler<void()>&&);
     void updateAttachmentThumbnail(const String& identifier, std::optional<ShareableBitmap::Handle>&& qlThumbnailHandle);
     void updateAttachmentIcon(const String& identifier, std::optional<ShareableBitmap::Handle>&& icon, const WebCore::FloatSize&);
     void requestAttachmentIcon(const String& identifier, const WebCore::FloatSize&);

@@ -109,6 +109,11 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     return _utiType.get();
 }
 
+- (BOOL)shouldPreserveFidelity
+{
+    return _attachment->associatedElementType() == WebCore::AttachmentAssociatedElementType::Source;
+}
+
 @end
 
 @implementation _WKAttachment

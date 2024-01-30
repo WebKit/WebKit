@@ -8019,12 +8019,12 @@ void WebPage::insertAttachment(const String& identifier, std::optional<uint64_t>
     callback();
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& enclosingImageData, CompletionHandler<void()>&& callback)
+void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferReference& associatedElementData, CompletionHandler<void()>&& callback)
 {
     if (RefPtr attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
         attachment->updateAttributes(WTFMove(fileSize), AtomString { contentType }, AtomString { fileName });
-        attachment->updateEnclosingImageWithData(contentType, enclosingImageData.isNull() ? WebCore::SharedBuffer::create() : enclosingImageData.unsafeBuffer().releaseNonNull());
+        attachment->updateAssociatedElementWithData(contentType, associatedElementData.isNull() ? WebCore::SharedBuffer::create() : associatedElementData.unsafeBuffer().releaseNonNull());
     }
     callback();
 }

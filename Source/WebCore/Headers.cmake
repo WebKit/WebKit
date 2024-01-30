@@ -1138,6 +1138,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     history/CachedPage.h
     history/HistoryItem.h
 
+    html/AttachmentAssociatedElement.h
     html/Autocapitalize.h
     html/AutocapitalizeTypes.h
     html/Autofill.h
