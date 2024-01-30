@@ -1967,3 +1967,12 @@ webkit.org/b/268098 [ Monterey+ ] imported/w3c/web-platform-tests/webrtc/RTCPeer
 webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
 
 webkit.org/b/268332 [ Sonoma+ Release ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+
+# webkit.org/b/268347 REGRESSION(273637@main?): [ Sonoma+ wk2 Release arm64] 7 http/wpt/webcodecs (layout-tests) are constant text failures
+[ Sonoma+ Release arm64 ] http/tests/webcodecs/h264-reordering.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/wpt/webcodecs/webcodecs-gc.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/wpt/webcodecs/videoFrame-negative-timestamp.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/wpt/webcodecs/hevc-decoder-annexb.https.any.worker.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/wpt/webcodecs/hevc-decoder-annexb.https.any.html [ Failure ]
+[ Sonoma+ Release arm64 ] http/tests/webcodecs/hevc-reordering.html [ Failure ]
