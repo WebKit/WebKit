@@ -70,6 +70,10 @@ public:
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
 
+    template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message);
+    template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message, uint64_t destinationID);
+    template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message, uint64_t destinationID, OptionSet<SendOption>);
+
     template<typename T> inline bool sendWithoutUsingIPCConnection(T&& message) const;
     virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) const;
 
