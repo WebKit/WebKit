@@ -1163,6 +1163,12 @@ Class webAVPlayerControllerClass()
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    RetainPtr displayName = adoptNS([_localizedDisplayName copyWithZone:zone]);
+    return [[WebAVMediaSelectionOption allocWithZone:zone] initWithMediaType:_mediaType displayName:displayName.get()];
+}
+
 - (NSString *)displayName
 {
     return self.localizedDisplayName;
@@ -1291,6 +1297,13 @@ Class webAVPlayerControllerClass()
     WTFLogAlways("ERROR: -[WebAVMediaSelectionOption track:] unimplemented");
     return nil;
 }
+
+#if PLATFORM(APPLETV)
+- (NSString *)avkit_mediaRemoteIdentifier
+{
+    return self.displayName;
+}
+#endif
 
 @end
 

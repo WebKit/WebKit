@@ -371,6 +371,18 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     _legibleContentInsets = legibleContentInsets;
 }
 
+#if PLATFORM(APPLETV)
+- (BOOL)avkit_isVisible
+{
+    return !CGRectIsEmpty(self.bounds);
+}
+
+- (CGRect)avkit_videoRectInWindow
+{
+    return self.videoRect;
+}
+#endif
+
 @end
 
 #if !RELEASE_LOG_DISABLED

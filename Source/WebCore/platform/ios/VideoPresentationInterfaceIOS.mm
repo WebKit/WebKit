@@ -113,6 +113,8 @@ static bool ignoreWatchdogForDebugging = false;
 @property (nonatomic, assign /* weak */) RefPtr<VideoPresentationInterfaceIOS> fullscreenInterface;
 #if !PLATFORM(APPLETV)
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+#else
+- (BOOL)playerViewControllerShouldDismiss:(AVPlayerViewController *)playerViewController;
 #endif
 @end
 
@@ -202,6 +204,17 @@ static VideoPresentationInterfaceIOS::ExitFullScreenReason convertToExitFullScre
     UNUSED_PARAM(playerViewController);
     if (auto fullscreenInterface = self.fullscreenInterface)
         return fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
+
+    return YES;
+}
+
+#else
+
+- (BOOL)playerViewControllerShouldDismiss:(AVPlayerViewController *)playerViewController
+{
+    UNUSED_PARAM(playerViewController);
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        return fullscreenInterface->shouldExitFullscreenWithReason(VideoPresentationInterfaceIOS::ExitFullScreenReason::PinchGestureHandled);
 
     return YES;
 }

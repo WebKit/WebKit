@@ -56,6 +56,7 @@
 #import "WebPasteboardProxy.h"
 #import "WebPrivacyHelpers.h"
 #import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
 #import "WebsiteDataStore.h"
