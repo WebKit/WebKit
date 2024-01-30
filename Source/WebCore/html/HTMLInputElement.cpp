@@ -546,6 +546,10 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     bool previouslySelectable = m_inputType->supportsSelectionAPI();
 
     m_inputType = WTFMove(newType);
+    if (!didStoreValue && willStoreValue)
+        m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
+    else
+        updateValueIfNeeded();
     m_inputType->createShadowSubtreeIfNeeded();
 
     // https://html.spec.whatwg.org/multipage/dom.html#auto-directionality
@@ -558,11 +562,6 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     }
 
     updateWillValidateAndValidity();
-
-    if (!didStoreValue && willStoreValue)
-        m_valueIfDirty = sanitizeValue(attributeWithoutSynchronization(valueAttr));
-    else
-        updateValueIfNeeded();
 
     setFormControlValueMatchesRenderer(false);
     m_inputType->updateInnerTextValue();

@@ -310,12 +310,13 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
     if (!isTextField())
         return false;
 
+    auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
+
     // Clamps to the current value length.
     unsigned innerTextValueLength = innerTextValue().length();
     end = std::min(end, innerTextValueLength);
     start = std::min(start, end);
 
-    auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
     bool hasFocus = document().focusedElement() == this;
 
     RefPtr frame = document().frame();
