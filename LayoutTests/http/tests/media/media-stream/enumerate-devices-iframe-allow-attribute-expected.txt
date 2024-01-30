@@ -1,21 +1,21 @@
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'microphone'.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute 'microphone'.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
-CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'camera'.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for element with origin 'http://localhost:8000' and allow attribute 'camera'.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
-CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'microphone;speaker-selection'.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute 'microphone;speaker-selection'.
 CONSOLE MESSAGE: Not allowed to call getUserMedia.
 
 
