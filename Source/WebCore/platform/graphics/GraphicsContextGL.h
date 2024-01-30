@@ -70,36 +70,6 @@ class VideoFrame;
 
 class GraphicsContextGL;
 
-struct GCGLOwned {
-    GCGLOwned() = default;
-    GCGLOwned(const GCGLOwned&) = delete;
-    GCGLOwned(GCGLOwned&&) = delete;
-    ~GCGLOwned();
-
-    GCGLOwned& operator=(const GCGLOwned&) const = delete;
-    GCGLOwned& operator=(GCGLOwned&&) = delete;
-
-    operator PlatformGLObject() const { return m_object; }
-
-    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
-
-protected:
-    PlatformGLObject m_object = 0;
-};
-
-#define DECLARE_GCGL_OWNED(ClassName) \
-struct GCGLOwned##ClassName : public GCGLOwned { \
-    void adopt(GraphicsContextGL& gl, PlatformGLObject object); \
-    void ensure(GraphicsContextGL& gl); \
-    void release(GraphicsContextGL& gl); \
-}
-
-DECLARE_GCGL_OWNED(Framebuffer);
-DECLARE_GCGL_OWNED(Renderbuffer);
-DECLARE_GCGL_OWNED(Texture);
-
-#undef DECLARE_GCGL_OWNED
-
 #if PLATFORM(COCOA)
 struct GraphicsContextGLEGLImageSourceIOSurfaceHandle {
     MachSendRight handle;
@@ -1726,34 +1696,49 @@ private:
 
 WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher* = nullptr);
 
-inline GCGLOwned::~GCGLOwned()
-{
-    ASSERT(!m_object, "Have you explicitly deleted this object? If so, call release().");
-}
+template<PlatformGLObject(GraphicsContextGL::*createFunc)(), void(GraphicsContextGL::*destroyFunc)(PlatformGLObject)>
+class GCGLOwned {
+    WTF_MAKE_NONCOPYABLE(GCGLOwned);
 
-#define IMPLEMENT_GCGL_OWNED(ClassName) \
-inline void GCGLOwned##ClassName::adopt(GraphicsContextGL& gl, PlatformGLObject object) \
-{ \
-    if (m_object) \
-        gl.delete##ClassName(m_object); \
-    m_object = object; \
-} \
-inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
-{ \
-    if (!m_object) \
-        m_object = gl.create##ClassName(); \
-} \
-\
-inline void GCGLOwned##ClassName::release(GraphicsContextGL& gl) \
-{ \
-    adopt(gl, 0); \
-}
+public:
+    GCGLOwned() = default;
 
-IMPLEMENT_GCGL_OWNED(Framebuffer)
-IMPLEMENT_GCGL_OWNED(Renderbuffer)
-IMPLEMENT_GCGL_OWNED(Texture)
+    GCGLOwned(GCGLOwned&& other)
+        : m_object(other.leakObject())
+    {
+    }
 
-#undef IMPLEMENT_GCGL_OWNED
+    ~GCGLOwned()
+    {
+        ASSERT(!m_object); // Clients should call release() explicitly.
+    }
+
+    operator PlatformGLObject() const { return m_object; }
+
+    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
+
+    void adopt(GraphicsContextGL& gl, PlatformGLObject object)
+    {
+        if (m_object)
+            (gl.*destroyFunc)(m_object);
+        m_object = object;
+    }
+
+    void ensure(GraphicsContextGL& gl)
+    {
+        if (m_object)
+            return;
+        m_object = (gl.*createFunc)();
+    }
+
+    void release(GraphicsContextGL& gl) { adopt(gl, 0); }
+private:
+    PlatformGLObject m_object { 0 };
+};
+
+using GCGLOwnedFramebuffer = GCGLOwned<&GraphicsContextGL::createFramebuffer, &GraphicsContextGL::deleteFramebuffer>;
+using GCGLOwnedRenderbuffer = GCGLOwned<&GraphicsContextGL::createRenderbuffer, &GraphicsContextGL::deleteRenderbuffer>;
+using GCGLOwnedTexture = GCGLOwned<&GraphicsContextGL::createTexture, &GraphicsContextGL::deleteTexture>;
 
 } // namespace WebCore
 
