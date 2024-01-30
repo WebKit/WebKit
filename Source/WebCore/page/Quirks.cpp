@@ -411,8 +411,10 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
     // Vimeo.com has incorrect layout on iOS on certain videos with wider
     // aspect ratios than the device's screen in landscape mode.
     // (Ref: rdar://116531089)
+    // Instagram.com stories flow under the notch and status bar
+    // (Ref: rdar://121014613)
     if (!m_shouldDisableElementFullscreen)
-        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s);
+        m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s) || isDomain("instagram.com"_s);
     return m_shouldDisableElementFullscreen.value();
 #else
     return false;
