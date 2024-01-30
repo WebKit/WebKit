@@ -2111,33 +2111,65 @@ EventTargetInterface Node::eventTargetInterface() const
 }
 
 template <typename MoveNodeFunction, typename MoveShadowRootFunction>
-static void traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNode, MoveShadowRootFunction moveShadowRoot)
+static unsigned traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNode, MoveShadowRootFunction moveShadowRoot)
 {
+    unsigned count = 0;
     for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
         moveNode(*node);
+        ++count;
 
         auto* element = dynamicDowncast<Element>(*node);
         if (!element)
             continue;
 
         if (element->hasSyntheticAttrChildNodes()) {
-            for (auto& attr : element->attrNodeList())
+            for (auto& attr : element->attrNodeList()) {
                 moveNode(*attr);
+                ++count;
+            }
         }
 
         if (auto* shadow = element->shadowRoot())
-            moveShadowRoot(*shadow);
+            count += moveShadowRoot(*shadow);
     }
+    return count;
 }
 
-inline void Node::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+static ALWAYS_INLINE bool isDocumentEligibleForFastAdoption(Document& oldDocument, Document& newDocument)
 {
-    traverseSubtreeToUpdateTreeScope(shadowRoot, [&oldDocument, &newDocument](Node& node) {
-        node.moveNodeToNewDocument(oldDocument, newDocument);
+    return !oldDocument.hasNodeIterators()
+        && !oldDocument.hasRanges()
+        && !oldDocument.hasNodeWithEventListeners()
+        && !oldDocument.hasMutationObservers()
+        && !oldDocument.textManipulationControllerIfExists()
+        && !oldDocument.shouldInvalidateNodeListAndCollectionCaches()
+        && !oldDocument.numberOfIntersectionObservers()
+        && (!AXObjectCache::accessibilityEnabled() || !oldDocument.existingAXObjectCache())
+        && oldDocument.inQuirksMode() == newDocument.inQuirksMode();
+}
+
+inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+{
+    ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
+    return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
+        node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
-        moveShadowTreeToNewDocument(innerShadowRoot, oldDocument, newDocument);
+        return moveShadowTreeToNewDocumentFastCase(innerShadowRoot, oldDocument, newDocument);
+    });
+}
+
+inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+{
+    ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
+    traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
+        node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+    }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
+        innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
+        moveShadowTreeToNewDocumentSlowCase(innerShadowRoot, oldDocument, newDocument);
+        return 0; // Unused.
     });
 }
 
@@ -2150,18 +2182,36 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
     bool newScopeIsUAShadowTree = newScope.rootNode().hasBeenInUserAgentShadowTree();
     if (&oldDocument != &newDocument) {
         oldDocument.incrementReferencingNodeCount();
-        traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
-            ASSERT(!node.isTreeScope());
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
-            if (newScopeIsUAShadowTree)
-                node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
-            node.setTreeScope(newScope);
-            node.moveNodeToNewDocument(oldDocument, newDocument);
-        }, [&](ShadowRoot& shadowRoot) {
-            ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
-            shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
-            moveShadowTreeToNewDocument(shadowRoot, oldDocument, newDocument);
-        });
+        bool isFastCase = isDocumentEligibleForFastAdoption(oldDocument, newDocument) && !newScopeIsUAShadowTree;
+        if (isFastCase) {
+            unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+                ASSERT(!node.isTreeScope());
+                RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+                node.setTreeScope(newScope);
+                node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+            }, [&](ShadowRoot& shadowRoot) {
+                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
+                shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
+                return moveShadowTreeToNewDocumentFastCase(shadowRoot, oldDocument, newDocument);
+            });
+//            UNUSED_PARAM(nodeCount);
+            newDocument.incrementReferencingNodeCount(nodeCount);
+            oldDocument.decrementReferencingNodeCount(nodeCount);
+        } else {
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+                ASSERT(!node.isTreeScope());
+                RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
+                if (newScopeIsUAShadowTree)
+                    node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
+                node.setTreeScope(newScope);
+                node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+            }, [&](ShadowRoot& shadowRoot) {
+                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
+                shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
+                moveShadowTreeToNewDocumentSlowCase(shadowRoot, oldDocument, newDocument);
+                return 0; // Unused
+            });
+        }
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == &oldDocument && &newScope.documentScope() == &newDocument);
         oldDocument.decrementReferencingNodeCount();
     } else {
@@ -2177,11 +2227,33 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
                 nodeLists->adoptTreeScope();
         }, [&newScope](ShadowRoot& shadowRoot) {
             shadowRoot.setParentTreeScope(newScope);
+            return 0; // Unused.
         });
     }
 }
 
-void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
+void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument)
+{
+    ASSERT(!oldDocument.shouldInvalidateNodeListAndCollectionCaches());
+    ASSERT(!oldDocument.hasNodeIterators());
+    ASSERT(!oldDocument.hasRanges());
+    ASSERT(!AXObjectCache::accessibilityEnabled() || !oldDocument.existingAXObjectCache());
+    ASSERT(!oldDocument.textManipulationControllerIfExists());
+    ASSERT(!oldDocument.hasNodeWithEventListeners());
+    ASSERT(!hasEventListeners());
+    ASSERT(!mutationObserverRegistry());
+    ASSERT(!transientMutationObserverRegistry());
+    ASSERT(!oldDocument.numberOfIntersectionObservers());
+
+    if (!hasTypeFlag(TypeFlag::HasDidMoveToNewDocument) && !hasEventTargetFlag(EventTargetFlag::HasLangAttr) && !hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr)
+        && !isDefinedCustomElement())
+        return;
+
+    if (auto* element = dynamicDowncast<Element>(*this))
+        element->didMoveToNewDocument(oldDocument, newDocument);
+}
+
+void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument)
 {
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
