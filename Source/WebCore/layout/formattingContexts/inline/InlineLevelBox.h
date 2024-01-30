@@ -189,13 +189,12 @@ inline void InlineLevelBox::setHasContent()
 
 inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
-    // FIXME: Remove integral flooring when legacy line layout stops using it.
     if (isPreferredLineHeightFontMetricsBased())
-        return primarymetricsOfPrimaryFont().lineSpacing();
+        return primarymetricsOfPrimaryFont().floatLineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
-        return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
-    return floorf(m_style.lineHeight.value());
+        return minimumValueForLength(m_style.lineHeight, fontSize());
+    return m_style.lineHeight.value();
 }
 
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
