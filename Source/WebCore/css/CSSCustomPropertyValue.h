@@ -97,6 +97,7 @@ public:
     bool isInherit() const { return std::holds_alternative<CSSValueID>(m_value) && std::get<CSSValueID>(m_value) == CSSValueInherit; }
     bool isCurrentColor() const;
     bool containsCSSWideKeyword() const;
+    bool isAnimatable() const;
 
     const VariantValue& value() const { return m_value; }
 
