@@ -151,9 +151,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isWaitingForRenderer)
         return;
 
-    if (!m_coordinator.rootCompositingLayer())
-        return;
-
 #if !HAVE(DISPLAY_LINK)
     // If a force-repaint callback was registered, we should force a 'frame sync' that
     // will guarantee us a call to renderNextFrame() once the update is complete.
