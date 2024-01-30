@@ -7859,3 +7859,18 @@ header: <WebCore/SharedBuffer.h>
 [RefCounted, CustomHeader, CreateUsing=fromIPCData] class WebCore::FragmentedSharedBuffer {
     std::variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>> toIPCData();
 };
+
+header: <WebCore/PlatformMediaError.h>
+enum class WebCore::PlatformMediaError : uint8_t {
+    AppendError,
+    ClientDisconnected,
+    BufferRemoved,
+    SourceRemoved,
+    IPCError,
+    ParsingError,
+    MemoryError,
+    Cancelled,
+    LogicError,
+    DecoderCreationError,
+    NotSupportedError,
+};
