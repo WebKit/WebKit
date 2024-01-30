@@ -224,8 +224,11 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
             break;
         return Exits;
 
-    case CompareEq:
     case CompareStrictEq:
+        if (node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse))
+            break;
+        FALLTHROUGH;
+    case CompareEq:
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:

@@ -1149,6 +1149,8 @@ public:
 
     void freeDFGIRAfterLowering();
 
+    bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
+
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
 
     StackCheck m_stackChecker;
