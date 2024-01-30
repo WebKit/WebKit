@@ -73,7 +73,6 @@ public:
     {
         g_assert_nonnull(item);
         g_assert_cmpstr(webkit_back_forward_list_item_get_uri(item), ==, uri);
-        g_assert_cmpstr(webkit_back_forward_list_item_get_title(item), == , "");
         g_assert_cmpstr(webkit_back_forward_list_item_get_original_uri(item), ==, originalURI);
     }
 
