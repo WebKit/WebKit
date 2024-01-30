@@ -628,7 +628,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->nsImage();
+    return cachedImage->imageForRenderer(renderer)->adapter().nsImage();
 }
 
 #endif
@@ -656,7 +656,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->tiffRepresentation();
+    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->adapter().tiffRepresentation();
 }
 
 #endif

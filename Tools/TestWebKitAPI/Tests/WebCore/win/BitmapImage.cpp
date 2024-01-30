@@ -40,12 +40,11 @@ TEST(WebCore, BitmapImageEmptyFrameTest)
 {
     IntSize sz(16, 16);
 
-    BitmapInfo bitmapInfo = BitmapInfo::create(sz);
-
+    auto bitmapInfo = BitmapInfo::create(sz);
     auto bmp = adoptGDIObject(CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, 0, 0, 0));
+    auto nativeImage = ImageAdapter::nativeImageOfHBITMAP(bmp.get());
 
-    RefPtr<Image> bitmapImageTest = BitmapImage::create(bmp.get());
-
+    RefPtr<Image> bitmapImageTest = BitmapImage::create(WTFMove(nativeImage));
     if (!bitmapImageTest)
         return;
 
@@ -55,7 +54,7 @@ TEST(WebCore, BitmapImageEmptyFrameTest)
     int bits[256];
     auto bitmap = adoptGDIObject(CreateBitmap(sz.width(), sz.height(), 1, 32, bits));
 
-    bitmapImageTest->getHBITMAPOfSize(bitmap.get(), &sz);
+    bitmapImageTest->adapter().getHBITMAPOfSize(bitmap.get(), &sz);
 }
 
 } // namespace TestWebKitAPI

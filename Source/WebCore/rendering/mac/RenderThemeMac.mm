@@ -1357,9 +1357,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(layout);
     if (deviceScaleFactor >= 2)
-        return { Image::loadPlatformResource("AttachmentPlaceholder@2x"), 2 };
+        return { ImageAdapter::loadPlatformResource("AttachmentPlaceholder@2x"), 2 };
 
-    return { Image::loadPlatformResource("AttachmentPlaceholder"), 1 };
+    return { ImageAdapter::loadPlatformResource("AttachmentPlaceholder"), 1 };
 #endif
 }
 

@@ -230,7 +230,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!image)
         return nil;
 
-    return image->snapshotNSImage();
+    return image->adapter().snapshotNSImage();
 }
 
 #endif
@@ -247,7 +247,7 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view, 
     if (Image* image = page->contextMenuController().context().controlledImage()) {
         ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
 
-        RetainPtr<NSItemProvider> itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:image->snapshotNSImage().get() typeIdentifier:@"public.image"]);
+        RetainPtr<NSItemProvider> itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:image->adapter().snapshotNSImage().get() typeIdentifier:@"public.image"]);
 
         bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
         m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithItems:@[ itemProvider.get() ] includeEditorServices:isContentEditable client:this style:NSSharingServicePickerStyleRollover]);

@@ -808,7 +808,7 @@ void Pasteboard::writeImage(Element& element, const URL&, const String&)
 
     auto coreBitmap = adoptGDIObject(::CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0));
     HGDIOBJ oldSource = ::SelectObject(sourceDC.get(), coreBitmap.get());
-    image->getHBITMAP(coreBitmap.get());
+    image->adapter().getHBITMAP(coreBitmap.get());
 
     ::BitBlt(compatibleDC.get(), 0, 0, image->width(), image->height(), sourceDC.get(), 0, 0, SRCCOPY);
 

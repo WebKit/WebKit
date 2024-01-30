@@ -34,18 +34,6 @@
 #include "ImageSource.h"
 #include "IntSize.h"
 
-#if USE(CG) || USE(APPKIT)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(APPKIT)
-OBJC_CLASS NSImage;
-#endif
-
-#if PLATFORM(WIN)
-typedef struct HBITMAP__ *HBITMAP;
-#endif
-
 namespace WebCore {
 
 class Timer;
@@ -70,16 +58,14 @@ public:
     {
         return adoptRef(*new BitmapImage(observer));
     }
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT static RefPtr<BitmapImage> create(HBITMAP);
-#endif
+
     virtual ~BitmapImage();
 
     EncodedDataStatus dataChanged(bool allDataReceived) override;
     unsigned decodedSize() const { return m_source->decodedSize(); }
 
     EncodedDataStatus encodedDataStatus() const { return m_source->encodedDataStatus(); }
-    size_t frameCount() const { return m_source->frameCount(); }
+    size_t frameCount() const final { return m_source->frameCount(); }
     size_t primaryFrameIndex() const { return m_source->primaryFrameIndex(); }
     RepetitionCount repetitionCount() const { return m_source->repetitionCount(); }
     String uti() const override { return m_source->uti(); }
@@ -122,35 +108,9 @@ public:
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
 
-    // Accessors for native image formats.
-#if USE(APPKIT)
-    NSImage *nsImage() override;
-    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage() override;
-#endif
-
-#if PLATFORM(COCOA)
-    CFDataRef tiffRepresentation() override;
-#endif
-
-#if PLATFORM(WIN)
-    bool getHBITMAP(HBITMAP) override;
-    bool getHBITMAPOfSize(HBITMAP, const IntSize*) override;
-#endif
-
-#if PLATFORM(GTK)
-    GRefPtr<GdkPixbuf> gdkPixbuf() override;
-#if USE(GTK4)
-    GRefPtr<GdkTexture> gdkTexture() override;
-#endif
-#endif
-
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) override;
     RefPtr<NativeImage> nativeImageForCurrentFrame() override;
     RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation) override;
-#if USE(CG)
-    RefPtr<NativeImage> nativeImageOfSize(const IntSize&) override;
-    Vector<Ref<NativeImage>> framesNativeImages();
-#endif
 
     void imageFrameAvailableAtIndex(size_t);
     void decode(Function<void()>&&);
@@ -159,8 +119,8 @@ private:
     WEBCORE_EXPORT BitmapImage(Ref<NativeImage>&&);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
-    RefPtr<NativeImage> frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
-    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
+    RefPtr<NativeImage> nativeImageAtIndex(size_t index) final { return m_source->frameImageAtIndex(index); }
+    RefPtr<NativeImage> nativeImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { }) final;
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy
@@ -179,9 +139,6 @@ private:
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) override;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override;
-#if PLATFORM(WIN)
-    void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) override;
-#endif
 
     // Animation.
     enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
@@ -198,16 +155,9 @@ private:
     // automatically pause once all observers no longer want to render the image anywhere.
     void stopAnimation() override;
     void resetAnimation() override;
-    
-    // Handle platform-specific data
-    void invalidatePlatformData();
 
 #if ASSERT_ENABLED
     bool notSolidColor() override;
-#endif
-
-#if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> tiffRepresentation(const Vector<Ref<NativeImage>>&);
 #endif
 
     void clearTimer();
@@ -246,12 +196,6 @@ private:
 
     unsigned m_decodeCountForTesting { 0 };
 
-#if USE(APPKIT)
-    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.
-#endif
-#if USE(CG)
-    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
-#endif
     RefPtr<NativeImage> m_cachedImage;
 };
 

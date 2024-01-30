@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
+#include "ImageAdapter.h"
 #include "ImageOrientation.h"
 #include "ImagePaintingOptions.h"
 #include "ImageTypes.h"
@@ -41,28 +42,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(APPKIT)
-OBJC_CLASS NSImage;
-#endif
-
-#if USE(CG)
-struct CGContext;
-#endif
-
-#if PLATFORM(WIN)
-typedef struct tagSIZE SIZE;
-typedef SIZE* LPSIZE;
-typedef struct HBITMAP__ *HBITMAP;
-#endif
-
-#if PLATFORM(GTK)
-#include <wtf/glib/GRefPtr.h>
-typedef struct _GdkPixbuf GdkPixbuf;
-#if USE(GTK4)
-typedef struct _GdkTexture GdkTexture;
-#endif
-#endif
 
 namespace WebCore {
 
@@ -82,7 +61,6 @@ class Image : public RefCounted<Image>, public CanMakeWeakPtr<Image> {
 public:
     virtual ~Image();
     
-    WEBCORE_EXPORT static Ref<Image> loadPlatformResource(const char* name);
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
     WEBCORE_EXPORT static bool supportsType(const String&);
     static bool isPDFResource(const String& mimeType, const URL&);
@@ -100,6 +78,8 @@ public:
     virtual bool isCustomPaintImage() const { return false; }
 
     bool drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
+
+    virtual size_t frameCount() const { return 1; }
 
     virtual bool currentFrameKnownToBeOpaque() const = 0;
     virtual bool isAnimated() const { return false; }
@@ -155,6 +135,10 @@ public:
     // Typically the CachedImage that owns us.
     RefPtr<ImageObserver> imageObserver() const;
     void setImageObserver(RefPtr<ImageObserver>&&);
+
+    WEBCORE_EXPORT ImageAdapter& adapter();
+    void invalidateAdapter();
+
     URL sourceURL() const;
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
@@ -164,30 +148,8 @@ public:
     virtual RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) { return nullptr; }
     virtual RefPtr<NativeImage> nativeImageForCurrentFrame() { return nativeImage(); }
     virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true) { return nativeImageForCurrentFrame(); }
-    virtual RefPtr<NativeImage> nativeImageOfSize(const IntSize&) { return nullptr; }
-
-    // Accessors for native image formats.
-
-#if USE(APPKIT)
-    virtual NSImage *nsImage() { return nullptr; }
-    virtual RetainPtr<NSImage> snapshotNSImage() { return nullptr; }
-#endif
-
-#if PLATFORM(COCOA)
-    virtual CFDataRef tiffRepresentation() { return nullptr; }
-#endif
-
-#if PLATFORM(WIN)
-    virtual bool getHBITMAP(HBITMAP) { return false; }
-    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) { return false; }
-#endif
-
-#if PLATFORM(GTK)
-    virtual GRefPtr<GdkPixbuf> gdkPixbuf() { return nullptr; }
-#if USE(GTK4)
-    virtual GRefPtr<GdkTexture> gdkTexture() { return nullptr; }
-#endif
-#endif
+    virtual RefPtr<NativeImage> nativeImageAtIndex(size_t) { return nativeImage(); }
+    virtual RefPtr<NativeImage> nativeImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { }) { return nativeImageAtIndex(index); }
 
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
@@ -202,9 +164,6 @@ protected:
 
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
-#if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect&, const IntSize&, CompositeOperator) { }
-#endif
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
@@ -217,6 +176,7 @@ protected:
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     WeakPtr<ImageObserver> m_imageObserver;
+    std::unique_ptr<ImageAdapter> m_adapter;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };

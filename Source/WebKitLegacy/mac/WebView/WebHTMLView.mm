@@ -1984,7 +1984,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardType()]];
     } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardType()] && _private->promisedDragTIFFDataSource) {
         if (auto* image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(__bridge NSData *)image->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
+            [pasteboard setData:(__bridge NSData *)image->adapter().tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }

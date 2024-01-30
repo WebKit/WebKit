@@ -436,7 +436,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         auto cfCurrentTime = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &nowPlayingInfo.currentTime));
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoElapsedTime, cfCurrentTime.get());
     }
-    RetainPtr tiffImage = nowPlayingInfo.artwork && nowPlayingInfo.artwork->image ? nowPlayingInfo.artwork->image->tiffRepresentation() : nullptr;
+    RetainPtr tiffImage = nowPlayingInfo.artwork && nowPlayingInfo.artwork->image ? nowPlayingInfo.artwork->image->adapter().tiffRepresentation() : nullptr;
     if (tiffImage) {
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkData, tiffImage.get());
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoArtworkMIMEType, @"image/tiff");

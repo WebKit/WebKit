@@ -2284,6 +2284,7 @@ platform/graphics/GraphicsTypes.cpp
 platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
 platform/graphics/Image.cpp
+platform/graphics/ImageAdapter.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageBufferAllocator.cpp
 platform/graphics/ImageBufferBackend.cpp
