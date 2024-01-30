@@ -712,7 +712,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         if (cookies.isEmpty())
             return;
         for (auto& observer : it->value)
-            observer->cookiesAdded(host, cookies);
+            observer.cookiesAdded(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 
     [nsCookieStorage() _setCookiesRemovedHandler:makeBlockPtr([this, weakThis = WeakPtr { *this }](NSArray<NSHTTPCookie *> *removedCookies, NSString *domainForRemovedCookies, bool removeAllCookies) {
@@ -721,7 +721,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         if (removeAllCookies) {
             for (auto& observers : m_cookieChangeObservers.values()) {
                 for (auto& observer : observers)
-                    observer->allCookiesDeleted();
+                    observer.allCookiesDeleted();
             }
             return;
         }
@@ -735,7 +735,7 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         if (cookies.isEmpty())
             return;
         for (auto& observer : it->value)
-            observer->cookiesDeleted(host, cookies);
+            observer.cookiesDeleted(host, cookies);
     }).get() onQueue:dispatch_get_main_queue()];
 }
 
@@ -756,10 +756,10 @@ void NetworkStorageSession::startListeningForCookieChangeNotifications(CookieCha
     registerCookieChangeListenersIfNecessary();
 
     auto& observers = m_cookieChangeObservers.ensure(host, [] {
-        return HashSet<CheckedPtr<CookieChangeObserver>> { };
+        return WeakHashSet<CookieChangeObserver> { };
     }).iterator->value;
-    ASSERT(!observers.contains(&observer));
-    observers.add(&observer);
+    ASSERT(!observers.contains(observer));
+    observers.add(observer);
 
     if (!m_subscribedDomainsForCookieChanges)
         m_subscribedDomainsForCookieChanges = adoptNS([[NSMutableSet alloc] init]);
@@ -780,9 +780,9 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
             continue;
 
         auto& observers = it->value;
-        ASSERT(observers.contains(&observer));
-        observers.remove(&observer);
-        if (observers.isEmpty()) {
+        ASSERT(observers.contains(observer));
+        observers.remove(observer);
+        if (observers.isEmptyIgnoringNullReferences()) {
             m_cookieChangeObservers.remove(it);
             ASSERT([m_subscribedDomainsForCookieChanges containsObject:(NSString *)host]);
             [m_subscribedDomainsForCookieChanges removeObject:(NSString *)host];

@@ -93,7 +93,7 @@ enum class ApplyTrackingPrevention : bool { No, Yes };
 enum class ScriptWrittenCookiesOnly : bool { No, Yes };
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-class CookieChangeObserver : public CanMakeCheckedPtr {
+class CookieChangeObserver : public CanMakeWeakPtr<CookieChangeObserver> {
 public:
     virtual ~CookieChangeObserver() { }
     virtual void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) = 0;
@@ -290,7 +290,7 @@ private:
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     bool m_didRegisterCookieListeners { false };
     RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
-    MemoryCompactRobinHoodHashMap<String, HashSet<CheckedPtr<CookieChangeObserver>>> m_cookieChangeObservers;
+    MemoryCompactRobinHoodHashMap<String, WeakHashSet<CookieChangeObserver>> m_cookieChangeObservers;
 #endif
     WeakHashSet<CookiesEnabledStateObserver> m_cookiesEnabledStateObservers;
 
