@@ -336,7 +336,7 @@ class Git(SCM, SVNRepository):
         config_path = self._filesystem.dirname(self._filesystem.path_to_module('webkitpy.common.config'))
         order_file = self._filesystem.join(config_path, 'orderfile')
         if self._filesystem.exists(order_file):
-            command += ['-O', order_file]
+            command += ['-O{}'.format(order_file)]
 
         if git_index:
             assert command[1] == 'diff'
@@ -344,7 +344,10 @@ class Git(SCM, SVNRepository):
         elif git_commit:
             command += [merge_base]
         elif merge_base != head:
-            command += ['HEAD...{}'.format(merge_base)]
+            # Because the merge_base is a parent of HEAD, <rev1>..<rev2> finds the same
+            # total set of change for both git-format-patch (a revision range), and
+            # git-diff (viewing the changes between the two commits).
+            command += ['{}..HEAD'.format(merge_base)]
         else:
             command += ['HEAD']
 
