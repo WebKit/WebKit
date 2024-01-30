@@ -130,14 +130,8 @@ static bool shouldUseLocalDecoder(std::optional<VideoCodecType> type, const Vide
         return true;
 
 #if PLATFORM(MAC)
-#if CPU(X86_64)
     if (*type == VideoCodecType::VP9 && config.decoding == VideoDecoder::HardwareAcceleration::No)
         return true;
-#else
-    // FIXME: remove this once rdar://121693406 has been fixed
-    if (*type == VideoCodecType::VP9)
-        return true;
-#endif
 #endif
 
     return false;
