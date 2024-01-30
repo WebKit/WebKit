@@ -47,7 +47,15 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
     m_matches.set(*frameID, didWrap);
 }
 
-static inline bool shouldTargetFrame(const WebFrameProxy& frame, const WebFrameProxy& focusedFrame, bool didWrap)
+RefPtr<WebFrameProxy> FindStringCallbackAggregator::incrementFrame(WebFrameProxy& frame)
+{
+    auto canWrap = m_options.contains(FindOptions::WrapAround) ? CanWrap::Yes : CanWrap::No;
+    return m_options.contains(FindOptions::Backwards)
+        ? frame.traversePrevious(canWrap).frame
+        : frame.traverseNext(canWrap).frame;
+}
+
+bool FindStringCallbackAggregator::shouldTargetFrame(WebFrameProxy& frame, WebFrameProxy& focusedFrame, bool didWrap)
 {
     if (!didWrap)
         return true;
@@ -55,11 +63,11 @@ static inline bool shouldTargetFrame(const WebFrameProxy& frame, const WebFrameP
     if (frame.process() != focusedFrame.process())
         return true;
 
-    RefPtr nextFrameInProcess = focusedFrame.traverseNext(CanWrap::Yes).frame;
+    RefPtr nextFrameInProcess = incrementFrame(focusedFrame);
     while (nextFrameInProcess && nextFrameInProcess != &focusedFrame && nextFrameInProcess->process() == focusedFrame.process()) {
         if (nextFrameInProcess == &frame)
             return true;
-        nextFrameInProcess = nextFrameInProcess->traverseNext(CanWrap::Yes).frame;
+        nextFrameInProcess = incrementFrame(*nextFrameInProcess);
     }
     return false;
 }
@@ -85,9 +93,7 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
             if (shouldTargetFrame(*targetFrame, *focusedFrame, it->value))
                 break;
         }
-        // FIXME(267905): This should have support for backwards traversal.
-        auto canWrap = m_options.contains(FindOptions::WrapAround) ? CanWrap::Yes : CanWrap::No;
-        targetFrame = targetFrame->traverseNext(canWrap).frame;
+        targetFrame = incrementFrame(*targetFrame);
     } while (targetFrame && targetFrame != focusedFrame);
 
     auto message = Messages::WebPage::FindString(m_string, m_options, m_maxMatchCount);

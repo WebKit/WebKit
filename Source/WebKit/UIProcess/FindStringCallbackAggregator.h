@@ -30,6 +30,7 @@
 
 namespace WebKit {
 
+class WebFrameProxy;
 class WebPageProxy;
 
 enum class FindOptions : uint16_t;
@@ -42,6 +43,9 @@ public:
 
 private:
     FindStringCallbackAggregator(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+
+    RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
+    bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
 
     WeakPtr<WebPageProxy> m_page;
     String m_string;
