@@ -34,7 +34,7 @@
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
 
 namespace WGSL {
@@ -145,8 +145,8 @@ private:
     IndexMap<Vector<std::pair<unsigned, String>>> m_groupBindingMap;
     IndexMap<const Type*> m_structTypes;
     HashMap<String, AST::Variable*> m_defs;
-    HashSet<String> m_reads;
-    HashMap<AST::Function*, HashSet<String>> m_visitedFunctions;
+    ListHashSet<String> m_reads;
+    HashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
     PipelineLayout* m_generatedLayout { nullptr };
     unsigned m_constantId { 0 };
@@ -234,10 +234,11 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 
 void RewriteGlobalVariables::visit(AST::Function& function)
 {
-    HashSet<String> reads;
+    ListHashSet<String> reads;
     for (auto& callee : m_callGraph.callees(function)) {
         visitCallee(callee);
-        reads.formUnion(WTFMove(m_reads));
+        for (const auto& read : m_reads)
+            reads.add(read);
     }
     m_reads = WTFMove(reads);
     m_defs.clear();
