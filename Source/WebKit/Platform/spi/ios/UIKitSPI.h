@@ -489,8 +489,6 @@ typedef enum {
 - (void)layoutHasChanged;
 @end
 
-@class UITextInputArrowKeyHistory;
-
 @protocol UITextInputPrivate <UITextInput, UITextInputTokenizer, UITextInputTraits_Private>
 @optional
 - (BOOL)requiresKeyEvents;
@@ -1203,6 +1201,8 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (BOOL)_requiresKeyboardResetOnReload;
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
 @end
+
+@class UITextInputArrowKeyHistory;
 
 WTF_EXTERN_C_BEGIN
 

@@ -156,8 +156,6 @@ WTF_EXTERN_C_END
 
 @class WebEvent;
 
-@class UITextInputArrowKeyHistory;
-
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
 - (UITextInputTraits *)textInputTraits;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
@@ -497,6 +495,8 @@ typedef enum {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+@class UITextInputArrowKeyHistory;
+
 // Start of UIKit IPI
 
 @interface UITextAutofillSuggestion ()
@@ -544,8 +544,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)clickDriver:(id<_UIClickInteractionDriving>)driver didUpdateHighlightProgress:(CGFloat)progress;
 - (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
-
-@class UITextInputArrowKeyHistory;
 
 @protocol UITextInputInternal
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
