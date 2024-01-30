@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2008, 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -279,7 +280,7 @@ String HitTestResult::title(TextDirection& dir) const
         if (is<Element>(*titleNode)) {
             Element& titleElement = downcast<Element>(*titleNode);
             String title = titleElement.title();
-            if (!title.isEmpty()) {
+            if (!title.isNull()) {
                 if (auto renderer = titleElement.renderer())
                     dir = renderer->style().direction();
                 return title;
