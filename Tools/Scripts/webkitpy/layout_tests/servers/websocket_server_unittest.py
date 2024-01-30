@@ -32,11 +32,11 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port import test
-from webkitpy.layout_tests.servers.http_server import Lighttpd
+from webkitpy.layout_tests.servers.websocket_server import PyWebSocket
 from webkitpy.layout_tests.servers.http_server_base import ServerError
 
 
-class TestHttpServer(unittest.TestCase):
+class TestWebsocketServer(unittest.TestCase):
     def test_start_cmd(self):
         # Fails on win - see https://bugs.webkit.org/show_bug.cgi?id=84726
         if sys.platform.startswith('win') or sys.platform == 'cygwin':
@@ -44,46 +44,19 @@ class TestHttpServer(unittest.TestCase):
 
         host = MockHost()
         test_port = test.TestPort(host)
-        host.filesystem.write_text_file(
-            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/lighttpd.conf", "Mock Config\n")
-        host.filesystem.write_text_file(
-            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"], ["/media-resources", "media"], ["/test/test.file", "resources/testfile"]]')
-        host.filesystem.write_text_file(
-            "/usr/lib/lighttpd/liblightcomp.dylib", "Mock dylib")
 
-        server = Lighttpd(test_port, "/mock/output_dir",
-                          additional_dirs={
-                              "/mock/one-additional-dir": "/mock-checkout/one-additional-dir",
-                              "/mock/another-additional-dir": "/mock-checkout/one-additional-dir"})
+        server = PyWebSocket(test_port, "/mock/output_dir")
         self.assertRaises(ServerError, server.start)
-        self.assertEqual(server.ports_to_forward(), [8000, 8080, 8443])
-
-        config_file = host.filesystem.read_text_file("/mock/output_dir/lighttpd.conf")
-        self.assertEqual(re.findall(r"alias.url.+", config_file), [
-            'alias.url = ( "/js-test-resources" => "/test.checkout/LayoutTests/resources" )',
-            'alias.url += ( "/media-resources" => "/test.checkout/LayoutTests/media" )',
-            'alias.url += ( "/test/test.file" => "/test.checkout/LayoutTests/resources/testfile" )',
-            'alias.url += ( "/mock/one-additional-dir" => "/mock-checkout/one-additional-dir" )',
-            'alias.url += ( "/mock/another-additional-dir" => "/mock-checkout/one-additional-dir" )',
-        ])
+        self.assertEqual(server.ports_to_forward(), [8880])
 
     def test_win32_start_and_stop(self):
         host = MockHost()
         test_port = test.TestPort(host)
-        host.filesystem.write_text_file(
-            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/lighttpd.conf", "Mock Config\n")
-        host.filesystem.write_text_file(
-            "/usr/lib/lighttpd/liblightcomp.dylib", "Mock dylib")
-        host.filesystem.write_text_file(
-            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/aliases.json", '[["/js-test-resources", "resources"], ["/media-resources", "media"], ["/test/test.file", "resources/testfile"]]')
 
         host.platform.is_win = lambda: True
         host.platform.is_cygwin = lambda: False
 
-        server = Lighttpd(test_port, "/mock/output_dir",
-                          additional_dirs={
-                              "/mock/one-additional-dir": "/mock-checkout/one-additional-dir",
-                              "/mock/another-additional-dir": "/mock-checkout/one-additional-dir"})
+        server = PyWebSocket(test_port, "/mock/output_dir")
         server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
 

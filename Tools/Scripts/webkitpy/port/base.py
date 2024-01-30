@@ -77,7 +77,7 @@ from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
 from webkitpy.port.image_diff import ImageDiffResult
-from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
+from webkitpy.layout_tests.servers import apache_http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
 
@@ -313,10 +313,7 @@ class Port(object):
         return True
 
     def check_httpd(self):
-        if self._uses_apache():
-            httpd_path = self._path_to_apache()
-        else:
-            httpd_path = self._path_to_lighttpd()
+        httpd_path = self._path_to_apache()
 
         try:
             server_name = self._filesystem.basename(httpd_path)
@@ -898,10 +895,7 @@ class Port(object):
             return
 
         http_port = self.get_option('http_port')
-        if self._uses_apache():
-            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
-        else:
-            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
+        server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
 
         server.start()
         self._http_server = server
@@ -1165,9 +1159,6 @@ class Port(object):
     # or any of its subclasses.
     #
 
-    def _uses_apache(self):
-        return True
-
     # FIXME: This does not belong on the port object.
     @memoized
     def _path_to_apache(self):
@@ -1306,18 +1297,6 @@ class Port(object):
 
     def path_to_api_test_binaries(self):
         return {binary: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}
-
-    def _path_to_lighttpd(self):
-        """Returns the path to the LigHTTPd binary.
-
-        This is needed only by ports that use the http_server.py module."""
-        raise NotImplementedError('Port._path_to_lighttpd')
-
-    def _path_to_lighttpd_modules(self):
-        """Returns the path to the LigHTTPd modules directory.
-
-        This is needed only by ports that use the http_server.py module."""
-        raise NotImplementedError('Port._path_to_lighttpd_modules')
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a

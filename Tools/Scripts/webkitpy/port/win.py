@@ -193,9 +193,6 @@ class WinPort(ApplePort):
         return self.host.platform.is_cygwin()
 
     # Note: These are based on the stock XAMPP locations for these files.
-    def _uses_apache(self):
-        return True
-
     def _path_to_apache(self):
         root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
         path = self._filesystem.join(root, 'apache', 'bin', 'httpd.exe')
@@ -203,12 +200,6 @@ class WinPort(ApplePort):
             return path
         _log.error('Could not find apache in the expected location. (path=%s)' % path)
         return None
-
-    def _path_to_lighttpd(self):
-        return "/usr/sbin/lighttpd"
-
-    def _path_to_lighttpd_modules(self):
-        return "/usr/lib/lighttpd"
 
     def _path_to_default_image_diff(self):
         return self._build_path('ImageDiff.exe')
