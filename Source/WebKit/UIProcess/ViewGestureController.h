@@ -88,6 +88,8 @@ typedef struct {
     bool isEnd;
 } PlatformGtkScrollData;
 typedef PlatformGtkScrollData* PlatformScrollEvent;
+#else
+typedef void* PlatformScrollEvent;
 #endif
 
 namespace WebKit {
@@ -101,6 +103,10 @@ class ViewGestureController : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
 public:
+
+    static constexpr double defaultMinMagnification { 1 };
+    static constexpr double defaultMaxMagnification { 3 };
+
     ViewGestureController(WebPageProxy&);
     ~ViewGestureController();
     void platformTeardown();
@@ -293,7 +299,7 @@ private:
     bool shouldUseSnapshotForSize(ViewSnapshot&, WebCore::FloatSize swipeLayerSize, float topContentInset);
 
 #if PLATFORM(MAC)
-    static double resistanceForDelta(double deltaScale, double currentScale);
+    static double resistanceForDelta(double deltaScale, double currentScale, double minMagnification, double maxMagnification);
 
     CALayer* determineSnapshotLayerParent() const;
     CALayer* determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer* snapshotLayerParent) const;
@@ -485,11 +491,6 @@ private:
 
     SnapshotRemovalTracker m_snapshotRemovalTracker;
     WTF::Function<void()> m_loadCallback;
-
-#if !PLATFORM(IOS_FAMILY)
-    static constexpr double minMagnification { 1 };
-    static constexpr double maxMagnification { 3 };
-#endif
 };
 
 } // namespace WebKit

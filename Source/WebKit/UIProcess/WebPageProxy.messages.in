@@ -142,7 +142,7 @@ messages -> WebPageProxy {
 
     UpdateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
 
-    MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
+    MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture, double minScale, double maxScale)
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     # Resource load messages

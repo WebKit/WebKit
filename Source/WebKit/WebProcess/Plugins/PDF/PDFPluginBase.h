@@ -110,6 +110,9 @@ public:
     virtual CGFloat scaleFactor() const = 0;
     virtual CGSize contentSizeRespectingZoom() const = 0;
 
+    virtual CGFloat minScaleFactor() const { return 0.25; }
+    virtual CGFloat maxScaleFactor() const { return 5; }
+
     bool isLocked() const;
 
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_pdfDocument; }

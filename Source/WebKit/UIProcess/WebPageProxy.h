@@ -1222,9 +1222,14 @@ public:
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }
     void setTextZoomFactor(double);
+
     double pageZoomFactor() const;
     void setPageZoomFactor(double);
+
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
+
+    double minPageZoomFactor() const;
+    double maxPageZoomFactor() const;
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, const WebCore::IntPoint& centerInViewCoordinates);
@@ -2408,7 +2413,7 @@ private:
     void didFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier, const UserData&);
     void didDisplayInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
     void didRunInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
-    void mainFramePluginHandlesPageScaleGestureDidChange(bool);
+    void mainFramePluginHandlesPageScaleGestureDidChange(bool, double minScale, double maxScale);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
@@ -3122,8 +3127,14 @@ private:
     double m_textZoomFactor { 1 };
     double m_pageZoomFactor { 1 };
     double m_pageScaleFactor { 1 };
+
     double m_pluginZoomFactor { 1 };
+
+    double m_pluginMinZoomFactor { 1 };
+    double m_pluginMaxZoomFactor { 1 };
+
     double m_pluginScaleFactor { 1 };
+
     double m_viewScaleFactor { 1 };
     float m_intrinsicDeviceScaleFactor { 1 };
     std::optional<float> m_customDeviceScaleFactor;

@@ -714,6 +714,8 @@ void ViewGestureController::endMagnificationGesture()
     if (m_activeGestureType != ViewGestureType::Magnification)
         return;
 
+    auto minMagnification = m_webPageProxy.minPageZoomFactor();
+    auto maxMagnification = m_webPageProxy.maxPageZoomFactor();
     double newMagnification = clampTo<double>(m_magnification, minMagnification, maxMagnification);
 
     if (m_frameHandlesMagnificationGesture)

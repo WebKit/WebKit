@@ -118,6 +118,7 @@
 #include "UndoOrRedo.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "UserMediaProcessManager.h"
+#include "ViewGestureController.h"
 #include "ViewWindowCoordinates.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
@@ -683,6 +684,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_waitsForPaintAfterViewDidMoveToWindow(m_configuration->waitsForPaintAfterViewDidMoveToWindow())
+    , m_pluginMinZoomFactor(ViewGestureController::defaultMinMagnification)
+    , m_pluginMaxZoomFactor(ViewGestureController::defaultMaxMagnification)
     , m_hasRunningProcess(process.state() != WebProcessProxy::State::Terminated)
     , m_controlledByAutomation(m_configuration->isControlledByAutomation())
 #if PLATFORM(COCOA)
@@ -4805,6 +4808,22 @@ double WebPageProxy::pageZoomFactor() const
     return m_pageZoomFactor;
 }
 
+double WebPageProxy::minPageZoomFactor() const
+{
+    if (m_mainFramePluginHandlesPageScaleGesture)
+        return m_pluginMinZoomFactor;
+
+    return ViewGestureController::defaultMinMagnification;
+}
+
+double WebPageProxy::maxPageZoomFactor() const
+{
+    if (m_mainFramePluginHandlesPageScaleGesture)
+        return m_pluginMaxZoomFactor;
+
+    return ViewGestureController::defaultMaxMagnification;
+}
+
 double WebPageProxy::pageScaleFactor() const
 {
     // PDF documents use zoom and scale factors to size themselves appropriately in the window. We store them
@@ -6615,9 +6634,13 @@ void WebPageProxy::didRunInsecureContentForFrame(FrameIdentifier frameID, const 
     m_navigationClient->didRunInsecureContent(*this, protectedProcess()->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
-void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
+void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture, double minScale, double maxScale)
 {
     m_mainFramePluginHandlesPageScaleGesture = mainFramePluginHandlesPageScaleGesture;
+    if (m_mainFramePluginHandlesPageScaleGesture) {
+        m_pluginMinZoomFactor = minScale;
+        m_pluginMaxZoomFactor = maxScale;
+    }
 }
 
 #if !PLATFORM(COCOA)

@@ -51,9 +51,6 @@
 #import <pal/spi/mac/NSEventSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
-static const double minElasticMagnification = 0.75;
-static const double maxElasticMagnification = 4;
-
 static const double zoomOutBoost = 1.6;
 static const double zoomOutResistance = 0.10;
 
@@ -89,7 +86,7 @@ void ViewGestureController::platformTeardown()
         removeSwipeSnapshot();
 }
 
-double ViewGestureController::resistanceForDelta(double deltaScale, double currentScale)
+double ViewGestureController::resistanceForDelta(double deltaScale, double currentScale, double minMagnification, double maxMagnification)
 {
     // Zoom out with slight acceleration, until we reach minimum scale.
     if (deltaScale < 0 && currentScale > minMagnification)
@@ -136,11 +133,19 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
 
     willBeginGesture(ViewGestureType::Magnification);
 
+    auto minMagnification = m_webPageProxy.minPageZoomFactor();
+    auto maxMagnification = m_webPageProxy.maxPageZoomFactor();
+
     double scale = event.magnification;
-    double scaleWithResistance = resistanceForDelta(scale, m_magnification) * scale;
+    double scaleWithResistance = resistanceForDelta(scale, m_magnification, minMagnification, maxMagnification) * scale;
+
+    auto minElasticMagnification = minMagnification * 0.75;
+    auto maxElasticMagnification = maxMagnification * 1.333;
 
     m_magnification += m_magnification * scaleWithResistance;
     m_magnification = std::min(std::max(m_magnification, minElasticMagnification), maxElasticMagnification);
+
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleMagnificationGestureEvent - gesture scale " << scale << " with resistance " << scaleWithResistance << " clamped to " << m_magnification);
 
     m_magnificationOrigin = origin;
 
@@ -198,6 +203,8 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     if (fitEntireRect)
         targetMagnification = std::min(targetMagnification, static_cast<double>(visibleContentRect.height() / viewportConstrainedUnscaledTargetRect.height()));
 
+    auto minMagnification = m_webPageProxy.minPageZoomFactor();
+    auto maxMagnification = m_webPageProxy.maxPageZoomFactor();
     targetMagnification = std::min(std::max(targetMagnification, minMagnification), maxMagnification);
 
     // Allow panning between elements via double-tap while magnified, unless the target rect is
