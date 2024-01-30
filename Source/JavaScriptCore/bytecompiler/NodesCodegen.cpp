@@ -1229,7 +1229,31 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
     }
 
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
-    return generator.emitCallDirectEval(returnValue.get(), func.get(), callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+
+    if (m_args->m_listNode && m_args->m_listNode->m_expr && m_args->m_listNode->m_expr->isSpreadExpression()) {
+        Ref<Label> notEvalFunction = generator.newLabel();
+        Ref<Label> done = generator.newLabel();
+        generator.emitJumpIfNotEvalFunction(func.get(), notEvalFunction.get());
+
+        {
+            SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(m_args->m_listNode->m_expr);
+            RefPtr<RegisterID> spreadRegister = generator.emitNode(spread->expression());
+            generator.emitExpressionInfo(spread->divot(), spread->divotStart(), spread->divotEnd());
+
+            CallArguments directEvalArguments(generator, nullptr, 1);
+            generator.move(directEvalArguments.thisRegister(), callArguments.thisRegister());
+            generator.emitGetByVal(directEvalArguments.argumentRegister(0), spreadRegister.get(), generator.emitLoad(nullptr, jsNumber(0)));
+            generator.emitCallDirectEval(returnValue.get(), func.get(), directEvalArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+            generator.emitJump(done.get());
+        }
+
+        generator.emitLabel(notEvalFunction.get());
+        generator.emitCallInTailPosition(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        generator.emitLabel(done.get());
+    } else
+        generator.emitCallDirectEval(returnValue.get(), func.get(), callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+
+    return returnValue.get();
 }
 
 // ------------------------------ FunctionCallValueNode ----------------------------------

@@ -941,15 +941,6 @@ test/language/expressions/assignmenttargettype/direct-callexpression-arguments.j
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/assignmenttargettype/parenthesized-callexpression-arguments.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/call/eval-spread-empty-leading.js:
-  default: 'Test262Error: Expected SameValue(«local», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«local», «0») to be true'
-test/language/expressions/call/eval-spread-empty-trailing.js:
-  default: 'Test262Error: Expected SameValue(«local», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«local», «0») to be true'
-test/language/expressions/call/eval-spread.js:
-  default: 'Test262Error: Expected SameValue(«local», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«local», «1») to be true'
 test/language/expressions/call/tco-non-eval-function-dynamic.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-function.js:

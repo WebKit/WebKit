@@ -121,6 +121,7 @@ namespace JSC {
     macro(toLength) \
     macro(importMapStatus) \
     macro(importInRealm) \
+    macro(evalFunction) \
     macro(evalInRealm) \
     macro(moveFunctionToRealm) \
     macro(newTargetLocal) \

@@ -80,6 +80,7 @@ class JSGlobalObject;
     v(Map, nullptr) \
     v(importMapStatus, nullptr) \
     v(importInRealm, nullptr) \
+    v(evalFunction, nullptr) \
     v(evalInRealm, nullptr) \
     v(moveFunctionToRealm, nullptr) \
     v(isConstructor, nullptr) \
