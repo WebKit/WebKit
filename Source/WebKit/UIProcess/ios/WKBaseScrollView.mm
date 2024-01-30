@@ -115,6 +115,17 @@
         break;
     }
 
+    switch ([_axisLockingPanGestureRecognizer state]) {
+    case UIGestureRecognizerStateCancelled:
+    case UIGestureRecognizerStateFailed:
+        return;
+    case UIGestureRecognizerStatePossible:
+    case UIGestureRecognizerStateBegan:
+    case UIGestureRecognizerStateChanged:
+    case UIGestureRecognizerStateEnded:
+        break;
+    }
+
     auto axesToPrevent = self._axesToPreventScrollingFromDelegate;
     if (axesToPrevent == UIAxisNeither)
         return;
