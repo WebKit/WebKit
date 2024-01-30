@@ -514,6 +514,8 @@ void Recorder::fillPath(const Path& path)
             recordFillLine(*line);
         else if (auto arc = path.singleArc())
             recordFillArc(*arc);
+        else if (auto closedArc = path.singleClosedArc())
+            recordFillClosedArc(*closedArc);
         else if (auto curve = path.singleQuadCurve())
             recordFillQuadCurve(*curve);
         else if (auto curve = path.singleBezierCurve())
@@ -561,6 +563,8 @@ void Recorder::strokePath(const Path& path)
             recordStrokeLine(*line);
         else if (auto arc = path.singleArc())
             recordStrokeArc(*arc);
+        else if (auto closedArc = path.singleClosedArc())
+            recordStrokeClosedArc(*closedArc);
         else if (auto curve = path.singleQuadCurve())
             recordStrokeQuadCurve(*curve);
         else if (auto curve = path.singleBezierCurve())

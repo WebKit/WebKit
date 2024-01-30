@@ -348,6 +348,11 @@ void RemoteDisplayListRecorderProxy::recordFillArc(const PathArc& arc)
     send(Messages::RemoteDisplayListRecorder::FillArc(arc));
 }
 
+void RemoteDisplayListRecorderProxy::recordFillClosedArc(const PathClosedArc& closedArc)
+{
+    send(Messages::RemoteDisplayListRecorder::FillClosedArc(closedArc));
+}
+
 void RemoteDisplayListRecorderProxy::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
     send(Messages::RemoteDisplayListRecorder::FillQuadCurve(curve));
@@ -420,6 +425,11 @@ void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const
 void RemoteDisplayListRecorderProxy::recordStrokeArc(const PathArc& arc)
 {
     send(Messages::RemoteDisplayListRecorder::StrokeArc(arc));
+}
+
+void RemoteDisplayListRecorderProxy::recordStrokeClosedArc(const PathClosedArc& closedArc)
+{
+    send(Messages::RemoteDisplayListRecorder::StrokeClosedArc(closedArc));
 }
 
 void RemoteDisplayListRecorderProxy::recordStrokeQuadCurve(const PathDataQuadCurve& curve)

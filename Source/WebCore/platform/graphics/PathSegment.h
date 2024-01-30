@@ -41,6 +41,7 @@ public:
         PathArcTo,
 
         PathArc,
+        PathClosedArc,
         PathEllipse,
         PathEllipseInRect,
         PathRect,
@@ -60,7 +61,7 @@ public:
 
     const Data& data() const & { return m_data; }
     Data&& data() && { return WTFMove(m_data); }
-    bool isCloseSubPath() const { return std::holds_alternative<PathCloseSubpath>(m_data); }
+    bool closesSubpath() const { return std::holds_alternative<PathCloseSubpath>(m_data) || std::holds_alternative<PathClosedArc>(m_data); }
 
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
     std::optional<FloatPoint> tryGetEndPointWithoutContext() const;

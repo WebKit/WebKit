@@ -637,6 +637,16 @@ void FillArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("path", path());
 }
 
+void FillClosedArc::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+void FillClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("path", path());
+}
+
 void FillQuadCurve::apply(GraphicsContext& context) const
 {
     context.fillPath(path());
@@ -774,6 +784,16 @@ void StrokeArc::apply(GraphicsContext& context) const
 }
 
 void StrokeArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("path", path());
+}
+
+void StrokeClosedArc::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
+void StrokeClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("path", path());
 }

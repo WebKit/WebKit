@@ -304,6 +304,11 @@ void RecorderImpl::recordFillArc(const PathArc& arc)
     append(FillArc(arc));
 }
 
+void RecorderImpl::recordFillClosedArc(const PathClosedArc& closedArc)
+{
+    append(FillClosedArc(closedArc));
+}
+
 void RecorderImpl::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
     append(FillQuadCurve(curve));
@@ -364,6 +369,11 @@ void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& lin
 void RecorderImpl::recordStrokeArc(const PathArc& arc)
 {
     append(StrokeArc(arc));
+}
+
+void RecorderImpl::recordStrokeClosedArc(const PathClosedArc& closedArc)
+{
+    append(StrokeClosedArc(closedArc));
 }
 
 void RecorderImpl::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
