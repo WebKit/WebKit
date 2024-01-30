@@ -1967,7 +1967,3 @@ webkit.org/b/268098 [ Monterey+ ] imported/w3c/web-platform-tests/webrtc/RTCPeer
 webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
 
 webkit.org/b/268332 [ Sonoma+ Release ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
-
-# webkit.org/b/268329 REGRESSION (273601@main?): [ macOS Debug ] ASSERTION FAILED: !m_inRemovedLastRefFunction result of 2 tests in inspector/canvas to be flaky crash
-inspector/canvas/create-context-2d.html [ Skip ]
-inspector/canvas/resolveContext-2d.html [ Skip ]
