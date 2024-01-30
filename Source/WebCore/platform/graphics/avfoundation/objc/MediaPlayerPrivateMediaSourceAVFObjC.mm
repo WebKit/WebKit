@@ -1361,8 +1361,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [m_synchronizer removeRenderer:audioRenderer atTime:currentTime completionHandler:nil];
 
     m_sampleBufferAudioRendererMap.remove(iter);
-    if (auto player = m_player.get())
-        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(AudioTrackPrivate& track)
