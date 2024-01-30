@@ -481,6 +481,7 @@ fast/css-generated-content/quote-first-letter.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/quotes-lang-case-insensitive.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure Pass ]
 fast/custom-elements/defined-update-style.html [ ImageOnlyFailure ]
+fast/dom/ParentNode-append-fragments.html [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-002.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-003.htm [ ImageOnlyFailure ]
@@ -2760,3 +2761,5 @@ webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-
 compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region.html [ Skip ]
+
+css1/units/rounding.html [ Failure ]
