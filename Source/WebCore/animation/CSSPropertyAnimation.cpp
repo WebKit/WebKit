@@ -682,8 +682,9 @@ public:
     virtual bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
     virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
     virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
+    virtual bool normalizesProgressForDiscreteInterpolation() const { return true; }
     virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
-    
+
 #if !LOG_DISABLED
     virtual void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;
 #endif
@@ -3597,6 +3598,20 @@ private:
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSPropertyAnimationWrapperMap);
 
+template <typename T>
+class NonNormalizedDiscretePropertyWrapper final : public PropertyWrapper<T> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
+public:
+    NonNormalizedDiscretePropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+        : PropertyWrapper<T>(property, getter, setter)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
+    bool normalizesProgressForDiscreteInterpolation() const final { return false; }
+};
+
 CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 {
     // build the list of property wrappers to do the comparisons and blends
@@ -3699,7 +3714,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius),
-        new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
+        new NonNormalizedDiscretePropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
 
         new ClipWrapper,
 
@@ -3814,7 +3829,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<PrintColorAdjust>(CSSPropertyPrintColorAdjust, &RenderStyle::printColorAdjust, &RenderStyle::setPrintColorAdjust),
         new DiscretePropertyWrapper<ColumnFill>(CSSPropertyColumnFill, &RenderStyle::columnFill, &RenderStyle::setColumnFill),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyColumnRuleStyle, &RenderStyle::columnRuleStyle, &RenderStyle::setColumnRuleStyle),
-        new PropertyWrapper<ContentVisibility>(CSSPropertyContentVisibility, &RenderStyle::contentVisibility, &RenderStyle::setContentVisibility),
+        new NonNormalizedDiscretePropertyWrapper<ContentVisibility>(CSSPropertyContentVisibility, &RenderStyle::contentVisibility, &RenderStyle::setContentVisibility),
         new DiscretePropertyWrapper<CursorType>(CSSPropertyCursor, &RenderStyle::cursor, &RenderStyle::setCursor),
         new DiscretePropertyWrapper<EmptyCell>(CSSPropertyEmptyCells, &RenderStyle::emptyCells, &RenderStyle::setEmptyCells),
         new DiscretePropertyWrapper<FlexDirection>(CSSPropertyFlexDirection, &RenderStyle::flexDirection, &RenderStyle::setFlexDirection),
@@ -4237,7 +4252,7 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
         // The property's values cannot be meaningfully combined, thus it is not additive and
         // interpolation swaps from Va to Vb at 50% (p=0.5).
         auto isDiscrete = !wrapper->canInterpolate(from, to, compositeOperation);
-        if (isDiscrete) {
+        if (isDiscrete && wrapper->normalizesProgressForDiscreteInterpolation()) {
             // If we want additive, we should specify progress at 0 actually and return from.
             progress = progress < 0.5 ? 0 : 1;
             compositeOperation = CompositeOperation::Replace;
