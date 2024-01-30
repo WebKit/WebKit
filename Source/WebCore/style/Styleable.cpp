@@ -260,8 +260,10 @@ void Styleable::cancelStyleOriginatedAnimations() const
 {
     if (auto* animations = this->animations()) {
         for (auto& animation : *animations) {
-            if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get()))
+            if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get())) {
                 styleOriginatedAnimation->cancelFromStyle();
+                setLastStyleChangeEventStyle(nullptr);
+            }
         }
     }
 

@@ -605,7 +605,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     auto& element = *state.element();
 
     unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult, parentStyle.inheritedCustomProperties());
-    auto includedProperties = PropertyCascade::allProperties();
+    auto includedProperties = PropertyCascade::normalProperties();
 
     auto* cacheEntry = m_matchedDeclarationsCache.find(cacheHash, matchResult, parentStyle.inheritedCustomProperties());
 

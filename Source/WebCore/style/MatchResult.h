@@ -53,6 +53,7 @@ struct MatchResult {
 
     bool isForLink { false };
     bool isCacheable { true };
+    bool hasStartingStyle { false };
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
     Vector<MatchedProperties> authorDeclarations;
