@@ -1,0 +1,7 @@
+Some text
+
+PASS body ::selection has the root custom property
+PASS body ::selection uses its own custom property
+PASS div::selection inherits a custom property
+PASS div::selection uses its own custom property
+
