@@ -189,7 +189,7 @@ public:
     String valueAsString() const
     {
         StringBuilder builder;
-        builder.append(prefixForTransfromType(m_type));
+        builder.append(prefixForTransformType(m_type));
         switch (m_type) {
         case SVG_TRANSFORM_UNKNOWN:
             break;
@@ -215,7 +215,7 @@ public:
         return builder.toString();
     }
 
-    static const char* prefixForTransfromType(SVGTransformType type)
+    static const char* prefixForTransformType(SVGTransformType type)
     {
         switch (type) {
         case SVG_TRANSFORM_UNKNOWN:
