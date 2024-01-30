@@ -250,7 +250,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     m_scrollContainerLayer->setPosition(scrollContainerRect.location());
     m_scrollContainerLayer->setSize(scrollContainerRect.size());
 
-    m_contentsLayer->setSize(contentsSize());
+    m_contentsLayer->setSize(documentSize());
     m_contentsLayer->setNeedsDisplay();
 
     didChangeSettings();
@@ -434,8 +434,19 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (!m_inMagnificationGesture)
         m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
+    auto sidePadding = 0.0f;
+    if (m_scaleFactor < 1) {
+        auto availableWidth = availableContentsRect().size().width();
+        auto documentPresentationWidth = m_documentLayout.scaledContentsSize().width() * m_scaleFactor;
+
+        sidePadding = std::floor(std::max<float>(availableWidth - documentPresentationWidth, 0) / 2);
+        sidePadding /= m_scaleFactor;
+    }
+
     TransformationMatrix transform;
     transform.scale(m_scaleFactor);
+    transform.translate(sidePadding, 0);
+
     m_contentsLayer->setTransform(transform);
 
     if (!origin)
@@ -449,6 +460,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
 
     auto delta = gestureOriginInNewContentsCoordinates - gestureOriginInContentsCoordinates;
     auto newPosition = oldScrollPosition + delta;
+    newPosition = newPosition.expandedTo({ 0, 0 });
 
     auto options = ScrollPositionChangeOptions::createUser();
     options.originalScrollDelta = delta;
@@ -511,6 +523,7 @@ IntSize UnifiedPDFPlugin::documentSize() const
 {
     if (isLocked())
         return { 0, 0 };
+
     auto size = m_documentLayout.scaledContentsSize();
     return expandedIntSize(size);
 }
@@ -519,6 +532,7 @@ IntSize UnifiedPDFPlugin::contentsSize() const
 {
     if (isLocked())
         return { 0, 0 };
+
     auto size = m_documentLayout.scaledContentsSize();
     size.scale(m_scaleFactor);
     return expandedIntSize(size);
