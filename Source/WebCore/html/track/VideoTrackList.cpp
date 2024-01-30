@@ -99,6 +99,15 @@ int VideoTrackList::selectedIndex() const
     return -1;
 }
 
+VideoTrack* VideoTrackList::selectedItem() const
+{
+    auto selectedIndex = this->selectedIndex();
+    if (selectedIndex < 0)
+        return nullptr;
+
+    return item(selectedIndex);
+}
+
 EventTargetInterface VideoTrackList::eventTargetInterface() const
 {
     return VideoTrackListEventTargetInterfaceType;

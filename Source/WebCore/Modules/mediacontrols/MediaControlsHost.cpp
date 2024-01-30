@@ -756,29 +756,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
 auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
 {
-    if (!m_mediaElement)
-        return std::nullopt;
-
-    if (m_mediaElement->hasMediaStreamSource())
-        return SourceType::MediaStream;
-
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaElement->hasManagedMediaSource())
-        return SourceType::ManagedMediaSource;
-
-    if (m_mediaElement->hasMediaSource())
-        return SourceType::MediaSource;
-#endif
-
-    switch (m_mediaElement->movieLoadType()) {
-    case HTMLMediaElement::MovieLoadType::Unknown: return std::nullopt;
-    case HTMLMediaElement::MovieLoadType::Download: return SourceType::File;
-    case HTMLMediaElement::MovieLoadType::StoredStream: return SourceType::LiveStream;
-    case HTMLMediaElement::MovieLoadType::LiveStream: return SourceType::StoredStream;
-    case HTMLMediaElement::MovieLoadType::HttpLiveStream: return SourceType::HLS;
-    }
-
-    ASSERT_NOT_REACHED();
+    if (m_mediaElement)
+        return m_mediaElement->sourceType();
     return std::nullopt;
 }
 

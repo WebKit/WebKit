@@ -46,6 +46,8 @@ public:
     unsigned displayCompositedVideoFrames() const { return m_displayCompositedVideoFrames; }
     double totalFrameDelay() const { return m_totalFrameDelay; }
 
+    Ref<JSON::Object> toJSONObject() const;
+
 private:
     VideoPlaybackQuality(double creationTime, const VideoPlaybackQualityMetrics&);
 

@@ -439,6 +439,7 @@ Modules/webauthn/fido/FidoParsingUtils.cpp
 Modules/webauthn/fido/Pin.cpp
 Modules/webauthn/fido/U2fCommandConstructor.cpp
 Modules/webauthn/fido/U2fResponseConverter.cpp
+Modules/webcodecs/VideoColorSpace.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioDataAlgorithms.cpp
@@ -1610,6 +1611,7 @@ html/shadow/SpinButtonElement.cpp
 html/shadow/TextControlInnerElements.cpp
 html/shadow/TextPlaceholderElement.cpp
 html/track/AudioTrack.cpp
+html/track/AudioTrackConfiguration.cpp
 html/track/AudioTrackList.cpp
 html/track/BufferedLineReader.cpp
 html/track/DataCue.cpp
@@ -1631,6 +1633,7 @@ html/track/VTTRegion.cpp
 html/track/VTTRegionList.cpp
 html/track/VTTScanner.cpp
 html/track/VideoTrack.cpp
+html/track/VideoTrackConfiguration.cpp
 html/track/VideoTrackList.cpp
 html/track/WebVTTElement.cpp
 html/track/WebVTTParser.cpp
@@ -2224,6 +2227,7 @@ platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/ByteArrayPixelBuffer.cpp
 platform/graphics/CachedSubimage.cpp
+platform/graphics/CodecUtilities.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
 platform/graphics/ColorConversion.cpp

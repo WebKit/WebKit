@@ -32,6 +32,7 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
+#include "AudioTrackConfiguration.h"
 #include "AudioTrackList.h"
 #include "AudioTrackPrivate.h"
 #include "Blob.h"
@@ -40,6 +41,7 @@
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CodecUtilities.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContentRuleListResults.h"
@@ -125,6 +127,7 @@
 #include "UserGestureIndicator.h"
 #include "VideoPlaybackQuality.h"
 #include "VideoTrack.h"
+#include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
 #include "WebCoreJSClientData.h"
@@ -133,6 +136,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Algorithms.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -8042,7 +8046,7 @@ void HTMLMediaElement::updateRateChangeRestrictions()
         mediaSession().removeBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 }
 
-RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
+RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality() const
 {
     RefPtr domWindow = document().domWindow();
     double timestamp = domWindow ? domWindow->nowTimestamp().milliseconds() : 0;
@@ -9152,6 +9156,58 @@ void HTMLMediaElement::setShowingStats(bool shouldShowStats)
 bool HTMLMediaElement::shouldDisableHDR() const
 {
     return !screenSupportsHighDynamicRange(document().view());
+}
+
+auto HTMLMediaElement::sourceType() const -> std::optional<SourceType>
+{
+    if (hasMediaStreamSource())
+        return SourceType::MediaStream;
+
+#if ENABLE(MEDIA_SOURCE)
+    if (hasManagedMediaSource())
+        return SourceType::ManagedMediaSource;
+
+    if (hasMediaSource())
+        return SourceType::MediaSource;
+#endif
+
+    switch (movieLoadType()) {
+    case HTMLMediaElement::MovieLoadType::Unknown: return std::nullopt;
+    case HTMLMediaElement::MovieLoadType::Download: return SourceType::File;
+    case HTMLMediaElement::MovieLoadType::StoredStream: return SourceType::LiveStream;
+    case HTMLMediaElement::MovieLoadType::LiveStream: return SourceType::StoredStream;
+    case HTMLMediaElement::MovieLoadType::HttpLiveStream: return SourceType::HLS;
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+String HTMLMediaElement::localizedSourceType() const
+{
+    auto sourceType = this->sourceType();
+    if (!sourceType)
+        return { };
+
+    switch (*sourceType) {
+    case HTMLMediaElement::SourceType::File:
+        return WEB_UI_STRING_KEY("File", "File (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::HLS:
+        return WEB_UI_STRING_KEY("HLS", "HLS (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::MediaSource:
+        return WEB_UI_STRING_KEY("Media Source", "MediaSource (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::ManagedMediaSource:
+        return WEB_UI_STRING_KEY("Managed Media Source", "ManagedMediaSource (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::MediaStream:
+        return WEB_UI_STRING_KEY("Media Stream", "MediaStream (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::LiveStream:
+        return WEB_UI_STRING_KEY("Live Stream", "LiveStream (Media Element Source Type)", "Media Element Source Type");
+    case HTMLMediaElement::SourceType::StoredStream:
+        return WEB_UI_STRING_KEY("Stored Stream", "StoredStream (Media Element Source Type)", "Media Element Source Type");
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 } // namespace WebCore

@@ -61,6 +61,12 @@ struct MainThreadAccessTraits;
 struct ObjectIdentifierMainThreadAccessTraits;
 struct ObjectIdentifierThreadSafeAccessTraits;
 
+namespace JSONImpl {
+class Array;
+class Object;
+template<typename> class ArrayOf;
+}
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 struct VectorBufferMalloc;
 #else
@@ -127,6 +133,10 @@ template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> cl
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
 template<typename T> class NativePromiseRequest;
+}
+
+namespace JSON {
+using namespace WTF::JSONImpl;
 }
 
 namespace std {

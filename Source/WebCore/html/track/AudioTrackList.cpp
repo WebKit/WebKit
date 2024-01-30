@@ -74,6 +74,15 @@ AudioTrack* AudioTrackList::item(unsigned index) const
     return nullptr;
 }
 
+AudioTrack* AudioTrackList::firstEnabled() const
+{
+    for (auto& item : m_inbandTracks) {
+        if (item && item->enabled())
+            return downcast<AudioTrack>(item.get());
+    }
+    return nullptr;
+}
+
 AudioTrack* AudioTrackList::getTrackById(const AtomString& id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {

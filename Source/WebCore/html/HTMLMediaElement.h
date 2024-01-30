@@ -526,7 +526,7 @@ public:
     void mediaLoadingFailed(MediaPlayer::NetworkState);
     void mediaLoadingFailedFatally(MediaPlayer::NetworkState);
 
-    RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
+    RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality() const;
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
     MediaElementSession* mediaSessionIfExists() const { return m_mediaSession.get(); }
@@ -646,6 +646,20 @@ public:
     WEBCORE_EXPORT WebCore::FloatSize videoLayerSize() const;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
     void updateMediaState();
+
+    enum class SourceType : uint8_t {
+        File,
+        HLS,
+        MediaSource,
+        ManagedMediaSource,
+        MediaStream,
+        LiveStream,
+        StoredStream,
+    };
+    std::optional<SourceType> sourceType() const;
+    String localizedSourceType() const;
+
+    LayoutRect contentBoxRect() const { return mediaPlayerContentBoxRect(); }
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);

@@ -35,6 +35,9 @@
 #include "AccessibilityNodeObject.h"
 #include "AddEventListenerOptions.h"
 #include "Attr.h"
+#include "AudioTrack.h"
+#include "AudioTrackConfiguration.h"
+#include "AudioTrackList.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -46,6 +49,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CharacterData.h"
+#include "CodecUtilities.h"
 #include "CommandLineAPIHost.h"
 #include "ComposedTreeIterator.h"
 #include "ContainerNode.h"
@@ -83,7 +87,11 @@
 #include "JSDOMBindingSecurity.h"
 #include "JSEventListener.h"
 #include "JSLocalDOMWindowCustom.h"
+#include "JSMediaControlsHost.h"
 #include "JSNode.h"
+#include "JSVideoColorPrimaries.h"
+#include "JSVideoMatrixCoefficients.h"
+#include "JSVideoTransferCharacteristics.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -109,6 +117,9 @@
 #include "TextNodeTraversal.h"
 #include "Timer.h"
 #include "VideoPlaybackQuality.h"
+#include "VideoTrack.h"
+#include "VideoTrackConfiguration.h"
+#include "VideoTrackList.h"
 #include "WebInjectedScriptManager.h"
 #include "XPathResult.h"
 #include "markup.h"
@@ -3084,6 +3095,86 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserAgentShadowT
     m_allowEditingUserAgentShadowTrees = allow;
 
     return { };
+}
+
+Protocol::ErrorStringOr<Ref<Protocol::DOM::MediaStats>> InspectorDOMAgent::getMediaStats(Protocol::DOM::NodeId nodeId)
+{
+    Protocol::ErrorString errorString;
+
+    auto* element = assertElement(errorString, nodeId);
+    if (!element)
+        return makeUnexpected(errorString);
+
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    if (!mediaElement)
+        return makeUnexpected("Node for given nodeId is not a media element"_s);
+
+    auto stats = Inspector::Protocol::DOM::MediaStats::create().release();
+
+    if (auto quality = mediaElement->getVideoPlaybackQuality()) {
+        auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
+            .setTotalVideoFrames(quality->totalVideoFrames())
+            .setDroppedVideoFrames(quality->droppedVideoFrames())
+            .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
+            .release();
+        stats->setQuality(WTFMove(jsonQuality));
+    }
+
+    auto sourceType = mediaElement->localizedSourceType();
+    if (!sourceType.isEmpty())
+        stats->setSource(sourceType);
+
+    auto* videoTrack = mediaElement->videoTracks() ? mediaElement->videoTracks()->selectedItem() : nullptr;
+    auto* audioTrack = mediaElement->audioTracks() ? mediaElement->audioTracks()->firstEnabled() : nullptr;
+
+    auto viewport = mediaElement->contentBoxRect().size();
+    auto viewportJSON = Inspector::Protocol::DOM::ViewportSize::create()
+        .setWidth(viewport.width())
+        .setHeight(viewport.height())
+        .release();
+    stats->setViewport(WTFMove(viewportJSON));
+
+    if (auto* window = mediaElement->document().domWindow())
+        stats->setDevicePixelRatio(window->devicePixelRatio());
+
+    if (videoTrack) {
+        auto& configuration = videoTrack->configuration();
+        auto colorSpace = configuration.colorSpace();
+        auto colorSpaceJSON = Inspector::Protocol::DOM::VideoColorSpace::create().release();
+        if (auto fullRange = colorSpace->fullRange())
+            colorSpaceJSON->setFullRange(*fullRange);
+        if (auto matrix = colorSpace->matrix())
+            colorSpaceJSON->setMatrix(convertEnumerationToString(*matrix));
+        if (auto primaries = colorSpace->primaries())
+            colorSpaceJSON->setPrimaries(convertEnumerationToString(*primaries));
+        if (auto transfer = colorSpace->transfer())
+            colorSpaceJSON->setTransfer(convertEnumerationToString(*transfer));
+
+        auto videoJSON = Inspector::Protocol::DOM::VideoMediaStats::create()
+            .setBitrate(configuration.bitrate())
+            .setCodec(configuration.codec())
+            .setHumanReadableCodecString(humanReadableStringFromCodecString(configuration.codec()))
+            .setColorSpace(WTFMove(colorSpaceJSON))
+            .setFramerate(configuration.framerate())
+            .setHeight(configuration.height())
+            .setWidth(configuration.width())
+            .release();
+        stats->setVideo(WTFMove(videoJSON));
+    }
+
+    if (audioTrack) {
+        auto& configuration = audioTrack->configuration();
+        auto audioJSON = Inspector::Protocol::DOM::AudioMediaStats::create()
+            .setBitrate(configuration.bitrate())
+            .setCodec(configuration.codec())
+            .setHumanReadableCodecString(humanReadableStringFromCodecString(configuration.codec()))
+            .setNumberOfChannels(configuration.numberOfChannels())
+            .setSampleRate(configuration.sampleRate())
+            .release();
+        stats->setAudio(WTFMove(audioJSON));
+    }
+
+    return stats;
 }
 
 } // namespace WebCore
