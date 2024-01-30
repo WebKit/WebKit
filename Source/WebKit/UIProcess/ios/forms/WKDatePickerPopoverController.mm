@@ -305,13 +305,15 @@
     auto distanceFromTop = CGRectGetMinY(rectInWindow) - CGRectGetMinY(windowBounds);
     auto distanceFromLeft = CGRectGetMinX(rectInWindow) - CGRectGetMinX(windowBounds);
     auto distanceFromRight = CGRectGetMaxX(windowBounds) - CGRectGetMaxX(rectInWindow);
-    auto distanceFromBottom = CGRectGetMaxY(windowBounds) - CGRectGetMaxY(rectInWindow);
     auto estimatedMaximumPopoverSize = [_contentView estimatedMaximumPopoverSize];
 
     auto canContainPopover = [&](CGFloat width, CGFloat height) {
         return estimatedMaximumPopoverSize.width < width && estimatedMaximumPopoverSize.height < height;
     };
 
+    // FIXME: We intentionally avoid presenting below the input element, since UIKit will prefer shrinking
+    // the popover instead of shifting it upwards in the case where the software keyboard is show.
+    // See also: <rdar://121571971>.
     auto presentationController = self.popoverPresentationController;
     UIPopoverArrowDirection permittedDirections = 0;
     if (canContainPopover(CGRectGetWidth(windowBounds), distanceFromTop))
@@ -320,8 +322,6 @@
         permittedDirections |= UIPopoverArrowDirectionRight;
     if (canContainPopover(distanceFromRight, CGRectGetHeight(windowBounds)))
         permittedDirections |= UIPopoverArrowDirectionLeft;
-    if (canContainPopover(CGRectGetWidth(windowBounds), distanceFromBottom))
-        permittedDirections |= UIPopoverArrowDirectionUp;
 
     presentationController.permittedArrowDirections = permittedDirections;
     presentationController.sourceView = view;
