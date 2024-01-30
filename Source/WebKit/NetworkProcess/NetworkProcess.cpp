@@ -2981,7 +2981,7 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 #if USE(EXTENSIONKIT)
     if (hasAcquiredGrant())
         return;
-    if (aqcuireLockedFileGrant())
+    if (acquireLockedFileGrant())
         return;
 #endif
 

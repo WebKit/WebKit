@@ -523,7 +523,7 @@ private:
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
 #if USE(EXTENSIONKIT)
-    bool aqcuireLockedFileGrant();
+    bool acquireLockedFileGrant();
     void invalidateGrant();
     bool hasAcquiredGrant() const;
 #endif
