@@ -51,6 +51,7 @@ private:
     String m_name;
     BlockPtr<void()> m_willInvalidateBlock;
     BlockPtr<void()> m_didInvalidateBlock;
+    RetainPtr<_SECapability> m_capability;
 };
 
 } // namespace WebKit
