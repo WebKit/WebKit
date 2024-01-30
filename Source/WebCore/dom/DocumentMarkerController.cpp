@@ -785,7 +785,7 @@ void DocumentMarkerController::showMarkers() const
     for (auto& nodeMarkers : m_markers) {
         fprintf(stderr, "%p", nodeMarkers.key.ptr());
         for (auto& marker : *nodeMarkers.value)
-            fprintf(stderr, " %hu:[%d:%d]", enumToUnderlyingType(marker.type()), marker.startOffset(), marker.endOffset());
+            fprintf(stderr, " %lu:[%d:%d]", enumToUnderlyingType(marker.type()), marker.startOffset(), marker.endOffset());
         fputc('\n', stderr);
     }
 }
