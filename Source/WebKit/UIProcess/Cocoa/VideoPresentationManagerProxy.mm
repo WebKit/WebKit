@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
 #import "GPUProcessProxy.h"
+#import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoPresentationManagerMessages.h"
@@ -738,9 +739,12 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
     }
 
 #if USE(EXTENSIONKIT)
-    auto pid = m_page->process().processPool().gpuProcess()->processID();
-    auto handle = LayerHostingContext::createHostingHandle(pid, videoLayerID);
-    [view->_hostingView setHandle:handle.get()];
+    RefPtr page = m_page.get();
+    if (RefPtr gpuProcess = page ? page->process().processPool().gpuProcess() : nullptr) {
+        RetainPtr handle = LayerHostingContext::createHostingHandle(gpuProcess->processID(), videoLayerID);
+        [view->_hostingView setHandle:handle.get()];
+    } else
+        RELEASE_LOG_ERROR(Media, "VideoPresentationManagerProxy::createLayerHostViewWithID: Unable to initialize hosting view, no GPU process");
 #else
     [view setContextID:videoLayerID];
 #endif
