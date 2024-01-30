@@ -3,6 +3,7 @@
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -232,13 +233,13 @@ bool KeyboardEvent::isKeyboardEvent() const
     return true;
 }
 
-int KeyboardEvent::which() const
+unsigned KeyboardEvent::which() const
 {
     // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
     // That's exactly what IE's "keyCode" returns. So they are the same for keyboard events.
     if (m_which)
         return m_which.value();
-    return keyCode();
+    return static_cast<unsigned>(keyCode());
 }
 
 } // namespace WebCore

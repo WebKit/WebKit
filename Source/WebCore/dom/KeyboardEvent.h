@@ -3,6 +3,7 @@
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -83,7 +84,7 @@ public:
 
     EventInterface eventInterface() const final;
     bool isKeyboardEvent() const final;
-    int which() const final;
+    unsigned which() const final;
 
     bool isComposing() const { return m_isComposing; }
 

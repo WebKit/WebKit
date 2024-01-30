@@ -2,7 +2,8 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -194,14 +195,14 @@ MouseButton MouseEvent::button() const
     return isKnownButton ? static_cast<MouseButton>(m_button) : MouseButton::Other;
 }
 
-int MouseEvent::which() const
+unsigned MouseEvent::which() const
 {
     // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively.
     // So we must add 1.
     if (!m_buttonDown)
         return 0;
-    return m_button + 1;
+    return static_cast<unsigned>(m_button + 1);
 }
 
 RefPtr<Node> MouseEvent::toElement() const
