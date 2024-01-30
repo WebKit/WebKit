@@ -394,6 +394,11 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         }
 
         if (!result) {
+            if (initializerType == m_types.voidType()) {
+                typeError(InferBottom::No, variable.span(), "cannot initialize variable with expression of type 'void'");
+                initializerType = m_types.bottomType();
+            }
+
             if (variable.flavor() == AST::VariableFlavor::Const)
                 result = initializerType;
             else {
@@ -1647,6 +1652,7 @@ bool TypeChecker::isBottom(const Type* type) const
 
 void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
+    ASSERT(type);
     if (!introduceVariable(name, { Binding::Type, type, std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
@@ -1840,6 +1846,7 @@ bool TypeChecker::convertValueImpl(const SourceSpan& span, const Type* type, Con
 
 void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, std::optional<ConstantValue> value)
 {
+    ASSERT(type);
     if (shouldDumpConstantValues && value.has_value())
         dataLogLn("> Assigning value: ", name, " => ", value);
     if (!introduceVariable(name, { Binding::Value, type , value }))

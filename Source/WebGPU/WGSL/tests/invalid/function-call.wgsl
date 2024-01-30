@@ -22,3 +22,9 @@ fn f2() {
     // CHECK-L: funtion call has too many arguments: expected 1, found 2
     _ = f1(0, 0);
 }
+
+fn f3() { }
+fn f4() {
+    // CHECK-L: cannot initialize variable with expression of type 'void'
+    let x = f3();
+}
