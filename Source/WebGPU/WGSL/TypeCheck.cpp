@@ -1178,6 +1178,8 @@ void TypeChecker::visit(AST::CallExpression& call)
             for (auto& argument : call.arguments()) {
                 if (!elementType) {
                     elementType = infer(argument);
+                    if (auto* reference = std::get_if<Types::Reference>(elementType))
+                        elementType = reference->element;
                     continue;
                 }
                 auto* argumentType = infer(argument);

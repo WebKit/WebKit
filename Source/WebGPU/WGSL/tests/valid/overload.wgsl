@@ -865,6 +865,10 @@ fn testArray()
     { let x : array<u32, 1> = array<u32, 1>(u); }
     { let x : array<S, 2> = array<S, 2>(S(i), S(i)); }
     { _ = array<S, 2>(S(i), S(i)); }
+
+
+    var x1 = 0;
+    let x2 = array(x3, 0, 0i, x3);
 }
 
 // 16.1.2.2.
