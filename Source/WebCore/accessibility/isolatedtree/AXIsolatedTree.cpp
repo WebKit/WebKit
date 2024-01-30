@@ -645,6 +645,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::CellScope:
             propertyMap.set(AXPropertyName::CellScope, axObject.cellScope().isolatedCopy());
             break;
+        case AXPropertyName::ScreenRelativePosition:
+            propertyMap.set(AXPropertyName::ScreenRelativePosition, axObject.screenRelativePosition());
+            break;
         case AXPropertyName::SelectedTextRange:
             propertyMap.set(AXPropertyName::SelectedTextRange, axObject.selectedTextRange());
             break;
@@ -1015,6 +1018,18 @@ void AXIsolatedTree::updateFrame(AXID axID, IntRect&& newFrame)
     propertyMap.set(AXPropertyName::RelativeFrame, WTFMove(newFrame));
     Locker locker { m_changeLogLock };
     m_pendingPropertyChanges.append({ axID, WTFMove(propertyMap) });
+}
+
+void AXIsolatedTree::updateRootScreenRelativePosition()
+{
+    AXTRACE("AXIsolatedTree::updateRootScreenRelativePosition"_s);
+    ASSERT(isMainThread());
+
+    if (!rootNode())
+        return;
+
+    if (auto* axRoot = rootNode()->associatedAXObject())
+        updateNodeProperties(*axRoot, { AXPropertyName::ScreenRelativePosition });
 }
 
 void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)

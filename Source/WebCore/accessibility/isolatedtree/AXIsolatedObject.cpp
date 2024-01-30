@@ -1206,6 +1206,15 @@ FloatPoint AXIsolatedObject::screenRelativePosition() const
     if (auto point = optionalAttributeValue<FloatPoint>(AXPropertyName::ScreenRelativePosition))
         return *point;
 
+    if (auto rootNode = tree()->rootNode()) {
+        if (auto rootPoint = rootNode->optionalAttributeValue<FloatPoint>(AXPropertyName::ScreenRelativePosition)) {
+            // Relative frames are top-left origin, but screen relative positions are bottom-left origin.
+            FloatRect rootRelativeFrame = rootNode->relativeFrame();
+            FloatRect relativeFrame = this->relativeFrame();
+            return { rootPoint->x() + relativeFrame.x(), rootPoint->y() + (rootRelativeFrame.maxY() - relativeFrame.maxY()) };
+        }
+    }
+
     return Accessibility::retrieveValueFromMainThread<FloatPoint>([&, this] () -> FloatPoint {
         if (auto* axObject = associatedAXObject())
             return axObject->screenRelativePosition();
