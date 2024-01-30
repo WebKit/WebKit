@@ -59,8 +59,10 @@ public:
         return ContentPosition::Normal == static_cast<ContentPosition>(m_position)
         && ContentDistribution::Default == static_cast<ContentDistribution>(m_distribution);
     }
-    bool isStartward(TextDirection = TextDirection::LTR, bool isFlexReverse = false) const; // TextDirection only needed for inline axis.
-    bool isEndward(TextDirection = TextDirection::LTR, bool isFlexReverse = false) const;
+    bool isStartward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    bool isEndward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    // leftRightAxisDirection is only needed for justify-content (invalid for align-content).
+    // Pass std::nullopt if neither the inline axis nor the physical left-right axis matches the justify-content axis (e.g. in flexbox).
     bool isCentered() const;
 
     friend bool operator==(const StyleContentAlignmentData&, const StyleContentAlignmentData&) = default;

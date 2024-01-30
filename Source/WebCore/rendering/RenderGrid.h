@@ -213,6 +213,8 @@ private:
     LayoutUnit gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox&, GridTrackSizingDirection) const;
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
+    LayoutOptionalOutsets allowedLayoutOverflow() const override;
+
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&, GridTrackSizingDirection) const;
     StyleSelfAlignmentData justifySelfForChild(const RenderBox&, StretchingMode = StretchingMode::Any, const RenderStyle* = nullptr) const;
     StyleSelfAlignmentData alignSelfForChild(const RenderBox&, StretchingMode = StretchingMode::Any, const RenderStyle* = nullptr) const;
