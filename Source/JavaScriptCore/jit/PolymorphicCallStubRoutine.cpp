@@ -119,7 +119,7 @@ bool PolymorphicCallStubRoutine::upgradeIfPossible(VM&, CodeBlock* oldCodeBlock,
     auto target = newCodeBlock->jitCode()->addressForCall(slot.m_arityCheckMode);
     slot.m_codeBlock = newCodeBlock;
     slot.m_target = target;
-    newCodeBlock->linkIncomingCall(m_callLinkInfo->owner(), &callNode); // This is just relinking. So owner and caller frame can be nullptr.
+    newCodeBlock->linkIncomingCall(nullptr, &callNode); // This is just relinking. So owner and caller frame can be nullptr.
     return true;
 }
 
