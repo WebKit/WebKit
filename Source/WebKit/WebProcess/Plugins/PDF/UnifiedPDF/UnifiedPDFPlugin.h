@@ -184,7 +184,7 @@ private:
     void createScrollbarsController() override;
 
     bool usesAsyncScrolling() const final { return true; }
-    WebCore::ScrollingNodeID scrollingNodeID() const final { return m_scrollingNodeID; }
+    WebCore::ScrollingNodeID scrollingNodeID() const final;
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
@@ -199,6 +199,7 @@ private:
     void positionOverflowControlsLayers();
 
     WebCore::ScrollingCoordinator* scrollingCoordinator();
+    void createScrollingNodeIfNecessary();
 
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;

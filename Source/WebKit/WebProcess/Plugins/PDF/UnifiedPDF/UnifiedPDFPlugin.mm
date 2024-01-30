@@ -198,25 +198,44 @@ void UnifiedPDFPlugin::ensureLayers()
         m_overflowControlsContainer->setAnchorPoint({ });
         m_rootLayer->addChild(*m_overflowControlsContainer);
     }
+}
+
+ScrollingNodeID UnifiedPDFPlugin::scrollingNodeID() const
+{
+    if (!m_scrollingNodeID)
+        const_cast<UnifiedPDFPlugin*>(this)->createScrollingNodeIfNecessary();
+
+    return m_scrollingNodeID;
+}
+
+void UnifiedPDFPlugin::createScrollingNodeIfNecessary()
+{
+    if (m_scrollingNodeID)
+        return;
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
 
     RefPtr scrollingCoordinator = page->scrollingCoordinator();
-    if (!m_scrollingNodeID && scrollingCoordinator) {
-        m_scrollingNodeID = scrollingCoordinator->uniqueScrollingNodeID();
-        scrollingCoordinator->createNode(ScrollingNodeType::PluginScrolling, m_scrollingNodeID);
+    if (!scrollingCoordinator)
+        return;
+
+    m_scrollingNodeID = scrollingCoordinator->uniqueScrollingNodeID();
+    scrollingCoordinator->createNode(ScrollingNodeType::PluginScrolling, m_scrollingNodeID);
 
 #if ENABLE(SCROLLING_THREAD)
-        m_scrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
+    m_scrollContainerLayer->setScrollingNodeID(m_scrollingNodeID);
 #endif
 
-        m_frame->coreLocalFrame()->protectedView()->setPluginScrollableAreaForScrollingNodeID(m_scrollingNodeID, *this);
+    m_frame->coreLocalFrame()->protectedView()->setPluginScrollableAreaForScrollingNodeID(m_scrollingNodeID, *this);
 
-        WebCore::ScrollingCoordinator::NodeLayers nodeLayers;
-        nodeLayers.layer = m_rootLayer.get();
-        nodeLayers.scrollContainerLayer = m_scrollContainerLayer.get();
-        nodeLayers.scrolledContentsLayer = m_scrolledContentsLayer.get();
+    WebCore::ScrollingCoordinator::NodeLayers nodeLayers;
+    nodeLayers.layer = m_rootLayer.get();
+    nodeLayers.scrollContainerLayer = m_scrollContainerLayer.get();
+    nodeLayers.scrolledContentsLayer = m_scrolledContentsLayer.get();
 
-        scrollingCoordinator->setNodeLayers(m_scrollingNodeID, nodeLayers);
-    }
+    scrollingCoordinator->setNodeLayers(m_scrollingNodeID, nodeLayers);
 }
 
 void UnifiedPDFPlugin::updateLayerHierarchy()
