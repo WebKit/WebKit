@@ -5982,10 +5982,18 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)_didChangeWebViewEditability
 {
+    BOOL webViewIsEditable = self.webView._editable;
     if ([_formAccessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
-        [_formAccessoryView setNextPreviousItemsVisible:!self.webView._editable];
+        [_formAccessoryView setNextPreviousItemsVisible:!webViewIsEditable];
     
-    [_twoFingerSingleTapGestureRecognizer setEnabled:!self.webView._editable];
+    [_twoFingerSingleTapGestureRecognizer setEnabled:!webViewIsEditable];
+
+    if (webViewIsEditable) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            class_addProtocol(self.class, @protocol(UITextInputMultiDocument));
+        });
+    }
 }
 
 - (void)insertTextSuggestion:(id)textSuggestion
