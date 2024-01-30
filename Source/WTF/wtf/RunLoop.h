@@ -72,7 +72,7 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
-class WTF_CAPABILITY("is current") RunLoop final : public RefCountedSerialFunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
+class WTF_CAPABILITY("is current") RunLoop final : public GuaranteedSerialFunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread.

@@ -673,7 +673,7 @@ private:
 
             ASSERT(!promise.isNothing());
 
-            if (UNLIKELY(!m_targetQueue || (promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget && m_targetQueue->isCurrent()))) {
+            if (UNLIKELY(!m_targetQueue || m_disconnected || (promise.m_dispatchMode == PromiseDispatchMode::RunSynchronouslyOnTarget && m_targetQueue->isCurrent()))) {
                 PROMISE_LOG(*promise.m_result ? "Resolving" : "Rejecting", " synchronous then() call made from ", m_logSiteIdentifier, "[", promise, " callback:", (const void*)this, "]");
                 if (m_disconnected) {
                     PROMISE_LOG("ThenCallback disconnected aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
@@ -698,8 +698,6 @@ private:
 
         void disconnect() override
         {
-            assertIsCurrent(*m_targetQueue);
-
             m_disconnected = true;
         }
 
@@ -712,10 +710,8 @@ private:
         virtual RefPtr<NativePromiseBase> completionPromise() = 0;
         // In a debug build, m_disconnected is checked in the destructor
         // Otherwise it is only ever modified and read on the target queue.
-        std::atomic<bool> m_disconnected { false };
-#else
-        bool m_disconnected { false };
 #endif
+        std::atomic<bool> m_disconnected { false };
     };
     friend LogArgument<NativePromise::ThenCallbackBase>;
 
@@ -1428,7 +1424,7 @@ Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)
 // is itself resolved or rejected.
 // The lambda can return an Expected<T, U> or void.
 template<typename Function>
-static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
+static auto invokeAsync(GuaranteedSerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
 {
     static_assert(!std::is_lvalue_reference_v<Function>, "Function object must not be passed by lvalue-ref (to avoid unplanned copies); WTFMove() the object.");
     using ReturnType = decltype(function());

@@ -45,13 +45,15 @@ namespace WebCore {
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 
-class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerOrWorkletThread> {
+class WorkerOrWorkletThread : public RefCountedSerialFunctionDispatcher, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerOrWorkletThread> {
 public:
     virtual ~WorkerOrWorkletThread();
 
-    // SerialFunctionDispatcher methods
+    // RefCountedSerialFunctionDispatcher
     void dispatch(Function<void()>&&) final;
     bool isCurrent() const final;
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     Thread* thread() const { return m_thread.get(); }
 
