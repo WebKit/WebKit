@@ -206,6 +206,8 @@ private:
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
 
+    float sidePaddingWidth() const;
+
     // HUD Actions.
 #if ENABLE(PDF_HUD)
     void zoomIn() final;

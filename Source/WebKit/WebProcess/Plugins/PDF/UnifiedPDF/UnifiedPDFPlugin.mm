@@ -434,18 +434,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (!m_inMagnificationGesture)
         m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    auto sidePadding = 0.0f;
-    if (m_scaleFactor < 1) {
-        auto availableWidth = availableContentsRect().size().width();
-        auto documentPresentationWidth = m_documentLayout.scaledContentsSize().width() * m_scaleFactor;
-
-        sidePadding = std::floor(std::max<float>(availableWidth - documentPresentationWidth, 0) / 2);
-        sidePadding /= m_scaleFactor;
-    }
-
     TransformationMatrix transform;
     transform.scale(m_scaleFactor);
-    transform.translate(sidePadding, 0);
+    transform.translate(sidePaddingWidth(), 0);
 
     m_contentsLayer->setTransform(transform);
 
@@ -517,6 +508,20 @@ void UnifiedPDFPlugin::updateLayout()
 
     updateLayerHierarchy();
     updateScrollingExtents();
+}
+
+float UnifiedPDFPlugin::sidePaddingWidth() const
+{
+    auto sidePadding = 0.0f;
+    if (m_scaleFactor < 1) {
+        auto availableWidth = availableContentsRect().size().width();
+        auto documentPresentationWidth = m_documentLayout.scaledContentsSize().width() * m_scaleFactor;
+
+        sidePadding = std::floor(std::max<float>(availableWidth - documentPresentationWidth, 0) / 2);
+        sidePadding /= m_scaleFactor;
+    }
+
+    return sidePadding;
 }
 
 IntSize UnifiedPDFPlugin::documentSize() const
@@ -801,7 +806,14 @@ static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTyp
 
 WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::IntPoint& point) const
 {
-    return WebCore::AffineTransform { }.scale(1.0f / m_documentLayout.scale()).translate(m_scrollOffset).mapPoint(point);
+    auto transformedPoint = FloatPoint { point };
+    transformedPoint.moveBy(FloatPoint(m_scrollOffset));
+
+    transformedPoint.scale(1.0f / m_scaleFactor);
+    transformedPoint.move(-sidePaddingWidth(), 0);
+    transformedPoint.scale(1.0f / m_documentLayout.scale());
+
+    return roundedIntPoint(transformedPoint);
 }
 
 std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::nearestPageIndexForDocumentPoint(const WebCore::IntPoint& point) const
@@ -873,12 +885,31 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPageToDocument(const WebCore::Int
     return documentSpaceToPageSpaceTransform(pageRotation, pageBounds).inverse()->mapPoint(documentSpacePoint);
 }
 
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType elementType)
+{
+    switch (elementType) {
+    case UnifiedPDFPlugin::PDFElementType::Page: ts << "page"; break;
+    case UnifiedPDFPlugin::PDFElementType::Text: ts << "text"; break;
+    case UnifiedPDFPlugin::PDFElementType::Annotation: ts << "annotation"; break;
+    case UnifiedPDFPlugin::PDFElementType::Link: ts << "link"; break;
+    case UnifiedPDFPlugin::PDFElementType::Control: ts << "control"; break;
+    case UnifiedPDFPlugin::PDFElementType::TextField: ts << "text field"; break;
+    case UnifiedPDFPlugin::PDFElementType::Icon: ts << "icon"; break;
+    case UnifiedPDFPlugin::PDFElementType::Popup: ts << "popup"; break;
+    case UnifiedPDFPlugin::PDFElementType::Image: ts << "image"; break;
+    }
+    return ts;
+}
+#endif
+
 auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
 {
     auto pointInDocumentSpace = convertFromPluginToDocument(point);
     auto maybeNearestPageIndex = nearestPageIndexForDocumentPoint(pointInDocumentSpace);
     if (!maybeNearestPageIndex || *maybeNearestPageIndex >= m_documentLayout.pageCount())
         return { };
+
     auto nearestPageIndex = *maybeNearestPageIndex;
     auto nearestPage = m_documentLayout.pageAtIndex(nearestPageIndex);
     auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex);
@@ -903,6 +934,8 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
         if ([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()] && ![annotation isReadOnly])
             pdfElementTypes.add(PDFElementType::Control);
     }
+
+    LOG_WITH_STREAM(Plugins, stream << "UnifiedPDFPlugin::pdfElementTypesForPluginPoint " << point << " document point " << pointInDocumentSpace << " found page " << nearestPageIndex << " point in page " << pointInPDFPageSpace << " - elements " << pdfElementTypes);
 
     if (!isTaggedPDF())
         return pdfElementTypes;
