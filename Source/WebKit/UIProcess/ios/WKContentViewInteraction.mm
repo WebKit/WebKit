@@ -7170,6 +7170,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 #if USE(BROWSERENGINEKIT)
     if (self.shouldUseAsyncInteractions) {
         RetainPtr inputDelegate = _asyncInputDelegate;
+        [self _logMissingSystemInputDelegateIfNeeded:__PRETTY_FUNCTION__];
         if (!inputDelegate)
             return NO;
 
@@ -7237,6 +7238,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 #if USE(BROWSERENGINEKIT)
     if (self.shouldUseAsyncInteractions) {
         RetainPtr systemDelegate = _asyncInputDelegate;
+        [self _logMissingSystemInputDelegateIfNeeded:__PRETTY_FUNCTION__];
         if (!systemDelegate)
             return NO;
 
@@ -12605,6 +12607,19 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 {
     ASSERT([self conformsToProtocol:@protocol(BETextInput)]);
     return static_cast<id<BETextInput>>(self);
+}
+
+- (void)_logMissingSystemInputDelegateIfNeeded:(const char*)methodName
+{
+    if (_asyncInputDelegate)
+        return;
+
+    static constexpr auto delayBetweenLogStatements = 10_s;
+    static ApproximateTime lastLoggingTimestamp;
+    if (auto timestamp = ApproximateTime::now(); timestamp - lastLoggingTimestamp > delayBetweenLogStatements) {
+        RELEASE_LOG_ERROR(TextInput, "%{public}s - system input delegate is nil", methodName);
+        lastLoggingTimestamp = timestamp;
+    }
 }
 
 - (void)shiftKeyStateChangedFromState:(BEKeyModifierFlags)oldState toState:(BEKeyModifierFlags)newState
