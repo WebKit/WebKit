@@ -1974,6 +1974,11 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
     m_contentsDisplayDelegate->display(*layer);
 }
 
+bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*) const
+{
+    return client().layerNeedsPlatformContext(this);
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);

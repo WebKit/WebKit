@@ -75,6 +75,8 @@ public:
 
     virtual bool platformCALayerShouldPaintUsingCompositeCopy() const { return false; }
 
+    virtual bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const { return false; }
+
 protected:
     virtual ~PlatformCALayerClient() = default;
 };

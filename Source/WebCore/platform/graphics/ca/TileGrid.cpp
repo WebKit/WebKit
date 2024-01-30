@@ -754,6 +754,13 @@ bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
     return false;
 }
 
+bool TileGrid::platformCALayerNeedsPlatformContext(const PlatformCALayer* layer) const
+{
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->platformCALayerNeedsPlatformContext(layer);
+    return false;
+}
+
 bool TileGrid::platformCALayerContentsOpaque() const
 {
     return m_controller.tilesAreOpaque();

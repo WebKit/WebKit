@@ -170,6 +170,7 @@ private:
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override { return scaleFactor(); }
+    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override { return true; }
 
     void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
     void ensureLayers();

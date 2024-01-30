@@ -336,16 +336,10 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
     auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
 
-    auto imageBuffer = ImageBuffer::create(drawingRect.size(), RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!imageBuffer)
-        return;
+    auto stateSaver = GraphicsContextStateSaver(context);
 
-    auto& bufferContext = imageBuffer->context();
-    auto stateSaver = GraphicsContextStateSaver(bufferContext);
-
-    bufferContext.translate(FloatPoint { -drawingRect.location() });
     auto scale = m_documentLayout.scale();
-    bufferContext.scale(scale);
+    context.scale(scale);
 
     auto inverseScale = 1.0f / scale;
     auto scaleTransform = AffineTransform::makeScale({ inverseScale, inverseScale });
@@ -362,19 +356,17 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
         if (!destinationRect.intersects(drawingRectInPDFLayoutCoordinates))
             continue;
 
-        auto pageStateSaver = GraphicsContextStateSaver(bufferContext);
-        bufferContext.clip(destinationRect);
-        bufferContext.fillRect(destinationRect, Color::white);
+        auto pageStateSaver = GraphicsContextStateSaver(context);
+        context.clip(destinationRect);
+        context.fillRect(destinationRect, Color::white);
 
         // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
-        bufferContext.translate(destinationRect.minXMaxYCorner());
-        bufferContext.scale({ 1, -1 });
+        context.translate(destinationRect.minXMaxYCorner());
+        context.scale({ 1, -1 });
 
-        [page drawWithBox:kPDFDisplayBoxCropBox toContext:imageBuffer->context().platformContext()];
+        [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
     }
-
-    context.drawImageBuffer(*imageBuffer, drawingRect.location());
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const

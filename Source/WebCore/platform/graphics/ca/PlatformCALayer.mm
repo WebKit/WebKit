@@ -210,6 +210,11 @@ void PlatformCALayer::setDelegatedContents(const PlatformCALayerInProcessDelegat
     setDelegatedContents({ contents.surface.createSendRight(), contents.finishedFence, std::nullopt });
 }
 
+bool PlatformCALayer::needsPlatformContext() const
+{
+    return m_owner && m_owner->platformCALayerNeedsPlatformContext(this);
+}
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 void PlatformCALayer::clearAcceleratedEffectsAndBaseValues()
 {

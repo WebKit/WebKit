@@ -335,6 +335,8 @@ public:
     virtual void purgeFrontBufferForTesting() { }
     virtual void purgeBackBufferForTesting() { }
 
+    bool needsPlatformContext() const;
+
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 

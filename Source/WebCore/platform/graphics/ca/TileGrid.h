@@ -147,6 +147,7 @@ private:
     bool platformCALayerDrawsContent() const override { return true; }
     float platformCALayerDeviceScaleFactor() const override;
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
+    bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
 
     TileController& m_controller;
 #if USE(CA)
