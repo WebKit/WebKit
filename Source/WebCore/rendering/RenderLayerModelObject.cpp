@@ -477,8 +477,8 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
             return referencedClipperRenderer;
     }
 
-    if (auto* element = this->element())
-        document().addPendingSVGResource(referenceClipPathOperation->fragment(), downcast<SVGElement>(*element));
+    if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
+        document().addPendingSVGResource(referenceClipPathOperation->fragment(), *svgElement);
 
     return nullptr;
 }
@@ -623,7 +623,7 @@ void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo, const Fl
     if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || context.paintingDisabled())
         return;
 
-    ASSERT(isSVGLayerAwareRenderer());
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
     if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
         referencedClipperRenderer->applyMaskClipping(paintInfo, *this, objectBoundingBox);
 }
