@@ -1355,6 +1355,8 @@ fn testBitcast()
     let f = 0f;
     let h = 0h;
 
+    { const x =bitcast<vec2<i32>>(vec2(.659341217228384203)); }
+
     // @const @must_use fn bitcast<T>(e : T) -> T
     { const x: u32 = bitcast<u32>(5u); }
     { const x: i32 = bitcast<i32>(5i); }

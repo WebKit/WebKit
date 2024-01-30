@@ -1718,6 +1718,14 @@ CONSTANT_FUNCTION(Bitcast)
             return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'"));
         return { convertValue<BitwiseCast>(resultType, *result) };
     }
+
+    if (auto* abstractFloat = std::get_if<double>(&argument)) {
+        auto result = convertFloat<float>(*abstractFloat);
+        if (!result.has_value())
+            return makeUnexpected(makeString("value ", String::number(*abstractFloat), " cannot be represented as 'f32'"));
+        return { convertValue<BitwiseCast>(resultType, *result) };
+    }
+
     return { convertValue<BitwiseCast>(resultType, argument) };
 }
 
