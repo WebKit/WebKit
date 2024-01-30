@@ -52,8 +52,6 @@ public:
 
     Style::Scope* styleScope() { return m_styleScope.get(); }
 
-    static void clearCache();
-
 private:
     void createSheet(Element&, const String& text);
     void createSheetFromTextContents(Element&);

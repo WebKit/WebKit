@@ -32,20 +32,12 @@
 #include "ShadowRoot.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "StyleSheetContentsCache.h"
 #include "TextNodeTraversal.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-
-using InlineStyleSheetCacheKey = std::pair<String, CSSParserContext>;
-using InlineStyleSheetCache = HashMap<InlineStyleSheetCacheKey, RefPtr<StyleSheetContents>>;
-
-static InlineStyleSheetCache& inlineStyleSheetCache()
-{
-    static NeverDestroyed<InlineStyleSheetCache> cache;
-    return cache;
-}
 
 static CSSParserContext parserContextForElement(const Element& element)
 {
@@ -59,14 +51,14 @@ static CSSParserContext parserContextForElement(const Element& element)
     return result;
 }
 
-static std::optional<InlineStyleSheetCacheKey> makeInlineStyleSheetCacheKey(const String& text, const Element& element)
+static std::optional<Style::StyleSheetContentsCache::Key> makeStyleSheetContentsCacheKey(const String& text, const Element& element)
 {
     // Only cache for shadow trees. Main document inline stylesheets are generally unique and can't be shared between documents.
     // FIXME: This could be relaxed when a stylesheet does not contain document-relative URLs (or #urls).
     if (!element.isInShadowTree())
         return { };
 
-    return std::make_pair(text, parserContextForElement(element));
+    return Style::StyleSheetContentsCache::Key { text, parserContextForElement(element) };
 }
 
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
@@ -174,9 +166,9 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (CheckedPtr scope = m_styleScope.get())
         scope->addPendingSheet(element);
 
-    auto cacheKey = makeInlineStyleSheetCacheKey(text, element);
+    auto cacheKey = makeStyleSheetContentsCacheKey(text, element);
     if (cacheKey) {
-        if (RefPtr cachedSheet = inlineStyleSheetCache().get(*cacheKey)) {
+        if (RefPtr cachedSheet = Style::StyleSheetContentsCache::singleton().get(*cacheKey)) {
             ASSERT(cachedSheet->isCacheable());
             Ref sheet = CSSStyleSheet::createInline(*cachedSheet, element, m_startTextPosition);
             m_sheet = sheet.copyRef();
@@ -206,18 +198,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     contents->checkLoaded();
 
-    if (cacheKey && contents->isCacheable()) {
-        sheet->contents().addedToMemoryCache();
-        inlineStyleSheetCache().add(*cacheKey, &sheet->contents());
-
-        // Prevent pathological growth.
-        static constexpr auto maximumInlineStyleSheetCacheSize = 256;
-        if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize) {
-            auto toRemove = inlineStyleSheetCache().random();
-            toRemove->value->removedFromMemoryCache();
-            inlineStyleSheetCache().remove(toRemove);
-        }
-    }
+    if (cacheKey && contents->isCacheable())
+        Style::StyleSheetContentsCache::singleton().add(WTFMove(*cacheKey), contents);
 }
 
 bool InlineStyleSheetOwner::isLoading() const
@@ -242,11 +224,6 @@ void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
     if (CheckedPtr scope = m_styleScope.get(); scope && !scope->hasPendingSheet(element))
         scope->addPendingSheet(element);
-}
-
-void InlineStyleSheetOwner::clearCache()
-{
-    inlineStyleSheetCache().clear();
 }
 
 }
