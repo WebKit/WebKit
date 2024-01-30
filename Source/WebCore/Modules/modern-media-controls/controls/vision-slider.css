@@ -53,7 +53,6 @@
 .slider.vision > .appearance > .gutter > .background {
     background-color: black;
     opacity: 0.1;
-    -webkit-backdrop-filter: blur(48px);
     mix-blend-mode: plus-darker;
 }
 
