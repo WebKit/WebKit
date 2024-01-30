@@ -574,7 +574,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     response.setHTTPStatusText(m_isRangeRequest ? httpPartialContentText : httpOKText);
 
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
-    response.setTextEncodingName(extractCharsetFromMediaType(m_blobData->contentType()).toAtomString());
+    response.setTextEncodingName(extractCharsetFromMediaType(m_blobData->contentType()).toString());
     response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
     addPolicyContainerHeaders(response, m_blobData->policyContainer());
 

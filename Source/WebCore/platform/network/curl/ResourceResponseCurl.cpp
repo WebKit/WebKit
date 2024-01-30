@@ -106,8 +106,8 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
         break;
     }
 
-    setMimeType(AtomString { extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase() });
-    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
+    setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
+    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toString());
     setCertificateInfo(WTFMove(response.certificateInfo));
     setSource(ResourceResponse::Source::Network);
 }
@@ -115,7 +115,7 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
     if (startsWithLettersIgnoringASCIICase(header, "http/"_s)) {
-        setHTTPStatusText(extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)));
+        setHTTPStatusText(String { extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)) });
         return;
     }
 

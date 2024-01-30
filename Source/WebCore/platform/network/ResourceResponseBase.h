@@ -88,24 +88,24 @@ public:
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL&);
 
-    WEBCORE_EXPORT const AtomString& mimeType() const;
-    WEBCORE_EXPORT void setMimeType(const AtomString&);
+    WEBCORE_EXPORT const String& mimeType() const;
+    WEBCORE_EXPORT void setMimeType(String&&);
 
     WEBCORE_EXPORT long long expectedContentLength() const;
     WEBCORE_EXPORT void setExpectedContentLength(long long expectedContentLength);
 
-    WEBCORE_EXPORT const AtomString& textEncodingName() const;
-    WEBCORE_EXPORT void setTextEncodingName(AtomString&&);
+    WEBCORE_EXPORT const String& textEncodingName() const;
+    WEBCORE_EXPORT void setTextEncodingName(String&&);
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
     WEBCORE_EXPORT bool isRedirection() const;
 
-    WEBCORE_EXPORT const AtomString& httpStatusText() const;
-    WEBCORE_EXPORT void setHTTPStatusText(const AtomString&);
+    WEBCORE_EXPORT const String& httpStatusText() const;
+    WEBCORE_EXPORT void setHTTPStatusText(String&&);
 
-    WEBCORE_EXPORT const AtomString& httpVersion() const;
-    WEBCORE_EXPORT void setHTTPVersion(const AtomString&);
+    WEBCORE_EXPORT const String& httpVersion() const;
+    WEBCORE_EXPORT void setHTTPVersion(String&&);
     WEBCORE_EXPORT bool isHTTP09() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
@@ -245,11 +245,11 @@ private:
 
 protected:
     URL m_url;
-    AtomString m_mimeType;
+    String m_mimeType;
     long long m_expectedContentLength { 0 };
-    AtomString m_textEncodingName;
-    AtomString m_httpStatusText;
-    AtomString m_httpVersion;
+    String m_textEncodingName;
+    String m_httpStatusText;
+    String m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
     Box<NetworkLoadMetrics> m_networkLoadMetrics;
 

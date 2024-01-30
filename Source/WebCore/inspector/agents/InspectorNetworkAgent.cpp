@@ -117,7 +117,7 @@ public:
         m_statusCode = response.httpStatusCode();
 
         // FIXME: This assumes text only responses. We should support non-text responses as well.
-        PAL::TextEncoding textEncoding(response.textEncodingName().string());
+        PAL::TextEncoding textEncoding(response.textEncodingName());
         bool useDetector = false;
         if (!textEncoding.isValid()) {
             textEncoding = PAL::UTF8Encoding();
@@ -1275,9 +1275,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
     if (status)
         overrideResponse.setHTTPStatusCode(*status);
     if (!!statusText)
-        overrideResponse.setHTTPStatusText(AtomString { statusText });
+        overrideResponse.setHTTPStatusText(String { statusText });
     if (!!mimeType)
-        overrideResponse.setMimeType(AtomString { mimeType });
+        overrideResponse.setMimeType(String { mimeType });
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& header : *headers) {
@@ -1333,7 +1333,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     ResourceResponse response(pendingRequest->m_loader->url(), mimeType, data->size(), String());
     response.setSource(ResourceResponse::Source::InspectorOverride);
     response.setHTTPStatusCode(status);
-    response.setHTTPStatusText(AtomString { statusText });
+    response.setHTTPStatusText(String { statusText });
     HTTPHeaderMap explicitHeaders;
     for (auto& header : headers.get()) {
         auto headerValue = header.value->asString();

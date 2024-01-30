@@ -55,7 +55,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);
-    setHTTPStatusText(AtomString::fromLatin1(soup_message_get_reason_phrase(soupMessage)));
+    setHTTPStatusText(String::fromLatin1(soup_message_get_reason_phrase(soupMessage)));
 
     m_certificate = soup_message_get_tls_peer_certificate(soupMessage);
     m_tlsErrors = soup_message_get_tls_peer_certificate_errors(soupMessage);
@@ -69,10 +69,10 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
         contentType = String::fromLatin1(sniffedContentType.data());
     else
         contentType = String::fromLatin1(officialType);
-    setMimeType(AtomString { extractMIMETypeFromMediaType(contentType) });
+    setMimeType(extractMIMETypeFromMediaType(contentType));
     if (m_mimeType.isEmpty() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
-        setMimeType(AtomString { MIMETypeRegistry::mimeTypeForPath(m_url.path()) });
-    setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
+        setMimeType(MIMETypeRegistry::mimeTypeForPath(m_url.path()));
+    setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
     setExpectedContentLength(soup_message_headers_get_content_length(responseHeaders));
 }

@@ -70,9 +70,9 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData> d
     : m_url(data ? data->url : URL { })
     , m_mimeType(data ? data->mimeType : AtomString { })
     , m_expectedContentLength(data ? data->expectedContentLength : 0)
-    , m_textEncodingName(data ? data->textEncodingName : AtomString { })
-    , m_httpStatusText(data ? data->httpStatusText : AtomString { })
-    , m_httpVersion(data ? data->httpVersion : AtomString { })
+    , m_textEncodingName(data ? data->textEncodingName : String { })
+    , m_httpStatusText(data ? data->httpStatusText : String { })
+    , m_httpVersion(data ? data->httpVersion : String { })
     , m_httpHeaderFields(data ? data->httpHeaderFields : HTTPHeaderMap { })
     , m_networkLoadMetrics(data && data->networkLoadMetrics ? Box<NetworkLoadMetrics>::create(*data->networkLoadMetrics) : Box<NetworkLoadMetrics> { })
     , m_certificateInfo(data ? data->certificateInfo : std::nullopt)
@@ -117,12 +117,13 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
 {
     CrossThreadData data;
     data.url = url().isolatedCopy();
-    data.mimeType = mimeType().string().isolatedCopy();
+    data.mimeType = mimeType().isolatedCopy();
     data.expectedContentLength = expectedContentLength();
-    data.textEncodingName = textEncodingName().string().isolatedCopy();
+    data.textEncodingName = textEncodingName().isolatedCopy();
     data.httpStatusCode = httpStatusCode();
-    data.httpStatusText = httpStatusText().string().isolatedCopy();
-    data.httpVersion = httpVersion().string().isolatedCopy();
+    data.httpStatusText = httpStatusText().isolatedCopy();
+    data.httpVersion = httpVersion().isolatedCopy();
+
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     if (m_networkLoadMetrics)
         data.networkLoadMetrics = m_networkLoadMetrics->isolatedCopy();
@@ -144,13 +145,13 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     ResourceResponse response;
 
     response.setURL(data.url);
-    response.setMimeType(AtomString { WTFMove(data.mimeType) });
+    response.setMimeType(WTFMove(data.mimeType));
     response.setExpectedContentLength(data.expectedContentLength);
-    response.setTextEncodingName(AtomString { WTFMove(data.textEncodingName) });
+    response.setTextEncodingName(WTFMove(data.textEncodingName));
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(AtomString { WTFMove(data.httpStatusText) });
-    response.setHTTPVersion(AtomString { WTFMove(data.httpVersion) });
+    response.setHTTPStatusText(WTFMove(data.httpStatusText));
+    response.setHTTPVersion(WTFMove(data.httpVersion));
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     if (data.networkLoadMetrics)
@@ -262,20 +263,20 @@ void ResourceResponseBase::setURL(const URL& url)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::mimeType() const
+const String& ResourceResponseBase::mimeType() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_mimeType; 
 }
 
-void ResourceResponseBase::setMimeType(const AtomString& mimeType)
+void ResourceResponseBase::setMimeType(String&& mimeType)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
     // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
-    m_mimeType = mimeType;
+    m_mimeType = WTFMove(mimeType);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -298,14 +299,14 @@ void ResourceResponseBase::setExpectedContentLength(long long expectedContentLen
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::textEncodingName() const
+const String& ResourceResponseBase::textEncodingName() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_textEncodingName;
 }
 
-void ResourceResponseBase::setTextEncodingName(AtomString&& encodingName)
+void ResourceResponseBase::setTextEncodingName(String&& encodingName)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
@@ -375,30 +376,30 @@ bool ResourceResponseBase::isRedirection() const
     return isRedirectionStatusCode(m_httpStatusCode);
 }
 
-const AtomString& ResourceResponseBase::httpStatusText() const
+const String& ResourceResponseBase::httpStatusText() const
 {
     lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
-void ResourceResponseBase::setHTTPStatusText(const AtomString& statusText)
+void ResourceResponseBase::setHTTPStatusText(String&& statusText)
 {
     lazyInit(AllFields);
 
-    m_httpStatusText = statusText; 
+    m_httpStatusText = WTFMove(statusText);
 
     // FIXME: Should invalidate or update platform response if present.
 }
 
-const AtomString& ResourceResponseBase::httpVersion() const
+const String& ResourceResponseBase::httpVersion() const
 {
     lazyInit(AllFields);
     
     return m_httpVersion;
 }
 
-void ResourceResponseBase::setHTTPVersion(const AtomString& versionText)
+void ResourceResponseBase::setHTTPVersion(String&& versionText)
 {
     lazyInit(AllFields);
     
@@ -884,12 +885,12 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
     
     return { ResourceResponseData {
         URL { m_url },
-        String { m_mimeType.string() },
+        String { m_mimeType },
         m_expectedContentLength,
-        String { m_textEncodingName.string() },
+        String { m_textEncodingName },
         m_httpStatusCode,
-        String { m_httpStatusText.string() },
-        String { m_httpVersion.string() },
+        String { m_httpStatusText },
+        String { m_httpVersion },
         HTTPHeaderMap { m_httpHeaderFields },
         m_networkLoadMetrics ? std::optional(*m_networkLoadMetrics) : std::nullopt,
         m_source,
