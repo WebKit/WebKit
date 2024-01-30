@@ -46,7 +46,7 @@ public:
 
         ~Stream();
 
-        GRefPtr<GstBuffer> pullBuffer();
+        GRefPtr<GstSample> pullSample();
         GRefPtr<GstEvent> pullEvent();
 
         bool sendEvent(GstEvent*);
@@ -60,7 +60,7 @@ public:
     private:
         Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
 
-        GstFlowReturn chainBuffer(GstBuffer*);
+        GstFlowReturn chainSample(GRefPtr<GstSample>&&);
         bool sinkEvent(GstEvent*);
 
         GRefPtr<GstPad> m_pad;
@@ -68,8 +68,8 @@ public:
 
         GRefPtr<GstPad> m_targetPad;
 
-        Lock m_bufferQueueLock;
-        Deque<GRefPtr<GstBuffer>> m_bufferQueue WTF_GUARDED_BY_LOCK(m_bufferQueueLock);
+        Lock m_sampleQueueLock;
+        Deque<GRefPtr<GstSample>> m_sampleQueue WTF_GUARDED_BY_LOCK(m_sampleQueueLock);
 
         Lock m_sinkEventQueueLock;
         Deque<GRefPtr<GstEvent>> m_sinkEventQueue WTF_GUARDED_BY_LOCK(m_sinkEventQueueLock);
@@ -78,10 +78,10 @@ public:
     };
 
     using PadLinkCallback = Function<RefPtr<GStreamerElementHarness>(const GRefPtr<GstPad>&)>;
-    using ProcessBufferCallback = Function<void(Stream&, const GRefPtr<GstBuffer>&)>;
-    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback, std::optional<PadLinkCallback> padLinkCallback = std::nullopt)
+    using ProcessSampleCallback = Function<void(Stream&, const GRefPtr<GstSample>&)>;
+    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback> padLinkCallback = std::nullopt)
     {
-        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputBufferCallback), WTFMove(padLinkCallback)));
+        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputSampleCallback), WTFMove(padLinkCallback)));
     }
     ~GStreamerElementHarness();
 
@@ -99,14 +99,14 @@ public:
 
     GstElement* element() const { return m_element.get(); }
 
-    void processOutputBuffers();
+    void processOutputSamples();
     void flush();
     bool flushBuffers();
 
     void dumpGraph(const char* filenamePrefix);
 
 private:
-    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessBufferCallback&&, std::optional<PadLinkCallback>&&);
+    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessSampleCallback&&, std::optional<PadLinkCallback>&&);
 
     GstFlowReturn pushBufferFull(GRefPtr<GstBuffer>&&);
 
@@ -117,7 +117,7 @@ private:
     void pushSegmentEvent(std::optional<const GstSegment*>&& = { });
 
     GRefPtr<GstElement> m_element;
-    ProcessBufferCallback m_processOutputBufferCallback;
+    ProcessSampleCallback m_processOutputSampleCallback;
     std::optional<PadLinkCallback> m_padLinkCallback;
 
     GRefPtr<GstCaps> m_inputCaps;
