@@ -1976,3 +1976,5 @@ webkit.org/b/268332 [ Sonoma+ Release ] imported/w3c/web-platform-tests/webrtc/s
 [ Sonoma+ Release arm64 ] http/wpt/webcodecs/hevc-decoder-annexb.https.any.worker.html [ Failure ]
 [ Sonoma+ Release arm64 ] http/wpt/webcodecs/hevc-decoder-annexb.https.any.html [ Failure ]
 [ Sonoma+ Release arm64 ] http/tests/webcodecs/hevc-reordering.html [ Failure ]
+
+webkit.org/b/268406 transitions/flex-transitions.html [ Pass Failure ]
