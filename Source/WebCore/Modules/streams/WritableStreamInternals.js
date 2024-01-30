@@ -208,6 +208,16 @@ function writableStreamAbort(stream, reason)
     return abortPromiseCapability.promise;
 }
 
+function writableStreamCloseIfPossible(stream)
+{
+    const state = @getByIdDirectPrivate(stream, "state");
+    if (state !== "writable")
+        return;
+
+    const promise = @writableStreamClose(stream);
+    @markPromiseAsHandled(promise);
+}
+
 function writableStreamClose(stream)
 {
     const state = @getByIdDirectPrivate(stream, "state");

@@ -42,12 +42,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(VideoTrackGenerator);
 
 ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutionContext& context)
 {
-    auto source = Source::create();
+    auto source = Source::create(context.identifier());
     auto sink = Sink::create(Ref { source });
     auto writableOrException = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(context.globalObject()), Ref { sink });
 
     if (writableOrException.hasException())
         return writableOrException.releaseException();
+
+    Ref writable = writableOrException.releaseReturnValue();
+    source->setWritable(writable.get());
 
     // FIXME: Maybe we should have the writable buffer frames until the source is actually started.
     callOnMainThread([source] {
@@ -80,7 +83,7 @@ ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutio
     privateTrack->initializeSettings(WTFMove(settings));
     privateTrack->initializeCapabilities(WTFMove(capabilities));
 
-    return adoptRef(*new VideoTrackGenerator(WTFMove(sink), writableOrException.releaseReturnValue(), MediaStreamTrack::create(context, WTFMove(privateTrack))));
+    return adoptRef(*new VideoTrackGenerator(WTFMove(sink), WTFMove(writable), MediaStreamTrack::create(context, WTFMove(privateTrack))));
 }
 
 VideoTrackGenerator::VideoTrackGenerator(Ref<Sink>&& sink, Ref<WritableStream>&& writable, Ref<MediaStreamTrack>&& track)
@@ -122,13 +125,34 @@ Ref<MediaStreamTrack> VideoTrackGenerator::track()
     return Ref { m_track };
 }
 
-VideoTrackGenerator::Source::Source()
+VideoTrackGenerator::Source::Source(ScriptExecutionContextIdentifier identifier)
     : RealtimeMediaSource(CaptureDevice { { }, CaptureDevice::DeviceType::Camera, emptyString() })
+    , m_contextIdentifier(identifier)
 {
+}
+
+void VideoTrackGenerator::Source::endProducingData()
+{
+    ASSERT(isMainThread());
+    ScriptExecutionContext::postTaskTo(m_contextIdentifier, [weakThis = ThreadSafeWeakPtr { *this }] (auto&) {
+        RefPtr protectedSource = weakThis.get();
+        RefPtr writable = protectedSource ? protectedSource->m_writable.get() : nullptr;
+        if (writable)
+            writable->closeIfPossible();
+    });
+}
+
+void VideoTrackGenerator::Source::setWritable(WritableStream& writable)
+{
+    ASSERT(!isMainThread());
+    ASSERT(!m_writable);
+    m_writable = writable;
 }
 
 void VideoTrackGenerator::Source::writeVideoFrame(VideoFrame& frame, VideoFrameTimeMetadata metadata)
 {
+    ASSERT(!isMainThread());
+
     auto frameSize = IntSize(frame.presentationSize());
     if (frame.rotation() == VideoFrame::Rotation::Left || frame.rotation() == VideoFrame::Rotation::Right)
         frameSize = frameSize.transposedSize();

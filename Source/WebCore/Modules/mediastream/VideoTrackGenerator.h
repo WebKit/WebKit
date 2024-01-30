@@ -55,7 +55,7 @@ private:
 
     class Source final : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop> {
     public:
-        static Ref<Source> create() { return adoptRef(*new Source()); }
+        static Ref<Source> create(ScriptExecutionContextIdentifier identifier) { return adoptRef(*new Source(identifier)); }
 
         void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>::ref(); }
         void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>::deref(); }
@@ -63,11 +63,17 @@ private:
 
         void writeVideoFrame(VideoFrame&, VideoFrameTimeMetadata);
 
+        void setWritable(WritableStream&);
+
     private:
-        Source();
+        explicit Source(ScriptExecutionContextIdentifier);
 
         const RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
         const RealtimeMediaSourceSettings& settings() final { return m_settings; }
+        void endProducingData() final;
+
+        ScriptExecutionContextIdentifier m_contextIdentifier;
+        WeakPtr<WritableStream> m_writable;
 
         RealtimeMediaSourceCapabilities m_capabilities;
         RealtimeMediaSourceSettings m_settings;

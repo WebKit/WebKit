@@ -39,9 +39,11 @@ public:
 
     bool locked() const;
     void lock();
-    JSC::JSValue abort(JSC::JSGlobalObject&, JSC::JSValue);
-    JSC::JSValue close(JSC::JSGlobalObject&);
+    JSC::JSValue abortForBindings(JSC::JSGlobalObject&, JSC::JSValue);
+    JSC::JSValue closeForBindings(JSC::JSGlobalObject&);
     JSC::JSValue getWriter(JSC::JSGlobalObject&);
+
+    void closeIfPossible();
 
 private:
     InternalWritableStream(JSDOMGlobalObject& globalObject, JSC::JSObject& jsObject)

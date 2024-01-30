@@ -2,7 +2,7 @@
 PASS Tests that VideoTrackGenerator forwards frames to sink
 PASS Tests that creating a VideoTrackGenerator works as expected
 PASS Tests that VideoFrames are destroyed on write
-FAIL Generator writer rejects on mismatched media input promise_test: Unhandled rejection with value: object "NotSupportedError: AudioData creation failed"
+PASS Generator writer rejects on mismatched media input
 PASS Generator writer rejects on non media input
 PASS A writer rejects when generator's track is stopped
 PASS A muted writer rejects when generator's track is stopped
