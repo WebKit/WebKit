@@ -2141,7 +2141,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     case AttributeNames::XML::langAttr:
     case AttributeNames::langAttr: {
         if (name == HTMLNames::langAttr)
-            setHasLangAttr(!newValue.isNull());
+            setHasLangAttr(!newValue.isNull() && (isHTMLElement() || isSVGElement()));
         else
             setHasXMLLangAttr(!newValue.isNull());
         Ref document = this->document();
