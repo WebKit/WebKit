@@ -870,11 +870,12 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
-        stream.dumpProperty("parentObject", parent ? parent->objectID() : AXID());
+        stream.dumpProperty("parentID", parent ? parent->objectID() : AXID());
     }
 
-    if (options & AXStreamOptions::IdentifierAttribute)
-        stream.dumpProperty("identifierAttribute", object.identifierAttribute());
+    auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();
+    if (!id.isEmpty())
+        stream.dumpProperty("identifier", WTFMove(id));
 
     if (options & AXStreamOptions::OuterHTML) {
         auto role = object.roleValue();
