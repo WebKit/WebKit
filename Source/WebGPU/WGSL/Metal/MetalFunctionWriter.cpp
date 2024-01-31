@@ -134,7 +134,7 @@ private:
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
     unsigned m_functionConstantIndex { 0 };
-    std::optional<AST::Continuing> m_continuing;
+    AST::Continuing*m_continuing;
     HashSet<AST::Function*> m_visitedFunctions;
 };
 
@@ -2233,7 +2233,7 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
     m_stringBuilder.append("while (true) {\n");
     {
         auto& continuing = statement.continuing();
-        SetForScope continuingScope(m_continuing, continuing);
+        SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
 
         IndentationScope scope(m_indent);
         visitStatements(statement.body());
@@ -2248,6 +2248,9 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
 {
+    // Do not emit the same continuing for continue statements within the continuing block
+    SetForScope continuingScope(m_continuing, nullptr);
+
     m_stringBuilder.append("{\n");
     {
         IndentationScope scope(m_indent);
@@ -2309,7 +2312,7 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
 {
-    if (m_continuing.has_value()) {
+    if (m_continuing) {
         visit(*m_continuing);
         m_stringBuilder.append(m_indent);
     }

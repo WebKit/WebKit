@@ -20,4 +20,9 @@ fn main() {
       break if y > 10;
     }
   }
+
+  loop {
+    if (false) { break; }
+    continuing { while(false) { continue; } }
+  }
 }
