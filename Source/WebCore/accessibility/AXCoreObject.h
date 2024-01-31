@@ -770,6 +770,8 @@ enum class SpinButtonType : bool {
     Composite
 };
 
+enum class ForceLayout : bool { No, Yes };
+
 // Use this struct to store the isIgnored data that depends on the parents, so that in addChildren()
 // we avoid going up the parent chain for each element while traversing the tree with useful information already.
 struct AccessibilityIsIgnoredFromParentData {
@@ -1661,6 +1663,8 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
     return value.autorelease();
 }
 #endif
+
+bool inRenderTreeOrStyleUpdate(const Document&);
 
 } // namespace Accessibility
 

@@ -1541,6 +1541,8 @@ editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
+accessibility/tree-update-with-dirty-layout.html [ Skip ]
+
 # The inert attribute isn't making objects inaccessible on WK1.
 accessibility/node-only-inert-object.html [ Failure ]
 

@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "AXCoreObject.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 
@@ -594,5 +595,17 @@ void AXCoreObject::appendRadioButtonGroupMembers(AccessibilityChildrenVector& li
         }
     }
 }
+
+namespace Accessibility {
+
+bool inRenderTreeOrStyleUpdate(const Document& document)
+{
+    if (document.inStyleRecalc() || document.inRenderTreeUpdate())
+        return true;
+    auto* view = document.view();
+    return view && view->layoutContext().isInRenderTreeLayout();
+}
+
+} // namespace Accessibility
 
 } // namespace WebCore

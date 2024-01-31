@@ -3965,16 +3965,7 @@ bool AXObjectCache::nodeIsTextControl(const Node* node)
     return axObject && axObject->isTextControl();
 }
 
-void AXObjectCache::performCacheUpdateTimerFired()
-{
-    // If there's a pending layout, let the layout trigger the AX update.
-    if (!document().view() || document().view()->needsLayout())
-        return;
-
-    performDeferredCacheUpdate();
-}
-
-void AXObjectCache::performDeferredCacheUpdate()
+void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 {
     AXTRACE(makeString("AXObjectCache::performDeferredCacheUpdate 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     if (m_performingDeferredCacheUpdate) {
@@ -3982,6 +3973,26 @@ void AXObjectCache::performDeferredCacheUpdate()
         return;
     }
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
+
+    // It's unexpected for this function to run in the middle of a render tree or style update.
+    ASSERT(!Accessibility::inRenderTreeOrStyleUpdate(document()));
+
+    if (!document().view())
+        return;
+
+    if (document().view()->needsLayout()) {
+        // Layout became dirty while waiting to performDeferredCacheUpdate, and we require clean layout
+        // to update the accessibility tree correctly in this function.
+        if ((m_cacheUpdateDeferredCount >= 3 || forceLayout == ForceLayout::Yes) && !Accessibility::inRenderTreeOrStyleUpdate(document())) {
+            // Layout is being thrashed before we get a chance to update, so stop waiting and just force it.
+            m_cacheUpdateDeferredCount = 0;
+            document().updateLayoutIgnorePendingStylesheets();
+        } else {
+            // Wait for layout to trigger another async cache update.
+            ++m_cacheUpdateDeferredCount;
+            return;
+        }
+    }
 
     bool markedRelationsDirty = false;
     auto markRelationsDirty = [&] () {
