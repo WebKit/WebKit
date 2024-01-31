@@ -41,3 +41,5 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServices, ASAuthorizationPlatfo
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServices, ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServices, ASAuthorizationSecurityKeyPublicKeyCredentialAssertion);
 
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServices, ASAuthorizationErrorDomain, NSErrorDomain);
+

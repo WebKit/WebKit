@@ -145,10 +145,10 @@ static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
     return ArrayBuffer::create(data.data(), data.size());
 }
 
-static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
+static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId, const Vector<String>& relatedOrigins)
 {
     // Search Keychain for existing credential matched the RP ID.
-    NSDictionary *query = @{
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
@@ -156,16 +156,33 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
         (id)kSecUseDataProtectionKeychain: @YES
-    };
+    }];
 
+    CFMutableArrayRef allAttributes = CFArrayCreateMutable(kCFAllocatorDefault, 0, nullptr);
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return std::nullopt;
-    auto retainAttributesArray = adoptCF(attributesArrayRef);
-    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
+
+    CFArrayRef attributes = (CFArrayRef)attributesArrayRef;
+    if (!!attributes)
+        CFArrayAppendArray(allAttributes, attributes, CFRangeMake(0, CFArrayGetCount(attributes)));
+
+    for (String origin : relatedOrigins) {
+        query[(id)kSecAttrLabel] = origin;
+        status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+        if (status && status != errSecItemNotFound)
+            continue;
+
+        attributes = (CFArrayRef)attributesArrayRef;
+        if (!!attributes)
+            CFArrayAppendArray(allAttributes, attributes, CFRangeMake(0, CFArrayGetCount(attributes)));
+    }
+
+    NSArray *sortedAttributesArray = [(NSArray *)allAttributes sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
         return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
     }];
+    CFRelease(allAttributes);
 
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity(sortedAttributesArray.count);
@@ -207,6 +224,8 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
             response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
 
         response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
+
+        response->setRelyingPartyIdentifier(attributes[(id)kSecAttrLabel]);
 
         result.append(WTFMove(response));
     }
@@ -266,7 +285,7 @@ void LocalAuthenticator::makeCredential()
 
     // Step 3.
     ASSERT(creationOptions.rp.id);
-    auto existingCredentials = getExistingCredentials(*creationOptions.rp.id);
+    auto existingCredentials = getExistingCredentials(*creationOptions.rp.id, Vector<String>());
     if (!existingCredentials) {
         receiveException({ ExceptionCode::UnknownError, makeString("Couldn't get existing credentials") });
         return;
@@ -625,7 +644,7 @@ void LocalAuthenticator::getAssertion()
     }
 
     // Search Keychain for the RP ID.
-    auto existingCredentials = getExistingCredentials(requestOptions.rpId);
+    auto existingCredentials = getExistingCredentials(requestOptions.rpId, requestOptions.relatedOrigins);
     if (!existingCredentials) {
         receiveException({ ExceptionCode::UnknownError, "Couldn't get existing credentials"_s });
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't get existing credentials");
@@ -754,7 +773,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     };
 
     NSDictionary *updateParams = @{
-        (id)kSecAttrLabel: requestOptions.rpId,
+        (id)kSecAttrApplicationLabel: nsCredentialId.get(),
     };
     auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
     if (status)

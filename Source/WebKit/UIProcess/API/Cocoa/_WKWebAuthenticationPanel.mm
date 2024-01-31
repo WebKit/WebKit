@@ -914,6 +914,14 @@ static WebCore::MediationRequirement toWebCore(_WKWebAuthenticationMediationRequ
         return WebCore::MediationRequirement::Optional;
     }
 }
+
+static Vector<String> relatedOrigins(NSArray<NSString *> *relatedOrigins)
+{
+    return Vector<String>(relatedOrigins.count, [relatedOrigins](size_t i) {
+        NSString *relatedOrigin = relatedOrigins[i];
+        return String(relatedOrigin);
+    });
+}
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -1027,6 +1035,10 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
     else
         result.extensions = authenticationExtensionsClientInputs(options.extensions);
+
+    if (options.relatedOrigins)
+        result.relatedOrigins = relatedOrigins(options.relatedOrigins);
+
     result.userVerification = userVerification(options.userVerification);
     result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
 #endif

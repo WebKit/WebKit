@@ -48,6 +48,7 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @property (nonatomic) _WKAuthenticatorAttachment authenticatorAttachment;
 @property (nullable, nonatomic, strong) _WKAuthenticationExtensionsClientInputs *extensions;
 @property (nullable, nonatomic, copy) NSData *extensionsCBOR;
+@property (nullable, nonatomic, copy) NSArray<NSString *> *relatedOrigins;
 
 @end
 

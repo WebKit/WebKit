@@ -166,17 +166,18 @@ static inline RetainPtr<NSString> toASAuthorizationSecurityKeyPublicKeyCredentia
 RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::constructASController(WebAuthenticationRequestData &&requestData)
 {
     RetainPtr<NSArray> requests;
+    String origin = requestData.frameInfo.securityOrigin.toString();
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions &options) {
-        requests = requestsForRegisteration(options, requestData.hash);
+        requests = requestsForRegisteration(options, requestData.hash, origin);
     }, [&](const PublicKeyCredentialRequestOptions &options) {
-        requests = requestsForAssertion(options, requestData.hash, requestData.parentOrigin);
+        requests = requestsForAssertion(options, requestData.hash, requestData.parentOrigin, origin);
     });
     if (!requests || ![requests count])
         return nullptr;
     return adoptNS([allocASAuthorizationControllerInstance() initWithAuthorizationRequests:requests.get()]);
 }
 
-RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(const PublicKeyCredentialCreationOptions &options, const Vector<uint8_t> &hash)
+RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(const PublicKeyCredentialCreationOptions &options, const Vector<uint8_t> &hash, const String &origin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
     bool includeSecurityKeyRequest = true;
@@ -196,7 +197,14 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
         }
     }
     if (includePlatformRequest) {
-        auto request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithChallenge:toNSData(options.challenge).get() name:options.user.name userID:toNSData(options.user.id).get()]);
+        RetainPtr<ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest> request;
+        ASAuthorizationPlatformPublicKeyCredentialProvider *provider = [allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id];
+        if ([provider respondsToSelector:@selector(createCredentialRegistrationRequestWithClientData:name:userID:)]) {
+            ASPublicKeyCredentialClientData *clientData = [allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:origin];
+            request = adoptNS([provider createCredentialRegistrationRequestWithClientData:clientData name:options.user.name userID:toNSData(options.user.id).get()]);
+        } else
+            request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithChallenge:toNSData(options.challenge).get() name:options.user.name userID:toNSData(options.user.id).get()]);
+
         request.get().attestationPreference = toAttestationConveyancePreference(options.attestation).get();
         if (options.authenticatorSelection)
             request.get().userVerificationPreference = toASUserVerificationPreference(options.authenticatorSelection->userVerification).get();
@@ -219,7 +227,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
     return requests;
 }
 
-RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const PublicKeyCredentialRequestOptions &options, const Vector<uint8_t> &hash, std::optional<WebCore::SecurityOriginData> &parentOrigin)
+RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const PublicKeyCredentialRequestOptions &options, const Vector<uint8_t> &hash, std::optional<WebCore::SecurityOriginData> &parentOrigin, const String& origin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *>> platformAllowedCredentials = adoptNS([[NSMutableArray alloc] init]);
@@ -237,7 +245,14 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
         }
     }
     if ([platformAllowedCredentials count] || ![crossPlatformAllowedCredentials count]) {
-        auto request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId] createCredentialAssertionRequestWithChallenge:toNSData(options.challenge).get()]);
+        RetainPtr<ASAuthorizationPlatformPublicKeyCredentialAssertionRequest> request;
+        ASAuthorizationPlatformPublicKeyCredentialProvider *provider = [allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rpId];
+        if ([provider respondsToSelector:@selector(createCredentialAssertionRequestWithClientData:)]) {
+            ASPublicKeyCredentialClientData *clientData = [allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:origin];
+            request = adoptNS([provider createCredentialAssertionRequestWithClientData:clientData]);
+        } else
+            request = adoptNS([provider createCredentialAssertionRequestWithChallenge:toNSData(options.challenge).get()]);
+
         if (platformAllowedCredentials)
             request.get().allowedCredentials = platformAllowedCredentials.get();
         [requests addObject:request.leakRef()];
@@ -297,11 +312,15 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     m_controller = WTFMove(controller);
     m_completionHandler = WTFMove(handler);
     m_delegate = adoptNS([[_WKASDelegate alloc] initWithPage:WTFMove(requestData.page) completionHandler:makeBlockPtr([this](ASAuthorization *auth, NSError *error) mutable {
-        ensureOnMainRunLoop([this, auth = retainPtr(auth)]() {
+        ensureOnMainRunLoop([this, auth = retainPtr(auth), error]() {
             WebCore::AuthenticatorResponseData response = { };
             WebCore::ExceptionData exceptionData = { ExceptionCode::NotAllowedError, @"" };
             WebCore::AuthenticatorAttachment attachment = AuthenticatorAttachment::Platform;
-            if ([auth.get().credential isKindOfClass:getASAuthorizationPlatformPublicKeyCredentialRegistrationClass()]) {
+            if ([error.domain isEqualToString:ASAuthorizationErrorDomain] && error.code == ASAuthorizationErrorFailed && error.userInfo[NSUnderlyingErrorKey]) {
+                NSError *underlyingError = error.userInfo[NSUnderlyingErrorKey];
+                if ([underlyingError.domain isEqualToString:ASCAuthorizationErrorDomain] && underlyingError.code == ASCAuthorizationErrorSecurityError)
+                    exceptionData = { ExceptionCode::SecurityError, underlyingError.userInfo[NSLocalizedFailureReasonErrorKey] };
+            } else if ([auth.get().credential isKindOfClass:getASAuthorizationPlatformPublicKeyCredentialRegistrationClass()]) {
                 response.isAuthenticatorAttestationResponse = true;
                 auto credential = retainPtr((ASAuthorizationPlatformPublicKeyCredentialRegistration *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);

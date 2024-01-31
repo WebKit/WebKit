@@ -105,8 +105,8 @@ private:
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
     RetainPtr<ASAuthorizationController> constructASController(WebAuthenticationRequestData&&);
-    RetainPtr<NSArray> requestsForRegisteration(const WebCore::PublicKeyCredentialCreationOptions&, const Vector<uint8_t>& hash);
-    RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const Vector<uint8_t>& hash, std::optional<WebCore::SecurityOriginData>& parentOrigin);
+    RetainPtr<NSArray> requestsForRegisteration(const WebCore::PublicKeyCredentialCreationOptions&, const Vector<uint8_t>& hash, const String&);
+    RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const Vector<uint8_t>& hash, std::optional<WebCore::SecurityOriginData>& parentOrigin, const String& origin);
 #endif
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);

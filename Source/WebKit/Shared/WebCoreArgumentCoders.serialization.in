@@ -1576,6 +1576,7 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
     WebCore::UserVerificationRequirement userVerification;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
+    Vector<String> relatedOrigins;
     [NotSerialized] std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
 #endif // ENABLE(WEB_AUTHN)
 };

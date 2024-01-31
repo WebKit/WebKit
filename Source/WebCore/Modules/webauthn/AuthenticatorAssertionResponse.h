@@ -54,6 +54,7 @@ public:
     LAContext * laContext() const { return m_laContext.get(); }
     RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
     const String& accessGroup() const { return m_accessGroup; }
+    const String& relyingPartyIdentifier() const { return m_relyingPartyIdentifier; }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
     void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTFMove(signature); }
@@ -65,6 +66,7 @@ public:
     void setLAContext(LAContext *context) { m_laContext = context; }
     void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTFMove(largeBlob); }
     void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
+    void setRelyingPartyIdentifier(const String& relyingPartyIdentifier) { m_relyingPartyIdentifier = relyingPartyIdentifier; }
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);
@@ -86,6 +88,7 @@ private:
     RetainPtr<LAContext> m_laContext;
     RefPtr<ArrayBuffer> m_largeBlob;
     String m_accessGroup;
+    String m_relyingPartyIdentifier;
 };
 
 } // namespace WebCore

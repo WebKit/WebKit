@@ -78,6 +78,11 @@
     return _response->accessGroup();
 }
 
+- (NSString *)relyingPartyIdentifier
+{
+    return _response->relyingPartyIdentifier();
+}
+
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)setLAContext:(LAContext *)context
