@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DigitalCredential.h"
 
+#if ENABLE(WEB_AUTHN)
+
 namespace WebCore {
 
 Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& data)
@@ -36,8 +38,11 @@ Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& data)
 DigitalCredential::~DigitalCredential() = default;
 
 DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& data)
-    : m_data(WTFMove(data))
+    : BasicCredential(base64URLEncodeToString(data->data(), data->byteLength()), Type::DigitalCredential, Discovery::CredentialStore)
+    , m_data(WTFMove(data))
 {
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

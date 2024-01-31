@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
+#include "BasicCredential.h"
 #include "IDLTypes.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +40,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 
 using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredential>>;
 
-class DigitalCredential : public RefCounted<DigitalCredential> {
+class DigitalCredential final : public BasicCredential {
 public:
     static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data);
 
@@ -51,7 +54,13 @@ public:
 private:
     DigitalCredential(Ref<ArrayBuffer>&& data);
 
+    Type credentialType() const final { return Type::DigitalCredential; }
+
     RefPtr<ArrayBuffer> m_data;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(DigitalCredential, BasicCredential::Type::DigitalCredential)
+
+#endif // ENABLE(WEB_AUTHN)
