@@ -37,6 +37,7 @@
 #include "CommonAtomStrings.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
 #include "KeyframeEffect.h"

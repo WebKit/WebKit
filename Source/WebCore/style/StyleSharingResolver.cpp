@@ -300,7 +300,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())
+    if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
         return false;
 #endif
 

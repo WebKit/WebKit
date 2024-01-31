@@ -44,6 +44,7 @@
 #include "CSSShadowValue.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "FilterOperationsBuilder.h"
 #include "FontCache.h"

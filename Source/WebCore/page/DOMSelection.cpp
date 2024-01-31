@@ -32,6 +32,7 @@
 
 #include "CommonAtomStrings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "FrameSelection.h"
 #include "LocalFrame.h"

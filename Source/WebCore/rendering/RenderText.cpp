@@ -1424,7 +1424,11 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
     if (!textNode())
         return { };
 
-    auto markers = document().markers().markersFor(*textNode(), DocumentMarker::Type::DraggedContent);
+    CheckedPtr markerController = document().markersIfExists();
+    if (!markerController)
+        return { };
+
+    auto markers = markerController->markersFor(*textNode(), DocumentMarker::Type::DraggedContent);
     if (markers.isEmpty())
         return { };
 

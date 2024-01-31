@@ -31,6 +31,7 @@
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FeaturePolicy.h"
 #include "FrameLoader.h"
 #include "GPU.h"

@@ -26,6 +26,7 @@
 #include "DOMWrapperWorld.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "ExtendedDOMClientIsoSubspaces.h"

@@ -53,6 +53,62 @@ inline PAL::TextEncoding Document::textEncoding() const
 
 inline String Document::charset() const { return Document::encoding(); }
 
+inline Quirks& Document::quirks()
+{
+    if (!m_quirks)
+        return ensureQuirks();
+    return *m_quirks;
+}
+
+inline const Quirks& Document::quirks() const
+{
+    if (!m_quirks)
+        return const_cast<Document&>(*this).ensureQuirks();
+    return *m_quirks;
+}
+
+inline ExtensionStyleSheets& Document::extensionStyleSheets()
+{
+    if (!m_extensionStyleSheets)
+        return ensureExtensionStyleSheets();
+    return *m_extensionStyleSheets;
+}
+
+inline VisitedLinkState& Document::visitedLinkState() const
+{
+    if (!m_visitedLinkState)
+        return const_cast<Document&>(*this).ensureVisitedLinkState();
+    return *m_visitedLinkState;
+}
+
+inline ScriptRunner& Document::scriptRunner()
+{
+    if (!m_scriptRunner)
+        return ensureScriptRunner();
+    return *m_scriptRunner;
+}
+
+inline ScriptModuleLoader& Document::moduleLoader()
+{
+    if (!m_moduleLoader)
+        return ensureModuleLoader();
+    return *m_moduleLoader;
+}
+
+CSSFontSelector& Document::fontSelector()
+{
+    if (!m_fontSelector)
+        return ensureFontSelector();
+    return *m_fontSelector;
+}
+
+const CSSFontSelector& Document::fontSelector() const
+{
+    if (!m_fontSelector)
+        return const_cast<Document&>(*this).ensureFontSelector();
+    return *m_fontSelector;
+}
+
 inline const Document* Document::templateDocument() const
 {
     return m_templateDocumentHost ? this : m_templateDocument.get();
@@ -139,9 +195,16 @@ inline RefPtr<LocalDOMWindow> Document::protectedWindow() const
     return m_domWindow;
 }
 
+inline CachedResourceLoader& Document::cachedResourceLoader()
+{
+    if (!m_cachedResourceLoader)
+        return ensureCachedResourceLoader();
+    return *m_cachedResourceLoader;
+}
+
 inline Ref<CachedResourceLoader> Document::protectedCachedResourceLoader() const
 {
-    return m_cachedResourceLoader;
+    return const_cast<Document&>(*this).cachedResourceLoader();
 }
 
 inline RefPtr<DocumentParser> Document::protectedParser() const
@@ -154,14 +217,28 @@ inline RefPtr<Element> Document::protectedDocumentElement() const
     return m_documentElement;
 }
 
+inline UndoManager& Document::undoManager() const
+{
+    if (!m_undoManager)
+        return const_cast<Document&>(*this).ensureUndoManager();
+    return *m_undoManager;
+}
+
 inline Ref<UndoManager> Document::protectedUndoManager() const
 {
-    return m_undoManager;
+    return undoManager();
+}
+
+inline ReportingScope& Document::reportingScope() const
+{
+    if (!m_reportingScope)
+        return const_cast<Document&>(*this).ensureReportingScope();
+    return *m_reportingScope;
 }
 
 inline Ref<ReportingScope> Document::protectedReportingScope() const
 {
-    return m_reportingScope;
+    return reportingScope();
 }
 
 inline RefPtr<TextResourceDecoder> Document::protectedDecoder() const
@@ -176,22 +253,26 @@ inline RefPtr<Element> Document::protectedFocusedElement() const
 
 inline DocumentMarkerController& Document::markers()
 {
-    return m_markers.get();
+    if (!m_markers)
+        return ensureMarkers();
+    return *m_markers;
 }
 
 inline const DocumentMarkerController& Document::markers() const
 {
-    return m_markers.get();
+    if (!m_markers)
+        return const_cast<Document&>(*this).ensureMarkers();
+    return *m_markers;
 }
 
 inline CheckedRef<DocumentMarkerController> Document::checkedMarkers()
 {
-    return m_markers.get();
+    return markers();
 }
 
 inline CheckedRef<const DocumentMarkerController> Document::checkedMarkers() const
 {
-    return m_markers.get();
+    return markers();
 }
 
 inline Ref<SecurityOrigin> Document::protectedSecurityOrigin() const
@@ -200,14 +281,28 @@ inline Ref<SecurityOrigin> Document::protectedSecurityOrigin() const
 }
 
 #if ENABLE(FULLSCREEN_API)
+inline FullscreenManager& Document::fullscreenManager()
+{
+    if (!m_fullscreenManager)
+        return ensureFullscreenManager();
+    return *m_fullscreenManager;
+}
+
+inline const FullscreenManager& Document::fullscreenManager() const
+{
+    if (!m_fullscreenManager)
+        return const_cast<Document&>(*this).ensureFullscreenManager();
+    return *m_fullscreenManager;
+}
+
 inline CheckedRef<FullscreenManager> Document::checkedFullscreenManager()
 {
-    return m_fullscreenManager.get();
+    return fullscreenManager();
 }
 
 inline CheckedRef<const FullscreenManager> Document::checkedFullscreenManager() const
 {
-    return m_fullscreenManager.get();
+    return fullscreenManager();
 }
 #endif
 

@@ -199,7 +199,11 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     if (!renderer.textNode())
         return { };
 
-    auto markers = renderer.document().markers().markersFor(*renderer.textNode());
+    CheckedPtr markerController = renderer.document().markersIfExists();
+    if (!markerController)
+        return { };
+
+    auto markers = markerController->markersFor(*renderer.textNode());
 
     auto markedTextTypeForMarkerType = [] (DocumentMarker::Type type) {
         switch (type) {

@@ -3303,14 +3303,16 @@ IGNORE_WARNINGS_END
     [NSApp setWindowsNeedUpdate:YES];
 
 #if ENABLE(FULLSCREEN_API)
-    auto* document = core([frame DOMDocument]);
-    if (auto* element = document ? document->fullscreenManager().currentFullscreenElement() : 0) {
-        SEL selector = @selector(webView:closeFullScreenWithListener:);
-        if ([_private->UIDelegate respondsToSelector:selector]) {
-            auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element]);
-            CallUIDelegate(self, selector, listener.get());
-        } else if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen]) {
-            [_private->newFullscreenController close];
+    if (RefPtr document = core([frame DOMDocument]); document) {
+        if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
+            if (RefPtr element = fullscreenManager->currentFullscreenElement()) {
+                SEL selector = @selector(webView:closeFullScreenWithListener:);
+                if ([_private->UIDelegate respondsToSelector:selector]) {
+                    auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element.get()]);
+                    CallUIDelegate(self, selector, listener.get());
+                } else if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen])
+                    [_private->newFullscreenController close];
+            }
         }
     }
 #endif

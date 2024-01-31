@@ -36,6 +36,7 @@
 #include "CSSSelectorParser.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"

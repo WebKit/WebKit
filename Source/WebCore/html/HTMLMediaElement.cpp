@@ -6461,8 +6461,8 @@ void HTMLMediaElement::mediaVolumeDidChange()
 bool HTMLMediaElement::elementIsHidden() const
 {
 #if ENABLE(FULLSCREEN_API)
-    auto& fullscreenManager = document().fullscreenManager();
-    if (isVideo() && fullscreenManager.isFullscreen() && fullscreenManager.currentFullscreenElement())
+    auto* fullscreenManager = document().fullscreenManagerIfExists();
+    if (isVideo() && fullscreenManager && fullscreenManager->isFullscreen() && fullscreenManager->currentFullscreenElement())
         return false;
 #endif
 
@@ -6756,7 +6756,8 @@ bool HTMLMediaElement::taintsOrigin(const SecurityOrigin& origin) const
 bool HTMLMediaElement::isFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API)
-    if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == this)
+    CheckedPtr fullscreenManager = document().fullscreenManagerIfExists();
+    if (fullscreenManager && fullscreenManager->isFullscreen() && fullscreenManager->currentFullscreenElement() == this)
         return true;
 #endif
 
@@ -6766,7 +6767,8 @@ bool HTMLMediaElement::isFullscreen() const
 bool HTMLMediaElement::isStandardFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API)
-    if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == this)
+    CheckedPtr fullscreenManager = document().fullscreenManagerIfExists();
+    if (fullscreenManager && fullscreenManager->isFullscreen() && fullscreenManager->currentFullscreenElement() == this)
         return true;
 #endif
 
@@ -7158,7 +7160,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (m_processingPreferenceChange)
         return;
 
-    if (isSuspended())
+    if (isSuspended() || isContextStopped())
         return;
 
     bool haveVisibleTextTrack = false;

@@ -39,6 +39,7 @@
 #include "CSSValuePool.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
 #include "RenderStyle.h"

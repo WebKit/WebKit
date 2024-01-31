@@ -32,6 +32,7 @@
 #include "CSSFontSelector.h"
 #include "CSSStyleSheet.h"
 #include "CustomPropertyRegistry.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -628,12 +629,14 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
 {
     Vector<RefPtr<CSSStyleSheet>> result;
 
-    if (auto* pageUserSheet = m_document->extensionStyleSheets().pageUserSheet())
-        result.append(pageUserSheet);
-    result.appendVector(m_document->extensionStyleSheets().documentUserStyleSheets());
-    result.appendVector(m_document->extensionStyleSheets().injectedUserStyleSheets());
-    result.appendVector(m_document->extensionStyleSheets().injectedAuthorStyleSheets());
-    result.appendVector(m_document->extensionStyleSheets().authorStyleSheetsForTesting());
+    if (CheckedPtr extensionStyleSheets = m_document->extensionStyleSheetsIfExists()) {
+        if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet())
+            result.append(pageUserSheet);
+        result.appendVector(extensionStyleSheets->documentUserStyleSheets());
+        result.appendVector(extensionStyleSheets->injectedUserStyleSheets());
+        result.appendVector(extensionStyleSheets->injectedAuthorStyleSheets());
+        result.appendVector(extensionStyleSheets->authorStyleSheetsForTesting());
+    }
 
     for (auto& styleSheet : m_styleSheetsForStyleSheetList) {
         auto* sheet = dynamicDowncast<CSSStyleSheet>(*styleSheet);

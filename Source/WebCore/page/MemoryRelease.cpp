@@ -35,6 +35,7 @@
 #include "CommonVM.h"
 #include "CookieJar.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCache.h"
 #include "GCController.h"
 #include "HRTFElevation.h"
@@ -124,7 +125,8 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
     for (auto& document : protectedDocuments) {
         document->clearQuerySelectorAllResults();
         document->styleScope().releaseMemory();
-        document->fontSelector().emptyCaches();
+        if (RefPtr fontSelector = document->fontSelectorIfExists())
+            fontSelector->emptyCaches();
         document->cachedResourceLoader().garbageCollectDocumentResources();
     }
 

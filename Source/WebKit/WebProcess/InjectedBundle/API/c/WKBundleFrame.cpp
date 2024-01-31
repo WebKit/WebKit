@@ -39,6 +39,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/LocalFrame.h>

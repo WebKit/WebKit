@@ -2134,10 +2134,12 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             elementData()->setIdForStyleResolution(newId);
         }
 
-        if (!oldValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(oldValue);
-        if (!newValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(newValue);
+        if (CheckedPtr observerRegistry = treeScope().idTargetObserverRegistryIfExists()) {
+            if (!oldValue.isEmpty())
+                observerRegistry->notifyObservers(oldValue);
+            if (!newValue.isEmpty())
+                observerRegistry->notifyObservers(newValue);
+        }
         break;
     }
     case AttributeNames::nameAttr:

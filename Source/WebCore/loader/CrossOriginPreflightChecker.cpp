@@ -37,6 +37,8 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentThreadableLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"

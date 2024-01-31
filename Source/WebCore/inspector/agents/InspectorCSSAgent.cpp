@@ -1254,7 +1254,8 @@ RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const Style
 
     // StyleRules returned by Style::Resolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(styleResolver.document().extensionStyleSheets());
+    if (auto* extensionStyleSheets = styleResolver.document().extensionStyleSheetsIfExists())
+        styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
     styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(element));
 
     // Possiblity of :host styles if this element has a shadow root.

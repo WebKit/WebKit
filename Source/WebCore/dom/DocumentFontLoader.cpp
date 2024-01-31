@@ -120,7 +120,8 @@ void DocumentFontLoader::stopLoadingAndClearFonts()
         cachedResourceLoader->decrementRequestCount(*fontHandle);
     }
     m_fontsToBeginLoading.clear();
-    m_document->protectedFontSelector()->clearFonts();
+    if (RefPtr fontSelector = m_document->fontSelectorIfExists())
+        fontSelector->clearFonts();
 
     m_isFontLoadingSuspended = true;
     m_isStopped = true;

@@ -23,6 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"

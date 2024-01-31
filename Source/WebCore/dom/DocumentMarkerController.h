@@ -77,7 +77,7 @@ public:
 
     void dismissMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
 
-    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersFor(Node&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersFor(Node&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers()) const;
     WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersInRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
     WEBCORE_EXPORT Vector<SimpleRange> rangesForMarkersInRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
     void clearDescriptionOnMarkersIntersectingRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
@@ -108,7 +108,7 @@ private:
 
     using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
-    bool possiblyHasMarkers(OptionSet<DocumentMarker::Type>);
+    bool possiblyHasMarkers(OptionSet<DocumentMarker::Type>) const;
     void removeMarkers(OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
     OptionSet<DocumentMarker::Type> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 

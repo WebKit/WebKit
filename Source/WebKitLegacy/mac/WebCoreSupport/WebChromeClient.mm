@@ -254,8 +254,12 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
     WebView *newWebView;
 
 #if ENABLE(FULLSCREEN_API)
-    if (frame.document() && frame.document()->fullscreenManager().currentFullscreenElement())
-        frame.document()->fullscreenManager().cancelFullscreen();
+    if (RefPtr document = frame.document()) {
+        if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
+            if (fullscreenManager->currentFullscreenElement())
+                fullscreenManager->cancelFullscreen();
+        }
+    }
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {

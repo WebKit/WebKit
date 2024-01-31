@@ -31,6 +31,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

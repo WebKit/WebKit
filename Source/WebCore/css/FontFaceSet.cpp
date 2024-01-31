@@ -28,6 +28,7 @@
 
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "FontFace.h"
 #include "FrameDestructionObserverInlines.h"

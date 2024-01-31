@@ -28,6 +28,8 @@
 #include "CSSPropertyNames.h"
 #include "CommonAtomStrings.h"
 #include "DOMTokenList.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

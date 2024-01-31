@@ -25,6 +25,7 @@
 #include "RenderSVGInlineText.h"
 
 #include "CSSFontSelector.h"
+#include "DocumentInlines.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "InlineRunAndOffset.h"

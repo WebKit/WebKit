@@ -21,6 +21,8 @@
 #include "MediaQueryList.h"
 
 #include "AddEventListenerOptions.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "HTMLFrameOwnerElement.h"
 #include "MediaQueryEvaluator.h"

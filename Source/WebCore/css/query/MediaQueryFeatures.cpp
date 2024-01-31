@@ -26,6 +26,8 @@
 #include "MediaQueryFeatures.h"
 
 #include "Chrome.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
