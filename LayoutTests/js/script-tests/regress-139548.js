@@ -1,5 +1,5 @@
 //@ skip if not $jitTests
-//@ skip if $architecture == "mips"
+//@ skip if $architecture == "arm"
 //@ slow!
 //@ noEagerNoNoLLIntTestsRunLayoutTest
 

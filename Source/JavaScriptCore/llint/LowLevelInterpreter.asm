@@ -218,6 +218,7 @@ else
     const CellTag = constexpr JSValue::CellTag
     const EmptyValueTag = constexpr JSValue::EmptyValueTag
     const DeletedValueTag = constexpr JSValue::DeletedValueTag
+    const InvalidTag = constexpr JSValue::InvalidTag
     const LowestTag = constexpr JSValue::LowestTag
 end
 
@@ -1653,11 +1654,16 @@ macro functionInitialization(profileArgSkip)
         subp sizeof ArgumentValueProfile, t3
         storeq t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
     else
-        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t2
         subp sizeof ArgumentValueProfile, t3
-        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + TagOffset[t3]
+        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t1
         loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + offset[t3]
+            end,
+            t1,
+            t2
+        )
     end
     baddpnz -8, t0, .argumentProfileLoop
 .argumentProfileDone:

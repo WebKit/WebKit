@@ -87,7 +87,10 @@ enum PreferredPrimitiveType : uint8_t { NoPreference, PreferNumber, PreferString
 struct CallData;
 
 typedef int64_t EncodedJSValue;
-    
+
+inline void updateEncodedJSValueConcurrent(EncodedJSValue&, EncodedJSValue);
+inline void clearEncodedJSValueConcurrent(EncodedJSValue&);
+
 union EncodedValueDescriptor {
     int64_t asInt64;
 #if USE(JSVALUE32_64)
@@ -168,12 +171,18 @@ public:
     static constexpr uint32_t NativeCalleeTag = 0xfffffffa;
     static constexpr uint32_t EmptyValueTag =   0xfffffff9;
     static constexpr uint32_t DeletedValueTag = 0xfffffff8;
+    static constexpr uint32_t InvalidTag      = 0xfffffff7;
 
-    static constexpr uint32_t LowestTag =  DeletedValueTag;
+    static constexpr uint32_t LowestTag =  InvalidTag;
 #endif
 
     static EncodedJSValue encode(JSValue);
     static JSValue decode(EncodedJSValue);
+
+    /* read a JSValue from storage not owned by this thread
+     * on 64-bit ports, or when JIT is not enabled, equivalent to
+     * JSValue::decode(*ptr) */
+    static JSValue decodeConcurrent(const volatile EncodedJSValue *);
 
     enum JSNullTag { JSNull };
     enum JSUndefinedTag { JSUndefined };
@@ -731,5 +740,65 @@ public:
 private:
     JSValue m_value;
 };
+
+#if USE(JSVALUE64) || !ENABLE(CONCURRENT_JS)
+
+inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue* encodedJSValue)
+{
+    return JSValue::decode(*encodedJSValue);
+}
+
+inline void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
+{
+    dest = value;
+}
+
+inline void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
+{
+    dest = JSValue::encode(JSValue());
+}
+
+#elif USE(JSVALUE32_64)
+
+inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue *encodedJSValue)
+{
+    for (;;) {
+        auto v = JSValue::decode(reinterpret_cast<const volatile std::atomic<EncodedJSValue>*>(encodedJSValue)->load());
+        if (v.tag() != InvalidTag)
+            return v;
+    }
+}
+
+inline void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
+{
+    auto destDesc = const_cast<volatile EncodedValueDescriptor*>(reinterpret_cast<EncodedValueDescriptor*>(&dest));
+
+    EncodedValueDescriptor desc;
+    memcpy(&desc, &value, sizeof(value));
+
+    auto destTag = const_cast<volatile int32_t*>(&destDesc->asBits.tag);
+    auto destPayload = const_cast<volatile int32_t*>(&destDesc->asBits.payload);
+
+    *destTag = JSValue::InvalidTag;
+    WTF::storeStoreFence();
+    *destPayload = desc.asBits.payload;
+    WTF::storeStoreFence();
+    *destTag = desc.asBits.tag;
+}
+
+inline void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
+{
+    auto destDesc = const_cast<volatile EncodedValueDescriptor*>(reinterpret_cast<EncodedValueDescriptor*>(&dest));
+    auto destTag = const_cast<volatile int32_t*>(&destDesc->asBits.tag);
+    auto destPayload = const_cast<volatile int32_t*>(&destDesc->asBits.payload);
+
+    *destTag = JSValue::EmptyValueTag;
+    WTF::storeStoreFence();
+    *destPayload = 0;
+}
+
+#else
+#  error "Unsupported configuration"
+#endif
 
 } // namespace JSC

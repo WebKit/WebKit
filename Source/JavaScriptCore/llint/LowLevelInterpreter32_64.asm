@@ -66,6 +66,19 @@ macro getOperandWide32Wasm(opcodeStruct, fieldName, dst)
     loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeWasm[PB, PC, 1], dst
 end
 
+macro storeJSValueConcurrent(store, tag, payload)
+    if JIT
+        store(InvalidTag, TagOffset)
+        writefence
+        store(payload, PayloadOffset)
+        writefence
+        store(tag, TagOffset)
+    else
+        store(payload, PayloadOffset)
+        store(tag, TagOffset)
+    end
+end
+
 macro makeReturn(get, dispatch, fn)
     fn(macro(tag, payload)
         move tag, t5
@@ -721,8 +734,13 @@ end
 macro valueProfile(size, opcodeStruct, profileName, tag, payload, scratch)
     getu(size, opcodeStruct, profileName, scratch)
     muli constexpr (-sizeof(ValueProfile)), scratch
-    storei tag, constexpr (-sizeof(UnlinkedMetadataTable::LinkingData)) + ValueProfile::m_buckets + TagOffset[metadataTable, scratch, 1]
-    storei payload, constexpr (-sizeof(UnlinkedMetadataTable::LinkingData)) + ValueProfile::m_buckets + PayloadOffset[metadataTable, scratch, 1]
+    storeJSValueConcurrent(
+        macro(val, offset)
+            storei val, constexpr (-sizeof(UnlinkedMetadataTable::LinkingData)) + ValueProfile::m_buckets + offset[metadataTable, scratch, 1]
+        end,
+        tag,
+        payload
+    )
 end
 
 
@@ -1500,8 +1518,13 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, tag, 
 .isInline:
     addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
 .ready:
-    storei tag, TagOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
-    storei payload, PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
+    storeJSValueConcurrent(
+        macro(val, offset)
+            storei val, (firstOutOfLineOffset - 2) * 8 + offset[objectAndStorage, propertyOffsetAsInt, 8]
+        end,
+        tag,
+        payload
+    )
 end
 
 
@@ -1927,8 +1950,13 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
                 const tag = scratch
                 const payload = operand
                 loadConstantOrVariable2Reg(size, operand, tag, payload)
-                storei tag, TagOffset[base, index, 8]
-                storei payload, PayloadOffset[base, index, 8]
+                storeJSValueConcurrent(
+                    macro (val, offset)
+                        storei val, offset[base, index, 8]
+                    end,
+                    tag,
+                    payload
+                )
             end)
 
     .opPutByValNotContiguous:
@@ -1938,8 +1966,13 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     .opPutByValArrayStorageStoreResult:
         get(m_value, t2)
         loadConstantOrVariable2Reg(size, t2, t1, t2)
-        storei t1, ArrayStorage::m_vector + TagOffset[t0, t3, 8]
-        storei t2, ArrayStorage::m_vector + PayloadOffset[t0, t3, 8]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, ArrayStorage::m_vector + offset[t0, t3, 8]
+            end,
+            t1,
+            t2
+        )
         dispatch()
 
     .opPutByValArrayStorageEmpty:
@@ -2824,16 +2857,26 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         notifyWrite(t3, .pDynamic)
     .noVariableWatchpointSet:
         loadp OpPutToScope::Metadata::m_operand[t5], t0
-        storei t1, TagOffset[t0]
-        storei t2, PayloadOffset[t0]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, offset[t0]
+            end,
+            t1,
+            t2
+        )
     end
 
     macro putClosureVar()
         get(m_value, t1)
         loadConstantOrVariable(size, t1, t2, t3)
         loadp OpPutToScope::Metadata::m_operand[t5], t1
-        storei t2, JSLexicalEnvironment_variables + TagOffset[t0, t1, 8]
-        storei t3, JSLexicalEnvironment_variables + PayloadOffset[t0, t1, 8]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, JSLexicalEnvironment_variables + offset[t0, t1, 8]
+            end,
+            t2,
+            t3
+        )
     end
 
     macro putResolvedClosureVar()
@@ -2844,8 +2887,13 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         notifyWrite(t1, .pDynamic)
     .noVariableWatchpointSet:
         loadp OpPutToScope::Metadata::m_operand[t5], t1
-        storei t2, JSLexicalEnvironment_variables + TagOffset[t0, t1, 8]
-        storei t3, JSLexicalEnvironment_variables + PayloadOffset[t0, t1, 8]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, JSLexicalEnvironment_variables + offset[t0, t1, 8]
+            end,
+            t2,
+            t3
+        )
     end
 
     macro checkTDZInGlobalPutToScopeIfNecessary()
@@ -2959,8 +3007,13 @@ llintOp(op_put_to_arguments, OpPutToArguments, macro (size, get, dispatch)
     get(m_value, t1)
     loadConstantOrVariable(size, t1, t2, t3)
     getu(size, OpPutToArguments, m_index, t1)
-    storei t2, DirectArguments_storage + TagOffset[t0, t1, 8]
-    storei t3, DirectArguments_storage + PayloadOffset[t0, t1, 8]
+    storeJSValueConcurrent(
+        macro (val, offset)
+            storei val, DirectArguments_storage + offset[t0, t1, 8]
+        end,
+        t2,
+        t3
+    )
     dispatch()
 end)
 
@@ -2990,8 +3043,13 @@ llintOpWithMetadata(op_profile_type, OpProfileType, macro (size, get, dispatch, 
     loadp TypeProfilerLog::m_currentLogEntryPtr[t1], t2
 
     # Store the JSValue onto the log entry.
-    storei t5, TypeProfilerLog::LogEntry::value + TagOffset[t2]
-    storei t0, TypeProfilerLog::LogEntry::value + PayloadOffset[t2]
+    storeJSValueConcurrent(
+        macro (val, offset)
+            storei val, TypeProfilerLog::LogEntry::value + offset[t2]
+        end,
+        t5,
+        t0
+    )
 
     # Store the TypeLocation onto the log entry.
     loadp OpProfileType::Metadata::m_typeLocation[t3], t3
@@ -3204,8 +3262,13 @@ llintOp(op_put_internal_field, OpPutInternalField, macro (size, get, dispatch)
     get(m_value, t1)
     loadConstantOrVariable(size, t1, t2, t3)
     getu(size, OpPutInternalField, m_index, t1)
-    storei t2, JSInternalFieldObjectImpl_internalFields + TagOffset[t0, t1, SlotSize]
-    storei t3, JSInternalFieldObjectImpl_internalFields + PayloadOffset[t0, t1, SlotSize]
+    storeJSValueConcurrent(
+        macro (val, offset)
+            storei val, JSInternalFieldObjectImpl_internalFields + offset[t0, t1, SlotSize]
+        end,
+        t2,
+        t3
+    )
     writeBarrierOnOperand(size, get, m_base)
     dispatch()
 end)
@@ -3233,8 +3296,13 @@ llintOp(op_log_shadow_chicken_tail, OpLogShadowChickenTail, macro (size, get, di
     storep cfr, ShadowChicken::Packet::frame[t0]
     storep ShadowChickenTailMarker, ShadowChicken::Packet::callee[t0]
     loadVariable(get, m_thisValue, t3, t2, t1)
-    storei t2, TagOffset + ShadowChicken::Packet::thisValue[t0]
-    storei t1, PayloadOffset + ShadowChicken::Packet::thisValue[t0]
+    storeJSValueConcurrent(
+        macro (val, offset)
+            storei val, ShadowChicken::Packet::thisValue + offset[t0]
+        end,
+        t2,
+        t1
+    )
     get(m_scope, t1)
     loadi PayloadOffset[cfr, t1, 8], t1
     storep t1, ShadowChicken::Packet::scope[t0]

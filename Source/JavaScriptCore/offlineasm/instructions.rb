@@ -402,6 +402,7 @@ ARM_INSTRUCTIONS =
      "storecondh",
      "storecondi",
      "storecond2i",
+     "writefence",
     ]
 
 ARM64_INSTRUCTIONS =
