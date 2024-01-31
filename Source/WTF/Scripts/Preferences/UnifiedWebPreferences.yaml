@@ -7797,17 +7797,19 @@ WebRTCH264SimulcastEnabled:
 
 WebRTCH265CodecEnabled:
   type: bool
-  status: developer
+  status: stable
   category: media
   condition: ENABLE(WEB_RTC)
-  humanReadableName: "WebRTC H265 codec"
-  humanReadableDescription: "Enable WebRTC H265 codec"
+  humanReadableName: "WebRTC HEVC codec"
+  humanReadableDescription: "Enable WebRTC HEVC codec"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 WebRTCMediaPipelineAdditionalLoggingEnabled:
