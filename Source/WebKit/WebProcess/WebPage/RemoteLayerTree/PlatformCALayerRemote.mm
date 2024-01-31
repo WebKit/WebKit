@@ -1101,5 +1101,11 @@ void PlatformCALayerRemote::purgeBackBufferForTesting()
         return m_properties.backingStoreOrProperties.store->purgeBackBufferForTesting();
 }
 
+void PlatformCALayerRemote::markFrontBufferVolatileForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        m_properties.backingStoreOrProperties.store->markFrontBufferVolatileForTesting();
+}
 
 } // namespace WebKit
+

@@ -247,6 +247,7 @@ public:
     void clearContext() { m_context = nullptr; }
     RemoteLayerTreeContext* context() const { return m_context; }
     
+    void markFrontBufferVolatileForTesting() override;
     virtual void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType);
 
     bool containsBitmapOnly() const;

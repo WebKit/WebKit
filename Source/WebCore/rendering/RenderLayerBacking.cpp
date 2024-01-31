@@ -4319,14 +4319,20 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
 
 void RenderLayerBacking::purgeFrontBufferForTesting()
 {
-    if (m_graphicsLayer)
-        m_graphicsLayer->purgeFrontBufferForTesting();
+    if (RefPtr graphicsLayer = m_graphicsLayer)
+        graphicsLayer->purgeFrontBufferForTesting();
 }
 
 void RenderLayerBacking::purgeBackBufferForTesting()
 {
-    if (m_graphicsLayer)
-        m_graphicsLayer->purgeBackBufferForTesting();
+    if (RefPtr graphicsLayer = m_graphicsLayer)
+        graphicsLayer->purgeBackBufferForTesting();
+}
+
+void RenderLayerBacking::markFrontBufferVolatileForTesting()
+{
+    if (RefPtr graphicsLayer = m_graphicsLayer)
+        graphicsLayer->markFrontBufferVolatileForTesting();
 }
 
 } // namespace WebCore

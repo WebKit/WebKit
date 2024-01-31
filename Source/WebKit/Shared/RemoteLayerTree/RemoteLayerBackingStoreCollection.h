@@ -56,6 +56,7 @@ public:
     RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerBackingStoreCollection();
 
+    void markFrontBufferVolatileForTesting(RemoteLayerBackingStore&);
     virtual void backingStoreWasCreated(RemoteLayerBackingStore&);
     virtual void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
 

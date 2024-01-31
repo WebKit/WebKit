@@ -600,6 +600,12 @@ void RemoteLayerBackingStore::purgeBackBufferForTesting()
         collection->purgeBackBufferForTesting(*this);
 }
 
+void RemoteLayerBackingStore::markFrontBufferVolatileForTesting()
+{
+    if (auto* collection = backingStoreCollection())
+        collection->markFrontBufferVolatileForTesting(*this);
+}
+
 TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
 {
     backingStore.dump(ts);

@@ -5805,6 +5805,12 @@ void RenderLayer::purgeBackBufferForTesting()
         backing()->purgeBackBufferForTesting();
 }
 
+void RenderLayer::markFrontBufferVolatileForTesting()
+{
+    if (backing())
+        backing()->markFrontBufferVolatileForTesting();
+}
+
 RenderLayerScrollableArea* RenderLayer::scrollableArea() const
 {
     return m_scrollableArea.get();

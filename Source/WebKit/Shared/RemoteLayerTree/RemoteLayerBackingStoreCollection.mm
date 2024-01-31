@@ -222,9 +222,7 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
 void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
-
-        auto bufferSet = remoteBackingStore->protectedBufferSet();
-        if (bufferSet) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
             Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
             OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
             identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
@@ -239,9 +237,7 @@ void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBa
 void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBackingStore& backingStore)
 {
     if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
-
-        auto bufferSet = remoteBackingStore->protectedBufferSet();
-        if (bufferSet) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
             Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
             OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Back, BufferInSetType::SecondaryBack };
             identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
@@ -251,6 +247,21 @@ void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBac
         auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
         inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Back, true);
         inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+    }
+}
+
+void RemoteLayerBackingStoreCollection::markFrontBufferVolatileForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { });
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front, false);
     }
 }
 

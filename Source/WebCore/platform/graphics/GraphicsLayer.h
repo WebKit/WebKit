@@ -679,6 +679,8 @@ public:
 
     static void traverse(GraphicsLayer&, const Function<void(GraphicsLayer&)>&);
 
+    virtual void markFrontBufferVolatileForTesting() { }
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     AcceleratedEffectStack* acceleratedEffectStack() const { return m_effectStack.get(); }
     WEBCORE_EXPORT virtual void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&);

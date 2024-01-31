@@ -195,6 +195,7 @@ public:
 
     ExceptionOr<String> elementRenderTreeAsText(Element&);
     bool hasPausedImageAnimations(Element&);
+    void markFrontBufferVolatile(Element&);
 
     bool isFullyActive(Document&);
     bool isPaintingFrequently(Element&);

@@ -1388,14 +1388,26 @@ void Internals::incrementFrequentPaintCounter(Element& element)
 
 void Internals::purgeFrontBuffer(Element& element)
 {
-    if (element.renderer() && element.renderer()->enclosingLayer())
-        element.renderer()->enclosingLayer()->purgeFrontBufferForTesting();
+    if (element.renderer()) {
+        if (CheckedPtr layer = element.renderer()->enclosingLayer())
+            layer->purgeFrontBufferForTesting();
+    }
 }
 
 void Internals::purgeBackBuffer(Element& element)
 {
-    if (element.renderer() && element.renderer()->enclosingLayer())
-        element.renderer()->enclosingLayer()->purgeBackBufferForTesting();
+    if (element.renderer()) {
+        if (CheckedPtr layer = element.renderer()->enclosingLayer())
+            layer->purgeBackBufferForTesting();
+    }
+}
+
+void Internals::markFrontBufferVolatile(Element& element)
+{
+    if (element.renderer()) {
+        if (CheckedPtr layer = element.renderer()->enclosingLayer())
+            layer->markFrontBufferVolatileForTesting();
+    }
 }
 
 Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const

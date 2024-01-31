@@ -432,6 +432,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     // Animated image pausing testing.
     boolean hasPausedImageAnimations(Element element);
 
+    undefined markFrontBufferVolatile(Element element);
     boolean isFullyActive(Document document);
     // Must be called on an element whose enclosingLayer() is self-painting.
     boolean isPaintingFrequently(Element element);

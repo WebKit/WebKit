@@ -328,6 +328,7 @@ public:
     static void drawRepaintIndicator(GraphicsContext&, PlatformCALayer*, int repaintCount, Color customBackgroundColor = { });
     static CGRect frameForLayer(const PlatformLayer*);
 
+    virtual void markFrontBufferVolatileForTesting() { }
     void moveToLayerPool();
 
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);

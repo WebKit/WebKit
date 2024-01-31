@@ -292,6 +292,7 @@ public:
 
     void purgeFrontBufferForTesting();
     void purgeBackBufferForTesting();
+    void markFrontBufferVolatileForTesting();
 private:
     friend class PaintedContentsInfo;
 

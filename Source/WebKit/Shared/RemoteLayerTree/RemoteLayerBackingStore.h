@@ -172,6 +172,7 @@ public:
 
     void purgeFrontBufferForTesting();
     void purgeBackBufferForTesting();
+    void markFrontBufferVolatileForTesting();
 
 protected:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;

@@ -5073,14 +5073,20 @@ void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& ef
 
 void GraphicsLayerCA::purgeFrontBufferForTesting()
 {
-    if (primaryLayer())
-        primaryLayer()->purgeFrontBufferForTesting();
+    if (RefPtr layer = primaryLayer())
+        layer->purgeFrontBufferForTesting();
 }
 
 void GraphicsLayerCA::purgeBackBufferForTesting()
 {
-    if (primaryLayer())
-        primaryLayer()->purgeBackBufferForTesting();
+    if (RefPtr layer = primaryLayer())
+        layer->purgeBackBufferForTesting();
+}
+
+void GraphicsLayerCA::markFrontBufferVolatileForTesting()
+{
+    if (RefPtr layer = primaryLayer())
+        layer->markFrontBufferVolatileForTesting();
 }
 
 } // namespace WebCore
