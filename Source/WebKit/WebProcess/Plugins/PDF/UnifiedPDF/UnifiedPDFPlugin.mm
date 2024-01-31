@@ -816,28 +816,12 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::I
     return roundedIntPoint(transformedPoint);
 }
 
-std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::nearestPageIndexForDocumentPoint(const WebCore::IntPoint& point) const
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocumentPoint(const WebCore::IntPoint& point) const
 {
-    switch (m_documentLayout.displayMode()) {
-    case PDFDocumentLayout::DisplayMode::TwoUp:
-    case PDFDocumentLayout::DisplayMode::TwoUpContinuous:
-        // FIXME: Implement page index resolution for TwoUp display modes.
-        notImplemented();
-        break;
-    case PDFDocumentLayout::DisplayMode::SinglePage:
-    case PDFDocumentLayout::DisplayMode::Continuous: {
-        // Walk down the document, find the first page bound that contains the position.
-        // Note that we don't consider display direction (vertical vs horizontal).
-        for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
-            auto pageBounds = m_documentLayout.boundsForPageAtIndex(index);
-            pageBounds.expand(PDFDocumentLayout::documentMargin);
-            pageBounds.contract(PDFDocumentLayout::pageMargin);
-            // At this point, this page index necessarily corresponds to the
-            // nearest page to the point (so far), so we always keep track of it.
-            if (point.y() <= pageBounds.maxY())
-                return index;
-        }
-    }
+    for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
+        auto pageBounds = m_documentLayout.boundsForPageAtIndex(index);
+        if (pageBounds.contains(point))
+            return index;
     }
 
     return std::nullopt;
@@ -906,17 +890,17 @@ static TextStream& operator<<(TextStream& ts, UnifiedPDFPlugin::PDFElementType e
 auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
 {
     auto pointInDocumentSpace = convertFromPluginToDocument(point);
-    auto maybeNearestPageIndex = nearestPageIndexForDocumentPoint(pointInDocumentSpace);
-    if (!maybeNearestPageIndex || *maybeNearestPageIndex >= m_documentLayout.pageCount())
+    auto hitPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
+    if (!hitPageIndex || *hitPageIndex >= m_documentLayout.pageCount())
         return { };
 
-    auto nearestPageIndex = *maybeNearestPageIndex;
-    auto nearestPage = m_documentLayout.pageAtIndex(nearestPageIndex);
-    auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex);
+    auto pageIndex = *hitPageIndex;
+    auto page = m_documentLayout.pageAtIndex(pageIndex);
+    auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, pageIndex);
 
     PDFElementTypes pdfElementTypes { PDFElementType::Page };
 
-    if (auto annotation = [nearestPage annotationAtPoint:pointInPDFPageSpace]) {
+    if (auto annotation = [page annotationAtPoint:pointInPDFPageSpace]) {
         pdfElementTypes.add(PDFElementType::Annotation);
 
         if ([annotation isKindOfClass:getPDFAnnotationLinkClass()])
@@ -935,12 +919,12 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
             pdfElementTypes.add(PDFElementType::Control);
     }
 
-    LOG_WITH_STREAM(Plugins, stream << "UnifiedPDFPlugin::pdfElementTypesForPluginPoint " << point << " document point " << pointInDocumentSpace << " found page " << nearestPageIndex << " point in page " << pointInPDFPageSpace << " - elements " << pdfElementTypes);
+    LOG_WITH_STREAM(Plugins, stream << "UnifiedPDFPlugin::pdfElementTypesForPluginPoint " << point << " document point " << pointInDocumentSpace << " found page " << pageIndex << " point in page " << pointInPDFPageSpace << " - elements " << pdfElementTypes);
 
     if (!isTaggedPDF())
         return pdfElementTypes;
 
-    if (auto pageLayout = [nearestPage pageLayout]) {
+    if (auto pageLayout = [page pageLayout]) {
         CGPDFAreaOfInterest areaOfInterest = CGPDFPageLayoutGetAreaOfInterestAtPoint(pageLayout, pointInPDFPageSpace);
         if (areaOfInterest & kCGPDFAreaText)
             pdfElementTypes.add(PDFElementType::Text);
@@ -974,7 +958,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         switch (event.button()) {
         case WebMouseEventButton::Left: {
             auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(event.position()));
-            auto nearestPageIndex = nearestPageIndexForDocumentPoint(pointInDocumentSpace);
+            auto nearestPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
             if (!nearestPageIndex)
                 return false;
 
