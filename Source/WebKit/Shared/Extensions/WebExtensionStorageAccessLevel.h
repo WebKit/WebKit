@@ -38,19 +38,4 @@ enum class WebExtensionStorageAccessLevel : uint8_t {
 
 } // namespace WebKit
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionStorageAccessLevel> {
-    using values = EnumValues<
-        WebKit::WebExtensionStorageAccessLevel,
-        WebKit::WebExtensionStorageAccessLevel::TrustedContexts,
-        WebKit::WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts
-    >;
-};
-
-template<> struct DefaultHash<WebKit::WebExtensionStorageAccessLevel> : IntHash<WebKit::WebExtensionStorageAccessLevel> { };
-template<> struct HashTraits<WebKit::WebExtensionStorageAccessLevel> : StrongEnumHashTraits<WebKit::WebExtensionStorageAccessLevel> { };
-
-} // namespace WTF
-
 #endif // ENABLE(WK_WEB_EXTENSIONS)

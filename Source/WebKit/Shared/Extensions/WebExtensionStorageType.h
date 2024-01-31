@@ -51,20 +51,4 @@ inline String toAPIPrefixString(WebExtensionStorageType storageType)
 
 } // namespace WebKit
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionStorageType> {
-    using values = EnumValues<
-        WebKit::WebExtensionStorageType,
-        WebKit::WebExtensionStorageType::Local,
-        WebKit::WebExtensionStorageType::Session,
-        WebKit::WebExtensionStorageType::Sync
-    >;
-};
-
-template<> struct DefaultHash<WebKit::WebExtensionStorageType> : IntHash<WebKit::WebExtensionStorageType> { };
-template<> struct HashTraits<WebKit::WebExtensionStorageType> : StrongEnumHashTraits<WebKit::WebExtensionStorageType> { };
-
-} // namespace WTF
-
 #endif // ENABLE(WK_WEB_EXTENSIONS)
