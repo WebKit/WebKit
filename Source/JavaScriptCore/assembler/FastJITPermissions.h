@@ -39,7 +39,12 @@
 #ifdef __arm64e__
 #include <BrowserEngineCore/BEMemory.h>
 #elif USE(APPLE_INTERNAL_SDK)
-#include <os/thread_self_restrict.h> 
+#include <os/thread_self_restrict.h>
+inline bool be_memory_inline_jit_restrict_with_witness_supported()
+{
+    return !!os_thread_self_restrict_rwx_is_supported();
+}
+
 inline
 void be_memory_inline_jit_restrict_rwx_to_rw_with_witness(void)
 {
@@ -52,6 +57,7 @@ void be_memory_inline_jit_restrict_rwx_to_rx_with_witness(void)
     os_thread_self_restrict_rwx_to_rx();
 }
 #else
+inline bool be_memory_inline_jit_restrict_with_witness_supported() { return false; }
 inline void be_memory_inline_jit_restrict_rwx_to_rw_with_witness(void) { }
 inline void be_memory_inline_jit_restrict_rwx_to_rx_with_witness(void) { }
 #endif

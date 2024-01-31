@@ -85,8 +85,10 @@ extern "C" {
 #endif
 
 #if USE(INLINE_JIT_PERMISSIONS_API)
+#ifdef __arm64e__
 #include <wtf/darwin/WeakLinking.h>
 WTF_WEAK_LINK_FORCE_IMPORT(be_memory_inline_jit_restrict_with_witness_supported);
+#endif
 #endif
 
 namespace JSC {
