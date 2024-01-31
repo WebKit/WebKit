@@ -88,7 +88,7 @@ void SVGInlineTextBox::dirtyLineBoxes()
         nextBox->dirtyOwnLineBoxes();
 }
 
-int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragment, float position, bool includePartialGlyphs) const
+int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragment, float position) const
 {
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
@@ -102,6 +102,7 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     if (!fragmentTransform.isIdentity())
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
+    const bool includePartialGlyphs = true;
     return fragment.characterOffset - start() + renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
