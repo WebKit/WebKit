@@ -54,7 +54,7 @@ public:
     static Ref<CacheStorageConnection> create() { return adoptRef(*new StoppedCacheStorageConnection); }
 
 private:
-    void open(const ClientOrigin&, const String&, DOMCacheEngine::CacheIdentifierCallback&& callback) final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
     void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
@@ -92,24 +92,11 @@ WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
     callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
 }
 
-void WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
+auto WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName) -> Ref<OpenPromise>
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_openCachePendingRequests.add(requestIdentifier, WTFMove(callback));
-
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()] () mutable {
-        mainThreadConnection->open(origin, cacheName, [workerThread = WTFMove(workerThread), requestIdentifier] (const CacheIdentifierOrError& result) mutable {
-            workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().openCompleted(requestIdentifier, result);
-            }, WorkerRunLoop::defaultMode());
-        });
+    return invokeAsync(RunLoop::main(), [mainThreadConnection = m_mainThreadConnection, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()] () mutable {
+        return mainThreadConnection->open(origin, cacheName);
     });
-}
-
-void WorkerCacheStorageConnection::openCompleted(uint64_t requestIdentifier, const CacheIdentifierOrError& result)
-{
-    if (auto callback = m_openCachePendingRequests.take(requestIdentifier))
-        callback(result);
 }
 
 void WorkerCacheStorageConnection::remove(DOMCacheIdentifier cacheIdentifier, RemoveCacheIdentifierCallback&& callback)
@@ -248,10 +235,6 @@ void WorkerCacheStorageConnection::unlockStorage(const ClientOrigin& origin)
 
 void WorkerCacheStorageConnection::clearPendingRequests()
 {
-    auto openCachePendingRequests = WTFMove(m_openCachePendingRequests);
-    for (auto& callback : openCachePendingRequests.values())
-        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
-
     auto removeCachePendingRequests = WTFMove(m_removeCachePendingRequests);
     for (auto& callback : removeCachePendingRequests.values())
         callback(makeUnexpected(DOMCacheEngine::Error::Stopped));

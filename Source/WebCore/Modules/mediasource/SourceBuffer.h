@@ -256,8 +256,8 @@ private:
     bool m_mediaSourceEnded { false };
     Ref<TimeRanges> m_buffered;
     Vector<PlatformTimeRanges> m_trackBuffers;
-    NativePromiseRequest<MediaPromise> m_appendBufferPromise;
-    NativePromiseRequest<MediaPromise> m_removeCodedFramesPromise;
+    NativePromiseRequest m_appendBufferPromise;
+    NativePromiseRequest m_removeCodedFramesPromise;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

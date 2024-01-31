@@ -132,7 +132,7 @@ template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTra
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
-template<typename T> class NativePromiseRequest;
+class NativePromiseRequest;
 }
 
 namespace JSON {

@@ -42,6 +42,7 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -343,6 +344,26 @@ public:
     void addDeferredPromise(Ref<DeferredPromise>&&);
     RefPtr<DeferredPromise> takeDeferredPromise(DeferredPromise*);
 
+    template<typename Promise, typename Task>
+    void enqueueTaskWhenSettled(Ref<Promise>&& promise, TaskSource taskSource, Task&& task)
+    {
+        auto request = makeUnique<NativePromiseRequest>();
+        WeakPtr weakRequest { *request };
+        auto command = promise->whenSettled(nativePromiseDispatcher(), [weakThis = WeakPtr { *this }, taskSource, task = WTFMove(task), request = WTFMove(request)] (auto&& result) mutable {
+            request->complete();
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            protectedThis->eventLoop().queueTask(taskSource, [task = WTFMove(task), result = WTFMove(result)] () mutable {
+                task(WTFMove(result));
+            });
+        });
+        if (weakRequest) {
+            m_nativePromiseRequests.add(*weakRequest);
+            command->track(*weakRequest);
+        }
+    }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -385,6 +406,7 @@ private:
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
+    RefCountedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;
@@ -428,6 +450,9 @@ private:
     mutable bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
+
+    RefPtr<RefCountedSerialFunctionDispatcher> m_nativePromiseDispatcher;
+    WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

@@ -36,6 +36,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Lock.h>
@@ -48,6 +49,7 @@
 #include <wtf/TypeTraits.h>
 #include <wtf/Unexpected.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WTF {
 
@@ -59,7 +61,7 @@ namespace WTF {
  * A NativePromise object is thread safe, and may be ->then()/whenSettle()ed on any threads.
  * The then() call accepts either a resolve and reject callback, while whenSettled() accepts a resolveOrReject one.
  *
- * NativePromise::then() and NativePromise::whenSettled() returns a NativePromise::Request object. This request can be either:
+ * NativePromise::then() and NativePromise::whenSettled() returns a NativePromise::ThenCommand object. This object can be either:
  * 1- Converted back to a NativePromise which will be resolved or rejected once the resolve/reject callbacks are run.
  *    This new NativePromise can be then()ed again to chain multiple operations.
  * 2- Be tracked using a NativePromiseRequest: this allows the caller to cancel the delivery of the resolve/reject result if it has not already occurred.
@@ -148,7 +150,7 @@ namespace WTF {
  *    }
  *
  * 3. Using a NativePromiseRequest
- *    NativePromiseRequest<GenericPromise> request;
+ *    NativePromiseRequest request;
  *
  *    GenericPromise::Producer p;
  *    // Note that if you're not interested in the result you can provide a Function<void()>
@@ -273,8 +275,52 @@ public:
 
 class ConvertibleToNativePromise { };
 
-template<typename T>
-class NativePromiseRequest;
+class NativePromiseRequest :  public CanMakeWeakPtr<NativePromiseRequest> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    NativePromiseRequest() = default;
+    NativePromiseRequest(NativePromiseRequest&& other) = default;
+    NativePromiseRequest& operator=(NativePromiseRequest&& other) = default;
+    ~NativePromiseRequest()
+    {
+        ASSERT(!m_callback, "complete() or disconnect() wasn't called");
+    }
+
+    class Callback : public ThreadSafeRefCounted<Callback> {
+    public:
+        virtual ~Callback() = default;
+        virtual void disconnect() = 0;
+    };
+
+
+    void track(Ref<Callback> callback)
+    {
+        ASSERT(!m_callback);
+        m_callback = WTFMove(callback);
+    }
+
+    explicit operator bool() const { return !!m_callback; }
+
+    void complete()
+    {
+        ASSERT(m_callback);
+        m_callback = nullptr;
+    }
+
+    // Disconnect and forget an outstanding promise. The resolve/reject methods will never be called.
+    void disconnect()
+    {
+        ASSERT(m_callback);
+        if (!m_callback)
+            return;
+        m_callback->disconnect();
+        m_callback = nullptr;
+
+    }
+
+private:
+    RefPtr<Callback> m_callback;
+};
 
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0>
 class NativePromiseProducer;
@@ -331,13 +377,6 @@ public:
     // We split the functionalities from a "Producer" that can create and resolve/reject a promise and a "Consumer"
     // that will then()/whenSettled() on such promise.
     using Producer = NativePromiseProducer<ResolveValueT, RejectValueT, options>;
-
-    // Request is the object returned by NativePromise::then()/whenSettled is used by NativePromiseRequest holder to track/disconnect.
-    class Request : public ThreadSafeRefCounted<Request> {
-    public:
-        virtual ~Request() = default;
-        virtual void disconnect() = 0;
-    };
 
     virtual ~NativePromise()
     {
@@ -647,7 +686,7 @@ private:
         PROMISE_LOG("creating ", *this);
     }
 
-    class ThenCallbackBase : public Request {
+    class ThenCallbackBase : public NativePromiseRequest::Callback {
 
     public:
         ThenCallbackBase(RefPtr<RefCountedSerialFunctionDispatcher>&& targetQueue, const Logger::LogSiteIdentifier& callSite)
@@ -864,7 +903,7 @@ private:
             return completionPromise()->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
         }
 
-        void track(NativePromiseRequest<NativePromise>& requestHolder)
+        void track(NativePromiseRequest& requestHolder)
         {
             ASSERT(m_thenCallback, "Can only track a request once");
             requestHolder.track(*m_thenCallback);
@@ -1376,46 +1415,6 @@ using GenericPromise = NativePromise<void, void>;
 
 // A generic, non-exclusive promise type that does the trick for simple use cases.
 using GenericNonExclusivePromise = NativePromise<void, void, PromiseOption::Default | PromiseOption::NonExclusive>;
-
-template<typename PromiseType>
-class NativePromiseRequest final {
-public:
-    NativePromiseRequest() = default;
-    NativePromiseRequest(NativePromiseRequest&& other) = default;
-    NativePromiseRequest& operator=(NativePromiseRequest&& other) = default;
-    ~NativePromiseRequest()
-    {
-        ASSERT(!m_request, "complete() or disconnect() wasn't called");
-    }
-
-    void track(Ref<typename PromiseType::Request> request)
-    {
-        ASSERT(!m_request);
-        m_request = WTFMove(request);
-    }
-
-    explicit operator bool() const { return !!m_request; }
-
-    void complete()
-    {
-        ASSERT(m_request);
-        m_request = nullptr;
-    }
-
-    // Disconnect and forget an outstanding promise. The resolve/reject methods will never be called.
-    void disconnect()
-    {
-        ASSERT(m_request);
-        if (!m_request)
-            return;
-        m_request->disconnect();
-        m_request = nullptr;
-
-    }
-
-private:
-    RefPtr<typename PromiseType::Request> m_request;
-};
 
 template<typename S, typename E>
 Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)

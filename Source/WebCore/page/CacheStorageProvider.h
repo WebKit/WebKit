@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CacheStorageConnection.h"
+#include <wtf/NativePromise.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ public:
         {
         }
 
-        void open(const ClientOrigin&, const String&, DOMCacheEngine::CacheIdentifierCallback&&) final { }
+        Ref<OpenPromise> open(const ClientOrigin&, const String&) final { return OpenPromise::createAndReject(DOMCacheEngine::Error::Stopped); }
         void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) final { }
         void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&&) final { }
         void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::CrossThreadRecordsCallback&&) final { }

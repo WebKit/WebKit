@@ -222,23 +222,28 @@ void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<D
 
 void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
+    RefPtr context = scriptExecutionContext();
+    if (!context) {
+        promise.reject(convertToException(DOMCacheEngine::Error::Stopped));
+        return;
+    }
+
     auto position = m_caches.findIf([&](auto& item) { return item->name() == name; });
     if (position != notFound) {
         promise.resolve(DOMCache::create(*scriptExecutionContext(), String { m_caches[position]->name() }, m_caches[position]->identifier(), m_connection.copyRef()));
         return;
     }
 
-    m_connection->open(*origin(), name, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin())](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
-        if (!result.has_value())
+    context->enqueueTaskWhenSettled(m_connection->open(*origin(), name), TaskSource::DOMManipulation, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this), connectionStorageLock = makeUnique<ConnectionStorageLock>(m_connection.copyRef(), *origin())](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
+        if (!result.has_value()) {
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-        else {
-            if (result.value().hadStorageError)
-                logConsolePersistencyError(scriptExecutionContext(), name);
-
-            auto cache = DOMCache::create(*scriptExecutionContext(), String { name }, result.value().identifier, m_connection.copyRef());
-            promise.resolve(cache);
-            m_caches.append(WTFMove(cache));
+            return;
         }
+        if (result.value().hadStorageError)
+            logConsolePersistencyError(scriptExecutionContext(), name);
+        auto cache = DOMCache::create(*scriptExecutionContext(), String { name }, result.value().identifier, m_connection.copyRef());
+        promise.resolve(cache);
+        m_caches.append(WTFMove(cache));
     });
 }
 

@@ -296,7 +296,7 @@ TEST(NativePromise, GenericPromise)
 
         GenericPromise::Producer producer3;
         Ref<GenericPromise> promise3 = producer3;
-        NativePromiseRequest<GenericPromise> request3;
+        NativePromiseRequest request3;
 
         // Note that if you're not interested in the result you can provide two Function<void()> to then()
         promise3->then(queue, doFail(), doFail()).track(request3);
@@ -422,7 +422,7 @@ TEST(NativePromise, PromiseRequest)
     // We declare the Request holder before using the runLoop to ensure it stays in scope for the entire run.
     // ASSERTION FAILED: !m_request
     using MyPromise = NativePromise<bool, bool>;
-    NativePromiseRequest<MyPromise> request1;
+    NativePromiseRequest request1;
 
     runInCurrentRunLoop([&](auto& runLoop) {
         MyPromise::Producer producer1;
@@ -443,7 +443,7 @@ TEST(NativePromise, PromiseRequest)
     // lifetime of the object.
     bool objectToShare = true;
     runInCurrentRunLoop([&](auto& runLoop) {
-        NativePromiseRequest<GenericPromise> request2;
+        NativePromiseRequest request2;
         GenericPromise::Producer producer2;
         Ref<GenericPromise> promise2 = producer2;
         promise2->whenSettled(runLoop,
@@ -465,7 +465,7 @@ TEST(NativePromise, PromiseRequest)
 TEST(NativePromise, PromiseRequestDisconnected1)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        NativePromiseRequest<TestPromise> request;
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
@@ -480,7 +480,7 @@ TEST(NativePromise, PromiseRequestDisconnected1)
 TEST(NativePromise, PromiseRequestDisconnected2)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        NativePromiseRequest<TestPromise> request;
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
@@ -928,7 +928,7 @@ TEST(NativePromise, PromiseAllSettledAsync)
 TEST(NativePromise, Chaining)
 {
     // We declare this variable before |awq| to ensure the destructor is run after |holder.disconnect()|.
-    NativePromiseRequest<TestPromise> holder;
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -1261,7 +1261,7 @@ TEST(NativePromise, HeterogeneousChaining)
     using Promise1 = NativePromise<std::unique_ptr<char>, bool>;
     using Promise2 = NativePromise<std::unique_ptr<int>, bool>;
 
-    NativePromiseRequest<Promise2> holder;
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
