@@ -1980,3 +1980,5 @@ webkit.org/b/268406 transitions/flex-transitions.html [ Pass Failure ]
 # webkit.org/b/268414 [ macOS ] 2 tests in imported/w3c/web-platform-tests/webrtc are flaky failure
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
+
+webkit.org/b/268423 [ Sonoma+ Debug arm64 ] http/tests/inspector/dom/didFireEvent.html [ Skip ]
