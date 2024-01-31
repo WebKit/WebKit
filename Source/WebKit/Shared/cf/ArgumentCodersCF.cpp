@@ -553,25 +553,6 @@ std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRe
     return colorSpace;
 }
 
-template<typename Encoder>
-void ArgumentCoder<SecCertificateRef>::encode(Encoder& encoder, SecCertificateRef certificate)
-{
-    encoder << adoptCF(SecCertificateCopyData(certificate));
-}
-
-template void ArgumentCoder<SecCertificateRef>::encode<Encoder>(Encoder&, SecCertificateRef);
-template void ArgumentCoder<SecCertificateRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecCertificateRef);
-
-std::optional<RetainPtr<SecCertificateRef>> ArgumentCoder<RetainPtr<SecCertificateRef>>::decode(Decoder& decoder)
-{
-    std::optional<RetainPtr<CFDataRef>> data;
-    decoder >> data;
-    if (!data)
-        return std::nullopt;
-
-    return adoptCF(SecCertificateCreateWithData(0, data->get()));
-}
-
 #if HAVE(SEC_KEYCHAIN)
 template<typename Encoder>
 void ArgumentCoder<SecKeychainItemRef>::encode(Encoder& encoder, SecKeychainItemRef keychainItem)

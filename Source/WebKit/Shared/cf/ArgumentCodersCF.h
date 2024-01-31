@@ -84,13 +84,6 @@ template<> struct ArgumentCoder<RetainPtr<CGColorSpaceRef>> : CFRetainPtrArgumen
     static std::optional<RetainPtr<CGColorSpaceRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<SecCertificateRef> {
-    template<typename Encoder> static void encode(Encoder&, SecCertificateRef);
-};
-template<> struct ArgumentCoder<RetainPtr<SecCertificateRef>> : CFRetainPtrArgumentCoder<SecCertificateRef> {
-    static std::optional<RetainPtr<SecCertificateRef>> decode(Decoder&);
-};
-
 #if HAVE(SEC_KEYCHAIN)
 template<> struct ArgumentCoder<SecKeychainItemRef> {
     template<typename Encoder> static void encode(Encoder&, SecKeychainItemRef);

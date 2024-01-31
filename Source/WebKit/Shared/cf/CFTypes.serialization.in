@@ -40,6 +40,10 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
 }
 
+additional_forward_declaration: typedef struct __SecCertificate *SecCertificateRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecCertificate()] SecCertificateRef wrapped by WebKit::CoreIPCSecCertificate {
+}
+
 #endif
 
 #if USE(CG)
