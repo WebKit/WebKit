@@ -23,7 +23,6 @@
 
 #if os(visionOS)
 
-import LinearMediaKit
 import WebKitSwift
 
 // MARK: Objective-C Implementations
@@ -45,6 +44,10 @@ import WebKitSwift
         self.localizedDisplayName = localizedDisplayName
     }
 }
+
+#if canImport(LinearMediaKit)
+
+import LinearMediaKit
 
 // MARK: LinearMediaKit Extensions
 
@@ -180,5 +183,7 @@ extension WKSLinearMediaTimeRange {
 
 extension WKSLinearMediaTrack: @retroactive Track {
 }
+
+#endif // canImport(LinearMediaKit)
 
 #endif // os(visionOS)

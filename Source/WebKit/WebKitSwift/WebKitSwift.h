@@ -23,4 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKitSwift/WKSLinearMediaPlayer.h>
 #import <WebKitSwift/WKSLinearMediaTypes.h>
