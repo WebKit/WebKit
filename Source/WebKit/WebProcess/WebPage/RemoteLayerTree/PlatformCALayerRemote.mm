@@ -236,11 +236,24 @@ void PlatformCALayerRemote::didCommit()
 void PlatformCALayerRemote::ensureBackingStore()
 {
     ASSERT(owner());
-
     ASSERT(m_properties.backingStoreAttached);
 
-    if (!m_properties.backingStoreOrProperties.store && m_context)
-        m_properties.backingStoreOrProperties.store = m_context->backingStoreCollection().createRemoteLayerBackingStore(this);
+    bool needsNewBackingStore = [&] {
+        if (!m_context)
+            return false;
+
+        if (!m_properties.backingStoreOrProperties.store)
+            return true;
+
+        // A layer pulled out of a pool may have existing backing store which we mustn't reuse if it lives in the wrong process.
+        if (m_properties.backingStoreOrProperties.store->processModel() != RemoteLayerBackingStore::processModelForLayer(this))
+            return true;
+
+        return false;
+    }();
+
+    if (needsNewBackingStore)
+        m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(this);
 
     updateBackingStore();
 }

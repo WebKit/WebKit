@@ -34,6 +34,7 @@ public:
     using RemoteLayerBackingStore::RemoteLayerBackingStore;
 
     bool isRemoteLayerWithInProcessRenderingBackingStore() const final { return true; }
+    ProcessModel processModel() const final { return ProcessModel::InProcess; }
 
     void prepareToDisplay() final;
     void createContextAndPaintContents() final;

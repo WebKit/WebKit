@@ -79,6 +79,8 @@ public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
     virtual ~RemoteLayerBackingStore();
 
+    static std::unique_ptr<RemoteLayerBackingStore> createForLayer(PlatformCALayerRemote*);
+
     enum class Type : bool {
         IOSurface,
         Bitmap
@@ -90,6 +92,10 @@ public:
 
     virtual bool isRemoteLayerWithRemoteRenderingBackingStore() const { return false; }
     virtual bool isRemoteLayerWithInProcessRenderingBackingStore() const { return false; }
+
+    enum class ProcessModel : uint8_t { InProcess, Remote };
+    virtual ProcessModel processModel() const = 0;
+    static ProcessModel processModelForLayer(PlatformCALayerRemote*);
 
     struct Parameters {
         Type type { Type::Bitmap };

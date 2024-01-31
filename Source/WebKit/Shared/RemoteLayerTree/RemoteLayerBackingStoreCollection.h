@@ -67,8 +67,6 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
-    std::unique_ptr<RemoteLayerBackingStore> createRemoteLayerBackingStore(PlatformCALayerRemote*);
-
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
     virtual bool paintReachableBackingStoreContents();
 

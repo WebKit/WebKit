@@ -37,6 +37,7 @@ public:
     RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote*);
 
     bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
+    ProcessModel processModel() const final { return ProcessModel::Remote; }
 
     void prepareToDisplay() final;
     void clearBackingStore() final;

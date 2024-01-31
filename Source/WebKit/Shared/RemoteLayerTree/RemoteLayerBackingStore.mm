@@ -39,6 +39,8 @@
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeLayers.h"
 #import "RemoteLayerTreeNode.h"
+#import "RemoteLayerWithInProcessRenderingBackingStore.h"
+#import "RemoteLayerWithRemoteRenderingBackingStore.h"
 #import "ShareableBitmap.h"
 #import "SwapBuffersDisplayRequirement.h"
 #import "WebCoreArgumentCoders.h"
@@ -93,6 +95,16 @@ private:
 
 }
 
+std::unique_ptr<RemoteLayerBackingStore> RemoteLayerBackingStore::createForLayer(PlatformCALayerRemote* layer)
+{
+    switch (processModelForLayer(layer)) {
+    case ProcessModel::Remote:
+        return makeUnique<RemoteLayerWithRemoteRenderingBackingStore>(layer);
+    case ProcessModel::InProcess:
+        return makeUnique<RemoteLayerWithInProcessRenderingBackingStore>(layer);
+    }
+}
+
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
     , m_lastDisplayTime(-MonotonicTime::infinity())
@@ -128,6 +140,13 @@ void RemoteLayerBackingStore::ensureBackingStore(const Parameters& parameters)
 
     m_parameters = parameters;
     clearBackingStore();
+}
+
+RemoteLayerBackingStore::ProcessModel RemoteLayerBackingStore::processModelForLayer(PlatformCALayerRemote* layer)
+{
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM) && !layer->needsPlatformContext())
+        return ProcessModel::Remote;
+    return ProcessModel::InProcess;
 }
 
 #if !LOG_DISABLED

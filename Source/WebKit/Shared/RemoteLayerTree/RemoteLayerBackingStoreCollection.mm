@@ -104,15 +104,6 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
     }
 }
 
-std::unique_ptr<RemoteLayerBackingStore> RemoteLayerBackingStoreCollection::createRemoteLayerBackingStore(PlatformCALayerRemote* layer)
-{
-    // We currently only create a single type of backing store based on the global setting, but
-    // it should be fine to mix both types in the same collection.
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM) && !layer->needsPlatformContext())
-        return makeUnique<RemoteLayerWithRemoteRenderingBackingStore>(layer);
-    return makeUnique<RemoteLayerWithInProcessRenderingBackingStore>(layer);
-}
-
 bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 {
     bool anyNonEmptyDirtyRegion = false;
