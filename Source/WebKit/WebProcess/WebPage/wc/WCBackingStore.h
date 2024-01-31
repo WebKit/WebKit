@@ -54,16 +54,17 @@ public:
     }
 
     template <class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCBackingStore& result)
+    static std::optional<WCBackingStore> decode(Decoder& decoder)
     {
-        auto handle = decoder.template decode<std::optional<ImageBufferBackendHandle>>();
-        if (UNLIKELY(!decoder.isValid()))
-            return false;
+        std::optional<std::optional<ImageBufferBackendHandle>> handle;
+        decoder >> handle;
+        if (UNLIKELY(!handle))
+            return std::nullopt;
 
+        WCBackingStore result;
         if (*handle)
             result.m_bitmap = ShareableBitmap::create(WTFMove(std::get<ShareableBitmap::Handle>(**handle)));
-
-        return true;
+        return result;
     }
 
 private:

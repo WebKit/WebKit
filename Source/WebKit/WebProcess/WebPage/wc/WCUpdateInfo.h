@@ -179,135 +179,242 @@ struct WCLayerUpdateInfo {
     }
 
     template <class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCLayerUpdateInfo& result)
+    static std::optional<WCLayerUpdateInfo> decode(Decoder& decoder)
     {
-        if (!decoder.decode(result.id))
-            return false;
-        if (!decoder.decode(result.changes))
-            return false;
+        WCLayerUpdateInfo result;
+
+        std::optional<WebCore::PlatformLayerIdentifier> id;
+        decoder >> id;
+        if (UNLIKELY(!id))
+            return std::nullopt;
+        result.id = WTFMove(*id);
+
+        std::optional<OptionSet<WCLayerChange>> changes;
+        decoder >> changes;
+        if (UNLIKELY(!changes))
+            return std::nullopt;
+        result.changes = WTFMove(*changes);
+
         if (result.changes & WCLayerChange::Children) {
-            if (!decoder.decode(result.children))
-                return false;
+            std::optional<Vector<WebCore::PlatformLayerIdentifier>> children;
+            decoder >> children;
+            if (UNLIKELY(!children))
+                return std::nullopt;
+            result.children = WTFMove(*children);
         }
+
         if (result.changes & WCLayerChange::MaskLayer) {
-            if (!decoder.decode(result.maskLayer))
-                return false;
+            std::optional<std::optional<WebCore::PlatformLayerIdentifier>> maskLayer;
+            decoder >> maskLayer;
+            if (UNLIKELY(!maskLayer))
+                return std::nullopt;
+            result.maskLayer = WTFMove(*maskLayer);
         }
         if (result.changes & WCLayerChange::ReplicaLayer) {
-            if (!decoder.decode(result.replicaLayer))
-                return false;
+            std::optional<std::optional<WebCore::PlatformLayerIdentifier>> replicaLayer;
+            decoder >> replicaLayer;
+            if (UNLIKELY(!replicaLayer))
+                return std::nullopt;
+            result.replicaLayer = WTFMove(*replicaLayer);
         }
         if (result.changes & WCLayerChange::Position) {
-            if (!decoder.decode(result.position))
-                return false;
+            std::optional<WebCore::FloatPoint> position;
+            decoder >> position;
+            if (UNLIKELY(!position))
+                return std::nullopt;
+            result.position = WTFMove(*position);
         }
         if (result.changes & WCLayerChange::AnchorPoint) {
-            if (!decoder.decode(result.anchorPoint))
-                return false;
+            std::optional<WebCore::FloatPoint3D> anchorPoint;
+            decoder >> anchorPoint;
+            if (UNLIKELY(!anchorPoint))
+                return std::nullopt;
+            result.anchorPoint = WTFMove(*anchorPoint);
         }
         if (result.changes & WCLayerChange::Size) {
-            if (!decoder.decode(result.size))
-                return false;
+            std::optional<WebCore::FloatSize> size;
+            decoder >> size;
+            if (UNLIKELY(!size))
+                return std::nullopt;
+            result.size = WTFMove(*size);
         }
         if (result.changes & WCLayerChange::BoundsOrigin) {
-            if (!decoder.decode(result.boundsOrigin))
-                return false;
+            std::optional<WebCore::FloatPoint> boundsOrigin;
+            decoder >> boundsOrigin;
+            if (UNLIKELY(!boundsOrigin))
+                return std::nullopt;
+            result.boundsOrigin = WTFMove(*boundsOrigin);
         }
         if (result.changes & WCLayerChange::Preserves3D) {
-            if (!decoder.decode(result.preserves3D))
-                return false;
+            std::optional<bool> preserves3D;
+            decoder >> preserves3D;
+            if (UNLIKELY(!preserves3D))
+                return std::nullopt;
+            result.preserves3D = WTFMove(*preserves3D);
         }
         if (result.changes & WCLayerChange::ContentsVisible) {
-            if (!decoder.decode(result.contentsVisible))
-                return false;
+            std::optional<bool> contentsVisible;
+            decoder >> contentsVisible;
+            if (UNLIKELY(!contentsVisible))
+                return std::nullopt;
+            result.contentsVisible = WTFMove(*contentsVisible);
         }
         if (result.changes & WCLayerChange::BackfaceVisibility) {
-            if (!decoder.decode(result.backfaceVisibility))
-                return false;
+            std::optional<bool> backfaceVisibility;
+            decoder >> backfaceVisibility;
+            if (UNLIKELY(!backfaceVisibility))
+                return std::nullopt;
+            result.backfaceVisibility = WTFMove(*backfaceVisibility);
         }
         if (result.changes & WCLayerChange::MasksToBounds) {
-            if (!decoder.decode(result.masksToBounds))
-                return false;
+            std::optional<bool> masksToBounds;
+            decoder >> masksToBounds;
+            if (UNLIKELY(!masksToBounds))
+                return std::nullopt;
+            result.masksToBounds = WTFMove(*masksToBounds);
         }
         if (result.changes & WCLayerChange::SolidColor) {
-            if (!decoder.decode(result.solidColor))
-                return false;
+            std::optional<WebCore::Color> solidColor;
+            decoder >> solidColor;
+            if (UNLIKELY(!solidColor))
+                return std::nullopt;
+            result.solidColor = WTFMove(*solidColor);
         }
         if (result.changes & WCLayerChange::ShowDebugBorder) {
-            if (!decoder.decode(result.showDebugBorder))
-                return false;
+            std::optional<bool> showDebugBorder;
+            decoder >> showDebugBorder;
+            if (UNLIKELY(!showDebugBorder))
+                return std::nullopt;
+            result.showDebugBorder = WTFMove(*showDebugBorder);
         }
         if (result.changes & WCLayerChange::DebugBorderColor) {
-            if (!decoder.decode(result.debugBorderColor))
-                return false;
+            std::optional<WebCore::Color> debugBorderColor;
+            decoder >> debugBorderColor;
+            if (UNLIKELY(!debugBorderColor))
+                return std::nullopt;
+            result.debugBorderColor = WTFMove(*debugBorderColor);
         }
         if (result.changes & WCLayerChange::DebugBorderWidth) {
-            if (!decoder.decode(result.debugBorderWidth))
-                return false;
+            std::optional<float> debugBorderWidth;
+            decoder >> debugBorderWidth;
+            if (UNLIKELY(!debugBorderWidth))
+                return std::nullopt;
+            result.debugBorderWidth = WTFMove(*debugBorderWidth);
         }
         if (result.changes & WCLayerChange::ShowRepaintCounter) {
-            if (!decoder.decode(result.showRepaintCounter))
-                return false;
+            std::optional<bool> showRepaintCounter;
+            decoder >> showRepaintCounter;
+            if (UNLIKELY(!showRepaintCounter))
+                return std::nullopt;
+            result.showRepaintCounter = WTFMove(*showRepaintCounter);
         }
         if (result.changes & WCLayerChange::RepaintCount) {
-            if (!decoder.decode(result.repaintCount))
-                return false;
+            std::optional<int> repaintCount;
+            decoder >> repaintCount;
+            if (UNLIKELY(!repaintCount))
+                return std::nullopt;
+            result.repaintCount = WTFMove(*repaintCount);
         }
         if (result.changes & WCLayerChange::ContentsRect) {
-            if (!decoder.decode(result.contentsRect))
-                return false;
+            std::optional<WebCore::FloatRect> contentsRect;
+            decoder >> contentsRect;
+            if (UNLIKELY(!contentsRect))
+                return std::nullopt;
+            result.contentsRect = WTFMove(*contentsRect);
         }
         if (result.changes & WCLayerChange::ContentsClippingRect) {
-            if (!decoder.decode(result.contentsClippingRect))
-                return false;
+            std::optional<WebCore::FloatRoundedRect> contentsClippingRect;
+            decoder >> contentsClippingRect;
+            if (UNLIKELY(!contentsClippingRect))
+                return std::nullopt;
+            result.contentsClippingRect = WTFMove(*contentsClippingRect);
         }
         if (result.changes & WCLayerChange::ContentsRectClipsDescendants) {
-            if (!decoder.decode(result.contentsRectClipsDescendants))
-                return false;
+            std::optional<bool> contentsRectClipsDescendants;
+            decoder >> contentsRectClipsDescendants;
+            if (UNLIKELY(!contentsRectClipsDescendants))
+                return std::nullopt;
+            result.contentsRectClipsDescendants = WTFMove(*contentsRectClipsDescendants);
         }
         if (result.changes & WCLayerChange::Opacity) {
-            if (!decoder.decode(result.opacity))
-                return false;
+            std::optional<float> opacity;
+            decoder >> opacity;
+            if (UNLIKELY(!opacity))
+                return std::nullopt;
+            result.opacity = WTFMove(*opacity);
         }
         if (result.changes & WCLayerChange::Background) {
-            if (!decoder.decode(result.backgroundColor))
-                return false;
-            if (!decoder.decode(result.hasBackingStore))
-                return false;
-            if (!decoder.decode(result.tileUpdate))
-                return false;
+            std::optional<WebCore::Color> backgroundColor;
+            decoder >> backgroundColor;
+            if (UNLIKELY(!backgroundColor))
+                return std::nullopt;
+            result.backgroundColor = WTFMove(*backgroundColor);
+            std::optional<bool> hasBackingStore;
+            decoder >> hasBackingStore;
+            if (UNLIKELY(!hasBackingStore))
+                return std::nullopt;
+            result.hasBackingStore = WTFMove(*hasBackingStore);
+            std::optional<Vector<WCTileUpdate>> tileUpdate;
+            decoder >> tileUpdate;
+            if (UNLIKELY(!tileUpdate))
+                return std::nullopt;
+            result.tileUpdate = WTFMove(*tileUpdate);
         }
         if (result.changes & WCLayerChange::Transform) {
-            if (!decoder.decode(result.transform))
-                return false;
+            std::optional<WebCore::TransformationMatrix> transform;
+            decoder >> transform;
+            if (UNLIKELY(!transform))
+                return std::nullopt;
+            result.transform = WTFMove(*transform);
         }
         if (result.changes & WCLayerChange::ChildrenTransform) {
-            if (!decoder.decode(result.childrenTransform))
-                return false;
+            std::optional<WebCore::TransformationMatrix> childrenTransform;
+            decoder >> childrenTransform;
+            if (UNLIKELY(!childrenTransform))
+                return std::nullopt;
+            result.childrenTransform = WTFMove(*childrenTransform);
         }
         if (result.changes & WCLayerChange::Filters) {
-            if (!decoder.decode(result.filters))
-                return false;
+            std::optional<WebCore::FilterOperations> filters;
+            decoder >> filters;
+            if (UNLIKELY(!filters))
+                return std::nullopt;
+            result.filters = WTFMove(*filters);
         }
         if (result.changes & WCLayerChange::BackdropFilters) {
-            if (!decoder.decode(result.backdropFilters))
-                return false;
+            std::optional<WebCore::FilterOperations> backdropFilters;
+            decoder >> backdropFilters;
+            if (UNLIKELY(!backdropFilters))
+                return std::nullopt;
+            result.backdropFilters = WTFMove(*backdropFilters);
         }
         if (result.changes & WCLayerChange::BackdropFiltersRect) {
-            if (!decoder.decode(result.backdropFiltersRect))
-                return false;
+            std::optional<WebCore::FloatRoundedRect> backdropFiltersRect;
+            decoder >> backdropFiltersRect;
+            if (UNLIKELY(!backdropFiltersRect))
+                return std::nullopt;
+            result.backdropFiltersRect = WTFMove(*backdropFiltersRect);
         }
         if (result.changes & WCLayerChange::PlatformLayer) {
-            if (!decoder.decode(result.hasPlatformLayer))
-                return false;
-            if (!decoder.decode(result.contentBufferIdentifiers))
-                return false;
+            std::optional<bool> hasPlatformLayer;
+            decoder >> hasPlatformLayer;
+            if (UNLIKELY(!hasPlatformLayer))
+                return std::nullopt;
+            result.hasPlatformLayer = WTFMove(*hasPlatformLayer);
+            std::optional<Vector<WCContentBufferIdentifier>> contentBufferIdentifiers;
+            decoder >> contentBufferIdentifiers;
+            if (UNLIKELY(!contentBufferIdentifiers))
+                return std::nullopt;
+            result.contentBufferIdentifiers = WTFMove(*contentBufferIdentifiers);
         }
         if (result.changes & WCLayerChange::RemoteFrame) {
-            if (!decoder.decode(result.hostIdentifier))
-                return false;
+            std::optional<Markable<WebCore::LayerHostingContextIdentifier>> hostIdentifier;
+            decoder >> hostIdentifier;
+            if (UNLIKELY(!hostIdentifier))
+                return std::nullopt;
+            result.hostIdentifier = WTFMove(*hostIdentifier);
         }
-        return true;
+        return result;
     }
 };
 
