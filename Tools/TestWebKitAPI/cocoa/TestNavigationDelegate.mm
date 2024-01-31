@@ -31,9 +31,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
-@implementation TestNavigationDelegate {
-    RetainPtr<NSError> _navigationError;
-}
+@implementation TestNavigationDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
@@ -194,15 +192,16 @@
     EXPECT_FALSE(self.didFailProvisionalNavigation);
 
     __block bool finished = false;
+    __block RetainPtr<NSError> navigationError;
     self.didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
-        _navigationError = error;
+        navigationError = error;
         finished = true;
     };
 
     TestWebKitAPI::Util::run(&finished);
 
     self.didFailProvisionalNavigation = nil;
-    return _navigationError.autorelease();
+    return navigationError.autorelease();
 }
 
 - (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url
@@ -221,6 +220,18 @@
 {
     if (_didPromptForStorageAccess)
         _didPromptForStorageAccess(webView, topFrameDomain, subFrameDomain, hasQuirk);
+}
+
+- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download
+{
+    if (_navigationActionDidBecomeDownload)
+        _navigationActionDidBecomeDownload(navigationAction, download);
+}
+
+- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download
+{
+    if (_navigationResponseDidBecomeDownload)
+        _navigationResponseDidBecomeDownload(navigationResponse, download);
 }
 
 @end
