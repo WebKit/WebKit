@@ -57,15 +57,20 @@ MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, c
     , m_crossOriginMode(crossOriginMode)
     , m_destination(destination)
 {
+    assertIsMainThread();
 }
 
 MediaResourceLoader::~MediaResourceLoader()
 {
+    assertIsMainThread();
+
     ASSERT(m_resources.isEmpty());
 }
 
 void MediaResourceLoader::contextDestroyed()
 {
+    assertIsMainThread();
+
     ContextDestructionObserver::contextDestroyed();
     m_document = nullptr;
     m_element = nullptr;
@@ -73,15 +78,18 @@ void MediaResourceLoader::contextDestroyed()
 
 void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
+    assertIsMainThread();
+
     if (!m_document || !m_document->frame())
         return completionHandler(makeUnexpected(internalError(url)));
 
     m_document->frame()->loader().client().sendH2Ping(url, WTFMove(completionHandler));
 }
 
-
 RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
 {
+    assertIsMainThread();
+
     if (!m_document)
         return nullptr;
 
@@ -131,16 +139,41 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
 
 void MediaResourceLoader::removeResource(MediaResource& mediaResource)
 {
+    assertIsMainThread();
+
     ASSERT(m_resources.contains(&mediaResource));
     m_resources.remove(&mediaResource);
 }
 
 void MediaResourceLoader::addResponseForTesting(const ResourceResponse& response)
 {
+    assertIsMainThread();
+
     const auto maximumResponsesForTesting = 5;
     if (!shouldRecordResponsesForTesting || m_responsesForTesting.size() > maximumResponsesForTesting)
         return;
     m_responsesForTesting.append(response);
+}
+
+Document* MediaResourceLoader::document()
+{
+    assertIsMainThread();
+
+    return m_document.get();
+}
+
+const String& MediaResourceLoader::crossOriginMode() const
+{
+    assertIsMainThread();
+
+    return m_crossOriginMode;
+}
+
+Vector<ResourceResponse> MediaResourceLoader::responsesForTesting() const
+{
+    assertIsMainThread();
+
+    return m_responsesForTesting;
 }
 
 Ref<MediaResource> MediaResource::create(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource> resource)
@@ -152,18 +185,25 @@ MediaResource::MediaResource(MediaResourceLoader& loader, CachedResourceHandle<C
     : m_loader(loader)
     , m_resource(resource)
 {
+    assertIsMainThread();
+
     ASSERT(resource);
     resource->addClient(*this);
 }
 
 MediaResource::~MediaResource()
 {
-    stop();
+    assertIsMainThread();
+
     m_loader->removeResource(*this);
 }
 
-void MediaResource::stop()
+void MediaResource::shutdown()
 {
+    assertIsMainThread();
+
+    setClient(nullptr);
+
     if (!m_resource)
         return;
 
@@ -173,6 +213,8 @@ void MediaResource::stop()
 
 void MediaResource::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
@@ -183,76 +225,94 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
     if (m_resource->resourceError().isAccessControl()) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy."_s);
         m_loader->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
-        m_didPassAccessControlCheck = false;
-        if (m_client)
-            m_client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
-        stop();
+        m_didPassAccessControlCheck.store(false);
+        if (auto client = this->client())
+            client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
+        ensureShutdown();
         return;
     }
 
-    m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
-    if (m_client)
-        m_client->responseReceived(*this, response, [this, protectedThis = Ref { *this }, completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
+    m_didPassAccessControlCheck.store(m_resource->options().mode == FetchOptions::Mode::Cors);
+    if (auto client = this->client()) {
+        client->responseReceived(*this, response, [this, protectedThis = Ref { *this }, completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
             if (completionHandler)
                 completionHandler();
             if (shouldContinue == ShouldContinuePolicyCheck::No)
-                stop();
+                ensureShutdown();
         });
+    }
 
     m_loader->addResponseForTesting(response);
 }
 
 bool MediaResource::shouldCacheResponse(CachedResource& resource, const ResourceResponse& response)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
-    if (m_client)
-        return m_client->shouldCacheResponse(*this, response);
+    if (auto client = this->client())
+        return client->shouldCacheResponse(*this, response);
     return true;
 }
 
 void MediaResource::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
-    if (m_client)
-        m_client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
+    if (auto client = this->client())
+        client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
     else
         completionHandler(WTFMove(request));
 }
 
 void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
-    if (m_client)
-        m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
+    if (auto client = this->client())
+        client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
 void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
-    if (m_client)
-        m_client->dataReceived(*this, buffer);
+    if (auto client = this->client())
+        client->dataReceived(*this, buffer);
 }
 
 void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
+    assertIsMainThread();
+
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
-    if (m_client) {
+    if (auto client = this->client()) {
         if (m_resource->loadFailedOrCanceled())
-            m_client->loadFailed(*this, m_resource->resourceError());
+            client->loadFailed(*this, m_resource->resourceError());
         else
-            m_client->loadFinished(*this, metrics);
+            client->loadFinished(*this, metrics);
     }
-    stop();
+    ensureShutdown();
+}
+
+void MediaResource::ensureShutdown()
+{
+    ensureOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->shutdown();
+    });
 }
 
 } // namespace WebCore

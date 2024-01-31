@@ -72,7 +72,6 @@ class WebCoreDecompressionSession;
 
 class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
-    , public RefCounted<MediaPlayerPrivateWebM>
     , public WebMResourceClientParent
     , public WebAVSampleBufferListenerClient
     , private LoggerHelper {
@@ -81,12 +80,8 @@ public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();
 
-    // Make WeakPtr { *this } work as `CanMakeWeakPtr` is implemented in both WebMResourceClientParent and WebAVSampleBufferListenerClient
-    using WebMResourceClientParent::weakPtrFactory;
-    using WebMResourceClientParent::WeakValueType;
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    void ref() final { WebMResourceClientParent::ref(); }
+    void deref() final { WebMResourceClientParent::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 private:
@@ -217,8 +212,6 @@ private:
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, const String& mediaType);
     void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, TrackID);
 
-    void append(SharedBuffer&);
-
     void flush();
 #if PLATFORM(IOS_FAMILY)
     void flushIfNeeded();
@@ -250,6 +243,7 @@ private:
     void checkNewVideoFrameMetadata(CMTime);
 
     // WebAVSampleBufferListenerParent
+    // Methods are called on the WebMResourceClient's WorkQueue
     void layerDidReceiveError(AVSampleBufferDisplayLayer*, NSError*) final;
     void rendererDidReceiveError(AVSampleBufferAudioRenderer*, NSError*) final;
     void layerReadyForDisplayChanged(AVSampleBufferDisplayLayer*, bool isReadyForDisplay) final;
@@ -264,6 +258,8 @@ private:
     static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
+    void maybeFinishLoading();
+
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_durationObserver;
@@ -271,7 +267,7 @@ private:
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
-    WeakPtr<WebMResourceClient> m_resourceClient;
+    RefPtr<WebMResourceClient> m_resourceClient;
 
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;

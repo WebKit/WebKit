@@ -29,6 +29,7 @@
 
 #include "RemoteMediaResourceIdentifier.h"
 #include <WebCore/PlatformMediaResourceLoader.h>
+#include <atomic>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,13 +46,17 @@ class RemoteMediaResourceManager;
 
 class RemoteMediaResource : public WebCore::PlatformMediaResource {
 public:
+    // Called on the main thread.
     static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
-    ~RemoteMediaResource();
 
-    // PlatformMediaResource
-    void stop() final;
+    // Thread-safe
+    ~RemoteMediaResource();
+    void shutdown() final;
+
+    // PlatformMediaResource, called on the main thread.
     bool didPassAccessControlCheck() const final;
 
+    // Called on MediaResourceLoader's WorkQueue.
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(uint64_t, uint64_t);
@@ -63,10 +68,11 @@ public:
 private:
     RemoteMediaResource(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
 
-    WeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
+    ThreadSafeWeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
-    bool m_didPassAccessControlCheck { false };
+    std::atomic<bool> m_didPassAccessControlCheck { false };
+    std::atomic<bool> m_shutdown { false };
 };
 
 } // namespace WebKit

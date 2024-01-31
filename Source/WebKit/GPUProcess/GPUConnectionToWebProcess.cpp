@@ -343,6 +343,8 @@ uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+    assertIsMainThread();
+
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     m_routingArbitrator->processDidTerminate();
 #endif
@@ -387,6 +389,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
+
+    if (m_remoteMediaResourceManager)
+        m_remoteMediaResourceManager->stopListeningForIPC();
+
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
 }
@@ -534,8 +540,12 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 #if ENABLE(VIDEO)
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
-    if (!m_remoteMediaResourceManager)
-        m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
+    assertIsMainThread();
+
+    if (!m_remoteMediaResourceManager) {
+        m_remoteMediaResourceManager = RemoteMediaResourceManager::create();
+        m_remoteMediaResourceManager->initializeConnection(&connection());
+    }
 
     return *m_remoteMediaResourceManager;
 }

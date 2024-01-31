@@ -62,8 +62,6 @@ public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&, unsigned requestNumber);
     virtual ~CachedResourceStreamingClient();
 
-    const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
-
 private:
     void checkUpdateBlocksize(unsigned bytesRead);
 
@@ -87,7 +85,6 @@ private:
 
     GThreadSafeWeakPtr<WebKitWebSrc> m_src;
     ResourceRequest m_request;
-    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
 
 struct WebKitWebSrcPrivate {
@@ -97,9 +94,9 @@ struct WebKitWebSrcPrivate {
     // Configuration of the element (properties set by the user of WebKitWebSrc):
     // They can only change when state < PAUSED.
     CString originalURI;
-    bool keepAlive;
+    bool keepAlive { false };
     GUniquePtr<GstStructure> extraHeaders;
-    bool compress;
+    bool compress { false };
     GUniquePtr<gchar> httpMethod;
 
     struct StreamingMembers {
@@ -113,12 +110,12 @@ struct WebKitWebSrcPrivate {
 #endif
 
         // Properties initially empty, but set once the first HTTP response arrives:
-        bool wasResponseReceived;
+        bool wasResponseReceived { false };
         CString redirectedURI;
-        bool didPassAccessControlCheck;
-        bool haveSize;
-        uint64_t size;
-        bool isSeekable;
+        bool didPassAccessControlCheck { false };
+        bool haveSize { false };
+        uint64_t size { 0 };
+        bool isSeekable { false };
         GRefPtr<GstCaps> pendingCaps;
         GRefPtr<GstMessage> pendingHttpHeadersMessage; // Set from MT, sent from create().
         GRefPtr<GstEvent> pendingHttpHeadersEvent; // Set from MT, sent from create().
@@ -126,7 +123,7 @@ struct WebKitWebSrcPrivate {
         // Properties updated with every downloaded data block:
         WallTime downloadStartTime { WallTime::nan() };
         uint64_t totalDownloadedBytes { 0 };
-        bool doesHaveEOS; // Set both when we reach stopPosition and on errors (including on responseReceived).
+        bool doesHaveEOS { false }; // Set both when we reach stopPosition and on errors (including on responseReceived).
         bool isDownloadSuspended { false }; // Set to true from the network handler when the high water level is reached.
 
         // Obtained by means of GstContext queries before making the first HTTP request, unless it
@@ -142,8 +139,8 @@ struct WebKitWebSrcPrivate {
         bool isFlushing { false };
         Condition responseCondition; // Must be signaled after any updates on HTTP requests, and when flushing.
         GRefPtr<GstAdapter> adapter;
-        bool isDurationSet;
-        uint64_t readPosition;
+        bool isDurationSet { false };
+        uint64_t readPosition { 0 };
 
         // Properties only set during seek.
         // basesrc ensures they can't change during a create() call by taking the STREAMING_LOCK.
@@ -153,6 +150,7 @@ struct WebKitWebSrcPrivate {
         uint64_t stopPosition { UINT64_MAX };
 
         bool isRequestPending { true };
+        HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
 
         RefPtr<PlatformMediaResource> resource;
     };
@@ -449,7 +447,7 @@ static void stopLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPr
 
     GST_DEBUG_OBJECT(src, "R%u: stopping download", members->requestNumber);
     members->isDownloadSuspended = true;
-    members->resource->stop();
+    members->resource->shutdown();
 }
 
 static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
@@ -821,8 +819,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
         GST_DEBUG_OBJECT(src, "Resource request R%u will be stopped", members->requestNumber);
         RunLoop::main().dispatch([resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
-            resource->stop();
-            resource->setClient(nullptr);
+            resource->shutdown();
         });
     }
     ASSERT(!members->resource);
@@ -1011,7 +1008,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     GST_DEBUG_OBJECT(src.get(), "R%u: Received response: %d", m_requestNumber, response.httpStatusCode());
 
     members->didPassAccessControlCheck = members->resource->didPassAccessControlCheck();
-    m_origins.add(SecurityOrigin::create(response.url()));
+    members->origins.add(SecurityOrigin::create(response.url()));
 
     auto responseURI = response.url().string().utf8();
     if (priv->originalURI != responseURI)
@@ -1113,7 +1110,14 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
 void CachedResourceStreamingClient::redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    m_origins.add(SecurityOrigin::create(response.url()));
+    ASSERT(isMainThread());
+    auto src = m_src.get();
+    if (!src) {
+        completionHandler(WTFMove(request));
+        return;
+    }
+    DataMutexLocker members { src->priv->dataMutex };
+    members->origins.add(SecurityOrigin::create(response.url()));
     completionHandler(WTFMove(request));
 }
 
@@ -1217,11 +1221,7 @@ bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
 {
     DataMutexLocker members { src->priv->dataMutex };
 
-    if (!members->resource)
-        return false;
-
-    auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(members->resource->client());
-    for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
+    for (auto& responseOrigin : members->origins) {
         if (!origin.isSameOriginDomain(*responseOrigin))
             return true;
     }

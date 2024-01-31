@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "RemoteMediaPlayerProxy.h"
+#include "RemoteMediaResourceLoader.h"
 #include "RemoteMediaResourceManager.h"
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -47,22 +48,28 @@ RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceManager& remoteMedia
     , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
     , m_id(identifier)
 {
+    ASSERT(isMainRunLoop());
 }
 
 RemoteMediaResource::~RemoteMediaResource()
 {
-    ASSERT(isMainRunLoop());
-    stop();
-    if (!m_remoteMediaResourceManager)
-        return;
-
-    m_remoteMediaResourceManager->removeMediaResource(m_id);
+    ASSERT(m_shutdown);
 }
 
-void RemoteMediaResource::stop()
+void RemoteMediaResource::shutdown()
 {
-    if (m_remoteMediaPlayerProxy)
-        m_remoteMediaPlayerProxy->removeResource(m_id);
+    if (m_shutdown.exchange(true))
+        return;
+
+    setClient(nullptr);
+
+    if (RefPtr remoteMediaResourceManager = m_remoteMediaResourceManager.get())
+        remoteMediaResourceManager->removeMediaResource(m_id);
+
+    ensureOnMainRunLoop([remoteMediaPlayerProxy = WTFMove(m_remoteMediaPlayerProxy), id = m_id] {
+        if (remoteMediaPlayerProxy)
+            remoteMediaPlayerProxy->removeResource(id);
+    });
 }
 
 bool RemoteMediaResource::didPassAccessControlCheck() const
@@ -72,14 +79,19 @@ bool RemoteMediaResource::didPassAccessControlCheck() const
 
 void RemoteMediaResource::responseReceived(const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    if (!m_client)
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    auto client = this->client();
+    if (!client)
         return completionHandler(ShouldContinuePolicyCheck::No);
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
-    m_client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
-        ASSERT(isMainRunLoop());
-        if (shouldContinue == ShouldContinuePolicyCheck::No)
-            protectedThis->stop();
+    client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
+        if (shouldContinue == ShouldContinuePolicyCheck::No) {
+            ensureOnMainThread([protectedThis] {
+                protectedThis->shutdown();
+            });
+        }
 
         completionHandler(shouldContinue);
     });
@@ -87,41 +99,51 @@ void RemoteMediaResource::responseReceived(const ResourceResponse& response, boo
 
 void RemoteMediaResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    if (m_client)
-        m_client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
-    else
-        completionHandler({ });
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    if (auto client = this->client())
+        client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
 }
 
 void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
-    if (m_client)
-        m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    if (auto client = this->client())
+        client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
 void RemoteMediaResource::dataReceived(const SharedBuffer& data)
 {
-    if (m_client)
-        m_client->dataReceived(*this, data);
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    if (auto client = this->client())
+        client->dataReceived(*this, data);
 }
 
 void RemoteMediaResource::accessControlCheckFailed(const ResourceError& error)
 {
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
     m_didPassAccessControlCheck = false;
-    if (m_client)
-        m_client->accessControlCheckFailed(*this, error);
+    if (auto client = this->client())
+        client->accessControlCheckFailed(*this, error);
 }
 
 void RemoteMediaResource::loadFailed(const ResourceError& error)
 {
-    if (m_client)
-        m_client->loadFailed(*this, error);
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    if (auto client = this->client())
+        client->loadFailed(*this, error);
 }
 
 void RemoteMediaResource::loadFinished(const NetworkLoadMetrics& metrics)
 {
-    if (m_client)
-        m_client->loadFinished(*this, metrics);
+    assertIsCurrent(RemoteMediaResourceLoader::defaultQueue());
+
+    if (auto client = this->client())
+        client->loadFinished(*this, metrics);
 }
 
 } // namespace WebKit

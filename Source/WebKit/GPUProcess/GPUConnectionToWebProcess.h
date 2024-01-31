@@ -347,7 +347,7 @@ private:
     std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
 #if ENABLE(VIDEO)
-    std::unique_ptr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
+    RefPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager WTF_GUARDED_BY_CAPABILITY(mainThread);
     UniqueRef<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
     PAL::SessionID m_sessionID;

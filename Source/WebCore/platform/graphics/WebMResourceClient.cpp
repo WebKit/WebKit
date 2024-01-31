@@ -57,32 +57,25 @@ void WebMResourceClient::stop()
         return;
 
     auto resource = WTFMove(m_resource);
-    resource->stop();
-    resource->setClient(nullptr);
+    resource->shutdown();
 }
 
 void WebMResourceClient::dataReceived(PlatformMediaResource&, const SharedBuffer& buffer)
 {
-    if (!m_parent)
-        return;
-    
-    m_parent->dataReceived(buffer);
+    if (RefPtr parent = m_parent.get())
+        parent->dataReceived(buffer);
 }
 
 void WebMResourceClient::loadFailed(PlatformMediaResource&, const ResourceError& error)
 {
-    if (!m_parent)
-        return;
-    
-    m_parent->loadFailed(error);
+    if (RefPtr parent = m_parent.get())
+        parent->loadFailed(error);
 }
 
 void WebMResourceClient::loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&)
 {
-    if (!m_parent)
-        return;
-    
-    m_parent->loadFinished();
+    if (RefPtr parent = m_parent.get())
+        parent->loadFinished();
 }
 
 } // namespace WebCore

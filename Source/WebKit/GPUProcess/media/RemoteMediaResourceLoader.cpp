@@ -38,6 +38,7 @@ using namespace WebCore;
 RemoteMediaResourceLoader::RemoteMediaResourceLoader(RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
     : m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
+    ASSERT(isMainRunLoop());
 }
 
 RemoteMediaResourceLoader::~RemoteMediaResourceLoader()
@@ -46,6 +47,7 @@ RemoteMediaResourceLoader::~RemoteMediaResourceLoader()
 
 RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
 {
+    ASSERT(isMainRunLoop());
     if (!m_remoteMediaPlayerProxy)
         return nullptr;
 
@@ -54,6 +56,7 @@ RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(Resourc
 
 void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
     if (!m_remoteMediaPlayerProxy)
         return completionHandler(makeUnexpected(internalError(url)));
     

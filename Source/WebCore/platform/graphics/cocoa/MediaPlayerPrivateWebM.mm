@@ -94,6 +94,15 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_parser->setLogger(m_logger, m_logIdentifier);
+    m_parser->setDidParseInitializationDataCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (InitializationSegment&& segment) {
+        if (RefPtr protectedThis = weakThis.get())
+            didParseInitializationData(WTFMove(segment));
+    });
+
+    m_parser->setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
+        if (RefPtr protectedThis = weakThis.get())
+            didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
+    });
 
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
@@ -223,21 +232,38 @@ void MediaPlayerPrivateWebM::load(MediaStreamPrivate&)
 
 void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer& buffer)
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", buffer.size());
+
+    callOnMainThread([protectedThis = Ref { *this }, this] {
+        setNetworkState(MediaPlayer::NetworkState::Loading);
+        m_pendingAppends++;
+    });
+
     // FIXME: Remove const_cast once https://bugs.webkit.org/show_bug.cgi?id=243370 is fixed.
-    append(const_cast<SharedBuffer&>(buffer));
+    SourceBufferParser::Segment segment(Ref { const_cast<SharedBuffer&>(buffer) });
+    invokeAsync(m_appendQueue, [segment = WTFMove(segment), parser = m_parser]() mutable {
+        return MediaPromise::createAndSettle(parser->appendData(WTFMove(segment)));
+    })->whenSettled(RunLoop::main(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->appendCompleted(!!result);
+    });
 }
 
 void MediaPlayerPrivateWebM::loadFailed(const ResourceError& error)
 {
     ERROR_LOG(LOGIDENTIFIER, "resource failed to load with code ", error.errorCode());
-    setNetworkState(MediaPlayer::NetworkState::NetworkError);
+    callOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->setNetworkState(MediaPlayer::NetworkState::NetworkError);
+    });
 }
 
 void MediaPlayerPrivateWebM::loadFinished()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_loadFinished = true;
+    callOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->m_loadFinished = true;
+        protectedThis->maybeFinishLoading();
+    });
 }
 
 void MediaPlayerPrivateWebM::cancelLoad()
@@ -683,8 +709,9 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
     DEBUG_LOG(logSiteIdentifier, duration);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, duration, logSiteIdentifier, this] {
-        if (!weakThis)
+    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = ThreadSafeWeakPtr { *this }, duration, logSiteIdentifier, this] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         MediaTime now = currentMediaTime();
@@ -890,7 +917,7 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, TrackID tr
 
         DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
 
-        [displayLayer prerollDecodeWithCompletionHandler:[this, weakThis = WeakPtr { *this }, logSiteIdentifier = LOGIDENTIFIER] (BOOL success) mutable {
+        [displayLayer prerollDecodeWithCompletionHandler:[this, weakThis = ThreadSafeWeakPtr { *this }, logSiteIdentifier = LOGIDENTIFIER] (BOOL success) mutable {
             ensureOnMainThread([this, weakThis = WTFMove(weakThis), logSiteIdentifier, success] () {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
@@ -945,14 +972,14 @@ void MediaPlayerPrivateWebM::notifyClientWhenReadyForMoreSamples(TrackID trackId
 {
     if (isEnabledVideoTrackID(trackId)) {
         if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this, trackId] {
-                if (weakThis)
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, this, trackId] {
+                if (RefPtr protectedThis = weakThis.get())
                     didBecomeReadyForMoreSamples(trackId);
             });
         }
         if (m_videoLayer) {
-            m_videoLayer->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this, trackId] {
-                if (weakThis)
+            m_videoLayer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, this, trackId] {
+                if (RefPtr protectedThis = weakThis.get())
                     didBecomeReadyForMoreSamples(trackId);
             });
         }
@@ -960,9 +987,9 @@ void MediaPlayerPrivateWebM::notifyClientWhenReadyForMoreSamples(TrackID trackId
     }
     
     if (auto itAudioRenderer = m_audioRenderers.find(trackId); itAudioRenderer != m_audioRenderers.end()) {
-        WeakPtr weakThis { *this };
+        ThreadSafeWeakPtr weakThis { *this };
         [itAudioRenderer->second requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
-            if (weakThis)
+            if (RefPtr protectedThis = weakThis.get())
                 didBecomeReadyForMoreSamples(trackId);
         }];
     }
@@ -1018,14 +1045,21 @@ void MediaPlayerPrivateWebM::didBecomeReadyForMoreSamples(TrackID trackId)
 
 void MediaPlayerPrivateWebM::appendCompleted(bool success)
 {
+    assertIsMainThread();
+
     ASSERT(m_pendingAppends > 0);
     m_pendingAppends--;
-    INFO_LOG(LOGIDENTIFIER, "pending appends = ", m_pendingAppends);
+    INFO_LOG(LOGIDENTIFIER, "pending appends = ", m_pendingAppends, " success = ", success);
     setLoadingProgresssed(true);
     m_errored |= !success;
     if (!m_errored)
         updateBufferedFromTrackBuffers(m_loadFinished && !m_pendingAppends);
 
+    maybeFinishLoading();
+}
+
+void MediaPlayerPrivateWebM::maybeFinishLoading()
+{
     if (m_loadFinished && !m_pendingAppends) {
         if (!m_hasVideo && !m_hasAudio) {
             ERROR_LOG(LOGIDENTIFIER, "could not load audio or video tracks");
@@ -1115,8 +1149,8 @@ void MediaPlayerPrivateWebM::trackDidChangeSelected(VideoTrackPrivate& track, bo
         m_enabledVideoTrackID = trackId;
         updateDisplayLayerAndDecompressionSession();
         if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this, trackId] {
-                if (weakThis)
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, this, trackId] {
+                if (RefPtr protectedThis = weakThis.get())
                     didBecomeReadyForMoreSamples(trackId);
             });
         }
@@ -1172,14 +1206,14 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
 #endif
             addTrackBuffer(track->id(), WTFMove(videoTrackInfo.description));
 
-            track->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {
-                if (!weakThis)
+            track->setSelectedChangedCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
 
                 auto videoTrackSelectedChanged = [weakThis, this, trackRef = Ref { track }, selected] {
-                    if (!weakThis)
-                        return;
-                    trackDidChangeSelected(trackRef, selected);
+                    if (RefPtr protectedThis = weakThis.get())
+                        trackDidChangeSelected(trackRef, selected);
                 };
 
                 if (!m_processingInitializationSegment) {
@@ -1202,15 +1236,14 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
             auto track = static_pointer_cast<AudioTrackPrivateWebM>(audioTrackInfo.track);
             addTrackBuffer(track->id(), WTFMove(audioTrackInfo.description));
 
-            track->setEnabledChangedCallback([weakThis = WeakPtr { *this }, this] (AudioTrackPrivate& track, bool enabled) {
-                if (!weakThis)
+            track->setEnabledChangedCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (AudioTrackPrivate& track, bool enabled) {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
 
                 auto audioTrackEnabledChanged = [weakThis, this, trackRef = Ref { track }, enabled] {
-                    if (!weakThis)
-                        return;
-
-                    trackDidChangeEnabled(trackRef, enabled);
+                    if (RefPtr protectedThis = weakThis.get())
+                        trackDidChangeEnabled(trackRef, enabled);
                 };
 
                 if (!m_processingInitializationSegment) {
@@ -1273,37 +1306,6 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
     trackBuffer.addBufferedRange(presentationTimestamp, presentationEndTime);
 
     notifyClientWhenReadyForMoreSamples(trackId);
-}
-
-void MediaPlayerPrivateWebM::append(SharedBuffer& buffer)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", buffer.size());
-
-    setNetworkState(MediaPlayer::NetworkState::Loading);
-
-    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, this] (InitializationSegment&& segment) {
-        if (!weakThis)
-            return;
-
-        didParseInitializationData(WTFMove(segment));
-    });
-
-    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, this] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
-        if (!weakThis)
-            return;
-        didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
-    });
-
-    m_pendingAppends++;
-
-    SourceBufferParser::Segment segment(Ref { buffer });
-    invokeAsync(m_appendQueue, [segment = WTFMove(segment), parser = m_parser]() mutable {
-        return MediaPromise::createAndSettle(parser->appendData(WTFMove(segment)));
-    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) {
-        if (!weakThis)
-            return;
-        appendCompleted(!!result);
-    });
 }
 
 void MediaPlayerPrivateWebM::flush()

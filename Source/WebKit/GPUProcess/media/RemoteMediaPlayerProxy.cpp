@@ -325,6 +325,8 @@ void RemoteMediaPlayerProxy::setPresentationSize(const WebCore::IntSize& size)
 
 RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
 {
+    ASSERT(isMainRunLoop());
+
     ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return nullptr;
