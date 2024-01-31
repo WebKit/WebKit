@@ -36,7 +36,6 @@
 #include "FullscreenManager.h"
 #include "LocalDOMWindow.h"
 #include "MediaProducer.h"
-#include "NodeIterator.h"
 #include "ReportingScope.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
@@ -71,11 +70,6 @@ inline Ref<Document> Document::create(const Settings& settings, const URL& url)
     auto document = adoptRef(*new Document(nullptr, settings, url));
     document->addToContextsMap();
     return document;
-}
-
-bool Document::hasNodeIterators() const
-{
-    return !m_nodeIterators.isEmptyIgnoringNullReferences();
 }
 
 inline void Document::invalidateAccessKeyCache()

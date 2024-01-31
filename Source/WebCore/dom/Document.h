@@ -424,17 +424,16 @@ public:
     // not enough to keep it from removing its children. This allows a
     // node that outlives its document to still have a valid document
     // pointer without introducing reference cycles.
-    ALWAYS_INLINE void incrementReferencingNodeCount(unsigned count = 1)
+    void incrementReferencingNodeCount()
     {
         ASSERT(!m_deletionHasBegun);
-        m_referencingNodeCount += count;
+        ++m_referencingNodeCount;
     }
 
-    ALWAYS_INLINE void decrementReferencingNodeCount(unsigned count = 1)
+    void decrementReferencingNodeCount()
     {
         ASSERT(!m_deletionHasBegun || !m_referencingNodeCount);
-        ASSERT(m_referencingNodeCount >= count || (!m_referencingNodeCount && m_deletionHasBegun));
-        m_referencingNodeCount -= count;
+        --m_referencingNodeCount;
         if (!m_referencingNodeCount && !refCount()) {
 #if ASSERT_ENABLED
             m_deletionHasBegun = true;
@@ -958,12 +957,10 @@ public:
 
     void attachNodeIterator(NodeIterator&);
     void detachNodeIterator(NodeIterator&);
-    inline bool hasNodeIterators() const;
     void moveNodeIteratorsToNewDocument(Node&, Document&);
 
     void attachRange(Range&);
     void detachRange(Range&);
-    bool hasRanges() { return !m_ranges.isEmpty(); }
 
     void updateRangesAfterChildrenChanged(ContainerNode&);
     // nodeChildrenWillBeRemoved is used when removing all node children at once.
@@ -1036,8 +1033,7 @@ public:
 
     void didAddEventListenersOfType(const AtomString&, unsigned = 1);
     void didRemoveEventListenersOfType(const AtomString&, unsigned = 1);
-    bool hasNodeWithEventListeners() const { return !m_eventListenerCounts.isEmpty(); }
-    bool hasEventListenersOfType(const AtomString& type) const { return m_eventListenerCounts.inlineGet(type); }
+    bool hasEventListnersOfType(const AtomString& type) const { return m_eventListenerCounts.inlineGet(type); }
 
     bool hasConnectedPluginElements() { return m_connectedPluginElementCount; }
     void didConnectPluginElement() { ++m_connectedPluginElementCount; }

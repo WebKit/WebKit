@@ -588,9 +588,9 @@ protected:
         IsMathMLElement = 1 << 6,
         IsShadowRoot = 1 << 7,
         IsUnknownElement = 1 << 8,
-        IsSpecialInternalNode = 1 << 9, // DocumentFragment node for innerHTML/outerHTML or EditingText node.
-        HasCustomStyleResolveCallbacks = 1 << 10,
-        HasDidMoveToNewDocument = 1 << 11,
+        IsDocumentFragmentForInnerOuterHTML = 1 << 9,
+        IsEditingText = 1 << 10,
+        HasCustomStyleResolveCallbacks = 1 << 11,
     };
     static constexpr auto typeFlagBitCount = 12;
 
@@ -740,11 +740,9 @@ private:
 
     void adjustStyleValidity(Style::Validity, Style::InvalidationMode);
 
-    static unsigned moveShadowTreeToNewDocumentFastCase(ShadowRoot&, Document& oldDocument, Document& newDocument);
-    static void moveShadowTreeToNewDocumentSlowCase(ShadowRoot&, Document& oldDocument, Document& newDocument);
+    static void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
-    void moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument);
-    void moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument);
+    void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
     

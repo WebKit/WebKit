@@ -44,8 +44,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGraphicsElement);
 
-SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
-    : SVGElement(tagName, document, WTFMove(propertyRegistry), typeFlags)
+SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
+    : SVGElement(tagName, document, WTFMove(propertyRegistry))
     , SVGTests(this)
     , m_shouldIsolateBlending(false)
 {
