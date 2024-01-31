@@ -151,6 +151,42 @@ template<typename T> struct IDLLegacyNullToEmptyStringAdaptor : IDLString<String
     using InnerType = T;
 };
 
+template<typename T> struct IDLStringContextTrustedHTMLAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLStringContextTrustedScriptAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLStringContextTrustedScriptURLAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedHTMLAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedScriptAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLLegacyNullToEmptyStringStringContextTrustedScriptURLAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLAtomStringStringContextTrustedHTMLAdaptor : IDLString<AtomString> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLAtomStringStringContextTrustedScriptAdaptor : IDLString<AtomString> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLAtomStringStringContextTrustedScriptURLAdaptor : IDLString<AtomString> {
+    using InnerType = T;
+};
+
 template<typename T> struct IDLLegacyNullToEmptyAtomStringAdaptor : IDLString<AtomString> {
     using InnerType = T;
 };

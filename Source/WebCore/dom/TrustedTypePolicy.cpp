@@ -50,64 +50,67 @@ TrustedTypePolicy::TrustedTypePolicy(const String& name, const TrustedTypePolicy
 
 ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createHTMLCallback) {
-        auto callbackResult = m_createHTMLCallback->handleEvent(input, WTFMove(arguments));
+    auto policyValue = getPolicyValue("TrustedHTML"_s, input, WTFMove(arguments));
 
-        if (callbackResult.type() == CallbackResultType::Success) {
-            auto contents = callbackResult.releaseReturnValue();
+    if (policyValue.hasException())
+        return policyValue.releaseException();
 
-            return TrustedHTML::create(contents);
-        }
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExceptionCode::ExistingExceptionError };
-    }
-
-    return Exception {
-        ExceptionCode::TypeError,
-        makeString("Policy "_s, m_name,
-        "'s TrustedTypePolicyOptions did not specify a 'createHTML' member."_s)
-    };
+    return TrustedHTML::create(policyValue.releaseReturnValue());
 }
 
 ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createScriptCallback) {
-        auto callbackResult = m_createScriptCallback->handleEvent(input, WTFMove(arguments));
+    auto policyValue = getPolicyValue("TrustedScript"_s, input, WTFMove(arguments));
 
-        if (callbackResult.type() == CallbackResultType::Success) {
-            auto contents = callbackResult.releaseReturnValue();
+    if (policyValue.hasException())
+        return policyValue.releaseException();
 
-            return TrustedScript::create(contents);
-        }
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExceptionCode::ExistingExceptionError };
-    }
-
-    return Exception {
-        ExceptionCode::TypeError,
-        makeString("Policy "_s, m_name,
-        "'s TrustedTypePolicyOptions did not specify a 'createScript' member."_s)
-    };
+    return TrustedScript::create(policyValue.releaseReturnValue());
 }
 
 ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createScriptURLCallback) {
-        auto callbackResult = m_createScriptURLCallback->handleEvent(input, WTFMove(arguments));
+    auto policyValue = getPolicyValue("TrustedScriptURL"_s, input, WTFMove(arguments));
 
-        if (callbackResult.type() == CallbackResultType::Success) {
-            auto contents = callbackResult.releaseReturnValue();
+    if (policyValue.hasException())
+        return policyValue.releaseException();
 
-            return TrustedScriptURL::create(contents);
-        }
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExceptionCode::ExistingExceptionError };
+    return TrustedScriptURL::create(policyValue.releaseReturnValue());
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-policy-value-algorithm
+ExceptionOr<String> TrustedTypePolicy::getPolicyValue(const String& trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    auto callbackName = emptyString();
+    CallbackResult<String> callbackResult(CallbackResultType::UnableToExecute);
+    if (trustedTypeName == "TrustedHTML"_s) {
+        callbackName = "createHTML"_s;
+        if (m_createHTMLCallback)
+            callbackResult = m_createHTMLCallback->handleEvent(input, WTFMove(arguments));
+    } else if (trustedTypeName == "TrustedScript"_s) {
+        callbackName = "createScript"_s;
+        if (m_createScriptCallback)
+            callbackResult = m_createScriptCallback->handleEvent(input, WTFMove(arguments));
+    } else if (trustedTypeName == "TrustedScriptURL"_s) {
+        callbackName = "createScriptURL"_s;
+        if (m_createScriptURLCallback)
+            callbackResult = m_createScriptURLCallback->handleEvent(input, WTFMove(arguments));
+    } else {
+        ASSERT_NOT_REACHED();
+        return Exception {
+            ExceptionCode::TypeError
+        };
     }
+
+    if (callbackResult.type() == CallbackResultType::Success)
+        return callbackResult.releaseReturnValue();
+    if (callbackResult.type() == CallbackResultType::ExceptionThrown)
+        return Exception { ExceptionCode::ExistingExceptionError };
 
     return Exception {
         ExceptionCode::TypeError,
         makeString("Policy "_s, m_name,
-        "'s TrustedTypePolicyOptions did not specify a 'createScriptURL' member."_s)
+            "'s TrustedTypePolicyOptions did not specify a '"_s, callbackName, "' member."_s)
     };
 }
 

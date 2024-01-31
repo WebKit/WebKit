@@ -109,6 +109,7 @@ JSTestSetLikeWithOverriddenOperations.h:
 JSTestStandaloneDictionary.h: TestSupplemental.idl
 TestSupplemental.idl:
 JSTestStandaloneEnumeration.h: 
+JSTestStringContext.h: 
 JSTestStringifier.h: 
 JSTestStringifierAnonymousOperation.h: 
 JSTestStringifierNamedOperation.h: 

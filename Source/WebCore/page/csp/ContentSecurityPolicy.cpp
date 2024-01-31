@@ -754,6 +754,12 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForBaseURI, url);
 }
 
+bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String&) const
+{
+    // FIXME: Implement CSP handling for "require-trusted-types-for" directive.
+    return false;
+}
+
 static bool shouldReportProtocolOnly(const URL& url)
 {
     // FIXME: https://w3c.github.io/webappsec-csp/#strip-url-for-use-in-reports suggests this should

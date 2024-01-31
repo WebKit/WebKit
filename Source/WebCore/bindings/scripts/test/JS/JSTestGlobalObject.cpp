@@ -96,6 +96,7 @@
 #include "JSTestReportExtraMemoryCost.h"
 #include "JSTestSetLike.h"
 #include "JSTestSetLikeWithOverriddenOperations.h"
+#include "JSTestStringContext.h"
 #include "JSTestStringifier.h"
 #include "JSTestStringifierAnonymousOperation.h"
 #include "JSTestStringifierNamedOperation.h"
@@ -238,6 +239,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestSerializedScriptValueInt
 #endif
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestStringContextConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierAnonymousOperationConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestStringifierNamedOperationConstructor);
@@ -275,7 +277,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 66, -1 },
+    { 67, -1 },
     { -1, -1 },
     { 4, -1 },
     { -1, -1 },
@@ -295,7 +297,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 70, -1 },
+    { 71, -1 },
     { 15, 261 },
     { -1, -1 },
     { -1, -1 },
@@ -348,7 +350,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 11, 257 },
     { -1, -1 },
-    { 61, -1 },
+    { 62, -1 },
     { 21, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -412,9 +414,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 67, -1 },
-    { -1, -1 },
     { 68, -1 },
+    { -1, -1 },
+    { 69, -1 },
     { -1, -1 },
     { 29, -1 },
     { 34, -1 },
@@ -429,7 +431,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 17, 260 },
     { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -442,7 +444,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 18, 256 },
     { -1, -1 },
-    { 65, -1 },
+    { 66, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -486,8 +488,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 52, 264 },
     { 9, 263 },
     { -1, -1 },
-    { 63, -1 },
-    { -1, -1 },
+    { 64, -1 },
+    { 61, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -520,8 +522,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 46, -1 },
     { 53, -1 },
     { 58, -1 },
-    { 64, -1 },
-    { 69, -1 },
+    { 65, -1 },
+    { 70, -1 },
 };
 
 
@@ -604,6 +606,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
 #endif
     { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
     { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
+    { "TestStringContext"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringContextConstructor, 0 } },
     { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
     { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
     { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
@@ -616,7 +619,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 71, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 #else
 
 static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
@@ -641,7 +644,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 66, -1 },
+    { 67, -1 },
     { -1, -1 },
     { 4, -1 },
     { -1, -1 },
@@ -661,7 +664,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 70, -1 },
+    { 71, -1 },
     { 15, 261 },
     { -1, -1 },
     { -1, -1 },
@@ -714,7 +717,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 11, 257 },
     { -1, -1 },
-    { 61, -1 },
+    { 62, -1 },
     { 21, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -778,9 +781,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 67, -1 },
-    { -1, -1 },
     { 68, -1 },
+    { -1, -1 },
+    { 69, -1 },
     { -1, -1 },
     { 29, -1 },
     { 34, -1 },
@@ -795,7 +798,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 17, 260 },
     { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -808,7 +811,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 18, 256 },
     { -1, -1 },
-    { 65, -1 },
+    { 66, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -852,8 +855,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 52, 264 },
     { 9, 263 },
     { -1, -1 },
-    { 63, -1 },
-    { -1, -1 },
+    { 64, -1 },
+    { 61, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -886,8 +889,8 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 46, -1 },
     { 53, -1 },
     { 58, -1 },
-    { 64, -1 },
-    { 69, -1 },
+    { 65, -1 },
+    { 70, -1 },
 };
 
 
@@ -970,6 +973,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
 #endif
     { "TestSetLike"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeConstructor, 0 } },
     { "TestSetLikeWithOverriddenOperations"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, 0 } },
+    { "TestStringContext"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringContextConstructor, 0 } },
     { "TestStringifier"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierConstructor, 0 } },
     { "TestStringifierAnonymousOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierAnonymousOperationConstructor, 0 } },
     { "TestStringifierNamedOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestGlobalObject_TestStringifierNamedOperationConstructor, 0 } },
@@ -982,7 +986,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestGlobalObjectInstanceFunction_regularOperation, 1 } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 71, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 72, 255, static_cast<uint8_t>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 #endif
 /* Hash table for constructor */
 
@@ -1908,6 +1912,17 @@ static inline JSValue jsTestGlobalObject_TestSetLikeWithOverriddenOperationsCons
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestSetLikeWithOverriddenOperationsConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsTestGlobalObject_TestStringContextConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestStringContext::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestStringContextConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestStringContextConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestGlobalObject_TestStringifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
