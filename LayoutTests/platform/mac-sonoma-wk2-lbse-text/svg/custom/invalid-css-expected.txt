@@ -8,6 +8,10 @@ layer at (20,30) size 20x20
   RenderSVGResourceClipper {clipPath} at (20,30) size 20x20
 layer at (20,30) size 20x20
   RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=40.00] [r=10.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 3.33x3.33 clip at (0,0) size 3.33x3.33
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (0,-1.41) size 298x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,-2) size 299x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 299x19

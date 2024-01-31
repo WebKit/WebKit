@@ -2812,6 +2812,7 @@ rendering/svg/RenderSVGResourceClipper.cpp
 rendering/svg/RenderSVGResourceContainer.cpp
 rendering/svg/RenderSVGResourceGradient.cpp
 rendering/svg/RenderSVGResourceLinearGradient.cpp
+rendering/svg/RenderSVGResourceMarker.cpp
 rendering/svg/RenderSVGResourceMasker.cpp
 rendering/svg/RenderSVGResourcePaintServer.cpp
 rendering/svg/RenderSVGResourcePattern.cpp

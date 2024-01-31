@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 3x3
+  RenderSVGResourceMarker {marker} at (0,0) size 3x3
+layer at (0,0) size 96x96 backgroundClip at (0,0) size 3x3 clip at (0,0) size 3x3
+  RenderSVGRect {rect} at (0,0) size 96x96 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=96.00] [height=96.00]
+layer at (0,0) size 0x0
+  RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [data="M 0 0 L 0 0"]
+layer at (0,100) size 0x0
+  RenderSVGPath {line} at (0,100) size 0x0 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [x1=0.00] [y1=100.00] [x2=0.00] [y2=100.00]

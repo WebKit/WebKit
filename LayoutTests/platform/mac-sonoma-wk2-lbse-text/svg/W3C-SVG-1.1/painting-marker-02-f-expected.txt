@@ -20,6 +20,10 @@ layer at (125,17.31) size 180x16
       chunk 1 text run 1 at (125.00,30.00) startOffset 0 endOffset 27 width 179.74: "Marker Rendering Properties"
 layer at (0,0) size 154x143
   RenderSVGTransformableContainer {g} at (0,0) size 153.36x142.13
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (100,130.94) size 53x11
   RenderSVGText {text} at (100,130) size 54x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x12
@@ -56,6 +60,10 @@ layer at (0,0) size 10x10
   RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (0,0) size 410x143
   RenderSVGTransformableContainer {g} at (0,0) size 409.48x142.13
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (0,0) size 4x4
+layer at (0,0) size 20x20 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (340,130.94) size 69x11
   RenderSVGText {text} at (340,130) size 70x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x12
@@ -90,6 +98,14 @@ layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (0,0) size 4x4
+layer at (0,0) size 20x20 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (0,0) size 4x4
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 10x10 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (0,0) size 166x273
   RenderSVGTransformableContainer {g} at (0,0) size 165.03x272.13
 layer at (90,260.94) size 75x11

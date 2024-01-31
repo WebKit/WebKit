@@ -215,7 +215,7 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttri
     SVGHitTestCycleDetectionScope scope(*this, patternRenderer != this);
 
     // Draw the content into the ImageBuffer.
-    patternRenderer->layer()->paintSVGResourceLayer(tileImageContext, stateSaver, tileImageTransform);
+    patternRenderer->layer()->paintSVGResourceLayer(tileImageContext, tileImageTransform);
     return tileImage;
 }
 

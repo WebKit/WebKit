@@ -31,6 +31,7 @@ namespace WebCore {
 class BlendingKeyframes;
 class RenderLayer;
 class RenderSVGResourceClipper;
+class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
 class RenderSVGResourcePaintServer;
 class SVGGraphicsElement;
@@ -100,6 +101,9 @@ public:
 
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
+    RenderSVGResourceMarker* svgMarkerStartResourceFromStyle() const;
+    RenderSVGResourceMarker* svgMarkerMidResourceFromStyle() const;
+    RenderSVGResourceMarker* svgMarkerEndResourceFromStyle() const;
 
     void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
@@ -120,6 +124,11 @@ protected:
     void willBeRemovedFromTree(IsInternalMove) override;
 
     virtual void updateFromStyle() { }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+private:
+    RenderSVGResourceMarker* svgMarkerResourceFromStyle(const String& markerResource) const;
+#endif
 
 private:
     std::unique_ptr<RenderLayer> m_layer;

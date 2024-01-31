@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 50x50
+  RenderSVGResourceMarker {marker} at (0,0) size 50x50
+layer at (-50,-50) size 200x200 backgroundClip at (0,0) size 50x50 clip at (0,0) size 50x50
+  RenderSVGRect {rect} at (-50,-50) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=-50.00] [y=-50.00] [width=200.00] [height=200.00]
+layer at (0,0) size 100x100 backgroundClip at (0,0) size 50x50 clip at (0,0) size 50x50
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 25x25
+  RenderSVGRect {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=25.00] [height=25.00]
+layer at (100,100) size 0x0
+  RenderSVGPath {path} at (100,100) size 0x0 [start marker=marker] [data="M 100 100 L 100 100"]
+layer at (30,6) size 301x18
+  RenderSVGText {text} at (30,6) size 302x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 302x18
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 45 width 301.23: "There should be a 150x150 green rect at 25x25"

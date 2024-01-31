@@ -39,6 +39,8 @@ public:
 
     FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
+    void updateMarkerPositions();
+
 private:
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
@@ -54,7 +56,6 @@ private:
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;
 
-    void processMarkerPositions();
     bool shouldGenerateMarkerPositions() const;
     void drawMarkers(PaintInfo&) override;
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 
 #include "LegacyRenderSVGResourceMarker.h"
 #include "NodeName.h"
+#include "RenderSVGResourceMarker.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -97,13 +99,30 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void SVGMarkerElement::invalidateMarkerResource()
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto* markerRenderer = dynamicDowncast<RenderSVGResourceMarker>(renderer()))
+            markerRenderer->invalidateMarker();
+        return;
+    }
+#endif
+
+    updateSVGRendererForElementChange();
+}
+
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (PropertyRegistry::isAnimatedLengthAttribute(attrName))
             updateRelativeLengthsInformation();
-        updateSVGRendererForElementChange();
+        // These properties affect the layout of the RenderSVGResourceMarker itself (due to viewBox + overflowClipRect handling).
+        if (attrName == SVGNames::markerWidthAttr || attrName == SVGNames::markerHeightAttr)
+            updateSVGRendererForElementChange();
+        else
+            invalidateMarkerResource();
         return;
     }
     
@@ -122,7 +141,7 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-    updateSVGRendererForElementChange();
+    invalidateMarkerResource();
 }
 
 AtomString SVGMarkerElement::orient() const
@@ -138,15 +157,21 @@ void SVGMarkerElement::setOrient(const AtomString& orient)
 void SVGMarkerElement::setOrientToAuto()
 {
     m_orientType->setBaseVal(SVGMarkerOrientAuto);
+    invalidateMarkerResource();
 }
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 {
     m_orientAngle->baseVal()->newValueSpecifiedUnits(angle.unitType(), angle.valueInSpecifiedUnits());
+    invalidateMarkerResource();
 }
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceMarker>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGResourceMarker>(*this, WTFMove(style));
 }
 

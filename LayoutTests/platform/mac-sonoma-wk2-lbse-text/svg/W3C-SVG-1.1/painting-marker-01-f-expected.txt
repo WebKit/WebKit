@@ -6,6 +6,26 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 280x280
   RenderSVGTransformableContainer {g} at (0,0) size 279.64x280
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
 layer at (170,17.31) size 89x16
   RenderSVGText {text} at (170,17) size 89x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x16

@@ -882,7 +882,7 @@ public:
 
     void setIsHiddenByOverflowTruncation(bool);
 
-    void paintSVGResourceLayer(GraphicsContext&, GraphicsContextStateSaver&, const AffineTransform& contentTransform);
+    void paintSVGResourceLayer(GraphicsContext&, const AffineTransform& contentTransform);
 
 private:
 
