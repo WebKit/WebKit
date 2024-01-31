@@ -98,7 +98,7 @@ public:
 
     void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();
-    void remoteBufferSetWasDestroyed();
+    void abandonGPUProcess();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();

@@ -117,13 +117,12 @@ PlatformDisplayID WebWorkerClient::displayID() const
 RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
 #if ENABLE(GPU_PROCESS)
-    if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
-        return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
-    auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
-    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), ensureRenderingBackend());
-#else
-    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+    if (is<RemoteSerializedImageBufferProxy>(imageBuffer)) {
+        auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
+        return ensureRenderingBackend().moveToImageBuffer(WTFMove(remote));
+    }
 #endif
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options) const

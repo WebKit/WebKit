@@ -271,7 +271,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
     m_remoteNeedsConfigurationUpdate = false;
 }
 
-void RemoteImageBufferSetProxy::remoteBufferSetWasDestroyed()
+void RemoteImageBufferSetProxy::abandonGPUProcess()
 {
     if (m_pendingFlush) {
         m_pendingFlush->setHandles(BufferSetBackendHandle { });

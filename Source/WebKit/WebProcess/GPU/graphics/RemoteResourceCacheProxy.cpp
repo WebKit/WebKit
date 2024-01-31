@@ -49,11 +49,20 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
     clearRenderingResourceMap();
 }
 
-void RemoteResourceCacheProxy::clear()
+void RemoteResourceCacheProxy::connectGPUProcess()
+{
+    for (auto& weakImageBuffer : m_imageBuffers.values()) {
+        if (RefPtr imageBuffer = weakImageBuffer.get())
+            m_remoteRenderingBackendProxy.createRemoteImageBuffer(*imageBuffer);
+    }
+}
+
+void RemoteResourceCacheProxy::abandonGPUProcess()
 {
     clearImageBufferBackends();
-    m_imageBuffers.clear();
     clearRenderingResourceMap();
+    clearFontMap();
+    clearFontCustomPlatformDataMap();
 }
 
 unsigned RemoteResourceCacheProxy::imagesCount() const
@@ -75,7 +84,7 @@ RefPtr<RemoteImageBufferProxy> RemoteResourceCacheProxy::cachedImageBuffer(Rende
 }
 
 
-void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier identifier)
+void RemoteResourceCacheProxy::uncacheImageBuffer(RenderingResourceIdentifier identifier)
 {
     auto iterator = m_imageBuffers.find(identifier);
     RELEASE_ASSERT(iterator != m_imageBuffers.end());
@@ -328,22 +337,6 @@ void RemoteResourceCacheProxy::didPaintLayers()
     finalizeRenderingUpdateForFonts();
     prepareForNextRenderingUpdate();
     m_renderingUpdateID++;
-}
-
-void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
-{
-    clearImageBufferBackends();
-
-    for (auto& weakImageBuffer : m_imageBuffers.values()) {
-        auto protectedImageBuffer = weakImageBuffer.get();
-        if (!protectedImageBuffer)
-            continue;
-        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*protectedImageBuffer);
-    }
-
-    clearRenderingResourceMap();
-    clearFontMap();
-    clearFontCustomPlatformDataMap();
 }
 
 void RemoteResourceCacheProxy::releaseMemory()

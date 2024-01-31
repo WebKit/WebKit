@@ -55,8 +55,13 @@ RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const Imag
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
 {
-    ASSERT(m_remoteRenderingBackendProxy);
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
+}
+
+Ref<RemoteImageBufferProxy> RemoteImageBufferProxy::create(std::unique_ptr<RemoteSerializedImageBufferProxy> source, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+{
+    auto result = adoptRef(*new RemoteImageBufferProxy(source->m_parameters, source->m_info, remoteRenderingBackendProxy, nullptr, source->m_renderingResourceIdentifier));
+    source->m_connection = nullptr;
+    return result;
 }
 
 RemoteImageBufferProxy::~RemoteImageBufferProxy()
@@ -67,7 +72,6 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     }
 
     flushDrawingContextAsync();
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
     m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
 }
 
@@ -151,7 +155,6 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     }
     if (!backend) {
         m_remoteDisplayList.disconnect();
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
         m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
         m_remoteRenderingBackendProxy = nullptr;
         return;
@@ -341,14 +344,9 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     if (!ensureBackend())
         return nullptr;
-
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
-
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
-
+    auto result = m_remoteRenderingBackendProxy->moveToSerializedBuffer(*this);
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
-
     std::unique_ptr<SerializedImageBuffer> ret = WTFMove(result);
     return ret;
 }
@@ -365,15 +363,6 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::Imag
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(backend.connection())
 {
-    backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
-}
-
-RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
-{
-    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
-    backend.moveToImageBuffer(result->renderingResourceIdentifier());
-    buffer->m_connection = nullptr;
-    return result;
 }
 
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
