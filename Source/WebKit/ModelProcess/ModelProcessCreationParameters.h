@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,20 @@
  */
 
 #pragma once
-#if ENABLE(DECLARATIVE_WEB_PUSH)
 
-#include "ExceptionOr.h"
-#include "PushPermissionState.h"
-#include "PushSubscriptionData.h"
-#include "PushSubscriptionIdentifier.h"
+#if ENABLE(MODEL_PROCESS)
 
-namespace WebCore {
+#include "AuxiliaryProcessCreationParameters.h"
+#include <wtf/ProcessID.h>
 
-class WEBCORE_EXPORT PushStrategy {
-public:
-    virtual ~PushStrategy() = default;
+namespace WebKit {
 
-    using SubscribeToPushServiceCallback = CompletionHandler<void(ExceptionOr<PushSubscriptionData>&&)>;
-    virtual void navigatorSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) = 0;
-
-    using UnsubscribeFromPushServiceCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
-    virtual void navigatorUnsubscribeFromPushService(const URL& scope, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) = 0;
-
-    using GetPushSubscriptionCallback = CompletionHandler<void(ExceptionOr<std::optional<PushSubscriptionData>>&&)>;
-    virtual void navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&&) = 0;
-
-    using GetPushPermissionStateCallback = CompletionHandler<void(ExceptionOr<PushPermissionState>&&)>;
-    virtual void navigatorGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&&) = 0;
+struct ModelProcessCreationParameters {
+    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+    ProcessID parentPID;
+    String applicationVisibleName;
 };
 
-} // namespace WebCore
-#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+} // namespace WebKit
+
+#endif // ENABLE(MODEL_PROCESS)

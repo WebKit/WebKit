@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,29 @@
  */
 
 #pragma once
-#if ENABLE(DECLARATIVE_WEB_PUSH)
 
-#include "ExceptionOr.h"
-#include "PushPermissionState.h"
-#include "PushSubscriptionData.h"
-#include "PushSubscriptionIdentifier.h"
+#if ENABLE(MODEL_PROCESS)
 
-namespace WebCore {
+#include <WebCore/ProcessIdentity.h>
+#include <wtf/MachSendRight.h>
 
-class WEBCORE_EXPORT PushStrategy {
-public:
-    virtual ~PushStrategy() = default;
+#if HAVE(AUDIT_TOKEN)
+#include "CoreIPCAuditToken.h"
+#endif
 
-    using SubscribeToPushServiceCallback = CompletionHandler<void(ExceptionOr<PushSubscriptionData>&&)>;
-    virtual void navigatorSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) = 0;
+namespace WebKit {
 
-    using UnsubscribeFromPushServiceCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
-    virtual void navigatorUnsubscribeFromPushService(const URL& scope, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) = 0;
+struct ModelProcessConnectionParameters {
+    WebCore::ProcessIdentity webProcessIdentity;
 
-    using GetPushSubscriptionCallback = CompletionHandler<void(ExceptionOr<std::optional<PushSubscriptionData>>&&)>;
-    virtual void navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&&) = 0;
-
-    using GetPushPermissionStateCallback = CompletionHandler<void(ExceptionOr<PushPermissionState>&&)>;
-    virtual void navigatorGetPushPermissionState(const URL& scope, GetPushPermissionStateCallback&&) = 0;
+#if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting { false };
+#endif
+#if HAVE(AUDIT_TOKEN)
+    std::optional<CoreIPCAuditToken> presentingApplicationAuditToken;
+#endif
 };
 
-} // namespace WebCore
-#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+} // namespace WebKit
+
+#endif // ENABLE(MODEL_PROCESS)

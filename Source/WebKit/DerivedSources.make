@@ -28,6 +28,7 @@ VPATH = \
     $(WebKit2)/GPUProcess/media \
     $(WebKit2)/GPUProcess/media/ios \
     $(WebKit2)/GPUProcess/webrtc \
+    $(WebKit2)/ModelProcess \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
@@ -64,6 +65,7 @@ VPATH = \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaSession \
     $(WebKit2)/WebProcess/MediaStream \
+    $(WebKit2)/WebProcess/Model \
     $(WebKit2)/WebProcess/Network \
     $(WebKit2)/WebProcess/Network/webrtc \
     $(WebKit2)/WebProcess/Notifications \
@@ -93,6 +95,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Media \
     $(WebKit2)/UIProcess/Media/cocoa \
     $(WebKit2)/UIProcess/MediaStream \
+    $(WebKit2)/UIProcess/Model \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
@@ -186,6 +189,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Extensions/WebExtensionController \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
 	UIProcess/Media/RemoteMediaSessionCoordinatorProxy \
+	UIProcess/Model/ModelProcessProxy \
 	UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager \
 	UIProcess/SpeechRecognitionServer \
 	UIProcess/XR/PlatformXRSystem \
@@ -221,6 +225,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Inspector/WebInspector \
 	WebProcess/Inspector/RemoteWebInspectorUI \
 	WebProcess/MediaSession/RemoteMediaSessionCoordinator \
+	WebProcess/Model/ModelProcessConnection \
 	WebProcess/Network/WebSocketChannel \
 	WebProcess/Network/NetworkProcessConnection \
 	WebProcess/Network/WebResourceLoader \
@@ -319,6 +324,8 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteMediaSourceProxy \
 	GPUProcess/media/RemoteRemoteCommandListenerProxy \
 	GPUProcess/media/RemoteSourceBufferProxy \
+	ModelProcess/ModelConnectionToWebProcess \
+	ModelProcess/ModelProcess \
 	webpushd/PushClientConnection \
 #
 
@@ -491,6 +498,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	ModelProcess/ModelProcessCreationParameters.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
 	NetworkProcess/NetworkSessionCreationParameters.serialization.in \
@@ -605,6 +613,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/LocalFrameCreationParameters.serialization.in \
 	Shared/MediaPlaybackState.serialization.in \
 	Shared/Model.serialization.in \
+	Shared/ModelProcessConnectionParameters.serialization.in \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
 	Shared/Pasteboard.serialization.in \
@@ -761,6 +770,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in \
 	WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in \
 	WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in \
+	WebProcess/Model/ModelProcessConnectionInfo.serialization.in \
 	WebProcess/Network/NetworkProcessConnectionInfo.serialization.in \
 	WebProcess/UserContent/InjectUserScriptImmediately.serialization.in \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \

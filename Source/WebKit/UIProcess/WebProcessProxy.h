@@ -115,6 +115,7 @@ class WebsiteDataStore;
 struct BackForwardListItemState;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
+struct ModelProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
@@ -550,6 +551,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void createModelProcessConnection(IPC::Connection::Handle&&, ModelProcessConnectionParameters&&);
 #endif
 
     bool shouldAllowNonValidInjectedCode() const;

@@ -35,6 +35,7 @@
 #include "GoToBackForwardItemParameters.h"
 #include "LoadParameters.h"
 #include "Logging.h"
+#include "ModelProcessProxy.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
@@ -1049,6 +1050,12 @@ void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 
     for (Ref page : pages())
         page->gpuProcessExited(reason);
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&&, WebKit::ModelProcessConnectionParameters&&)
+{
 }
 #endif
 

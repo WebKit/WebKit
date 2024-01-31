@@ -14,6 +14,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/graphics/WebGPU"
     "${WEBKIT_DIR}/GPUProcess/media"
     "${WEBKIT_DIR}/GPUProcess/webrtc"
+    "${WEBKIT_DIR}/ModelProcess"
     "${WEBKIT_DIR}/NetworkProcess"
     "${WEBKIT_DIR}/NetworkProcess/Classifier"
     "${WEBKIT_DIR}/NetworkProcess/Cookies"
@@ -62,6 +63,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/Agents"
     "${WEBKIT_DIR}/UIProcess/Launcher"
     "${WEBKIT_DIR}/UIProcess/Media"
+    "${WEBKIT_DIR}/UIProcess/Model"
     "${WEBKIT_DIR}/UIProcess/Network"
     "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols"
     "${WEBKIT_DIR}/UIProcess/Notifications"
@@ -361,6 +363,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in
     GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in
 
+    ModelProcess/ModelProcessCreationParameters.serialization.in
+
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
     NetworkProcess/NetworkSessionCreationParameters.serialization.in
@@ -412,6 +416,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/LocalFrameCreationParameters.serialization.in
     Shared/MediaPlaybackState.serialization.in
     Shared/Model.serialization.in
+    Shared/ModelProcessConnectionParameters.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
     Shared/Pasteboard.serialization.in
@@ -582,6 +587,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 
     WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
+
+    WebProcess/Model/ModelProcessConnectionInfo.serialization.in
 
     WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 

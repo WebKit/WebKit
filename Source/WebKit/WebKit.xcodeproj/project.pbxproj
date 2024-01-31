@@ -4361,6 +4361,14 @@
 		2D54C304212F3B330049C174 /* UnifiedSource71-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource71-mm.mm"; sourceTree = "<group>"; };
 		2D54C305212F3B330049C174 /* UnifiedSource62-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource62-mm.mm"; sourceTree = "<group>"; };
 		2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource61-mm.mm"; sourceTree = "<group>"; };
+		2D56C1A328A367760081BD25 /* ModelProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessCreationParameters.h; sourceTree = "<group>"; };
+		2D56C1A428A367760081BD25 /* ModelProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcess.messages.in; sourceTree = "<group>"; };
+		2D56C1A828A367760081BD25 /* ModelConnectionToWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelConnectionToWebProcess.h; sourceTree = "<group>"; };
+		2D56C1A928A367760081BD25 /* ModelProcessCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessCreationParameters.serialization.in; sourceTree = "<group>"; };
+		2D56C1AD28A367760081BD25 /* ModelProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcess.h; sourceTree = "<group>"; };
+		2D56C1AE28A367760081BD25 /* ModelConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
+		2D56C1B128A367760081BD25 /* ModelProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcess.cpp; sourceTree = "<group>"; };
+		2D56C1B928A367760081BD25 /* ModelConnectionToWebProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelConnectionToWebProcess.cpp; sourceTree = "<group>"; };
 		2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageOverlay.cpp; sourceTree = "<group>"; };
 		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
 		2D6482492644B1AB00030335 /* RemoteLayerTreeLayers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeLayers.h; sourceTree = "<group>"; };
@@ -4612,6 +4620,14 @@
 		2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserInterfaceIdiom.serialization.in; sourceTree = "<group>"; };
 		2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicViewportSizeUpdate.h; path = ios/DynamicViewportSizeUpdate.h; sourceTree = "<group>"; };
 		2DA7FDCB18F88625008DDED0 /* FindIndicatorOverlayClientIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FindIndicatorOverlayClientIOS.h; path = ios/FindIndicatorOverlayClientIOS.h; sourceTree = "<group>"; };
+		2DA8152F28A462B400CF811C /* ModelProcessConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessConnection.cpp; sourceTree = "<group>"; };
+		2DA8153028A462B400CF811C /* ModelProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessConnectionInfo.h; sourceTree = "<group>"; };
+		2DA8153128A462B400CF811C /* ModelProcessConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessConnection.h; sourceTree = "<group>"; };
+		2DA8153228A462B400CF811C /* ModelProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnection.messages.in; sourceTree = "<group>"; };
+		2DA8153328A46A0000CF811C /* ModelProcessConnectionParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessConnectionParameters.h; sourceTree = "<group>"; };
+		2DA8153528A4939700CF811C /* ModelProcessProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessProxy.h; sourceTree = "<group>"; };
+		2DA8153628A4939700CF811C /* ModelProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessProxy.cpp; sourceTree = "<group>"; };
+		2DA8153728A4939700CF811C /* ModelProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessProxy.messages.in; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
 		2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIOSEventFactory.h; path = ios/WebIOSEventFactory.h; sourceTree = "<group>"; };
@@ -5624,6 +5640,9 @@
 		53CFBBC62224D1B000266546 /* TextCheckerCompletion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckerCompletion.cpp; sourceTree = "<group>"; };
 		53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
 		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkActivityTracker.cpp; sourceTree = "<group>"; };
+		541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionParameters.serialization.in; sourceTree = "<group>"; };
+		541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
+		541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		5506409D2407160900AAE045 /* RemoteRenderingBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackendProxy.cpp; sourceTree = "<group>"; };
 		5506409E2407160900AAE045 /* RemoteRenderingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendProxy.h; sourceTree = "<group>"; };
 		5506409F2407196A00AAE045 /* RenderingBackendIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingBackendIdentifier.h; sourceTree = "<group>"; };
@@ -8358,6 +8377,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
+				2D56C1A128A367760081BD25 /* ModelProcess */,
 				BC032DC310F438260058C15A /* UIProcess */,
 				A1071FAD2B643ED100E9FC57 /* WebKitSwift */,
 				BC032D5C10F436D50058C15A /* WebProcess */,
@@ -8748,6 +8768,8 @@
 				2D9BECF82B309E6E00D0AE99 /* MediaPlaybackState.serialization.in */,
 				869055832912C6B000B5ECD3 /* Model.serialization.in */,
 				71E9650F2745682E00ADCF43 /* ModelIdentifier.h */,
+				2DA8153328A46A0000CF811C /* ModelProcessConnectionParameters.h */,
+				541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
 				2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
@@ -10113,6 +10135,21 @@
 			path = RemoteLayerTree;
 			sourceTree = "<group>";
 		};
+		2D56C1A128A367760081BD25 /* ModelProcess */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1B928A367760081BD25 /* ModelConnectionToWebProcess.cpp */,
+				2D56C1A828A367760081BD25 /* ModelConnectionToWebProcess.h */,
+				2D56C1AE28A367760081BD25 /* ModelConnectionToWebProcess.messages.in */,
+				2D56C1B128A367760081BD25 /* ModelProcess.cpp */,
+				2D56C1AD28A367760081BD25 /* ModelProcess.h */,
+				2D56C1A428A367760081BD25 /* ModelProcess.messages.in */,
+				2D56C1A328A367760081BD25 /* ModelProcessCreationParameters.h */,
+				2D56C1A928A367760081BD25 /* ModelProcessCreationParameters.serialization.in */,
+			);
+			path = ModelProcess;
+			sourceTree = "<group>";
+		};
 		2D6482482644B1AB00030335 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -10368,6 +10405,7 @@
 				2D7E43C323752CD900EA5CA0 /* GPUProcessConnection.h */,
 				2D7E43C223752CD900EA5CA0 /* GPUProcessConnection.messages.in */,
 				2D7E43C123752CD900EA5CA0 /* GPUProcessConnectionInfo.h */,
+				541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */,
 			);
 			path = GPU;
 			sourceTree = "<group>";
@@ -10451,6 +10489,28 @@
 				2D9FB2122375209D0049F936 /* Info-OSX.plist */,
 			);
 			path = GPUService;
+			sourceTree = "<group>";
+		};
+		2DA8152E28A462B400CF811C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2DA8152F28A462B400CF811C /* ModelProcessConnection.cpp */,
+				2DA8153128A462B400CF811C /* ModelProcessConnection.h */,
+				2DA8153228A462B400CF811C /* ModelProcessConnection.messages.in */,
+				2DA8153028A462B400CF811C /* ModelProcessConnectionInfo.h */,
+				541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2DA8153428A4939700CF811C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2DA8153628A4939700CF811C /* ModelProcessProxy.cpp */,
+				2DA8153528A4939700CF811C /* ModelProcessProxy.h */,
+				2DA8153728A4939700CF811C /* ModelProcessProxy.messages.in */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		2DA944961884E4DA00ED86DB /* ios */ = {
@@ -13080,6 +13140,7 @@
 				0736B752260D039F00E06994 /* MediaSession */,
 				4A410F4119AF7B27002EBAB5 /* MediaStream */,
 				BC2B410A2732EF6500A2D191 /* Model */,
+				2DA8152E28A462B400CF811C /* Model */,
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
@@ -13288,6 +13349,7 @@
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
 				CD4570D82444CA1700A3DCEB /* Media */,
+				2DA8153428A4939700CF811C /* Model */,
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
 				DF84CEE1249AA200009096F6 /* PDF */,

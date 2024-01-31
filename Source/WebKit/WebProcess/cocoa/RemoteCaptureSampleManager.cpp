@@ -33,6 +33,7 @@
 #include "SharedCARingBuffer.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
 

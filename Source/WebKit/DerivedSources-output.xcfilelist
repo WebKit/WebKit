@@ -115,6 +115,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageArgumentDescriptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MessageNames.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelConnectionToWebProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelConnectionToWebProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessConnectionMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessConnectionMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NPObjectMessageReceiverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NPObjectMessageReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/NetworkBroadcastChannelRegistryMessageReceiver.cpp
@@ -250,10 +258,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferSetProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFMessageReceiver.cpp

@@ -114,6 +114,9 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+$(PROJECT_DIR)/ModelProcess/ModelConnectionToWebProcess.messages.in
+$(PROJECT_DIR)/ModelProcess/ModelProcess.messages.in
+$(PROJECT_DIR)/ModelProcess/ModelProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/Modules/iOS_Private.modulemap
 $(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyData.serialization.in
@@ -285,6 +288,7 @@ $(PROJECT_DIR)/Shared/LoadParameters.serialization.in
 $(PROJECT_DIR)/Shared/LocalFrameCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
+$(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
 $(PROJECT_DIR)/Shared/NetworkProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.in
@@ -458,6 +462,7 @@ $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messag
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Model/ModelProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in
@@ -564,6 +569,8 @@ $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspectorUIExtensionController.messages.in
 $(PROJECT_DIR)/WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
+$(PROJECT_DIR)/WebProcess/Model/ModelProcessConnection.messages.in
+$(PROJECT_DIR)/WebProcess/Model/ModelProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
