@@ -829,8 +829,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.left(40).toString() : emptyString();
 
     if (!m_client) {
-        // Unable to ref the document as it may have started destruction.
-        auto* document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
+        RefPtrAllowingPartiallyDestroyed<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
         if (!document || !document->frame())
             return;
 

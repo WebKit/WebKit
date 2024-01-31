@@ -49,9 +49,8 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
 
 AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 {
-    // Unable to ref the process because it may have started destruction.
-    CheckedRef checkedProcess = m_process.get();
-    checkedProcess->removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
+    RefAllowingPartiallyDestroyed<WebProcessProxy> process = m_process.get();
+    process->removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
 }
 
 void AudioSessionRoutingArbitratorProxy::processDidTerminate()

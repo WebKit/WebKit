@@ -29,21 +29,6 @@
 
 namespace WTF {
 
-template<typename T> struct DefaultRefDerefTraits {
-    static ALWAYS_INLINE T* refIfNotNull(T* ptr)
-    {
-        if (LIKELY(ptr))
-            ptr->ref();
-        return ptr;
-    }
-
-    static ALWAYS_INLINE void derefIfNotNull(T* ptr)
-    {
-        if (LIKELY(ptr))
-            ptr->deref();
-    }
-};
-
 template<typename T, typename PtrTraits, typename RefDerefTraits> class RefPtr;
 template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
 
@@ -303,8 +288,12 @@ inline RefPtr<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDeref
     return static_pointer_cast<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDerefTraits>(WTFMove(source));
 }
 
+template<typename T>
+using RefPtrAllowingPartiallyDestroyed = RefPtr<T, RawPtrTraits<T>, RefDerefTraitsAllowingPartiallyDestroyed<T>>;
+
 } // namespace WTF
 
 using WTF::RefPtr;
+using WTF::RefPtrAllowingPartiallyDestroyed;
 using WTF::adoptRef;
 using WTF::static_pointer_cast;

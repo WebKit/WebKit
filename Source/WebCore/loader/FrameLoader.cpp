@@ -595,8 +595,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
 {
-    // The frame may have started destruction, in which case we can't protect it.
-    RefPtr protectedFrame = m_frame->view() ? m_frame.ptr() : nullptr;
+    RefAllowingPartiallyDestroyed<LocalFrame> protectedFrame { m_frame.get() };
 
     if (RefPtr parser = m_frame->document() ? m_frame->document()->parser() : nullptr)
         parser->stopParsing();
@@ -1145,8 +1144,7 @@ void FrameLoader::setOpener(RefPtr<Frame>&& opener)
 
     if (m_opener) {
         // When setOpener is called in ~FrameLoader, opener's m_frameLoader is already cleared.
-        // Cannot ref localOpener as it may have started destruction.
-        if (auto* localOpener = dynamicDowncast<LocalFrame>(m_opener.get())) {
+        if (RefPtrAllowingPartiallyDestroyed<LocalFrame> localOpener = dynamicDowncast<LocalFrame>(m_opener.get())) {
             auto& openerFrameLoader = m_opener == m_frame.ptr() ? *this : localOpener->loader();
             openerFrameLoader.m_openedFrames.remove(m_frame.get());
         }

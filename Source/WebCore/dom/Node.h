@@ -525,20 +525,31 @@ public:
     virtual void defaultEventHandler(Event&);
 
     void ref() const;
+    void refAllowingPartiallyDestroyed() const;
     void deref() const;
+    void derefAllowingPartiallyDestroyed() const;
     bool hasOneRef() const;
     unsigned refCount() const;
 
 #if ASSERT_ENABLED
-    bool m_deletionHasBegun { false };
+    enum class IsAllocatedMemory : unsigned {
+        Scribble = 0, // Do not check for this value, it is not guaranteed to exist.
+        Yes = 0xFEEDB0BA,
+    };
+    mutable IsAllocatedMemory m_isAllocatedMemory { IsAllocatedMemory::Yes };
     mutable bool m_inRemovedLastRefFunction { false };
     bool m_adoptionIsRequired { true };
+
+    bool deletionHasEnded() const
+    {
+        return m_isAllocatedMemory != IsAllocatedMemory::Yes;
+    }
 #endif
 
     void relaxAdoptionRequirement()
     {
 #if ASSERT_ENABLED
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+        ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
         ASSERT(m_adoptionIsRequired);
         m_adoptionIsRequired = false;
 #endif
@@ -574,6 +585,8 @@ public:
     static auto flagIsLink() { return enumToUnderlyingType(StateFlag::IsLink); }
     static auto flagIsParsingChildren() { return enumToUnderlyingType(StateFlag::IsParsingChildren); }
 #endif // ENABLE(JIT)
+
+    bool deletionHasBegun() const { return hasStateFlag(StateFlag::HasStartedDeletion); }
 
 protected:
     enum class TypeFlag : uint16_t {
@@ -614,6 +627,7 @@ protected:
         ContainsOnlyASCIIWhitespace = 1 << 11, // Only used on CharacterData.
         ContainsOnlyASCIIWhitespaceIsValid = 1 << 12, // Only used on CharacterData.
         HasHeldBackChildrenChanged = 1 << 13,
+        HasStartedDeletion = 1 << 14,
     };
 
     enum class TabIndexState : uint8_t {
@@ -785,7 +799,7 @@ inline void adopted(Node* node)
 {
     if (!node)
         return;
-    ASSERT(!node->m_deletionHasBegun);
+    ASSERT(!node->deletionHasBegun());
     ASSERT(!node->m_inRemovedLastRefFunction);
     node->m_adoptionIsRequired = false;
 }
@@ -794,22 +808,39 @@ inline void adopted(Node* node)
 
 ALWAYS_INLINE void Node::ref() const
 {
-    ASSERT(isMainThread());
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
     ASSERT(!m_inRemovedLastRefFunction);
+    refAllowingPartiallyDestroyed();
+}
+
+// Doesn't check deletionHasBegun().
+ALWAYS_INLINE void Node::refAllowingPartiallyDestroyed() const
+{
+    ASSERT(isMainThread());
+    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
     m_refCountAndParentBit += s_refCountIncrement;
 }
 
 ALWAYS_INLINE void Node::deref() const
 {
-    ASSERT(isMainThread());
-    ASSERT(refCount());
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
     ASSERT(!m_inRemovedLastRefFunction);
+    derefAllowingPartiallyDestroyed();
+}
+
+// Doesn't check deletionHasBegun().
+ALWAYS_INLINE void Node::derefAllowingPartiallyDestroyed() const
+{
+    ASSERT(isMainThread());
+    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
+
+    ASSERT(refCount());
     auto updatedRefCount = m_refCountAndParentBit - s_refCountIncrement;
     if (!updatedRefCount) {
+        if (deletionHasBegun())
+            return;
         // Don't update m_refCountAndParentBit to avoid double destruction through use of Ref<T>/RefPtr<T>.
         // (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
 #if ASSERT_ENABLED
@@ -823,7 +854,7 @@ ALWAYS_INLINE void Node::deref() const
 
 ALWAYS_INLINE bool Node::hasOneRef() const
 {
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
     ASSERT(!m_inRemovedLastRefFunction);
     return refCount() == 1;
 }
@@ -886,7 +917,7 @@ inline void Node::setHasValidStyle()
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 {
     ASSERT(!isDocumentNode());
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
     if (m_treeScope != &newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
 }

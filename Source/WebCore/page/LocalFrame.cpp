@@ -830,8 +830,7 @@ void LocalFrame::willDetachPage()
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
-    // Unable to ref the page as it may have started destruction.
-    if (WeakPtr page = this->page()) {
+    if (RefPtrAllowingPartiallyDestroyed<Page> page = this->page()) {
         CheckedRef focusController = page->focusController();
         if (focusController->focusedFrame() == this)
             focusController->setFocusedFrame(nullptr);

@@ -173,7 +173,7 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
     ASSERT(element.isDefinedCustomElement());
-    if (element.document().refCount() <= 0)
+    if (element.document().wasRemovedLastRefCalled())
         return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.reactionQueue());
@@ -213,7 +213,7 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
 void CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(Element& element, HTMLFormElement* associatedForm)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    if (element.document().refCount() <= 0)
+    if (element.document().wasRemovedLastRefCalled())
         return; // Don't enqueue formAssociatedCallback if the entire document is getting destructed.
     auto& queue = *element.reactionQueue();
     if (!queue.m_interface->hasFormAssociatedCallback())

@@ -434,20 +434,17 @@ public:
     // pointer without introducing reference cycles.
     ALWAYS_INLINE void incrementReferencingNodeCount(unsigned count = 1)
     {
-        ASSERT(!m_deletionHasBegun);
+        ASSERT(!deletionHasBegun());
         m_referencingNodeCount += count;
     }
 
     ALWAYS_INLINE void decrementReferencingNodeCount(unsigned count = 1)
     {
-        ASSERT(!m_deletionHasBegun || !m_referencingNodeCount);
-        ASSERT(m_referencingNodeCount >= count || (!m_referencingNodeCount && m_deletionHasBegun));
         m_referencingNodeCount -= count;
         if (!m_referencingNodeCount && !refCount()) {
-#if ASSERT_ENABLED
-            m_deletionHasBegun = true;
-#endif
-            m_refCountAndParentBit = s_refCountIncrement; // Avoid double destruction through use of Ref<T>/RefPtr<T>. (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
+            if (deletionHasBegun())
+                return;
+            setStateFlag(StateFlag::HasStartedDeletion);
             delete this;
         }
     }
@@ -464,6 +461,8 @@ public:
 
     using ContainerNode::ref;
     using ContainerNode::deref;
+    using ContainerNode::refAllowingPartiallyDestroyed;
+    using ContainerNode::derefAllowingPartiallyDestroyed;
     using TreeScope::rootNode;
 
     bool canContainRangeEndPoint() const final { return true; }
@@ -644,6 +643,7 @@ public:
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
+    bool wasRemovedLastRefCalled() const { return m_wasRemovedLastRefCalled; }
 
     Style::Resolver& userAgentShadowTreeStyleResolver();
 
@@ -1966,17 +1966,12 @@ private:
     // FontSelectorClient
     void fontsNeedUpdate(FontSelector&) final;
 
-    bool isDocument() const final { return true; }
-
     void childrenChanged(const ChildChange&) final;
 
     String nodeName() const final;
     bool childTypeAllowed(NodeType) const final;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
     void cloneDataFromDocument(const Document&);
-
-    void refScriptExecutionContext() final { ref(); }
-    void derefScriptExecutionContext() final { deref(); }
 
     Seconds minimumDOMTimerInterval() const final;
 
@@ -2576,6 +2571,7 @@ private:
     bool m_isDirAttributeDirty { false };
 
     bool m_scheduledDeferredAXObjectCacheUpdate { false };
+    bool m_wasRemovedLastRefCalled { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

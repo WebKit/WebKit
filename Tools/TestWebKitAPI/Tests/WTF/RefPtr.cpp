@@ -561,6 +561,64 @@ TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 }
 
+class PartiallyDestroyedRefPtrTest : public RefCounted<PartiallyDestroyedRefPtrTest> {
+public:
+    static Ref<PartiallyDestroyedRefPtrTest> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefPtrTest);
+    }
+
+    ~PartiallyDestroyedRefPtrTest()
+    {
+        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTest> protectedThis { this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefPtrTest()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyed)
+{
+    RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTest::create();
+    partiallyDestroyedRefPtrTest = nullptr;
+}
+
+class PartiallyDestroyedRefPtrTestThreadSafe : public ThreadSafeRefCounted<PartiallyDestroyedRefPtrTestThreadSafe> {
+public:
+    static Ref<PartiallyDestroyedRefPtrTestThreadSafe> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefPtrTestThreadSafe);
+    }
+
+    ~PartiallyDestroyedRefPtrTestThreadSafe()
+    {
+        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefPtrTestThreadSafe()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyedThreadSafe)
+{
+    RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTestThreadSafe::create();
+    partiallyDestroyedRefPtrTest = nullptr;
+}
+
 // FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
 #if! PLATFORM(WIN)
 

@@ -3336,17 +3336,14 @@ std::optional<WheelScrollGestureState> EventHandler::updateWheelGestureState(con
 
 void EventHandler::clearLatchedState()
 {
-    // Unable to ref the page as it may have started destruction.
-    WeakPtr page = m_frame->page();
+    RefPtrAllowingPartiallyDestroyed<Page> page = m_frame->page();
     if (!page)
         return;
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::clearLatchedState()");
-    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists()) {
-        // Unable to ref the frame as it may have started destruction.
-        scrollLatchingController->removeLatchingStateForFrame(m_frame);
-    }
+    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
+        scrollLatchingController->removeLatchingStateForFrame(RefAllowingPartiallyDestroyed<LocalFrame> { m_frame.get() });
 #endif
 }
 

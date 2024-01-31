@@ -593,7 +593,7 @@ static inline IntDegrees currentOrientation(LocalFrame* frame)
 Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, ScriptExecutionContextIdentifier identifier)
     : ContainerNode(*this, DOCUMENT_NODE)
     , TreeScope(*this)
-    , ScriptExecutionContext(identifier)
+    , ScriptExecutionContext(Type::Document, identifier)
     , FrameDestructionObserver(frame)
     , m_settings(settings)
     , m_parserContentPolicy(DefaultParserContentPolicy)
@@ -788,12 +788,9 @@ Document::~Document()
 void Document::removedLastRef()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
+    m_wasRemovedLastRefCalled = true;
     if (m_referencingNodeCount) {
-        // Node::removedLastRef doesn't set refCount() to zero because it's not observable.
-        // But we need to remember that our refCount reached zero in subsequent calls to decrementReferencingNodeCount().
-        m_refCountAndParentBit = 0;
-
         // If removing a child removes the last node reference, we don't want the scope to be destroyed
         // until after removeDetachedChildren returns, so we protect ourselves.
         incrementReferencingNodeCount();
@@ -842,13 +839,18 @@ void Document::removedLastRef()
         // We need to do this right now since selfOnlyDeref() can delete this.
         m_inRemovedLastRefFunction = false;
 #endif
+
+        // Node::removedLastRef doesn't set refCount() to zero because it's not observable.
+        // But we need to remember that our refCount reached zero in subsequent calls to decrementReferencingNodeCount().
+        m_refCountAndParentBit = 0;
+
         decrementReferencingNodeCount();
     } else {
         commonTeardown();
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = false;
-        m_deletionHasBegun = true;
 #endif
+        setStateFlag(StateFlag::HasStartedDeletion);
         delete this;
     }
 }
@@ -2941,7 +2943,7 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
 void Document::fontsNeedUpdate(FontSelector&)
 {
-    ASSERT(!m_deletionHasBegun);
+    ASSERT(!deletionHasBegun());
     invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
@@ -3170,8 +3172,7 @@ void Document::willBeRemovedFromFrame()
     if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this))
         pluginDocument->detachFromPluginElement();
 
-    // Unable to ref the page as it may have started destruction.
-    if (WeakPtr page = this->page()) {
+    if (RefPtrAllowingPartiallyDestroyed<Page> page = this->page()) {
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().documentDetached(*this);
 #endif

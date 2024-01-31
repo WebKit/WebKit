@@ -35,6 +35,7 @@
 #include "DOMTimer.h"
 #include "DatabaseContext.h"
 #include "Document.h"
+#include "EmptyScriptExecutionContext.h"
 #include "ErrorEvent.h"
 #include "FontLoadRequest.h"
 #include "FrameDestructionObserverInlines.h"
@@ -117,8 +118,9 @@ public:
     RefPtr<ScriptCallStack> m_callStack;
 };
 
-ScriptExecutionContext::ScriptExecutionContext(ScriptExecutionContextIdentifier contextIdentifier)
+ScriptExecutionContext::ScriptExecutionContext(Type type, ScriptExecutionContextIdentifier contextIdentifier)
     : m_identifier(contextIdentifier ? contextIdentifier : ScriptExecutionContextIdentifier::generate())
+    , m_type(type)
 {
 }
 
@@ -849,6 +851,66 @@ RefPtr<DeferredPromise> ScriptExecutionContext::takeDeferredPromise(DeferredProm
 CheckedRef<EventLoopTaskGroup> ScriptExecutionContext::checkedEventLoop()
 {
     return eventLoop();
+}
+
+void ScriptExecutionContext::ref()
+{
+    switch (m_type) {
+    case Type::Document:
+        uncheckedDowncast<Document>(*this).ref();
+        break;
+    case Type::WorkerOrWorkletGlobalScope:
+        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).ref();
+        break;
+    case Type::EmptyScriptExecutionContext:
+        uncheckedDowncast<EmptyScriptExecutionContext>(*this).ref();
+        break;
+    }
+}
+
+void ScriptExecutionContext::deref()
+{
+    switch (m_type) {
+    case Type::Document:
+        uncheckedDowncast<Document>(*this).deref();
+        break;
+    case Type::WorkerOrWorkletGlobalScope:
+        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).deref();
+        break;
+    case Type::EmptyScriptExecutionContext:
+        uncheckedDowncast<EmptyScriptExecutionContext>(*this).deref();
+        break;
+    }
+}
+
+void ScriptExecutionContext::refAllowingPartiallyDestroyed()
+{
+    switch (m_type) {
+    case Type::Document:
+        uncheckedDowncast<Document>(*this).refAllowingPartiallyDestroyed();
+        break;
+    case Type::WorkerOrWorkletGlobalScope:
+        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).refAllowingPartiallyDestroyed();
+        break;
+    case Type::EmptyScriptExecutionContext:
+        uncheckedDowncast<EmptyScriptExecutionContext>(*this).refAllowingPartiallyDestroyed();
+        break;
+    }
+}
+
+void ScriptExecutionContext::derefAllowingPartiallyDestroyed()
+{
+    switch (m_type) {
+    case Type::Document:
+        uncheckedDowncast<Document>(*this).derefAllowingPartiallyDestroyed();
+        break;
+    case Type::WorkerOrWorkletGlobalScope:
+        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).derefAllowingPartiallyDestroyed();
+        break;
+    case Type::EmptyScriptExecutionContext:
+        uncheckedDowncast<EmptyScriptExecutionContext>(*this).derefAllowingPartiallyDestroyed();
+        break;
+    }
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

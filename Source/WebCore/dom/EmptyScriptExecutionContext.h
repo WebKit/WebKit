@@ -82,21 +82,23 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
+    using RefCounted::refAllowingPartiallyDestroyed;
+    using RefCounted::derefAllowingPartiallyDestroyed;
 
 private:
     EmptyScriptExecutionContext(JSC::VM& vm)
-        : m_vm(vm)
+        : ScriptExecutionContext(Type::EmptyScriptExecutionContext)
+        , m_vm(vm)
         , m_origin(SecurityOrigin::createOpaque())
         , m_eventLoop(EmptyEventLoop::create(vm))
         , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
     {
+        relaxAdoptionRequirement();
         m_eventLoop->addAssociatedContext(*this);
     }
 
     void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long = 0) final { }
-    void logExceptionToConsole(const String&, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final { };
-    void refScriptExecutionContext() final { ref(); };
-    void derefScriptExecutionContext() final { deref(); };
+    void logExceptionToConsole(const String&, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final { }
 
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
@@ -134,3 +136,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::EmptyScriptExecutionContext)
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isEmptyScriptExecutionContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

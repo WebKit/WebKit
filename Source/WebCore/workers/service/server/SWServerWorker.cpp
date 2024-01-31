@@ -179,8 +179,8 @@ const ClientOrigin& SWServerWorker::origin() const
 
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    // Unable to ref m_server here as it may have started destruction.
-    return m_server ? m_server->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
+    RefPtrAllowingPartiallyDestroyed<SWServer> server = m_server.get();
+    return server ? server->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
 }
 
 void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)

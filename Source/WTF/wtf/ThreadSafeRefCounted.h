@@ -45,17 +45,21 @@ public:
     ThreadSafeRefCountedBase() = default;
 
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-    ~ThreadSafeRefCountedBase()
-    {
-        // When this ThreadSafeRefCounted object is a part of another object, derefBase() is never called on this object.
-        m_deletionHasBegun = true;
-    }
+    ~ThreadSafeRefCountedBase();
 #endif
 
     void ref() const
     {
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
         ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+#endif
+        refAllowingPartiallyDestroyed();
+    }
+
+    void refAllowingPartiallyDestroyed() const
+    {
+#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+        ASSERT(!deletionHasEnded());
 #endif
         ++m_refCount;
     }
@@ -75,40 +79,86 @@ public:
 
 protected:
     // Returns whether the pointer should be freed or not.
-    bool derefBase() const
+    bool derefBaseWithoutDeletionCheck() const
     {
         ASSERT(m_refCount);
-
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+        ASSERT(!deletionHasEnded());
 #endif
-
         if (UNLIKELY(!--m_refCount)) {
             // Setting m_refCount to 1 here prevents double delete within the destructor but not from another thread
             // since such a thread could have ref'ed this object long after it had been deleted. See webkit.org/b/201576.
             m_refCount = 1;
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-            m_deletionHasBegun = true;
-#endif
             return true;
         }
 
         return false;
     }
 
+    // Returns whether the pointer should be freed or not.
+    bool derefBase() const
+    {
+#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+#endif
+        return derefBaseWithoutDeletionCheck();
+    }
+
 private:
     mutable std::atomic<unsigned> m_refCount { 1 };
 
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+    bool deletionHasEnded() const;
+
     mutable std::atomic<bool> m_deletionHasBegun { false };
+    enum class IsAllocatedMemory : unsigned {
+        Scribble = 0, // Do not check for this value, it is not guaranteed to exist.
+        Yes = 0xFEEDB0BA
+    };
+    mutable std::atomic<IsAllocatedMemory> m_isAllocatedMemory { IsAllocatedMemory::Yes };
 #endif
 };
+
+#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+inline ThreadSafeRefCountedBase::~ThreadSafeRefCountedBase()
+{
+    // When this ThreadSafeRefCounted object is a part of another object, derefBase() is never called on this object.
+    m_deletionHasBegun = true;
+    m_isAllocatedMemory = IsAllocatedMemory::Scribble;
+}
+
+inline bool ThreadSafeRefCountedBase::deletionHasEnded() const
+{
+    return m_isAllocatedMemory != IsAllocatedMemory::Yes;
+}
+#endif
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
     void deref() const
     {
         if (!derefBase())
+            return;
+
+        auto deleteThis = [this] {
+            delete static_cast<const T*>(this);
+        };
+        switch (destructionThread) {
+        case DestructionThread::Any:
+            break;
+        case DestructionThread::Main:
+            ensureOnMainThread(WTFMove(deleteThis));
+            return;
+        case DestructionThread::MainRunLoop:
+            ensureOnMainRunLoop(WTFMove(deleteThis));
+            return;
+        }
+        deleteThis();
+    }
+
+    void derefAllowingPartiallyDestroyed() const
+    {
+        if (!derefBaseWithoutDeletionCheck())
             return;
 
         auto deleteThis = [this] {

@@ -1474,8 +1474,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         fireEvents = FireEvents::No;
 
     if (popoverState() == PopoverState::Auto) {
-        // Unable to protect the document as it may have started destruction.
-        document().hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
+        RefAllowingPartiallyDestroyed<Document> { document() }->hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
 
         check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
         if (check.hasException())

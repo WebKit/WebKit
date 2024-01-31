@@ -109,7 +109,7 @@ using namespace HTMLNames;
 
 struct SameSizeAsNode : EventTarget {
 #if ASSERT_ENABLED
-    bool deletionHasBegun;
+    uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;
     bool adoptionIsRequired;
 #endif
@@ -413,8 +413,8 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
 Node::~Node()
 {
     ASSERT(isMainThread());
-    ASSERT(m_refCountAndParentBit == s_refCountIncrement);
-    ASSERT(m_deletionHasBegun);
+    ASSERT(deletionHasBegun());
+    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
@@ -450,6 +450,10 @@ Node::~Node()
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventHandlersContain(*this));
         ASSERT_WITH_SECURITY_IMPLICATION(!document->touchEventTargetsContain(*this));
     }
+#endif
+
+#if ASSERT_ENABLED
+    m_isAllocatedMemory = IsAllocatedMemory::Scribble;
 #endif
 }
 
@@ -2831,9 +2835,7 @@ void Node::removedLastRef()
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
         svgElement->detachAllProperties();
 
-#if ASSERT_ENABLED
-    m_deletionHasBegun = true;
-#endif
+    setStateFlag(StateFlag::HasStartedDeletion);
     delete this;
 }
 
