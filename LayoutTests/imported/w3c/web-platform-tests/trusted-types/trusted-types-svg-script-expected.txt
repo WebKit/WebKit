@@ -1,7 +1,23 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (TIMEOUT), message = null
 
+FAIL Assign String to SVGScriptElement.innerHTML. assert_throws_js: function "_ => {
+        document.getElementById("script").innerHTML = "'modified via innerHTML';";
+      }" did not throw
+PASS Assign TrustedHTML to SVGScriptElement.innerHTML.
+TIMEOUT Assign TrustedHTML to SVGScriptElement.innerHTML and execute it. Test timed out
+NOTRUN Modify SVGScriptElement via DOM manipulation.
+NOTRUN Assign string to SVGScriptElement.href.baseVal.
+NOTRUN Assign TrustedScriptURL to SVGScriptElement.href.baseVal.
+NOTRUN Assign string to non-attached SVGScriptElement.href via setAttribute.
+NOTRUN Assign TrustedScriptURL to non-attached SVGScriptElement.href via setAttribute.
+NOTRUN Assign string to attached SVGScriptElement.href via setAttribute.
+NOTRUN Assign TrustedScriptURL to attached SVGScriptElement.href via setAttribute.
+NOTRUN Setup default policy
+NOTRUN Assign String to SVGScriptElement.innerHTML w/ default policy.
+NOTRUN Assign string to SVGScriptElement.href.baseVal  w/ default policy.
+NOTRUN Assign string to non-attached SVGScriptElement.href via setAttribute w/ default policy.
+NOTRUN Assign string to attached SVGScriptElement.href via setAttribute w/ default policy.
 

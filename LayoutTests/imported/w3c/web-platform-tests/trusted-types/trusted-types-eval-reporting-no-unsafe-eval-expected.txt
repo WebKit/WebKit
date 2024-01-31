@@ -1,7 +1,11 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
 
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Trusted Type violation report: evaluating a string violates both script-src and trusted-types. Test timed out
+NOTRUN Trusted Type violation report: evaluating a Trusted Script violates script-src.
+NOTRUN Trusted Type violation report: script-src restrictions apply after the default policy runs.
 

@@ -1,8 +1,11 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
 
 PASS script.src without trusted types
 PASS div.innerHTML without trusted types
 PASS script.text without trusted types
+PASS script.src with trusted types
+PASS div.innerHTML with trusted types
+PASS script.text with trusted types
+PASS script.src empty default
+PASS div.innerHTML empty default
+PASS script.text empty default
 

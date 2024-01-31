@@ -789,6 +789,9 @@ imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.servicework
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/ [ Skip ]
+imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Skip ]
+imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Skip ]
+imported/w3c/web-platform-tests/trusted-types/worker-constructor.https.html [ Skip ]
 
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]

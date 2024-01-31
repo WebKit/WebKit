@@ -1,13 +1,13 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
 
-FAIL range.createContextualFragment assigned via policy (successful HTML transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS range.createContextualFragment assigned via policy (successful HTML transformation).
 FAIL `range.createContextualFragment(string)` throws. assert_throws_js: function "_ => {
       var result = range.createContextualFragment("A string");
     }" did not throw
 FAIL `range.createContextualFragment(null)` throws. assert_throws_js: function "_ => {
       var result = range.createContextualFragment(null);
     }" did not throw
-FAIL `range.createContextualFragment(string)` assigned via default policy (successful HTML transformation). undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+FAIL `range.createContextualFragment(string)` assigned via default policy (successful HTML transformation). assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
 PASS `range.createContextualFragment(null)` assigned via default policy does not throw.
 

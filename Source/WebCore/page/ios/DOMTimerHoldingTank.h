@@ -29,6 +29,7 @@
 
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 

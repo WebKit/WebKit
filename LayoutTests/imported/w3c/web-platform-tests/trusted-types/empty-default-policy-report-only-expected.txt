@@ -1,13 +1,11 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
 CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
-TIMEOUT Count SecurityPolicyViolation events. Test timed out
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (TIMEOUT), message = null
 
 TIMEOUT Count SecurityPolicyViolation events. Test timed out
+PASS script.src default
+PASS div.innerHTML default
+PASS script.text default
 

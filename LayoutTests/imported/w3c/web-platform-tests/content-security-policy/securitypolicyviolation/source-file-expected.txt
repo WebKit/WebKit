@@ -1,4 +1,21 @@
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (TIMEOUT), message = null
 
+TIMEOUT Basic HTTPS URL Test timed out
+NOTRUN Basic HTTP URL
+NOTRUN Basic WSS URL
+NOTRUN Basic WS URL
+NOTRUN Fragment
+NOTRUN Query
+NOTRUN Port
+NOTRUN User:password
+NOTRUN User
+NOTRUN Invalid URL
+NOTRUN file:
+NOTRUN Custom protocol
+NOTRUN about:blank
+NOTRUN about:custom
+NOTRUN data:
+NOTRUN blob:
+NOTRUN javascript:
 

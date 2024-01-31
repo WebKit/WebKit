@@ -1,7 +1,14 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+PASS Create Worker via ScriptTestUrl
+PASS Create SharedWorker via ScriptTestUrl
+PASS Create ServiceWorker via ScriptTestUrl
+FAIL Block Worker creation via string assert_throws_js: function "() => new Worker(test_url)" did not throw
+FAIL Block SharedWorker creation via string assert_throws_js: function "() => new SharedWorker(test_url)" did not throw
+FAIL Block ServiceWorker creation via String assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Setup default policy.
+PASS Create Worker via string with default policy.
+PASS Create SharedWorker via string with default policy.
+FAIL Create ServiceWorker via string with default policy. promise_test: Unhandled rejection with value: object "TypeError: Script https://localhost:9443/trusted-types/support/WorkerGlobalScope-importScripts.potato.js load failed"
 

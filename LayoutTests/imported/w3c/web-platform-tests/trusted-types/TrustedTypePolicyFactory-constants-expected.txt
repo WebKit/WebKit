@@ -1,8 +1,8 @@
 
-FAIL trustedTypes.emptyHTML returns the intended value. Can't find variable: trustedTypes
-FAIL trustedTypes.emptyHTML cannot be redefined. Can't find variable: trustedTypes
-FAIL trustedTypes.emptyHTML cannot be redefined via defineProperty. Can't find variable: trustedTypes
-FAIL trustedTypes.emptyScript returns the intended value. Can't find variable: trustedTypes
-FAIL trustedTypes.emptyScript cannot be redefined. Can't find variable: trustedTypes
-FAIL trustedTypes.emptyScript cannot be redefined via defineProperty. Can't find variable: trustedTypes
+PASS trustedTypes.emptyHTML returns the intended value.
+PASS trustedTypes.emptyHTML cannot be redefined.
+PASS trustedTypes.emptyHTML cannot be redefined via defineProperty.
+PASS trustedTypes.emptyScript returns the intended value.
+PASS trustedTypes.emptyScript cannot be redefined.
+PASS trustedTypes.emptyScript cannot be redefined via defineProperty.
 

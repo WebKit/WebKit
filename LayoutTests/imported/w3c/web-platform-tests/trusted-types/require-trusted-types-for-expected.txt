@@ -10,5 +10,5 @@ FAIL Require trusted types for 'script' block create script. assert_throws_js: f
 FAIL Require trusted types for 'script' block create script URL. assert_throws_js: function "_ => {
           s.src = "a";
         }" did not throw
-FAIL Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: trustedTypes"
+PASS Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using.
 

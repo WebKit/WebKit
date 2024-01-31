@@ -120,6 +120,9 @@ namespace WebCore {
     macro(ContactsManager) \
     macro(ContentVisibilityAutoStateChangeEvent) \
     macro(ConvolverNode) \
+    macro(CreateHTMLCallback) \
+    macro(CreateScriptCallback) \
+    macro(CreateScriptURLCallback) \
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CryptoKey) \
@@ -439,6 +442,12 @@ namespace WebCore {
     macro(ToggleEvent) \
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
+    macro(TrustedHTML) \
+    macro(TrustedScript) \
+    macro(TrustedScriptURL) \
+    macro(TrustedTypePolicy) \
+    macro(TrustedTypePolicyFactory) \
+    macro(TrustedTypePolicyOptions) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VideoDecoder) \
@@ -695,6 +704,7 @@ namespace WebCore {
     macro(textEncoderStreamEncoder) \
     macro(textEncoderStreamTransform) \
     macro(transformAlgorithm) \
+    macro(trustedTypes) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \
     macro(underlyingSource) \

@@ -6762,6 +6762,20 @@ TreatsAnyTextCSSLinkAsStylesheet:
     WebCore:
       default: false
 
+TrustedTypesEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Trusted Types"
+  humanReadableDescription: "Enable Trusted Types"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UAVisualTransitionDetectionEnabled:
   type: bool
   status: testable

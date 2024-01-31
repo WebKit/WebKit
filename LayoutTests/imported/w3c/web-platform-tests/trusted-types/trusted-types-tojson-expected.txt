@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
 
 
-FAIL toJSON Can't find variable: trustedTypes
+PASS toJSON
 

@@ -1,5 +1,7 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
 
 
-PASS No name list given - policy creation throws
+FAIL No name list given - policy creation throws assert_throws_js: function "_ => {
+      window.trustedTypes.createPolicy('SomeName', { createHTML: s => s } );
+    }" did not throw
 

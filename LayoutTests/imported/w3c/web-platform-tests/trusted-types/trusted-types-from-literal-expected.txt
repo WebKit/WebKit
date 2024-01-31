@@ -1,7 +1,55 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: TrustedHTML
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: TrustedHTML
-
+FAIL TrustedHTML.fromLiteral is supported assert_true: expected true got false
+FAIL TrustedHTML.fromLiteral: Basic string literal works. undefined is not a function (near '...type.fromLiteral`abc`...')
+FAIL TrustedHTML.fromLiteral: Empty string literal works. undefined is not a function (near '...type.fromLiteral``...')
+FAIL TrustedHTML.fromLiteral: A very important emoji works. undefined is not a function (near '...type.fromLiteral`\u{1f4a9}`...')
+FAIL TrustedHTML.fromLiteral: Multi-line string literal works. undefined is not a function (near '...type.fromLiteral`A Multiline
+  string
+     works.`...')
+FAIL TrustedHTML.fromLiteral: Bound method works. undefined is not an object (evaluating 'type.fromLiteral.bind')
+PASS TrustedHTML.fromLiteral: String throws.
+PASS TrustedHTML.fromLiteral: null throws.
+PASS TrustedHTML.fromLiteral: undefined throws.
+PASS TrustedHTML.fromLiteral: Object throws.
+PASS TrustedHTML.fromLiteral: template literal with expression throws.
+PASS TrustedHTML.fromLiteral: non-literal throws.
+PASS TrustedHTML.fromLiteral: frozen non-literal throws.
+PASS TrustedHTML.fromLiteral: non-literal with param throws.
+FAIL TrustedScript.fromLiteral is supported assert_true: expected true got false
+FAIL TrustedScript.fromLiteral: Basic string literal works. undefined is not a function (near '...type.fromLiteral`abc`...')
+FAIL TrustedScript.fromLiteral: Empty string literal works. undefined is not a function (near '...type.fromLiteral``...')
+FAIL TrustedScript.fromLiteral: A very important emoji works. undefined is not a function (near '...type.fromLiteral`\u{1f4a9}`...')
+FAIL TrustedScript.fromLiteral: Multi-line string literal works. undefined is not a function (near '...type.fromLiteral`A Multiline
+  string
+     works.`...')
+FAIL TrustedScript.fromLiteral: Bound method works. undefined is not an object (evaluating 'type.fromLiteral.bind')
+PASS TrustedScript.fromLiteral: String throws.
+PASS TrustedScript.fromLiteral: null throws.
+PASS TrustedScript.fromLiteral: undefined throws.
+PASS TrustedScript.fromLiteral: Object throws.
+PASS TrustedScript.fromLiteral: template literal with expression throws.
+PASS TrustedScript.fromLiteral: non-literal throws.
+PASS TrustedScript.fromLiteral: frozen non-literal throws.
+PASS TrustedScript.fromLiteral: non-literal with param throws.
+FAIL TrustedScriptURL.fromLiteral is supported assert_true: expected true got false
+FAIL TrustedScriptURL.fromLiteral: Basic string literal works. undefined is not a function (near '...type.fromLiteral`abc`...')
+FAIL TrustedScriptURL.fromLiteral: Empty string literal works. undefined is not a function (near '...type.fromLiteral``...')
+FAIL TrustedScriptURL.fromLiteral: A very important emoji works. undefined is not a function (near '...type.fromLiteral`\u{1f4a9}`...')
+FAIL TrustedScriptURL.fromLiteral: Multi-line string literal works. undefined is not a function (near '...type.fromLiteral`A Multiline
+  string
+     works.`...')
+FAIL TrustedScriptURL.fromLiteral: Bound method works. undefined is not an object (evaluating 'type.fromLiteral.bind')
+PASS TrustedScriptURL.fromLiteral: String throws.
+PASS TrustedScriptURL.fromLiteral: null throws.
+PASS TrustedScriptURL.fromLiteral: undefined throws.
+PASS TrustedScriptURL.fromLiteral: Object throws.
+PASS TrustedScriptURL.fromLiteral: template literal with expression throws.
+PASS TrustedScriptURL.fromLiteral: non-literal throws.
+PASS TrustedScriptURL.fromLiteral: frozen non-literal throws.
+PASS TrustedScriptURL.fromLiteral: non-literal with param throws.
+FAIL TrustedHTML.fromLiteral: Normalization of value works. undefined is not an object (evaluating 'TrustedHTML.fromLiteral.bind')
+FAIL TrustedScript.fromLiteral: No normalization of value occurs. undefined is not an object (evaluating 'TrustedScript.fromLiteral.bind')
+FAIL TrustedScriptURL.fromLiteral: No normalization of value occurs. undefined is not an object (evaluating 'TrustedScriptURL.fromLiteral.bind')
 

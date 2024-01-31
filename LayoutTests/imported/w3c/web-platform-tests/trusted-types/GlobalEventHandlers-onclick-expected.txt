@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-
+PASS a.setAttribte('onclick') sets a trusted script.
+FAIL a.setAttribute('onclick') sets an unsuitable trusted type. assert_unreached: Reached unreachable code
+FAIL a.setAttribute('click') sets a test string. assert_unreached: Reached unreachable code
 

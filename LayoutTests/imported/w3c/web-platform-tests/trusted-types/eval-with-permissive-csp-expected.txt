@@ -1,7 +1,14 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
-
+FAIL eval with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
+      eval('a="hello there"');
+    }" did not throw
+FAIL Function constructor with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
+      new Function('a="hello there"');
+    }" did not throw
+FAIL eval with TrustedScript and permissive CSP works. assert_equals: expected "Hello a cat string" but got "\"Hello a cat string\""
+PASS new Function with TrustedScript and permissive CSP works.
+FAIL eval with default policy and permissive CSP still obeys default policy. assert_equals: expected "Hello a cat untrusted string" but got "Hello transformed untrusted string"
+FAIL new Function with default policy and permissive CSP still obeys default policy. assert_equals: expected "Hello a cat untrusted string" but got "Hello transformed untrusted string"
 

@@ -1,12 +1,10 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
-TIMEOUT Count SecurityPolicyViolation events. Test timed out
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (TIMEOUT), message = null
 
 TIMEOUT Count SecurityPolicyViolation events. Test timed out
+FAIL script.src default assert_throws_js: function "_ => element[c[1]] = "abc"" did not throw
+FAIL div.innerHTML default assert_throws_js: function "_ => element[c[1]] = "abc"" did not throw
+FAIL script.text default assert_throws_js: function "_ => element[c[1]] = "abc"" did not throw
 

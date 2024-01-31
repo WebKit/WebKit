@@ -1331,6 +1331,9 @@ $(PROJECT_DIR)/dom/ClipboardEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
 $(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
+$(PROJECT_DIR)/dom/CreateHTMLCallback.idl
+$(PROJECT_DIR)/dom/CreateScriptCallback.idl
+$(PROJECT_DIR)/dom/CreateScriptURLCallback.idl
 $(PROJECT_DIR)/dom/CustomElementRegistry.idl
 $(PROJECT_DIR)/dom/CustomEvent.idl
 $(PROJECT_DIR)/dom/CustomStateSet.idl
@@ -1461,6 +1464,12 @@ $(PROJECT_DIR)/dom/TouchEvent.idl
 $(PROJECT_DIR)/dom/TouchList.idl
 $(PROJECT_DIR)/dom/TransitionEvent.idl
 $(PROJECT_DIR)/dom/TreeWalker.idl
+$(PROJECT_DIR)/dom/TrustedHTML.idl
+$(PROJECT_DIR)/dom/TrustedScript.idl
+$(PROJECT_DIR)/dom/TrustedScriptURL.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicy.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicyFactory.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicyOptions.idl
 $(PROJECT_DIR)/dom/UIEvent.idl
 $(PROJECT_DIR)/dom/UIEventInit.idl
 $(PROJECT_DIR)/dom/ValidityStateFlags.idl
@@ -1468,6 +1477,7 @@ $(PROJECT_DIR)/dom/ViewTransition.idl
 $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
+$(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
 $(PROJECT_DIR)/dom/make-event-names.py
 $(PROJECT_DIR)/dom/make_event_factory.pl

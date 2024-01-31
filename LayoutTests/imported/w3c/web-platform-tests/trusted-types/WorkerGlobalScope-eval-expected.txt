@@ -1,7 +1,13 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL eval(string) in dedicated worker assert_throws_js: function "_ => eval("2")" did not throw
+FAIL eval(TrustedScript) in dedicated worker assert_equals: expected (number) 7 but got (object) object "2"
+FAIL eval(string) with default policy in dedicated worker assert_equals: expected 5 but got 2
+FAIL eval(string) in shared worker assert_throws_js: function "_ => eval("2")" did not throw
+FAIL eval(TrustedScript) in shared worker assert_equals: expected (number) 7 but got (object) object "2"
+FAIL eval(string) with default policy in shared worker assert_equals: expected 5 but got 2
+FAIL eval(string) in service worker assert_throws_js: function "_ => eval("2")" did not throw
+FAIL eval(TrustedScript) in service worker assert_equals: expected (number) 7 but got (object) object "2"
+FAIL eval(string) with default policy in service worker assert_equals: expected 5 but got 2
 

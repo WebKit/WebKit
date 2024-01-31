@@ -1,21 +1,23 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'want'
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'want'
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'want'
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.trustedTypes.createPolicy')
-
-FAIL window.setTimeout assigned via policy (successful Script transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS window.setTimeout assigned via policy (successful Script transformation).
 FAIL `window.setTimeout(string)` throws. assert_throws_js: function "_ => {
       setTimeout("window.timeoutTestString();");
     }" did not throw
 FAIL `window.setTimeout(null)` throws. assert_throws_js: function "_ => {
       setTimeout(null);
     }" did not throw
-FAIL window.setInterval assigned via policy (successful Script transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS window.setInterval assigned via policy (successful Script transformation).
 FAIL `window.setInterval(string)` throws. assert_throws_js: function "_ => {
       setInterval("window.intervalTestString()");
     }" did not throw
 FAIL `window.setInterval(null)` throws. assert_throws_js: function "_ => {
       setInterval(null);
     }" did not throw
+PASS `setTimeout(string)`, `setInterval(string)` via default policy (successful Script transformation).
+PASS `setTimeout(null)`, `setInterval(null)` via default policy (successful Script transformation).
 

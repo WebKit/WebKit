@@ -1,4 +1,4 @@
 
-FAIL document.innerText assigned via policy (successful HTML transformation). undefined is not an object (evaluating 'win.trustedTypes.createPolicy')
+PASS document.innerText assigned via policy (successful HTML transformation).
 PASS document.innerText = null.
 

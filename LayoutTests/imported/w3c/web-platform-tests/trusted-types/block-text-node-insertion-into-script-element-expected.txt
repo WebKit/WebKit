@@ -1,7 +1,22 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'fail'
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
+Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'fail'
 
+FAIL Regression test: Bypass via insertAdjacentText, initial comment. promise_test: Unhandled rejection with value: "'block' received (beforebegin should be blocked)"
+PASS Regression test: Bypass via insertAdjacentText, initial comment. script
+FAIL Regression test: Bypass via appendChild into off-document script elementscript promise_test: Unhandled rejection with value: "'block' received (beforebegin should be blocked)"
+PASS Regression test: Bypass via appendChild into live script element script
+FAIL Regression test: Bypass via insertAdjacentText, initial comment. svg:script promise_test: Unhandled rejection with value: "'block' received (appendChild with a text node should be blocked)"
+PASS Regression test: Bypass via appendChild into off-document script elementsvg:script
+FAIL Regression test: Bypass via appendChild into live script element svg:script promise_test: Unhandled rejection with value: "'block' received (appendChild with a live text node should be blocked)"
+TIMEOUT Prep for subsequent tests: Clear SPV event queue. Test timed out
+NOTRUN Spot tests around script + innerHTML interaction.
+NOTRUN Prep for subsequent tests: Create default policy.
+NOTRUN Test that default policy applies. script
+NOTRUN Test a failing default policy. script
+NOTRUN Test that default policy applies. svg:script
+NOTRUN Test a failing default policy. svg:script
+NOTRUN Spot tests around script + innerHTML interaction with default policy.
 

@@ -1,7 +1,9 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: trustedTypes
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: trustedTypes
-
+FAIL eval of TrustedScript works. assert_equals: expected (number) 2 but got (object) object "1+1"
+FAIL eval of string works. assert_equals: expected 5 but got 2
+PASS eval of !TrustedScript and !string works.
+PASS Function constructor of TrustedScript works.
+FAIL Function constructor of string works. assert_equals: expected 5 but got 2
 
