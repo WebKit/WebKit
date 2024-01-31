@@ -55,11 +55,11 @@
 
 #define CRASH_GPR0 "x16"
 #define CRASH_GPR1 "x17"
-#define CRASH_GPR2 "x18"
-#define CRASH_GPR3 "x19"
-#define CRASH_GPR4 "x20"
-#define CRASH_GPR5 "x21"
-#define CRASH_GPR6 "x22"
+#define CRASH_GPR2 "x19" // We skip x18, which is reserved on ARM64 for platform use.
+#define CRASH_GPR3 "x20"
+#define CRASH_GPR4 "x21"
+#define CRASH_GPR5 "x22"
+#define CRASH_GPR6 "x23"
 
 #endif
 
