@@ -4386,6 +4386,7 @@ enum class WebCore::CDMRequirement : uint8_t {
     NotAllowed
 };
 
+header: <WebCore/CDMInstanceSession.h>
 enum class WebCore::CDMInstanceSessionLoadFailure : uint8_t {
     None,
     NoSessionData,
@@ -4394,13 +4395,13 @@ enum class WebCore::CDMInstanceSessionLoadFailure : uint8_t {
     Other,
 };
 
+header: <WebCore/CDMInstance.h>
 [Nested] enum class WebCore::CDMInstance::HDCPStatus : uint8_t {
     Unknown,
     Valid,
     OutputRestricted,
     OutputDownscaled,
 };
-
 #endif
 
 #if ENABLE(WEB_RTC)

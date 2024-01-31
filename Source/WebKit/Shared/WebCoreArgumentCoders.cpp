@@ -863,25 +863,4 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     return std::nullopt;
 }
 
-#if ENABLE(ENCRYPTED_MEDIA)
-void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)
-{
-    encoder << message.first;
-    encoder << message.second;
-}
-
-std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode(Decoder& decoder)
-{
-    WebCore::CDMInstanceSession::MessageType type;
-    if (!decoder.decode(type))
-        return std::nullopt;
-
-    auto buffer = decoder.decode<Ref<SharedBuffer>>();
-    if (UNLIKELY(!buffer))
-        return std::nullopt;
-
-    return std::make_optional<WebCore::CDMInstanceSession::Message>({ type, WTFMove(*buffer) });
-}
-#endif // ENABLE(ENCRYPTED_MEDIA)
-
 } // namespace IPC
