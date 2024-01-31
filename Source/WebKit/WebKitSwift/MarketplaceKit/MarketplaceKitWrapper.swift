@@ -36,10 +36,13 @@ public final class MarketplaceKitWrapper : NSObject {
     @objc
     @available(iOS 17.4, *)
     public static func requestAppInstallation(topOrigin: URL, url: URL) {
-        let metadata = LinkMetadata(referrer: topOrigin, url: url)
         Task { @MainActor in
             do {
-                try await AppLibrary.current.requestAppInstallation(with: metadata)
+#if canImport(MarketplaceKit, _version: "1.4.77.2")
+                try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)
+#else
+                try await AppLibrary.current.requestAppInstallation(with: LinkMetadata(referrer: topOrigin, url: url))
+#endif
                 logger.debug("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded")
             } catch {
                 logger.error("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) failed: \(error, privacy: .public)")
