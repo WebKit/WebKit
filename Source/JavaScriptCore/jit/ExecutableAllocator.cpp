@@ -422,8 +422,10 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         bool fastJITPermissionsIsSupported = false;
 #if OS(DARWIN) && CPU(ARM64)
 #if USE(INLINE_JIT_PERMISSIONS_API)
+IGNORE_WARNINGS_BEGIN("pointer-bool-conversion")
         fastJITPermissionsIsSupported = (be_memory_inline_jit_restrict_with_witness_supported
             && !!be_memory_inline_jit_restrict_with_witness_supported());
+IGNORE_WARNINGS_END
 #elif USE(PTHREAD_JIT_PERMISSIONS_API)
         fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
 #elif USE(APPLE_INTERNAL_SDK)
