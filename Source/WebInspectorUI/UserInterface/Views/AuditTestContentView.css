@@ -142,7 +142,7 @@
     display: inline-block;
     width: 1em;
     margin-inline-end: 2px;
-    vertical-align: -1px;
+    vertical-align: 1px;
     content: url(../Images/Warning.svg);
 }
 
