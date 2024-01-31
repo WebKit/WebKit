@@ -31,6 +31,17 @@ header: "WCUpdateInfo.h"
     WebCore::IntRect dirtyRect;
 }
 
+[Nested] struct WebKit::WCLayerUpdateInfo::BackgroundChanges {
+    WebCore::Color color;
+    bool hasBackingStore;
+    Vector<WebKit::WCTileUpdate> tileUpdates;
+}
+
+[Nested] struct WebKit::WCLayerUpdateInfo::PlatformLayerChanges {
+    bool hasLayer;
+    Vector<WebKit::WCContentBufferIdentifier> identifiers;
+}
+
 struct WebKit::WCUpdateInfo {
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;

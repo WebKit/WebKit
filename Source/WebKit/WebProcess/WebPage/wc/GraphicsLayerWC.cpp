@@ -51,7 +51,7 @@ public:
             tileUpdate.index = entry.key;
             tileUpdate.willRemove = tile.willRemove();
             if (tileUpdate.willRemove) {
-                update.tileUpdate.append(WTFMove(tileUpdate));
+                update.background.tileUpdates.append(WTFMove(tileUpdate));
                 continue;
             }
             if (!tile.hasDirtyRect())
@@ -65,7 +65,7 @@ public:
             m_owner.paintGraphicsLayerContents(context, dirtyRect);
             image->flushDrawingContextAsync();
             tileUpdate.backingStore.setImageBuffer(WTFMove(image));
-            update.tileUpdate.append(WTFMove(tileUpdate));
+            update.background.tileUpdates.append(WTFMove(tileUpdate));
         }
         m_tileGrid.clearDirtyRects();
         return repainted;
@@ -576,15 +576,15 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     if (update.changes & WCLayerChange::MasksToBounds)
         update.masksToBounds = masksToBounds();
     if (update.changes & WCLayerChange::Background) {
-        update.backgroundColor = backgroundColor();
+        update.background.color = backgroundColor();
         if (drawsContent() && contentsAreVisible()) {
-            update.hasBackingStore = true;
+            update.background.hasBackingStore = true;
             if (m_tiledBacking->paintAndFlush(update)) {
                 incrementRepaintCount();
                 update.changes.add(WCLayerChange::RepaintCount);
             }
         } else
-            update.hasBackingStore = false;
+            update.background.hasBackingStore = false;
     }
     if (update.changes & WCLayerChange::SolidColor)
         update.solidColor = m_solidColor;
@@ -611,10 +611,10 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     if (update.changes & WCLayerChange::BackdropFiltersRect)
         update.backdropFiltersRect = backdropFiltersRect();
     if (update.changes & WCLayerChange::PlatformLayer) {
-        update.hasPlatformLayer = m_platformLayer;
+        update.platformLayer.hasLayer = m_platformLayer;
 #if ENABLE(WEBGL)
         if (m_platformLayer)
-            update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
+            update.platformLayer.identifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
 #endif
     }
     if (update.changes & WCLayerChange::RemoteFrame)

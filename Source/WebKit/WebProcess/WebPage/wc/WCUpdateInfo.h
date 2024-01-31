@@ -94,24 +94,32 @@ struct WCLayerUpdateInfo {
     bool contentsVisible;
     bool backfaceVisibility;
     bool preserves3D;
-    bool hasPlatformLayer;
-    bool hasBackingStore;
     WebCore::Color solidColor;
-    WebCore::Color backgroundColor;
     WebCore::Color debugBorderColor;
     float opacity;
     float debugBorderWidth;
     int repaintCount;
     WebCore::FloatRect contentsRect;
+
+    struct BackgroundChanges {
+        WebCore::Color color;
+        bool hasBackingStore;
+        Vector<WCTileUpdate> tileUpdates;
+    } background;
+
     WebCore::TransformationMatrix transform;
     WebCore::TransformationMatrix childrenTransform;
     WebCore::FilterOperations filters;
     WebCore::FilterOperations backdropFilters;
     WebCore::FloatRoundedRect backdropFiltersRect;
     WebCore::FloatRoundedRect contentsClippingRect;
+
+    struct PlatformLayerChanges {
+        bool hasLayer;
+        Vector<WCContentBufferIdentifier> identifiers;
+    } platformLayer;
+
     Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
-    Vector<WCTileUpdate> tileUpdate;
-    Vector<WCContentBufferIdentifier> contentBufferIdentifiers;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -161,7 +169,7 @@ struct WCLayerUpdateInfo {
         if (changes & WCLayerChange::Opacity)
             encoder << opacity;
         if (changes & WCLayerChange::Background)
-            encoder << backgroundColor << hasBackingStore << tileUpdate;
+            encoder << background;
         if (changes & WCLayerChange::Transform)
             encoder << transform;
         if (changes & WCLayerChange::ChildrenTransform)
@@ -173,7 +181,7 @@ struct WCLayerUpdateInfo {
         if (changes & WCLayerChange::BackdropFiltersRect)
             encoder << backdropFiltersRect;
         if (changes & WCLayerChange::PlatformLayer)
-            encoder << hasPlatformLayer << contentBufferIdentifiers;
+            encoder << platformLayer;
         if (changes & WCLayerChange::RemoteFrame)
             encoder << hostIdentifier;
     }
@@ -270,11 +278,7 @@ struct WCLayerUpdateInfo {
                 return false;
         }
         if (result.changes & WCLayerChange::Background) {
-            if (!decoder.decode(result.backgroundColor))
-                return false;
-            if (!decoder.decode(result.hasBackingStore))
-                return false;
-            if (!decoder.decode(result.tileUpdate))
+            if (!decoder.decode(result.background))
                 return false;
         }
         if (result.changes & WCLayerChange::Transform) {
@@ -298,9 +302,7 @@ struct WCLayerUpdateInfo {
                 return false;
         }
         if (result.changes & WCLayerChange::PlatformLayer) {
-            if (!decoder.decode(result.hasPlatformLayer))
-                return false;
-            if (!decoder.decode(result.contentBufferIdentifiers))
+            if (!decoder.decode(result.platformLayer))
                 return false;
         }
         if (result.changes & WCLayerChange::RemoteFrame) {
