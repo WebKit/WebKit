@@ -568,8 +568,10 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
     else
         m_scrollContainerLayer->setBoundsOrigin(IntPoint(m_scrollOffset));
 
+#if PLATFORM(MAC)
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
+#endif
 
     scheduleRenderingUpdate();
 }
