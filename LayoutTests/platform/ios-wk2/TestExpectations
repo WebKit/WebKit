@@ -2362,3 +2362,5 @@ webkit.org/b/268044 [ Debug ] ipc/shared-video-frame-size.html [ Crash ]
 webkit.org/b/268305 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
 
 webkit.org/b/263044 [ Debug ] imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Pass Failure ]
+
+webkit.org/b/268422 fast/events/ios/keyboard-should-not-trigger-resize.html [ Pass Failure ]
