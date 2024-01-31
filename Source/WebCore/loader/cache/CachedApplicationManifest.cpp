@@ -43,9 +43,9 @@ CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& req
 void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
-        auto contiguousData = data->makeContiguous();
+        Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_text = m_decoder->decodeAndFlush(contiguousData->data(), data->size());
+        m_text = protectedDecoder()->decodeAndFlush(contiguousData->data(), data->size());
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;
@@ -56,12 +56,12 @@ void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data
 
 void CachedApplicationManifest::setEncoding(const String& chs)
 {
-    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 String CachedApplicationManifest::encoding() const
 {
-    return String::fromLatin1(m_decoder->encoding().name());
+    return String::fromLatin1(protectedDecoder()->encoding().name());
 }
 
 std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)
@@ -71,6 +71,11 @@ std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL&
     if (document)
         return ApplicationManifestParser::parse(*document, *m_text, manifestURL, documentURL);
     return ApplicationManifestParser::parse(*m_text, manifestURL, documentURL);
+}
+
+Ref<TextResourceDecoder> CachedApplicationManifest::protectedDecoder() const
+{
+    return m_decoder;
 }
 
 } // namespace WebCore

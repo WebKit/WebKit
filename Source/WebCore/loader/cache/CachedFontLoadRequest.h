@@ -49,10 +49,11 @@ public:
     ~CachedFontLoadRequest()
     {
         if (m_fontLoadRequestClient)
-            m_font->removeClient(*this);
+            protectedCachedFont()->removeClient(*this);
     }
 
     CachedFont& cachedFont() const { return *m_font; }
+    CachedResourceHandle<CachedFont> protectedCachedFont() const { return m_font; }
 
 private:
     const URL& url() const final { return m_font->url(); }
@@ -63,18 +64,18 @@ private:
     bool ensureCustomFontData() final { return m_font->ensureCustomFontData(); }
     RefPtr<Font> createFont(const FontDescription& description, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext) final
     {
-        return m_font->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
+        return protectedCachedFont()->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
     }
 
     void setClient(FontLoadRequestClient* client) final
     {
-        auto* oldClient = m_fontLoadRequestClient;
+        WeakPtr oldClient = m_fontLoadRequestClient;
         m_fontLoadRequestClient = client;
 
         if (!client && oldClient)
-            m_font->removeClient(*this);
+            protectedCachedFont()->removeClient(*this);
         else if (client && !oldClient)
-            m_font->addClient(*this);
+            protectedCachedFont()->addClient(*this);
     }
 
     bool isCachedFontLoadRequest() const final { return true; }
@@ -82,16 +83,18 @@ private:
     void fontLoaded(CachedFont& font) final
     {
         ASSERT_UNUSED(font, &font == m_font.get());
-        if (m_font->didRefuseToLoadCustomFont() && m_context) {
-            auto message = makeString("[Lockdown Mode] This font has been blocked: ", m_font->url().string());
-            m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
+        if (protectedCachedFont()->didRefuseToLoadCustomFont()) {
+            if (RefPtr context = m_context.get()) {
+                auto message = makeString("[Lockdown Mode] This font has been blocked: ", m_font->url().string());
+                context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
+            }
         }
         if (m_fontLoadRequestClient)
             m_fontLoadRequestClient->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
     }
 
     CachedResourceHandle<CachedFont> m_font;
-    FontLoadRequestClient* m_fontLoadRequestClient { nullptr };
+    WeakPtr<FontLoadRequestClient> m_fontLoadRequestClient;
     WeakPtr<ScriptExecutionContext> m_context;
 };
 
