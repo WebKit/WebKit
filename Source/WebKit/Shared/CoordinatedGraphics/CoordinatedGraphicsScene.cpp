@@ -116,10 +116,8 @@ void updateBackingStore(TextureMapperLayer& layer,
         backingStore.createTile(tile.tileID, tile.scale);
     for (auto& tile : update.tilesToRemove)
         backingStore.removeTile(tile.tileID);
-    for (auto& tile : update.tilesToUpdate) {
-        backingStore.updateTile(tile.tileID, tile.updateInfo.updateRect,
-            tile.tileRect, tile.updateInfo.buffer.copyRef(), { 0, 0 });
-    }
+    for (auto& tile : update.tilesToUpdate)
+        backingStore.updateTile(tile.tileID, tile.updateRect, tile.tileRect, tile.buffer.copyRef(), { });
 }
 
 void updateImageBacking(TextureMapperLayer& layer,

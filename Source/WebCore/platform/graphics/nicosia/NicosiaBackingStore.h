@@ -29,7 +29,6 @@
 #pragma once
 
 #include "CoordinatedBackingStore.h"
-#include "SurfaceUpdateInfo.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include <wtf/Lock.h>
@@ -60,8 +59,9 @@ public:
 
         struct UpdateData {
             uint32_t tileID;
+            WebCore::IntRect updateRect;
             WebCore::IntRect tileRect;
-            WebCore::SurfaceUpdateInfo updateInfo;
+            Ref<Buffer> buffer;
         };
         Vector<UpdateData> tilesToUpdate;
 
@@ -110,7 +110,7 @@ public:
     // FIXME: Move these to private once updateTile() is not called from CoordinatedGrahpicsLayer.
     void tiledBackingStoreHasPendingTileCreation() override;
     void createTile(uint32_t, float) override;
-    void updateTile(uint32_t, const WebCore::SurfaceUpdateInfo&, const WebCore::IntRect&) override;
+    void updateTile(uint32_t, const WebCore::IntRect&, const WebCore::IntRect&, Ref<Buffer>&&) override;
     void removeTile(uint32_t) override;
 
 private:

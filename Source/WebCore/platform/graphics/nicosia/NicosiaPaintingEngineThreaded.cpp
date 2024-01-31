@@ -68,23 +68,21 @@ PaintingEngineThreaded::~PaintingEngineThreaded()
 {
 }
 
-bool PaintingEngineThreaded::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
+void PaintingEngineThreaded::paint(GraphicsLayer& layer, Buffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
-    buffer->beginPainting();
+    buffer.beginPainting();
 
     PaintingOperations paintingOperations;
     PaintingContext::record(paintingOperations,
         [&](GraphicsContext& context)
         {
-            paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer->supportsAlpha());
+            paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer.supportsAlpha());
         });
 
-    m_workerPool->postTask([paintingOperations = WTFMove(paintingOperations), buffer = WTFMove(buffer)] {
-        PaintingContext::replay(buffer, paintingOperations);
+    m_workerPool->postTask([paintingOperations = WTFMove(paintingOperations), buffer = Ref { buffer }] {
+        PaintingContext::replay(buffer.get(), paintingOperations);
         buffer->completePainting();
     });
-
-    return true;
 }
 
 } // namespace Nicosia

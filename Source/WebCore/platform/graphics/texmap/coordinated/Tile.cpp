@@ -28,7 +28,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "SurfaceUpdateInfo.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 

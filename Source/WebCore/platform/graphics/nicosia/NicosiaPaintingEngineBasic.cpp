@@ -41,11 +41,11 @@ using namespace WebCore;
 PaintingEngineBasic::PaintingEngineBasic() = default;
 PaintingEngineBasic::~PaintingEngineBasic() = default;
 
-bool PaintingEngineBasic::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
+void PaintingEngineBasic::paint(GraphicsLayer& layer, Buffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
-    buffer->beginPainting();
+    buffer.beginPainting();
 
-    bool supportsAlpha = buffer->supportsAlpha();
+    bool supportsAlpha = buffer.supportsAlpha();
     PaintingContext::paint(buffer,
         [&layer, sourceRect, mappedSourceRect, targetRect, contentsScale, supportsAlpha]
         (GraphicsContext& context)
@@ -68,9 +68,7 @@ bool PaintingEngineBasic::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, cons
             context.restore();
         });
 
-    buffer->completePainting();
-
-    return true;
+    buffer.completePainting();
 }
 
 } // namespace Nicosia

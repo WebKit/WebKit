@@ -1186,18 +1186,13 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
 
-            auto coordinatedBuffer = Nicosia::Buffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
-            SurfaceUpdateInfo updateInfo;
-            updateInfo.updateRect = dirtyRect;
-            updateInfo.updateRect.move(-tileRect.x(), -tileRect.y());
-            updateInfo.buffer = coordinatedBuffer.copyRef();
+            auto buffer = Nicosia::Buffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
+            m_coordinator->paintingEngine().paint(*this, buffer.get(), dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect),
+                IntRect { { 0, 0 }, dirtyRect.size() }, layerState.mainBackingStore->contentsScale());
 
-            if (!m_coordinator->paintingEngine().paint(*this, WTFMove(coordinatedBuffer),
-                dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect),
-                IntRect { { 0, 0 }, dirtyRect.size() }, layerState.mainBackingStore->contentsScale()))
-                continue;
-
-            m_nicosia.backingStore->updateTile(tile.tileID(), updateInfo, tileRect);
+            IntRect updateRect(dirtyRect);
+            updateRect.move(-tileRect.x(), -tileRect.y());
+            m_nicosia.backingStore->updateTile(tile.tileID(), updateRect, tileRect, WTFMove(buffer));
 
             tile.markClean();
             didUpdateTiles |= true;
