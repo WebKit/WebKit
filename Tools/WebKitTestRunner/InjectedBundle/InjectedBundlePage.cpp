@@ -768,14 +768,13 @@ void InjectedBundlePage::dump(bool forceRepaint)
     }
     WKBundlePageFlushPendingEditorStateUpdate(m_page);
 
-    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    auto urlRef = adoptWK(WKBundleFrameCopyURL(frame));
-    if (!urlRef)
-        return;
-    String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
-    auto mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(frame, urlRef.get()));
-    if (url.find("dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
-        injectedBundle.testRunner()->dumpAsText(false);
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(m_page);
+    if (auto urlRef = adoptWK(WKBundleFrameCopyURL(mainFrame))) {
+        String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
+        auto mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(mainFrame, urlRef.get()));
+        if (url.find("dumpAsText/"_s) != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
+            injectedBundle.testRunner()->dumpAsText(false);
+    }
 
     StringBuilder stringBuilder;
 
@@ -796,7 +795,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
     case WhatToDump::Audio:
         break;
     case WhatToDump::DOMAsWebArchive:
-        dumpDOMAsWebArchive(frame, stringBuilder);
+        dumpDOMAsWebArchive(mainFrame, stringBuilder);
         break;
     }
 

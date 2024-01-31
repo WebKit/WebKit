@@ -1,0 +1,5 @@
+
+--------
+Frame: '<!--frame2-->'
+--------
+I am a simple document that calls notifyDone when loaded.
