@@ -82,7 +82,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    GetWindowSceneIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneID)
+    GetWindowSceneAndBundleIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneIdentifier, String bundleIdentifier)
 #endif
 
     DataTaskReceivedChallenge(WebKit::DataTaskIdentifier identifier, WebCore::AuthenticationChallenge challenge) -> (enum:uint8_t WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential credential)
