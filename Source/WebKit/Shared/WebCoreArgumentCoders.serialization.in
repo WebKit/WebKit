@@ -6666,6 +6666,12 @@ struct WebCore::KeypressCommand {
 }
 #endif
 
+#if !USE(COORDINATED_GRAPHICS)
+class WebCore::FilterOperations {
+    Vector<RefPtr<WebCore::FilterOperation>> operations();
+}
+#endif // !USE(COORDINATED_GRAPHICS)
+
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::Filter subclasses {
     WebCore::CSSFilter
     WebCore::SVGFilter

@@ -206,13 +206,6 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
 };
 #endif
 
-#if !USE(COORDINATED_GRAPHICS)
-template<> struct ArgumentCoder<WebCore::FilterOperations> {
-    static void encode(Encoder&, const WebCore::FilterOperations&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FilterOperations&);
-};
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);

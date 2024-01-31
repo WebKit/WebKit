@@ -434,33 +434,6 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
     return true;
 }
 
-#if !USE(COORDINATED_GRAPHICS)
-void ArgumentCoder<FilterOperations>::encode(Encoder& encoder, const FilterOperations& filters)
-{
-    encoder << static_cast<uint64_t>(filters.size());
-
-    for (const auto& filter : filters.operations())
-        encoder << *filter;
-}
-
-bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations& filters)
-{
-    uint64_t filterCount;
-    if (!decoder.decode(filterCount))
-        return false;
-
-    for (uint64_t i = 0; i < filterCount; ++i) {
-        std::optional<Ref<FilterOperation>> filter;
-        decoder >> filter;
-        if (!filter)
-            return false;
-        filters.operations().append(WTFMove(*filter));
-    }
-
-    return true;
-}
-#endif // !USE(COORDINATED_GRAPHICS)
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {

@@ -37,7 +37,7 @@ class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FilterOperations() = default;
-    explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
+    WEBCORE_EXPORT explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
 
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
 
