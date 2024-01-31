@@ -215,7 +215,7 @@ public:
 
     bool isElementNode() const { return hasTypeFlag(TypeFlag::IsElement); }
     bool isContainerNode() const { return hasTypeFlag(TypeFlag::IsContainerNode); }
-    bool isCharacterData() const { return hasTypeFlag(TypeFlag::IsCharacterData); }
+    bool isCharacterDataNode() const { return hasTypeFlag(TypeFlag::IsCharacterData); }
     bool isTextNode() const { return hasTypeFlag(TypeFlag::IsText); }
     bool isHTMLElement() const { return hasTypeFlag(TypeFlag::IsHTMLElement); }
     bool isSVGElement() const { return hasTypeFlag(TypeFlag::IsSVGElement); }
@@ -238,7 +238,6 @@ public:
 #endif
     bool isStyledElement() const { return hasTypeFlag(TypeFlag::IsHTMLElement) || hasTypeFlag(TypeFlag::IsSVGElement) || hasTypeFlag(TypeFlag::IsMathMLElement); }
     virtual bool isAttributeNode() const { return false; }
-    bool isCharacterDataNode() const { return hasTypeFlag(TypeFlag::IsCharacterData); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
 

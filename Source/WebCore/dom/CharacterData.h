@@ -50,7 +50,7 @@ protected:
         : Node(document, type, typeFlags | TypeFlag::IsCharacterData)
         , m_data(!text.isNull() ? WTFMove(text) : emptyString())
     {
-        ASSERT(isCharacterData());
+        ASSERT(isCharacterDataNode());
         ASSERT(!isContainerNode());
     }
 
