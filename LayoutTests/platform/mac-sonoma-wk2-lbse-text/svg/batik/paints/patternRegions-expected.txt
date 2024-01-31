@@ -14,6 +14,54 @@ layer at (168.08,60.52) size 114x17
       chunk 1 (middle anchor) text run 1 at (168.08,75.00) startOffset 0 endOffset 15 width 113.84: "pattern viewBox"
 layer at (0,-11.50) size 156x42 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (0,-11.50) size 155.33x41.50
+layer at (0,0) size 25x25
+  RenderSVGHiddenContainer {pattern} at (0,0) size 25x25
+layer at (0,0) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
+layer at (10,10) size 15x15
+  RenderSVGRect {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=15.00] [height=15.00]
+layer at (0,0) size 25x25
+  RenderSVGHiddenContainer {pattern} at (0,0) size 25x25
+layer at (0,0) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
+layer at (10,10) size 15x15
+  RenderSVGRect {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=15.00] [height=15.00]
+layer at (0,0) size 25x25
+  RenderSVGHiddenContainer {pattern} at (0,0) size 25x25
+layer at (0,0) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
+layer at (10,10) size 15x15
+  RenderSVGRect {rect} at (10,10) size 15x15 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=15.00] [height=15.00]
+layer at (0,0.08) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0,0.08) size 0.63x0.77
+layer at (0,0.08) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.52x0.52 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.25] [cy=0.33] [r=0.25]
+layer at (0.25,0.33) size 1x1
+  RenderSVGRect {rect} at (0.25,0.25) size 0.38x0.52 [fill={[type=SOLID] [color=#008000]}] [x=0.25] [y=0.33] [width=0.38] [height=0.50]
+layer at (0,0.08) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0,0.08) size 0.63x0.77
+layer at (0,0.08) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.50x0.52 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.25] [cy=0.33] [r=0.25]
+layer at (0.25,0.33) size 1x1
+  RenderSVGRect {rect} at (0.25,0.25) size 0.38x0.52 [fill={[type=SOLID] [color=#008000]}] [x=0.25] [y=0.33] [width=0.38] [height=0.50]
+layer at (0,0.08) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0,0.08) size 0.63x0.77
+layer at (0,0.08) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.50x0.52 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.25] [cy=0.33] [r=0.25]
+layer at (0.25,0.33) size 1x1
+  RenderSVGRect {rect} at (0.25,0.25) size 0.38x0.52 [fill={[type=SOLID] [color=#008000]}] [x=0.25] [y=0.33] [width=0.38] [height=0.50]
+layer at (0,0) size 40x40
+  RenderSVGHiddenContainer {pattern} at (0,0) size 40x40
+layer at (0,0) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=20.00] [cy=20.00] [r=20.00]
+layer at (0,0) size 40x40
+  RenderSVGHiddenContainer {pattern} at (0,0) size 40x40
+layer at (0,0) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=20.00] [cy=20.00] [r=20.00]
+layer at (-20,-20) size 80x80 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGHiddenContainer {pattern} at (-20,-20) size 80x80
+layer at (-20,-20) size 80x80 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=20.00] [cy=20.00] [r=40.00]
 layer at (0,-11.50) size 156x42 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (0,0) size 155.33x41.50
 layer at (0,-11.50) size 85x42 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
