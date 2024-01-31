@@ -474,6 +474,19 @@ bool Connection::platformPrepareForOpen()
 }
 #endif
 
+Error Connection::flushSentMessages(Timeout timeout)
+{
+    Locker locker { m_outgoingMessagesLock };
+    do {
+        if (!isValid())
+            return Error::InvalidConnection;
+        if (m_outgoingMessages.isEmpty())
+            return Error::NoError;
+        m_outgoingMessagesEmptyCondition.waitUntil(m_outgoingMessagesLock, timeout.deadline());
+    } while (!timeout.didTimeOut());
+    return Error::Timeout;
+}
+
 void Connection::invalidate()
 {
     m_isValid = false;
@@ -1033,6 +1046,7 @@ void Connection::connectionDidClose()
     {
         Locker locker { m_outgoingMessagesLock };
         m_outgoingMessages.clear();
+        m_outgoingMessagesEmptyCondition.notifyAll();
     }
 
     if (m_didCloseOnConnectionWorkQueueCallback)
@@ -1056,8 +1070,10 @@ void Connection::sendOutgoingMessages()
 
         {
             Locker locker { m_outgoingMessagesLock };
-            if (m_outgoingMessages.isEmpty())
+            if (m_outgoingMessages.isEmpty()) {
+                m_outgoingMessagesEmptyCondition.notifyAll();
                 break;
+            }
             message = m_outgoingMessages.takeFirst().moveToUniquePtr();
         }
         ASSERT(message);
@@ -1231,7 +1247,7 @@ void Connection::dispatchMessage(Decoder& decoder)
 
 void Connection::dispatchMessage(UniqueRef<Decoder> message)
 {
-    if (!isValid())
+    if (!m_syncState)
         return;
     assertIsCurrent(dispatcher());
     {

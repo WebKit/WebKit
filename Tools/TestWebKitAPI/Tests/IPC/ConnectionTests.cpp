@@ -495,7 +495,8 @@ TEST_P(ConnectionRunLoopTest, RunLoopSend)
             EXPECT_EQ(message.messageName, MockTestMessage1::name());
             EXPECT_EQ(message.destinationID, i);
         }
-        semaphore.wait(); // FIXME: We cannot yet invalidate() and expect all messages get delivered.
+        auto flushResult = b()->flushSentMessages(kDefaultWaitForTimeout);
+        EXPECT_EQ(flushResult, IPC::Error::NoError);
         b()->invalidate();
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
@@ -576,6 +577,76 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 
     for (uint64_t i = 100u; i < 160u; ++i)
         EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+// Tests that all sent messages are received, even if sender invalidates
+// without synchronizing with the receiver.
+TEST_P(ConnectionRunLoopTest, SendAndInvalidate)
+{
+    constexpr uint64_t messageCount = 1777;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 1u; i < messageCount; ++i) {
+            auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+            EXPECT_EQ(message.messageName, MockTestMessage1::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+        semaphore.signal();
+    });
+    for (uint64_t i = 1u; i < messageCount; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    auto flushResult = a()->flushSentMessages(kDefaultWaitForTimeout);
+    EXPECT_EQ(flushResult, IPC::Error::NoError);
+    a()->invalidate();
+    semaphore.wait();
+    localReferenceBarrier();
+}
+
+// Tests that all sent messages with async replies are received, even if sender invalidates
+// without synchronizing with the receiver. The async reply callbacks are always run, either
+// with the reply or the cancel value.
+TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
+{
+    constexpr uint64_t messageCount = 1536u;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    HashSet<uint64_t> messages;
+    HashSet<uint64_t> replies;
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+            auto listenerID = decoder.decode<uint64_t>();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            encoder.get() << decoder.destinationID();
+            b()->sendSyncReply(WTFMove(encoder));
+            messages.add(decoder.destinationID());
+            return true;
+        });
+        ASSERT_TRUE(openB());
+        while (messages.size() < messageCount - 1)
+            RunLoop::current().cycle();
+        semaphore.signal();
+    });
+    for (uint64_t i = 1u; i < messageCount; ++i) {
+        a()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t) {
+            // The reply value might be the reply value (destinationID) or zero in case the
+            // reply was resolved as invalid. Either of these are expected valid results.
+            // Use the `j` to prove that reply callback was run as expected.
+            replies.add(j);
+        }, i);
+    }
+    auto flushResult = a()->flushSentMessages(kDefaultWaitForTimeout);
+    EXPECT_EQ(flushResult, IPC::Error::NoError);
+    a()->invalidate();
+    semaphore.wait();
+    for (uint64_t i = 1u; i < messageCount; ++i) {
+        EXPECT_TRUE(replies.contains(i)) << i;
+        EXPECT_TRUE(messages.contains(i)) << i;
+    }
     localReferenceBarrier();
 }
 

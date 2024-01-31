@@ -354,6 +354,8 @@ public:
     void removeMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     bool open(Client&, SerialFunctionDispatcher& = RunLoop::current());
+    // Ensures that messages sent prior to the call are not affected by invalidate() or crash done after the call returns.
+    Error flushSentMessages(Timeout);
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
 
@@ -561,6 +563,7 @@ private:
     // Outgoing messages.
     Lock m_outgoingMessagesLock;
     Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+    Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
