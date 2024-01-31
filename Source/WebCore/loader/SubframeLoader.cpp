@@ -313,7 +313,17 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     ReferrerPolicy policy = ownerElement.referrerPolicy();
     if (policy == ReferrerPolicy::EmptyString)
         policy = document->referrerPolicy();
-    String referrerToUse = SecurityPolicy::generateReferrerHeader(policy, url, referrer, OriginAccessPatternsForWebProcess::singleton());
+    // For any new (about:blank) browsing context, step 16 of
+    // https://html.spec.whatwg.org/#creating-a-new-browsing-context requires
+    // setting the referrer to "the serialization of creator's URL" — that is,
+    // the full URL, without regard to Referrer Policy.
+    // And rather than doing this in SecurityPolicy::generateReferrerHeader,
+    // we do it here because per-spec, this should only happen when creating
+    // a new browsing context — and per step 13 of the spec algorithm at
+    // https://html.spec.whatwg.org/#initialise-the-document-object, should
+    // not happen when creating and initializing a new Document object (in
+    // which case, Referrer Policy is applied).
+    auto referrerToUse = url.isAboutBlank() ? referrer : SecurityPolicy::generateReferrerHeader(policy, url, referrer, OriginAccessPatternsForWebProcess::singleton());
 
     frame->checkedLoader()->loadURLIntoChildFrame(url, referrerToUse, subFrame.get());
 
