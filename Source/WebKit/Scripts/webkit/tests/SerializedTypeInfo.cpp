@@ -40,6 +40,7 @@
 #include "LayerProperties.h"
 #include "PlatformClass.h"
 #include "RValueWithFunctionCalls.h"
+#include "RemoteVideoFrameIdentifier.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -438,6 +439,26 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "SandboxExtensionHandle"_s,
                 "callFunction()"_s
+            },
+        } },
+        { "WebKit::RemoteVideoFrameReference"_s, {
+            {
+                "WebKit::RemoteVideoFrameIdentifier"_s,
+                "identifier()"_s
+            },
+            {
+                "uint64_t"_s,
+                "version()"_s
+            },
+        } },
+        { "WebKit::RemoteVideoFrameWriteReference"_s, {
+            {
+                "IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier>"_s,
+                "reference()"_s
+            },
+            {
+                "uint64_t"_s,
+                "pendingReads()"_s
             },
         } },
         { "WebCore::SharedStringHash"_s, {

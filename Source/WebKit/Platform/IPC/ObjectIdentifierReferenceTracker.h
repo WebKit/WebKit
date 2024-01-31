@@ -60,21 +60,6 @@ public:
     {
         return m_identifier.isHashTableDeletedValue();
     }
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << m_identifier;
-        encoder << m_version;
-    }
-    template<typename Decoder> static std::optional<ObjectIdentifierReference> decode(Decoder& decoder)
-    {
-        std::optional<T> identifier;
-        std::optional<uint64_t> version;
-        decoder >> identifier
-            >> version;
-        if (!decoder.isValid())
-            return std::nullopt;
-        return ObjectIdentifierReference { WTFMove(*identifier), *version };
-    }
 private:
     T m_identifier;
     uint64_t m_version { 0 };
@@ -124,23 +109,6 @@ public:
     uint64_t pendingReads() const { return m_pendingReads; }
     Reference reference() const { return m_reference; }
     ObjectIdentifierReference<T> retiredReference() const { return { identifier(), version() + 1 }; }
-
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << m_reference;
-        encoder << m_pendingReads;
-    }
-    template<typename Decoder> static std::optional<ObjectIdentifierWriteReference> decode(Decoder& decoder)
-    {
-        std::optional<Reference> reference;
-        std::optional<uint64_t> pendingReads;
-
-        decoder >> reference
-            >> pendingReads;
-        if (!decoder.isValid())
-            return std::nullopt;
-        return ObjectIdentifierWriteReference { WTFMove(*reference), *pendingReads };
-    }
 
 private:
     Reference m_reference;

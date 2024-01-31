@@ -71,8 +71,6 @@ class CreateUsingClass;
 namespace WebCore {
 class InheritsFrom;
 class InheritanceGrandchild;
-template<typename, typename> class ScrollSnapOffsetsInfo;
-using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
 class TimingFunction;
 class MoveOnlyBaseClass;
 class MoveOnlyDerivedClass;
@@ -109,6 +107,19 @@ struct RequestEncodedWithBodyRValue;
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
 #endif
+namespace IPC { template<typename> class ObjectIdentifierReference; };
+namespace IPC { template<typename> class ObjectIdentifierWriteReference; };
+namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; };
+namespace WebCore {
+template<typename, typename> class ScrollSnapOffsetsInfo;
+using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
+}
+namespace WebKit {
+using RemoteVideoFrameReference = IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>;
+}
+namespace WebKit {
+using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
+}
 
 namespace IPC {
 
@@ -318,6 +329,18 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
 template<> struct ArgumentCoder<WebKit::RValueWithFunctionCalls> {
     static void encode(Encoder&, WebKit::RValueWithFunctionCalls&&);
     static std::optional<WebKit::RValueWithFunctionCalls> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::RemoteVideoFrameReference> {
+    static void encode(Encoder&, const WebKit::RemoteVideoFrameReference&);
+    static void encode(StreamConnectionEncoder&, const WebKit::RemoteVideoFrameReference&);
+    static std::optional<WebKit::RemoteVideoFrameReference> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::RemoteVideoFrameWriteReference> {
+    static void encode(Encoder&, const WebKit::RemoteVideoFrameWriteReference&);
+    static void encode(StreamConnectionEncoder&, const WebKit::RemoteVideoFrameWriteReference&);
+    static std::optional<WebKit::RemoteVideoFrameWriteReference> decode(Decoder&);
 };
 
 } // namespace IPC

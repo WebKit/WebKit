@@ -274,3 +274,20 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
 [RValue] class WebKit::RValueWithFunctionCalls {
     SandboxExtensionHandle callFunction()
 }
+
+
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierReference; }
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
+additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameReference {
+    WebKit::RemoteVideoFrameIdentifier identifier();
+    uint64_t version();
+};
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameWriteReference {
+    IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier> reference();
+    uint64_t pendingReads();
+};
