@@ -284,17 +284,21 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     return { };
 }
 
-InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
+InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveFloat, InlineItemPosition layoutRangeEnd)
 {
-    if (!previousLineTrailingInlineItemPosition)
+    if (!previousLineContentEnd)
         return lineContentEnd;
-    if (previousLineTrailingInlineItemPosition->index < lineContentEnd.index || (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && previousLineTrailingInlineItemPosition->offset < lineContentEnd.offset)) {
+    if (previousLineContentEnd->index < lineContentEnd.index || (previousLineContentEnd->index == lineContentEnd.index && previousLineContentEnd->offset < lineContentEnd.offset)) {
         // Either full or partial advancing.
         return lineContentEnd;
     }
-    if (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && !previousLineTrailingInlineItemPosition->offset && !lineContentEnd.offset) {
-        // Can't mangage to put any content on line (most likely due to floats). Note that this only applies to full content.
+    if (lineContentEnd == *previousLineContentEnd && lineHasIntrusiveFloat) {
+        // Couldn't manage to put any content on line due to floats.
         return lineContentEnd;
+    }
+    if (lineContentEnd == layoutRangeEnd) {
+        // End of content.
+        return layoutRangeEnd;
     }
     // This looks like a partial content and we are stuck. Let's force-move over to the next inline item.
     // We certainly lose some content, but we would be busy looping otherwise.
