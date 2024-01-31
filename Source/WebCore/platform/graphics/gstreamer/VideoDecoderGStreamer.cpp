@@ -216,7 +216,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto& stream, const GRefPtr<GstSample>& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
         if (!weakThis)
             return;
 
@@ -231,7 +231,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         if (m_presentationSize.isEmpty())
             m_presentationSize = getVideoResolutionFromCaps(stream.outputCaps().get()).value_or(FloatSize { 0, 0 });
 
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, outputSample]() mutable {
+        m_postTaskCallback([weakThis = WeakPtr { *this }, this, outputSample = WTFMove(outputSample)]() mutable {
             if (!weakThis)
                 return;
 
@@ -245,7 +245,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
                 timestamp = m_timestamp;
 
             GST_TRACE_OBJECT(m_harness->element(), "Handling decoded frame with PTS: %" GST_TIME_FORMAT " and duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp), GST_TIME_ARGS(duration));
-            auto videoFrame = VideoFrameGStreamer::create(GRefPtr(outputSample), m_presentationSize, fromGstClockTime(timestamp));
+            auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), m_presentationSize, fromGstClockTime(timestamp));
             m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
         });
     });

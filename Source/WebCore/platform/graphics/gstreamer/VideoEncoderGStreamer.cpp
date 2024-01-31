@@ -217,7 +217,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
         delete static_cast<ThreadSafeWeakPtr<GStreamerInternalVideoEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, const GRefPtr<GstSample>& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         if (!weakThis.get())
             return;
         if (m_isClosed)
@@ -232,10 +232,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
         bool isKeyFrame = !GST_BUFFER_FLAG_IS_SET(outputBuffer, GST_BUFFER_FLAG_DELTA_UNIT);
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer encodedImage(outputBuffer, GST_MAP_READ);
-        VideoEncoder::EncodedFrame encodedFrame {
-            Vector<uint8_t> { std::span<const uint8_t> { encodedImage.data(), encodedImage.size() } },
-            isKeyFrame, m_timestamp, m_duration, { }
-        };
+        VideoEncoder::EncodedFrame encodedFrame { encodedImage.createVector(), isKeyFrame, m_timestamp, m_duration, { } };
 
         m_postTaskCallback([protectedThis = Ref { *this }, encodedFrame = WTFMove(encodedFrame)]() mutable {
             if (protectedThis->m_isClosed)

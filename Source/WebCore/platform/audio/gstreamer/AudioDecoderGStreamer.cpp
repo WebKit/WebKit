@@ -256,7 +256,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, const GRefPtr<GstSample>& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         if (!weakThis)
             return;
         if (m_isClosed)
@@ -276,7 +276,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
 
         GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer)));
 
-        auto data = PlatformRawAudioDataGStreamer::create(GRefPtr(outputSample));
+        auto data = PlatformRawAudioDataGStreamer::create(WTFMove(outputSample));
         m_postTaskCallback([weakThis = WeakPtr { *this }, this, data = WTFMove(data)]() mutable {
             if (!weakThis)
                 return;

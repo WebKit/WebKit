@@ -78,7 +78,7 @@ public:
     };
 
     using PadLinkCallback = Function<RefPtr<GStreamerElementHarness>(const GRefPtr<GstPad>&)>;
-    using ProcessSampleCallback = Function<void(Stream&, const GRefPtr<GstSample>&)>;
+    using ProcessSampleCallback = Function<void(Stream&, GRefPtr<GstSample>&&)>;
     static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessSampleCallback&& processOutputSampleCallback, std::optional<PadLinkCallback> padLinkCallback = std::nullopt)
     {
         return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputSampleCallback), WTFMove(padLinkCallback)));

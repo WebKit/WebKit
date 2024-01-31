@@ -247,7 +247,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         delete static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, const GRefPtr<GstSample>& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         if (!weakThis.get())
             return;
         if (m_isClosed)

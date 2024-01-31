@@ -412,7 +412,7 @@ void GStreamerElementHarness::processOutputSamples()
 {
     for (auto& stream : m_outputStreams) {
         while (auto outputSample = stream->pullSample())
-            m_processOutputSampleCallback(*stream.get(), outputSample);
+            m_processOutputSampleCallback(*stream.get(), WTFMove(outputSample));
     }
 }
 

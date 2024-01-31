@@ -96,7 +96,7 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 
     static Atomic<uint32_t> decoderId;
     GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-", decoderId.exchangeAdd(1)).utf8().data());
-    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, const auto&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
+    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
         auto caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
         auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });
         GST_DEBUG_OBJECT(pad.get(), "Caps on parser source pad: %" GST_PTR_FORMAT, caps.get());
@@ -119,8 +119,8 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 
         GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
         configureVideoDecoderForHarnessing(element);
-        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto&, const auto& outputSample) {
-            storeDecodedSample(GRefPtr(outputSample));
+        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto&, auto&& outputSample) {
+            storeDecodedSample(WTFMove(outputSample));
         }, { });
         return m_decoderHarness;
     });
