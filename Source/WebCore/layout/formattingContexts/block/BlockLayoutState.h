@@ -33,10 +33,11 @@ namespace Layout {
 
 class BlockFormattingContext;
 
-// This class holds block level information shared across child inline formatting contexts. 
+// This class holds block level information shared across child inline formatting contexts.
 class BlockLayoutState {
 public:
     struct LineClamp {
+        size_t allowedLineCount() const { return std::max(maximumLineCount - currentLineCount, 0lu); }
         size_t maximumLineCount { 0 };
         size_t currentLineCount { 0 };
     };
