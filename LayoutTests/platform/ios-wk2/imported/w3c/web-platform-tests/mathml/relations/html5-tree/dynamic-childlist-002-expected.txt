@@ -17,13 +17,13 @@ PASS Appending and removing children to mspace
 FAIL Appending and removing children to msqrt assert_approx_equals: inline size expected 12.703125 +/- 1 but got 16.640625
 PASS Appending and removing children to mstyle
 FAIL Appending and removing children to msub assert_approx_equals: block position (child 0) expected 0 +/- 1 but got -5.875
-FAIL Appending and removing children to msubsup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 2.390625
+FAIL Appending and removing children to msubsup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 2.375
 FAIL Appending and removing children to msup assert_approx_equals: inline size expected 10.625 +/- 1 but got 0
 PASS Appending and removing children to mtable
 PASS Appending and removing children to mtext
-FAIL Appending and removing children to munder assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 2.75
+FAIL Appending and removing children to munder assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 3
 FAIL Appending and removing children to munderover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 7
-FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -18651040 +/- 1 but got -18651060
+FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -33359776 +/- 1 but got -33359796
 maction:
 mfrac:
 mmultiscripts:
