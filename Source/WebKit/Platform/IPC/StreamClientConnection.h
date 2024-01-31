@@ -72,6 +72,7 @@ public:
     void setMaxBatchSize(unsigned);
 
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
+    Error flushSentMessages(Timeout);
     void invalidate();
 
     template<typename T, typename U, typename V> Error send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);

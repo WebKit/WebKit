@@ -112,6 +112,12 @@ void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDi
     m_connection->open(*m_dedicatedConnectionClient, dispatcher);
 }
 
+Error StreamClientConnection::flushSentMessages(Timeout timeout)
+{
+    wakeUpServer(WakeUpServer::Yes);
+    return m_connection->flushSentMessages(WTFMove(timeout));
+}
+
 void StreamClientConnection::invalidate()
 {
     m_connection->invalidate();
