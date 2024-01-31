@@ -1,3 +1,10 @@
+param(
+    # not on by default because CI does not need it (for some reason)
+    # and i really really really really do not want to break anything
+    #
+    # you almost certainly need this to build locally
+    [switch][bool]$ExtraEffortPathManagement = $false
+)
 $ErrorActionPreference = "Stop"
 
 # Set up MSVC environment variables. This is taken from Bun's 'scripts\env.ps1'
@@ -29,6 +36,16 @@ $MSVCPaths = $SplitPath | Where-Object { $_ -like "Microsoft Visual Studio" }
 $SplitPath = $MSVCPaths + ($SplitPath | Where-Object { $_ -notlike "Microsoft Visual Studio" } | Where-Object { $_ -notlike "*mingw*" })
 $PathWithPerl = $SplitPath -join ";"
 $env:PATH = ($SplitPath | Where-Object { $_ -notlike "*strawberry*" }) -join ';'
+
+if($ExtraEffortPathManagement) {
+    $SedPath = $(& cygwin.exe -c 'where sed')
+    $SedDir = Split-Path $SedPath
+    $LinkPath = $(gcm link).Path
+    $LinkDir = Split-Path $LinkPath
+
+    # override coreutils link with the msvc one
+    $env:PATH = "$LinkDir;$SedDir;$PathWithPerl"
+}
 
 Write-Host $env:PATH
 
@@ -148,7 +165,7 @@ cmake -S . -B $WebKitBuild `
     -DUSE_THIN_ARCHIVES=OFF `
     -DENABLE_DFG_JIT=ON `
     -DENABLE_FTL_JIT=OFF `
-    -DENABLE_WEBASSEMBLY=OFF `
+    -DENABLE_WEBASSEMBLY=ON `
     -DUSE_BUN_JSC_ADDITIONS=ON `
     -DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON `
     -DUSE_SYSTEM_MALLOC=ON `
