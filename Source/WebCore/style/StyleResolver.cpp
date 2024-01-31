@@ -484,9 +484,9 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
     if (collector.matchResult().isEmpty())
         return { };
 
-    state.style()->setPseudoElementType(pseudoElementRequest.pseudoId);
-    if (!pseudoElementRequest.pseudoElementNameArgument.isNull())
-        state.style()->setPseudoElementNameArgument(pseudoElementRequest.pseudoElementNameArgument);
+    state.style()->setPseudoElementType(pseudoElementRequest.pseudoId());
+    if (!pseudoElementRequest.pseudoElementNameArgument().isNull())
+        state.style()->setPseudoElementNameArgument(pseudoElementRequest.pseudoElementNameArgument());
 
     applyMatchedProperties(state, collector.matchResult());
 
