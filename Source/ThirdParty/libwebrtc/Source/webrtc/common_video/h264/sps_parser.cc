@@ -164,9 +164,17 @@ absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
   // to signify resolutions that aren't multiples of 16.
   //
   // pic_width_in_mbs_minus1: ue(v)
+#if WEBRTC_WEBKIT_BUILD
+  sps.pic_width_in_mbs_minus1 = reader.ReadExponentialGolomb();
+  sps.width = 16 * (sps.pic_width_in_mbs_minus1 + 1);
+#else
   sps.width = 16 * (reader.ReadExponentialGolomb() + 1);
+#endif
   // pic_height_in_map_units_minus1: ue(v)
   uint32_t pic_height_in_map_units_minus1 = reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+  sps.pic_height_in_map_units_minus1 = pic_height_in_map_units_minus1;
+#endif
   // frame_mbs_only_flag: u(1)
   sps.frame_mbs_only_flag = reader.ReadBit();
   if (!sps.frame_mbs_only_flag) {

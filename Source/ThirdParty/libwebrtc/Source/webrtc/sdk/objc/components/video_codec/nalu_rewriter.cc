@@ -678,7 +678,9 @@ static uint8_t ComputeH264ReorderSizeFromSPS(const SpsAndVuiParser::State& state
   }
 
   uint64_t max_dpb_mbs = maxDpbMbsFromLevelNumber(state.profile_idc, state.level_idc, state.constraint_set3_flag);
-  uint64_t max_dpb_frames_from_sps = max_dpb_mbs / ((state.width / 16) * (state.height / 16));
+  uint64_t pic_width_in_mbs = state.pic_width_in_mbs_minus1 + 1;
+  uint64_t frame_height_in_mbs = (2 - state.frame_mbs_only_flag) * (state.pic_height_in_map_units_minus1 + 1);
+  uint64_t max_dpb_frames_from_sps = max_dpb_mbs / (pic_width_in_mbs * frame_height_in_mbs);
   // We use a max value of 16.
   auto max_dpb_frames = static_cast<uint8_t>(std::min(max_dpb_frames_from_sps, 16ull));
 
