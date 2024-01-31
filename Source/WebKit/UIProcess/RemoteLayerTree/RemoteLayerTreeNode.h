@@ -104,7 +104,10 @@ public:
 
 #if ENABLE(SCROLLING_THREAD)
     WebCore::ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) {
+        ALWAYS_LOG_WITH_STREAM(stream << "setScrollingNodeID: nodeID: " << nodeID << " layerID: " << m_layerID);
+        m_scrollingNodeID = nodeID;
+    }
 #endif
 
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostingIdentifier() const { return m_remoteContextHostingIdentifier; }

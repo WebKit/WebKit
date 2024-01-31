@@ -95,7 +95,7 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
 
     ASSERT(stateTree);
     connectStateNodeLayers(*stateTree, *layerTreeHost);
-    bool succeeded = m_scrollingTree->commitTreeState(WTFMove(stateTree));
+    bool succeeded = m_scrollingTree->commitTreeState(WTFMove(stateTree), transaction.remoteContextHostedIdentifier(), transaction.frameIdentifier());
     MESSAGE_CHECK_WITH_RETURN_VALUE(succeeded, std::nullopt);
 
     establishLayerTreeScrollingRelations(*layerTreeHost);
@@ -164,7 +164,7 @@ void RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommi
 
 void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)
 {
-    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical));
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical), nodeID.processIdentifier());
 }
 
 // This comes from the scrolling tree.
@@ -211,21 +211,15 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
-        LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
-        m_webPageProxy.sendWithAsyncReply(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync), [weakThis = WeakPtr { *this }, isLastUpdate] {
-            if (!weakThis)
-                return;
-
-            if (isLastUpdate)
-                weakThis->receivedLastScrollingTreeNodeDidScrollReply();
-        });
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
+        m_webPageProxy.sendScrollPositionChangedForNode(scrollingTree()->pageIDForScrollingNodeID(update.nodeID), update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync, isLastUpdate );
         m_waitingForDidScrollReply = true;
     }
 }
 
 void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply()
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply - has pending updates " << (m_scrollingTree && m_scrollingTree->hasPendingScrollUpdates()));
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply - has pending updates " << (m_scrollingTree && m_scrollingTree->hasPendingScrollUpdates()));
     m_waitingForDidScrollReply = false;
 
     if (!m_scrollingTree || !m_scrollingTree->hasPendingScrollUpdates())
@@ -240,7 +234,7 @@ void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollRepl
 
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidStopAnimatedScroll(ScrollingNodeID scrolledNodeID)
 {
-    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::AnimatedScrollDidEndForNode(scrolledNodeID));
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::AnimatedScrollDidEndForNode(scrolledNodeID), scrollingTree()->pageIDForScrollingNodeID(scrolledNodeID));
 }
 
 bool RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const RequestedScrollData& request)

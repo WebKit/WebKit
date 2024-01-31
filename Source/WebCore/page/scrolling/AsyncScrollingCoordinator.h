@@ -75,6 +75,8 @@ public:
     
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
+    WEBCORE_EXPORT void setLayerHostingContextIdentifier(ScrollableArea&, Markable<LayerHostingContextIdentifier>) override;
+
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);

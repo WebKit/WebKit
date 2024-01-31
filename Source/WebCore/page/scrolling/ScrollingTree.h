@@ -42,7 +42,8 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
-
+#include "LayerHostingContextIdentifier.h"
+#include "FrameIdentifier.h"
 namespace WebCore {
 
 class IntPoint;
@@ -102,7 +103,7 @@ public:
     WEBCORE_EXPORT bool hasNodeWithActiveScrollAnimations();
 
     virtual void invalidate() { }
-    WEBCORE_EXPORT bool commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
+    WEBCORE_EXPORT bool commitTreeState(std::unique_ptr<ScrollingStateTree>&&, Markable<LayerHostingContextIdentifier> = std::nullopt, FrameIdentifier pageID = { });
     
     WEBCORE_EXPORT virtual void applyLayerPositions();
     WEBCORE_EXPORT void applyLayerPositionsAfterCommit();
@@ -249,6 +250,13 @@ public:
     WEBCORE_EXPORT Seconds maxAllowableRenderingUpdateDurationForSynchronization();
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID, ScrollbarOrientation, bool) { };
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) { };
+    void addScrollingNodeToHostedSubtreeMap(WebCore::LayerHostingContextIdentifier, RefPtr<ScrollingTreeNode>);
+    FrameIdentifier pageIDForScrollingNodeID(ScrollingNodeID nodeID) {
+        for(auto pairs : m_webPageCallbackIDs) {
+            ALWAYS_LOG_WITH_STREAM(stream << " pageIDForScrollingNodeID: pid: " << pairs.key << " pageID: " << pairs.value );
+        }
+        return m_webPageCallbackIDs.get(nodeID.processIdentifier());
+    }
 
 protected:
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
@@ -273,7 +281,7 @@ protected:
     mutable Lock m_treeLock; // Protects the scrolling tree.
 
 private:
-    bool updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&) WTF_REQUIRES_LOCK(m_treeLock);
+    bool updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&, std::optional<ScrollingNodeID> = std::nullopt) WTF_REQUIRES_LOCK(m_treeLock);
     virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) WTF_REQUIRES_LOCK(m_treeLock) { }
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&) WTF_REQUIRES_LOCK(m_treeLock);
@@ -292,6 +300,8 @@ private:
     OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
+    
+    HashMap<ProcessIdentifier, FrameIdentifier> m_webPageCallbackIDs;
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
@@ -303,6 +313,9 @@ private:
 
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>> m_activeOverflowScrollProxyNodes;
     HashSet<Ref<ScrollingTreePositionedNode>> m_activePositionedNodes;
+
+    HashMap<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>> m_hostedSubtreesNeedingPairing;
+    HashMap<LayerHostingContextIdentifier, RefPtr<ScrollingTreeNode>> m_hostedSubtrees;
 
     struct TreeState {
         EventTrackingRegions eventTrackingRegions;

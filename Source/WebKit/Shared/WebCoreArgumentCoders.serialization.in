@@ -3767,6 +3767,7 @@ header: <WebCore/ScrollingStateNode.h>
     MouseActivityState
     ScrollbarHoverState
     ScrollbarEnabledState
+    LayerHostingContextIdentifier
     FrameScaleFactor
     EventTrackingRegion
     RootContentsLayer

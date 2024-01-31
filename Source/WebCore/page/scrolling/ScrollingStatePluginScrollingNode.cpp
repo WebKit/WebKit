@@ -60,6 +60,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    Markable<LayerHostingContextIdentifier> identifier,
     RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::PluginScrolling,
@@ -89,6 +90,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     WTFMove(mouseLocationState),
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
+    WTFMove(identifier),
     WTFMove(scrollData)
 )
 {

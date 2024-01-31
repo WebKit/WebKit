@@ -75,6 +75,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        Markable<LayerHostingContextIdentifier> identifier,
         RequestedKeyboardScrollData&&
     );
 

@@ -236,7 +236,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     ProcessState& state = processStateForConnection(connection);
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
-    LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
+//    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree remote id:" << layerTreeTransaction.remoteContextHostedIdentifier() << " scrollibng tree: "<< scrollingTreeTransaction.description());
+//    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree hostIdentifier: " << layerTreeTransaction.remoteContextHostedIdentifier() << " isMainFrameProcessTransaction: " << layerTreeTransaction.isMainFrameProcessTransaction() <<"scrolling tree hostIdentifier: " << scrollingTreeTransaction.remoteContextHostedIdentifier());
 
     state.lastLayerTreeTransactionID = layerTreeTransaction.transactionID();
     if (state.pendingLayerTreeTransactionID < state.lastLayerTreeTransactionID)
@@ -277,9 +278,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         }
 
 #if ENABLE(ASYNC_SCROLLING)
-        // FIXME: Making scrolling trees work with site isolation.
-        if (layerTreeTransaction.isMainFrameProcessTransaction())
-            requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction);
+        requestedScroll = webPageProxy->scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction);
 #endif
     };
 

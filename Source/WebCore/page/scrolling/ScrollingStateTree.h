@@ -125,9 +125,7 @@ private:
 
 } // namespace WebCore
 
-#ifndef NDEBUG
 void showScrollingStateTree(const WebCore::ScrollingStateTree&);
-void showScrollingStateTree(const WebCore::ScrollingStateNode&);
-#endif
+//void showScrollingStateTree(const WebCore::ScrollingStateNode&);
 
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -125,7 +125,7 @@ bool isTopTargetFrameName(StringView);
 
 } // namespace WebCore
 
-#if ENABLE(TREE_DEBUGGING)
+//#if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
 WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
-#endif
+//#endif

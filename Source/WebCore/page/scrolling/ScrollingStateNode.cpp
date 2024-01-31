@@ -37,6 +37,18 @@
 
 namespace WebCore {
 
+TextStream& operator<<(TextStream& ts, LayerRepresentation::Type scrollType)
+{
+    switch (scrollType) {
+        case LayerRepresentation::EmptyRepresentation: ts << "EmptyRepresentation"; break;
+        case LayerRepresentation::GraphicsLayerRepresentation: ts << "GraphicsLayerRepresentation"; break;
+        case LayerRepresentation::PlatformLayerRepresentation: ts << "PlatformLayerRepresentation"; break;
+        case LayerRepresentation::PlatformLayerIDRepresentation: ts << "PlatformLayerIDRepresentation"; break;
+    }
+    return ts;
+}
+
+
 ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree& scrollingStateTree, ScrollingNodeID nodeID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
@@ -199,6 +211,7 @@ void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation
         return;
 
     m_layer = layerRepresentation;
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateNode::setLayer: node ID:" << scrollingNodeID() << " layer: " << layerRepresentation.layerID() << " type: " << layerRepresentation.representation() << " ");
 
     setPropertyChanged(Property::Layer);
 }

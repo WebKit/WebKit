@@ -97,9 +97,9 @@ public:
     IntPoint convertToContainingView(const IntPoint&) const final;
     FloatPoint convertToContainingView(const FloatPoint&) const final;
     IntPoint convertFromContainingView(const IntPoint&) const final;
+    ScrollableArea* enclosingScrollableArea() const final;
 
 private:
-    ScrollableArea* enclosingScrollableArea() const final;
 
     bool scrollAnimatorEnabled() const final;
 };

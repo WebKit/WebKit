@@ -95,6 +95,7 @@ private:
     void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason>);
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, WebCore::ScrollbarOrientation orientation, int minimumThumbLength);
+    bool isSiteIsolatedTree() override;
 
     WebCore::WheelEventHandlingResult handleWheelEventForScrolling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 

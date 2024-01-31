@@ -84,15 +84,19 @@ public:
     WEBCORE_EXPORT bool isRootNode() const;
 
     const Vector<Ref<ScrollingTreeNode>>& children() const { return m_children; }
-
+    void setIsHostedSubtree(bool flag) { m_isHostedSubtree = flag; }
+    bool isHostedSubtree() const { return m_isHostedSubtree;}
+    
     void appendChild(Ref<ScrollingTreeNode>&&);
     void removeChild(ScrollingTreeNode&);
-    void removeAllChildren();
+    void removeAllChildren(bool isHostedCommit=false);
 
     WEBCORE_EXPORT RefPtr<ScrollingTreeFrameScrollingNode> enclosingFrameNodeIncludingSelf();
     WEBCORE_EXPORT RefPtr<ScrollingTreeScrollingNode> enclosingScrollingNodeIncludingSelf();
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const;
+    std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_hostingContext; }
+    void setlayerHostingContextIdentifier(LayerHostingContextIdentifier identifier) { m_hostingContext = identifier; }
 
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -109,6 +113,9 @@ private:
 
     const ScrollingNodeType m_nodeType;
     const ScrollingNodeID m_nodeID;
+    bool m_isHostedSubtree { false };
+    std::optional<LayerHostingContextIdentifier> m_hostingContext;
+
 
     ThreadSafeWeakPtr<ScrollingTreeNode> m_parent;
 };

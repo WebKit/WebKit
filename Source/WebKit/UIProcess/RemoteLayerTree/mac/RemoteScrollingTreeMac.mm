@@ -484,11 +484,9 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     bool hasAnyNonInteractiveScrollingLayers = false;
     auto layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, scrolledContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
 
-    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << pointInContentsLayer << ") found " << layersAtPoint.size() << " layers");
-#if !LOG_DISABLED
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << pointInContentsLayer << ") found " << layersAtPoint.size() << " layers");
     for (auto [layer, point] : layersAtPoint)
-        LOG_WITH_STREAM(UIHitTesting, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
-#endif
+        ALWAYS_LOG_WITH_STREAM(stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
 
     if (layersAtPoint.size()) {
         auto* frontmostLayer = layersAtPoint.first().first;
@@ -505,7 +503,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
                 if (!is<ScrollingTreeScrollingNode>(scrollingNode))
                     return nullptr;
                 if (isScrolledBy(*this, nodeID, frontmostLayer)) {
-                    LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
+                    ALWAYS_LOG_WITH_STREAM(stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
                     return scrollingNode;
                 }
                 return nullptr;

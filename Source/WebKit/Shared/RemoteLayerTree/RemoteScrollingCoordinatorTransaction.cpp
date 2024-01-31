@@ -49,9 +49,11 @@ using namespace WebCore;
 
 RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction() = default;
 
-RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching, FromDeserialization fromDeserialization)
+RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching, Markable<WebCore::LayerHostingContextIdentifier> identifier, WebCore::FrameIdentifier pageID, FromDeserialization fromDeserialization)
     : m_scrollingStateTree(WTFMove(scrollingStateTree))
     , m_clearScrollLatching(clearScrollLatching)
+    , m_remoteContextHostedIdentifier(identifier)
+    , m_identifier(pageID)
 {
     if (!m_scrollingStateTree)
         m_scrollingStateTree = makeUnique<WebCore::ScrollingStateTree>();
@@ -135,6 +137,7 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
         else if (keyboardScrollData.action == KeyboardScrollAction::StopImmediately)
             ts.dumpProperty("keyboard-scroll-data-action", "stop immediately");
     }
+    ts.dumpProperty("remote context hosted identifier", node.layerHostingContextIdentifier());
 }
 
 static void dump(TextStream& ts, const ScrollingStateFrameHostingNode& node, bool changedPropertiesOnly)

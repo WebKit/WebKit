@@ -39,7 +39,7 @@ class RemoteScrollingCoordinatorTransaction {
 public:
     enum class FromDeserialization : bool { No, Yes };
     RemoteScrollingCoordinatorTransaction();
-    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, FromDeserialization = FromDeserialization::Yes);
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, Markable<WebCore::LayerHostingContextIdentifier>, WebCore::FrameIdentifier={ }, FromDeserialization = FromDeserialization::Yes);
     RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
@@ -53,6 +53,12 @@ public:
     String description() const;
     void dump() const;
 #endif
+    
+    void setRemoteContextHostedIdentifier(Markable<WebCore::LayerHostingContextIdentifier> identifier) { m_remoteContextHostedIdentifier = identifier; }
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
+
+    WebCore::FrameIdentifier frameIdentifier() const { return m_identifier; }
+    void setFrameIdentifier(WebCore::FrameIdentifier i) { m_identifier = i; }
 
 private:
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
@@ -60,6 +66,10 @@ private:
     // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.
     // Maybe RequestedScrollData should move here.
     bool m_clearScrollLatching { false };
+    
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
+    
+    WebCore::FrameIdentifier m_identifier;
 };
 
 } // namespace WebKit

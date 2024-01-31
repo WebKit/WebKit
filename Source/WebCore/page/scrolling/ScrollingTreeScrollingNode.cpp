@@ -102,6 +102,16 @@ bool ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
         m_scrolledContentsLayer = state.scrolledContentsLayer();
 
+    if (state.hasChangedProperty(ScrollingStateNode::Property::LayerHostingContextIdentifier)) {
+        if (state.layerHostingContextIdentifier()) {
+            scrollingTree().addScrollingNodeToHostedSubtreeMap(*state.layerHostingContextIdentifier(), this);
+            setlayerHostingContextIdentifier(*state.layerHostingContextIdentifier());
+            // TODO: look to see if there is an untached subtree waiting in m_hostedSubtreesNeedingPairing
+        } else {
+            // TODO: need some logic to remove subtree if we are no longer hosting
+        }
+    }
+    
     return true;
 }
 
@@ -419,7 +429,11 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scroll
     if (m_reachableContentsSize != m_totalContentsSize)
         ts.dumpProperty("reachable content size", m_reachableContentsSize);
     ts.dumpProperty("last committed scroll position", m_lastCommittedScrollPosition);
-
+    
+    ts.dumpProperty("scroll container layer", m_scrollContainerLayer.layerID());
+    ts.dumpProperty("scroll m_scrollContentsLayer", m_scrolledContentsLayer.layerID());
+    ts.dumpProperty("is hosted subtree", isHostedSubtree());
+//    LayerRepresentation m_scrolledContentsLayer
     if (!m_currentScrollPosition.isZero())
         ts.dumpProperty("scroll position", m_currentScrollPosition);
 

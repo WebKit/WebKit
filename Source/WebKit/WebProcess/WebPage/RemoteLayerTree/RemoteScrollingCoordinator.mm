@@ -110,6 +110,8 @@ RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransacti
     return {
         scrollingStateTree()->commit(LayerRepresentation::PlatformLayerIDRepresentation),
         std::exchange(m_clearScrollLatchingInNextTransaction, false),
+        std::nullopt,
+        { },
         RemoteScrollingCoordinatorTransaction::FromDeserialization::No
     };
 }
@@ -117,7 +119,7 @@ RemoteScrollingCoordinatorTransaction RemoteScrollingCoordinator::buildTransacti
 // Notification from the UI process that we scrolled.
 void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool syncLayerPosition, CompletionHandler<void()>&& completionHandler)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinator::scrollingTreeNodeDidScroll " << nodeID << " to " << scrollPosition << " layoutViewportOrigin " << layoutViewportOrigin);
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteScrollingCoordinator::scrollingTreeNodeDidScroll got message for: " << nodeID << " to " << scrollPosition << " layoutViewportOrigin " << layoutViewportOrigin);
 
     auto scrollUpdate = ScrollUpdate { nodeID, scrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set };
     applyScrollUpdate(WTFMove(scrollUpdate));
@@ -212,6 +214,11 @@ void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarMinimumThumbLengthDid
 
     if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
         scrollableArea->scrollbarsController().setScrollbarMinimumThumbLength(orientation, minimumThumbLength);
+}
+
+bool RemoteScrollingCoordinator::isSiteIsolatedTree()
+{
+    return static_cast<bool>(m_webPage->mainWebFrame().layerHostingContextIdentifier());
 }
 
 } // namespace WebKit

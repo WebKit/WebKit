@@ -143,11 +143,9 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     bool hasAnyNonInteractiveScrollingLayers = false;
     auto layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, rootContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
-#if !LOG_DISABLED
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
     for (auto [layer, point] : layersAtPoint)
-        LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
-#endif
+        ALWAYS_LOG_WITH_STREAM(stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
 
     if (layersAtPoint.size()) {
         auto* frontmostLayer = layersAtPoint.first().first;

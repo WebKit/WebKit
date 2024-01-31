@@ -37,6 +37,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/TypeCasts.h>
+#include "LayerHostingContextIdentifier.h"
 
 namespace WTF {
 class TextStream;
@@ -209,7 +210,9 @@ public:
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
-
+    
+    WEBCORE_EXPORT virtual bool isSiteIsolatedTree() { return false; }
+    WEBCORE_EXPORT virtual void setLayerHostingContextIdentifier(ScrollableArea&, Markable<LayerHostingContextIdentifier>) { }
 protected:
     explicit ScrollingCoordinator(Page*);
 

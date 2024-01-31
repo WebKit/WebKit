@@ -239,6 +239,9 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
+#include "RemoteScrollingCoordinatorMessages.h"
+
+
 #if ENABLE(APPLICATION_MANIFEST)
 #include "APIApplicationManifest.h"
 #endif
@@ -3394,6 +3397,18 @@ void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
         handleMouseEventReply(*eventType, handled, remoteUserInputEventData, { });
     });
+}
+
+void WebPageProxy::sendScrollPositionChangedForNode(const WebCore::FrameIdentifier& frameID, ScrollingNodeID nodeID, const FloatPoint& scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate)
+{
+    sendToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(nodeID, scrollPosition, layoutViewportOrigin, syncLayerPosition), [weakThis = WeakPtr { *m_scrollingCoordinatorProxy }, isLastUpdate] {
+        if (!weakThis)
+            return;
+
+        if (isLastUpdate)
+            weakThis->receivedLastScrollingTreeNodeDidScrollReply();
+    });
+
 }
 
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)

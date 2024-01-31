@@ -375,6 +375,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
         // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames. <rdar://116202678>
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingArea::updateRendering rootFRame: " << rootLayer.frameID << " hosted context: " << layerTransaction.remoteContextHostedIdentifier());
 
         layerTransaction.setNewlyReachedPaintingMilestones(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }));
         layerTransaction.setActivityStateChangeID(std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous));
@@ -389,6 +390,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 #if ENABLE(ASYNC_SCROLLING)
         if (webPage->scrollingCoordinator())
             scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->scrollingCoordinator()).buildTransaction();
+        scrollingTransaction.setRemoteContextHostedIdentifier(layerTransaction.remoteContextHostedIdentifier());
+        scrollingTransaction.setFrameIdentifier(rootLayer.frameID);
 #endif
 
         return { WTFMove(layerTransaction), WTFMove(scrollingTransaction) };

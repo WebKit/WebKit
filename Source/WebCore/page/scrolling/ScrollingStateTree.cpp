@@ -153,7 +153,7 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
 
 ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID)
 {
-    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " createUnparentedNode " << newNodeID);
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree " << this << " createUnparentedNode " << newNodeID);
 
     if (auto node = stateNodeForID(newNodeID)) {
         if (node->nodeType() == nodeType) {
@@ -177,12 +177,17 @@ ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeT
     auto stateNode = createNode(nodeType, newNodeID);
     addNode(stateNode);
     m_unparentedNodes.add(newNodeID, WTFMove(stateNode));
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree asdfasfsdfa " << newNodeID);
+//    showScrollingStateTree(*this);
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree asdfasfsdfa " << newNodeID);
+
     return newNodeID;
 }
 
 ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)
 {
-    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
+
     ASSERT(newNodeID);
 
     if (auto node = stateNodeForID(newNodeID)) {
@@ -220,12 +225,12 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
     RefPtr<ScrollingStateNode> newNode;
     if (!parentID) {
-        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame);
         ASSERT(!childIndex || childIndex == notFound);
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
+//        ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree " << this << " creating root state node " << newNodeID << " in parent " << parentID << " at " << childIndex);
 
-        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, ScrollingNodeType::MainFrame, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, nodeType, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -258,6 +263,11 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
     }
 
     addNode(*newNode);
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree asdfasfsdfa " << newNodeID);
+//
+//    showScrollingStateTree(*this);
+//    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateTree asdfasfsdfa " << newNodeID);
+
     return newNodeID;
 }
 
@@ -496,7 +506,7 @@ String ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTree
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 void showScrollingStateTree(const WebCore::ScrollingStateTree& tree)
 {
     auto rootNode = tree.rootStateNode();
@@ -508,12 +518,12 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree& tree)
     String output = rootNode->scrollingStateTreeAsText(WebCore::debugScrollingStateTreeAsTextBehaviors);
     WTFLogAlways("%s\n", output.utf8().data());
 }
+//
+//void showScrollingStateTree(const WebCore::ScrollingStateNode& node)
+//{
+//    showScrollingStateTree(node.scrollingStateTree());
+//}
 
-void showScrollingStateTree(const WebCore::ScrollingStateNode& node)
-{
-    showScrollingStateTree(node.scrollingStateTree());
-}
-
-#endif
+//#endif
 
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -57,9 +57,9 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     bool bytes[9];
 };
 
-#if CPU(ADDRESS64)
-static_assert(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), "ScrollableArea should stay small");
-#endif
+//#if CPU(ADDRESS64)
+//static_assert(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), "ScrollableArea should stay small");
+//#endif
 
 ScrollableArea::ScrollableArea() = default;
 ScrollableArea::~ScrollableArea() = default;

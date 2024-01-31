@@ -578,6 +578,9 @@ public:
     WebBackForwardList& backForwardList() { return m_backForwardList; }
     Ref<WebBackForwardList> protectedBackForwardList() const;
 
+    void sendScrollPositionChangedForNode(const WebCore::FrameIdentifier& frameID, WebCore::ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate);
+
+    
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore; }

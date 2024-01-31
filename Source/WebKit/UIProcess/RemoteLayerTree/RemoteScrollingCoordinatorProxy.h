@@ -174,6 +174,7 @@ public:
     
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int);
+    void receivedLastScrollingTreeNodeDidScrollReply();
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
@@ -184,7 +185,6 @@ protected:
     virtual void didReceiveWheelEvent(bool /* wasHandled */) { }
 
     void sendUIStateChangedIfNecessary();
-    void receivedLastScrollingTreeNodeDidScrollReply();
 
 private:
     WebPageProxy& m_webPageProxy;

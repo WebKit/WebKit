@@ -67,6 +67,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    Markable<LayerHostingContextIdentifier> identifier,
     RequestedKeyboardScrollData&& keyboardScrollData
 ) : ScrollingStateNode(nodeType, nodeID, WTFMove(children), changedProperties, layerID)
     , m_scrollableAreaSize(scrollableAreaSize)
@@ -84,6 +85,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     , m_scrollbarHoverState(WTFMove(scrollbarHoverState))
     , m_mouseLocationState(WTFMove(mouseLocationState))
     , m_scrollbarEnabledState(WTFMove(scrollbarEnabledState))
+    , m_remoteContextHostedIdentifier(identifier)
     , m_scrollableAreaParameters(WTFMove(scrollableAreaParameters))
     , m_requestedScrollData(WTFMove(requestedScrollData))
     , m_keyboardScrollData(WTFMove(keyboardScrollData))
@@ -111,6 +113,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
+    , m_remoteContextHostedIdentifier(stateNode.layerHostingContextIdentifier())
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollData(stateNode.requestedScrollData())
     , m_keyboardScrollData(stateNode.keyboardScrollData())
@@ -374,6 +377,14 @@ void ScrollingStateScrollingNode::setScrollbarEnabledState(ScrollbarOrientation 
     setPropertyChanged(Property::ScrollbarEnabledState);
 }
 
+void ScrollingStateScrollingNode::setLayerHostingContextIdentifier(const Markable<LayerHostingContextIdentifier> identifier)
+{
+    if (identifier == m_remoteContextHostedIdentifier)
+        return;
+    m_remoteContextHostedIdentifier = identifier;
+    setPropertyChanged(Property::LayerHostingContextIdentifier);
+}
+
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingStateNode::dumpProperties(ts, behavior);
@@ -460,6 +471,7 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
         if (m_scrolledContentsLayer.layerID())
             ts.dumpProperty("scrolled contents layer", m_scrolledContentsLayer.layerID());
     }
+    ts.dumpProperty("remote context hosted identifier", m_remoteContextHostedIdentifier);
 }
 
 } // namespace WebCore

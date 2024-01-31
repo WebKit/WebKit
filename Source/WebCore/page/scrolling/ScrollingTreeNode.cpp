@@ -72,11 +72,11 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode& node)
         child->removeChild(node);
 }
 
-void ScrollingTreeNode::removeAllChildren()
+void ScrollingTreeNode::removeAllChildren(bool isHostedCommit)
 {
     RELEASE_ASSERT(m_scrollingTree.inCommitTreeState());
-
-    m_children.clear();
+    
+    m_children.removeAllMatching([isHostedCommit](Ref<ScrollingTreeNode> x) { return x->isHostedSubtree() == isHostedCommit; });
 }
 
 bool ScrollingTreeNode::isRootNode() const

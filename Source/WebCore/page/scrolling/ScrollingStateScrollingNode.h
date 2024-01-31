@@ -136,6 +136,9 @@ public:
     WEBCORE_EXPORT void setMouseMovedInContentArea(const MouseLocationState&);
     const MouseLocationState& mouseLocationState() const { return m_mouseLocationState; }
 
+    WEBCORE_EXPORT void setLayerHostingContextIdentifier(const Markable<LayerHostingContextIdentifier>);
+    const Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_remoteContextHostedIdentifier; }
+
 protected:
     ScrollingStateScrollingNode(
         ScrollingNodeType,
@@ -165,6 +168,7 @@ protected:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        Markable<LayerHostingContextIdentifier> identifier,
         RequestedKeyboardScrollData&&
     );
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
@@ -198,6 +202,7 @@ private:
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 #endif
 
+    Markable<LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
     ScrollableAreaParameters m_scrollableAreaParameters;
     RequestedScrollData m_requestedScrollData;
     RequestedKeyboardScrollData m_keyboardScrollData;

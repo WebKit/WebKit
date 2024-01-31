@@ -77,12 +77,56 @@ void RemoteFrame::disconnectView()
     m_view = nullptr;
 }
 
+//ScrollableArea* RemoteFrame::enclosingScrollableArea(Node* node)
+//{
+//    for (auto ancestor = node; ancestor; ancestor = ancestor->parentOrShadowHostNode()) {
+//        if (is<HTMLIFrameElement>(*ancestor))
+//            return nullptr;
+//
+//        if (is<HTMLHtmlElement>(*ancestor) || is<HTMLDocument>(*ancestor))
+//            break;
+//
+//        auto renderer = ancestor->renderer();
+//        if (!renderer)
+//            continue;
+//
+//        if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer)) {
+//            auto* scrollableArea = static_cast<ScrollableArea*>(renderListBox);
+//            if (scrollableArea->isScrollableOrRubberbandable())
+//                return scrollableArea;
+//        }
+//
+//        auto* layer = renderer->enclosingLayer();
+//        if (!layer)
+//            return nullptr;
+//
+//        if (auto* scrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No)) {
+//            if (!scrollableLayer->isRenderViewLayer())
+//                return scrollableLayer->scrollableArea();
+//        }
+//    }
+//
+//    return m_frame->view();
+//}
+
+
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
     m_preventsParentFromBeingComplete = false;
 
-    if (auto* ownerElement = this->ownerElement())
+    if (auto* ownerElement = this->ownerElement()) {
         ownerElement->document().checkCompleted();
+        if (auto* scrollableArea = m_view->enclosingScrollableArea()) {
+            scrollableArea->setLayerHostingContextIdentifier(m_layerHostingContextIdentifier);
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteFrame::didFinishLoadInAnotherProcess nodeid" << scrollableArea->scrollingNodeID());
+            page()->scrollingCoordinator()->setLayerHostingContextIdentifier(*scrollableArea, m_layerHostingContextIdentifier);
+        }
+        else if (auto* parentFrame = m_view->parent()) {
+            parentFrame->setLayerHostingContextIdentifier(m_layerHostingContextIdentifier);
+            page()->scrollingCoordinator()->setLayerHostingContextIdentifier(*parentFrame, m_layerHostingContextIdentifier);
+        }
+
+    }
 }
 
 bool RemoteFrame::preventsParentFromBeingComplete() const

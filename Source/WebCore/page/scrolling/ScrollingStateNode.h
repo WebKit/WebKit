@@ -103,7 +103,7 @@ public:
 
     explicit operator PlatformLayer*() const
     {
-        ASSERT(m_representation == PlatformLayerRepresentation);
+//        ASSERT(m_representation == PlatformLayerRepresentation);
         return makePlatformLayerTyped(m_typelessPlatformLayer);
     }
     
@@ -174,6 +174,7 @@ public:
     
     LayerRepresentation toRepresentation(Type representation) const
     {
+        ALWAYS_LOG_WITH_STREAM(stream << "toRepresentation: " << representation);
         switch (representation) {
         case EmptyRepresentation:
             return LayerRepresentation();
@@ -188,9 +189,10 @@ public:
         ASSERT_NOT_REACHED();
         return LayerRepresentation();
     }
-
+    
     bool representsGraphicsLayer() const { return m_representation == GraphicsLayerRepresentation; }
     bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
+    Type representation() const { return m_representation; }
     
 private:
     WEBCORE_EXPORT static void retainPlatformLayer(void* typelessPlatformLayer);
@@ -203,6 +205,9 @@ private:
     PlatformLayerIdentifier m_layerID;
     Type m_representation { EmptyRepresentation };
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LayerRepresentation::Type);
+
 
 enum class ScrollingStateNodeProperty : uint64_t {
     // ScrollingStateNode
@@ -234,8 +239,9 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MouseActivityState                          = ContentAreaHoverState << 1,
     ScrollbarHoverState                         = MouseActivityState << 1,
     ScrollbarEnabledState                       = ScrollbarHoverState << 1,
+    LayerHostingContextIdentifier               = ScrollbarEnabledState << 1,
     // ScrollingStateFrameScrollingNode
-    KeyboardScrollData                          = ScrollbarEnabledState << 1,
+    KeyboardScrollData                          = LayerHostingContextIdentifier << 1,
     FrameScaleFactor                            = KeyboardScrollData << 1,
     EventTrackingRegion                         = FrameScaleFactor << 1,
     RootContentsLayer                           = EventTrackingRegion << 1,

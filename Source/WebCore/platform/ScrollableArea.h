@@ -36,6 +36,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
+#include "LayerHostingContextIdentifier.h"
 
 namespace WTF {
 class TextStream;
@@ -415,6 +416,8 @@ public:
     virtual void updateScrollAnchoringElement() { }
     virtual void updateScrollPositionForScrollAnchoringController() { }
     virtual void invalidateScrollAnchoringElement() { }
+    void setLayerHostingContextIdentifier(Markable<LayerHostingContextIdentifier> identifier) { m_layerHostingContextIdentifier = identifier; }
+    Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();
@@ -478,6 +481,7 @@ private:
 
     ScrollType m_currentScrollType { ScrollType::User };
     ScrollAnimationStatus m_scrollAnimationStatus { ScrollAnimationStatus::NotAnimating };
+    Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier { std::nullopt };
 
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };

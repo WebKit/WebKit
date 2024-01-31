@@ -564,7 +564,7 @@ bool isTopTargetFrameName(StringView name)
 
 } // namespace WebCore
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 
 static void printIndent(int indent)
 {
@@ -589,7 +589,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
         printIndent(indent);
         printf("  ownerElement=%p\n", localFrame->ownerElement());
         printIndent(indent);
-        printf("  frameView=%p (needs layout %d)\n", view, view ? view->needsLayout() : false);
+        printf("  frameView=%p (nodeID (%llu,%llu))\n", view, view ? view->scrollingNodeID().object() : 0,view ? view->scrollingNodeID().processIdentifier().toUInt64() : 0 );
         printIndent(indent);
         printf("  renderView=%p\n", view ? view->renderView() : nullptr);
         printIndent(indent);
@@ -613,4 +613,4 @@ void showFrameTree(const WebCore::Frame* frame)
     printFrames(frame->tree().top(), frame, 0);
 }
 
-#endif
+//#endif
