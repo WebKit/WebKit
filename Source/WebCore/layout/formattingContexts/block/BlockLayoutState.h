@@ -27,6 +27,7 @@
 
 #include "Font.h"
 #include "PlacedFloats.h"
+#include <algorithm>
 
 namespace WebCore {
 namespace Layout {
