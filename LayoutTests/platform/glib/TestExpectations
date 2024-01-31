@@ -1879,7 +1879,6 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
 
 # Requires video scaling adaptation.
-webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure ]
 webrtc/video-maxBitrate.html [ Failure ]
 webrtc/video-maxBitrate-vp8.html [ Failure ]
 
@@ -1894,9 +1893,6 @@ fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
 fast/mediastream/video-rotation2.html [ Failure Pass Timeout ]
 
-# Missing/broken pageIsFocused notification.
-fast/mediastream/device-change-event-2.html [ Timeout Failure ]
-
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
 fast/mediastream/apply-constraints-video.html [ Failure ]
@@ -1908,7 +1904,6 @@ fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
 fast/mediastream/getUserMedia-frame-rate.html [ Failure ]
 fast/mediastream/get-user-media-constraints.html [ Failure ]
 fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
-fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 fast/mediastream/video-rotation.html [ Skip ]
 webrtc/video-rotation-no-cvo.html [ Failure Timeout ]
 webrtc/video-rotation-black.html [ Crash Failure Pass Timeout ]

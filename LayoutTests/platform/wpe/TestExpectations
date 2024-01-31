@@ -1629,3 +1629,8 @@ webkit.org/b/266671 http/wpt/webcodecs/videoFrame-rect.html [ Failure ]
 webkit.org/b/266711 fast/editing/create-link-inline-style-change-crash-001.html [ Pass Crash ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
+
+# [WPE] Missing implementation of TestController::setHidden()
+webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
+
+webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout ]
