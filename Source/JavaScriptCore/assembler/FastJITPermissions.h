@@ -35,7 +35,26 @@
 #include <wtf/Platform.h>
 
 #if USE(INLINE_JIT_PERMISSIONS_API)
+// This is a temporary workaround to fix a build error, see rdar://121990409
+#ifdef __arm64e__
 #include <BrowserEngineCore/BEMemory.h>
+#elif USE(APPLE_INTERNAL_SDK)
+#include <os/thread_self_restrict.h> 
+inline
+void be_memory_inline_jit_restrict_rwx_to_rw_with_witness(void)
+{
+    os_thread_self_restrict_rwx_to_rw();
+}
+
+inline
+void be_memory_inline_jit_restrict_rwx_to_rx_with_witness(void)
+{
+    os_thread_self_restrict_rwx_to_rx();
+}
+#else
+inline void be_memory_inline_jit_restrict_rwx_to_rw_with_witness(void) { }
+inline void be_memory_inline_jit_restrict_rwx_to_rx_with_witness(void) { }
+#endif
 #elif USE(PTHREAD_JIT_PERMISSIONS_API)
 #include <pthread.h>
 #elif USE(APPLE_INTERNAL_SDK)
