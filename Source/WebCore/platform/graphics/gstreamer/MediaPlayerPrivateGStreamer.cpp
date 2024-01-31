@@ -3475,8 +3475,14 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
                 object.format = DMABufFormat::create(fourcc);
                 object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
-                object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
-                object.height = GST_VIDEO_INFO_HEIGHT(&videoInfo);
+
+                if (m_videoSize.isEmpty()) {
+                    object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
+                    object.height = GST_VIDEO_INFO_HEIGHT(&videoInfo);
+                } else {
+                    object.width = m_videoSize.width();
+                    object.height = m_videoSize.height();
+                }
 
                 // The dmabuf object itself doesn't provide anything useful, but the decoder won't
                 // reuse the dmabuf until the relevant GstSample reference is dropped by the
