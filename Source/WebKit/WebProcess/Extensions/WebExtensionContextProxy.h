@@ -86,7 +86,8 @@ public:
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
 
-    WebCore::DOMWrapperWorld& contentScriptWorld() { return *m_contentScriptWorld; }
+    bool hasContentScriptWorld() const { return !!m_contentScriptWorld; }
+    WebCore::DOMWrapperWorld& contentScriptWorld() const { RELEASE_ASSERT(hasContentScriptWorld()); return *m_contentScriptWorld; }
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
 
     void addFrameWithExtensionContent(WebFrame&);

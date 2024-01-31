@@ -509,6 +509,7 @@ void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
 
     if (m_hasAccessInPrivateBrowsing) {
         addDeclarativeNetRequestRulesToPrivateUserContentControllers();
+
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
             addInjectedContent(controller);
     } else {
@@ -2911,7 +2912,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         [baseExcludeMatchPatternsSet addObjectsFromArray:deniedEntry.key->expandedStrings()];
     }
 
-    auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+    auto& userContentControllers = this->userContentControllers();
 
     for (auto& injectedContentData : injectedContents) {
         NSMutableSet<NSString *> *includeMatchPatternsSet = [NSMutableSet set];
@@ -3032,9 +3033,7 @@ void WebExtensionContext::removeInjectedContent()
 
     // Use all user content controllers in case the extension was briefly allowed in private browsing
     // and content was injected into any of those content controllers.
-    auto allUserContentControllers = extensionController()->allUserContentControllers();
-
-    for (auto& userContentController : allUserContentControllers) {
+    for (auto& userContentController : extensionController()->allUserContentControllers()) {
         for (auto& entry : m_injectedScriptsPerPatternMap) {
             for (auto& userScript : entry.value)
                 userContentController.removeUserScript(userScript);
@@ -3077,9 +3076,7 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
 
     // Use all user content controllers in case the extension was briefly allowed in private browsing
     // and content was injected into any of those content controllers.
-    auto allUserContentControllers = extensionController()->allUserContentControllers();
-
-    for (auto& userContentController : allUserContentControllers) {
+    for (auto& userContentController : extensionController()->allUserContentControllers()) {
         for (auto& userScript : originInjectedScripts)
             userContentController.removeUserScript(userScript);
 
@@ -3131,9 +3128,7 @@ void WebExtensionContext::removeDeclarativeNetRequestRules()
 
     // Use all user content controllers in case the extension was briefly allowed in private browsing
     // and content was injected into any of those content controllers.
-    auto allUserContentControllers = extensionController()->allUserContentControllers();
-
-    for (auto& userContentController : allUserContentControllers)
+    for (auto& userContentController : extensionController()->allUserContentControllers())
         userContentController.removeContentRuleList(uniqueIdentifier());
 }
 
@@ -3181,8 +3176,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
     API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
         if (foundRuleList) {
             if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
-                auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
-                for (auto& userContentController : userContentControllers)
+                for (auto& userContentController : userContentControllers())
                     userContentController.addContentRuleList(*foundRuleList, m_baseURL);
 
                 completionHandler(true);
@@ -3200,8 +3194,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
             [m_state setObject:hashOfWebKitRules forKey:lastLoadedDeclarativeNetRequestHashStateKey];
             writeStateToStorage();
 
-            auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
-            for (auto& userContentController : userContentControllers)
+            for (auto& userContentController : userContentControllers())
                 userContentController.addContentRuleList(*ruleList, m_baseURL);
 
             completionHandler(true);

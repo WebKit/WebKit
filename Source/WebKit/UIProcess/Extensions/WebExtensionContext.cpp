@@ -73,6 +73,15 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
     };
 }
 
+const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::userContentControllers() const
+{
+    ASSERT(isLoaded());
+
+    if (hasAccessInPrivateBrowsing())
+        return extensionController()->allUserContentControllers();
+    return extensionController()->allNonPrivateUserContentControllers();
+}
+
 bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
 {
     if (!hasAccessInPrivateBrowsing() && page.sessionID().isEphemeral())
