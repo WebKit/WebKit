@@ -3161,6 +3161,8 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             # workspaces (rdar://88135402).
             if architecture:
                 self.setCommand(self.command + ['--architecture', architecture])
+            if CompileJSC.name not in self.name:
+                self.setCommand(self.command + ['-hideShellScriptEnvironment'])
             self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
