@@ -158,7 +158,7 @@ private:
     void setHasInteractionRegionsDescendant(bool value) { m_hasInteractionRegionsDescendant = value; }
 
     bool m_hasInteractionRegionsDescendant { false };
-    RetainPtr<CALayer> m_interactionRegionsContainer;
+    RetainPtr<UIView> m_interactionRegionsContainer;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;
