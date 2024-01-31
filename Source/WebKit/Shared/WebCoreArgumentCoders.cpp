@@ -344,6 +344,8 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     return fontCustomPlatformData.releaseNonNull();
 }
 
+#if !USE(CORE_TEXT)
+
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
 {
     encoder << data.m_orientation;
@@ -395,6 +397,8 @@ std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attr
 
     return result;
 }
+
+#endif
 
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
 {

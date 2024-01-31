@@ -217,44 +217,6 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
-void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
-{
-    encoder << data.m_attributes;
-    encoder << data.m_options;
-    encoder << data.m_url;
-    encoder << data.m_psName;
-}
-
-bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
-{
-    std::optional<RetainPtr<CFDictionaryRef>> attributes;
-    decoder >> attributes;
-    if (!attributes)
-        return false;
-
-    std::optional<CTFontDescriptorOptions> options;
-    decoder >> options;
-    if (!options)
-        return false;
-
-
-    std::optional<RetainPtr<CFStringRef>> url;
-    decoder >> url;
-    if (!url)
-        return false;
-
-    std::optional<RetainPtr<CFStringRef>> psName;
-    decoder >> psName;
-    if (!psName)
-        return false;
-
-    data.m_attributes = attributes.value();
-    data.m_options = options.value();
-    data.m_url = url.value();
-    data.m_psName = psName.value();
-    return true;
-}
-
 #if ENABLE(DATA_DETECTION)
 
 void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, const WebCore::DataDetectorElementInfo& info)
