@@ -4677,8 +4677,9 @@ void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (currentScrollType() == ScrollType::Programmatic)
         return;
 
-    if (wasScrolledByUser)
-        m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
+    RefPtr document = m_frame->document();
+    if (wasScrolledByUser && document)
+        document->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
     m_maintainScrollPositionAnchor = nullptr;
     if (m_wasScrolledByUser == wasScrolledByUser)
