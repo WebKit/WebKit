@@ -699,7 +699,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
 
     if (auto* canvas = htmlCanvas()) {
         if (isAccelerated()) {
-            canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+            canvas->notifyObserversCanvasChanged({ });
             RenderBox* renderBox = canvas->renderBox();
             if (renderBox && renderBox->hasAcceleratedCompositing()) {
                 m_canvasBufferContents = std::nullopt;

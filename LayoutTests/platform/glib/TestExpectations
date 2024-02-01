@@ -1204,6 +1204,8 @@ http/wpt/webcodecs/encoder-task-failing.html [ Pass ]
 # expected to pass again once we update to GStreamer 1.24.
 fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
 
+fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
+
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
 
 webkit.org/b/264666 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Failure ]
