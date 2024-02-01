@@ -48,12 +48,25 @@ struct Binding {
     enum Kind : uint8_t {
         Value,
         Type,
+        Function,
     };
 
     Kind kind;
     const struct Type* type;
     std::optional<ConstantValue> constantValue;
 };
+
+static ASCIILiteral bindingKindToString(Binding::Kind kind)
+{
+    switch (kind) {
+    case Binding::Value:
+        return "value"_s;
+    case Binding::Type:
+        return "type"_s;
+    case Binding::Function:
+        return "function"_s;
+    }
+}
 
 class TypeChecker : public AST::Visitor, public ContextProvider<Binding> {
 public:
@@ -142,6 +155,7 @@ private:
     bool isBottom(const Type*) const;
     void introduceType(const AST::Identifier&, const Type*);
     void introduceValue(const AST::Identifier&, const Type*, std::optional<ConstantValue> = std::nullopt);
+    void introduceFunction(const AST::Identifier&, const Type*);
     bool convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
     bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
 
@@ -507,7 +521,7 @@ void TypeChecker::visit(AST::Function& function)
     }
 
     const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType);
-    introduceValue(function.name(), functionType);
+    introduceFunction(function.name(), functionType);
 }
 
 // Attributes
@@ -966,7 +980,7 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
     }
 
     if (binding->kind != Binding::Value) {
-        typeError(identifier.span(), "cannot use type '", identifier.identifier(), "' as value");
+        typeError(identifier.span(), "cannot use ", bindingKindToString(binding->kind), " '", identifier.identifier(), "' as value");
         return;
     }
 
@@ -1048,32 +1062,31 @@ void TypeChecker::visit(AST::CallExpression& call)
                     targetName = targetBinding->type->toString();
             }
 
-            if (targetBinding->kind == Binding::Value) {
-                if (auto* functionType = std::get_if<Types::Function>(targetBinding->type)) {
-                    auto numberOfArguments = call.arguments().size();
-                    auto numberOfParameters = functionType->parameters.size();
-                    if (numberOfArguments != numberOfParameters) {
-                        const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
-                        typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
-                        return;
-                    }
-
-                    for (unsigned i = 0; i < numberOfArguments; ++i) {
-                        auto& argument = call.arguments()[i];
-                        auto* parameterType = functionType->parameters[i];
-                        auto* argumentType = infer(argument);
-                        if (!unify(parameterType, argumentType)) {
-                            typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
-                            return;
-                        }
-                        argument.m_inferredType = parameterType;
-                        auto& value = argument.m_constantValue;
-                        if (value.has_value())
-                            convertValue(argument.span(), argument.inferredType(), value);
-                    }
-                    inferred(functionType->result);
+            if (targetBinding->kind == Binding::Function) {
+                auto& functionType = std::get<Types::Function>(*targetBinding->type);
+                auto numberOfArguments = call.arguments().size();
+                auto numberOfParameters = functionType.parameters.size();
+                if (numberOfArguments != numberOfParameters) {
+                    const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
+                    typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
                     return;
                 }
+
+                for (unsigned i = 0; i < numberOfArguments; ++i) {
+                    auto& argument = call.arguments()[i];
+                    auto* parameterType = functionType.parameters[i];
+                    auto* argumentType = infer(argument);
+                    if (!unify(parameterType, argumentType)) {
+                        typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
+                        return;
+                    }
+                    argument.m_inferredType = parameterType;
+                    auto& value = argument.m_constantValue;
+                    if (value.has_value())
+                        convertValue(argument.span(), argument.inferredType(), value);
+                }
+                inferred(functionType.result);
+                return;
             }
         }
 
@@ -1233,6 +1246,12 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
     auto& argument = call.arguments()[0];
     auto* sourceType = infer(argument);
     auto* destinationType = typeArguments[0];
+
+    if (isBottom(sourceType) || isBottom(destinationType)) {
+        inferred(m_types.bottomType());
+        return;
+    }
+
     if (auto* reference = std::get_if<Types::Reference>(sourceType))
         sourceType = reference->element;
     sourceType = concretize(sourceType, m_types);
@@ -1374,7 +1393,7 @@ const Type* TypeChecker::lookupType(const AST::Identifier& name)
     }
 
     if (binding->kind != Binding::Type) {
-        typeError(InferBottom::No, name.span(), "cannot use value '", name, "' as type");
+        typeError(InferBottom::No, name.span(), "cannot use ", bindingKindToString(binding->kind), " '", name, "' as type");
         return m_types.bottomType();
     }
 
@@ -1852,6 +1871,13 @@ void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, 
     if (shouldDumpConstantValues && value.has_value())
         dataLogLn("> Assigning value: ", name, " => ", value);
     if (!introduceVariable(name, { Binding::Value, type , value }))
+        typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
+}
+
+void TypeChecker::introduceFunction(const AST::Identifier& name, const Type* type)
+{
+    ASSERT(type);
+    if (!introduceVariable(name, { Binding::Function, type , std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
