@@ -61,6 +61,9 @@ public:
 
     CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
+    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&);
+    void finishAnnotationTracking();
+    void handleMouseDraggedOffTrackedAnnotation();
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 
@@ -218,6 +221,7 @@ private:
 
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
+    RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     WebCore::IntPoint convertFromPageToDocument(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     PDFElementTypes pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const;
@@ -239,6 +243,9 @@ private:
 
     float m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };
+
+    RetainPtr<PDFAnnotation> m_trackedAnnotation;
+
 };
 
 } // namespace WebKit
