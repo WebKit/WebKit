@@ -2925,12 +2925,21 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
         return self.runStep()
 
-    def test_change_breaks_layout_tests(self):
+    def test_change_breaks_layout_tests1(self):
         self.configureStep()
         self.setProperty('first_run_failures', [])
         self.setProperty('second_run_failures', [])
         self.setProperty('clean_tree_run_failures', [])
         self.setProperty('clean_tree_run_status', SUCCESS)
+        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
+        return self.runStep()
+
+    def test_change_breaks_layout_tests2(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('second_run_failures', [])
+        self.setProperty('clean_tree_run_failures', [])
+        self.setProperty('clean_tree_run_status', WARNINGS)
         self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
         return self.runStep()
 

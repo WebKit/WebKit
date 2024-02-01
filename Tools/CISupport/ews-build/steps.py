@@ -3639,7 +3639,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
             # If we've made it here, then jsc-tests and re-run-jsc-tests failed, which means
             # there should have been some test failures. Otherwise there is some unexpected issue.
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
-            if clean_tree_run_status == SUCCESS:
+            if clean_tree_run_status in [SUCCESS, WARNINGS]:
                 return self.report_failure(set(), set())
             # TODO: email EWS admins
             return self.retry_build('Unexpected infrastructure issue, retrying build')
@@ -4476,7 +4476,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             # If we've made it here, then layout-tests and re-run-layout-tests failed, which means
             # there should have been some test failures. Otherwise there is some unexpected issue.
             clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
-            if clean_tree_run_status == SUCCESS:
+            if clean_tree_run_status in [SUCCESS, WARNINGS]:
                 rc = yield self.report_failure(set())
                 return defer.returnValue(rc)
             self.send_email_for_infrastructure_issue('Both first and second layout-test runs with patch generated no list of results but exited with error, and the clean_tree without change retry also failed.')
