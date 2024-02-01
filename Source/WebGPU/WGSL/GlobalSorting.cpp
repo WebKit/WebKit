@@ -36,6 +36,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -168,8 +169,10 @@ private:
 struct Empty { };
 
 class GraphBuilder : public AST::Visitor, public ContextProvider<Empty> {
+    static constexpr unsigned s_maxExpressionDepth = 512;
+
 public:
-    static void visit(Graph&, Graph::Node&);
+    static Result<void> visit(Graph&, Graph::Node&);
 
     using AST::Visitor::visit;
 
@@ -177,6 +180,7 @@ public:
     void visit(AST::VariableStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::Expression&) override;
     void visit(AST::IdentifierExpression&) override;
 
 private:
@@ -187,11 +191,14 @@ private:
 
     Graph& m_graph;
     Graph::Node& m_currentNode;
+    unsigned m_expressionDepth { 0 };
 };
 
-void GraphBuilder::visit(Graph& graph, Graph::Node& node)
+Result<void> GraphBuilder::visit(Graph& graph, Graph::Node& node)
 {
-    GraphBuilder(graph, node).visit(node.astNode());
+    GraphBuilder graphBuilder(graph, node);
+    graphBuilder.visit(node.astNode());
+    return graphBuilder.result();
 }
 
 GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
@@ -233,6 +240,17 @@ void GraphBuilder::visit(AST::ForStatement& statement)
     AST::Visitor::visit(statement);
 }
 
+void GraphBuilder::visit(AST::Expression& expression)
+{
+    SetForScope expressionDepthScope(m_expressionDepth, m_expressionDepth + 1);
+    if (UNLIKELY(m_expressionDepth > s_maxExpressionDepth)) {
+        setError({ makeString("reached maximum expression depth of "_s, String::number(s_maxExpressionDepth)), expression.span() });
+        return;
+    }
+
+    AST::Visitor::visit(expression);
+}
+
 void GraphBuilder::visit(AST::IdentifierExpression& identifier)
 {
     readVariable(identifier.identifier());
@@ -271,8 +289,11 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
         graphNodeList.append(graphNode);
     }
 
-    for (auto* graphNode : graphNodeList)
-        GraphBuilder::visit(graph, *graphNode);
+    for (auto* graphNode : graphNodeList) {
+        auto result = GraphBuilder::visit(graph, *graphNode);
+        if (!result)
+            return FailedCheck { Vector<Error> { result.error() }, { } };
+    }
 
     list.clear();
     Deque<Graph::Node> queue;
