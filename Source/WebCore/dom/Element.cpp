@@ -112,6 +112,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderSVGModelObject.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -4107,46 +4108,54 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     return computedStyle;
 }
 
-const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle& Element::resolvePseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier)
 {
     ASSERT(!isPseudoElement());
 
     auto* parentStyle = existingComputedStyle();
     ASSERT(parentStyle);
-    ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementSpecifier));
+    ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementIdentifier.pseudoId));
 
     Ref document = this->document();
     Style::PostResolutionCallbackDisabler disabler(document, Style::PostResolutionCallbackDisabler::DrainCallbacks::No);
 
-    auto style = document->styleForElementIgnoringPendingStylesheets(*this, parentStyle, pseudoElementSpecifier);
+    auto style = document->styleForElementIgnoringPendingStylesheets(*this, parentStyle, pseudoElementIdentifier);
     if (!style) {
         style = RenderStyle::createPtr();
         style->inheritFrom(*parentStyle);
-        style->setPseudoElementType(pseudoElementSpecifier);
+        // FIXME: RenderStyle should switch to use PseudoElementIdentifier.
+        style->setPseudoElementType(pseudoElementIdentifier.pseudoId);
+        if (!pseudoElementIdentifier.nameArgument.isNull())
+            style->setPseudoElementNameArgument(pseudoElementIdentifier.nameArgument);
     }
 
     auto* computedStyle = style.get();
-    const_cast<RenderStyle*>(parentStyle)->addCachedPseudoStyle(WTFMove(style));
+    if (!pseudoElementIdentifier.nameArgument)
+        const_cast<RenderStyle*>(parentStyle)->addCachedPseudoStyle(WTFMove(style));
     return *computedStyle;
 }
 
-const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle* Element::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (!isConnected())
         return nullptr;
 
-    if (RefPtr pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
-        return pseudoElement->computedStyle();
+    if (pseudoElementIdentifier) {
+        if (RefPtr pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
+            return pseudoElement->computedStyle();
+    }
 
     // FIXME: This should call resolveComputedStyle() unconditionally so we check if the style is valid.
     auto* style = existingComputedStyle();
     if (!style)
         style = resolveComputedStyle();
 
-    if (pseudoElementSpecifier != PseudoId::None) {
-        if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))
-            return cachedPseudoStyle;
-        return &resolvePseudoElementStyle(pseudoElementSpecifier);
+    if (pseudoElementIdentifier) {
+        if (!pseudoElementIdentifier->nameArgument) {
+            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementIdentifier->pseudoId))
+                return cachedPseudoStyle;
+        }
+        return &resolvePseudoElementStyle(*pseudoElementIdentifier);
     }
 
     return style;

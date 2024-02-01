@@ -27,6 +27,7 @@
 
 #include "PseudoElementIdentifier.h"
 #include "RenderStyleConstants.h"
+#include "StyleScrollbarState.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore::Style {
@@ -39,8 +40,8 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& pseudoElementNameArgument)
-        : m_identifier({ pseudoId, pseudoElementNameArgument })
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameArgument)
+        : m_identifier({ pseudoId, nameArgument })
     {
         ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
     }
@@ -52,7 +53,7 @@ public:
 
     const PseudoElementIdentifier& identifier() const { return m_identifier; }
     PseudoId pseudoId() const { return m_identifier.pseudoId; }
-    const AtomString& pseudoElementNameArgument() const { return m_identifier.pseudoElementNameArgument; }
+    const AtomString& nameArgument() const { return m_identifier.nameArgument; }
     const std::optional<StyleScrollbarState>& scrollbarState() const { return m_scrollbarState; }
 
 private:

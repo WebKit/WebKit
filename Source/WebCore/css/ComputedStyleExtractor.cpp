@@ -65,6 +65,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
+#include "PseudoElementIdentifier.h"
 #include "QuotesData.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
@@ -1890,25 +1891,25 @@ static Ref<CSSValue> valueForContainIntrinsicSize(const RenderStyle& style, cons
     return CSSPrimitiveValue::create(CSSValueNone);
 }
 
-ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
-    : ComputedStyleExtractor(styleElementForNode(node), allowVisitedStyle, pseudoElementSpecifier)
+ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+    : ComputedStyleExtractor(styleElementForNode(node), allowVisitedStyle, pseudoElementIdentifier)
 {
 }
 
 ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle)
-    : ComputedStyleExtractor(node, allowVisitedStyle, PseudoId::None)
+    : ComputedStyleExtractor(node, allowVisitedStyle, std::nullopt)
 {
 }
 
-ComputedStyleExtractor::ComputedStyleExtractor(Element* element, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
+ComputedStyleExtractor::ComputedStyleExtractor(Element* element, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : m_element(element)
-    , m_pseudoElementSpecifier(pseudoElementSpecifier)
+    , m_pseudoElementIdentifier(pseudoElementIdentifier)
     , m_allowVisitedStyle(allowVisitedStyle)
 {
 }
 
 ComputedStyleExtractor::ComputedStyleExtractor(Element* element, bool allowVisitedStyle)
-    : ComputedStyleExtractor(element, allowVisitedStyle, PseudoId::None)
+    : ComputedStyleExtractor(element, allowVisitedStyle, std::nullopt)
 {
 }
 
@@ -1919,7 +1920,7 @@ RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringK
 
     m_element->document().updateLayoutIgnorePendingStylesheets();
 
-    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
         return nullptr;
 
@@ -1933,7 +1934,7 @@ bool ComputedStyleExtractor::useFixedFontDefaultSize() const
 {
     if (!m_element)
         return false;
-    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
         return false;
 
@@ -2741,8 +2742,9 @@ RenderElement* ComputedStyleExtractor::styledRenderer() const
 {
     if (!m_element)
         return nullptr;
-    if (m_pseudoElementSpecifier != PseudoId::None)
-        return Styleable(*m_element, m_pseudoElementSpecifier).renderer();
+    // FIXME: Styleable should use PseudoElementIdentifier (webkit.org/b/268064).
+    if (m_pseudoElementIdentifier)
+        return Styleable(*m_element, m_pseudoElementIdentifier->pseudoId).renderer();
     if (m_element->hasDisplayContents())
         return nullptr;
     return m_element->renderer();
@@ -2812,21 +2814,21 @@ bool ComputedStyleExtractor::updateStyleIfNeededForProperty(Element& element, CS
     return true;
 }
 
-static inline const RenderStyle* computeRenderStyleForProperty(Element& element, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle, SingleThreadWeakPtr<RenderElement> renderer)
+static inline const RenderStyle* computeRenderStyleForProperty(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle, SingleThreadWeakPtr<RenderElement> renderer)
 {
     if (!renderer)
         renderer = element.renderer();
 
     if (renderer && renderer->isComposited() && CSSPropertyAnimation::animationOfPropertyIsAccelerated(propertyID, element.document().settings())) {
         ownedStyle = renderer->animatedStyle();
-        if (pseudoElementSpecifier != PseudoId::None) {
+        if (pseudoElementIdentifier) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
-            return ownedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
+            return !pseudoElementIdentifier->nameArgument ? ownedStyle->getCachedPseudoStyle(pseudoElementIdentifier->pseudoId) : element.computedStyle(pseudoElementIdentifier);
         }
         return ownedStyle.get();
     }
 
-    return element.computedStyle(pseudoElementSpecifier);
+    return element.computedStyle(pseudoElementIdentifier);
 }
 
 static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
@@ -3100,7 +3102,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& p
     updateStyleIfNeededForProperty(*styledElement, CSSPropertyCustom);
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    auto* style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle, nullptr);
+    auto* style = computeRenderStyleForProperty(*styledElement, m_pseudoElementIdentifier, CSSPropertyCustom, ownedStyle, nullptr);
     if (!style)
         return nullptr;
 
@@ -3109,7 +3111,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& p
     if (document.hasStyleWithViewportUnits()) {
         if (RefPtr owner = document.ownerElement()) {
             owner->document().updateLayout();
-            style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle, nullptr);
+            style = computeRenderStyleForProperty(*styledElement, m_pseudoElementIdentifier, CSSPropertyCustom, ownedStyle, nullptr);
         }
     }
 
@@ -3194,7 +3196,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 return nullptr;
         }
 
-        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementIdentifier, propertyID, ownedStyle, styledRenderer());
 
         forcedLayout = [&] {
             // FIXME: Some of these cases could be narrowed down or optimized better.
@@ -3226,7 +3228,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     }
 
     if (updateLayout == UpdateLayout::No || forcedLayout != ForcedLayout::No)
-        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementIdentifier, propertyID, ownedStyle, styledRenderer());
 
     if (!style)
         return nullptr;
@@ -4770,7 +4772,7 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
     if (propertyID == CSSPropertyFontSize) {
         if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value)) {
             m_element->document().updateLayoutIgnorePendingStylesheets();
-            if (auto* style = m_element->computedStyle(m_pseudoElementSpecifier)) {
+            if (auto* style = m_element->computedStyle(m_pseudoElementIdentifier)) {
                 if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                     if (primitiveValue->isValueID() && primitiveValue->valueID() == sizeIdentifier)
                         return true;
@@ -4867,7 +4869,7 @@ size_t ComputedStyleExtractor::getLayerCount(CSSPropertyID property) const
         return 0;
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    const RenderStyle* style = computeRenderStyleForProperty(*m_element, m_pseudoElementSpecifier, property, ownedStyle, nullptr);
+    const RenderStyle* style = computeRenderStyleForProperty(*m_element, m_pseudoElementIdentifier, property, ownedStyle, nullptr);
     if (!style)
         return 0;
 

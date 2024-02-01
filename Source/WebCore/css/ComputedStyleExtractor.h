@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "PseudoElementIdentifier.h"
 #include <span>
 #include <wtf/RefPtr.h>
 
@@ -56,9 +57,9 @@ class ComputedStyleExtractor {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
 public:
     ComputedStyleExtractor(Node*, bool allowVisitedStyle = false);
-    ComputedStyleExtractor(Node*, bool allowVisitedStyle, PseudoId);
+    ComputedStyleExtractor(Node*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);
     ComputedStyleExtractor(Element*, bool allowVisitedStyle = false);
-    ComputedStyleExtractor(Element*, bool allowVisitedStyle, PseudoId);
+    ComputedStyleExtractor(Element*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);
 
     enum class UpdateLayout : bool { No, Yes };
     enum class PropertyValueType : bool { Resolved, Computed };
@@ -105,7 +106,7 @@ private:
     RefPtr<CSSValue> whiteSpaceShorthandValue(const RenderStyle&) const;
 
     RefPtr<Element> m_element;
-    PseudoId m_pseudoElementSpecifier;
+    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
     bool m_allowVisitedStyle;
 };
 

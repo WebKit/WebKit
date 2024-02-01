@@ -38,6 +38,7 @@
 #include "OrientationNotifier.h"
 #include "PageIdentifier.h"
 #include "PlaybackTargetClientContextIdentifier.h"
+#include "PseudoElementIdentifier.h"
 #include "RegistrableDomain.h"
 #include "RenderPtr.h"
 #include "ReportingClient.h"
@@ -730,7 +731,7 @@ public:
     // so calling this may cause a flash of unstyled content (FOUC).
         WEBCORE_EXPORT UpdateLayoutResult updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
 
-    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
+    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& = std::nullopt);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);

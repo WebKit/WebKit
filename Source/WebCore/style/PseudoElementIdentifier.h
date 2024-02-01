@@ -34,7 +34,7 @@ struct PseudoElementIdentifier {
     PseudoId pseudoId;
 
     // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString pseudoElementNameArgument { nullAtom() };
+    AtomString nameArgument { nullAtom() };
 };
 
 } // namespace WebCore

@@ -82,9 +82,10 @@ public:
         { }
 
         const SelectorChecker::Mode resolvingMode;
+        // FIXME: Switch to PseudoElementIdentifier.
         PseudoId pseudoId { PseudoId::None };
-        std::optional<StyleScrollbarState> scrollbarState;
         AtomString pseudoElementNameArgument;
+        std::optional<StyleScrollbarState> scrollbarState;
         const ContainerNode* scope { nullptr };
         const Element* hasScope { nullptr };
         bool matchesAllHasScopes { false };

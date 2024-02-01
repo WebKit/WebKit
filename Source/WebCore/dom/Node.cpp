@@ -1232,10 +1232,15 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-const RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
+const RenderStyle* Node::computedStyle()
+{
+    return computedStyle(std::nullopt);
+}
+
+const RenderStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     RefPtr composedParent = parentElementInComposedTree();
-    return composedParent ? composedParent->computedStyle(pseudoElementSpecifier) : nullptr;
+    return composedParent ? composedParent->computedStyle(pseudoElementIdentifier) : nullptr;
 }
 
 // FIXME: Shouldn't these functions be in the editing code?  Code that asks questions about HTML in the core DOM class

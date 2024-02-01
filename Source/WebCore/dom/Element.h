@@ -124,6 +124,7 @@ enum class ContentRelevancy : uint8_t {
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
+struct PseudoElementIdentifier;
 struct ResolutionContext;
 struct ResolvedStyle;
 }
@@ -419,7 +420,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
 
-    const RenderStyle* computedStyle(PseudoId = PseudoId::None) override;
+    using Node::computedStyle;
+    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
     const RenderStyle* computedStyleForEditability();
 
     bool needsStyleInvalidation() const;
@@ -868,7 +870,7 @@ private:
 
     enum class ResolveComputedStyleMode : uint8_t { Normal, RenderedOnly, Editability };
     const RenderStyle* resolveComputedStyle(ResolveComputedStyleMode = ResolveComputedStyleMode::Normal);
-    const RenderStyle& resolvePseudoElementStyle(PseudoId);
+    const RenderStyle& resolvePseudoElementStyle(const Style::PseudoElementIdentifier&);
 
     unsigned rareDataChildIndex() const;
 

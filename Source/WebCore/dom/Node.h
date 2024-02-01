@@ -74,6 +74,10 @@ class ShadowRoot;
 class TouchEvent;
 class WebCoreOpaqueRoot;
 
+namespace Style {
+struct PseudoElementIdentifier;
+}
+
 }
 
 WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(WebCore::RenderObject);
@@ -450,11 +454,12 @@ public:
     // Use these two methods with caution.
     WEBCORE_EXPORT RenderBox* renderBox() const;
     RenderBoxModelObject* renderBoxModelObject() const;
-    
+
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
     const RenderStyle* renderStyle() const;
 
-    virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = PseudoId::None);
+    WEBCORE_EXPORT const RenderStyle* computedStyle();
+    virtual const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&);
 
     enum class InsertedIntoAncestorResult {
         Done,

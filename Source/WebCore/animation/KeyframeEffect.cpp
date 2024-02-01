@@ -658,7 +658,8 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
     auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
     auto& elementStyle = lastStyleChangeEventStyle ? *lastStyleChangeEventStyle : currentStyle();
 
-    ComputedStyleExtractor computedStyleExtractor { target, false, m_pseudoId };
+    auto pseudoElementIdentifier = m_pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { m_pseudoId });
+    ComputedStyleExtractor computedStyleExtractor { target, false, pseudoElementIdentifier };
 
     BlendingKeyframes computedBlendingKeyframes(m_blendingKeyframes.animationName());
     computedBlendingKeyframes.copyKeyframes(m_blendingKeyframes);

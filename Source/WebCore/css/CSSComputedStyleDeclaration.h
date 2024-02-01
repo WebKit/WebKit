@@ -22,6 +22,7 @@
 
 #include "CSSStyleDeclaration.h"
 #include "ComputedStyleExtractor.h"
+#include "PseudoElementIdentifier.h"
 #include "RenderStyleConstants.h"
 #include <wtf/FixedVector.h>
 #include <wtf/IsoMalloc.h>
@@ -36,8 +37,11 @@ class MutableStyleProperties;
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration, public RefCounted<CSSComputedStyleDeclaration> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, bool allowVisitedStyle);
-    static Ref<CSSComputedStyleDeclaration> create(Element&, std::optional<PseudoId>);
+    enum class AllowVisited : bool { No, Yes };
+    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
+    static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<CSSComputedStyleDeclaration> createEmpty(Element&);
+
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
 
     void ref() final { RefCounted::ref(); }
@@ -46,8 +50,10 @@ public:
     String getPropertyValue(CSSPropertyID) const;
 
 private:
-    CSSComputedStyleDeclaration(Element&, bool allowVisitedStyle);
-    CSSComputedStyleDeclaration(Element&, std::optional<PseudoId>);
+    enum class IsEmpty : bool { No, Yes };
+    CSSComputedStyleDeclaration(Element&, AllowVisited);
+    CSSComputedStyleDeclaration(Element&, IsEmpty);
+    CSSComputedStyleDeclaration(Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
     // CSSOM functions. Don't make these public.
     CSSRule* parentRule() const final;
@@ -73,7 +79,8 @@ private:
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
 
     mutable Ref<Element> m_element;
-    std::optional<PseudoId> m_pseudoElementSpecifier { PseudoId::None };
+    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { std::nullopt };
+    bool m_isEmpty { false };
     bool m_allowVisitedStyle { false };
 };
 

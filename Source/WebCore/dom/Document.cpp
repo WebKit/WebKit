@@ -2743,11 +2743,11 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
     return result;
 }
 
-std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, const RenderStyle* parentStyle, PseudoId pseudoElementSpecifier)
+std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, const RenderStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     ASSERT(&element.document() == this);
-    ASSERT(!element.isPseudoElement() || pseudoElementSpecifier == PseudoId::None);
-    ASSERT(pseudoElementSpecifier == PseudoId::None || parentStyle);
+    ASSERT(!element.isPseudoElement() || !pseudoElementIdentifier);
+    ASSERT(!pseudoElementIdentifier || parentStyle);
     ASSERT(Style::postResolutionCallbacksAreSuspended());
 
     std::optional<RenderStyle> updatedDocumentStyle;
@@ -2759,8 +2759,8 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     SetForScope change(m_ignorePendingStylesheets, true);
     auto& resolver = element.styleResolver();
 
-    if (pseudoElementSpecifier != PseudoId::None) {
-        auto style = resolver.styleForPseudoElement(element, { pseudoElementSpecifier }, { parentStyle });
+    if (pseudoElementIdentifier) {
+        auto style = resolver.styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
         if (!style)
             return nullptr;
         return WTFMove(style->style);

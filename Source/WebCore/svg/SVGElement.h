@@ -154,8 +154,9 @@ public:
     RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive);
     void animatorWillBeDeleted(const QualifiedName&);
 
-    const RenderStyle* computedStyle(PseudoId = PseudoId::None) final;
-    
+    using Node::computedStyle;
+    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
+
     ColorInterpolation colorInterpolation() const;
 
     // These are needed for the RenderTree, animation and DOM.

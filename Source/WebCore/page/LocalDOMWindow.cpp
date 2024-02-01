@@ -1644,11 +1644,14 @@ StyleMedia& LocalDOMWindow::styleMedia()
 
 Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
-    std::optional<PseudoId> pseudoId = PseudoId::None;
+    if (!pseudoElt.startsWith(':'))
+        return CSSComputedStyleDeclaration::create(element, std::nullopt);
+
     // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
-    if (pseudoElt.startsWith(":"_s))
-        pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
-    return CSSComputedStyleDeclaration::create(element, pseudoId);
+    auto pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
+    if (!pseudoId)
+        return CSSComputedStyleDeclaration::createEmpty(element);
+    return CSSComputedStyleDeclaration::create(element, Style::PseudoElementIdentifier { *pseudoId });
 }
 
 RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const

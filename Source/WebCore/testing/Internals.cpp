@@ -1412,8 +1412,7 @@ void Internals::markFrontBufferVolatile(Element& element)
 
 Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const
 {
-    bool allowVisitedStyle = true;
-    return CSSComputedStyleDeclaration::create(element, allowVisitedStyle);
+    return CSSComputedStyleDeclaration::create(element, CSSComputedStyleDeclaration::AllowVisited::Yes);
 }
 
 Node* Internals::ensureUserAgentShadowRoot(Element& host)
