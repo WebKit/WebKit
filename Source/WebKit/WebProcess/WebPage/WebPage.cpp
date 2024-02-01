@@ -5324,11 +5324,6 @@ bool WebPage::findStringFromInjectedBundle(const String& target, OptionSet<FindO
     return m_page->findString(target, core(options)).has_value();
 }
 
-void WebPage::findStringMatchesFromInjectedBundle(const String& target, OptionSet<FindOptions> options)
-{
-    findController().findStringMatches(target, options, 0);
-}
-
 void WebPage::replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly)
 {
     findController().replaceMatches(matchIndices, replacementText, selectionOnly);

@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
 <body>
     <p>Verifies that find and replace fires input events of type "insertReplacementText". This test requires WebKitTestRunner.</p>
     <div id="editor" contenteditable>
@@ -35,7 +38,12 @@ field.addEventListener("input", logInputEvent);
 
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = async () => {
     testRunner.findStringMatchesInPage("banana", []);
+    await UIHelper.ensurePresentationUpdate();
     testRunner.replaceFindMatchesAtIndices([0, 1, 2], "watermelon", false);
 
     write("---");
@@ -48,6 +56,8 @@ if (window.testRunner) {
     field.focus();
     field.setSelectionRange(0, 0);
     testRunner.replaceFindMatchesAtIndices([], "Guava", false);
+
+    testRunner.notifyDone();
 }
 </script>
 </html>

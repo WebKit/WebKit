@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/dump-as-markup.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style>
     p[contenteditable] {
         border: 1px solid red;
@@ -14,9 +15,16 @@
     </div>
 </body>
 <script>
+Markup.waitUntilDone();
 Markup.description("Verifies that find and replace ignores matches that span editing boundaries. This test requires WebKitTestRunner.");
-testRunner.findStringMatchesInPage("apple", []);
-testRunner.replaceFindMatchesAtIndices([0], "pear", false);
-Markup.dump("container", "After replacing 'apple' with 'pear'");
+
+onload = async () => {
+    testRunner.findStringMatchesInPage("apple", []);
+    await UIHelper.ensurePresentationUpdate();
+    testRunner.replaceFindMatchesAtIndices([0], "pear", false);
+    Markup.dump("container", "After replacing 'apple' with 'pear'");
+
+    Markup.notifyDone();
+}
 </script>
 </html>

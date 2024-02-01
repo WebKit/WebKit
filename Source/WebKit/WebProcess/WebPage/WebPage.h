@@ -614,7 +614,6 @@ public:
 #endif
 
     bool findStringFromInjectedBundle(const String&, OptionSet<FindOptions>);
-    void findStringMatchesFromInjectedBundle(const String&, OptionSet<FindOptions>);
     void replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
 
     void setTextIndicator(const WebCore::TextIndicatorData&);

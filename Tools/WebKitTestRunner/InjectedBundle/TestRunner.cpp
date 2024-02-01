@@ -351,8 +351,12 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
 
 void TestRunner::findStringMatchesInPage(JSStringRef target, JSValueRef optionsArrayAsValue)
 {
-    if (auto options = findOptionsFromArray(optionsArrayAsValue))
-        WKBundlePageFindStringMatches(page(), toWK(target).get(), *options);
+    if (auto options = findOptionsFromArray(optionsArrayAsValue)) {
+        postPageMessage("FindStringMatches", createWKDictionary({
+            { "String", toWK(target) },
+            { "FindOptions", toWK(*options) },
+        }));
+    }
 }
 
 void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)

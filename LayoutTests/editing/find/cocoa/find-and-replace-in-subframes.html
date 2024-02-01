@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/dump-as-markup.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 </head>
 <body>
     <div contenteditable id="editor">
@@ -19,12 +20,14 @@
 Markup.waitUntilDone();
 Markup.description("Verifies that find and replace can be used to replace words in different frames on the same page, as well as inside text fields. This test requires WebKitTestRunner.");
 
-addEventListener("load", () => {
+addEventListener("load", async () => {
     testRunner.findStringMatchesInPage("bar", []);
+    await UIHelper.ensurePresentationUpdate();
     testRunner.replaceFindMatchesAtIndices([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "hello", false);
     Markup.dump("editor", "After replacing 'bar' with 'hello'");
 
     testRunner.findStringMatchesInPage("foo", []);
+    await UIHelper.ensurePresentationUpdate();
     testRunner.replaceFindMatchesAtIndices([0], "world", false);
     Markup.dump("editor", "After replacing the first occurrence of 'foo' with 'world'");
 

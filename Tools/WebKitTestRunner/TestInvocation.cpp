@@ -890,6 +890,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "FindStringMatches")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto string = stringValue(messageBodyDictionary, "String");
+        auto findOptions = static_cast<WKFindOptions>(uint64Value(messageBodyDictionary, "FindOptions"));
+        WKPageFindStringMatches(TestController::singleton().mainWebView()->page(), string, findOptions, 0);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/dump-as-markup.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style>
     *[contenteditable="true"] {
         border: 3px green solid;
@@ -25,9 +26,16 @@
     </div>
 </body>
 <script>
+Markup.waitUntilDone();
 Markup.description("Verifies that find and replace does not change matches in noneditable content. This test requires WebKitTestRunner.");
-testRunner.findStringMatchesInPage("eta", []);
-testRunner.replaceFindMatchesAtIndices([0, 1, 2, 3, 4], "_eta_", false);
-Markup.dump("editor", "After replacing 'eta' with '_eta_'");
+
+onload = async () => {
+    testRunner.findStringMatchesInPage("eta", []);
+    await UIHelper.ensurePresentationUpdate();
+    testRunner.replaceFindMatchesAtIndices([0, 1, 2, 3, 4], "_eta_", false);
+    Markup.dump("editor", "After replacing 'eta' with '_eta_'");
+
+    Markup.notifyDone();
+}
 </script>
 </html>
