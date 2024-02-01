@@ -152,17 +152,30 @@ void WebExtensionAPIStorageArea::set(WebPage* page, NSDictionary *items, Ref<Web
         return;
     }
 
-    if (!isValidJSONObject(items)) {
-        *outExceptionString = toErrorString(nil, @"items", @"it is not JSON-serializable");
+    __block NSString *keyWithError;
+
+    auto *serializedData = mapObjects(items, ^NSString *(NSString *key, id object) {
+        ASSERT([object isKindOfClass:JSValue.class]);
+
+        if (keyWithError)
+            return nil;
+
+        auto *result = encodeJSONString(object, JSONOptions::FragmentsAllowed);
+        if (!result) {
+            keyWithError = key;
+            return nil;
+        }
+
+        return result;
+    });
+
+    if (keyWithError) {
+        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it is not JSON-serializable");
         return;
     }
 
-    NSDictionary<NSString *, NSString *> *serializedData = mapObjects(items, ^NSString *(NSString *key, id object) {
-        return encodeJSONString(object, { JSONOptions::FragmentsAllowed });
-    });
-
-    if (anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem)) {
-        *outExceptionString = toErrorString(nil, @"items", @"exceeded maximum size for a single item");
+    if (anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem, &keyWithError)) {
+        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"exceeded maximum size for a single item");
         return;
     }
 

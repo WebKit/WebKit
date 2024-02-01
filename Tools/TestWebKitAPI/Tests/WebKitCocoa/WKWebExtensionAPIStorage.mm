@@ -65,6 +65,7 @@ TEST(WKWebExtensionAPIStorage, Errors)
         @"browser.test.assertThrows(() => browser?.storage?.local?.set(), /A required argument is missing/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.set([]), /'items' value is invalid, because an object is expected/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.set({ 'key': () => { 'function' } }), /it is not JSON-serializable/i)",
+        @"browser.test.assertThrows(() => browser?.storage?.local?.set({ 'key': 'a'.repeat(8193) }), /exceeded maximum size for a single item/i)",
 
         @"browser.test.assertThrows(() => browser?.storage?.local?.remove(), /A required argument is missing/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.remove({}), /'keys' value is invalid, because a string or an array of strings is expected, but an object was provided/i)",
@@ -192,7 +193,7 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
 TEST(WKWebExtensionAPIStorage, Set)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null }",
         @"await browser?.storage?.local?.set(data)",
 
         @"var result = await browser?.storage?.local?.get()",
@@ -220,10 +221,47 @@ TEST(WKWebExtensionAPIStorage, Set)
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIStorage, SetCustomObject)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"class BaseObject {",
+        @"  constructor(name) {",
+        @"    this.name = name",
+        @"  }",
+
+        @"  toJSON() {",
+        @"    return { type: 'BaseObject', name: this.name }",
+        @"  }",
+        @"}",
+
+        @"class DerivedObject extends BaseObject {",
+        @"  constructor(name, value) {",
+        @"    super(name)",
+        @"    this.value = value",
+        @"  }",
+
+        @"  toJSON() {",
+        @"    let baseSerialization = super.toJSON()",
+        @"    return { ...baseSerialization, type: 'DerivedObject', value: this.value }",
+        @"  }",
+        @"}",
+
+        @"const customObject = new DerivedObject('TestObject', 42)",
+        @"await browser.test.assertSafeResolve(() => browser?.storage?.local?.set({ customObject }))",
+
+        @"var result = await browser.test.assertSafeResolve(() => browser?.storage?.local?.get('customObject'))",
+        @"browser.test.assertDeepEq(customObject?.toJSON(), result?.customObject, 'Custom object should be correctly stored and retrieved')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIStorage, Get)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null }",
         @"await browser?.storage?.local?.set(data)",
 
         @"var result = await browser?.storage?.local?.get()",
@@ -235,9 +273,8 @@ TEST(WKWebExtensionAPIStorage, Get)
         @"result = await browser?.storage?.local?.get([ 'string', 'number' ])",
         @"browser.test.assertDeepEq({ 'string': 'string', 'number': 1 }, result)",
 
-        @"result = await browser?.storage?.local?.get({ 'boolean': false, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'] })",
-        @"await browser.test.log(result)",
-        @"browser.test.assertDeepEq({ 'boolean': true, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'] }, result)",
+        @"result = await browser?.storage?.local?.get({ 'boolean': false, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'], 'null': 42 })",
+        @"browser.test.assertDeepEq({ 'boolean': true, 'unrecognized_key': 'default_value', 'array': [1, true, 'string'], 'null': null }, result)",
 
         @"browser.test.notifyPass()",
     ]);

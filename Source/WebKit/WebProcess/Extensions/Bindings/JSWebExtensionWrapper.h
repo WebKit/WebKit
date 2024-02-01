@@ -121,6 +121,11 @@ enum class NullValuePolicy : bool {
     Allowed,
 };
 
+enum class ValuePolicy : bool {
+    Recursive,
+    StopAtTopLevel,
+};
+
 inline RefPtr<WebFrame> toWebFrame(JSContextRef context)
 {
     ASSERT(context);
@@ -167,7 +172,7 @@ RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef, JSValueRef
 
 id toNSObject(JSContextRef, JSValueRef, Class containingObjectsOfClass = Nil);
 NSString *toNSString(JSContextRef, JSValueRef, NullStringPolicy = NullStringPolicy::NullAndUndefinedAsNullString);
-NSDictionary *toNSDictionary(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed);
+NSDictionary *toNSDictionary(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);
 
 inline NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containingObjectsOfClass = NSObject.class)
 {

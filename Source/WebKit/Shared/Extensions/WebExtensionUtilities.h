@@ -69,7 +69,7 @@ size_t storageSizeOf(NSString *);
 size_t storageSizeOf(NSDictionary<NSString *, NSString *> *);
 
 /// Returns true if the size of any item in the dictionary exceeds the given quota.
-bool anyItemsExceedQuota(NSDictionary *, size_t quota);
+bool anyItemsExceedQuota(NSDictionary *, size_t quota, NSString **outKeyWithError = nullptr);
 
 } // namespace WebKit
 

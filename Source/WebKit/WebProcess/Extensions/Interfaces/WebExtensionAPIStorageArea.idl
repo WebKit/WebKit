@@ -31,7 +31,7 @@
 
     [RaisesException] void get([Optional, NSObject, DOMString] any items, [Optional, CallbackHandler] function callback);
     [RaisesException] void getBytesInUse([Optional, NSObject, DOMString] any keys, [Optional, CallbackHandler] function callback);
-    [RaisesException] void set([NSDictionary] any items, [Optional, CallbackHandler] function callback);
+    [RaisesException] void set([NSDictionary=StopAtTopLevel] any items, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any keys, [Optional, CallbackHandler] function callback);
     [NeedsPage] void clear([Optional, CallbackHandler] function callback);
 

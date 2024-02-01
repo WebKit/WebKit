@@ -28,10 +28,13 @@
 #endif
 
 #import "config.h"
-#import "APIData.h"
 #import "CocoaHelpers.h"
+
+#import "APIData.h"
+#import "JSWebExtensionWrapper.h"
 #import "Logging.h"
 #import "WKNSData.h"
+#import <JavaScriptCore/JSValue.h>
 #import <wtf/FileSystem.h>
 
 namespace WebKit {
@@ -267,8 +270,16 @@ id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
 
 NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
 {
+    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+        if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
+            return nil;
+
+        return value._toJSONString;
+    }
+
     if (auto *data = encodeJSONData(object, options, error))
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
     return nil;
 }
 
@@ -276,6 +287,13 @@ NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
 {
     if (!object)
         return nil;
+
+    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+        if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
+            return nil;
+
+        return [value._toJSONString dataUsingEncoding:NSUTF8StringEncoding];
+    }
 
     ASSERT(isValidJSONObject(object, options));
 

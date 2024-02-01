@@ -220,7 +220,7 @@ NSString *toNSString(JSContextRef context, JSValueRef value, NullStringPolicy nu
     }
 }
 
-NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValuePolicy nullPolicy)
+NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValuePolicy nullPolicy, ValuePolicy valuePolicy)
 {
     ASSERT(context);
 
@@ -248,12 +248,20 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
         if (nullPolicy == NullValuePolicy::NotAllowed && JSValueIsNull(context, item))
             continue;
 
+        auto *key = toNSString(propertyName.get());
         auto *itemValue = toJSValue(context, item);
+
+        if (valuePolicy == ValuePolicy::StopAtTopLevel) {
+            if (itemValue)
+                result[key] = itemValue;
+            continue;
+        }
+
         if (itemValue._isDictionary) {
             if (auto *itemDictionary = toNSDictionary(context, item, nullPolicy))
-                [result setObject:itemDictionary forKey:toNSString(propertyName.get())];
+                result[key] = itemDictionary;
         } else if (id value = toNSObject(context, item))
-            [result setObject:value forKey:toNSString(propertyName.get())];
+            result[key] = value;
     }
 
     JSPropertyNameArrayRelease(propertyNames);

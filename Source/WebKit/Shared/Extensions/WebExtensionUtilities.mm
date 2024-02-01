@@ -387,16 +387,24 @@ size_t storageSizeOf(NSDictionary<NSString *, NSString *> *keysAndValues)
     return storageSize;
 }
 
-bool anyItemsExceedQuota(NSDictionary *items, size_t quota)
+bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWithError)
 {
-    __block BOOL itemExceededQuota = NO;
+    __block bool itemExceededQuota;
+    __block NSString *keyWithError;
+
     [items enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         size_t sizeOfCurrentItem = storageSizeOf(key) + storageSizeOf(value);
         if (sizeOfCurrentItem > quota) {
-            itemExceededQuota = YES;
+            itemExceededQuota = true;
+            keyWithError = key;
             *stop = YES;
         }
     }];
+
+    ASSERT(!itemExceededQuota || (itemExceededQuota && keyWithError));
+
+    if (outKeyWithError)
+        *outKeyWithError = keyWithError;
 
     return itemExceededQuota;
 }
