@@ -187,8 +187,10 @@ bool WidthIterator::hasExtraSpacing() const
 
 static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
 {
-    ASSERT(index < glyphBuffer.size());
-    glyphBuffer.shrink(index);
+    ASSERT(index >= 0);
+    auto unsignedIndex = static_cast<unsigned>(index);
+    ASSERT(unsignedIndex < glyphBuffer.size());
+    glyphBuffer.shrink(unsignedIndex);
 }
 
 static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, char32_t character)
