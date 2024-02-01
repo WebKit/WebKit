@@ -48,6 +48,8 @@ GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t* surface)
     ASSERT(cairo_image_surface_get_format(surface) == CAIRO_FORMAT_ARGB32);
     auto width = cairo_image_surface_get_width(surface);
     auto height = cairo_image_surface_get_height(surface);
+    if (width <= 0 || height <= 0)
+        return nullptr;
     auto stride = cairo_image_surface_get_stride(surface);
     auto* data = cairo_image_surface_get_data(surface);
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, height * stride, [](gpointer data) {

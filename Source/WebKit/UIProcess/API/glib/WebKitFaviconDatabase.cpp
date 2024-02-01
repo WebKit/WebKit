@@ -245,8 +245,14 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     g_return_val_if_fail(g_task_is_valid(result, database), nullptr);
 
 #if USE(GTK4)
-    auto icon = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-    return icon ? cairoSurfaceToGdkTexture(icon.get()).leakRef() : nullptr;
+    auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
+    auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
+    if (texture)
+        return texture.leakRef();
+    // FIXME: Add a new WEBKIT_FAVICON_DATABASE_ERROR
+    if (error && !*error)
+        g_set_error_literal(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Failed to create texture"));
+    return nullptr;
 #else
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 #endif
