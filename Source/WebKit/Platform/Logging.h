@@ -84,6 +84,7 @@ extern "C" {
     M(NetworkScheduling) \
     M(NetworkSession) \
     M(Notifications) \
+    M(PDF) \
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \

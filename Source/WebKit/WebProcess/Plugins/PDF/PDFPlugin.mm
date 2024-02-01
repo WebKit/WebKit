@@ -803,7 +803,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransfo
     if (size() == pluginSize)
         return;
 
-    LOG_WITH_STREAM(Plugins, stream << "PDFPlugin::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
+    LOG_WITH_STREAM(PDF, stream << "PDFPlugin::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
     PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
 
     [m_pdfLayerController setFrameSize:pluginSize];
