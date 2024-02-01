@@ -37,8 +37,9 @@ GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_media_debug);
 
 namespace WebCore {
 
-RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track)
-    : m_mediaStreamId(mediaStreamId)
+RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(Type type, const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track)
+    : m_type(type)
+    , m_mediaStreamId(mediaStreamId)
     , m_trackId(track.id())
     , m_ssrcGenerator(ssrcGenerator)
 {
@@ -311,6 +312,78 @@ void RealtimeOutgoingMediaSourceGStreamer::teardown()
     m_webrtcSinkPad.clear();
     m_parameters.reset();
     m_fallbackSource.clear();
+    m_pendingCodecPreferences.clear();
+}
+
+void RealtimeOutgoingMediaSourceGStreamer::unlinkPayloader()
+{
+    PayloaderState state;
+    g_object_get(m_payloader.get(), "seqnum", &state.seqnum, nullptr);
+    if (state.seqnum < 65535)
+        state.seqnum++;
+    m_payloaderState = state;
+
+    if (m_type == RealtimeOutgoingMediaSourceGStreamer::Type::Audio)
+        gst_element_set_state(m_encoder.get(), GST_STATE_NULL);
+    gst_element_set_state(m_payloader.get(), GST_STATE_NULL);
+    if (m_type == RealtimeOutgoingMediaSourceGStreamer::Type::Audio) {
+        gst_element_unlink_many(m_preEncoderQueue.get(), m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+        gst_bin_remove_many(GST_BIN_CAST(m_bin.get()), m_payloader.get(), m_encoder.get(), nullptr);
+        m_encoder.clear();
+    } else {
+        gst_element_unlink_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+        gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_payloader.get());
+    }
+    m_payloader.clear();
+}
+
+void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged(const GRefPtr<GstCaps>& codecPreferences)
+{
+    if (m_payloader) {
+        // We have a linked encoder/payloader, so to replace the audio encoder and audio/video
+        // payloader we need to block upstream data flow, send an EOS event to the first element we
+        // want to remove (encoder for audio, payloader for video) and wait it reaches the payloader
+        // source pad. Then we can unlink/clean-up elements.
+        m_pendingCodecPreferences = codecPreferences;
+        auto srcPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "src"));
+        gst_pad_add_probe(srcPad.get(), GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+            gst_pad_remove_probe(pad, GST_PAD_PROBE_INFO_ID(info));
+
+            auto self = reinterpret_cast<RealtimeOutgoingMediaSourceGStreamer*>(userData);
+            auto srcPad = adoptGRef(gst_element_get_static_pad(self->m_payloader.get(), "src"));
+            gst_pad_add_probe(srcPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BLOCK | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+                if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_DATA(info)) != GST_EVENT_EOS)
+                    return GST_PAD_PROBE_OK;
+
+                gst_pad_remove_probe(pad, GST_PAD_PROBE_INFO_ID(info));
+
+                auto self = reinterpret_cast<RealtimeOutgoingMediaSourceGStreamer*>(userData);
+                self->unlinkPayloader();
+                self->codecPreferencesChanged(self->m_pendingCodecPreferences);
+                self->m_pendingCodecPreferences.clear();
+                return GST_PAD_PROBE_DROP;
+            }),  userData, nullptr);
+
+            auto head = self->m_encoder.get();
+            if (self->m_type == RealtimeOutgoingMediaSourceGStreamer::Type::Video)
+                head = self->m_payloader.get();
+            auto sinkPad = adoptGRef(gst_element_get_static_pad(head, "sink"));
+            gst_pad_send_event(sinkPad.get(), gst_event_new_eos());
+
+            return GST_PAD_PROBE_OK;
+        }), this, nullptr);
+        return;
+    }
+
+    if (!setPayloadType(codecPreferences)) {
+        GST_ERROR_OBJECT(m_bin.get(), "Unable to link encoder to webrtcbin");
+        return;
+    }
+
+    gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));
+    gst_element_sync_state_with_parent(m_bin.get());
+    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, "outgoing-media-new-codec-prefs");
+    m_isStopped = false;
 }
 
 #undef GST_CAT_DEFAULT

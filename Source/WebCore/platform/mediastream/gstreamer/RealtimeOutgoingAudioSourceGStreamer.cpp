@@ -34,7 +34,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);
 namespace WebCore {
 
 RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track)
-    : RealtimeOutgoingMediaSourceGStreamer(ssrcGenerator, mediaStreamId, track)
+    : RealtimeOutgoingMediaSourceGStreamer(RealtimeOutgoingMediaSourceGStreamer::Type::Audio, ssrcGenerator, mediaStreamId, track)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -119,6 +119,11 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     if (gst_structure_get_int(structure, "payload", &payloadType))
         g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
 
+    if (m_payloaderState) {
+        g_object_set(m_payloader.get(), "seqnum-offset", m_payloaderState->seqnum, nullptr);
+        m_payloaderState.reset();
+    }
+
     g_object_set(m_inputCapsFilter.get(), "caps", m_inputCaps.get(), nullptr);
     g_object_set(m_capsFilter.get(), "caps", caps.get(), nullptr);
 
@@ -133,30 +138,6 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     }
 
     return gst_element_link_many(m_preEncoderQueue.get(), m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
-}
-
-void RealtimeOutgoingAudioSourceGStreamer::codecPreferencesChanged(const GRefPtr<GstCaps>& codecPreferences)
-{
-    gst_element_set_locked_state(m_bin.get(), TRUE);
-    if (m_payloader) {
-        gst_element_set_state(m_payloader.get(), GST_STATE_NULL);
-        gst_element_set_state(m_encoder.get(), GST_STATE_NULL);
-        gst_element_unlink_many(m_preEncoderQueue.get(), m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
-        gst_bin_remove_many(GST_BIN_CAST(m_bin.get()), m_payloader.get(), m_encoder.get(), nullptr);
-        m_payloader.clear();
-        m_encoder.clear();
-    }
-    if (!setPayloadType(codecPreferences)) {
-        gst_element_set_locked_state(m_bin.get(), FALSE);
-        GST_ERROR_OBJECT(m_bin.get(), "Unable to link encoder to webrtcbin");
-        return;
-    }
-
-    gst_element_set_locked_state(m_bin.get(), FALSE);
-    gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));
-    gst_element_sync_state_with_parent(m_bin.get());
-    GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, "outgoing-audio-new-codec-prefs");
-    m_isStopped = false;
 }
 
 void RealtimeOutgoingAudioSourceGStreamer::connectFallbackSource()
