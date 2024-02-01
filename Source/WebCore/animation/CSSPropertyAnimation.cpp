@@ -1469,51 +1469,14 @@ private:
     {
         return property() == CSSPropertyFilter
             || property() == CSSPropertyBackdropFilter
-            || property() == CSSPropertyWebkitBackdropFilter
-            ;
+            || property() == CSSPropertyWebkitBackdropFilter;
     }
 
     bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return true; }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
-        auto& fromFilterOperations = value(from);
-        auto& toFilterOperations = value(to);
-
-        // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
-
-        if (fromFilterOperations.hasReferenceFilter() || toFilterOperations.hasReferenceFilter())
-            return false;
-
-        // If one filter is none and the other is a <filter-value-list> without <url>
-        auto oneListIsEmpty = [&]() {
-            return fromFilterOperations.isEmpty() != toFilterOperations.isEmpty();
-        };
-
-        // If both filters have a <filter-value-list> of same length without <url> and for each <filter-function>
-        // for which there is a corresponding item in each list
-        // If both filters have a <filter-value-list> of different length without <url> and for each
-        // <filter-function> for which there is a corresponding item in each list
-        auto listsMatch = [&]() {
-            auto numItems = [&]() {
-                if (fromFilterOperations.size() == toFilterOperations.size())
-                    return fromFilterOperations.size();
-                return std::min(fromFilterOperations.size(), toFilterOperations.size());
-            }();
-
-            for (size_t i = 0; i < numItems; ++i) {
-                auto* fromOperation = fromFilterOperations.at(i);
-                auto* toOperation = toFilterOperations.at(i);
-                if (!!fromOperation != !!toOperation)
-                    return false;
-                if (fromOperation && toOperation && fromOperation->type() != toOperation->type())
-                    return false;
-            }
-
-            return true;
-        };
-
-        return compositeOperation != CompositeOperation::Replace || oneListIsEmpty() || listsMatch();
+        return value(from).canInterpolate(value(to), compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final

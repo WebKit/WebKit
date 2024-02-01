@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "FilterOperation.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -65,6 +66,7 @@ public:
     bool transformColor(Color&) const;
     bool inverseTransformColor(Color&) const;
 
+    WEBCORE_EXPORT bool canInterpolate(const FilterOperations&, CompositeOperation) const;
     WEBCORE_EXPORT FilterOperations blend(const FilterOperations&, const BlendingContext&) const;
 
 private:
