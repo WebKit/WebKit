@@ -48,23 +48,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::ResourceError>::encodePlatformData(Encoder& encoder, const WebCore::ResourceError& resourceError)
-{
-    encoder << WebKit::CoreIPCError(resourceError.nsError());
-}
-
-
-
-bool ArgumentCoder<WebCore::ResourceError>::decodePlatformData(Decoder& decoder, WebCore::ResourceError& resourceError)
-{
-    std::optional<WebKit::CoreIPCError> error;
-    decoder >> error;
-    if (!error)
-        return false;
-    resourceError = WebCore::ResourceError(error->toID().get());
-    return true;
-}
-
 void ArgumentCoder<WebCore::Credential>::encodePlatformData(Encoder& encoder, const WebCore::Credential& credential)
 {
     NSURLCredential *nsCredential = credential.nsCredential();

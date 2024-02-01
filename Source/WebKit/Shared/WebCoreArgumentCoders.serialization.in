@@ -1903,6 +1903,29 @@ header: <WebCore/ResourceRequest.h>
 };
 #endif
 
+[Nested] struct WebCore::ResourceError::IPCData {
+    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceError::Type type;
+#if PLATFORM(COCOA)
+    RetainPtr<NSError> nsError;
+    bool isSanitized;
+#endif // PLATFORM(COCOA)
+#if !PLATFORM(COCOA)
+    String domain;
+    int errorCode;
+    URL failingURL;
+    String localizedDescription;
+    WebCore::ResourceError::IsSanitized isSanitized;
+#endif // !PLATFORM(COCOA)
+#if USE(SOUP)
+    WebCore::CertificateInfo certificateInfo;
+#endif // USE(SOUP)
+};
+
+header: <WebCore/ResourceError.h>
+[CreateUsing=fromIPCData] class WebCore::ResourceError {
+    std::optional<WebCore::ResourceError::IPCData> ipcData();
+};
+
 header: <WebCore/DiagnosticLoggingDomain.h>
 enum class WebCore::DiagnosticLoggingDomain : uint8_t {
     Media

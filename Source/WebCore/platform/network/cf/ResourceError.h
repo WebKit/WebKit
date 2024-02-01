@@ -55,6 +55,15 @@ public:
     WEBCORE_EXPORT NSError *nsError() const;
     WEBCORE_EXPORT operator NSError *() const;
 
+
+    struct IPCData {
+        Type type;
+        RetainPtr<NSError> nsError;
+        bool isSanitized;
+    };
+    WEBCORE_EXPORT static ResourceError fromIPCData(std::optional<IPCData>&&);
+    WEBCORE_EXPORT std::optional<IPCData> ipcData() const;
+
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     WEBCORE_EXPORT bool blockedKnownTracker() const;
     WEBCORE_EXPORT String blockedTrackerHostName() const;

@@ -112,7 +112,6 @@ class FontPlatformData;
 class FragmentedSharedBuffer;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
-class ResourceError;
 class ScriptBuffer;
 class SerializedScriptValue;
 class SharedBuffer;
@@ -168,13 +167,6 @@ template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ResourceError> {
-    static void encode(Encoder&, const WebCore::ResourceError&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceError&);
-    static void encodePlatformData(Encoder&, const WebCore::ResourceError&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ResourceError&);
 };
 
 #if USE(APPKIT)

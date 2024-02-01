@@ -29,6 +29,7 @@
 
 #if USE(SOUP)
 
+#include "CertificateInfo.h"
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GTlsCertificate GTlsCertificate;
@@ -43,10 +44,19 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
-        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
-    {
-    }
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type = Type::General, IsSanitized = IsSanitized::No);
+
+    struct IPCData {
+        Type type;
+        String domain;
+        int errorCode;
+        URL failingURL;
+        String localizedDescription;
+        IsSanitized isSanitized;
+        CertificateInfo certificateInfo;
+    };
+    WEBCORE_EXPORT static ResourceError fromIPCData(std::optional<IPCData>&&);
+    WEBCORE_EXPORT std::optional<IPCData> ipcData() const;
 
     static ResourceError httpError(SoupMessage*, GError*);
     static ResourceError transportError(const URL&, int statusCode, const String& reasonPhrase);

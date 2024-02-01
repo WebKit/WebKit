@@ -118,6 +118,30 @@ ResourceError::ResourceError(NSError *nsError)
     mapPlatformError();
 }
 
+ResourceError ResourceError::fromIPCData(std::optional<IPCData>&& ipcData)
+{
+    if (!ipcData)
+        return { };
+
+    ResourceError error(ipcData->nsError.get());
+    error.setType(ipcData->type);
+    if (ipcData->isSanitized)
+        error.setAsSanitized();
+    return error;
+}
+
+auto ResourceError::ipcData() const -> std::optional<IPCData>
+{
+    if (isNull())
+        return std::nullopt;
+
+    return IPCData {
+        type(),
+        nsError(),
+        isSanitized()
+    };
+}
+
 ResourceError::ResourceError(CFErrorRef cfError)
     : ResourceError { (__bridge NSError *)cfError }
 {

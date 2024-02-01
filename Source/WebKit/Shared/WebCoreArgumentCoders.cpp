@@ -118,7 +118,6 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Report.h>
 #include <WebCore/ReportBody.h>
-#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RotateTransformOperation.h>
@@ -399,40 +398,6 @@ std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attr
 }
 
 #endif
-
-void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
-{
-    encoder << resourceError.type();
-    if (resourceError.type() == ResourceError::Type::Null)
-        return;
-    encodePlatformData(encoder, resourceError);
-    encoder << resourceError.isSanitized();
-}
-
-bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resourceError)
-{
-    ResourceError::Type type;
-    if (!decoder.decode(type))
-        return false;
-
-    if (type == ResourceError::Type::Null) {
-        resourceError = { };
-        return true;
-    }
-
-    if (!decodePlatformData(decoder, resourceError))
-        return false;
-
-    bool isSanitized;
-    if (!decoder.decode(isSanitized))
-        return false;
-
-    resourceError.setType(type);
-    if (isSanitized)
-        resourceError.setAsSanitized();
-
-    return true;
-}
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const MediaPlaybackTargetContext& target)

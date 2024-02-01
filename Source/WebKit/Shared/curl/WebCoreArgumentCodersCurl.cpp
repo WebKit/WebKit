@@ -40,49 +40,6 @@ namespace IPC {
 
 using namespace WebCore;
 
-void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
-{
-    encoder << resourceError.type();
-    if (resourceError.isNull())
-        return;
-
-    encoder << resourceError.domain();
-    encoder << resourceError.errorCode();
-    encoder << resourceError.failingURL().string();
-    encoder << resourceError.localizedDescription();
-}
-
-bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
-{
-    ResourceErrorBase::Type errorType;
-    if (!decoder.decode(errorType))
-        return false;
-    if (errorType == ResourceErrorBase::Type::Null) {
-        resourceError = { };
-        return true;
-    }
-
-    String domain;
-    if (!decoder.decode(domain))
-        return false;
-
-    int errorCode;
-    if (!decoder.decode(errorCode))
-        return false;
-
-    String failingURL;
-    if (!decoder.decode(failingURL))
-        return false;
-
-    String localizedDescription;
-    if (!decoder.decode(localizedDescription))
-        return false;
-
-    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription, errorType);
-
-    return true;
-}
-
 void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
 {
     ASSERT_NOT_REACHED();

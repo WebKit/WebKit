@@ -44,45 +44,6 @@
 namespace IPC {
 using namespace WebCore;
 
-void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
-{
-    encoder << resourceError.domain();
-    encoder << resourceError.errorCode();
-    encoder << resourceError.failingURL().string();
-    encoder << resourceError.localizedDescription();
-
-    encoder << CertificateInfo(resourceError);
-}
-
-bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
-{
-    String domain;
-    if (!decoder.decode(domain))
-        return false;
-
-    int errorCode;
-    if (!decoder.decode(errorCode))
-        return false;
-
-    String failingURL;
-    if (!decoder.decode(failingURL))
-        return false;
-
-    String localizedDescription;
-    if (!decoder.decode(localizedDescription))
-        return false;
-
-    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription);
-
-    CertificateInfo certificateInfo;
-    if (!decoder.decode(certificateInfo))
-        return false;
-
-    resourceError.setCertificate(certificateInfo.certificate().get());
-    resourceError.setTLSErrors(certificateInfo.tlsErrors());
-    return true;
-}
-
 void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const SoupNetworkProxySettings& settings)
 {
     ASSERT(!settings.isEmpty());
