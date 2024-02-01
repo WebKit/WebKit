@@ -181,6 +181,8 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
+    if (LIKELY(m_src))
+        g_object_set(m_src.get(), "destination", nullptr, nullptr);
     unregisterPipeline(m_pipeline);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
