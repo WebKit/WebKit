@@ -81,10 +81,6 @@ std::unique_ptr<Connector> Connector::create(int fd, drmModeConnector* connector
     if (!properties)
         return nullptr;
 
-    auto dpms = drmPropertyForName(fd, properties.get(), "DPMS");
-    if (dpms.first && dpms.second == DRM_MODE_DPMS_OFF)
-        return nullptr;
-
     Properties props = { drmPropertyForName(fd, properties.get(), "CRTC_ID"), drmPropertyForName(fd, properties.get(), "link-status") };
     return makeUnique<Connector>(connector, WTFMove(props));
 }
