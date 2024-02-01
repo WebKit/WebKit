@@ -1763,6 +1763,8 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseLHSExpression()
     START_PARSE();
 
     if (current().type == TokenType::And || current().type == TokenType::Star) {
+        CHECK_RECURSION();
+
         auto op = toUnaryOperation(current());
         consume();
         PARSE(expression, LHSExpression);
