@@ -284,17 +284,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
     for (auto& record : m_jsCalls) {
         std::visit([&](auto* info) {
-            info->setCodeLocations(
-                linkBuffer.locationOf<JSInternalPtrTag>(record.slowPathStart),
-                linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
+            info->setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
         }, record.info);
     }
     
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
-        info.setCodeLocations(
-            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
-            CodeLocationLabel<JSInternalPtrTag>());
+        info.setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));
     }
 
     if (m_graph.m_plan.isUnlinked()) {
@@ -600,7 +596,7 @@ std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> JITCompiler::ad
     return std::tuple { stubInfo, StructureStubInfoIndex(0) };
 }
 
-std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin, bool isDirect)
+std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin)
 {
     if (m_graph.m_plan.isUnlinked()) {
         void* unlinkedCallLinkInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedCallLinkInfos.size()));
@@ -609,7 +605,7 @@ std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::
         LinkerIR::Constant callLinkInfoIndex = addToConstantPool(LinkerIR::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);
         return std::tuple { callLinkInfo, LinkableConstant(callLinkInfoIndex) };
     }
-    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, isDirect ? CallLinkInfo::UseDataIC::No : CallLinkInfo::UseDataIC::Yes, m_graph.m_codeBlock);
+    auto* callLinkInfo = jitCode()->common.m_callLinkInfos.add(codeOrigin, CallLinkInfo::UseDataIC::Yes, m_graph.m_codeBlock);
     return std::tuple { callLinkInfo, LinkableConstant::nonCellPointer(*this, callLinkInfo) };
 }
 

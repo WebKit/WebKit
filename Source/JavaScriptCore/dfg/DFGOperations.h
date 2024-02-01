@@ -38,6 +38,7 @@
 namespace JSC {
 
 class DateInstance;
+class DirectCallLinkInfo;
 class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
@@ -367,7 +368,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewRawObject, char*, (VM*, Structure*, int32_
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterfly, JSCell*, (VM*, Structure*, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength, JSCell*, (VM*, Structure*, unsigned length, Butterfly*));
 
-JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*, JSFunction*));
+JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo*, JSFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationDateGetFullYear, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetUTCFullYear, EncodedJSValue, (VM*, DateInstance*));

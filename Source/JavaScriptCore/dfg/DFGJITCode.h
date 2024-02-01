@@ -77,7 +77,6 @@ struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {
 
     CodeOrigin codeOrigin;
     CallLinkInfo::CallType callType { CallLinkInfo::CallType::None };
-    GPRReg callLinkInfoGPR { InvalidGPRReg };
 };
 
 class LinkerIR {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArityCheckMode.h"
+#include "CallMode.h"
 #include "JSCPtrTag.h"
 #include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
@@ -58,9 +59,47 @@ public:
         CallLinkInfo,
 #if ENABLE(JIT)
         PolymorphicCallNode,
+        DirectCall,
 #endif
         CachedCall,
     };
+
+    enum CallType : uint8_t {
+        None,
+        Call,
+        CallVarargs,
+        Construct,
+        ConstructVarargs,
+        TailCall,
+        TailCallVarargs,
+        DirectCall,
+        DirectConstruct,
+        DirectTailCall
+    };
+
+    enum class UseDataIC : bool { No, Yes };
+
+    static CallMode callModeFor(CallType callType)
+    {
+        switch (callType) {
+        case Call:
+        case CallVarargs:
+        case DirectCall:
+            return CallMode::Regular;
+        case TailCall:
+        case TailCallVarargs:
+        case DirectTailCall:
+            return CallMode::Tail;
+        case Construct:
+        case ConstructVarargs:
+        case DirectConstruct:
+            return CallMode::Construct;
+        case None:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     explicit CallLinkInfoBase(CallSiteType callSiteType)
         : m_callSiteType(callSiteType)

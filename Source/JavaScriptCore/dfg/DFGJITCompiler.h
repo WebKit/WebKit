@@ -255,7 +255,7 @@ public:
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Label slowPath, OptimizingCallLinkInfo* info)
+    void addJSDirectCall(Label slowPath, DirectCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
     }
@@ -394,7 +394,7 @@ public:
     }
 
     std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> addStructureStubInfo();
-    std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin, bool isDirect);
+    std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin);
     LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 
     void appendExceptionHandlingOSRExit(SpeculativeJIT*, ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
@@ -442,14 +442,14 @@ protected:
     };
     
     struct JSDirectCallRecord {
-        JSDirectCallRecord(Label slowPath, OptimizingCallLinkInfo* info)
+        JSDirectCallRecord(Label slowPath, DirectCallLinkInfo* info)
             : slowPath(slowPath)
             , info(info)
         {
         }
         
         Label slowPath;
-        OptimizingCallLinkInfo* info;
+        DirectCallLinkInfo* info;
     };
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;

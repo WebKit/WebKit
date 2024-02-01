@@ -2326,7 +2326,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     addp CallerFrameAndPCSize, sp
 
     bineq t1, CellTag, .opCallSlow
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
+    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t3
     btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
     prepareCall(t2, t3, t4, t6, macro(address)
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
@@ -2416,7 +2416,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
             metadata(t5, t2)
 
             bineq t1, CellTag, .opCallSlow
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
+            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t3
             btpz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
             prepareCall(t2, t3, t4, t6, macro(address)
                 loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2

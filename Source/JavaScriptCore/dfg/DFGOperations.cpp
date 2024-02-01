@@ -4268,7 +4268,7 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject* globa
     scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo* callLinkInfo, JSFunction* callee))
+JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo* callLinkInfo, JSFunction* callee))
 {
     JSGlobalObject* globalObject = callee->globalObject();
     VM& vm = globalObject->vm();
@@ -4277,25 +4277,9 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
-    
-    RELEASE_ASSERT(callLinkInfo->isDirect());
-    
-    // This would happen if the executable died during GC but the CodeBlock did not die. That should
-    // not happen because the CodeBlock should have a weak reference to any executable it uses for
-    // this purpose.
-    RELEASE_ASSERT(callLinkInfo->executable());
-    
-    // Having a CodeBlock indicates that this is linked. We shouldn't be taking this path if it's
-    // linked.
-    RELEASE_ASSERT(!callLinkInfo->codeBlock());
-    
-    // We just don't support this yet.
-    RELEASE_ASSERT(!callLinkInfo->isVarargs());
-    
-    ExecutableBase* executable = callLinkInfo->executable();
-    RELEASE_ASSERT(callee->executable() == callLinkInfo->executable());
 
     JSScope* scope = callee->scopeUnchecked();
+    ExecutableBase* executable = callee->executable();
 
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
@@ -4312,14 +4296,14 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
         RETURN_IF_EXCEPTION(throwScope, void());
 
-        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThisForDirectCall();
+        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
             codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);
         else
             codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired);
     }
-    
-    linkDirectCall(callFrame, *callLinkInfo, codeBlock, codePtr);
+
+    linkDirectCall(*callLinkInfo, codeBlock, codePtr);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* codeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase* exit))

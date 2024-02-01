@@ -1015,6 +1015,9 @@ public:
     void registerWasmInstance(Wasm::Instance&);
 #endif
 
+    void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
+    bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1131,6 +1134,7 @@ private:
     bool m_hasTerminationRequest { false };
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
+    bool m_isDebuggerHookInjected { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
