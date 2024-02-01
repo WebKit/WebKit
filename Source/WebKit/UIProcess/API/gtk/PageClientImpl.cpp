@@ -276,7 +276,11 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     }
 
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+#if USE(GTK4)
+    webkitWebViewBaseProcessAcceleratorsForKeyPressEvent(webkitWebViewBase, event.nativeEvent());
+#else
     webkitWebViewBasePropagateKeyEvent(webkitWebViewBase, event.nativeEvent());
+#endif
 }
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
