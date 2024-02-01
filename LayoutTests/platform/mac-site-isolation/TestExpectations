@@ -373,7 +373,6 @@ http/wpt/shared-workers/third-party-shared-worker-broadcast-channel.html [ Skip 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-with-user-activation-in-parent.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-without-user-activation.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-multi-globals.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/top-level-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-same-document-nav.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-nav-cross-document-traversal.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/cross-origin-video.html [ Skip ]

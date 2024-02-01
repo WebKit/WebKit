@@ -1896,16 +1896,21 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
     auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
-    if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
-        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
-        if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
-            Ref mainFrameProcess = page.mainFrame()->protectedProcess();
-            if (!mainFrameProcess->isInProcessCache())
-                return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+    if (page.preferences().siteIsolationEnabled()) {
+        if (registrableDomain.isEmpty()) {
+            if (navigation.currentRequest().url().protocolIsData())
+                return completionHandler(frame.process(), nullptr, "Using frame's existing process for data URL"_s);
+        } else {
+            RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
+            if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
+                Ref mainFrameProcess = page.mainFrame()->protectedProcess();
+                if (!mainFrameProcess->isInProcessCache())
+                    return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+            }
+            RefPtr process = page.processForRegistrableDomain(registrableDomain);
+            if (process && !process->isInProcessCache())
+                return completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
         }
-        RefPtr process = page.processForRegistrableDomain(registrableDomain);
-        if (process && !process->isInProcessCache())
-            return completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
     }
 
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
