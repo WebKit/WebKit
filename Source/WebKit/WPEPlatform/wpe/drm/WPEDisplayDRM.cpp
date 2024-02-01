@@ -95,7 +95,7 @@ static UnixFileDescriptor findDevice(GError** error)
         if (resources && resources->count_crtcs && resources->count_connectors && resources->count_encoders)
             break;
 
-        fd.release();
+        fd = { };
     }
 
     drmFreeDevices(devices, numDevices);
