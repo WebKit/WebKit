@@ -58,6 +58,7 @@
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
 #import "LocalFrame.h"
+#import "NodeName.h"
 #import "Quirks.h"
 #import "RenderImage.h"
 #import "RenderText.h"
@@ -426,9 +427,14 @@ RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& e
 
 RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, CSSPropertyID propertyId)
 {
-    if (propertyId == CSSPropertyInvalid || !is<StyledElement>(element))
+    if (propertyId == CSSPropertyInvalid)
         return nullptr;
-    const StyleProperties* properties = downcast<StyledElement>(element).inlineStyle();
+
+    RefPtr styledElement = dynamicDowncast<StyledElement>(element);
+    if (!styledElement)
+        return nullptr;
+
+    const auto* properties = styledElement->inlineStyle();
     if (!properties)
         return nullptr;
     return properties->getPropertyCSSValue(propertyId);
@@ -436,12 +442,12 @@ RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& ele
 
 static bool stringFromCSSValue(CSSValue& value, String& result)
 {
-    if (is<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // FIXME: Use isStringType(CSSUnitType)?
-        CSSUnitType primitiveType = downcast<CSSPrimitiveValue>(value).primitiveType();
+        auto primitiveType = primitiveValue->primitiveType();
         if (primitiveType == CSSUnitType::CSS_STRING || primitiveType == CSSUnitType::CSS_URI
             || primitiveType == CSSUnitType::CSS_IDENT || primitiveType == CSSUnitType::CSS_ATTR) {
-            String stringValue = value.cssText();
+            auto stringValue = value.cssText();
             if (stringValue.length()) {
                 result = stringValue;
                 return true;
@@ -456,21 +462,23 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
 
 String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
-    if (!is<Element>(node)) {
-        if (Node* parent = node.parentInComposedTree())
+    using namespace ElementNames;
+
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element) {
+        if (RefPtr parent = node.parentInComposedTree())
             return propertyValueForNode(*parent, propertyId);
         return String();
     }
 
     bool inherit = false;
-    Element& element = downcast<Element>(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
+    if (RefPtr value = computedStylePropertyForElement(*element, propertyId)) {
         String result;
         if (stringFromCSSValue(*value, result))
             return result;
     }
 
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
+    if (RefPtr value = inlineStylePropertyForElement(*element, propertyId)) {
         String result;
         if (isValueID(*value, CSSValueInherit))
             inherit = true;
@@ -480,73 +488,118 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
     switch (propertyId) {
     case CSSPropertyDisplay:
-        if (element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(appletTag) || element.hasTagName(noframesTag))
+        switch (element->elementName()) {
+        case HTML::head:
+        case HTML::script:
+        case HTML::applet:
+        case HTML::noframes:
             return noneAtom();
-        else if (element.hasTagName(addressTag) || element.hasTagName(blockquoteTag) || element.hasTagName(bodyTag) || element.hasTagName(centerTag)
-             || element.hasTagName(ddTag) || element.hasTagName(dirTag) || element.hasTagName(divTag) || element.hasTagName(dlTag)
-             || element.hasTagName(dtTag) || element.hasTagName(fieldsetTag) || element.hasTagName(formTag) || element.hasTagName(frameTag)
-             || element.hasTagName(framesetTag) || element.hasTagName(hrTag) || element.hasTagName(htmlTag) || element.hasTagName(h1Tag)
-             || element.hasTagName(h2Tag) || element.hasTagName(h3Tag) || element.hasTagName(h4Tag) || element.hasTagName(h5Tag)
-             || element.hasTagName(h6Tag) || element.hasTagName(iframeTag) || element.hasTagName(menuTag) || element.hasTagName(noscriptTag)
-             || element.hasTagName(olTag) || element.hasTagName(pTag) || element.hasTagName(preTag) || element.hasTagName(ulTag))
+        case HTML::address:
+        case HTML::blockquote:
+        case HTML::body:
+        case HTML::center:
+        case HTML::dd:
+        case HTML::dir:
+        case HTML::div:
+        case HTML::dl:
+        case HTML::dt:
+        case HTML::fieldset:
+        case HTML::form:
+        case HTML::frame:
+        case HTML::frameset:
+        case HTML::hr:
+        case HTML::html:
+        case HTML::h1:
+        case HTML::h2:
+        case HTML::h3:
+        case HTML::h4:
+        case HTML::h5:
+        case HTML::h6:
+        case HTML::iframe:
+        case HTML::menu:
+        case HTML::noscript:
+        case HTML::ol:
+        case HTML::p:
+        case HTML::pre:
+        case HTML::ul:
             return "block"_s;
-        else if (element.hasTagName(liTag))
+        case HTML::li:
             return "list-item"_s;
-        else if (element.hasTagName(tableTag))
+        case HTML::table:
             return "table"_s;
-        else if (element.hasTagName(trTag))
+        case HTML::tr:
             return "table-row"_s;
-        else if (element.hasTagName(thTag) || element.hasTagName(tdTag))
+        case HTML::th:
+        case HTML::td:
             return "table-cell"_s;
-        else if (element.hasTagName(theadTag))
+        case HTML::thead:
             return "table-header-group"_s;
-        else if (element.hasTagName(tbodyTag))
+        case HTML::tbody:
             return "table-row-group"_s;
-        else if (element.hasTagName(tfootTag))
+        case HTML::tfoot:
             return "table-footer-group"_s;
-        else if (element.hasTagName(colTag))
+        case HTML::col:
             return "table-column"_s;
-        else if (element.hasTagName(colgroupTag))
+        case HTML::colgroup:
             return "table-column-group"_s;
-        else if (element.hasTagName(captionTag))
+        case HTML::caption:
             return "table-caption"_s;
+        default:
+            break;
+        }
         break;
     case CSSPropertyWhiteSpace:
-        if (element.hasTagName(preTag))
+        if (element->hasTagName(preTag))
             return "pre"_s;
         inherit = true;
         break;
     case CSSPropertyFontStyle:
-        if (element.hasTagName(iTag) || element.hasTagName(citeTag) || element.hasTagName(emTag) || element.hasTagName(varTag) || element.hasTagName(addressTag))
+        if (element->hasTagName(iTag) || element->hasTagName(citeTag) || element->hasTagName(emTag) || element->hasTagName(varTag) || element->hasTagName(addressTag))
             return "italic"_s;
         inherit = true;
         break;
     case CSSPropertyFontWeight:
-        if (element.hasTagName(bTag) || element.hasTagName(strongTag) || element.hasTagName(thTag))
+        if (element->hasTagName(bTag) || element->hasTagName(strongTag) || element->hasTagName(thTag))
             return "bolder"_s;
         inherit = true;
         break;
     case CSSPropertyTextDecorationLine:
-        if (element.hasTagName(uTag) || element.hasTagName(insTag))
+        switch (element->elementName()) {
+        case HTML::u:
+        case HTML::ins:
             return "underline"_s;
-        else if (element.hasTagName(sTag) || element.hasTagName(strikeTag) || element.hasTagName(delTag))
+        case HTML::s:
+        case HTML::strike:
+        case HTML::del:
             return "line-through"_s;
+        default:
+            break;
+        }
         inherit = true; // FIXME: This is not strictly correct
         break;
     case CSSPropertyTextAlign:
-        if (element.hasTagName(centerTag) || element.hasTagName(captionTag) || element.hasTagName(thTag))
+        if (element->hasTagName(centerTag) || element->hasTagName(captionTag) || element->hasTagName(thTag))
             return "center"_s;
         inherit = true;
         break;
     case CSSPropertyVerticalAlign:
-        if (element.hasTagName(supTag))
+        switch (element->elementName()) {
+        case HTML::sup:
             return "super"_s;
-        else if (element.hasTagName(subTag))
+        case HTML::sub:
             return "sub"_s;
-        else if (element.hasTagName(theadTag) || element.hasTagName(tbodyTag) || element.hasTagName(tfootTag))
+        case HTML::thead:
+        case HTML::tbody:
+        case HTML::tfoot:
             return "middle"_s;
-        else if (element.hasTagName(trTag) || element.hasTagName(thTag) || element.hasTagName(tdTag))
+        case HTML::tr:
+        case HTML::th:
+        case HTML::td:
             inherit = true;
+            break;
+        default:
+            break;
+        }
         break;
     case CSSPropertyFontFamily:
     case CSSPropertyFontVariantCaps:
@@ -565,7 +618,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     }
 
     if (inherit) {
-        if (Node* parent = node.parentInComposedTree())
+        if (RefPtr parent = node.parentInComposedTree())
             return propertyValueForNode(*parent, propertyId);
     }
     
@@ -604,21 +657,21 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
 
 bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID propertyId, float& result)
 {
-    if (!is<Element>(node)) {
-        if (ContainerNode* parent = node.parentInComposedTree())
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element) {
+        if (RefPtr parent = node.parentInComposedTree())
             return floatPropertyValueForNode(*parent, propertyId, result);
         return false;
     }
 
-    Element& element = downcast<Element>(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
+    if (RefPtr value = computedStylePropertyForElement(*element, propertyId)) {
+        if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && floatValueFromPrimitiveValue(*primitiveValue, result))
             return true;
     }
 
     bool inherit = false;
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
+    if (RefPtr value = inlineStylePropertyForElement(*element, propertyId)) {
+        if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && floatValueFromPrimitiveValue(*primitiveValue, result))
             return true;
         if (isValueID(*value, CSSValueInherit))
             inherit = true;
@@ -638,7 +691,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     }
 
     if (inherit) {
-        if (ContainerNode* parent = node.parentInComposedTree())
+        if (RefPtr parent = node.parentInComposedTree())
             return floatPropertyValueForNode(*parent, propertyId, result);
     }
 
@@ -721,10 +774,12 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
 
 Element* HTMLConverter::_blockLevelElementForNode(Node* node)
 {
-    Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
+        element = node->parentElement();
     if (element && !_caches->isBlockElement(*element))
         element = _blockLevelElementForNode(element->parentInComposedTree());
-    return element;
+    return element.get();
 }
 
 static Color normalizedColor(Color color, bool ignoreDefaultColor, Element& element)
@@ -744,22 +799,22 @@ static Color normalizedColor(Color color, bool ignoreDefaultColor, Element& elem
 
 Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
-    if (!is<Element>(node)) {
-        if (Node* parent = node.parentInComposedTree())
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element) {
+        if (RefPtr parent = node.parentInComposedTree())
             return colorPropertyValueForNode(*parent, propertyId);
         return Color();
     }
 
     bool ignoreDefaultColor = propertyId == CSSPropertyColor;
 
-    Element& element = downcast<Element>(node);
-    if (auto value = computedStylePropertyForElement(element, propertyId); value && value->isColor())
-        return normalizedColor(value->color(), ignoreDefaultColor, element);
+    if (auto value = computedStylePropertyForElement(*element, propertyId); value && value->isColor())
+        return normalizedColor(value->color(), ignoreDefaultColor, *element);
 
     bool inherit = false;
-    if (auto value = inlineStylePropertyForElement(element, propertyId)) {
+    if (auto value = inlineStylePropertyForElement(*element, propertyId)) {
         if (value->isColor())
-            return normalizedColor(value->color(), ignoreDefaultColor, element);
+            return normalizedColor(value->color(), ignoreDefaultColor, *element);
         if (isValueID(*value, CSSValueInherit))
             inherit = true;
     }
@@ -769,8 +824,8 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
         inherit = true;
         break;
     case CSSPropertyBackgroundColor:
-        if (!elementHasOwnBackgroundColor(element)) {
-            if (Element* parentElement = node.parentElement()) {
+        if (!elementHasOwnBackgroundColor(*element)) {
+            if (auto* parentElement = node.parentElement()) {
                 if (!elementHasOwnBackgroundColor(*parentElement))
                     inherit = true;
             }
@@ -781,7 +836,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     }
 
     if (inherit) {
-        if (Node* parent = node.parentInComposedTree())
+        if (RefPtr parent = node.parentInComposedTree())
             return colorPropertyValueForNode(*parent, propertyId);
     }
 
@@ -1595,25 +1650,23 @@ void HTMLConverter::_addTableCellForElement(Element* element)
         if (columnNumber >= [previousBlock startingColumn] && columnNumber < [previousBlock startingColumn] + [previousBlock columnSpan])
             columnNumber = [previousBlock startingColumn] + [previousBlock columnSpan];
     }
-    
+
     RetainPtr<NSTextTableBlock> block;
-    
+
     if (element) {
-        if (is<HTMLTableCellElement>(*element)) {
-            HTMLTableCellElement& tableCellElement = downcast<HTMLTableCellElement>(*element);
-            
-            rowSpan = tableCellElement.rowSpan();
+        if (RefPtr tableCellElement = dynamicDowncast<HTMLTableCellElement>(*element)) {
+            rowSpan = tableCellElement->rowSpan();
             if (rowSpan < 1)
                 rowSpan = 1;
-            colSpan = tableCellElement.colSpan();
+            colSpan = tableCellElement->colSpan();
             if (colSpan < 1)
                 colSpan = 1;
         }
-        
+
         block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
-        
+
         String verticalAlign = _caches->propertyValueForNode(*element, CSSPropertyVerticalAlign);
-        
+
         _fillInBlock(block.get(), *element, color, cellSpacingVal / 2, 0, NO);
         if (verticalAlign == "middle"_s)
             [block setVerticalAlignment:NSTextBlockMiddleAlignment];
@@ -1626,7 +1679,7 @@ void HTMLConverter::_addTableCellForElement(Element* element)
     } else {
         block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
     }
-    
+
     [_textBlocks addObject:block.get()];
     [rowArray addObject:block.get()];
     [rowArray sortUsingFunction:_colCompare context:NULL];
@@ -1677,12 +1730,11 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             _addTableForElement(nil);
         _addTableCellForElement(&element);
 #if ENABLE(ATTACHMENT_ELEMENT)
-    } else if (is<HTMLAttachmentElement>(element)) {
-        HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
-        if (attachment.file()) {
-            NSURL *url = [NSURL fileURLWithPath:attachment.file()->path()];
+    } else if (RefPtr attachment = dynamicDowncast<HTMLAttachmentElement>(element)) {
+        if (attachment->file()) {
+            RetainPtr url = [NSURL fileURLWithPath:attachment->file()->path()];
             if (url)
-                _addAttachmentForElement(element, url, isBlockLevel, NO);
+                _addAttachmentForElement(element, url.get(), isBlockLevel, NO);
         }
         retval = NO;
 #endif
@@ -1722,8 +1774,8 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
-    } else if (is<HTMLFrameElementBase>(element)) {
-        if (Document* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument()) {
+    } else if (auto* frameElement = dynamicDowncast<HTMLFrameElementBase>(element)) {
+        if (RefPtr contentDocument = frameElement->contentDocument()) {
             _traverseNode(*contentDocument, depth + 1, true /* embedded */);
             retval = NO;
         }
@@ -1754,28 +1806,26 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         if (!listStyleType.length())
             listStyleType = "decimal"_s;
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
-        if (is<HTMLOListElement>(element)) {
-            NSInteger startingItemNumber = downcast<HTMLOListElement>(element).start();
+        if (RefPtr olElement = dynamicDowncast<HTMLOListElement>(element)) {
+            auto startingItemNumber = olElement->start();
             [list setStartingItemNumber:startingItemNumber];
         }
         [_textLists addObject:list.get()];
     } else if (element.hasTagName(qTag)) {
         _addQuoteForElement(element, YES, _quoteLevel++);
     } else if (element.hasTagName(inputTag)) {
-        if (is<HTMLInputElement>(element)) {
-            HTMLInputElement& inputElement = downcast<HTMLInputElement>(element);
-            if (inputElement.type() == textAtom()) {
-                NSString *value = inputElement.value();
+        if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element)) {
+            if (inputElement->type() == textAtom()) {
+                RetainPtr value = (NSString *)inputElement->value();
                 if (value && [value length] > 0)
-                    _addValue(value, element);
+                    _addValue(value.get(), element);
             }
         }
     } else if (element.hasTagName(textareaTag)) {
-        if (is<HTMLTextAreaElement>(element)) {
-            HTMLTextAreaElement& textAreaElement = downcast<HTMLTextAreaElement>(element);
-            NSString *value = textAreaElement.value();
+        if (RefPtr textAreaElement = dynamicDowncast<HTMLTextAreaElement>(element)) {
+            RetainPtr value = (NSString *)textAreaElement->value();
             if (value && [value length] > 0)
-                _addValue(value, element);
+                _addValue(value.get(), element);
         }
         retval = NO;
     }
@@ -2098,12 +2148,11 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
             ASSERT(child->nextSibling() == nextSiblingInComposedTreeIgnoringUserAgentShadow(*child));
             child = child->nextSibling();
         }
-    } else if (is<Element>(node)) {
-        Element& element = downcast<Element>(node);
-        if (_enterElement(element, embedded)) {
+    } else if (RefPtr element = dynamicDowncast<Element>(node)) {
+        if (_enterElement(*element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
-            if (_processElement(element, depth)) {
-                if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(element)) // Traverse through shadow root to detect start and end.
+            if (_processElement(*element, depth)) {
+                if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(*element)) // Traverse through shadow root to detect start and end.
                     _traverseNode(*shadowRoot, depth + 1, embedded);
                 else {
                     auto* child = firstChildInComposedTreeIgnoringUserAgentShadow(node);
@@ -2119,7 +2168,7 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                         child = nextSiblingInComposedTreeIgnoringUserAgentShadow(*child);
                     }
                 }
-                _exitElement(element, depth, std::min(startIndex, [_attrStr length]));
+                _exitElement(*element, depth, std::min(startIndex, [_attrStr length]));
             }
         }
     } else if (node.nodeType() == Node::TEXT_NODE)
@@ -2232,8 +2281,8 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
     }
 
     auto* renderer = element.renderer();
-    if (is<RenderImage>(renderer)) {
-        auto* image = downcast<RenderImage>(*renderer).cachedImage();
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer)) {
+        CachedResourceHandle image = renderImage->cachedImage();
         if (image && !image->errorOccurred()) {
             RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->adapter().tiffRepresentation()]);
             [wrapper setPreferredFilename:@"image.tiff"];
@@ -2266,8 +2315,8 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         auto node = it.node();
 
-        if (includeImages == IncludeImages::Yes && is<HTMLImageElement>(node)) {
-            auto fileWrapper = fileWrapperForElement(downcast<HTMLImageElement>(*node));
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includeImages == IncludeImages::Yes) {
+            auto fileWrapper = fileWrapperForElement(*imageElement);
             auto attachment = adoptNS([[NSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
             [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment.get()]];
         }
