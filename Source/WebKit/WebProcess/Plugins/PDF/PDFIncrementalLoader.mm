@@ -299,7 +299,7 @@ void PDFIncrementalLoader::clear()
 void PDFIncrementalLoader::receivedNonLinearizedPDFSentinel()
 {
 #if !LOG_DISABLED
-    pdfLog(makeString("Cancelling all ", m_requestData->streamLoaderMap.size(), " range request loaders"));
+    incrementalLoaderLog(makeString("Cancelling all ", m_requestData->streamLoaderMap.size(), " range request loaders"));
 #endif
 
     for (auto iterator = m_requestData->streamLoaderMap.begin(); iterator != m_requestData->streamLoaderMap.end(); iterator = m_requestData->streamLoaderMap.begin()) {
@@ -371,7 +371,7 @@ void PDFIncrementalLoader::incrementalPDFStreamDidFinishLoading()
         return;
 
 #if !LOG_DISABLED
-    pdfLog(makeString("PDF document finished loading with a total of ", availableDataSize(), " bytes"));
+    incrementalLoaderLog(makeString("PDF document finished loading with a total of ", availableDataSize(), " bytes"));
 #endif
     // At this point we know all data for the document, and therefore we know how to answer any outstanding range requests.
     unconditionalCompleteOutstandingRangeRequests();
@@ -454,7 +454,7 @@ void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t positi
     m_requestData->outstandingByteRangeRequests.set(identifier, WTFMove(request));
 
 #if !LOG_DISABLED
-    pdfLog(makeString("Scheduling a stream loader for request ", identifier, " (", count, " bytes at ", position, ")"));
+    incrementalLoaderLog(makeString("Scheduling a stream loader for request ", identifier, " (", count, " bytes at ", position, ")"));
 #endif
 
     plugin->startByteRangeRequest(m_streamLoaderClient.get(), identifier, position, count);
@@ -475,7 +475,7 @@ void PDFIncrementalLoader::streamLoaderDidStart(ByteRangeRequestIdentifier reque
     m_requestData->streamLoaderMap.set(WTFMove(streamLoader), requestIdentifier);
 
 #if !LOG_DISABLED
-    pdfLog(makeString("There are now ", m_requestData->streamLoaderMap.size(), " stream loaders in flight"));
+    incrementalLoaderLog(makeString("There are now ", m_requestData->streamLoaderMap.size(), " stream loaders in flight"));
 #endif
 }
 
@@ -510,7 +510,7 @@ void PDFIncrementalLoader::forgetStreamLoader(NetscapePlugInStreamLoader& loader
     m_requestData->streamLoaderMap.remove(&loader);
 
 #if !LOG_DISABLED
-    pdfLog(makeString("Forgot stream loader for range request ", identifier, ". There are now ", m_requestData->streamLoaderMap.size(), " stream loaders remaining"));
+    incrementalLoaderLog(makeString("Forgot stream loader for range request ", identifier, ". There are now ", m_requestData->streamLoaderMap.size(), " stream loaders remaining"));
 #endif
 }
 
@@ -548,7 +548,7 @@ bool PDFIncrementalLoader::requestCompleteIfPossible(ByteRangeRequest& request)
 
         if (m_requestData->completedRanges.contains({ request.position(), request.position() + request.count() - 1 })) {
 #if !LOG_DISABLED
-            pdfLog(makeString("Completing request %llu with a previously completed range", request.identifier()));
+            incrementalLoaderLog(makeString("Completing request %llu with a previously completed range", request.identifier()));
 #endif
             return true;
         }
@@ -568,7 +568,7 @@ void PDFIncrementalLoader::requestDidCompleteWithBytes(ByteRangeRequest& request
 {
 #if !LOG_DISABLED
     ++m_completedRangeRequests;
-    pdfLog(makeString("Completing range request ", request.identifier(), " (", request.count(), " bytes at ", request.position(), ") with ", byteCount, " bytes from the main PDF buffer"));
+    incrementalLoaderLog(makeString("Completing range request ", request.identifier(), " (", request.count(), " bytes at ", request.position(), ") with ", byteCount, " bytes from the main PDF buffer"));
 #else
     UNUSED_PARAM(byteCount);
 #endif
@@ -582,7 +582,7 @@ void PDFIncrementalLoader::requestDidCompleteWithAccumulatedData(ByteRangeReques
 #if !LOG_DISABLED
     ++m_completedRangeRequests;
     ++m_completedNetworkRangeRequests;
-    pdfLog(makeString("Completing range request ", request.identifier(), " (", request.count(), " bytes at ", request.position(), ") with ", request.accumulatedData().size(), " bytes from the network"));
+    incrementalLoaderLog(makeString("Completing range request ", request.identifier(), " (", request.count(), " bytes at ", request.position(), ") with ", request.accumulatedData().size(), " bytes from the network"));
 #endif
 
     // Fold this data into the main data buffer so that if something in its range is requested again (which happens quite often)
@@ -619,7 +619,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
 {
     if (isMainRunLoop()) {
 #if !LOG_DISABLED
-        pdfLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
+        incrementalLoaderLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
 #endif
         ASSERT(documentFinishedLoading());
         return getResourceBytesAtPositionAfterLoadingComplete(buffer, position, count);
@@ -637,12 +637,12 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
 
 #if !LOG_DISABLED
     incrementThreadsWaitingOnCallback();
-    pdfLog(makeString("PDF data provider requesting ", count, " bytes at position ", position));
+    incrementalLoaderLog(makeString("PDF data provider requesting ", count, " bytes at position ", position));
 #endif
 
     if (position > nonLinearizedPDFSentinel) {
 #if !LOG_DISABLED
-        pdfLog(makeString("Received invalid range request for ", count, " bytes at position ", position, ". PDF is probably not linearized. Falling back to non-incremental loading."));
+        incrementalLoaderLog(makeString("Received invalid range request for ", count, " bytes at position ", position, ". PDF is probably not linearized. Falling back to non-incremental loading."));
 #endif
         // FIXME: Confusing to jump to the plugin
         plugin->receivedNonLinearizedPDFSentinel();
@@ -665,7 +665,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();
-    pdfLog(makeString("PDF data provider received ", bytesProvided, " bytes of requested ", count));
+    incrementalLoaderLog(makeString("PDF data provider received ", bytesProvided, " bytes of requested ", count));
 #endif
 
     return bytesProvided;
@@ -689,7 +689,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
             stream << ", ";
     }
     stream << ")";
-    pdfLog(stream.release());
+    incrementalLoaderLog(stream.release());
 #endif
 
     WTF::Semaphore dataSemaphore { 0 };
@@ -710,7 +710,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();
-    pdfLog(makeString("PDF data provider finished receiving the requested ", count, " byte ranges"));
+    incrementalLoaderLog(makeString("PDF data provider finished receiving the requested ", count, " byte ranges"));
 #endif
 
     for (auto& result : dataResults) {
@@ -791,12 +791,12 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
     firstPageSemaphore.wait();
 
 #if !LOG_DISABLED
-    pdfLog("Finished preloading first page"_s);
+    incrementalLoaderLog("Finished preloading first page"_s);
 #endif
 }
 
 #if !LOG_DISABLED
-void PDFIncrementalLoader::pdfLog(const String& message)
+void PDFIncrementalLoader::incrementalLoaderLog(const String& message)
 {
     RefPtr plugin = m_plugin.get();
     if (!plugin)
@@ -804,12 +804,12 @@ void PDFIncrementalLoader::pdfLog(const String& message)
 
     if (!isMainRunLoop()) {
         callOnMainRunLoop([protectedPlugin = plugin, message = message.isolatedCopy()] {
-            protectedPlugin->pdfLog(message);
+            protectedPlugin->incrementalLoaderLog(message);
         });
         return;
     }
 
-    plugin->pdfLog(message);
+    plugin->incrementalLoaderLog(message);
 }
 
 void PDFIncrementalLoader::logStreamLoader(TextStream& stream, NetscapePlugInStreamLoader& streamLoader)

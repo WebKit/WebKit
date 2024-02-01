@@ -269,7 +269,7 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
     m_streamedBytes += buffer.size();
 
 #if !LOG_DISABLED
-    pdfLog(makeString("PDFPluginBase::streamDidReceiveData() - received ", buffer.size(), " bytes, total streamed bytes ", m_streamedBytes));
+    incrementalLoaderLog(makeString("PDFPluginBase::streamDidReceiveData() - received ", buffer.size(), " bytes, total streamed bytes ", m_streamedBytes));
 #endif
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -327,7 +327,7 @@ void PDFPluginBase::adoptBackgroundThreadDocument(RetainPtr<PDFDocument>&& backg
     ASSERT(isMainRunLoop());
 
 #if !LOG_DISABLED
-    pdfLog("Adopting PDFDocument from background thread"_s);
+    incrementalLoaderLog("Adopting PDFDocument from background thread"_s);
 #endif
 
     m_pdfDocument = WTFMove(backgroundThreadDocument);
@@ -385,7 +385,7 @@ void PDFPluginBase::receivedNonLinearizedPDFSentinel()
 
     if (!isMainRunLoop()) {
 #if !LOG_DISABLED
-        pdfLog("Disabling incremental PDF loading on background thread"_s);
+        incrementalLoaderLog("Disabling incremental PDF loading on background thread"_s);
 #endif
         callOnMainRunLoop([this, protectedThis = Ref { *this }] {
             receivedNonLinearizedPDFSentinel();
@@ -825,21 +825,7 @@ bool PDFPluginBase::supportsForms()
 
 #if !LOG_DISABLED
 
-void PDFPluginBase::pdfLog(const String& message)
-{
-    if (!isMainRunLoop()) {
-        callOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
-            pdfLog(message);
-        });
-        return;
-    }
-
-    LOG_WITH_STREAM(IncrementalPDF, stream << message);
-    verboseLog();
-    LOG_WITH_STREAM(IncrementalPDFVerbose, stream << message);
-}
-
-void PDFPluginBase::verboseLog()
+static void verboseLog(PDFIncrementalLoader* incrementalLoader, uint64_t streamedBytes, bool documentFinishedLoading)
 {
     ASSERT(isMainRunLoop());
 
@@ -847,16 +833,32 @@ void PDFPluginBase::verboseLog()
     stream << "\n";
 
 #if HAVE(INCREMENTAL_PDF_APIS)
-    if (m_incrementalLoader)
-        m_incrementalLoader->logState(stream);
+    if (incrementalLoader)
+        incrementalLoader->logState(stream);
+#else
+    UNUSED_PARAM(incrementalLoader);
 #endif
 
-    stream << "The main document loader has finished loading " << m_streamedBytes << " bytes, and is";
-    if (!m_documentFinishedLoading)
+    stream << "The main document loader has finished loading " << streamedBytes << " bytes, and is";
+    if (!documentFinishedLoading)
         stream << " not";
     stream << " complete";
 
     LOG(IncrementalPDFVerbose, "%s", stream.release().utf8().data());
+}
+
+void PDFPluginBase::incrementalLoaderLog(const String& message)
+{
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
+            incrementalLoaderLog(message);
+        });
+        return;
+    }
+
+    LOG_WITH_STREAM(IncrementalPDF, stream << message);
+    verboseLog(m_incrementalLoader.get(), m_streamedBytes, m_documentFinishedLoading);
+    LOG_WITH_STREAM(IncrementalPDFVerbose, stream << message);
 }
 
 #endif // !LOG_DISABLED

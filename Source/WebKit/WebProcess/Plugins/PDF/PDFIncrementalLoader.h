@@ -110,8 +110,7 @@ private:
     size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
     size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
 
-    void pdfLog(const String&);
-    void verboseLog();
+    void incrementalLoaderLog(const String&);
     void logStreamLoader(WTF::TextStream&, WebCore::NetscapePlugInStreamLoader&);
 #endif
 

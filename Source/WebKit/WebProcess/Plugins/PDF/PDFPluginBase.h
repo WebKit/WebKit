@@ -291,8 +291,7 @@ protected:
 #endif
 
 #if !LOG_DISABLED
-    void pdfLog(const String&);
-    void verboseLog();
+    void incrementalLoaderLog(const String&);
 #endif
 
     SingleThreadWeakPtr<PluginView> m_view;
