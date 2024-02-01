@@ -64,7 +64,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInImageElement);
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document)
-    : HTMLPlugInElement(tagName, document)
+    : HTMLPlugInElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
 }
 
