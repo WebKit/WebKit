@@ -114,8 +114,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
         if (frameView().pagination().mode != Pagination::Mode::Unpaginated)
-            updateColumnProgressionFromStyle(style());
-        updateStylesForColumnChildren(oldStyle);
+            updateStylesForColumnChildren(oldStyle);
     }
 
     if (directionChanged)
@@ -220,7 +219,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     if (shouldUsePrintingLayout())
         return m_pageLogicalSize->height();
     
-    if (multiColumnFlow() && !style().hasInlineColumnAxis()) {
+    if (multiColumnFlow()) {
         if (int pageLength = frameView().pagination().pageLength)
             return pageLength;
     }
@@ -317,10 +316,7 @@ bool RenderView::requiresColumns(int) const
 void RenderView::computeColumnCountAndWidth()
 {
     int columnWidth = contentLogicalWidth();
-    if (style().hasInlineColumnAxis()) {
-        if (int pageLength = frameView().pagination().pageLength)
-            columnWidth = pageLength;
-    }
+
     setComputedColumnCountAndWidth(1, columnWidth);
 }
 
@@ -1032,20 +1028,14 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
         return columnNumber;
     
     bool progressionIsInline = false;
-    bool progressionIsReversed = false;
     
-    if (multiColumnFlow()) {
+    if (multiColumnFlow())
         progressionIsInline = multiColumnFlow()->progressionIsInline();
-        progressionIsReversed = multiColumnFlow()->progressionIsReversed();
-    } else
+    else
         return columnNumber;
     
-    if (!progressionIsInline) {
-        if (!progressionIsReversed)
+    if (!progressionIsInline)
             columnNumber = (pagination.pageLength + pagination.gap - offset) / (pagination.pageLength + pagination.gap);
-        else
-            columnNumber = offset / (pagination.pageLength + pagination.gap);
-    }
 
     return columnNumber;
 }

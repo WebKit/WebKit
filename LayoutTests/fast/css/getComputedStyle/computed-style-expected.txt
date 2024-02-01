@@ -225,7 +225,6 @@ zoom: 1;
 -webkit-box-pack: start;
 -webkit-box-reflect: none;
 -webkit-box-shadow: none;
--webkit-column-axis: auto;
 -webkit-font-smoothing: auto;
 -webkit-hyphenate-limit-after: auto;
 -webkit-hyphenate-limit-before: auto;

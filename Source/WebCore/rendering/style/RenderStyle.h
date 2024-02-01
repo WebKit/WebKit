@@ -123,9 +123,7 @@ enum class BreakBetween : uint8_t;
 enum class BreakInside : uint8_t;
 enum class CaptionSide : uint8_t;
 enum class Clear : uint8_t;
-enum class ColumnAxis : uint8_t;
 enum class ColumnFill : bool;
-enum class ColumnProgression : bool;
 enum class ColumnSpan : bool;
 enum class CompositeOperator : uint8_t;
 enum class ContainIntrinsicSizeType : uint8_t;
@@ -839,9 +837,6 @@ public:
     inline const AtomString& computedLocale() const;
     inline const AtomString& specifiedLocale() const;
     inline Resize resize() const;
-    inline ColumnAxis columnAxis() const;
-    inline bool hasInlineColumnAxis() const;
-    inline ColumnProgression columnProgression() const;
     inline float columnWidth() const;
     inline bool hasAutoColumnWidth() const;
     inline unsigned short columnCount() const;
@@ -1448,8 +1443,6 @@ public:
     inline void setHyphenationLimitLines(short);
     inline void setHyphenationString(const AtomString&);
     inline void setResize(Resize);
-    inline void setColumnAxis(ColumnAxis);
-    inline void setColumnProgression(ColumnProgression);
     inline void setColumnWidth(float);
     inline void setHasAutoColumnWidth();
     inline void setColumnCount(unsigned short);
@@ -1815,8 +1808,6 @@ public:
     static constexpr OutlineIsAuto initialOutlineStyleIsAuto();
     static inline LengthSize initialBorderRadius();
     static constexpr CaptionSide initialCaptionSide();
-    static constexpr ColumnAxis initialColumnAxis();
-    static constexpr ColumnProgression initialColumnProgression();
     static constexpr TextDirection initialDirection();
     static constexpr WritingMode initialWritingMode();
     static constexpr TextCombine initialTextCombine();

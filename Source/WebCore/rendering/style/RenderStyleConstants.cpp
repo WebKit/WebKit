@@ -263,30 +263,11 @@ TextStream& operator<<(TextStream& ts, ColorScheme colorScheme)
 }
 #endif
 
-TextStream& operator<<(TextStream& ts, ColumnAxis axis)
-{
-    switch (axis) {
-    case ColumnAxis::Horizontal: ts << "horizontal"; break;
-    case ColumnAxis::Vertical: ts << "vertical"; break;
-    case ColumnAxis::Auto: ts << "auto"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, ColumnFill fill)
 {
     switch (fill) {
     case ColumnFill::Auto: ts << "auto"; break;
     case ColumnFill::Balance: ts << "balance"; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ColumnProgression progression)
-{
-    switch (progression) {
-    case ColumnProgression::Normal: ts << "normal"; break;
-    case ColumnProgression::Reverse: ts << "reverse"; break;
     }
     return ts;
 }

@@ -77,8 +77,6 @@ RenderStyle resolveForDocument(const Document& document)
     if (pagination.mode != Pagination::Mode::Unpaginated) {
         documentStyle.setColumnStylesFromPaginationMode(pagination.mode);
         documentStyle.setColumnGap(GapLength(Length((int) pagination.gap, LengthType::Fixed)));
-        if (renderView.multiColumnFlow())
-            renderView.updateColumnProgressionFromStyle(documentStyle);
     }
 
     const Settings& settings = renderView.frame().settings();

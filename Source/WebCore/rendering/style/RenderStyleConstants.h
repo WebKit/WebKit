@@ -984,17 +984,6 @@ enum class Order : bool {
     Visual
 };
 
-enum class ColumnAxis : uint8_t {
-    Horizontal,
-    Vertical,
-    Auto
-};
-
-enum class ColumnProgression : bool {
-    Normal,
-    Reverse
-};
-
 enum class LineSnap : uint8_t {
     None,
     Baseline,
@@ -1209,9 +1198,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, UsedClear);
 #if ENABLE(DARK_MODE_CSS)
 WTF::TextStream& operator<<(WTF::TextStream&, ColorScheme);
 #endif
-WTF::TextStream& operator<<(WTF::TextStream&, ColumnAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ColumnFill);
-WTF::TextStream& operator<<(WTF::TextStream&, ColumnProgression);
 WTF::TextStream& operator<<(WTF::TextStream&, ColumnSpan);
 WTF::TextStream& operator<<(WTF::TextStream&, ContentDistribution);
 WTF::TextStream& operator<<(WTF::TextStream&, ContentPosition);

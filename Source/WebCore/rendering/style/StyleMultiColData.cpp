@@ -34,8 +34,6 @@ StyleMultiColData::StyleMultiColData()
     , autoCount(true)
     , fill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
     , columnSpan(false)
-    , axis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
-    , progression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
 {
 }
 
@@ -49,8 +47,6 @@ inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     , autoCount(other.autoCount)
     , fill(other.fill)
     , columnSpan(other.columnSpan)
-    , axis(other.axis)
-    , progression(other.progression)
 {
 }
 
@@ -64,8 +60,7 @@ bool StyleMultiColData::operator==(const StyleMultiColData& other) const
     return width == other.width && count == other.count
         && rule == other.rule && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
         && autoWidth == other.autoWidth && autoCount == other.autoCount
-        && fill == other.fill && columnSpan == other.columnSpan
-        && axis == other.axis && progression == other.progression;
+        && fill == other.fill && columnSpan == other.columnSpan;
 }
 
 } // namespace WebCore

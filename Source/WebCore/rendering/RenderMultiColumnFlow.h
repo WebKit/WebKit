@@ -72,9 +72,6 @@ public:
     bool progressionIsInline() const { return m_progressionIsInline; }
     void setProgressionIsInline(bool progressionIsInline) { m_progressionIsInline = progressionIsInline; }
 
-    bool progressionIsReversed() const { return m_progressionIsReversed; }
-    void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
-
     RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const final;
 
     // This method takes a logical offset and returns a physical translation that can be applied to map

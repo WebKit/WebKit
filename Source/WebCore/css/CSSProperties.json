@@ -6766,20 +6766,6 @@
                 "comment": "Differs from box-shadow in its treatement of blur radii > 8px. Let -webkit-box-shadow blur, radius be w_r and box-shadow blur radius be b_r. For w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2)."
             }
         },
-        "-webkit-column-axis": {
-            "values": [
-                "horizontal",
-                "vertical",
-                "auto"
-            ],
-            "codegen-properties": {
-                "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "non-standard",
-                "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=71028"
-            }
-        },
         "-webkit-column-break-after": {
             "codegen-properties": {
                 "longhands": [
@@ -6897,19 +6883,6 @@
             "specification": {
                 "category": "css-align",
                 "url": "https://drafts.csswg.org/css-align/#gap-shorthand"
-            }
-        },
-        "-webkit-column-progression": {
-            "values": [
-                "normal",
-                "reverse"
-            ],
-            "codegen-properties": {
-                "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "non-standard",
-                "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=89315"
             }
         },
         "column-rule": {

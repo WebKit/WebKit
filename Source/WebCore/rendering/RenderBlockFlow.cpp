@@ -408,7 +408,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
     LayoutUnit desiredColumnWidth = contentLogicalWidth();
 
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
-    if (document().paginated() || (style().hasAutoColumnCount() && style().hasAutoColumnWidth()) || !style().hasInlineColumnAxis()) {
+    if (document().paginated() || !style().specifiesColumns()) {
         setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
         return;
     }
@@ -457,10 +457,6 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
 
     if (!style().specifiesColumns())
         return false;
-
-    // column-axis with opposite writing direction initiates MultiColumnFlow.
-    if (!style().hasInlineColumnAxis())
-        return true;
 
     // Non-auto column-width always initiates MultiColumnFlow.
     if (!style().hasAutoColumnWidth())
@@ -4423,32 +4419,6 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
     if (!multiColumnFlow())
         return;
     multiColumnFlow()->setColumnCountAndWidth(count, width);
-    multiColumnFlow()->setProgressionIsInline(style().hasInlineColumnAxis());
-    multiColumnFlow()->setProgressionIsReversed(style().columnProgression() == ColumnProgression::Reverse);
-}
-
-void RenderBlockFlow::updateColumnProgressionFromStyle(const RenderStyle& style)
-{
-    if (!multiColumnFlow())
-        return;
-    
-    bool needsLayout = false;
-    bool oldProgressionIsInline = multiColumnFlow()->progressionIsInline();
-    bool newProgressionIsInline = style.hasInlineColumnAxis();
-    if (oldProgressionIsInline != newProgressionIsInline) {
-        multiColumnFlow()->setProgressionIsInline(newProgressionIsInline);
-        needsLayout = true;
-    }
-
-    bool oldProgressionIsReversed = multiColumnFlow()->progressionIsReversed();
-    bool newProgressionIsReversed = style.columnProgression() == ColumnProgression::Reverse;
-    if (oldProgressionIsReversed != newProgressionIsReversed) {
-        multiColumnFlow()->setProgressionIsReversed(newProgressionIsReversed);
-        needsLayout = true;
-    }
-
-    if (needsLayout)
-        setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 LayoutUnit RenderBlockFlow::computedColumnWidth() const
@@ -4478,13 +4448,6 @@ LayoutOptionalOutsets RenderBlockFlow::allowedLayoutOverflow() const
             else
                 allowance.setLeft(-rareBlockFlowData()->m_alignContentShift);
         }
-    }
-
-    if (multiColumnFlow() && style().columnProgression() != ColumnProgression::Normal) {
-        if (isHorizontalWritingMode() ^ !style().hasInlineColumnAxis())
-            allowance = allowance.xFlippedCopy();
-        else
-            allowance = allowance.yFlippedCopy();
     }
 
     return allowance;

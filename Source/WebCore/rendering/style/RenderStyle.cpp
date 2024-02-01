@@ -3391,40 +3391,6 @@ void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMod
         return;
     
     setColumnFill(ColumnFill::Auto);
-    
-    switch (paginationMode) {
-    case Pagination::Mode::LeftToRightPaginated:
-        setColumnAxis(ColumnAxis::Horizontal);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Normal : ColumnProgression::Reverse);
-        else
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Reverse : ColumnProgression::Normal);
-        break;
-    case Pagination::Mode::RightToLeftPaginated:
-        setColumnAxis(ColumnAxis::Horizontal);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Reverse : ColumnProgression::Normal);
-        else
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Normal : ColumnProgression::Reverse);
-        break;
-    case Pagination::Mode::TopToBottomPaginated:
-        setColumnAxis(ColumnAxis::Vertical);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Reverse : ColumnProgression::Normal);
-        else
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Normal : ColumnProgression::Reverse);
-        break;
-    case Pagination::Mode::BottomToTopPaginated:
-        setColumnAxis(ColumnAxis::Vertical);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Normal : ColumnProgression::Reverse);
-        else
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Reverse : ColumnProgression::Normal);
-        break;
-    case Pagination::Mode::Unpaginated:
-        ASSERT_NOT_REACHED();
-        break;
-    }
 }
 
 void RenderStyle::deduplicateCustomProperties(const RenderStyle& other)

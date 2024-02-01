@@ -32,7 +32,6 @@ var propertiesToTest = {
     "break-after": true,
     "break-before": true,
     "break-inside": true,
-    "-webkit-column-axis": true,
     "column-count": true,
     "column-fill": true,
     "column-gap": true,

@@ -1988,18 +1988,6 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#define TYPE ColumnAxis
-#define FOR_EACH(CASE) CASE(Horizontal) CASE(Vertical) CASE(Auto)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
-#define TYPE ColumnProgression
-#define FOR_EACH(CASE) CASE(Normal) CASE(Reverse)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
-
 enum LengthConversion {
     AnyConversion = ~0,
     FixedIntegerConversion = 1 << 0,

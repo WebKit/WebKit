@@ -3466,8 +3466,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return cssValuePool.createColorValue(m_allowVisitedStyle ? style.visitedDependentColor(CSSPropertyColor) : style.color());
     case CSSPropertyPrintColorAdjust:
         return createConvertingToCSSValueID(style.printColorAdjust());
-    case CSSPropertyWebkitColumnAxis:
-        return createConvertingToCSSValueID(style.columnAxis());
     case CSSPropertyColumnCount:
         if (style.hasAutoColumnCount())
             return CSSPrimitiveValue::create(CSSValueAuto);
@@ -3482,8 +3480,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.rowGap().isNormal())
             return CSSPrimitiveValue::create(CSSValueNormal);
         return zoomAdjustedPixelValueForLength(style.rowGap().length(), style);
-    case CSSPropertyWebkitColumnProgression:
-        return createConvertingToCSSValueID(style.columnProgression());
     case CSSPropertyColumnRuleColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(style, style.columnRuleColor());
     case CSSPropertyColumnRuleStyle:

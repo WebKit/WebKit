@@ -58,8 +58,6 @@ public:
     bool autoCount : 1;
     unsigned fill : 1; // ColumnFill
     unsigned columnSpan : 1; // ColumnSpan
-    unsigned axis : 2; // ColumnAxis
-    unsigned progression : 2; // ColumnProgression
 
 private:
     StyleMultiColData();

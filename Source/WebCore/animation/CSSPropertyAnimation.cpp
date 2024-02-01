@@ -4144,11 +4144,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitBoxOrient:
         case CSSPropertyWebkitBoxPack:
         case CSSPropertyWebkitBoxReflect:
-        case CSSPropertyWebkitColumnAxis:
         case CSSPropertyWebkitColumnBreakAfter:
         case CSSPropertyWebkitColumnBreakBefore:
         case CSSPropertyWebkitColumnBreakInside:
-        case CSSPropertyWebkitColumnProgression:
 #if ENABLE(CURSOR_VISIBILITY)
         case CSSPropertyWebkitCursorVisibility:
 #endif
