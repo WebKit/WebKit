@@ -1981,6 +1981,4 @@ webkit.org/b/268406 transitions/flex-transitions.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
 
-webkit.org/b/268423 [ Sonoma+ Debug arm64 ] http/tests/inspector/dom/didFireEvent.html [ Skip ]
-
 webkit.org/b/268494 [ Monterey+ Release ] media/track/media-element-enqueue-event-crash.html [ Pass Crash ]

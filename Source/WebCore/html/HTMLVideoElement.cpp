@@ -666,6 +666,8 @@ void HTMLVideoElement::mediaPlayerEngineUpdated()
     HTMLMediaElement::mediaPlayerEngineUpdated();
     if (!m_videoFrameRequests.isEmpty() && player())
         player()->startVideoFrameMetadataGathering();
+    // If the RenderLayerCompositor had queried the element's MediaPlayer::supportsAcceleratedRendering prior the player having been created it would have been set to false.
+    HTMLMediaElement::mediaPlayerRenderingModeChanged();
 }
 
 } // namespace WebCore
