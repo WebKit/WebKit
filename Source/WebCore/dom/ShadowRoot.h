@@ -46,7 +46,7 @@ class WebAnimation;
 
 enum class ParserContentPolicy : uint8_t;
 
-class ShadowRoot final : public DocumentFragment, public TreeScope {
+class ShadowRoot final : public CanMakeCheckedPtr, public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
 public:
 
@@ -68,13 +68,13 @@ public:
     virtual ~ShadowRoot();
 
     // Resolve ambiguity for CanMakeCheckedPtr.
-    void incrementPtrCount() const { static_cast<const DocumentFragment*>(this)->incrementPtrCount(); }
-    void decrementPtrCount() const { static_cast<const DocumentFragment*>(this)->decrementPtrCount(); }
+    using CanMakeCheckedPtr::incrementPtrCount;
+    using CanMakeCheckedPtr::decrementPtrCount;
 #if CHECKED_POINTER_DEBUG
-    void registerCheckedPtr(const void* pointer) const { static_cast<const DocumentFragment*>(this)->registerCheckedPtr(pointer); }
-    void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const DocumentFragment*>(this)->copyCheckedPtr(source, destination); }
-    void moveCheckedPtr(const void* source, const void* destination) const { static_cast<const DocumentFragment*>(this)->moveCheckedPtr(source, destination); }
-    void unregisterCheckedPtr(const void* pointer) const { static_cast<const DocumentFragment*>(this)->unregisterCheckedPtr(pointer); }
+    using CanMakeCheckedPtr::registerCheckedPtr;
+    using CanMakeCheckedPtr::copyCheckedPtr;
+    using CanMakeCheckedPtr::moveCheckedPtr;
+    using CanMakeCheckedPtr::unregisterCheckedPtr;
 #endif // CHECKED_POINTER_DEBUG
 
     using TreeScope::getElementById;

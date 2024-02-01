@@ -107,7 +107,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
-struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr {
+struct SameSizeAsNode : EventTarget {
 #if ASSERT_ENABLED
     bool deletionHasBegun;
     bool inRemovedLastRefFunction;
