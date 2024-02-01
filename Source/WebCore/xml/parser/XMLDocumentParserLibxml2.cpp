@@ -890,7 +890,8 @@ void XMLDocumentParser::endElementNs()
         return;
     }
 
-    if (!isScriptElement(*element)) {
+    RefPtr scriptElement = dynamicDowncastScriptElement(*element);
+    if (!scriptElement) {
         popCurrentNode();
         return;
     }
@@ -899,18 +900,14 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    auto& scriptElement = downcastScriptElement(*element);
-    if (scriptElement.prepareScript(m_scriptStartPosition)) {
-        // FIXME: Script execution should be shared between
-        // the libxml2 and Qt XMLDocumentParser implementations.
-
-        if (scriptElement.readyToBeParserExecuted()) {
-            if (scriptElement.scriptType() == ScriptType::Classic)
-                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+    if (scriptElement->prepareScript(m_scriptStartPosition)) {
+        if (scriptElement->readyToBeParserExecuted()) {
+            if (scriptElement->scriptType() == ScriptType::Classic)
+                scriptElement->executeClassicScript(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*scriptElement)));
             else
-                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
-        } else if (scriptElement.willBeParserExecuted() && scriptElement.loadableScript()) {
-            m_pendingScript = PendingScript::create(scriptElement, *scriptElement.loadableScript());
+                scriptElement->registerImportMap(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
+        } else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript()) {
+            m_pendingScript = PendingScript::create(*scriptElement, *scriptElement->loadableScript());
             m_pendingScript->setClient(*this);
 
             // m_pendingScript will be nullptr if script was already loaded and setClient() executed it.

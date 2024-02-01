@@ -155,6 +155,6 @@ private:
 
 // FIXME: replace with is/downcast<ScriptElement>.
 bool isScriptElement(Element&);
-ScriptElement& downcastScriptElement(Element&);
+ScriptElement* dynamicDowncastScriptElement(Element&);
 
 }
