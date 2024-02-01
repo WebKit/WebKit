@@ -416,19 +416,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     if (reservation.pageReservation) {
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
-
-        bool fastJITPermissionsIsSupported = false;
-#if OS(DARWIN) && CPU(ARM64)
-#if USE(INLINE_JIT_PERMISSIONS_API)
-        fastJITPermissionsIsSupported = (be_memory_inline_jit_restrict_with_witness_supported
-            && !!be_memory_inline_jit_restrict_with_witness_supported());
-#elif USE(PTHREAD_JIT_PERMISSIONS_API)
-        fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
-#elif USE(APPLE_INTERNAL_SDK)
-        fastJITPermissionsIsSupported = !!os_thread_self_restrict_rwx_is_supported();
-#endif
-#endif
-        g_jscConfig.useFastJITPermissions = fastJITPermissionsIsSupported;
+        g_jscConfig.useFastJITPermissions = threadSelfRestrictSupported();
 
         if (g_jscConfig.useFastJITPermissions)
             threadSelfRestrictRWXToRX();
