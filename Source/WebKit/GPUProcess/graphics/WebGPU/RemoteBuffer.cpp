@@ -82,7 +82,8 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
     if (m_isMapped && m_mappedRange && m_mappedRange->byteLength >= data.size() && m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         memcpy(m_mappedRange->source, data.data(), data.size());
 
-    m_backing->unmap();
+    if (m_isMapped)
+        m_backing->unmap();
     m_isMapped = false;
     m_mappedRange = std::nullopt;
     m_mapModeFlags = { };
@@ -90,6 +91,7 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 
 void RemoteBuffer::destroy()
 {
+    unmap(Vector<uint8_t>());
     m_backing->destroy();
 }
 
