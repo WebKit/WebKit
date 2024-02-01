@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-160,-22.09) size 606x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-160,-22.09) size 605.63x46.23
+layer at (34.38,3.13) size 412x21
+  RenderSVGText {text} at (194,25) size 412x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 412x21
+      chunk 1 (middle anchor) text run 1 at (34.39,20.00) startOffset 0 endOffset 51 width 411.22: "Test unknown type attribute value on script element"
+layer at (-160,-22.09) size 320x28 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 320x27.63
+layer at (-132.19,-22.09) size 264x28 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (27,0) size 266x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 265x28
+      chunk 1 (middle anchor) text run 1 at (-132.18,0.00) startOffset 0 endOffset 24 width 264.35: "Good, script didn't run."
+layer at (-160,-22.09) size 320x28 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 320x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 320x28
+      chunk 1 (middle anchor) text run 1 at (-160.00,0.00) startOffset 0 endOffset 27 width 319.99: "No! This is not ECMAScript!"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

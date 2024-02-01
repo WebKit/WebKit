@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,13.13) size 381x107
+  RenderSVGTransformableContainer {g} at (10,13.13) size 380.47x106.88
+layer at (10,13.13) size 380x21
+  RenderSVGText {text} at (0,0) size 381x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 381x21
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 50 width 380.46: "Test that <script xlink:href=\"\"> is not animatable"
+layer at (10,50) size 369x71
+  RenderSVGTransformableContainer {g} at (0,36.88) size 368.73x70
+layer at (10,50) size 30x30
+  RenderSVGRect {rect} at (0,0) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=50.00] [width=30.00] [height=30.00]
+layer at (10,90) size 30x30
+  RenderSVGRect {rect} at (0,40) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=90.00] [width=30.00] [height=30.00]
+layer at (50,56.05) size 329x58
+  RenderSVGTransformableContainer {g} at (40,6.05) size 328.73x57.41
+layer at (50,56.05) size 273x17
+  RenderSVGText {text} at (0,0) size 273x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 273x18
+      chunk 1 text run 1 at (50.00,70.00) startOffset 0 endOffset 40 width 272.64: "Test script.href.animVal does not change"
+layer at (50,96.05) size 329x17
+  RenderSVGText {text} at (0,40) size 329x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 329x18
+      chunk 1 text run 1 at (50.00,110.00) startOffset 0 endOffset 51 width 328.73: "Test animating xlink:href=\"\" does not load a script"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.1 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

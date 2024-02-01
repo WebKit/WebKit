@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (30,19.19) size 358x14
+  RenderSVGText {text} at (30,19) size 358x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 358x14
+      chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 72 width 357.54: "Select the box, use the mouse wheel and check that the box become green."
+layer at (140,160) size 200x200
+  RenderSVGRect {rect} at (140,160) size 200x200 [fill={[type=SOLID] [color=#FFFF00]}] [x=140.00] [y=160.00] [width=200.00] [height=200.00]

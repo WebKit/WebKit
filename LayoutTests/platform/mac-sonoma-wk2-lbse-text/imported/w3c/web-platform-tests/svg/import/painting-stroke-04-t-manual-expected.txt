@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,26.88) size 475x241
+  RenderSVGTransformableContainer {g} at (10,26.88) size 474.23x240.03
+layer at (10,26.88) size 474x41
+  RenderSVGText {text} at (0,0) size 475x42 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 475x42
+      chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 31 width 474.22: "Basic paint: stroke properties."
+layer at (50,120) size 380x0
+  RenderSVGPath {path} at (40,93.13) size 380x0 [stroke={[type=SOLID] [color=#0000FF] [stroke width=25.00] [dash array={10.00, 10.00}]}] [data="M 50 120 L 430 120"]
+layer at (50,140) size 380x0
+  RenderSVGPath {path} at (40,113.13) size 380x0 [stroke={[type=SOLID] [color=#000000] [stroke width=25.00] [dash offset=10.00] [dash array={10.00, 10.00}]}] [data="M 50 140 L 430 140"]
+layer at (65,182.09) size 347x35
+  RenderSVGText {text} at (55,155) size 348x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 348x35
+      chunk 1 text run 1 at (65.00,210.00) startOffset 0 endOffset 25 width 347.31: "stroke-dasharray=\"10, 10\""
+layer at (75,232.09) size 302x35
+  RenderSVGText {text} at (65,205) size 303x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 303x35
+      chunk 1 text run 1 at (75.00,260.00) startOffset 0 endOffset 22 width 302.30: "stroke-dashoffset=\"10\""
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

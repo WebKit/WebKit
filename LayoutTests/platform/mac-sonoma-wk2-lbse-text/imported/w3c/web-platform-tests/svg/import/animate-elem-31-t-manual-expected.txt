@@ -1,0 +1,71 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (5,7.50) size 443x333
+  RenderSVGTransformableContainer {g} at (5,7.50) size 442.02x331.64
+layer at (5,7.50) size 375x75
+  RenderSVGRect {rect} at (0,0) size 375x75 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=7.50] [width=375.00] [height=75.00]
+layer at (5,112.50) size 375x75
+  RenderSVGRect {rect} at (0,105) size 375x75 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=112.50] [width=375.00] [height=75.00]
+layer at (10,10) size 240x111
+  RenderSVGTransformableContainer {g} at (5,2.50) size 240x110
+layer at (10,10) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=30.00] [r=20.00]
+layer at (10,80) size 40x40
+  RenderSVGEllipse {circle} at (0,70) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=100.00] [r=20.00]
+layer at (60,10) size 40x40
+  RenderSVGHiddenContainer {g} at (50,0) size 40x40
+layer at (60,10) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=30.00] [r=20.00]
+layer at (60,80) size 40x40
+  RenderSVGEllipse {circle} at (50,70) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=100.00] [r=20.00]
+layer at (110,80) size 40x40
+  RenderSVGEllipse {circle} at (100,70) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#1E90FF]}] [cx=130.00] [cy=100.00] [r=20.00]
+layer at (160,10) size 40x40
+  RenderSVGHiddenContainer {g} at (160,10) size 40x40
+layer at (160,10) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=30.00] [r=20.00]
+layer at (160,80) size 40x40
+  RenderSVGEllipse {circle} at (150,70) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=100.00] [r=20.00]
+layer at (160,10) size 40x40
+  RenderSVGHiddenContainer {g} at (160,10) size 40x40
+layer at (160,10) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
+layer at (160,80) size 40x40
+  RenderSVGEllipse {circle} at (150,70) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
+layer at (210,80) size 40x40
+  RenderSVGTransformableContainer {g} at (200,70) size 40x40
+layer at (210,80) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
+layer at (385,25.27) size 50x18
+  RenderSVGText {text} at (380,17) size 50x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x19
+      chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 49.80: "display"
+layer at (385,133.13) size 62x21
+  RenderSVGText {text} at (380,125) size 63x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 63x21
+      chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 62.01: "visibility"
+layer at (5,209.23) size 426x32
+  RenderSVGText {text} at (0,201) size 427x33 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 427x33
+      chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 426.44: "Test of display attribute animation."
+layer at (5,248.13) size 436x21
+  RenderSVGText {text} at (0,240) size 437x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 437x21
+      chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 436.17: "Circles with same color should be visible at same time."
+layer at (310,318.13) size 115x21
+  RenderSVGText {text} at (305,310) size 116x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 116x21
+      chunk 1 text run 1 at (310.00,335.00) startOffset 0 endOffset 15 width 115.06: "Test running..."
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

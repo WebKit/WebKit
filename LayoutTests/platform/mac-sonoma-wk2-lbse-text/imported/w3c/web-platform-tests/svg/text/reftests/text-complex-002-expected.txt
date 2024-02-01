@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (20,60) size 440x300
+  RenderSVGHiddenContainer {defs} at (20,60) size 440x300
+layer at (260,80) size 200x200
+  RenderSVGEllipse {circle} at (240,20) size 200x200 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=180.00] [r=100.00]
+layer at (20,140) size 200x200
+  RenderSVGEllipse {circle} at (0,80) size 200x200 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=240.00] [r=100.00]
+layer at (120,80) size 240x80
+  RenderSVGRect {rect} at (100,20) size 240x80 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+layer at (120,260) size 240x80
+  RenderSVGRect {rect} at (100,200) size 240x80 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+layer at (280,100) size 160x160
+  RenderSVGEllipse {circle} at (260,40) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=180.00] [r=80.00]
+layer at (40,160) size 160x160
+  RenderSVGEllipse {circle} at (20,100) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=240.00] [r=80.00]
+layer at (100,60) size 280x120
+  RenderSVGRect {rect} at (80,0) size 280x120 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+layer at (100,240) size 280x120
+  RenderSVGRect {rect} at (80,180) size 280x120 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+layer at (20,80) size 440x260
+  RenderSVGTransformableContainer {g} at (20,80) size 440x260
+layer at (120,80) size 240x80
+  RenderSVGTransformableContainer {use} at (100,0) size 240x80
+layer at (120,80) size 240x80
+  RenderSVGRect {rect} at (0,0) size 240x80 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+layer at (120,260) size 240x80
+  RenderSVGTransformableContainer {use} at (100,180) size 240x80
+layer at (120,260) size 240x80
+  RenderSVGRect {rect} at (0,0) size 240x80 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+layer at (260,80) size 200x200
+  RenderSVGTransformableContainer {use} at (240,0) size 200x200
+layer at (260,80) size 200x200
+  RenderSVGEllipse {circle} at (0,0) size 200x200 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=360.00] [cy=180.00] [r=100.00]
+layer at (20,140) size 200x200
+  RenderSVGTransformableContainer {use} at (0,60) size 200x200
+layer at (20,140) size 200x200
+  RenderSVGEllipse {circle} at (0,0) size 200x200 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=120.00] [cy=240.00] [r=100.00]
+layer at (40,60) size 400x300
+  RenderSVGTransformableContainer {g} at (40,60) size 400x300
+layer at (100,60) size 280x120
+  RenderSVGTransformableContainer {use} at (60,0) size 280x120
+layer at (100,60) size 280x120
+  RenderSVGRect {rect} at (0,0) size 280x120 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+layer at (100,240) size 280x120
+  RenderSVGTransformableContainer {use} at (60,180) size 280x120
+layer at (100,240) size 280x120
+  RenderSVGRect {rect} at (0,0) size 280x120 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+layer at (280,100) size 160x160
+  RenderSVGTransformableContainer {use} at (240,40) size 160x160
+layer at (280,100) size 160x160
+  RenderSVGEllipse {circle} at (0,0) size 160x160 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=360.00] [cy=180.00] [r=80.00]
+layer at (40,160) size 160x160
+  RenderSVGTransformableContainer {use} at (0,100) size 160x160
+layer at (40,160) size 160x160
+  RenderSVGEllipse {circle} at (0,0) size 160x160 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=120.00] [cy=240.00] [r=80.00]
+layer at (-662.25,-14.73) size 663x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-662.25,-14.73) size 662.25x18.42

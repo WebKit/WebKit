@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 321x134
+  RenderSVGTransformableContainer {g} at (0,0) size 320.22x133.23
+layer at (10,13.13) size 310x21
+  RenderSVGText {text} at (10,13) size 311x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 311x21
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 36 width 310.22: "Testing that SVGLoad does not bubble"
+layer at (10,50) size 50x50
+  RenderSVGRect {rect} at (10,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (210,50) size 50x50
+  RenderSVGRect {rect} at (210,50) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=210.00] [y=50.00] [width=50.00] [height=50.00]
+layer at (10,117.41) size 297x17
+  RenderSVGTransformableContainer {g} at (10,117.41) size 296.52x15.83
+layer at (10,117.41) size 89x16
+  RenderSVGText {text} at (0,0) size 89x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 89x16
+      chunk 1 text run 1 at (10.00,130.00) startOffset 0 endOffset 13 width 88.72: "On root <svg>"
+layer at (210,117.41) size 97x16
+  RenderSVGText {text} at (200,0) size 97x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 97x16
+      chunk 1 text run 1 at (210.00,130.00) startOffset 0 endOffset 13 width 96.51: "On an <image>"
+layer at (0,0) size 20x20
+  RenderSVGImage {image} at (0,0) size 20x20
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

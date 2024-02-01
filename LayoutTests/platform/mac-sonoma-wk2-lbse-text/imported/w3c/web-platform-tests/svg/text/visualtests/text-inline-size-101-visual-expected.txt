@@ -1,0 +1,93 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (80,100) size 320x40
+  RenderSVGHiddenContainer {defs} at (80,100) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGPath {path} at (0,0) size 320x40 [fill={[type=SOLID] [color=#000000]}] [data="M 80 100 L 80 140 M 400 100 L 400 140"]
+layer at (116.69,27.91) size 246x28
+  RenderSVGText {text} at (116,27) size 248x29 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 247x28
+      chunk 1 (middle anchor) text run 1 at (116.70,50.00) startOffset 0 endOffset 24 width 246.60: "Text 'inline-size' \x{2014} 101"
+layer at (112.59,58.95) size 256x15
+  RenderSVGTransformableContainer {a} at (112.59,58.95) size 254.81x13.81
+layer at (112.59,58.95) size 255x14
+  RenderSVGText {text} at (0,0) size 255x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 255x14
+      chunk 1 (middle anchor) text run 1 at (112.61,70.00) startOffset 0 endOffset 49 width 254.78: "https://svgwg.org/svg2-draft/text.html#InlineSize"
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {g} at (80,100) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {g} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {use} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGPath {path} at (0,0) size 320x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 80 100 L 80 140 M 400 100 L 400 140"]
+layer at (80,100.08) size 289x38
+  RenderSVGText {text} at (0,0) size 290x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 285x19
+      RenderSVGInlineText {#text} at (0,0) size 285x19
+        chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 39 width 284.56: "Lorem ipsum dolor sit amet, consectetur"
+    RenderSVGInlineText {#text} at (284,0) size 5x19
+      chunk 1 text run 1 at (364.56,114.80) startOffset 0 endOffset 1 width 4.45: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (0,20) size 105x19
+        chunk 1 text run 1 at (80.00,134.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {g} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {use} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGPath {path} at (0,0) size 320x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 80 100 L 80 140 M 400 100 L 400 140"]
+layer at (95.48,100.08) size 290x38
+  RenderSVGText {text} at (15,0) size 290x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 285x19
+      RenderSVGInlineText {#text} at (0,0) size 285x19
+        chunk 1 (middle anchor) text run 1 at (95.50,114.80) startOffset 0 endOffset 39 width 284.56: "Lorem ipsum dolor sit amet, consectetur"
+    RenderSVGInlineText {#text} at (284,0) size 5x19
+      chunk 1 (middle anchor) text run 1 at (380.06,114.80) startOffset 0 endOffset 1 width 4.45: " "
+    RenderSVGTSpan {tspan} at (0,0) size 105x19
+      RenderSVGInlineText {#text} at (92,20) size 105x19
+        chunk 1 (middle anchor) text run 1 at (187.97,134.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {g} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGTransformableContainer {use} at (0,0) size 320x40
+layer at (80,100) size 320x40
+  RenderSVGPath {path} at (0,0) size 320x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 80 100 L 80 140 M 400 100 L 400 140"]
+layer at (110.98,100.08) size 289x38
+  RenderSVGText {text} at (30,0) size 290x39 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 285x19
+      RenderSVGInlineText {#text} at (0,0) size 285x19
+        chunk 1 (end anchor) text run 1 at (110.99,114.80) startOffset 0 endOffset 39 width 284.56: "Lorem ipsum dolor sit amet, consectetur"
+    RenderSVGInlineText {#text} at (284,0) size 5x19
+      chunk 1 (end anchor) text run 1 at (395.55,114.80) startOffset 0 endOffset 1 width 4.45: " "
+    RenderSVGTSpan {tspan} at (0,0) size 106x19
+      RenderSVGInlineText {#text} at (184,20) size 105x19
+        chunk 1 (end anchor) text run 1 at (295.95,134.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (6.94,100.08) size 468x19
+  RenderSVGTransformableContainer {g} at (6.94,100.08) size 466.13x18.41
+layer at (80,100.08) size 394x19
+  RenderSVGTransformableContainer {g} at (73.06,0) size 393.06x18.41
+layer at (80,100.08) size 393x18
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+layer at (43.47,100.08) size 394x19
+  RenderSVGTransformableContainer {g} at (36.53,0) size 393.06x18.41
+layer at (43.47,100.08) size 393x18
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 (middle anchor) text run 1 at (43.47,114.80) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+layer at (6.94,100.08) size 394x19
+  RenderSVGTransformableContainer {g} at (0,0) size 393.06x18.41
+layer at (6.94,100.08) size 393x18
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 (end anchor) text run 1 at (6.94,114.80) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"

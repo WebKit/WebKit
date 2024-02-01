@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 310x170
+  RenderSVGRoot {svg} at (0,0) size 310x170
+layer at (0,0) size 310x170
+  RenderSVGViewportContainer at (0,0) size 310x170
+layer at (183.98,-46) size 501x501 backgroundClip at (0,0) size 310x170 clip at (0,0) size 310x170
+  RenderSVGEllipse {circle} at (183.98,-46) size 500.02x500.02 [stroke={[type=SOLID] [color=#00FFFF] [stroke width=30.00]}] [cx=434.00] [cy=204.00] [r=250.00]
+layer at (186,34) size 124x136
+  RenderSVGEllipse {ellipse} at (186,34) size 124x136 [stroke={[type=SOLID] [color=#008000] [stroke width=30.00]}] [cx=248.00] [cy=102.00] [rx=62.00] [ry=68.00]
+layer at (62,68) size 434x204 backgroundClip at (0,0) size 310x170 clip at (0,0) size 310x170
+  RenderSVGRect {rect} at (62,68) size 434x204 [stroke={[type=SOLID] [color=#0000FF] [stroke width=30.00]}] [x=62.00] [y=68.00] [width=434.00] [height=204.00]

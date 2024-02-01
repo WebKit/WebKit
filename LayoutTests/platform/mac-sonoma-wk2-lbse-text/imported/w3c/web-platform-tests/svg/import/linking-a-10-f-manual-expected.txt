@@ -1,0 +1,72 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 460x350
+  RenderSVGTransformableContainer {g} at (0,0) size 460x350
+layer at (0,0) size 460x350
+  RenderSVGTransformableContainer {a} at (0,0) size 460x350
+layer at (360,0) size 100x100
+  RenderSVGRect {rect} at (360,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=360.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (95,240) size 50x100
+  RenderSVGEllipse {ellipse} at (95,240) size 50x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=120.00] [cy=290.00] [rx=25.00] [ry=50.00]
+layer at (320,250) size 60x90
+  RenderSVGPath {line} at (320,250) size 60x90 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=380.00] [y1=250.00] [x2=320.00] [y2=340.00]
+layer at (0,0) size 100x100
+  RenderSVGPath {polygon} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [points="0 0 0 100 100 100 100 0"]
+layer at (250,250) size 60x100
+  RenderSVGPath {path} at (250,250) size 60x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M 280 250 L 250 350 L 310 330 Z"]
+layer at (10,227.98) size 67x115
+  RenderSVGText {text} at (10,227) size 67x116 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 67x115
+      chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 1 width 66.70: "X"
+layer at (360,120) size 100x100
+  RenderSVGImage {image} at (360,120) size 100x100
+layer at (240,120) size 100x100
+  RenderSVGTransformableContainer {g} at (240,120) size 100x100
+layer at (240,120) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=240.00] [y=120.00] [width=100.00] [height=100.00]
+layer at (0,0) size 480x360
+  RenderSVGViewportContainer {svg} at (0,0) size 480x360
+layer at (0,120) size 100x100
+  RenderSVGRect {rect} at (0,120) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=120.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {defs} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 80x80
+  RenderSVGHiddenContainer {symbol} at (0,0) size 80x80
+layer at (0,0) size 80x80
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [cx=40.00] [cy=40.00] [r=40.00]
+layer at (0,0) size 3x3
+  RenderSVGResourceMarker {marker} at (0,0) size 3x3
+layer at (0,0) size 100x100 backgroundClip at (0,0) size 5x5 clip at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {pattern} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {use} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (120,120) size 100x100
+  RenderSVGRect {rect} at (120,120) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=120.00] [width=100.00] [height=100.00]
+layer at (0,0) size 80x80
+  RenderSVGTransformableContainer {use} at (0,0) size 80x80
+layer at (0,0) size 480x360
+  RenderSVGViewportContainer {svg} at (0,0) size 480x360
+layer at (150,260) size 15x0
+  RenderSVGPath {line} at (150,260) size 15x0 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [x1=150.00] [y1=260.00] [x2=165.00] [y2=260.00]
+layer at (240,0) size 100x100
+  RenderSVGRect {rect} at (240,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

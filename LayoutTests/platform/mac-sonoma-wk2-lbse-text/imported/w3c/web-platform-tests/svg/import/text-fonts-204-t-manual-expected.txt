@@ -1,0 +1,92 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (30,29.14) size 374x311
+  RenderSVGTransformableContainer {g} at (30,29.14) size 373.84x309.89
+layer at (30,29.14) size 374x310
+  RenderSVGTransformableContainer {g} at (0,0) size 373.84x309.89
+layer at (360,29.14) size 33x30
+  RenderSVGText {text} at (330,0) size 34x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 34x31
+      chunk 1 text run 1 at (360.00,50.00) startOffset 0 endOffset 3 width 33.48: "100"
+layer at (360,64.14) size 35x30
+  RenderSVGText {text} at (330,35) size 36x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x31
+      chunk 1 text run 1 at (360.00,85.00) startOffset 0 endOffset 3 width 35.46: "200"
+layer at (360,99.14) size 35x30
+  RenderSVGText {text} at (330,70) size 36x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x31
+      chunk 1 text run 1 at (360.00,120.00) startOffset 0 endOffset 3 width 35.46: "300"
+layer at (360,134.11) size 36x30
+  RenderSVGText {text} at (330,104) size 36x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x31
+      chunk 1 text run 1 at (360.00,155.00) startOffset 0 endOffset 3 width 36.00: "400"
+layer at (360,169.11) size 36x30
+  RenderSVGText {text} at (330,139) size 36x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x31
+      chunk 1 text run 1 at (360.00,190.00) startOffset 0 endOffset 3 width 36.00: "500"
+layer at (360,204.08) size 38x30
+  RenderSVGText {text} at (330,174) size 38x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 38x31
+      chunk 1 text run 1 at (360.00,225.00) startOffset 0 endOffset 3 width 37.74: "600"
+layer at (360,239.05) size 41x30
+  RenderSVGText {text} at (330,209) size 41x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x31
+      chunk 1 text run 1 at (360.00,260.00) startOffset 0 endOffset 3 width 40.68: "700"
+layer at (360,274.02) size 44x30
+  RenderSVGText {text} at (330,244) size 44x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 44x31
+      chunk 1 text run 1 at (360.00,295.00) startOffset 0 endOffset 3 width 43.83: "800"
+layer at (360,309.02) size 44x30
+  RenderSVGText {text} at (330,279) size 44x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 44x31
+      chunk 1 text run 1 at (360.00,330.00) startOffset 0 endOffset 3 width 43.83: "900"
+layer at (60,59.05) size 101x30
+  RenderSVGText {text} at (30,29) size 102x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 102x31
+      chunk 1 text run 1 at (60.00,80.00) startOffset 0 endOffset 12 width 101.26: "This is bold"
+layer at (60,109.11) size 117x30
+  RenderSVGText {text} at (30,79) size 118x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 118x31
+      chunk 1 text run 1 at (60.00,130.00) startOffset 0 endOffset 14 width 117.18: "This is normal"
+layer at (60,159.05) size 129x31
+  RenderSVGTransformableContainer {g} at (30,129.91) size 128.45x30.02
+layer at (60,159.05) size 128x30
+  RenderSVGText {text} at (0,0) size 129x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 129x31
+      chunk 1 text run 1 at (60.00,180.00) startOffset 0 endOffset 14 width 128.44: "Blue is bolder"
+layer at (60,209.11) size 124x31
+  RenderSVGTransformableContainer {g} at (30,179.97) size 123.16x30.02
+layer at (60,209.11) size 123x30
+  RenderSVGText {text} at (0,0) size 124x31 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 124x31
+      chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 123.14: "Blue is lighter"
+layer at (30,260.25) size 157x35
+  RenderSVGTransformableContainer {g} at (0,231.11) size 156.03x34.02
+layer at (30,260.25) size 143x14
+  RenderSVGText {text} at (0,0) size 143x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 143x15
+      chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 142.80: "ZalamanderCaps is an OpenType font"
+layer at (30,280.25) size 156x14
+  RenderSVGText {text} at (0,20) size 157x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 157x15
+      chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 156.02: "by Tim Ahrens of Just Another Foundry"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.1 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,-0.41) size 478x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,-0.41) size 478x23.02
+layer at (1,1) size 478x21
+  RenderSVGRect {rect} at (0,1.41) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.11,-0.41) size 68x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x23
+      chunk 1 (middle anchor) text run 1 at (206.12,18.00) startOffset 0 endOffset 5 width 67.76: "DRAFT"

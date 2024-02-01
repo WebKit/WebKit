@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 470x460
+  RenderSVGTransformableContainer {g} at (0,0) size 470x460
+layer at (10,11.05) size 200x17
+  RenderSVGText {text} at (10,11) size 201x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 201x18
+      chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 200.10: "Testing gradientUnits attribute"
+layer at (10,35) size 460x50
+  RenderSVGRect {rect} at (10,35) size 460x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=35.00] [width=460.00] [height=50.00]
+layer at (10,88.95) size 309x14
+  RenderSVGText {text} at (10,88) size 309x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 309x14
+      chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 61 width 308.82: "Radial gradient with default attributes (from blue to yellow)"
+layer at (10,103.95) size 343x14
+  RenderSVGText {text} at (10,103) size 343x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 343x14
+      chunk 1 text run 1 at (10.00,115.00) startOffset 0 endOffset 66 width 342.88: "Gradient is blue at the object center and lime at the object edges"
+layer at (10,125) size 460x50
+  RenderSVGRect {rect} at (10,125) size 460x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=125.00] [width=460.00] [height=50.00]
+layer at (10,178.95) size 181x14
+  RenderSVGText {text} at (10,178) size 182x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 182x14
+      chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 31 width 181.13: "gradientUnits=objectBoundingBox"
+layer at (10,193.95) size 155x14
+  RenderSVGText {text} at (10,193) size 156x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 156x14
+      chunk 1 text run 1 at (10.00,205.00) startOffset 0 endOffset 31 width 155.08: "cx=.2, cy=.2, r=.5, fx=.2 fy=.2"
+layer at (0,0) size 50x460
+  RenderSVGRect {rect} at (0,0) size 50x460 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=460.00]
+layer at (10,263.95) size 172x14
+  RenderSVGText {text} at (10,263) size 173x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 173x14
+      chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 28 width 172.43: "gradientUnits=userSpaceOnUse"
+layer at (10,278.95) size 389x14
+  RenderSVGText {text} at (10,278) size 389x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 389x14
+      chunk 1 text run 1 at (10.00,290.00) startOffset 0 endOffset 75 width 388.88: "Gradient is yellow to blue radial gradient from center to horizontal bounds"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (15.41,25.52) size 410x222
+  RenderSVGTransformableContainer {g} at (15.41,25.52) size 409.59x221.45
+layer at (26.22,25.52) size 397x18
+  RenderSVGText {text} at (10,0) size 399x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 398x18
+      chunk 1 (middle anchor) text run 1 at (26.23,40.00) startOffset 0 endOffset 57 width 397.55: "Test animation options for specifying the target element."
+layer at (15.41,80) size 410x168
+  RenderSVGTransformableContainer {g} at (0,54.48) size 409.59x166.97
+layer at (15.41,231.31) size 65x16
+  RenderSVGText {text} at (0,151) size 65x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x16
+      chunk 1 (end anchor) text run 1 at (15.41,244.00) startOffset 0 endOffset 11 width 64.59: "0 to 3 sec."
+layer at (80,240) size 121x0
+  RenderSVGPath {line} at (64.59,160) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=80.00] [y1=240.00] [x2=200.00] [y2=240.00]
+layer at (27.08,111.31) size 53x16
+  RenderSVGText {text} at (11,31) size 54x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x16
+      chunk 1 (end anchor) text run 1 at (27.08,124.00) startOffset 0 endOffset 9 width 52.92: "at 6 sec."
+layer at (80,120) size 121x0
+  RenderSVGPath {line} at (64.59,40) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=80.00] [y1=120.00] [x2=200.00] [y2=120.00]
+layer at (100,80) size 101x160
+  RenderSVGRect {rect} at (84.59,0) size 100x160 [stroke={[type=SOLID] [color=#3366EE] [stroke width=4.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=80.00] [width=100.00] [height=160.00]
+layer at (240.41,231.31) size 65x16
+  RenderSVGText {text} at (225,151) size 65x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x16
+      chunk 1 (end anchor) text run 1 at (240.41,244.00) startOffset 0 endOffset 11 width 64.59: "0 to 6 sec."
+layer at (305,240) size 121x0
+  RenderSVGPath {line} at (289.59,160) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=305.00] [y1=240.00] [x2=425.00] [y2=240.00]
+layer at (252.08,111.31) size 53x16
+  RenderSVGText {text} at (236,31) size 54x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x16
+      chunk 1 (end anchor) text run 1 at (252.08,124.00) startOffset 0 endOffset 9 width 52.92: "at 9 sec."
+layer at (305,120) size 121x0
+  RenderSVGPath {line} at (289.59,40) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=305.00] [y1=120.00] [x2=425.00] [y2=120.00]
+layer at (325,80) size 101x160
+  RenderSVGRect {rect} at (309.59,0) size 100x160 [stroke={[type=SOLID] [color=#3366EE] [stroke width=4.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=325.00] [y=80.00] [width=100.00] [height=160.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

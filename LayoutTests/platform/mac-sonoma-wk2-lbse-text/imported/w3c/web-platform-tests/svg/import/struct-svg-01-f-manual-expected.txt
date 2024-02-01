@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (20,23.13) size 359x222
+  RenderSVGTransformableContainer {g} at (20,23.13) size 358.41x221.02
+layer at (0,0) size 480x361 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGViewportContainer {svg} at (-20,-23.13) size 480x360
+layer at (20,23.13) size 351x21
+  RenderSVGText {text} at (0,0) size 352x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 352x21
+      chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 51 width 351.37: "Initial value of the 'svg' tag's 'width' attribute:"
+layer at (20,43.13) size 46x21
+  RenderSVGText {text} at (0,20) size 47x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 47x21
+      chunk 1 text run 1 at (20.00,60.00) startOffset 0 endOffset 4 width 46.04: "100%"
+layer at (20,83.13) size 358x21
+  RenderSVGText {text} at (0,60) size 359x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 359x21
+      chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 52 width 358.39: "Initial value of the 'svg' tag's 'height' attribute:"
+layer at (20,103.13) size 46x21
+  RenderSVGText {text} at (0,80) size 47x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 47x21
+      chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 4 width 46.04: "100%"
+layer at (20,143.13) size 318x21
+  RenderSVGText {text} at (0,120) size 319x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 319x21
+      chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 47 width 318.35: "Initial value of the 'svg' tag's 'x' attribute:"
+layer at (20,163.13) size 10x21
+  RenderSVGText {text} at (0,140) size 11x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 11x21
+      chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 1 width 10.01: "0"
+layer at (20,203.13) size 318x21
+  RenderSVGText {text} at (0,180) size 319x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 319x21
+      chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 47 width 318.35: "Initial value of the 'svg' tag's 'y' attribute:"
+layer at (20,223.13) size 10x21
+  RenderSVGText {text} at (0,200) size 11x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 11x21
+      chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 1 width 10.01: "0"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

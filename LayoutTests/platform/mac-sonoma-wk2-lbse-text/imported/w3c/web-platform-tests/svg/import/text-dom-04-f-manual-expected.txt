@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-2417.53,-1000) size 20518x9201 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-2417.53,-1000) size 20517.53x9200.02
+layer at (-2417.53,-1000) size 20518x9201 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 20517.53x9200.02
+layer at (0,-1000) size 4001x5000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (2417.53,0) size 4000x5000
+layer at (0,0) size 4000x4000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,1000) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 4000 L 2000 0 L 4000 4000 Z"]
+layer at (0,0) size 2000x2000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,1000) size 2000x2000 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 2000 0 L 2000 2000 L 0 2000 Z"]
+layer at (0,0) size 2000x2000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,1000) size 2000x2000 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 2000 2000 L 0 2000 L 2000 0 Z"]
+layer at (0,0) size 4000x4000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,1000) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 4000 L 2000 0 L 4000 4000 Z"]
+layer at (0,0) size 2000x4000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,1000) size 2000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 2000 2000 L 0 4000 Z"]
+layer at (-2417.53,103.98) size 5315x230 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,1103) size 5316x231 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 5316x230
+      chunk 1 (middle anchor) text run 1 at (-2417.52,288.00) startOffset 0 endOffset 57 width 5315.04: "Failed getSubStringLength(0,3) got 8000 but expected 7500"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,-0.41) size 478x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,-0.41) size 478x23.02
+layer at (1,1) size 478x21
+  RenderSVGRect {rect} at (0,1.41) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.11,-0.41) size 68x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x23
+      chunk 1 (middle anchor) text run 1 at (206.12,18.00) startOffset 0 endOffset 5 width 67.76: "DRAFT"

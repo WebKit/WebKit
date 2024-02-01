@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (120,80) size 240x240
+  RenderSVGTransformableContainer {g} at (120,80) size 240x240
+layer at (120,80) size 240x240 isolatesBlending
+  RenderSVGTransformableContainer {g} at (0,0) size 240x240
+layer at (120,80) size 160x160 blendMode: screen
+  RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#FF0000]}] [x=120.00] [y=80.00] [width=160.00] [height=160.00]
+layer at (200,80) size 160x160 blendMode: screen
+  RenderSVGRect {rect} at (80,0) size 160x160 [fill={[type=SOLID] [color=#00FF00]}] [x=200.00] [y=80.00] [width=160.00] [height=160.00]
+layer at (160,160) size 160x160 blendMode: screen
+  RenderSVGRect {rect} at (40,80) size 160x160 [fill={[type=SOLID] [color=#0000FF]}] [x=160.00] [y=160.00] [width=160.00] [height=160.00]
+layer at (120,80) size 240x240
+  RenderSVGTransformableContainer {g} at (0,0) size 240x240
+layer at (120,80) size 160x160
+  RenderSVGRect {rect} at (0,0) size 160x160 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=120.00] [y=80.00] [width=160.00] [height=160.00]
+layer at (200,80) size 160x160
+  RenderSVGRect {rect} at (80,0) size 160x160 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=200.00] [y=80.00] [width=160.00] [height=160.00]
+layer at (160,160) size 160x160
+  RenderSVGRect {rect} at (40,80) size 160x160 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=160.00] [y=160.00] [width=160.00] [height=160.00]

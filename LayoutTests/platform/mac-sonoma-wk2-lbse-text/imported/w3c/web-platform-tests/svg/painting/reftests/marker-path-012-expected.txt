@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 12x9 backgroundClip at (0,0) size 10x10 clip at (0,0) size 11.67x10
+  RenderSVGResourceMarker {marker} at (0,0) size 12x9
+layer at (0,0) size 10x10
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+layer at (0,0) size 12x9 backgroundClip at (0,0) size 10x10 clip at (0,0) size 11.67x10
+  RenderSVGResourceMarker {marker} at (0,0) size 12x9
+layer at (0,0) size 10x10
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+layer at (0,0) size 12x9 backgroundClip at (0,0) size 10x10 clip at (0,0) size 11.67x10
+  RenderSVGResourceMarker {marker} at (0,0) size 12x9
+layer at (0,0) size 10x10
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+layer at (50,114.22) size 390x139
+  RenderSVGTransformableContainer {g} at (50,114.22) size 390x138.30 [start marker=Start] [middle marker=Mid] [end marker=End]
+layer at (50,114.22) size 150x12
+  RenderSVGPath {path} at (0,0) size 150x11.56 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 120 C 70 140 80 100 100 120 M 150 120 C 170 140 180 100 200 120"]
+layer at (50,240) size 150x14
+  RenderSVGPath {path} at (0,125.78) size 150x12.52 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 240 C 66.6667 256.667 83.3333 256.667 100 240 M 150 240 C 166.667 256.667 183.333 256.667 200 240"]
+layer at (290,114.22) size 150x12
+  RenderSVGPath {path} at (240,0) size 150x11.56 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 120 C 310 140 320 100 340 120 M 390 120 C 410 140 420 100 440 120"]
+layer at (290,240) size 150x14
+  RenderSVGPath {path} at (240,125.78) size 150x12.52 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 240 C 306.667 256.667 323.333 256.667 340 240 M 390 240 C 406.667 256.667 423.333 256.667 440 240"]

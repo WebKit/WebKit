@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-30,-60) size 479x369 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-30,-60) size 478.55x368.28
+layer at (-30,-60) size 479x369 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 478.55x368.28
+layer at (48,14.88) size 298x41
+  RenderSVGText {text} at (78,74) size 299x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 299x42
+      chunk 1 text run 1 at (48.00,48.00) startOffset 0 endOffset 18 width 298.16: "Test a motion path"
+layer at (48,61.88) size 234x41
+  RenderSVGText {text} at (78,121) size 234x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 234x42
+      chunk 1 text run 1 at (48.00,95.00) startOffset 0 endOffset 17 width 233.89: "'path' attribute."
+layer at (90,174.11) size 300x84
+  RenderSVGPath {path} at (120,234.11) size 300x83.89 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [data="M 90 258 C 90 258 216 120 390 198"]
+layer at (60,198) size 60x60
+  RenderSVGRect {rect} at (90,258) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=198.00] [width=60.00] [height=60.00]
+layer at (41.97,266.88) size 96x41
+  RenderSVGText {text} at (71,326) size 98x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 97x42
+      chunk 1 (middle anchor) text run 1 at (41.98,300.00) startOffset 0 endOffset 6 width 96.05: "0 sec."
+layer at (360,138) size 60x60
+  RenderSVGRect {rect} at (390,198) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=360.00] [y=138.00] [width=60.00] [height=60.00]
+layer at (331.45,206.88) size 118x41
+  RenderSVGText {text} at (361,266) size 118x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 118x42
+      chunk 1 (middle anchor) text run 1 at (331.46,240.00) startOffset 0 endOffset 7 width 117.07: "6+ sec."
+layer at (-30,-60) size 60x60 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,0) size 60x60 [stroke={[type=SOLID] [color=#008000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -30 0 L 0 -60 L 30 0 Z"]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

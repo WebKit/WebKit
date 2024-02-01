@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (5,5) size 145x98
+  RenderSVGTransformableContainer {g} at (5,5) size 145x98
+layer at (5,5) size 145x98
+  RenderSVGTransformableContainer {g} at (0,0) size 145x98
+layer at (40,5) size 100x98
+  RenderSVGImage {image} at (35,0) size 100x98
+layer at (30,10) size 120x10
+  RenderSVGRect {rect} at (25,5) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=10.00] [width=120.00] [height=10.00]
+layer at (30,23) size 120x10
+  RenderSVGRect {rect} at (25,18) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=23.00] [width=120.00] [height=10.00]
+layer at (30,36) size 120x23
+  RenderSVGTransformableContainer {g} at (25,31) size 120x23
+layer at (30,36) size 120x10
+  RenderSVGRect {rect} at (0,0) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=36.00] [width=120.00] [height=10.00]
+layer at (30,49) size 120x10
+  RenderSVGRect {rect} at (0,13) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [x=30.00] [y=49.00] [width=120.00] [height=10.00]
+layer at (30,62) size 120x10
+  RenderSVGRect {rect} at (25,57) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=62.00] [width=120.00] [height=10.00]
+layer at (30,75) size 120x10
+  RenderSVGRect {rect} at (25,70) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
+layer at (30,88) size 120x10
+  RenderSVGRect {rect} at (25,83) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
+layer at (5,10.61) size 24x87
+  RenderSVGTransformableContainer {g} at (0,5.61) size 23.73x86.02
+layer at (5,10.61) size 23x8
+  RenderSVGText {text} at (0,0) size 23x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 23x8
+      chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 22.56: "Normal"
+layer at (5,23.61) size 24x8
+  RenderSVGText {text} at (0,13) size 24x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 24x8
+      chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 23.73: "Multiply"
+layer at (5,36.61) size 24x8
+  RenderSVGText {text} at (0,26) size 24x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 24x8
+      chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 23.73: "Multiply"
+layer at (5,49.61) size 24x8
+  RenderSVGText {text} at (0,39) size 24x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 24x8
+      chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 23.73: "Multiply"
+layer at (5,62.61) size 22x8
+  RenderSVGText {text} at (0,52) size 23x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 23x8
+      chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 22.18: "Screen"
+layer at (5,75.61) size 23x8
+  RenderSVGText {text} at (0,65) size 23x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 23x8
+      chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 22.57: "Darken"
+layer at (5,88.61) size 23x8
+  RenderSVGText {text} at (0,78) size 23x8 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 23x8
+      chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 22.97: "Lighten"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

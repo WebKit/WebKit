@@ -1,0 +1,82 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (15,15) size 405x235
+  RenderSVGTransformableContainer {g} at (15,15) size 405x234.14
+layer at (65,22.09) size 20x35
+  RenderSVGText {text} at (50,7) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (65.00,50.00) startOffset 0 endOffset 1 width 20.01: "A"
+layer at (165,22.09) size 20x35
+  RenderSVGText {text} at (150,7) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (165.00,50.00) startOffset 0 endOffset 1 width 20.01: "B"
+layer at (265,22.09) size 22x35
+  RenderSVGText {text} at (250,7) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (265.00,50.00) startOffset 0 endOffset 1 width 21.67: "C"
+layer at (365,22.09) size 22x35
+  RenderSVGText {text} at (350,7) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (365.00,50.00) startOffset 0 endOffset 1 width 21.67: "D"
+layer at (30,15) size 390x40
+  RenderSVGTransformableContainer {g} at (15,0) size 390x40
+layer at (30,15) size 90x40
+  RenderSVGTransformableContainer {g} at (0,0) size 90x40
+layer at (30,15) size 90x40
+  RenderSVGRect {rect} at (0,0) size 90x40 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=30.00] [y=15.00] [width=90.00] [height=40.00]
+layer at (50,21.59) size 58x23
+  RenderSVGText {text} at (20,6) size 58x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x23
+      chunk 1 text run 1 at (50.00,40.00) startOffset 0 endOffset 7 width 57.78: "click A"
+layer at (130,15) size 90x40
+  RenderSVGTransformableContainer {g} at (100,0) size 90x40
+layer at (130,15) size 90x40
+  RenderSVGRect {rect} at (0,0) size 90x40 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=130.00] [y=15.00] [width=90.00] [height=40.00]
+layer at (135,21.59) size 81x23
+  RenderSVGText {text} at (5,6) size 81x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 81x23
+      chunk 1 text run 1 at (135.00,40.00) startOffset 0 endOffset 9 width 80.59: "click B+2"
+layer at (230,15) size 90x40
+  RenderSVGTransformableContainer {g} at (200,0) size 90x40
+layer at (230,15) size 90x40
+  RenderSVGRect {rect} at (0,0) size 90x40 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=230.00] [y=15.00] [width=90.00] [height=40.00]
+layer at (235,21.59) size 82x23
+  RenderSVGText {text} at (5,6) size 82x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x23
+      chunk 1 text run 1 at (235.00,40.00) startOffset 0 endOffset 9 width 81.69: "click C+4"
+layer at (330,15) size 90x40
+  RenderSVGTransformableContainer {g} at (300,0) size 90x40
+layer at (330,15) size 90x40
+  RenderSVGRect {rect} at (0,0) size 90x40 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [x=330.00] [y=15.00] [width=90.00] [height=40.00]
+layer at (350,21.59) size 50x23
+  RenderSVGText {text} at (20,6) size 51x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x23
+      chunk 1 text run 1 at (350.00,40.00) startOffset 0 endOffset 5 width 50.03: "never"
+layer at (15,149.23) size 327x32
+  RenderSVGText {text} at (0,134) size 327x33 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 327x33
+      chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 326.84: "Test of Eventbase targets."
+layer at (15,228.13) size 365x21
+  RenderSVGText {text} at (0,213) size 366x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 366x21
+      chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 365.18: "Note that clicking rect D should give no result."
+layer at (15,188.13) size 396x21
+  RenderSVGText {text} at (0,173) size 397x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 397x21
+      chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 396.23: "Clicking a rectangle should change its color at the"
+layer at (15,208.13) size 398x21
+  RenderSVGText {text} at (0,193) size 398x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 398x21
+      chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 397.70: "time for the click + delay as indicated in each rect."
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

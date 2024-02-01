@@ -1,0 +1,60 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,-3.45) size 471x264 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-3.45) size 470.83x263.45
+layer at (0,-3.45) size 471x264 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 470.83x263.45
+layer at (10,53.13) size 461x21
+  RenderSVGText {text} at (10,56) size 461x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 461x21
+      chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 60 width 460.83: "Test 'overflow'/'clip' on outermost and inner 'svg' elements"
+layer at (0,0) size 250x61
+  RenderSVGTransformableContainer {g} at (0,3.45) size 250x60
+layer at (0,0) size 250x60
+  RenderSVGTransformableContainer {g} at (0,0) size 250x60
+layer at (0,0) size 250x60
+  RenderSVGRect {rect} at (0,0) size 250x60 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+layer at (15,0.83) size 216x55
+  RenderSVGText {text} at (15,0) size 217x57 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 217x56
+      chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
+layer at (0,0) size 250x60
+  RenderSVGTransformableContainer {g} at (0,0) size 250x60
+layer at (0,0) size 250x60
+  RenderSVGRect {rect} at (0,0) size 250x60 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+layer at (15,0.83) size 216x55
+  RenderSVGText {text} at (15,0) size 217x57 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 217x56
+      chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
+layer at (0,0) size 250x60
+  RenderSVGTransformableContainer {g} at (0,0) size 250x60
+layer at (0,0) size 250x60
+  RenderSVGRect {rect} at (0,0) size 250x60 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+layer at (15,0.83) size 216x55
+  RenderSVGText {text} at (15,0) size 217x57 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 217x56
+      chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
+layer at (0,0) size 250x60
+  RenderSVGTransformableContainer {g} at (0,0) size 250x60
+layer at (0,0) size 250x60
+  RenderSVGRect {rect} at (0,0) size 250x60 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+layer at (15,0.83) size 216x55
+  RenderSVGText {text} at (15,0) size 217x57 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 217x56
+      chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 216.07: "Outer Clip"
+layer at (115,100) size 250x161
+  RenderSVGRect {rect} at (115,103.45) size 250x160 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
+layer at (0,0) size 250x161 backgroundClip at (0,0) size 250x160 clip at (0,0) size 250x160
+  RenderSVGViewportContainer {svg} at (0,3.45) size 250x160
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

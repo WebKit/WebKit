@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,50) size 472x162
+  RenderSVGTransformableContainer {g} at (10,50) size 472x162
+layer at (150,50) size 162x162
+  RenderSVGRect {rect} at (140,0) size 162x162 [fill={[type=SOLID] [color=#AAFF44]}] [x=150.00] [y=50.00] [width=162.00] [height=162.00]
+layer at (310,50) size 162x162
+  RenderSVGRect {rect} at (300,0) size 162x162 [fill={[type=SOLID] [color=#FFAA66]}] [x=310.00] [y=50.00] [width=162.00] [height=162.00]
+layer at (10,60) size 162x150
+  RenderSVGImage {image} at (0,10) size 162x150
+layer at (160,60) size 162x150
+  RenderSVGImage {image} at (150,10) size 162x150
+layer at (320,60) size 162x150
+  RenderSVGImage {image} at (310,10) size 162x150
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

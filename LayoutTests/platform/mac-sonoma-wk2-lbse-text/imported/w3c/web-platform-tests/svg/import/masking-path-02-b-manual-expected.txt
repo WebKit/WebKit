@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 472x287
+  RenderSVGTransformableContainer {g} at (0,0) size 471.14x286.91
+layer at (0,0) size 472x287
+  RenderSVGTransformableContainer {g} at (0,0) size 471.14x286.91
+layer at (0.25,0.50) size 1x2
+  RenderSVGResourceClipper {clipPath} at (0.25,0.50) size 0.61x1
+layer at (0.25,0.50) size 1x1
+  RenderSVGRect {rect} at (0,0) size 0.61x1 [fill={[type=SOLID] [color=#000000]}] [x=0.25] [y=0.50] [width=0.60] [height=1.00]
+layer at (10,10) size 430x80
+  RenderSVGRect {rect} at (10,10) size 430x80 [fill={[type=SOLID] [color=#FF0088]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
+layer at (117,50) size 258x40
+  RenderSVGRect {rect} at (117,50) size 258x40 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=117.00] [y=50.00] [width=258.00] [height=40.00]
+layer at (20,102.09) size 451x35
+  RenderSVGText {text} at (20,102) size 452x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 452x35
+      chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 451.13: "clipPathUnits=objectBoundingBox"
+layer at (60,60) size 80x80
+  RenderSVGResourceClipper {clipPath} at (60,60) size 80x80
+layer at (60,60) size 80x80
+  RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=60.00] [width=80.00] [height=80.00]
+layer at (0,0) size 120x120
+  RenderSVGRect {rect} at (0,0) size 120x120 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+layer at (60,60) size 60x60
+  RenderSVGRect {rect} at (60,60) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=60.00] [y=60.00] [width=60.00] [height=60.00]
+layer at (20,252.09) size 429x35
+  RenderSVGText {text} at (20,252) size 430x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 430x35
+      chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 28 width 429.39: "clipPathUnits=userSpaceOnUse"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

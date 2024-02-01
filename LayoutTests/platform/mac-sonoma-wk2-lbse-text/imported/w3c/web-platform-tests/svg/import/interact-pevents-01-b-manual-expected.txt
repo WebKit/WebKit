@@ -1,0 +1,226 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 359x110
+  RenderSVGTransformableContainer {g} at (0,0) size 358.41x109.20
+layer at (0,0) size 359x110
+  RenderSVGTransformableContainer {g} at (0,0) size 358.41x109.20
+layer at (121.59,21.59) size 236x23
+  RenderSVGText {text} at (121,21) size 238x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 237x23
+      chunk 1 (middle anchor) text run 1 at (121.61,40.00) startOffset 0 endOffset 27 width 236.79: "Test pointer-events on text"
+layer at (0,0) size 352x110
+  RenderSVGTransformableContainer {g} at (0,0) size 351.13x109.20
+layer at (50,63.19) size 302x47
+  RenderSVGTransformableContainer {g} at (50,63.19) size 301.13x46.02
+layer at (50,63.19) size 31x46
+  RenderSVGText {text} at (0,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (80,63.19) size 31x46
+  RenderSVGText {text} at (30,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (80.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (110,63.19) size 31x46
+  RenderSVGText {text} at (60,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (110.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (140,63.19) size 31x46
+  RenderSVGText {text} at (90,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (140.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (170,63.19) size 31x46
+  RenderSVGText {text} at (120,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (170.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (200,63.19) size 31x46
+  RenderSVGText {text} at (150,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (200.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (230,63.19) size 31x46
+  RenderSVGText {text} at (180,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (260,63.19) size 31x46
+  RenderSVGText {text} at (210,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (260.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (290,63.19) size 31x46
+  RenderSVGText {text} at (240,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (290.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (320,63.19) size 31x46
+  RenderSVGText {text} at (270,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (320.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (50,65) size 300x41
+  RenderSVGTransformableContainer {g} at (0,1.81) size 300x40
+layer at (50,65) size 270x40
+  RenderSVGRect {rect} at (0,0) size 270x40 [fill={[type=SOLID] [color=#008000] [opacity=0.50]}] [x=50.00] [y=65.00] [width=270.00] [height=40.00]
+layer at (50,65) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=65.00] [width=300.00] [height=40.00]
+layer at (50,63.19) size 302x47
+  RenderSVGTransformableContainer {g} at (50,63.19) size 301.13x46.02
+layer at (50,63.19) size 31x46
+  RenderSVGText {text} at (0,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (80,63.19) size 31x46
+  RenderSVGText {text} at (30,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (80.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (110,63.19) size 31x46
+  RenderSVGText {text} at (60,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (110.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (140,63.19) size 31x46
+  RenderSVGText {text} at (90,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (140.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (170,63.19) size 31x46
+  RenderSVGText {text} at (120,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (170.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (200,63.19) size 31x46
+  RenderSVGText {text} at (150,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (200.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (230,63.19) size 31x46
+  RenderSVGText {text} at (180,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (260,63.19) size 31x46
+  RenderSVGText {text} at (210,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (260.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (290,63.19) size 31x46
+  RenderSVGText {text} at (240,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (290.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (320,63.19) size 31x46
+  RenderSVGText {text} at (270,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (320.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (50,65) size 300x41
+  RenderSVGTransformableContainer {g} at (0,1.81) size 300x40
+layer at (50,65) size 270x40
+  RenderSVGRect {rect} at (0,0) size 270x40 [fill={[type=SOLID] [color=#008000] [opacity=0.50]}] [x=50.00] [y=65.00] [width=270.00] [height=40.00]
+layer at (50,65) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=65.00] [width=300.00] [height=40.00]
+layer at (50,63.19) size 302x47
+  RenderSVGTransformableContainer {g} at (50,63.19) size 301.13x46.02
+layer at (50,63.19) size 31x46
+  RenderSVGText {text} at (0,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (80,63.19) size 31x46
+  RenderSVGText {text} at (30,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (80.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (110,63.19) size 31x46
+  RenderSVGText {text} at (60,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (110.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (140,63.19) size 31x46
+  RenderSVGText {text} at (90,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (140.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (170,63.19) size 31x46
+  RenderSVGText {text} at (120,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (170.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (200,63.19) size 31x46
+  RenderSVGText {text} at (150,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (200.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (230,63.19) size 31x46
+  RenderSVGText {text} at (180,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (260,63.19) size 31x46
+  RenderSVGText {text} at (210,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (260.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (290,63.19) size 31x46
+  RenderSVGText {text} at (240,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (290.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (320,63.19) size 31x46
+  RenderSVGText {text} at (270,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (320.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (50,65) size 300x41
+  RenderSVGTransformableContainer {g} at (0,1.81) size 300x40
+layer at (200,65) size 120x40
+  RenderSVGRect {rect} at (150,0) size 120x40 [fill={[type=SOLID] [color=#008000] [opacity=0.50]}] [x=200.00] [y=65.00] [width=120.00] [height=40.00]
+layer at (50,65) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=65.00] [width=300.00] [height=40.00]
+layer at (50,63.19) size 302x47
+  RenderSVGTransformableContainer {g} at (50,63.19) size 301.13x46.02
+layer at (50,63.19) size 31x46
+  RenderSVGText {text} at (0,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (80,63.19) size 31x46
+  RenderSVGText {text} at (30,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (80.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (110,63.19) size 31x46
+  RenderSVGText {text} at (60,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (110.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (140,63.19) size 31x46
+  RenderSVGText {text} at (90,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (140.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (170,63.19) size 31x46
+  RenderSVGText {text} at (120,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (170.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (200,63.19) size 31x46
+  RenderSVGText {text} at (150,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (200.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (230,63.19) size 31x46
+  RenderSVGText {text} at (180,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (260,63.19) size 31x46
+  RenderSVGText {text} at (210,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (260.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (290,63.19) size 31x46
+  RenderSVGText {text} at (240,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (290.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (320,63.19) size 31x46
+  RenderSVGText {text} at (270,0) size 32x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 32x46
+      chunk 1 text run 1 at (320.00,100.00) startOffset 0 endOffset 1 width 31.11: "O"
+layer at (50,65) size 300x41
+  RenderSVGTransformableContainer {g} at (0,1.81) size 300x40
+layer at (110,65) size 90x40
+  RenderSVGRect {rect} at (60,0) size 90x40 [fill={[type=SOLID] [color=#008000] [opacity=0.50]}] [x=110.00] [y=65.00] [width=90.00] [height=40.00]
+layer at (230,65) size 90x40
+  RenderSVGRect {rect} at (180,0) size 90x40 [fill={[type=SOLID] [color=#008000] [opacity=0.50]}] [x=230.00] [y=65.00] [width=90.00] [height=40.00]
+layer at (50,65) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=65.00] [width=300.00] [height=40.00]
+layer at (0,0) size 150x26
+  RenderSVGTransformableContainer {g} at (0,0) size 150x26
+layer at (0,0) size 150x26
+  RenderSVGRect {rect} at (0,0) size 150x26 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=26.00]
+layer at (13.84,0.59) size 122x23
+  RenderSVGText {text} at (13,0) size 124x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 123x23
+      chunk 1 (middle anchor) text run 1 at (13.85,19.00) startOffset 0 endOffset 13 width 122.29: "Toggle freeze"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

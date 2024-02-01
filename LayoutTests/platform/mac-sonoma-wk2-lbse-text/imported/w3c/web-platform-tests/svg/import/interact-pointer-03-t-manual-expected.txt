@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,28.95) size 293x125
+  RenderSVGTransformableContainer {g} at (10,28.95) size 292.34x124.05
+layer at (10,28.95) size 292x14
+  RenderSVGText {text} at (0,0) size 293x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 293x14
+      chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 56 width 292.34: "Test pointer-events=\"painted\" with paint server fallback"
+layer at (10,80) size 50x51
+  RenderSVGRect {rect} at (0,51.05) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+layer at (10,80) size 50x51
+  RenderSVGRect {rect} at (0,51.05) size 50x50 [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+layer at (10,138.19) size 256x16
+  RenderSVGTransformableContainer {g} at (0,109.23) size 255.11x14.81
+layer at (10,138.19) size 255x15
+  RenderSVGText {text} at (0,0) size 256x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 256x15
+      chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 44 width 255.10: "Move the pointing device over the rectangle."
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (35,11.59) size 410x289
+  RenderSVGTransformableContainer {g} at (35,11.59) size 410x288.41
+layer at (35,11.59) size 410x289
+  RenderSVGTransformableContainer {g} at (0,0) size 410x288.41
+layer at (132.80,11.59) size 214x23
+  RenderSVGText {text} at (97,0) size 216x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 215x23
+      chunk 1 (middle anchor) text run 1 at (132.80,30.00) startOffset 0 endOffset 25 width 214.40: "'clip' property on images"
+layer at (35,45) size 200x121
+  RenderSVGImage {image} at (0,33.41) size 200x120
+layer at (35,45) size 200x121
+  RenderSVGRect {rect} at (0,33.41) size 200x120 [stroke={[type=SOLID] [color=#0000FF]}] [x=35.00] [y=45.00] [width=200.00] [height=120.00]
+layer at (45,55) size 180x101
+  RenderSVGRect {rect} at (10,43.41) size 180x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=45.00] [y=55.00] [width=180.00] [height=100.00]
+layer at (245,87.14) size 177x28
+  RenderSVGText {text} at (210,75) size 178x30 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 178x29
+      chunk 1 text run 1 at (245.00,110.00) startOffset 0 endOffset 16 width 177.14: "<-- raster image"
+layer at (245,180) size 200x121
+  RenderSVGImage {image} at (210,168.41) size 200x120
+layer at (245,180) size 200x121
+  RenderSVGRect {rect} at (210,168.41) size 200x120 [stroke={[type=SOLID] [color=#0000FF]}] [x=245.00] [y=180.00] [width=200.00] [height=120.00]
+layer at (255,190) size 180x101
+  RenderSVGRect {rect} at (220,178.41) size 180x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=255.00] [y=190.00] [width=180.00] [height=100.00]
+layer at (70,227.14) size 166x28
+  RenderSVGText {text} at (35,215) size 167x30 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 167x29
+      chunk 1 text run 1 at (70.00,250.00) startOffset 0 endOffset 13 width 166.03: "SVG image -->"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,-0.41) size 478x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,-0.41) size 478x23.02
+layer at (1,1) size 478x21
+  RenderSVGRect {rect} at (0,1.41) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.11,-0.41) size 68x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x23
+      chunk 1 (middle anchor) text run 1 at (206.12,18.00) startOffset 0 endOffset 5 width 67.76: "DRAFT"

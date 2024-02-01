@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (40,24.95) size 350x106
+  RenderSVGTransformableContainer {g} at (40,24.95) size 350x105.05
+layer at (40,24.95) size 97x14
+  RenderSVGText {text} at (0,0) size 98x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 98x14
+      chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 18 width 97.38: "element selectors:"
+layer at (130,70) size 60x61
+  RenderSVGEllipse {circle} at (90,45.05) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
+layer at (220,80) size 60x41
+  RenderSVGTransformableContainer {g} at (180,55.05) size 60x40
+layer at (220,80) size 60x40
+  RenderSVGRect {rect} at (0,0) size 60x40 [fill={[type=SOLID] [color=#008000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+layer at (300,70) size 90x51
+  RenderSVGPath {polygon} at (260,45.05) size 90x50 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
+layer at (40,24.95) size 350x106
+  RenderSVGTransformableContainer {g} at (0,0) size 350x105.05
+layer at (40,24.95) size 82x14
+  RenderSVGText {text} at (0,0) size 83x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 83x14
+      chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 16 width 82.03: "class selectors:"
+layer at (130,70) size 260x61
+  RenderSVGTransformableContainer {g} at (90,45.05) size 260x60
+layer at (130,70) size 60x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
+layer at (220,80) size 60x40
+  RenderSVGRect {rect} at (90,10) size 60x40 [fill={[type=SOLID] [color=#008000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+layer at (300,70) size 90x50
+  RenderSVGPath {polygon} at (170,0) size 90x50 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

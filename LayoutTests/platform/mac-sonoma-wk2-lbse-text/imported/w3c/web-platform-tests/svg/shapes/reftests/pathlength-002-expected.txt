@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (20,140) size 440x200
+  RenderSVGTransformableContainer {g} at (20,140) size 440x200
+layer at (20,140) size 200x200
+  RenderSVGEllipse {circle} at (0,0) size 200x200 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00] [dash array={39.27}]}] [cx=120.00] [cy=240.00] [r=100.00]
+layer at (260,140) size 200x200
+  RenderSVGEllipse {circle} at (240,0) size 200x200 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00] [dash array={0.25}] [path length=4.00]}] [cx=360.00] [cy=240.00] [r=100.00]

@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (50,9.98) size 75x252
+  RenderSVGTransformableContainer {g} at (50,9.98) size 75x250.03
+layer at (50,9.98) size 75x251
+  RenderSVGTransformableContainer {g} at (0,0) size 75x250.03
+layer at (50,9.98) size 25x50
+  RenderSVGText {text} at (0,0) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (100,9.98) size 25x50
+  RenderSVGText {text} at (50,0) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (50,109.98) size 25x50
+  RenderSVGText {text} at (0,100) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (50.00,150.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (100,109.98) size 25x50
+  RenderSVGText {text} at (50,100) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (100.00,150.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (50,209.98) size 25x50
+  RenderSVGText {text} at (0,200) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (50.00,250.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (100,209.98) size 25x50
+  RenderSVGText {text} at (50,200) size 25x51 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x51
+      chunk 1 text run 1 at (100.00,250.00) startOffset 0 endOffset 1 width 25.00: "a"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

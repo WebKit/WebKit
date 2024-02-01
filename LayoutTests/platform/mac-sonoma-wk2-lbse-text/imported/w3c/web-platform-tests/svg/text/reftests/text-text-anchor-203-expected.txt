@@ -1,0 +1,56 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (134.34,100.08) size 148x19
+  RenderSVGTransformableContainer {g} at (134.34,100.08) size 146.94x18.41
+layer at (134.34,100.08) size 68x19
+  RenderSVGTransformableContainer {g} at (0,0) size 67.66x18.41
+layer at (198,112.80) size 5x5
+  RenderSVGEllipse {circle} at (63.66,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (134.34,100.08) size 66x18
+  RenderSVGText {text} at (0,0) size 66x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 66x19
+      RenderSVGInlineText {#text} at (0,0) size 66x19
+        chunk 1 (end anchor) text run 1 at (134.35,114.80) startOffset 0 endOffset 12 width 65.65 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (166.34,100.08) size 68x19
+  RenderSVGTransformableContainer {g} at (32,0) size 67.31x18.41
+layer at (198,112.80) size 5x5
+  RenderSVGEllipse {circle} at (31.66,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (166.34,100.08) size 67x18
+  RenderSVGText {text} at (0,0) size 68x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 68x19
+      RenderSVGInlineText {#text} at (0,0) size 68x19
+        chunk 1 (middle anchor) text run 1 at (166.35,114.80) startOffset 0 endOffset 10 width 67.30 RTL: "\x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (198,100.08) size 84x19
+  RenderSVGTransformableContainer {g} at (63.66,0) size 83.28x18.41
+layer at (198,112.80) size 4x5
+  RenderSVGEllipse {circle} at (0,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (200,100.08) size 81x18
+  RenderSVGText {text} at (2,0) size 82x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 82x19
+      RenderSVGInlineText {#text} at (0,0) size 82x19
+        chunk 1 text run 1 at (200.00,114.80) startOffset 0 endOffset 14 width 81.27 RTL: "\x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (200,100.08) size 82x139
+  RenderSVGTransformableContainer {g} at (200,100.08) size 81.28x138.41
+layer at (200,100.08) size 81x138
+  RenderSVGText {text} at (0,0) size 82x139 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 67x19
+      RenderSVGInlineText {#text} at (12,120) size 66x19
+        chunk 1 text run 1 at (212.98,234.80) startOffset 0 endOffset 12 width 65.65 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646}"
+    RenderSVGInlineText {#text} at (8,120) size 5x19
+      chunk 1 text run 1 at (208.54,234.80) startOffset 0 endOffset 1 width 4.45 RTL: " "
+    RenderSVGTSpan {tspan} at (0,0) size 69x19
+      RenderSVGInlineText {#text} at (10,60) size 68x19
+        chunk 1 (middle anchor) text run 1 at (210.97,174.80) startOffset 0 endOffset 10 width 67.30 RTL: "\x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646}"
+    RenderSVGInlineText {#text} at (6,60) size 5x19
+      chunk 1 text run 1 at (206.52,174.80) startOffset 0 endOffset 1 width 4.45 RTL: " "
+    RenderSVGTSpan {tspan} at (0,0) size 82x19
+      RenderSVGInlineText {#text} at (0,0) size 82x19
+        chunk 1 (end anchor) text run 1 at (200.00,114.80) startOffset 0 endOffset 14 width 81.27 RTL: "\x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0

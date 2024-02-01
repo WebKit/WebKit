@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-40,-79.45) size 430x168 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-40,-79.45) size 429.52x166.81
+layer at (100,17.91) size 288x28
+  RenderSVGText {text} at (140,97) size 289x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 289x28
+      chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 288.16: "Mouse event handlers test."
+layer at (-40,-79.45) size 430x110 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 429.52x109.45
+layer at (60,-15.09) size 330x28 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (100,64) size 330x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 330x28
+      chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 329.51: "Use the target to trigger events"
+layer at (-30,-30) size 60x61 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (10,49.45) size 60x60
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
+layer at (-15,-9.45) size 234x97 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (25,70) size 233.14x96.81
+layer at (-15,-9.45) size 234x97 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 233.14x96.81
+layer at (10,-9.45) size 209x97 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (25,0) size 208.14x96.81
+layer at (10,-9.45) size 208x37 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 209x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 209x37
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 11 width 208.14: "onmousedown"
+layer at (10,20.55) size 167x37
+  RenderSVGText {text} at (0,30) size 168x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 168x37
+      chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 9 width 167.23: "onmouseup"
+layer at (10,50.55) size 98x37
+  RenderSVGText {text} at (0,60) size 98x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 98x37
+      chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 7 width 97.81: "onclick"
+layer at (-15,2) size 20x81 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,11.45) size 20x80
+layer at (-15,2) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=2.00] [width=20.00] [height=20.00]
+layer at (-15,2) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=2.00] [width=20.00] [height=20.00]
+layer at (-15,32) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,30) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=32.00] [width=20.00] [height=20.00]
+layer at (-15,32) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,30) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=32.00] [width=20.00] [height=20.00]
+layer at (-15,62) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,60) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=62.00] [width=20.00] [height=20.00]
+layer at (-15,62) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,60) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=62.00] [width=20.00] [height=20.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

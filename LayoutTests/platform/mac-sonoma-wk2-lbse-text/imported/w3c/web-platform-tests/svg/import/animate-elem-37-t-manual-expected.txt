@@ -1,0 +1,78 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-42.05,-30) size 416x95 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-42.05,-30) size 415.02x94.14
+layer at (107.03,10.27) size 266x19
+  RenderSVGText {text} at (149,40) size 266x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 266x19
+      chunk 1 (middle anchor) text run 1 at (107.04,25.00) startOffset 0 endOffset 33 width 265.91: "<animateTransform> shape elements"
+layer at (-42.05,-30) size 85x95 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 84.09x94.14
+layer at (-30,-30) size 61x95 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (12.05,0) size 60x94.14
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (0,0) size 60x60 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M 0 0 C 20 0 30 -10 30 -30 C 10 -30 0 -20 0 0 C 0 -20 -10 -30 -30 -30 C -30 -10 -20 0 0 0 C -20 0 -30 10 -30 30 C -10 30 0 20 0 0 C 0 20 10 30 30 30 C 30 10 20 0 0 0 Z"]
+layer at (-28.03,43.13) size 56x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (1,73) size 58x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 57x21
+      chunk 1 (middle anchor) text run 1 at (-28.03,60.00) startOffset 0 endOffset 6 width 56.06: "<path>"
+layer at (-30,-20) size 61x85 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (12.05,10) size 60x84.14
+layer at (-30,-20) size 60x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 60x40 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-30.00] [y=-20.00] [width=60.00] [height=40.00]
+layer at (-25.52,43.13) size 52x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (4,63) size 52x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 52x21
+      chunk 1 (middle anchor) text run 1 at (-25.51,60.00) startOffset 0 endOffset 6 width 51.03: "<rect>"
+layer at (-31.52,-30) size 64x95 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (10.53,0) size 63.03x94.14
+layer at (-30,-30) size 61x60 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (1.52,0) size 60x60 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [cx=0.00] [cy=0.00] [r=30.00]
+layer at (-31.52,43.13) size 63x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,73) size 64x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 64x21
+      chunk 1 (middle anchor) text run 1 at (-31.51,60.00) startOffset 0 endOffset 8 width 63.03: "<circle>"
+layer at (-40,-20) size 81x85 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (2.05,10) size 80x84.14
+layer at (-40,-20) size 80x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {ellipse} at (0,0) size 80x40 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [cx=0.00] [cy=0.00] [rx=40.00] [ry=20.00]
+layer at (-36.03,43.13) size 72x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (3,63) size 74x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 73x21
+      chunk 1 (middle anchor) text run 1 at (-36.03,60.00) startOffset 0 endOffset 9 width 72.05: "<ellipse>"
+layer at (-30,-20) size 61x85 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (12.05,10) size 60x84.14
+layer at (-30,-20) size 60x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (0,0) size 60x40 [stroke={[type=SOLID] [color=#FFB400] [stroke width=10.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [x1=-30.00] [y1=-20.00] [x2=30.00] [y2=20.00]
+layer at (-24.53,43.13) size 50x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (5,63) size 50x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x21
+      chunk 1 (middle anchor) text run 1 at (-24.52,60.00) startOffset 0 endOffset 6 width 49.04: "<line>"
+layer at (-41.05,-20) size 83x85 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,10) size 82.09x84.14
+layer at (-30,-20) size 61x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {polyline} at (11.05,0) size 60x40 [stroke={[type=SOLID] [color=#FFB400] [stroke width=10.00] [line cap=ROUND] [line join=ROUND]}] [points="-30 20 -30 -20 30 20 30 -20"]
+layer at (-41.05,43.13) size 82x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,63) size 83x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 83x21
+      chunk 1 (middle anchor) text run 1 at (-41.03,60.00) startOffset 0 endOffset 10 width 82.06: "<polyline>"
+layer at (-42.05,-20) size 85x85 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,10) size 84.09x84.14
+layer at (-30,-20) size 61x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {polygon} at (12.05,0) size 60x40 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [points="-30 20 -30 -20 30 20 30 -20"]
+layer at (-42.05,43.13) size 84x21 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,63) size 85x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x21
+      chunk 1 (middle anchor) text run 1 at (-42.04,60.00) startOffset 0 endOffset 9 width 84.08: "<polygon>"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

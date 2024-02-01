@@ -11,12 +11,52 @@
 #                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg
 #
 # Notes:
-# - 'platform/mac-sonoma-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Sonoma 14.2.1 using legacy SVG engine
+# - 'platform/mac-sonoma-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Sonoma 14.3 using legacy SVG engine
 # - 'platform/mac-sonoma-wk2-lbse-text' -> contains mostly text results (-expected.txt) which are intrinsically different between LBSE / legacy
 #                                          SVG engine plus a few pixel test results (-expected.png) that differ from the legacy SVG engine
 #                                          (e.g. progressions in individual tests)
 
 # No filters
+imported/w3c/web-platform-tests/svg/import/masking-filter-01-f-manual.svg              [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-background-01-f-manual.svg          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-blend-01-b-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-composite-02-b-manual.svg           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-composite-03-f-manual.svg           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-composite-04-f-manual.svg           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-composite-05-f-manual.svg           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-conv-01-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-conv-02-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-conv-03-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-conv-04-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-conv-05-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-diffuse-01-f-manual.svg             [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-displace-02-f-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-example-01-b-manual.svg             [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-felem-01-b-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-felem-02-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-gauss-01-b-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-gauss-02-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-image-01-b-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-image-02-b-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-image-03-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-image-04-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-light-01-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-light-02-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-light-03-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-light-04-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-light-05-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-morph-01-f-manual.svg               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-offset-01-b-manual.svg              [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-offset-02-b-manual.svg              [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-overview-01-b-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-overview-02-b-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-overview-03-b-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-specular-01-f-manual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-tile-01-b-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-turb-01-f-manual.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/filters-turb-02-f-manual.svg                [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-blend-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-color-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-composite-02-b.svg                                             [ ImageOnlyFailure ]
@@ -301,6 +341,9 @@ svg/foreignObject/filter.html                                                   
 svg/repaint/filter-child-repaint.svg                                                   [ ImageOnlyFailure ]
 svg/repaint/filter-repaint.svg                                                         [ ImageOnlyFailure ]
 
+# foreignObject issues
+imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.html [ ImageOnlyFailure ]
+
 # SVGImage support incomplete
 svg/as-image/image-respects-pageScaleFactor-change.html   [ ImageOnlyFailure ]
 svg/as-image/same-image-two-instances.html                [ ImageOnlyFailure ]
@@ -313,41 +356,66 @@ svg/as-background-image/background-image-preserveaspectRatio-support.html [ Imag
 svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
 
 # Pattern problems
-svg/W3C-SVG-1.1/pservers-grad-06-b.svg                          [ Failure ]
-svg/custom/js-late-pattern-and-object-creation.svg              [ Failure ]
-svg/custom/js-late-pattern-creation.svg                         [ Failure ]
-svg/custom/nested-pattern-boundingBoxModeContent.svg            [ Failure ]
-svg/custom/non-scaling-stroke.svg                               [ ImageOnlyFailure ]
-svg/custom/pattern-content-inheritance-cycle.svg                [ ImageOnlyFailure ]
-svg/custom/pattern-deep-referencing.svg                         [ Failure ]
-svg/custom/pattern-incorrect-tiling.svg                         [ Failure ]
-svg/custom/pattern-referencing-preserve-aspect-ratio.svg        [ Failure ]
-svg/custom/pattern-rotate.svg                                   [ Failure ]
-svg/custom/pattern-scaled-pattern-space.svg                     [ Failure ]
-svg/custom/pattern-scaling.svg                                  [ Failure ]
-svg/custom/pattern-skew-transformed.svg                         [ Failure ]
-svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml     [ ImageOnlyFailure ]
-svg/custom/pattern-with-transformation.svg                      [ Failure ]
-svg/custom/stroked-pattern.svg                                  [ Failure ]
-svg/custom/transformed-pattern-clamp-svg-root.svg               [ Failure ]
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml  [ Failure ]
-svg/transforms/text-with-pattern-with-svg-transform.svg         [ Failure ]
+imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual.svg    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual.svg [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/pservers-grad-06-b.svg                                      [ Failure ]
+svg/custom/js-late-pattern-and-object-creation.svg                          [ Failure ]
+svg/custom/js-late-pattern-creation.svg                                     [ Failure ]
+svg/custom/nested-pattern-boundingBoxModeContent.svg                        [ Failure ]
+svg/custom/non-scaling-stroke.svg                                           [ ImageOnlyFailure ]
+svg/custom/pattern-content-inheritance-cycle.svg                            [ ImageOnlyFailure ]
+svg/custom/pattern-deep-referencing.svg                                     [ Failure ]
+svg/custom/pattern-incorrect-tiling.svg                                     [ Failure ]
+svg/custom/pattern-referencing-preserve-aspect-ratio.svg                    [ Failure ]
+svg/custom/pattern-rotate.svg                                               [ Failure ]
+svg/custom/pattern-scaled-pattern-space.svg                                 [ Failure ]
+svg/custom/pattern-scaling.svg                                              [ Failure ]
+svg/custom/pattern-skew-transformed.svg                                     [ Failure ]
+svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml                 [ ImageOnlyFailure ]
+svg/custom/pattern-with-transformation.svg                                  [ Failure ]
+svg/custom/stroked-pattern.svg                                              [ Failure ]
+svg/custom/transformed-pattern-clamp-svg-root.svg                           [ Failure ]
+svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Failure ]
+svg/transforms/text-with-pattern-with-svg-transform.svg                     [ Failure ]
 
 # Clipping problems
-svg/W3C-SVG-1.1/masking-path-04-b.svg                     [ ImageOnlyFailure ]
-svg/batik/text/textEffect2.svg                            [ ImageOnlyFailure ]
-svg/batik/text/textProperties.svg                         [ ImageOnlyFailure ]
-svg/clip-path/clip-path-precision-001.svg                 [ ImageOnlyFailure ]
-svg/clip-path/clip-path-use-referencing-clipped-text.html [ ImageOnlyFailure ]
-svg/custom/use-on-clip-path-with-transformation.svg       [ Failure ]
-svg/repaint/image-with-clip-path.svg                      [ ImageOnlyFailure ]
+css3/masking/reference-clip-path-change-repaint.html                    [ Failure ]
+imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/masking-path-04-b.svg                                   [ ImageOnlyFailure ]
+svg/batik/text/textEffect2.svg                                          [ ImageOnlyFailure ]
+svg/batik/text/textProperties.svg                                       [ ImageOnlyFailure ]
+svg/clip-path/clip-path-precision-001.svg                               [ ImageOnlyFailure ]
+svg/clip-path/clip-path-use-referencing-clipped-text.html               [ ImageOnlyFailure ]
+svg/custom/use-on-clip-path-with-transformation.svg                     [ Failure ]
+svg/repaint/image-with-clip-path.svg                                    [ ImageOnlyFailure ]
 
 # Masking problems
 svg/masking/mask-negative-scale.svg                       [ ImageOnlyFailure ]
 svg/repaint/mask-clip-target-transform.svg                [ Failure ]
 
+# No mesh gradient support.
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001.svg   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002.svg   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003.svg   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004.svg   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005.svg   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001.svg   [ ImageOnlyFailure ]
+
+# Marker problems
+imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual.svg  [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/marker-005.svg          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/marker-007.svg          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/marker-008.svg          [ ImageOnlyFailure ]
+
 # Hit testing issues
-svg/custom/pointer-events-text-css-transform.svg          [ Failure ]
+svg/custom/inline-svg-in-xhtml.xml [ Failure ]
+
+svg/custom/pointer-events-text-css-transform.svg                                      [ Failure ]
+imported/w3c/web-platform-tests/svg/interact/scripted/svg-pointer-events-bbox.html    [ Failure ]
+imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.getBBox-03.html [ Failure ]
 
 # TODO: Test needs to be adapted (see test), then it will pass with LBSE, but fail legacy -- leaving it as-is for now.
 svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
@@ -358,10 +426,17 @@ svg/custom/rgba-color-outline.svg [ ImageOnlyFailure ]
 svg/text/text-outline-rgba.html   [ ImageOnlyFailure ]
 
 # Text rendering visually different
-svg/hittest/text-multiple-dx-values.svg    [ ImageOnlyFailure ]
-svg/hittest/text-with-multiple-tspans.svg  [ ImageOnlyFailure ]
-svg/hittest/text-with-text-path.svg        [ ImageOnlyFailure ]
-svg/text/scaled-font.svg                   [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual.svg                           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002.svg                      [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201.svg                      [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg                        [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-002-visual.svg            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-201-visual.svg            [ ImageOnlyFailure ]
+svg/hittest/text-multiple-dx-values.svg                                                         [ ImageOnlyFailure ]
+svg/hittest/text-with-multiple-tspans.svg                                                       [ ImageOnlyFailure ]
+svg/hittest/text-with-text-path.svg                                                             [ ImageOnlyFailure ]
+svg/text/scaled-font.svg                                                                        [ ImageOnlyFailure ]
 
 # Text rendering has issues with CSS 'visibility'
 svg/batik/text/textProperties2.svg [ ImageOnlyFailure ]
@@ -374,10 +449,11 @@ svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
-# SMIL animation not correctly updastes (repainting issue only?)
-svg/W3C-SVG-1.1/animate-elem-30-t.svg                     [ Pass ImageOnlyFailure ]
-svg/animations/animateMotion-additive-1.svg               [ ImageOnlyFailure ]
-svg/stroke/animated-non-scaling-stroke.html               [ ImageOnlyFailure ]
+# SMIL animation issues
+imported/w3c/web-platform-tests/svg/import/animate-elem-91-t-manual.svg [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-30-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/animations/animateMotion-additive-1.svg                             [ ImageOnlyFailure ]
+svg/stroke/animated-non-scaling-stroke.html                             [ ImageOnlyFailure ]
 
 # SVGViewSpec / svgView() support broken
 svg/custom/linking-a-03-b-all.svg               [ ImageOnlyFailure ]
@@ -401,6 +477,9 @@ webkit.org/b/256702 svg/custom/use-nested-symbol-viewport.html [ ImageOnlyFailur
 svg/repaint/text-repainting-after-modifying-container-transform-repaint-rects.html [ Failure ]
 svg/repaint/text-repainting-after-modifying-transform-repaint-rects.html           [ Failure ]
 
+# Paint server URI fallback problem?
+imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke.svg [ ImageOnlyFailure ]
+
 ###############
 # Buggy tests #
 ###############
@@ -413,8 +492,9 @@ svg/outermost-svg-root.html [ Failure ]
 ###############
 
 # 1) Text rendering flakines issue with SVG Fonts (also in legacy engine)
-svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Pass ImageOnlyFailure ]
-svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/fonts-desc-02-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/fonts-elem-02-t.svg                                   [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/fonts-desc-05-t-manual.svg [ Pass ImageOnlyFailure ]
 
 # 2) Filter / feImage invalidation/repainting issue?
 svg/filters/feImage-target-reappend-to-document.svg [ Pass ImageOnlyFailure ]
@@ -424,13 +504,22 @@ svg/as-image/image-preserveAspectRatio-all.svg [ Pass ImageOnlyFailure ]
 
 # 4) Historical flakiness of SMIL animations, we don't pause them in these tests, that should
 # finally be fixed to avoid this falkniess, even if it means adapting the SVG testsuite manually.
-svg/W3C-SVG-1.1/animate-elem-04-t.svg                     [ Pass ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-17-t.svg                     [ Pass ImageOnlyFailure ]
-svg/W3C-SVG-1.1/animate-elem-81-t.svg                     [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-06-t-manual.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-81-t-manual.svg [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-03-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-04-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-08-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-17-t.svg                                   [ Pass ImageOnlyFailure ]
+svg/W3C-SVG-1.1/animate-elem-81-t.svg                                   [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual.svg [ Pass ImageOnlyFailure ]
 
-###############
-#   Crashes   #
-###############
+# 5) Unknown flakiness.
+imported/w3c/web-platform-tests/svg/import/masking-path-04-b-manual.svg [ Pass ImageOnlyFailure ]
+svg/transforms/animated-path-inside-transformed-html.xhtml              [ Pass ImageOnlyFailure ]
+
+###################
+# Crash / Timeout #
+###################
 
 # 1) RenderLayer asserts that a RenderSVGText renderer has a scrollableArea.
 # The test moves the <text> element from the <html>...<svg><text>... document
@@ -444,6 +533,9 @@ webkit.org/b/222952 svg/dom/replaceChild-document-crash.html [ Pass Crash ]
 svg/filters/feDropShadow-negative-deviation.svg   [ ImageOnlyFailure Crash ]
 svg/filters/feGaussianBlur-negative-deviation.svg [ ImageOnlyFailure Crash ]
 
+# 3) Deep nesting invalidating via repaintAllClients() has expontential complexity in LBSE, fix that.
+svg/custom/pattern-nested-reference.html [ Timeout ]
+
 ###############
 #  OVERRIDES  #
 ###############
@@ -456,6 +548,7 @@ svg/W3C-SVG-1.1/text-intro-03-b.svg                           [ Pass ]
 svg/W3C-SVG-1.1/text-intro-04-t.svg                           [ Pass ]
 svg/W3C-SVG-1.1/text-text-06-t.svg                            [ Pass ]
 svg/custom/circle-move-invalidation-small-viewBox.svg         [ Pass ]
+svg/custom/use-on-symbol-inside-pattern.svg                   [ Pass ]
 svg/repaint/text-repainting-after-modifying-transform.html    [ Pass ]
 svg/resource-invalidation/mask-resource-invalidation.html     [ Pass ]
 svg/transforms/animated-path-inside-transformed-html.xhtml    [ Pass ]
@@ -467,3 +560,8 @@ svg/transforms/transformed-container-small-units.svg          [ Pass ]
 svg/transforms/transformed-container.svg                      [ Pass ]
 svg/transforms/transformed-text-fill-gradient.html            [ Pass ]
 svg/transforms/translation-tiny-element.svg                   [ Pass ]
+
+# WPT tests that pass only in LBSE
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html                          [ Pass ]
+imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg                                       [ Pass ]

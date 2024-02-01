@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (54.55,100.08) size 372x19
+  RenderSVGTransformableContainer {g} at (54.55,100.08) size 370.91x18.41
+layer at (54.55,100.08) size 346x19
+  RenderSVGTransformableContainer {g} at (0,0) size 345.45x18.41
+layer at (54.55,100.08) size 345x18
+  RenderSVGText {text} at (0,0) size 346x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 346x19
+      chunk 1 text run 1 at (54.56,114.80) startOffset 0 endOffset 59 width 345.44 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"
+layer at (67.27,100.08) size 347x19
+  RenderSVGTransformableContainer {g} at (12.72,0) size 345.47x18.41
+layer at (67.27,100.08) size 345x18
+  RenderSVGText {text} at (0,0) size 346x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 346x19
+      chunk 1 (middle anchor) text run 1 at (67.28,114.80) startOffset 0 endOffset 59 width 345.44 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"
+layer at (80,100.08) size 346x19
+  RenderSVGTransformableContainer {g} at (25.45,0) size 345.45x18.41
+layer at (80,100.08) size 345x18
+  RenderSVGText {text} at (0,0) size 346x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 346x19
+      chunk 1 (end anchor) text run 1 at (80.00,114.80) startOffset 0 endOffset 59 width 345.44 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"

@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 440x200
+  RenderSVGTransformableContainer {g} at (0,0) size 440x200
+layer at (10,0) size 100x200
+  RenderSVGRect {rect} at (10,0) size 100x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=0.00] [width=100.00] [height=200.00]
+layer at (0,0) size 100x200
+  RenderSVGRect {rect} at (0,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=200.00]
+layer at (120,0) size 100x200
+  RenderSVGEllipse {ellipse} at (120,0) size 100x200 [fill={[type=SOLID] [color=#FF0000]}] [cx=170.00] [cy=100.00] [rx=50.00] [ry=100.00]
+layer at (110,0) size 100x200
+  RenderSVGEllipse {ellipse} at (110,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [cx=160.00] [cy=100.00] [rx=50.00] [ry=100.00]
+layer at (230,10) size 100x190
+  RenderSVGPath {line} at (230,10) size 100x190 [stroke={[type=SOLID] [color=#FF0000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=230.00] [y1=10.00] [x2=330.00] [y2=200.00]
+layer at (220,10) size 100x190
+  RenderSVGPath {line} at (220,10) size 100x190 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=10.00] [x2=320.00] [y2=200.00]
+layer at (340,0) size 100x200
+  RenderSVGPath {path} at (340,0) size 100x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M 340 0 L 440 0 L 390 200 Z"]
+layer at (330,0) size 100x200
+  RenderSVGPath {path} at (330,0) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M 330 0 L 430 0 L 380 200 Z"]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.3 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

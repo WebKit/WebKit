@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 415x175
+  RenderSVGTransformableContainer {g} at (0,0) size 415x175
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {defs} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#006400]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (113.92,37.13) size 252x21
+  RenderSVGText {text} at (113,37) size 254x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 253x21
+      chunk 1 (middle anchor) text run 1 at (113.93,54.00) startOffset 0 endOffset 29 width 252.13: "CSS selectors and use element"
+layer at (215,125) size 50x50
+  RenderSVGEllipse {circle} at (215,125) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [cx=240.00] [cy=150.00] [r=25.00]
+layer at (365,125) size 50x50
+  RenderSVGEllipse {circle} at (365,125) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [cx=390.00] [cy=150.00] [r=25.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {use} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#006400] [stroke width=10.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {use} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#006400] [stroke width=10.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {use} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#006400] [stroke width=10.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
