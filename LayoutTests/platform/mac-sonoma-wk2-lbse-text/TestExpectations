@@ -379,15 +379,15 @@ svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Fa
 svg/transforms/text-with-pattern-with-svg-transform.svg                     [ Failure ]
 
 # Clipping problems
-css3/masking/reference-clip-path-change-repaint.html                    [ Failure ]
-imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/masking-path-04-b.svg                                   [ ImageOnlyFailure ]
-svg/batik/text/textEffect2.svg                                          [ ImageOnlyFailure ]
-svg/batik/text/textProperties.svg                                       [ ImageOnlyFailure ]
-svg/clip-path/clip-path-precision-001.svg                               [ ImageOnlyFailure ]
-svg/clip-path/clip-path-use-referencing-clipped-text.html               [ ImageOnlyFailure ]
-svg/custom/use-on-clip-path-with-transformation.svg                     [ Failure ]
-svg/repaint/image-with-clip-path.svg                                    [ ImageOnlyFailure ]
+css3/masking/reference-clip-path-change-repaint.html                                              [ Failure ]
+imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg                           [ ImageOnlyFailure ]
+svg/W3C-SVG-1.1/masking-path-04-b.svg                                                             [ ImageOnlyFailure ]
+svg/batik/text/textEffect2.svg                                                                    [ ImageOnlyFailure ]
+svg/batik/text/textProperties.svg                                                                 [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-precision-001.svg [ ImageOnlyFailure ]
+svg/clip-path/clip-path-use-referencing-clipped-text.html                                         [ ImageOnlyFailure ]
+svg/custom/use-on-clip-path-with-transformation.svg                                               [ Failure ]
+svg/repaint/image-with-clip-path.svg                                                              [ ImageOnlyFailure ]
 
 # Masking problems
 svg/masking/mask-negative-scale.svg                       [ ImageOnlyFailure ]
