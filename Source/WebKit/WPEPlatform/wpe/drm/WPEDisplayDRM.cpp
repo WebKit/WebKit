@@ -138,7 +138,7 @@ static std::unique_ptr<WPE::DRM::Connector> chooseConnector(int fd, drmModeRes* 
 {
     for (int i = 0; i < resources->count_connectors; ++i) {
         WPE::DRM::UniquePtr<drmModeConnector> connector(drmModeGetConnector(fd, resources->connectors[i]));
-        if (!connector || connector->connection != DRM_MODE_CONNECTED || connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK || !connector->encoder_id)
+        if (!connector || connector->connection != DRM_MODE_CONNECTED || connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
             continue;
 
         if (auto conn = WPE::DRM::Connector::create(fd, connector.get()))
@@ -151,16 +151,29 @@ static std::unique_ptr<WPE::DRM::Connector> chooseConnector(int fd, drmModeRes* 
 
 static std::unique_ptr<WPE::DRM::Crtc> chooseCrtcForConnector(int fd, drmModeRes* resources, const WPE::DRM::Connector& connector, GError** error)
 {
+    // Try the currently connected encoder+crtc.
     WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, connector.encoderID()));
-    if (!encoder) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to get the connector encoder");
-        return nullptr;
+    if (encoder) {
+        for (int i = 0; i < resources->count_crtcs; ++i) {
+            if (resources->crtcs[i] == encoder->crtc_id) {
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[i]));
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+            }
+        }
     }
 
-    for (int i = 0; i < resources->count_crtcs; ++i) {
-        if (resources->crtcs[i] == encoder->crtc_id) {
-            WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[i]));
-            return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+    // If no active crtc was found, pick the first possible crtc, then try the first possible for crtc.
+    for (int i = 0; i < resources->count_encoders; ++i) {
+        WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, resources->encoders[i]));
+        if (!encoder)
+            continue;
+
+        for (int j = 0; j < resources->count_crtcs; ++j) {
+            const uint32_t crtcMask = 1 << j;
+            if (encoder->possible_crtcs & crtcMask) {
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[j]));
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), j);
+            }
         }
     }
 
