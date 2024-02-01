@@ -473,6 +473,47 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIScripting, World)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script> const world = 'MAIN'; </script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser?.tabs?.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"function testWorld() {",
+        @"  if (world)",
+        @"    browser.test.notifyPass()",
+        @"  else",
+        @"    console.log(undefined)",
+        @"}",
+
+        @"var results = await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'ISOLATED'}, func: testWorld })",
+        @"browser.test.assertEq(results[0]?.error, 'A JavaScript exception occurred')",
+
+        @"await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'MAIN'}, func: testWorld })",
+    ]);
+
+
+    static auto *resources = @{
+        @"background.js": backgroundScript,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
 {
     TestWebKitAPI::HTTPServer server({

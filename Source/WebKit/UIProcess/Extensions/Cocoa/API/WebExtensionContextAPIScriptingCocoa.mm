@@ -77,7 +77,9 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
     }
 
     auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
-    executeScript(scriptPairs, webView, *m_contentScriptWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResultHolder& injectionResults) mutable {
+    Ref executionWorld = parameters.world == WebExtensionContentWorldType::Main ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
+
+    executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResultHolder& injectionResults) mutable {
         completionHandler(injectionResults.results, std::nullopt);
     });
 }
