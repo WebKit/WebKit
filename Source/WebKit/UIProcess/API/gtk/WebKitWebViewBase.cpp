@@ -289,7 +289,6 @@ struct _WebKitWebViewBasePrivate {
     RefPtr<WebPageProxy> pageProxy;
     IntSize viewSize { };
 #if USE(GTK4)
-    Vector<GRefPtr<GdkEvent>> keyEventsToPropagate;
     Vector<GRefPtr<GdkEvent>> wheelEventsToPropagate;
 #else
     bool shouldForwardNextKeyEvent { false };
@@ -1070,15 +1069,6 @@ static void webkitWebViewBaseUnmap(GtkWidget* widget)
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 }
 
-static bool shouldForwardKeyEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
-{
-#if USE(GTK4)
-    return event && webViewBase->priv->keyEventsToPropagate.removeFirst(event);
-#else
-    return std::exchange(webViewBase->priv->shouldForwardNextKeyEvent, false);
-#endif
-}
-
 static bool shouldForwardWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
 {
 #if USE(GTK4)
@@ -1125,6 +1115,11 @@ static gboolean webkitWebViewBaseFocusOutEvent(GtkWidget* widget, GdkEventFocus*
     webViewBase->priv->inputMethodFilter.notifyFocusedOut();
 
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus_out_event(widget, event);
+}
+
+static bool shouldForwardKeyEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
+{
+    return std::exchange(webViewBase->priv->shouldForwardNextKeyEvent, false);
 }
 
 static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* keyEvent)
@@ -1209,18 +1204,60 @@ static void webkitWebViewBaseFocusLeave(WebKitWebViewBase* webViewBase, GtkEvent
     webViewBase->priv->inputMethodFilter.notifyFocusedOut();
 }
 
+void webkitWebViewBaseProcessAcceleratorsForKeyPressEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
+{
+    // Event processing in GTK is synchronous, but in WebKit it is asynchronous because we don't
+    // want to block the UI process waiting for the web process to decide whether a DOM event has
+    // been handled (e.g. by using Event.stopPropagation). In GTK 3, we used a complicated scheme to
+    // synthesize and reinject new key and wheel events to continue event processing when the event
+    // is not handled by the web content, which the GTK developers did not approve of. We originally
+    // attempted this for GTK 4 as well, but it never worked properly, and GTK's support for event
+    // injection has been deprecated. Instead, the WebKitWebViewBase now always handles all events
+    // (by always returning GDK_EVENT_STOP).
+    //
+    // Web browsers must forward most key events to the web view for processing before they are
+    // processed by the window, because processing key press events on the window will activate
+    // action accelerators, but web content should be allowed to override most accelerators. E.g.
+    // on Google Docs Ctrl+O should open Google's document chooser, not the browser's file chooser,
+    // and Ctrl+F should open Google's find, not the browser's. See key_pressed_cb and
+    // should_view_receive_key_press_event_first in Epiphany's ephy-window.c for what this looks
+    // like on the browser side. (Those functions contain a comment that refers to this code in
+    // WebKit, so please update the comment there if needed when changing the code here.)
+    //
+    // This all creates a new problem with key events. If the browser implements the above strategy
+    // properly, then the browser's GtkWindow will never see the events and accelerators will not
+    // run, so we need to manually activate them here. (This function is called by PageClientImpl
+    // only after determining that the web process has not handled the event.) It's safe to do this
+    // even if the window already processed the events before WebKit, because in that case, no
+    // accelerator was activated (or it would have handled the event), so we'll fail to find any
+    // matching accelerator here. This clever strategy was proposed by Benjamin Otte.
+
+    GApplication* app = g_application_get_default();
+    if (!app || !GTK_IS_APPLICATION(app))
+        return;
+
+    ASSERT(gdk_event_get_event_type(event) == GDK_KEY_PRESS);
+    if (gdk_key_event_is_modifier(event))
+        return;
+
+    GUniquePtr<char> accelerator(gtk_accelerator_name(gdk_key_event_get_keyval(event), gdk_event_get_modifier_state(event)));
+    GUniquePtr<char*> actions(gtk_application_get_actions_for_accel(GTK_APPLICATION(app), accelerator.get()));
+    for (int i = 0; actions.get()[i]; ++i) {
+        const char* detailedAction = actions.get()[i];
+        GUniqueOutPtr<char> actionName;
+        GRefPtr<GVariant> targetValue;
+        GUniqueOutPtr<GError> error;
+        if (g_action_parse_detailed_name(detailedAction, &actionName.outPtr(), &targetValue.outPtr(), &error.outPtr()))
+            gtk_widget_activate_action_variant(GTK_WIDGET(webViewBase), actionName.get(), targetValue.get());
+        else
+            g_warning("Failed to parse detailed action %s: %s", detailedAction, error->message);
+    }
+}
+
 static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned, GdkModifierType state, GtkEventController* controller)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     auto* event = gtk_event_controller_get_current_event(controller);
-
-    // Since WebProcess key event handling is not synchronous, handle the event in two passes.
-    // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent
-    // with event handled status which determines whether to pass the input event to parent or not
-    // using gdk_display_put_event().
-    if (shouldForwardKeyEvent(webViewBase, event))
-        return GDK_EVENT_PROPAGATE;
-
     bool isAutoRepeat = priv->keyAutoRepeatHandler.keyPress(gdk_key_event_get_keycode(event));
 
 #if ENABLE(DEVELOPER_MODE) && OS(LINUX)
@@ -2562,17 +2599,13 @@ void webkitWebViewBaseDidPerformDragControllerAction(WebKitWebViewBase* webViewB
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
+#if !USE(GTK4)
 void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase* webkitWebViewBase, GdkEvent* event)
 {
-#if USE(GTK4)
-    webkitWebViewBase->priv->keyEventsToPropagate.append(event);
-    // Note: the docs for gdk_display_put_event lie - this adds to the end of the queue, not the front.
-    gdk_display_put_event(gtk_widget_get_display(GTK_WIDGET(webkitWebViewBase)), event);
-#else
     webkitWebViewBase->priv->shouldForwardNextKeyEvent = true;
     gtk_main_do_event(event);
-#endif
 }
+#endif
 
 void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase* webkitWebViewBase, GdkEvent* event)
 {
