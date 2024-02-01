@@ -1416,7 +1416,7 @@ void TypeChecker::visit(AST::Continuing& continuing)
     if (auto* breakIf = continuing.breakIf) {
         auto* type = infer(*breakIf);
         if (!unify(m_types.boolType(), type))
-            typeError(breakIf->span(), "expected 'bool', found ", *type);
+            typeError(InferBottom::No, breakIf->span(), "expected 'bool', found ", *type);
     }
 }
 
