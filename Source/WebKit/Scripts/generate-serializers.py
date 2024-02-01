@@ -895,6 +895,8 @@ def generate_one_impl(type, template_argument):
     for encoder in type.encoders:
         if type.custom_encoder:
             continue
+        if type.members_are_subclasses:
+            result.append('IGNORE_WARNINGS_BEGIN("missing-noreturn")')
         if type.cf_type is not None:
             result.append('void ArgumentCoder<' + name_with_template + '>::encode(' + encoder + '& encoder, ' + name_with_template + ' instance)')
         elif type.rvalue:
@@ -908,6 +910,8 @@ def generate_one_impl(type, template_argument):
         if type.members_are_subclasses:
             result.append('    ASSERT_NOT_REACHED();')
         result.append('}')
+        if type.members_are_subclasses:
+            result.append('IGNORE_WARNINGS_END')
         result.append('')
     if type.cf_type is not None:
         result.append('std::optional<RetainPtr<' + name_with_template + '>> ArgumentCoder<RetainPtr<' + name_with_template + '>>::decode(Decoder& decoder)')
