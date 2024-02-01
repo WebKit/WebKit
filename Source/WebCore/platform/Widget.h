@@ -62,8 +62,8 @@ namespace WebCore {
 class Cursor;
 class Event;
 class FontCascade;
+class FrameView;
 class GraphicsContext;
-class LocalFrameView;
 class PlatformMouseEvent;
 class RegionContext;
 class ScrollView;
@@ -138,7 +138,7 @@ public:
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
     WEBCORE_EXPORT ScrollView* parent() const;
-    LocalFrameView* root() const;
+    FrameView* root() const;
 
     virtual void handleEvent(Event&) { }
 
