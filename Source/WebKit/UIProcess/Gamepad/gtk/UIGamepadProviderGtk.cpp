@@ -76,8 +76,8 @@ WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
             continue;
 
 #if USE(GTK4)
-        GtkWidget* window = GTK_WIDGET(iter->data);
-        if (!gtk_widget_has_focus(window))
+        GtkWindow* window = GTK_WINDOW(iter->data);
+        if (!gtk_window_is_active(window))
             continue;
 #else
         GtkWindow* window = GTK_WINDOW(iter->data);
