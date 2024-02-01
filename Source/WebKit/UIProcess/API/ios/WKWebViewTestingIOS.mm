@@ -227,7 +227,7 @@ static String allowListedClassToString(UIView *view)
 static void dumpUIView(TextStream& ts, UIView *view)
 {
     auto rectToString = [] (auto rect) {
-        return makeString("[x: ", rect.origin.x, " y: ", rect.origin.x, " width: ", rect.size.width, " height: ", rect.size.height, "]");
+        return makeString("[x: ", rect.origin.x, " y: ", rect.origin.y, " width: ", rect.size.width, " height: ", rect.size.height, "]");
     };
 
     auto pointToString = [] (auto point) {
@@ -236,6 +236,21 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 
     ts << "view [class: " << allowListedClassToString(view) << "]";
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    if ([view isKindOfClass:[WKBaseScrollView class]]) {
+        ts.dumpProperty("scrolling behavior", makeString([(WKBaseScrollView *)view _scrollingBehavior]));
+
+        auto rects = [(WKBaseScrollView *)view overlayRegionsForTesting];
+        auto overlaysAsStrings = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
+        for (auto rect : rects)
+            [overlaysAsStrings addObject:rectToString(CGRect(rect))];
+
+        [overlaysAsStrings sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        for (NSString *overlayAsString in overlaysAsStrings.get())
+            ts.dumpProperty("overlay region", overlayAsString);
+    }
+#endif
 
     ts.dumpProperty("layer bounds", rectToString(view.layer.bounds));
     

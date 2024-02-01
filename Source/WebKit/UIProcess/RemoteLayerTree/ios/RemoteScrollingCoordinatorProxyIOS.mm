@@ -100,10 +100,24 @@ UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(S
 }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-void RemoteScrollingCoordinatorProxyIOS::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers)
+void RemoteScrollingCoordinatorProxyIOS::removeDestroyedLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers)
 {
-    for (auto layerID : destroyedLayers)
+    for (auto layerID : destroyedLayers) {
         m_fixedScrollingNodeLayerIDs.remove(layerID);
+        m_overlayRegionLayerIDs.remove(layerID);
+        m_scrollingNodesByLayerID.remove(layerID);
+    }
+}
+
+Vector<WKBaseScrollView*> RemoteScrollingCoordinatorProxyIOS::overlayRegionScrollViewCandidates() const
+{
+    Vector<WKBaseScrollView*> candidates;
+    for (auto scrollingNodeID : m_scrollingNodesByLayerID.values()) {
+        auto* scrollView = scrollViewForScrollingNodeID(scrollingNodeID);
+        if (scrollView)
+            candidates.append((WKBaseScrollView *)scrollView);
+    }
+    return candidates;
 }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
@@ -120,6 +134,8 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
             if (platformLayerID && (currNode->isFixedNode() || currNode->isStickyNode()))
                 m_fixedScrollingNodeLayerIDs.add(platformLayerID);
+            if (platformLayerID && currNode->isScrollingNode())
+                m_scrollingNodesByLayerID.add(platformLayerID, currNode->scrollingNodeID());
 #endif
         }
 

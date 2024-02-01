@@ -35,6 +35,12 @@
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+#import "UIKitUtilities.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#endif
+
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
 
@@ -42,6 +48,9 @@
     RetainPtr<UIPanGestureRecognizer> _axisLockingPanGestureRecognizer;
     UIAxis _axesToPreventMomentumScrolling;
     BOOL _isBeingRemovedFromSuperview;
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    HashSet<WebCore::IntRect> _overlayRegionRects;
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -164,6 +173,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto delegate = self.baseScrollViewDelegate;
     return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
+
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKBaseScrollViewAdditions.mm>)
+#import <WebKitAdditions/WKBaseScrollViewAdditions.mm>
+#else
+- (BOOL)_hasEnoughContentForOverlayRegions { return false; }
+- (void)_updateOverlayRegionRects:(HashSet<WebCore::IntRect>&)overlayRegions { }
+- (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
+#endif
+
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
 #pragma mark - UIGestureRecognizerDelegate
 

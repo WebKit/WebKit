@@ -30,6 +30,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 
 OBJC_CLASS UIScrollView;
+OBJC_CLASS WKBaseScrollView;
 
 namespace WebCore {
 enum class TouchAction : uint8_t;
@@ -57,8 +58,12 @@ public:
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void removeFixedScrollingNodeLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>&);
+    void removeDestroyedLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>&);
+    void updateOverlayRegionLayerIDs(const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionLayerIDs) { m_overlayRegionLayerIDs = overlayRegionLayerIDs; }
+
     const HashSet<WebCore::PlatformLayerIdentifier>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
+    const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionLayerIDs() const { return m_overlayRegionLayerIDs; }
+    Vector<WKBaseScrollView*> overlayRegionScrollViewCandidates() const;
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -85,6 +90,8 @@ private:
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::PlatformLayerIdentifier> m_fixedScrollingNodeLayerIDs;
+    HashSet<WebCore::PlatformLayerIdentifier> m_overlayRegionLayerIDs;
+    HashMap<WebCore::PlatformLayerIdentifier, WebCore::ScrollingNodeID> m_scrollingNodesByLayerID;
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
