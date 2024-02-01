@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2024 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WCBackingStore.h"
 
 #if USE(GRAPHICS_LAYER_WC)
 
-#include "ImageBufferBackendHandle.h"
-#include <WebCore/ImageBuffer.h>
+#include "ImageBufferBackendHandleSharing.h"
 
 namespace WebKit {
 
-class WCBackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WCBackingStore() { }
-    WebCore::ImageBuffer* imageBuffer() { return m_imageBuffer.get(); }
-    void setImageBuffer(RefPtr<WebCore::ImageBuffer>&& image) { m_imageBuffer = WTFMove(image); }
-    ShareableBitmap* bitmap() const { return m_bitmap.get(); }
+WCBackingStore::WCBackingStore(std::optional<ImageBufferBackendHandle>&& handle)
+{
+    if (auto* imageHandle = handle ? std::get_if<ShareableBitmap::Handle>(&*handle) : nullptr)
+        m_bitmap = ShareableBitmap::create(WTFMove(*imageHandle));
+}
 
-private:
-    friend struct IPC::ArgumentCoder<WCBackingStore, void>;
+std::optional<ImageBufferBackendHandle> WCBackingStore::handle() const
+{
+    if (!m_imageBuffer)
+        return std::nullopt;
 
-    WCBackingStore(std::optional<ImageBufferBackendHandle>&&);
-    std::optional<ImageBufferBackendHandle> handle() const;
+    auto* sharing = m_imageBuffer->toBackendSharing();
+    if (!is<ImageBufferBackendHandleSharing>(sharing))
+        return std::nullopt;
 
-    RefPtr<WebCore::ImageBuffer> m_imageBuffer;
-    RefPtr<ShareableBitmap> m_bitmap;
-};
+    return dynamicDowncast<ImageBufferBackendHandleSharing>(*sharing)->createBackendHandle();
+}
 
 } // namespace WebKit
 

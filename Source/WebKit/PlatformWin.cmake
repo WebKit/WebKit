@@ -120,6 +120,7 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/wc/DrawingAreaWC.cpp
     WebProcess/WebPage/wc/GraphicsLayerWC.cpp
+    WebProcess/WebPage/wc/WCBackingStore.cpp
     WebProcess/WebPage/wc/WCLayerFactory.cpp
     WebProcess/WebPage/wc/WCTileGrid.cpp
 
@@ -172,6 +173,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 )
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
+    WebProcess/WebPage/wc/WCBackingStore.serialization.in
     WebProcess/WebPage/wc/WCUpdateInfo.serialization.in
 )
 
