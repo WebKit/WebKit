@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS Test callback arguments, case Element innerHTML
 PASS Test callback arguments, case Node textContent

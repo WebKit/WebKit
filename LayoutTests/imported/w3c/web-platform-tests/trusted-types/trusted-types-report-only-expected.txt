@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 abc
 
 Harness Error (TIMEOUT), message = null

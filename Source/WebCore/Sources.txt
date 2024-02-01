@@ -2027,6 +2027,7 @@ page/csp/ContentSecurityPolicyResponseHeaders.cpp
 page/csp/ContentSecurityPolicySource.cpp
 page/csp/ContentSecurityPolicySourceList.cpp
 page/csp/ContentSecurityPolicySourceListDirective.cpp
+page/csp/ContentSecurityPolicyTrustedTypesDirective.cpp
 page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollAnchoringController.cpp
 page/scrolling/ScrollSnapOffsetsInfo.cpp

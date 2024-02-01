@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 FAIL TrustedTypePolicyFactory and policy list in CSP. assert_throws_js: Duplicate name function "_ => trustedTypes.createPolicy("a", {})" did not throw
 

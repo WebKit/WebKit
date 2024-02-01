@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL Trusted Type violation report: evaluating a string. assert_throws_js: function "_ => eval('beacon="should not run"')" did not throw
 FAIL Trusted Type violation report: evaluating a Trusted Script. assert_equals: expected "i ran" but got "never_overwritten2"

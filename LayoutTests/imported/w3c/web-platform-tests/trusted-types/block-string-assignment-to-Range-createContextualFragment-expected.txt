@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS range.createContextualFragment assigned via policy (successful HTML transformation).
 FAIL `range.createContextualFragment(string)` throws. assert_throws_js: function "_ => {

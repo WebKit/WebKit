@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL Require trusted types for 'script' block create HTML. assert_throws_js: function "_ => {
           d.innerHTML = "a";

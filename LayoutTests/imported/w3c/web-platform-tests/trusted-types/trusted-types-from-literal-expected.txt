@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL TrustedHTML.fromLiteral is supported assert_true: expected true got false
 FAIL TrustedHTML.fromLiteral: Basic string literal works. undefined is not a function (near '...type.fromLiteral`abc`...')

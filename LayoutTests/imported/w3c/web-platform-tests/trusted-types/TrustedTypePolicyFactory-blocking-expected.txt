@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 FAIL Block Trusted Type policy creation by event listener. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)
 FAIL Trusted Type policy creation. trustedTypes.addEventListener is not a function. (In 'trustedTypes.addEventListener('beforecreatepolicy', event_listener, {once:true})', 'trustedTypes.addEventListener' is undefined)

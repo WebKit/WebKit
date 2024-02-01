@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL eval of TrustedScript works. assert_equals: expected (number) 2 but got (object) object "1+1"
 FAIL eval of string works. assert_equals: expected 5 but got 2

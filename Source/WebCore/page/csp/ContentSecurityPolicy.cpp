@@ -948,6 +948,30 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
     logToConsole(message);
 }
 
+void ContentSecurityPolicy::reportInvalidTrustedTypesPolicy(const String& policyName) const
+{
+    String message = makeString("Invalid policy name in 'trusted-types' Content Security Policy directive: '", policyName, "'.\n");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidTrustedTypesNoneKeyword() const
+{
+    String message = "Invalid policy name in 'trusted-types' Content Security Policy directive: 'none'. Note that 'none' has no effect unless it is the only expression.\n"_s;
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidTrustedTypesSinkGroup(const String& sinkGroup) const
+{
+    String message = makeString("Invalid sink group in 'require-trusted-types-for' Content Security Policy directive: '", sinkGroup, "'.\n");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportEmptyRequireTrustedTypesForDirective() const
+{
+    String message = "'require-trusted-types-for' Content Security Policy directive is empty; The directive has no effect.\n"_s;
+    logToConsole(message);
+}
+
 void ContentSecurityPolicy::reportInvalidSandboxFlags(const String& invalidFlags) const
 {
     logToConsole("Error while parsing the 'sandbox' Content Security Policy directive: " + invalidFlags);

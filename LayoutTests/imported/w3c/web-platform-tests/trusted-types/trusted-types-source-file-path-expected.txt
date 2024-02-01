@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 FAIL same-document script assert_throws_js: function "_ => {
     document.getElementById("to-be-modified").innerHTML = "'test'";

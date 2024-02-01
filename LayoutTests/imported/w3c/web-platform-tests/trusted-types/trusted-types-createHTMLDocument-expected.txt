@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 shouldpass
 
 FAIL Trusted Type assignment is blocked. (document) assert_throws_js: function "_ => { doc.createElement("script").textContent = "2+2"; }" did not throw

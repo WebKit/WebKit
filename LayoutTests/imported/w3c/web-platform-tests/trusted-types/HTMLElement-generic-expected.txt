@@ -4,42 +4,12 @@ CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'simple'
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 a simple string
 a simple string

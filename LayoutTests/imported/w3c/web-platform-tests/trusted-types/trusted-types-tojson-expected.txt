@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 PASS toJSON
 

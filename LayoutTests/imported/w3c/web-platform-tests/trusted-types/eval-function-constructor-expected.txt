@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL Function constructor with mixed plain and trusted strings, mask #0 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
 FAIL Function constructor with mixed plain and trusted strings, mask #1 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw

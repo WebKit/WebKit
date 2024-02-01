@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL Prepare parameters for generic test series below. trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
 PASS Test assignment of string on madeup.madeup

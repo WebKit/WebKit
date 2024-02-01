@@ -80,6 +80,12 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
+enum class AllowTrustedTypePolicyDetails : uint8_t {
+    Allowed,
+    DisallowedName,
+    DisallowedDuplicateName,
+};
+
 class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -157,6 +163,13 @@ public:
 
     // Used by ContentSecurityPolicyMediaListDirective
     void reportInvalidPluginTypes(const String&) const;
+
+    // Used by ContentSecurityPolicyTrustedTypesDirective
+    void reportInvalidTrustedTypesPolicy(const String&) const;
+    void reportInvalidTrustedTypesNoneKeyword() const;
+
+    void reportInvalidTrustedTypesSinkGroup(const String&) const;
+    void reportEmptyRequireTrustedTypesForDirective() const;
 
     // Used by ContentSecurityPolicySourceList
     void reportDirectiveAsSourceExpression(const String& directiveName, StringView sourceExpression) const;

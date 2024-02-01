@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS document.innerText assigned via policy (successful HTML transformation).
 FAIL `document.innerText = string` throws. assert_throws_js: function "_ => {

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 PASS policy.name = name
 FAIL duplicate policy name attempt throws assert_throws_js: function "_ => {

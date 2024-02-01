@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL eval with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
       eval('a="hello there"');

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL embed.src accepts only TrustedScriptURL assert_throws_js: function "_ => {
     elem[attribute] = value;

@@ -585,6 +585,32 @@ void ContentSecurityPolicyDirectiveList::parseReportTo(ParsedDirective&& directi
     });
 }
 
+void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirective&& directive)
+{
+    if (m_requireTrustedTypesForScript) {
+        m_policy.reportDuplicateDirective(directive.name);
+        return;
+    }
+
+    readCharactersForParsing(directive.value, [&](auto buffer) {
+        while (buffer.hasCharactersRemaining()) {
+            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            if (buffer.atEnd()) {
+                policy().reportEmptyRequireTrustedTypesForDirective();
+                continue;
+            }
+
+            auto begin = buffer.position();
+            if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s))
+                m_requireTrustedTypesForScript = true;
+            else
+                policy().reportInvalidTrustedTypesSinkGroup(String(begin, buffer.position() - begin));
+
+            ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+        }
+    });
+}
+
 template<class CSPDirectiveType>
 void ContentSecurityPolicyDirectiveList::setCSPDirective(ParsedDirective&& directive, std::unique_ptr<CSPDirectiveType>& existingDirective)
 {
@@ -707,6 +733,10 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
         setUpgradeInsecureRequests(WTFMove(directive));
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::blockAllMixedContent))
         setBlockAllMixedContentEnabled(WTFMove(directive));
+    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::trustedTypes))
+        setCSPDirective<ContentSecurityPolicyTrustedTypesDirective>(WTFMove(directive), m_trustedTypes);
+    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::requireTrustedTypesFor))
+        parseRequireTrustedTypesFor(WTFMove(directive));
     else
         m_policy.reportUnsupportedDirective(WTFMove(directive.name));
 }

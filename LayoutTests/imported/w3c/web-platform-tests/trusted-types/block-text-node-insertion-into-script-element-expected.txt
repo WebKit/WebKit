@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'fail'
 
 Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'fail'

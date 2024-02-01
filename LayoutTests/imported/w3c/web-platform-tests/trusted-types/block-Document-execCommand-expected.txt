@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 FAIL Document.execCommand("insertHTML") throws. assert_throws_js: function "_ => document.execCommand(command, false, "<em>Hello World</em>")" did not throw
 PASS Document.execCommand("insertHTML") works with a TrustedHTML argument.

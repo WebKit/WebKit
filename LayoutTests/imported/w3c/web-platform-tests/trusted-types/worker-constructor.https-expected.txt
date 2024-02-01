@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS Create Worker via ScriptTestUrl
 PASS Create SharedWorker via ScriptTestUrl

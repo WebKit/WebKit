@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'trusted-types'.
-
 
 FAIL policy - duplicate names assert_throws_js: function "_ => trustedTypes.createPolicy("default", {})" did not throw
 

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
 
 

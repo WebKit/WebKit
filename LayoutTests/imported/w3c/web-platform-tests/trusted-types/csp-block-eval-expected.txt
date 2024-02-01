@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS eval with plain string throws (both block).
 FAIL eval with TrustedScript throws (script-src blocks). assert_throws_js: function "_ => {

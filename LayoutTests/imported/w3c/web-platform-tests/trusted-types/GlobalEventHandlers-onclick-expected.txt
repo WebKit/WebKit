@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS a.setAttribte('onclick') sets a trusted script.
 FAIL a.setAttribute('onclick') sets an unsuitable trusted type. assert_unreached: Reached unreachable code
