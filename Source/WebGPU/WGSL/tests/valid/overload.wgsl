@@ -868,7 +868,7 @@ fn testArray()
 
 
     var x1 = 0;
-    let x2 = array(x3, 0, 0i, x3);
+    let x2 = array(x1, 0, 0i, x1);
 }
 
 // 16.1.2.2.
