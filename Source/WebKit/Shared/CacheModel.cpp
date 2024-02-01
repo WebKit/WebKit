@@ -59,6 +59,7 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
 
         break;
     }
+
     case CacheModel::DocumentBrowser: {
         // back/forward cache capacity (in pages)
         if (memorySize >= 512)
