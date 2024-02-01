@@ -1,7 +1,7 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
     <pattern patternUnits="userSpaceOnUse" id="pattern0" x="0" y="0" width="100" height="100">
-        <rect x="0" y="0" width="50" height="50" fill="black"/>
         <rect x="50" y="50" width="100" height="100" fill="green"/>
     </pattern>
 

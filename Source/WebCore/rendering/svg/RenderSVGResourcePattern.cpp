@@ -133,9 +133,6 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
 
 bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
 {
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
-        return false;
-
     auto pattern = buildPattern(context, targetRenderer);
     if (!pattern)
         return false;
@@ -149,9 +146,6 @@ bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, co
 
 bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const RenderStyle& style)
 {
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
-        return false;
-
     auto pattern = buildPattern(context, targetRenderer);
     if (!pattern)
         return false;
@@ -188,6 +182,13 @@ bool RenderSVGResourcePattern::buildTileImageTransform(const RenderElement& rend
 
 RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttributes& attributes, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform) const
 {
+    auto* patternRenderer = static_cast<RenderSVGResourcePattern*>(attributes.patternContentElement()->renderer());
+    ASSERT(patternRenderer);
+    ASSERT(patternRenderer->hasLayer());
+
+    if (SVGHitTestCycleDetectionScope::isVisiting(*patternRenderer))
+        return nullptr;
+
     // FIXME: consider color space handling/'color-interpolation'.
     auto clampedAbsoluteTileBoundaries = ImageBuffer::clampedRect(absoluteTileBoundaries);
     auto tileImage = ImageBuffer::create(roundedIntSize(clampedAbsoluteTileBoundaries.size()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
@@ -205,14 +206,6 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttri
 
     // The image buffer represents the final rendered size, so the content has to be scaled (to avoid pixelation).
     tileImageContext.scale(clampedAbsoluteTileBoundaries.size() / tileBoundaries.size());
-
-    auto* patternRenderer = static_cast<RenderSVGResourcePattern*>(attributes.patternContentElement()->renderer());
-    ASSERT(patternRenderer);
-    ASSERT(patternRenderer->hasLayer());
-
-    // We only want to detect cycles for patternRenderer != this, since paintSVGResourceLayer itself
-    // will start cycle detection for patternRenderer.
-    SVGHitTestCycleDetectionScope scope(*this, patternRenderer != this);
 
     // Draw the content into the ImageBuffer.
     patternRenderer->layer()->paintSVGResourceLayer(tileImageContext, tileImageTransform);
