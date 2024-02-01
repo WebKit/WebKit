@@ -32,6 +32,7 @@
     --scope-bar-background-color-default: unset;
     --scope-bar-background-opacity-default: var(--glyph-opacity);
     --scope-bar-border-color-default: unset;
+    --scope-bar-text-align-default: right;
 }
 
 .scope-bar > li {
@@ -43,7 +44,6 @@
     font-size: 11px;
     line-height: 11px;
     color: var(--scope-bar-text-color);
-    text-align: center;
 
     --scope-bar-margin: var(--scope-bar-margin-override, var(--scope-bar-margin-default));
     --scope-bar-padding: var(--scope-bar-padding-override, var(--scope-bar-padding-default));
@@ -51,6 +51,7 @@
     --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
     --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
     --scope-bar-border-color: var(--scope-bar-border-color-override, var(--scope-bar-border-color-default));
+    --scope-bar-text-align: var(--scope-bar-text-align-override, var(--scope-bar-text-align-default));
 }
 
 .scope-bar > li::after {
