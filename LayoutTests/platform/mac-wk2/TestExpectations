@@ -1982,3 +1982,5 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
 
 webkit.org/b/268494 [ Monterey+ Release ] media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
+
+webkit.org/b/268507 [ Monterey+ Debug ] http/tests/media/video-useragent.html [ Skip ]
