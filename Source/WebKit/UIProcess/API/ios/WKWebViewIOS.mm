@@ -128,6 +128,10 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
 - (BOOL)_isHostedInAnotherProcess;
 @end
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewPrivateAdditions.mm>
+#endif
+
 @implementation WKWebView (WKViewInternalIOS)
 
 - (void)setFrame:(CGRect)frame
