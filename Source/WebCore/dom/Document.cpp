@@ -1031,8 +1031,10 @@ void Document::parseMarkupUnsafe(const String& markup, OptionSet<ParserContentPo
     bool usedFastPath = false;
     if (this->contentType() == textHTMLContentTypeAtom()) {
         auto body = HTMLBodyElement::create(*this);
+        body->beginParsingChildren();
         usedFastPath = tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy);
         if (LIKELY(usedFastPath)) {
+            body->finishParsingChildren();
             auto html = HTMLHtmlElement::create(*this);
             auto head = HTMLHeadElement::create(*this);
             html->appendChild(head);
