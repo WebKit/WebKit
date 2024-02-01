@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 #include "common_video/h265/h265_common.h"
@@ -129,6 +130,8 @@ H265BitstreamParser::Result H265BitstreamParser::ParseNonParameterSetNalu(
 
     uint32_t slice_segment_address_bits =
         H265::Log2Ceiling(pic_height_in_ctbs_y * pic_width_in_ctbs_y);
+    TRUE_OR_RETURN(slice_segment_address_bits !=
+                   std::numeric_limits<uint32_t>::max());
     slice_reader.ConsumeBits(slice_segment_address_bits);
   }
 
