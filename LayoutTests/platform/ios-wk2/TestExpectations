@@ -2356,3 +2356,5 @@ imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-whil
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
+
+webkit.org/b/268305 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
