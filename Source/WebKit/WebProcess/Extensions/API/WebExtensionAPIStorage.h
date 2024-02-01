@@ -50,6 +50,10 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
+    friend class WebExtensionContextProxy;
+
+    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionStorageType);
+
     RefPtr<WebExtensionAPIStorageArea> m_local;
     RefPtr<WebExtensionAPIStorageArea> m_session;
     RefPtr<WebExtensionAPIStorageArea> m_sync;

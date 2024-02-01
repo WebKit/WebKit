@@ -305,6 +305,19 @@ NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *dictionary)
     return [newDictionary copy];
 }
 
+NSDictionary *dictionaryWithKeys(NSDictionary *dictionary, NSArray *keys)
+{
+    if (!dictionary.count || !keys.count)
+        return @{ };
+
+    auto *keysSet = [NSSet setWithArray:keys];
+
+    return filterObjects(dictionary, ^bool(id key, id) {
+        return dictionary[key] && [keysSet containsObject:key];
+    });
+
+}
+
 NSDictionary *mergeDictionaries(NSDictionary *dictionaryA, NSDictionary *dictionaryB)
 {
     if (!dictionaryB.count)

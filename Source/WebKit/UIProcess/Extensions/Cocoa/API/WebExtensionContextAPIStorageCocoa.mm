@@ -34,6 +34,8 @@
 
 #import "CocoaHelpers.h"
 #import "WebExtensionConstants.h"
+#import "WebExtensionContextProxy.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionStorageAccessLevel.h"
 #import "WebExtensionStorageType.h"
 #import "WebExtensionUtilities.h"
@@ -89,9 +91,8 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
     }
 
     NSDictionary *data = parseJSON(dataJSON);
-    auto storage = storageForType(storageType);
 
-    [storage getStorageSizeForAllKeysIncludingKeyedData:data withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, storageType, storage, retainData = RetainPtr { data }, completionHandler = WTFMove(completionHandler)](size_t size, NSUInteger numberOfKeys, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString *errorMessage) mutable {
+    [storageForType(storageType) getStorageSizeForAllKeysIncludingKeyedData:data withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, storageType, retainData = RetainPtr { data }, completionHandler = WTFMove(completionHandler)](size_t size, NSUInteger numberOfKeys, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toErrorString(callingAPIName, nil, errorMessage));
             return;
@@ -107,32 +108,21 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        [storage setKeyedData:retainData.get() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, retainData, completionHandler = WTFMove(completionHandler)](NSArray *keysSuccessfullySet, NSString *errorMessage) mutable {
+        [storageForType(storageType) setKeyedData:retainData.get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, retainData, storageType, existingKeysAndValues = RetainPtr { existingKeysAndValues }, completionHandler = WTFMove(completionHandler)](NSArray *keysSuccessfullySet, NSString *errorMessage) mutable {
             if (errorMessage)
                 completionHandler(toErrorString(callingAPIName, nil, errorMessage));
             else
                 completionHandler(std::nullopt);
 
+            // Only fire an onChanged event for the keys that were successfully set.
+            if (!keysSuccessfullySet.count)
+                return;
+
             auto *data = retainData.get();
-            if (keysSuccessfullySet.count != data.allKeys.count) {
-                // Only fire an onChanged event for the keys that were successfully set.
-                auto *successfullySetData = [NSMutableDictionary dictionaryWithCapacity:keysSuccessfullySet.count];
-                for (NSString *key in keysSuccessfullySet) {
-                    NSString *value = data[key];
-                    ASSERT(value);
-                    if (!value)
-                        continue;
+            if (keysSuccessfullySet.count != data.allKeys.count)
+                data = dictionaryWithKeys(data, keysSuccessfullySet);
 
-                    successfullySetData[key] = value;
-                }
-
-                if (!successfullySetData.count)
-                    return;
-
-                data = successfullySetData;
-            }
-
-            // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+            fireStorageChangedEventIfNeeded(existingKeysAndValues.get(), data, storageType);
         }).get()];
     }).get()];
 }
@@ -146,14 +136,21 @@ void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdent
         return;
     }
 
-    auto storage = storageForType(storageType);
-    [storage deleteValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
-        if (errorMessage)
+    [storageForType(storageType) getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, keys, storageType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
+        if (errorMessage) {
             completionHandler(toErrorString(callingAPIName, nil, errorMessage));
-        else
-            completionHandler(std::nullopt);
+            return;
+        }
 
-        // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+        [storageForType(storageType) deleteValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, storageType, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+            if (errorMessage) {
+                completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+                return;
+            }
+
+            fireStorageChangedEventIfNeeded(oldValuesAndKeys.get(), nil, storageType);
+            completionHandler(std::nullopt);
+        }).get()];
     }).get()];
 }
 
@@ -166,14 +163,21 @@ void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdenti
         return;
     }
 
-    auto storage = storageForType(storageType);
-    [storage deleteDatabaseWithCompletionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
-        if (errorMessage)
+    [storageForType(storageType) getValuesForKeys:@[ ] completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, storageType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
+        if (errorMessage) {
             completionHandler(toErrorString(callingAPIName, nil, errorMessage));
-        else
-            completionHandler(std::nullopt);
+            return;
+        }
 
-        // FIXME: <https://webkit.org/b/267965> Fire onChanged event.
+        [storageForType(storageType) deleteDatabaseWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, storageType, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+            if (errorMessage) {
+                completionHandler(toErrorString(callingAPIName, nil, errorMessage));
+                return;
+            }
+
+            fireStorageChangedEventIfNeeded(oldValuesAndKeys.get(), nil, storageType);
+            completionHandler(std::nullopt);
+        }).get()];
     }).get()];
 }
 
@@ -189,6 +193,53 @@ void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPagePr
     setSessionStorageAllowedInContentScripts(accessLevel == WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts);
 
     completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::fireStorageChangedEventIfNeeded(NSDictionary *oldKeysAndValues, NSDictionary *newKeysAndValues, WebExtensionStorageType storageType)
+{
+    static NSString * const newValueKey = @"newValue";
+    static NSString * const oldValueKey = @"oldValue";
+
+    if (!oldKeysAndValues.count && !newKeysAndValues.count)
+        return;
+
+    auto *changedData = [NSMutableDictionary dictionary];
+
+    if (!newKeysAndValues) {
+        [oldKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
+            changedData[key] = @{ oldValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) };
+        }];
+    } else {
+        [newKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
+            if (NSString *oldValue = oldKeysAndValues[key]) {
+                if (![oldValue isEqualToString:value]) {
+                    changedData[key] = @{
+                        oldValueKey: parseJSON(oldValue, { JSONOptions::FragmentsAllowed }),
+                        newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }),
+                    };
+                }
+
+                return;
+            }
+
+            // A new key is being added for the first time.
+            changedData[key] = @{ newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) };
+        }];
+    }
+
+    if (!changedData.count)
+        return;
+
+    constexpr auto type = WebExtensionEventListenerType::StorageOnChanged;
+    auto jsonString = encodeJSONString(changedData);
+
+    // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
+    // content scripts are allowed to listen to storage.onChanged events.
+    sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, storageType, WebExtensionContentWorldType::ContentScript));
+
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, storageType, WebExtensionContentWorldType::Main));
+    });
 }
 
 } // namespace WebKit

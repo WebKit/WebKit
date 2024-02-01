@@ -44,6 +44,7 @@ OBJC_CLASS _WKWebExtensionLocalization;
 namespace WebKit {
 
 class WebExtensionAPINamespace;
+class WebExtensionAPIStorage;
 class WebExtensionMatchPattern;
 class WebFrame;
 
@@ -83,6 +84,8 @@ public:
     bool isSessionStorageAllowedInContentScripts() { return m_isSessionStorageAllowedInContentScripts; }
 
     bool inTestingMode() { return m_testingMode; }
+
+    WebCore::DOMWrapperWorld& toDOMWorld(WebExtensionContentWorldType);
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
 
@@ -158,6 +161,7 @@ private:
 
     // Storage
     void setStorageAccessLevel(bool);
+    void dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionStorageType, WebExtensionContentWorldType);
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);

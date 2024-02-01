@@ -108,6 +108,7 @@ NSString *encodeJSONString(id, JSONOptionSet = { }, NSError ** = nullptr);
 NSData *encodeJSONData(id, JSONOptionSet = { }, NSError ** = nullptr);
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *);
+NSDictionary *dictionaryWithKeys(NSDictionary *, NSArray *keys);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
 

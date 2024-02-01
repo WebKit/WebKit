@@ -317,6 +317,32 @@ TEST(WKWebExtensionAPIStorage, Clear)
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIStorage, StorageOnChanged)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function listener() { browser.test.notifyPass() }",
+        @"await browser?.storage?.onChanged?.addListener(listener)",
+
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
+        @"await browser?.storage?.local?.set(data)",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIStorage, StorageAreaOnChanged)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function listener() { browser.test.notifyPass() }",
+        @"await browser?.storage?.local?.onChanged?.addListener(listener)",
+
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
+        @"await browser?.storage?.local?.set(data)",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

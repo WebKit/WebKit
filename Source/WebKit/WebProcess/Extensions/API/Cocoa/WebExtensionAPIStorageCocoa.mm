@@ -32,7 +32,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIStorageArea.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionContextProxy.h"
 
 namespace WebKit {
 
@@ -75,6 +79,21 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     return *m_sync;
 }
 
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtensionStorageType storageType)
+{
+    switch (storageType) {
+    case WebExtensionStorageType::Local:
+        return local();
+    case WebExtensionStorageType::Session:
+        return session();
+    case WebExtensionStorageType::Sync:
+        return sync();
+    }
+
+    ASSERT_NOT_REACHED();
+    return local();
+}
+
 WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/onChanged
@@ -83,6 +102,16 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
         m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::StorageOnChanged);
 
     return *m_onChanged;
+}
+
+void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionStorageType storageType, WebExtensionContentWorldType contentWorldType)
+{
+    NSDictionary *onChangedData = parseJSON(onChangedJSON);
+
+    enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {
+        namespaceObject.storage().onChanged().invokeListenersWithArgument(onChangedData);
+        namespaceObject.storage().storageAreaForType(storageType).onChanged().invokeListenersWithArgument(onChangedData);
+    }, toDOMWorld(contentWorldType));
 }
 
 } // namespace WebKit

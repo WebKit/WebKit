@@ -126,6 +126,19 @@ _WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Da
     return [[_WKWebExtensionLocalization alloc] initWithLocalizedDictionary:parseJSON(json) uniqueIdentifier:baseURL.host().toString()];
 }
 
+WebCore::DOMWrapperWorld& WebExtensionContextProxy::toDOMWorld(WebExtensionContentWorldType contentWorldType)
+{
+    switch (contentWorldType) {
+    case WebExtensionContentWorldType::Main:
+        return mainWorld();
+    case WebExtensionContentWorldType::ContentScript:
+        return contentScriptWorld();
+    case WebExtensionContentWorldType::Native:
+        ASSERT_NOT_REACHED();
+        return mainWorld();
+    }
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
