@@ -30,6 +30,7 @@
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNodeDelegate.h>
+#import <wtf/WeakPtr.h>
 
 @class CALayer;
 @class UIScrollView;
@@ -49,7 +50,7 @@ class ScrollingTreeScrollingNode;
 
 namespace WebKit {
 
-class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate {
+class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate, public CanMakeWeakPtr<ScrollingTreeScrollingNodeDelegateIOS> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     
@@ -105,12 +106,12 @@ private:
 } // namespace WebKit
 
 @interface WKScrollingNodeScrollViewDelegate : NSObject <WKBEScrollViewDelegate> {
-    WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
+    WeakPtr<WebKit::ScrollingTreeScrollingNodeDelegateIOS> _scrollingTreeNodeDelegate;
 }
 
 @property (nonatomic, getter=_isInUserInteraction) BOOL inUserInteraction;
 
-- (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate;
+- (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS&)delegate;
 
 @end
 
