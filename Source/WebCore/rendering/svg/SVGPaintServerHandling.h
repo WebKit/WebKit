@@ -139,7 +139,6 @@ private:
     inline void prepareStrokeOperation(const RenderLayerModelObject& renderer, const RenderStyle& style, const Color& strokeColor) const
     {
         const auto& svgStyle = style.svgStyle();
-        ASSERT_UNUSED(renderer, !renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask));
         m_context.setAlpha(svgStyle.strokeOpacity());
         m_context.setStrokeColor(style.colorByApplyingColorFilter(strokeColor));
         SVGRenderSupport::applyStrokeStyleToContext(m_context, style, renderer);
