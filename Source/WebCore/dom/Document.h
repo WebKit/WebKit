@@ -58,6 +58,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TriState.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -1245,7 +1246,7 @@ public:
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
     String nameForCSSCanvasElement(const HTMLCanvasElement&) const;
 
-    bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
+    bool isDNSPrefetchEnabled() const;
     void parseDNSPrefetchControlHeader(const String&);
 
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
@@ -2157,7 +2158,7 @@ private:
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
-    unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes];
+    unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes] { 0 };
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
@@ -2432,6 +2433,8 @@ private:
     StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
     bool m_hasXMLDeclaration { false };
 
+    bool m_constructionDidFinish { false };
+
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
     bool m_allowsColorSchemeTransformations { true };
@@ -2473,7 +2476,7 @@ private:
     bool m_isResolvingContainerQueries { false };
 
     bool m_gotoAnchorNeededAfterStylesheetsLoad { false };
-    bool m_isDNSPrefetchEnabled { false };
+    TriState m_isDNSPrefetchEnabled { TriState::Indeterminate };
     bool m_haveExplicitlyDisabledDNSPrefetch { false };
 
     bool m_isSynthesized { false };
