@@ -97,7 +97,8 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
 
 void PresentationContextImpl::present()
 {
-    wgpuSwapChainPresent(m_swapChain.get());
+    if (auto* surface = m_swapChain.get())
+        wgpuSwapChainPresent(surface);
     m_currentTexture = nullptr;
 }
 
