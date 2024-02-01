@@ -3247,6 +3247,20 @@ ImperativeSlotAPIEnabled:
     WebCore:
       default: true
 
+InWindowFullscreenEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "In-Window Fullscreen"
+  humanReadableDescription: "Enable In-Window Fullscreen"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 InactiveMediaCaptureSteamRepromptIntervalInMinutes:
   type: double
   status: embedder

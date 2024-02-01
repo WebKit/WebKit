@@ -66,4 +66,4 @@
     [Conditional=VIDEO_PRESENTATION_MODE, EnabledBySetting=VideoPresentationModeAPIEnabled] undefined webkitSetPresentationMode(VideoPresentationMode mode);
 };
 
-[Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture" };
+[Conditional=VIDEO_PRESENTATION_MODE] enum VideoPresentationMode { "inline", "fullscreen", "picture-in-picture", "in-window" };

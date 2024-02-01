@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "MessageReceiver.h"
+#include <WebCore/HTMLMediaElement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -87,8 +88,7 @@ public:
         ExitingFullscreen,
     };
     FullscreenState fullscreenState() const { return m_fullscreenState; }
-
-    void willEnterFullScreen();
+    void willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();

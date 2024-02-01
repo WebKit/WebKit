@@ -448,6 +448,8 @@ static inline HTMLMediaElementEnums::VideoFullscreenMode toFullscreenMode(HTMLVi
         return HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
     case HTMLVideoElement::VideoPresentationMode::Inline:
         return HTMLMediaElementEnums::VideoFullscreenModeNone;
+    case HTMLVideoElement::VideoPresentationMode::InWindow:
+        return HTMLMediaElementEnums::VideoFullscreenModeInWindow;
     }
     ASSERT_NOT_REACHED();
     return HTMLMediaElementEnums::VideoFullscreenModeNone;
@@ -464,12 +466,18 @@ HTMLVideoElement::VideoPresentationMode HTMLVideoElement::toPresentationMode(HTM
     if (mode == HTMLMediaElementEnums::VideoFullscreenModeNone)
         return HTMLVideoElement::VideoPresentationMode::Inline;
 
+    if (mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
+        return HTMLVideoElement::VideoPresentationMode::InWindow;
+
     ASSERT_NOT_REACHED();
     return HTMLVideoElement::VideoPresentationMode::Inline;
 }
 
 void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 {
+    if (mode == VideoPresentationMode::InWindow && !document().settings().inWindowFullscreenEnabled())
+        return;
+
     INFO_LOG(LOGIDENTIFIER, ", mode = ",  mode);
     if (!isChangingVideoFullscreenMode())
         setPresentationMode(mode);

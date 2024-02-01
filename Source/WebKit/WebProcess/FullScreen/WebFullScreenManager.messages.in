@@ -24,7 +24,7 @@
 messages -> WebFullScreenManager LegacyReceiver {
     RequestRestoreFullScreen()
     RequestExitFullScreen()
-    WillEnterFullScreen()
+    WillEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode);
     DidEnterFullScreen()
     WillExitFullScreen()
     DidExitFullScreen()

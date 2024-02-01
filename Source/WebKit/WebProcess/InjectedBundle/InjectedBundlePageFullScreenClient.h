@@ -31,6 +31,8 @@
 #include "APIClient.h"
 #include "WKBundlePageFullScreenClient.h"
 #include <WebCore/FloatSize.h>
+#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/MediaPlayerEnums.h>
 #include <wtf/Forward.h>
 
 namespace API {
@@ -51,8 +53,8 @@ class WebPage;
 class InjectedBundlePageFullScreenClient : public API::Client<WKBundlePageFullScreenClientBase> {
 public:
     bool supportsFullScreen(WebPage*, bool withKeyboard);
-    void enterFullScreenForElement(WebPage*, WebCore::Element*, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions);
-    void exitFullScreenForElement(WebPage*, WebCore::Element*);
+    void enterFullScreenForElement(WebPage*, WebCore::Element*, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void exitFullScreenForElement(WebPage*, WebCore::Element*, bool);
     void beganEnterFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
     void beganExitFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
     void closeFullScreen(WebPage*);

@@ -49,6 +49,9 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-html-document": {},
+        "-internal-in-window-full-screen": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
         "-internal-media-document": {},
         "-webkit-any": {
             "argument": "required",

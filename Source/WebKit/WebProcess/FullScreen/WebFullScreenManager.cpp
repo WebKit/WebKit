@@ -195,7 +195,7 @@ void WebFullScreenManager::clearElement()
     m_element = nullptr;
 }
 
-void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
+void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(element);
     if (!element)
@@ -224,7 +224,13 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
     if (m_mainVideoElement)
         videoDimensions = FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight());
 #endif
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions);
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.ptr(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions, mode);
+
+    if (mode == WebCore::HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
+        willEnterFullScreen(mode);
+        didEnterFullScreen();
+        m_inWindowFullScreenMode = true;
+    }
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
@@ -234,13 +240,19 @@ void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
     else
         ALWAYS_LOG(LOGIDENTIFIER, "null");
 
-    m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.ptr(), element);
+    m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.ptr(), element, m_inWindowFullScreenMode);
+
+    if (m_inWindowFullScreenMode) {
+        willExitFullScreen();
+        didExitFullScreen();
+        m_inWindowFullScreenMode = false;
+    }
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
 #endif
 }
 
-void WebFullScreenManager::willEnterFullScreen()
+void WebFullScreenManager::willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(m_element);
     if (!m_element)
@@ -248,7 +260,7 @@ void WebFullScreenManager::willEnterFullScreen()
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", m_element->tagName(), " id=\"", m_element->getIdAttribute(), "\">");
 
-    if (!m_element->document().fullscreenManager().willEnterFullscreen(*m_element)) {
+    if (!m_element->document().fullscreenManager().willEnterFullscreen(*m_element, mode)) {
         close();
         return;
     }

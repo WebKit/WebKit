@@ -1307,9 +1307,9 @@ bool WebChromeClient::supportsFullScreenForElement(const Element&, bool withKeyb
     return protectedPage()->fullScreenManager()->supportsFullScreen(withKeyboard);
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element)
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    protectedPage()->fullScreenManager()->enterFullScreenForElement(&element);
+    protectedPage()->fullScreenManager()->enterFullScreenForElement(&element, mode);
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)

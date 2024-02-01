@@ -29,6 +29,7 @@
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/EventListener.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LengthBox.h>
 #include <wtf/RefCounted.h>
@@ -63,10 +64,10 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool supportsFullScreen(bool withKeyboard);
-    void enterFullScreenForElement(WebCore::Element*);
+    void enterFullScreenForElement(WebCore::Element*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void exitFullScreenForElement(WebCore::Element*);
 
-    void willEnterFullScreen();
+    void willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
@@ -132,7 +133,7 @@ private:
 #endif // ENABLE(VIDEO)
 
     bool m_closing { false };
-
+    bool m_inWindowFullScreenMode { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

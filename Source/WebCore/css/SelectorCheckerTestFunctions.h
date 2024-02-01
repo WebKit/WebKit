@@ -432,6 +432,15 @@ ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
     return fullscreenManager && fullscreenManager->fullscreenElement();
 }
 
+ALWAYS_INLINE bool matchesInWindowFullScreenPseudoClass(const Element& element)
+{
+    if (&element != element.document().fullscreenManager().currentFullscreenElement())
+        return false;
+
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
+}
+
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

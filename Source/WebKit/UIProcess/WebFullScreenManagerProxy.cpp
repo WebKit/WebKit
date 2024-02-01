@@ -61,12 +61,12 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
     callCloseCompletionHandlers();
 }
 
-void WebFullScreenManagerProxy::willEnterFullScreen()
+void WebFullScreenManagerProxy::willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_fullscreenState = FullscreenState::EnteringFullscreen;
     m_page.fullscreenClient().willEnterFullscreen(&m_page);
-    m_page.send(Messages::WebFullScreenManager::WillEnterFullScreen());
+    m_page.send(Messages::WebFullScreenManager::WillEnterFullScreen(mode));
 }
 
 void WebFullScreenManagerProxy::didEnterFullScreen()
