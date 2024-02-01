@@ -837,8 +837,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
-    if (is<HTMLTemplateElement>(newElement))
-        pushCurrentNode(&downcast<HTMLTemplateElement>(newElement.get()).content());
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(newElement))
+        pushCurrentNode(&templateElement->content());
     else
         pushCurrentNode(newElement.ptr());
 

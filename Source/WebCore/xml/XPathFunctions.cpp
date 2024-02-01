@@ -353,16 +353,16 @@ Value FunId::evaluate() const
     return Value(WTFMove(result));
 }
 
-static inline String expandedNameLocalPart(Node* node)
+static inline String expandedNameLocalPart(Node& node)
 {
-    if (is<ProcessingInstruction>(*node))
-        return downcast<ProcessingInstruction>(*node).target();
-    return node->localName().string();
+    if (auto* pi = dynamicDowncast<ProcessingInstruction>(node))
+        return pi->target();
+    return node.localName().string();
 }
 
-static inline String expandedName(Node* node)
+static inline String expandedName(Node& node)
 {
-    const AtomString& prefix = node->prefix();
+    auto& prefix = node.prefix();
     return prefix.isEmpty() ? expandedNameLocalPart(node) : prefix + ":" + expandedNameLocalPart(node);
 }
 
@@ -373,11 +373,11 @@ Value FunLocalName::evaluate() const
         if (!a.isNodeSet())
             return emptyString();
 
-        Node* node = a.toNodeSet().firstNode();
-        return node ? expandedNameLocalPart(node) : emptyString();
+        auto* node = a.toNodeSet().firstNode();
+        return node ? expandedNameLocalPart(*node) : emptyString();
     }
 
-    return expandedNameLocalPart(evaluationContext().node.get());
+    return expandedNameLocalPart(*evaluationContext().node);
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -401,11 +401,11 @@ Value FunName::evaluate() const
         if (!a.isNodeSet())
             return emptyString();
 
-        Node* node = a.toNodeSet().firstNode();
-        return node ? expandedName(node) : emptyString();
+        auto* node = a.toNodeSet().firstNode();
+        return node ? expandedName(*node) : emptyString();
     }
 
-    return expandedName(evaluationContext().node.get());
+    return expandedName(*evaluationContext().node);
 }
 
 Value FunCount::evaluate() const
@@ -627,10 +627,9 @@ Value FunLang::evaluate() const
     const Attribute* languageAttribute = nullptr;
     Node* node = evaluationContext().node.get();
     while (node) {
-        if (is<Element>(*node)) {
-            Element& element = downcast<Element>(*node);
-            if (element.hasAttributes())
-                languageAttribute = element.findAttributeByName(XMLNames::langAttr);
+        if (RefPtr element = dynamicDowncast<Element>(*node)) {
+            if (element->hasAttributes())
+                languageAttribute = element->findAttributeByName(XMLNames::langAttr);
         }
         if (languageAttribute)
             break;
