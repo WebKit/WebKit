@@ -326,6 +326,9 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.signature = toArrayBuffer(credential.get().signature);
                 response.userHandle = toArrayBuffer(credential.get().userID);
             }
+            if (auto cancelHandler = WTFMove(m_cancelHandler))
+                cancelHandler();
+
             if (!m_paused) {
                 m_completionHandler(response, attachment, exceptionData);
                 m_delegate.clear();
@@ -915,8 +918,17 @@ void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvail
     });
 }
 
-void WebAuthenticatorCoordinatorProxy::cancel()
+void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handler)
 {
+#if HAVE(WEB_AUTHN_AS_MODERN)
+    if (m_completionHandler || m_delegate) {
+#else
+    if (m_proxy) {
+#endif
+        m_cancelHandler = WTFMove(handler);
+    } else
+        handler();
+
     if (m_proxy) {
         [m_proxy cancelCurrentRequest];
         m_proxy.clear();

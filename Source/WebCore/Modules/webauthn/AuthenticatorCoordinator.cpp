@@ -177,6 +177,22 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         return;
     }
 
+    if (createOptions.signal) {
+        createOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
+            if (!weakThis)
+                return;
+            weakThis->m_isCancelling = true;
+            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+                if (!weakThis)
+                    return;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest)) {
+                    weakThis->m_isCancelling = false;
+                    queuedRequest();
+                }
+            });
+        });
+    }
+
     auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
@@ -191,8 +207,21 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         ASSERT(!exception.message.isNull());
         promise.reject(exception.toException());
     };
+
+    if (m_isCancelling) {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, clientDataJsonHash = WTFMove(clientDataJsonHash), createOptions = WTFMove(createOptions), callback = WTFMove(callback)]() mutable {
+            if (!weakThis || !weakFrame)
+                return;
+            const auto options = createOptions.publicKey.value();
+            RefPtr frame = weakFrame.get();
+            if (!frame)
+                return;
+            weakThis->m_client->makeCredential(*weakFrame, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
+        };
+        return;
+    }
     // Async operations are dispatched and handled in the messenger.
-    m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
+    m_client->makeCredential(*frame, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)
@@ -251,10 +280,18 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     if (requestOptions.signal) {
-        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
+        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
             if (!weakThis)
                 return;
-            weakThis->m_client->cancel();
+            weakThis->m_isCancelling = true;
+            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+                if (!weakThis)
+                    return;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest)) {
+                    weakThis->m_isCancelling = false;
+                    queuedRequest();
+                }
+            });
         });
     }
 
@@ -272,8 +309,21 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         ASSERT(!exception.message.isNull());
         promise.reject(exception.toException());
     };
+
+    if (m_isCancelling) {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, clientDataJsonHash = WTFMove(clientDataJsonHash), requestOptions = WTFMove(requestOptions), scopeAndCrossOriginParent, callback = WTFMove(callback)]() mutable {
+            if (!weakThis || !weakFrame)
+                return;
+            const auto options = requestOptions.publicKey.value();
+            RefPtr frame = weakFrame.get();
+            if (!frame)
+                return;
+            weakThis->m_client->getAssertion(*weakFrame, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+        };
+        return;
+    }
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const

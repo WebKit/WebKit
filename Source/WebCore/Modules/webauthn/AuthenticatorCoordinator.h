@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "IDLTypes.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
@@ -74,6 +75,8 @@ private:
     AuthenticatorCoordinator() = default;
 
     std::unique_ptr<AuthenticatorCoordinatorClient> m_client;
+    bool m_isCancelling = false;
+    CompletionHandler<void()> m_queuedRequest;
 };
 
 } // namespace WebCore

@@ -67,7 +67,7 @@ WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
 {
 }
 
-void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
     auto webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -76,7 +76,7 @@ void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const 
     m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options), WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
 {
     auto webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -95,9 +95,9 @@ void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(
     m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(origin.data()), WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinator::cancel()
+void WebAuthenticatorCoordinator::cancel(CompletionHandler<void()>&& handler)
 {
-    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::Cancel());
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::Cancel(), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::getClientCapabilities(const SecurityOrigin& origin, CapabilitiesCompletionHandler&& handler)

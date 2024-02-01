@@ -55,7 +55,7 @@ WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy(WebPageProxy&
 WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
-    cancel();
+    cancel([]() { });
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
@@ -127,8 +127,9 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
 
 #if !HAVE(UNIFIED_ASC_AUTH_UI)
-void WebAuthenticatorCoordinatorProxy::cancel()
+void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData&, QueryCompletionHandler&& handler)

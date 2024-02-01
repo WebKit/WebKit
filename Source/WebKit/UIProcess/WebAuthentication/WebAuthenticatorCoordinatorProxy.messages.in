@@ -31,7 +31,7 @@ messages -> WebAuthenticatorCoordinatorProxy NotRefCounted {
     isConditionalMediationAvailable(WebCore::SecurityOriginData origin) -> (bool result)
     IsUserVerifyingPlatformAuthenticatorAvailable(WebCore::SecurityOriginData origin) -> (bool result)
     GetClientCapabilities(WebCore::SecurityOriginData origin) -> (Vector<KeyValuePair<String, bool>> result)
-    Cancel()
+    Cancel() -> ()
 }
 
 #endif
