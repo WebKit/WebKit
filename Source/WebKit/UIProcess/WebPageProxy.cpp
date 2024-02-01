@@ -5274,11 +5274,13 @@ void WebPageProxy::pluginZoomFactorDidChange(double pluginZoomFactor)
 void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     if (string.isEmpty()) {
-        didFindStringMatches(string, Vector<Vector<WebCore::IntRect>> (), 0);
+        m_findMatchesClient->didFindStringMatches(this, string, Vector<Vector<WebCore::IntRect>> (), 0);
         return;
     }
 
-    send(Messages::WebPage::FindStringMatches(string, options, maxMatchCount));
+    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
+        m_findMatchesClient->didFindStringMatches(this, string, matches, firstIndexAfterSelection);
+    });
 }
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
@@ -8335,11 +8337,6 @@ void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
 void WebPageProxy::didFindString(const String& string, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround)
 {
     m_findClient->didFindString(this, string, matchRects, matchCount, matchIndex, didWrapAround);
-}
-
-void WebPageProxy::didFindStringMatches(const String& string, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection)
-{
-    m_findMatchesClient->didFindStringMatches(this, string, matchRects, firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)

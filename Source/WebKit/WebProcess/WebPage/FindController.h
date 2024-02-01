@@ -64,7 +64,7 @@ public:
     virtual ~FindController();
 
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, TriggerImageAnalysis, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, bool)>&& = { });
-    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
+    void findStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&&);
     void findRectsForStringMatches(const String&, OptionSet<WebKit::FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);

@@ -5334,9 +5334,9 @@ void WebPage::findString(const String& string, OptionSet<FindOptions> options, u
     findController().findString(string, options, maxMatchCount, FindController::TriggerImageAnalysis::Yes, WTFMove(completionHandler));
 }
 
-void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount)
+void WebPage::findStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&& completionHandler)
 {
-    findController().findStringMatches(string, options, maxMatchCount);
+    findController().findStringMatches(string, options, maxMatchCount, WTFMove(completionHandler));
 }
 
 void WebPage::findRectsForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler)

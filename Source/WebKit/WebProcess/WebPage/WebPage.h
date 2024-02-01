@@ -1965,7 +1965,7 @@ private:
     void didRemoveEditCommand(WebUndoStepID commandID);
 
     void findString(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, bool)>&&);
-    void findStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount);
+    void findStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&&);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);
     void indicateFindMatch(uint32_t matchIndex);

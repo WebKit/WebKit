@@ -329,7 +329,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Find.
     FindString(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (std::optional<WebCore::FrameIdentifier> frameContainingString, bool didWrap)
-    FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount)
+    FindStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection)
     GetImageForFindMatch(uint32_t matchIndex)
     SelectFindMatch(uint32_t matchIndex)
     IndicateFindMatch(uint32_t matchIndex)

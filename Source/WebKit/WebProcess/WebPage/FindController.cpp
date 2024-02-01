@@ -317,7 +317,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         completionHandler(idOfFrameContainingString, didWrap == DidWrap::Yes);
 }
 
-void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
+void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&& completionHandler)
 {
     auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTFMove(result.ranges);
@@ -325,7 +325,7 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     auto matchRects = m_findMatches.map([](auto& range) {
         return RenderObject::absoluteTextRects(range);
     });
-    m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, result.indexForSelection));
+    completionHandler(matchRects, result.indexForSelection);
 
     if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
         return;
