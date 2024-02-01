@@ -96,6 +96,9 @@ private:
         virtual ~Buffer() = default;
 
         enum class Type {
+#if GTK_CHECK_VERSION(4, 13, 4)
+            DmaBuf,
+#endif
             EglImage,
 #if USE(GBM)
             Gbm,
@@ -125,6 +128,25 @@ private:
         WebCore::IntSize m_size;
         float m_deviceScaleFactor { 1 };
     };
+
+#if GTK_CHECK_VERSION(4, 13, 4)
+    class BufferDMABuf final : public Buffer {
+    public:
+        static RefPtr<Buffer> create(uint64_t id, GdkDisplay*, const WebCore::IntSize&, float deviceScaleFactor, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
+        ~BufferDMABuf() = default;
+
+    private:
+        BufferDMABuf(uint64_t id, const WebCore::IntSize&, float deviceScaleFactor, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
+
+        Buffer::Type type() const override { return Buffer::Type::DmaBuf; }
+        void didUpdateContents() override;
+        GdkTexture* texture() const override { return m_texture.get(); }
+
+        Vector<WTF::UnixFileDescriptor> m_fds;
+        GRefPtr<GdkDmabufTextureBuilder> m_builder;
+        GRefPtr<GdkTexture> m_texture;
+    };
+#endif
 
     class BufferEGLImage final : public Buffer {
     public:

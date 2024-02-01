@@ -152,6 +152,42 @@ AcceleratedBackingStoreDMABuf::Buffer::Buffer(uint64_t id, const WebCore::IntSiz
 {
 }
 
+#if GTK_CHECK_VERSION(4, 13, 4)
+RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferDMABuf::create(uint64_t id, GdkDisplay* display, const WebCore::IntSize& size, float deviceScaleFactor, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
+{
+    GRefPtr<GdkDmabufTextureBuilder> builder = adoptGRef(gdk_dmabuf_texture_builder_new());
+    gdk_dmabuf_texture_builder_set_display(builder.get(), display);
+    gdk_dmabuf_texture_builder_set_width(builder.get(), size.width());
+    gdk_dmabuf_texture_builder_set_height(builder.get(), size.height());
+    gdk_dmabuf_texture_builder_set_fourcc(builder.get(), format);
+    gdk_dmabuf_texture_builder_set_modifier(builder.get(), modifier);
+    auto planeCount = fds.size();
+    gdk_dmabuf_texture_builder_set_n_planes(builder.get(), planeCount);
+    for (unsigned i = 0; i < planeCount; ++i) {
+        gdk_dmabuf_texture_builder_set_fd(builder.get(), i, fds[i].value());
+        gdk_dmabuf_texture_builder_set_stride(builder.get(), i, strides[i]);
+        gdk_dmabuf_texture_builder_set_offset(builder.get(), i, offsets[i]);
+    }
+
+    return adoptRef(*new BufferDMABuf(id, size, deviceScaleFactor, WTFMove(fds), WTFMove(builder)));
+}
+
+AcceleratedBackingStoreDMABuf::BufferDMABuf::BufferDMABuf(uint64_t id, const WebCore::IntSize& size, float deviceScaleFactor, Vector<UnixFileDescriptor>&& fds, GRefPtr<GdkDmabufTextureBuilder>&& builder)
+    : Buffer(id, size, deviceScaleFactor)
+    , m_fds(WTFMove(fds))
+    , m_builder(WTFMove(builder))
+{
+}
+
+void AcceleratedBackingStoreDMABuf::BufferDMABuf::didUpdateContents()
+{
+    GUniqueOutPtr<GError> error;
+    m_texture = adoptGRef(gdk_dmabuf_texture_builder_build(m_builder.get(), nullptr, nullptr, &error.outPtr()));
+    if (!m_texture)
+        WTFLogAlways("Failed to create DMA-BUF texture of size %dx%d: %s", m_size.width(), m_size.height(), error->message);
+}
+#endif
+
 RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferEGLImage::create(uint64_t id, const WebCore::IntSize& size, float deviceScaleFactor, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
 {
     auto& display = WebCore::PlatformDisplay::sharedDisplay();
@@ -348,6 +384,9 @@ void AcceleratedBackingStoreDMABuf::Renderer::snapshot(GtkSnapshot* gtkSnapshot)
         return;
 
     switch (m_buffer->type()) {
+#if GTK_CHECK_VERSION(4, 13, 4)
+    case Buffer::Type::DmaBuf:
+#endif
     case Buffer::Type::EglImage: {
         auto* texture = m_buffer->texture();
         if (!texture)
@@ -421,6 +460,13 @@ void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::
         ASSERT(fds.size() == 1 && strides.size() == 1);
         if (auto buffer = BufferGBM::create(id, size, m_webPage.deviceScaleFactor(), format, WTFMove(fds[0]), strides[0]))
             m_buffers.add(id, WTFMove(buffer));
+        return;
+    }
+#endif
+
+#if GTK_CHECK_VERSION(4, 13, 4)
+    if (auto buffer = BufferDMABuf::create(id, gtk_widget_get_display(m_webPage.viewWidget()), size, m_webPage.deviceScaleFactor(), format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier)) {
+        m_buffers.add(id, WTFMove(buffer));
         return;
     }
 #endif
