@@ -87,6 +87,9 @@ using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
+const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
+typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
+
 class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
@@ -716,7 +719,9 @@ protected:
     void updateAncestorsForStyleRecalc();
     void markAncestorsForInvalidatedStyle();
 
+    // FIXME: Replace all uses of convertNodesOrStringsIntoNode by convertNodesOrStringsIntoNodeVector.
     ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
+    ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
 
 private:
     virtual PseudoId customPseudoId() const
