@@ -34,11 +34,14 @@
 
 #if USE(EXTENSIONKIT)
 #import "ExtensionKitSPI.h"
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHandle.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostable);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostingHandle);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostingUpdateCoordinator);
+SOFT_LINK_FRAMEWORK_OPTIONAL(BrowserEngineKit);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchy);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchyHandle);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchyHostingTransactionCoordinator);
 #endif
 
 namespace WebKit {
@@ -78,8 +81,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
     };
 #if USE(EXTENSIONKIT)
     if (options.useHostable) {
-        // Note: this reads like a leak, but the object returned from createHostableWithOptions should not be adopted.
-        layerHostingContext->m_hostable = [get_SEHostableClass() createHostableWithOptions:contextOptions error:nil];
+        layerHostingContext->m_hostable = [getBELayerHierarchyClass() layerHierarchyWithOptions:contextOptions error:nil];
         return layerHostingContext;
     }
 #endif
@@ -215,22 +217,30 @@ OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 {
     if (!m_hostable)
         return nullptr;
-    return [[m_hostable handle] xpcRepresentation];
+    return [[m_hostable handle] createXPCRepresentation];
 }
 
-RetainPtr<_SEHostingUpdateCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
+RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
     auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
-    return adoptNS([alloc_SEHostingUpdateCoordinatorInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
+    NSError* error = nil;
+    auto coordinator = [getBELayerHierarchyHostingTransactionCoordinatorClass() coordinatorWithXPCRepresentation:xpcRepresentation.get() error:&error];
+    if (error)
+        NSLog(@"Could not create update coordinator, error = %@", error);
+    return coordinator;
 }
 
-RetainPtr<_SEHostingHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
+RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
 {
     auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
     xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
-    return adoptNS([alloc_SEHostingHandleInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
+    NSError* error = nil;
+    auto handle = [getBELayerHierarchyHandleClass() handleWithXPCRepresentation:xpcRepresentation.get() error:&error];
+    if (error)
+        NSLog(@"Could not create layer hierarchy handle, error = %@", error);
+    return handle;
 }
 #endif
 

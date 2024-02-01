@@ -61,7 +61,8 @@
 #endif
 
 #if USE(EXTENSIONKIT)
-#import "ExtensionKitSoftLink.h"
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingView.h>
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
@@ -76,7 +77,7 @@
 #endif
 #if USE(EXTENSIONKIT)
 @public
-    RetainPtr<_SEHostingView> _hostingView;
+    RetainPtr<BELayerHierarchyHostingView> _hostingView;
 #endif
 }
 
@@ -726,7 +727,7 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
         model->setLayerHostView(view);
 
 #if USE(EXTENSIONKIT)
-        auto hostingView = adoptNS([alloc_SEHostingViewInstance() init]);
+        auto hostingView = adoptNS([[BELayerHierarchyHostingView alloc] init]);
         view->_hostingView = hostingView;
         [view addSubview:hostingView.get()];
         auto layer = [hostingView layer];
@@ -1219,9 +1220,9 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
 #if USE(EXTENSIONKIT)
     RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
     if (view && view->_hostingView) {
-        auto hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() init]);
-        [hostingUpdateCoordinator addHostingView:view->_hostingView.get()];
-        OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [hostingUpdateCoordinator xpcRepresentation];
+        auto hostingUpdateCoordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithError:nil];
+        [hostingUpdateCoordinator addLayerHierarchyHostingView:view->_hostingView.get()];
+        OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [hostingUpdateCoordinator createXPCRepresentation];
         fenceSendRight = MachSendRight::adopt(xpc_dictionary_copy_mach_send(xpcRepresentationHostingCoordinator.get(), machPortKey));
         m_page->send(Messages::VideoPresentationManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)));
         [hostingUpdateCoordinator commit];
