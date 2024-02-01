@@ -391,10 +391,9 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
                     strongThis->processAssertionWillBeInvalidated();
             });
         };
-        AssertionCapability capability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
-        m_capability = capability.platformCapability();
+        m_capability = AssertionCapability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
         m_process = process.extensionProcess();
-        if (m_capability)
+        if (m_capability && m_capability->platformCapability())
             return;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
     }
@@ -466,9 +465,9 @@ void ProcessAssertion::acquireSync()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 #if USE(EXTENSIONKIT)
-    if (m_process) {
+    if (m_process && m_capability) {
         NSError *error = nil;
-        m_grant = [m_process grantCapability:m_capability.get() error:&error];
+        m_grant = [m_process grantCapability:m_capability->platformCapability().get() error:&error];
         if (m_grant) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;

@@ -39,17 +39,17 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     , m_willInvalidateBlock { makeBlockPtr(WTFMove(willInvalidateFunction)) }
     , m_didInvalidateBlock { makeBlockPtr(WTFMove(didInvalidateFunction)) }
 {
+#if USE(EXTENSIONKIT)
+    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:willInvalidate:didInvalidate:)])
+        m_capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
+    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
+        m_capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier];
+#endif
 }
 
 RetainPtr<_SECapability> AssertionCapability::platformCapability() const
 {
-#if USE(EXTENSIONKIT)
-    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:willInvalidate:didInvalidate:)])
-        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
-        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
-#endif
-    return nil;
+    return m_capability;
 }
 
 } // namespace WebKit
