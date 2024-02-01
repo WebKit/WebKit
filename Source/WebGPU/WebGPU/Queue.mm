@@ -185,9 +185,13 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
 void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
+    auto* device = m_device.get();
+    if (!device)
+        return;
+
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
     if (!validateSubmit(commands)) {
-        m_device.generateAValidationError("Validation failure."_s);
+        device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -199,7 +203,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
         if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer())
             [commandBuffersToSubmit addObject:mtlBuffer];
         else {
-            m_device.generateAValidationError("Command buffer appears twice."_s);
+            device->generateAValidationError("Command buffer appears twice."_s);
             return;
         }
         command.makeInvalid();
@@ -208,7 +212,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
         commitMTLCommandBuffer(commandBuffer);
 
-    if ([MTLCaptureManager sharedCaptureManager].isCapturing && m_device.shouldStopCaptureAfterSubmit())
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing && device->shouldStopCaptureAfterSubmit())
         [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
@@ -246,10 +250,14 @@ void Queue::waitUntilIdle()
 
 void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data, size_t size)
 {
+    auto* device = m_device.get();
+    if (!device)
+        return;
+
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writebuffer
 
-    if (!validateWriteBuffer(buffer, bufferOffset, size) || &buffer.device() != &m_device) {
-        m_device.generateAValidationError("Validation failure."_s);
+    if (!validateWriteBuffer(buffer, bufferOffset, size) || &buffer.device() != device) {
+        device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -283,11 +291,15 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data,
 
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, void* data, size_t size)
 {
+    auto* device = m_device.get();
+    if (!device)
+        return;
+
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     bool noCopy = size >= largeBufferSize;
-    id<MTLBuffer> temporaryBuffer = noCopy ? [m_device.device() newBufferWithBytesNoCopy:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared deallocator:nil] : [m_device.device() newBufferWithBytes:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared];
+    id<MTLBuffer> temporaryBuffer = noCopy ? [device->device() newBufferWithBytesNoCopy:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared deallocator:nil] : [device->device() newBufferWithBytes:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared];
     if (!temporaryBuffer) {
         ASSERT_NOT_REACHED();
         return;
@@ -341,15 +353,26 @@ static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const 
     return true;
 }
 
+const Device& Queue::device() const
+{
+    auto* device = m_device.get();
+    RELEASE_ASSERT(device);
+    return *device;
+}
+
 void Queue::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
 {
+    if (!m_device.get())
+        return;
+
     ensureBlitCommandEncoder();
-    CommandEncoder::clearTexture(destination, slice, m_device.device(), m_blitCommandEncoder);
+    CommandEncoder::clearTexture(destination, slice, m_device.get()->device(), m_blitCommandEncoder);
 }
 
 void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
 {
-    if (destination.nextInChain || dataLayout.nextInChain)
+    auto* device = m_device.get();
+    if (destination.nextInChain || dataLayout.nextInChain || !device)
         return;
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
@@ -362,8 +385,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
 
     RELEASE_ASSERT(data);
-    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || &texture.device() != &m_device) {
-        m_device.generateAValidationError("Validation failure."_s);
+    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || &texture.device() != device) {
+        device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -562,7 +585,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     auto newBufferSize = static_cast<NSUInteger>(dataByteSize - dataLayout.offset);
     bool noCopy = newBufferSize >= largeBufferSize;
-    id<MTLBuffer> temporaryBuffer = noCopy ? [m_device.device() newBufferWithBytesNoCopy:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared deallocator:nil] : [m_device.device() newBufferWithBytes:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared];
+    id<MTLBuffer> temporaryBuffer = noCopy ? [device->device() newBufferWithBytesNoCopy:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared deallocator:nil] : [device->device() newBufferWithBytes:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
         return;
 
@@ -654,7 +677,10 @@ void Queue::setLabel(String&& label)
 
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
-    m_device.instance().scheduleWork(WTFMove(workItem));
+    if (!m_device.get())
+        return;
+
+    m_device.get()->instance().scheduleWork(WTFMove(workItem));
 }
 
 } // namespace WebGPU

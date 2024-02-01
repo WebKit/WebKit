@@ -32,6 +32,7 @@
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUQueueImpl {
 };
@@ -70,7 +71,7 @@ public:
     bool isValid() const { return m_commandQueue; }
     void makeInvalid() { m_commandQueue = nil; }
 
-    const Device& device() const { return m_device; }
+    const Device& device() const;
     void waitUntilIdle();
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
     id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
@@ -95,7 +96,7 @@ private:
     id<MTLCommandQueue> m_commandQueue { nil };
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
-    Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
+    WeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };
