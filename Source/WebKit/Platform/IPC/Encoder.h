@@ -82,6 +82,12 @@ public:
         return *this;
     }
 
+    Encoder& operator<<(Attachment&& attachment)
+    {
+        addAttachment(WTFMove(attachment));
+        return *this;
+    }
+
     uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
 

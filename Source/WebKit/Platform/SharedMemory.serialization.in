@@ -25,7 +25,7 @@ webkit_platform_headers: "SharedMemory.h" <wtf/ArgumentCoder.h> <wtf/RefCounted.
 webkit_platform_header: <wtf/unix/UnixFileDescriptor.h> "ArgumentCodersUnix.h"
 #endif
 #if OS(DARWIN)
-webkit_platform_header: <wtf/MachSendRight.h> "ArgumentCodersDarwin.h"
+webkit_platform_header: <wtf/MachSendRight.h>
 #endif
 #if OS(WINDOWS)
 webkit_platform_header: <wtf/win/Win32Handle.h> "ArgumentCodersWin.h"

@@ -214,6 +214,12 @@ private:
     uint64_t m_destinationID;
 };
 
+template<>
+inline std::optional<Attachment> Decoder::decode<Attachment>()
+{
+    return takeLastAttachment();
+}
+
 inline bool alignedBufferIsLargeEnoughToContain(size_t bufferSize, const size_t alignedBufferPosition, size_t bytesNeeded)
 {
     // When bytesNeeded == 0 for the last argument and it's a variable length byte array,

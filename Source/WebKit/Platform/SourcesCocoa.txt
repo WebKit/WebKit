@@ -16,7 +16,6 @@ Platform/IPC/cocoa/ConnectionCocoa.mm
 Platform/IPC/cocoa/DaemonConnectionCocoa.mm
 Platform/IPC/cocoa/MachMessage.cpp
 
-Platform/IPC/darwin/ArgumentCodersDarwin.mm
 Platform/IPC/darwin/IPCEventDarwin.cpp
 Platform/IPC/darwin/IPCSemaphoreDarwin.cpp
 

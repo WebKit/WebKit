@@ -714,7 +714,6 @@ def argument_coder_headers_for_type(type):
         'IPC::Connection::Handle': '"Connection.h"',
         'IPC::Signal': '"IPCEvent.h"',
         'String': '"ArgumentCoders.h"',
-        'MachSendRight': '"ArgumentCodersDarwin.h"',
         'WebKit::ScriptMessageHandlerHandle': '"WebScriptMessageHandler.h"',
     }
 

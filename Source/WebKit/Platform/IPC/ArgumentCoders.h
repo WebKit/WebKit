@@ -43,9 +43,6 @@
 #include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
-#if OS(DARWIN)
-#include "ArgumentCodersDarwin.h"
-#endif
 #if OS(WINDOWS)
 #include "ArgumentCodersWin.h"
 #endif

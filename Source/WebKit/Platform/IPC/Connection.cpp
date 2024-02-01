@@ -45,7 +45,6 @@
 #include <wtf/threads/BinarySemaphore.h>
 
 #if PLATFORM(COCOA)
-#include "ArgumentCodersDarwin.h"
 #include "MachMessage.h"
 #endif
 

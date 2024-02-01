@@ -521,8 +521,14 @@ void Connection::receiveSourceEventHandler()
     if (decoder->messageName() == MessageName::InitializeConnection) {
         ASSERT(m_isServer);
         ASSERT(!m_sendPort);
-        MachSendRight sendRight;
-        if (m_isConnected || !decoder->decode(sendRight)) {
+        if (m_isConnected) {
+            // The sender sent an invalid message deliberately, close immediately.
+            ASSERT_IS_TESTING_IPC();
+            connectionDidClose();
+            return;
+        }
+        auto sendRight = decoder->decode<MachSendRight>();
+        if (!sendRight) {
             // The sender sent an invalid message deliberately, close immediately.
             ASSERT_IS_TESTING_IPC();
             connectionDidClose();
@@ -531,7 +537,7 @@ void Connection::receiveSourceEventHandler()
 
         m_isConnected = true;
 
-        if (!MACH_PORT_VALID(sendRight.sendRight())) {
+        if (!MACH_PORT_VALID(sendRight->sendRight())) {
             // The InitializeConnection message was valid message. We received MACH_PORT_DEAD
             // because by the time we read the message, the port was already closed.
             // Do not initialize the send source, as there is nobody to send to.
@@ -539,7 +545,7 @@ void Connection::receiveSourceEventHandler()
             // the NO_SENDERS notification.
             return;
         }
-        m_sendPort = sendRight.leakSendRight();
+        m_sendPort = sendRight->leakSendRight();
         initializeSendSource();
         return;
     }
