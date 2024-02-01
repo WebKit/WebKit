@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "Logging.h"
 #if USE(EXTENSIONKIT)
 #import "WKProcessExtension.h"
 
@@ -37,6 +38,10 @@ static RetainPtr<WKProcessExtension>& sharedInstance()
 }
 
 @implementation WKGrant
+- (void)invalidateGrant
+{
+    RELEASE_LOG_FAULT(Process, "-[WKGrant invalidateGrant] should never be called");
+}
 @end
 
 @implementation WKProcessExtension

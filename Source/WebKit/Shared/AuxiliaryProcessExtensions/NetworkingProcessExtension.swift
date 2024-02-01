@@ -25,6 +25,7 @@
 
 import ServiceExtensions
 @_spi(Private) import ServiceExtensions
+import os.log
 
 @objc
 @_spi(Private)
@@ -36,15 +37,19 @@ open class Grant: WKGrant {
     }
 
     deinit {
-        do {
-            try invalidate()
-        } catch {
-            NSLog("Failed to invalidate grant")
+        os_log(.info, "Deallocating grant")
+        if self.inner.valid {
+            invalidateGrant()
         }
     }
 
-    open func invalidate() throws {
-        try self.inner.invalidate()
+    public override func invalidateGrant() {
+        os_log(.info, "Invalidating grant")
+        do {
+            try self.inner.invalidate()
+        } catch {
+            os_log(.fault, "Failed to invalidate grant with error \(error)")
+        }
     }
 }
 
@@ -66,6 +71,7 @@ extension NetworkingProcessExtension : NetworkingServiceExtension {
             let grant = try self._request(capabilities: _Capability.assertion(domain: domain, name: name, environmentIdentifier: nil, willInvalidate: nil, didInvalidate: nil))
             return Grant(inner: grant)
         } catch {
+            os_log(.fault, "Failed to request grant with error \(error)")
             return WKGrant()
         }
     }
