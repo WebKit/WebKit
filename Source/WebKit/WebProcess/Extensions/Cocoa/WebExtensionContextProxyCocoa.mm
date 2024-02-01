@@ -45,29 +45,29 @@
 
 namespace WebKit {
 
-static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>& webExtensionContextProxies()
+static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>& webExtensionContextProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>> contexts;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>> contexts;
     return contexts;
 }
 
 RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
 {
-    return webExtensionContextProxies().get(identifier).get();
+    return webExtensionContextProxies().get(identifier);
 }
 
 WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextParameters& parameters)
     : m_identifier(parameters.identifier)
 {
-    ASSERT(!webExtensionContextProxies().contains(m_identifier));
-    webExtensionContextProxies().add(m_identifier, this);
+    ASSERT(!get(m_identifier));
+    webExtensionContextProxies().add(m_identifier, *this);
 
     WebProcess::singleton().addMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier, *this);
 }
 
 WebExtensionContextProxy::~WebExtensionContextProxy()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
+    WebProcess::singleton().removeMessageReceiver(*this);
 }
 
 Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExtensionContextParameters& parameters, WebPage* newPage)
@@ -84,7 +84,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         if (parameters.backgroundPageIdentifier) {
             if (newPage && parameters.backgroundPageIdentifier.value() == newPage->identifier())
                 context.setBackgroundPage(*newPage);
-            else if (auto* page = WebProcess::singleton().webPage(parameters.backgroundPageIdentifier.value()))
+            else if (RefPtr page = WebProcess::singleton().webPage(parameters.backgroundPageIdentifier.value()))
                 context.setBackgroundPage(*page);
         }
 
@@ -95,7 +95,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
 
             if (newPage && pageIdentifier == newPage->identifier())
                 context.addPopupPage(*newPage, tabIdentifier, windowIdentifier);
-            else if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+            else if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
                 context.addPopupPage(*page, tabIdentifier, windowIdentifier);
         }
 
@@ -106,19 +106,19 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
 
             if (newPage && pageIdentifier == newPage->identifier())
                 context.addTabPage(*newPage, tabIdentifier, windowIdentifier);
-            else if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+            else if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
                 context.addTabPage(*page, tabIdentifier, windowIdentifier);
         }
     };
 
-    if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
+    if (RefPtr context = get(parameters.identifier)) {
         updateProperties(*context);
         return *context;
     }
 
-    auto result = adoptRef(new WebExtensionContextProxy(parameters));
-    updateProperties(*result);
-    return result.releaseNonNull();
+    Ref result = adoptRef(*new WebExtensionContextProxy(parameters));
+    updateProperties(result);
+    return result;
 }
 
 _WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json, const URL& baseURL)

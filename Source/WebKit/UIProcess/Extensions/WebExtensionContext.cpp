@@ -38,22 +38,22 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContext>>& webExtensionContexts()
+static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& webExtensionContexts()
 {
-    static NeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContext>>> contexts;
+    static NeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>> contexts;
     return contexts;
 }
 
 WebExtensionContext* WebExtensionContext::get(WebExtensionContextIdentifier identifier)
 {
-    return webExtensionContexts().get(identifier).get();
+    return webExtensionContexts().get(identifier);
 }
 
 WebExtensionContext::WebExtensionContext()
     : m_identifier(WebExtensionContextIdentifier::generate())
 {
-    ASSERT(!webExtensionContexts().contains(m_identifier));
-    webExtensionContexts().add(m_identifier, this);
+    ASSERT(!get(m_identifier));
+    webExtensionContexts().add(m_identifier, *this);
 }
 
 WebExtensionContextParameters WebExtensionContext::parameters() const

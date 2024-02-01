@@ -39,23 +39,23 @@ namespace WebKit {
 
 constexpr auto freshlyCreatedTimeout = 5_s;
 
-static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>& webExtensionControllers()
+static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>& webExtensionControllers()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>> controllers;
     return controllers;
 }
 
 WebExtensionController* WebExtensionController::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllers().get(identifier).get();
+    return webExtensionControllers().get(identifier);
 }
 
 WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfiguration> configuration)
     : m_configuration(configuration)
     , m_identifier(WebExtensionControllerIdentifier::generate())
 {
-    ASSERT(!webExtensionControllers().contains(m_identifier));
-    webExtensionControllers().add(m_identifier, this);
+    ASSERT(!get(m_identifier));
+    webExtensionControllers().add(m_identifier, *this);
 
     // A freshly created extension controller will be used to determine if the startup event
     // should be fired for any loaded extensions during a brief time window. Start a timer
