@@ -238,7 +238,7 @@ public:
 #endif
     bool isStyledElement() const { return hasTypeFlag(TypeFlag::IsHTMLElement) || hasTypeFlag(TypeFlag::IsSVGElement) || hasTypeFlag(TypeFlag::IsMathMLElement); }
     virtual bool isAttributeNode() const { return false; }
-    virtual bool isFrameOwnerElement() const { return false; }
+    virtual bool isHTMLFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
 
     bool isDocumentNode() const { return nodeType() == DOCUMENT_NODE; }

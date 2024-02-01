@@ -432,9 +432,8 @@ void InspectorDOMAgent::unbind(Node& node)
 
     m_idToNode.remove(id);
 
-    if (node.isFrameOwnerElement()) {
-        const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(&node);
-        if (Document* contentDocument = frameOwner->contentDocument())
+    if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node)) {
+        if (RefPtr contentDocument = frameOwner->contentDocument())
             unbind(*contentDocument);
     }
 

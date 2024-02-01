@@ -74,7 +74,7 @@ protected:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
 
 private:
-    bool isFrameOwnerElement() const final { return true; }
+    bool isHTMLFrameOwnerElement() const final { return true; }
 
     WeakPtr<Frame> m_contentFrame;
     SandboxFlags m_sandboxFlags { SandboxNone };
@@ -120,5 +120,5 @@ inline RefPtr<HTMLFrameOwnerElement> Frame::protectedOwnerElement() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFrameOwnerElement)
-    static bool isType(const WebCore::Node& node) { return node.isFrameOwnerElement(); }
+    static bool isType(const WebCore::Node& node) { return node.isHTMLFrameOwnerElement(); }
 SPECIALIZE_TYPE_TRAITS_END()

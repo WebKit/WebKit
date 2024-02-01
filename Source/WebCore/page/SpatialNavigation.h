@@ -111,7 +111,6 @@ struct FocusCandidate {
     explicit FocusCandidate(HTMLAreaElement* area, FocusDirection);
     bool isNull() const { return !visibleNode; }
     bool inScrollableContainer() const { return visibleNode && enclosingScrollableBox; }
-    bool isFrameOwnerElement() const { return visibleNode && visibleNode->isFrameOwnerElement(); }
     Document* document() const { return visibleNode ? &visibleNode->document() : 0; }
 
     // We handle differently visibleNode and FocusableNode to properly handle the areas of imagemaps,

@@ -766,7 +766,7 @@ LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement* area, FocusDir
 
 HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate& candidate)
 {
-    return candidate.isFrameOwnerElement() ? downcast<HTMLFrameOwnerElement>(candidate.visibleNode) : nullptr;
+    return dynamicDowncast<HTMLFrameOwnerElement>(candidate.visibleNode);
 }
 
 } // namespace WebCore

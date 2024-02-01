@@ -2079,8 +2079,8 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
     fputs(indent.utf8().data(), stderr);
     node->showNode();
     if (!node->isShadowRoot()) {
-        if (node->isFrameOwnerElement())
-            showSubTreeAcrossFrame(static_cast<const HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
+        if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node))
+            showSubTreeAcrossFrame(frameOwner->protectedContentDocument().get(), markedNode, indent + "\t");
         if (RefPtr shadowRoot = node->shadowRoot())
             showSubTreeAcrossFrame(shadowRoot.get(), markedNode, indent + "\t");
     }
