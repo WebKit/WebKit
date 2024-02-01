@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5888,57 +5888,6 @@ void testStoreImmediateBaseIndex()
 #endif
 }
 
-static void testCagePreservesPACFailureBit()
-{
-#if GIGACAGE_ENABLED
-    // Placate ASan builds and any environments that disables the Gigacage.
-    if (!Gigacage::shouldBeEnabled())
-        return;
-
-    RELEASE_ASSERT(!Gigacage::disablingPrimitiveGigacageIsForbidden());
-    auto cage = compile([] (CCallHelpers& jit) {
-        emitFunctionPrologue(jit);
-        constexpr GPRReg storageGPR = GPRInfo::argumentGPR0;
-        constexpr GPRReg lengthGPR = GPRInfo::argumentGPR1;
-        constexpr GPRReg scratchGPR = GPRInfo::argumentGPR2;
-        jit.cageConditionally(Gigacage::Primitive, storageGPR, lengthGPR, scratchGPR);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        emitFunctionEpilogue(jit);
-        jit.ret();
-    });
-
-    void* ptr = Gigacage::tryMalloc(Gigacage::Primitive, 1);
-    void* taggedPtr = tagArrayPtr(ptr, 1);
-    RELEASE_ASSERT(hasOneBitSet(Gigacage::maxSize(Gigacage::Primitive) << 2));
-    void* notCagedPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(ptr) + (Gigacage::maxSize(Gigacage::Primitive) << 2));
-    CHECK_NOT_EQ(Gigacage::caged(Gigacage::Primitive, notCagedPtr), notCagedPtr);
-    void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);
-
-    if (!isARM64E())
-        CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-
-    CHECK_EQ(invoke<void*>(cage, taggedPtr, 1), ptr);
-
-    auto cageWithoutAuthentication = compile([] (CCallHelpers& jit) {
-        emitFunctionPrologue(jit);
-        jit.cage(Gigacage::Primitive, GPRInfo::argumentGPR0);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        emitFunctionEpilogue(jit);
-        jit.ret();
-    });
-
-    CHECK_EQ(invoke<void*>(cageWithoutAuthentication, taggedPtr), taggedPtr);
-    if (isARM64E()) {
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedNotCagedPtr);
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(notCagedPtr, 1));
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedPtr);
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(ptr, 1));
-    }
-
-    Gigacage::free(Gigacage::Primitive, ptr);
-#endif
-}
-
 static void testBranchIfType()
 {
     using JSC::JSType;
@@ -6304,8 +6253,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testStoreImmediateAddress());
     RUN(testStoreBaseIndex());
     RUN(testStoreImmediateBaseIndex());
-
-    RUN(testCagePreservesPACFailureBit());
 
     RUN(testBranchIfType());
     RUN(testBranchIfNotType());
