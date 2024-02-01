@@ -231,7 +231,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         if (auto* text = dynamicDowncast<Text>(node)) {
             auto* textUpdate = m_styleUpdate->textUpdate(*text);
             bool didCreateParent = parent().update && parent().update->change == Style::Change::Renderer;
-            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text->data().containsOnly<isASCIIWhitespace>();
+            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text->containsOnlyASCIIWhitespace();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
                 updateTextRenderer(*text, textUpdate);
 
@@ -520,7 +520,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         return true;
     if (!textNode.length())
         return false;
-    if (!textNode.data().containsOnly<isASCIIWhitespace>())
+    if (!textNode.containsOnlyASCIIWhitespace())
         return true;
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
