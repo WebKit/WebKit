@@ -88,8 +88,14 @@ static UnixFileDescriptor findDevice(GError** error)
             continue;
 
         fd = UnixFileDescriptor { open(device->nodes[DRM_NODE_PRIMARY], O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-        if (fd)
+        if (!fd)
+            continue;
+
+        WPE::DRM::UniquePtr<drmModeRes> resources(drmModeGetResources(fd.value()));
+        if (resources && resources->count_crtcs && resources->count_connectors && resources->count_encoders)
             break;
+
+        fd.release();
     }
 
     drmFreeDevices(devices, numDevices);
