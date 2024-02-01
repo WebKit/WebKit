@@ -41,11 +41,11 @@
 #include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
-#include "SharedMemory.h"
 #include "StreamClientConnection.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/Timer.h>
 #include <span>
 #include <wtf/Deque.h>
@@ -180,7 +180,7 @@ private:
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.
-    std::optional<SharedMemory::Handle> updateSharedMemoryForGetPixelBuffer(size_t dataSize);
+    std::optional<WebCore::SharedMemory::Handle> updateSharedMemoryForGetPixelBuffer(size_t dataSize);
     void destroyGetPixelBufferSharedMemory();
 
     // Messages to be received.
@@ -195,7 +195,7 @@ private:
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
-    RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
+    RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     MarkSurfacesAsVolatileRequestIdentifier m_currentVolatilityRequest;
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;

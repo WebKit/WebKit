@@ -111,7 +111,7 @@ private:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
-    void takeOwnershipOfMemory(WebKit::SharedMemory::Handle&&);
+    void takeOwnershipOfMemory(WebCore::SharedMemory::Handle&&);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, uint64_t, CompletionHandler<void()>&&);
     void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);

@@ -27,8 +27,8 @@
 
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
-#include "SharedMemory.h"
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -109,7 +109,7 @@ private:
     void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, RefPtr<WebCore::SharedBuffer>&&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
 
 #if ENABLE(IPC_TESTING_API)
-    void testIPCSharedMemory(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, WebKit::SharedMemory::Handle&&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t, String)>&&);
+    void testIPCSharedMemory(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, WebCore::SharedMemory::Handle&&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t, String)>&&);
 #endif
 
 #endif

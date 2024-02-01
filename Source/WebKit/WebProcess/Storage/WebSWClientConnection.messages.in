@@ -36,7 +36,7 @@ messages -> WebSWClientConnection {
     UpdateBackgroundFetchRegistration(struct WebCore::BackgroundFetchInformation information)
 
     SetSWOriginTableIsImported()
-    SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
+    SetSWOriginTableSharedMemory(WebCore::SharedMemory::Handle handle)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)

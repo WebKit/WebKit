@@ -30,13 +30,13 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "RemoteVideoFrameIdentifier.h"
-#include "SharedMemory.h"
 #include "SharedVideoFrame.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "VideoCodecType.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoDecoder.h>
 #include <atomic>
@@ -97,7 +97,7 @@ private:
     void flushEncoder(VideoEncoderIdentifier, CompletionHandler<void()>&&);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
     void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(VideoEncoderIdentifier, SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(VideoEncoderIdentifier, WebCore::SharedMemory::Handle&&);
     void setRTCLoggingLevel(WTFLogLevel);
 
     void notifyEncoderResult(VideoEncoderIdentifier, bool);

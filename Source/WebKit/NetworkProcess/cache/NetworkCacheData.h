@@ -44,9 +44,11 @@
 #include <wtf/Box.h>
 #endif
 
-namespace WebKit {
-
+namespace WebCore {
 class SharedMemory;
+}
+
+namespace WebKit {
 
 namespace NetworkCache {
 
@@ -76,7 +78,7 @@ public:
     size_t size() const { return m_size; }
     std::span<const uint8_t> span() const { return { data(), size() }; }
     bool isMap() const { return m_isMap; }
-    RefPtr<SharedMemory> tryCreateSharedMemory() const;
+    RefPtr<WebCore::SharedMemory> tryCreateSharedMemory() const;
 
     Data subrange(size_t offset, size_t) const;
 

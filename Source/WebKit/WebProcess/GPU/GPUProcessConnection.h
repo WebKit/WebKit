@@ -31,9 +31,9 @@
 #include "Connection.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
-#include "SharedMemory.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>

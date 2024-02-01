@@ -154,7 +154,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle) {
         if (!imageHandle)
             return;
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         tracePoint(TakeSnapshotEnd, !!cgImage);
         [thumbnailView _didTakeSnapshot:cgImage.get()];

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ShareablePixelBuffer.h"
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -79,7 +79,7 @@ private:
     void enqueueVideoFrame(SharedVideoFrame&&);
     void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
     void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender

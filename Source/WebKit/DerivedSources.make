@@ -513,7 +513,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/IPC/SharedBufferReference.serialization.in \
 	Platform/IPC/SharedFileHandle.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
-	Platform/SharedMemory.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
 	Shared/API/APIArray.serialization.in \
 	Shared/API/APIData.serialization.in \

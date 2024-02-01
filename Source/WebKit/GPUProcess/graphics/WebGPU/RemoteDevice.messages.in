@@ -46,7 +46,7 @@ messages -> RemoteDevice NotRefCounted Stream {
     void SetLabel(String label)
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
-    void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
+    void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
     void ImportExternalTextureFromVideoFrame(struct WebKit::WebGPU::ExternalTextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
 #endif
 }

@@ -28,9 +28,11 @@
 #include <WebCore/SharedStringHash.h>
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
-
+namespace WebCore {
 class SharedMemory;
+}
+
+namespace WebKit {
 
 class SharedStringHashTableReadOnly {
 public:
@@ -39,13 +41,13 @@ public:
 
     bool contains(WebCore::SharedStringHash) const;
 
-    SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
-    void setSharedMemory(RefPtr<SharedMemory>&&);
+    WebCore::SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
+    void setSharedMemory(RefPtr<WebCore::SharedMemory>&&);
 
 protected:
     WebCore::SharedStringHash* findSlot(WebCore::SharedStringHash) const;
 
-    RefPtr<SharedMemory> m_sharedMemory;
+    RefPtr<WebCore::SharedMemory> m_sharedMemory;
     unsigned m_tableSize { 0 };
     unsigned m_tableSizeMask { 0 };
     WebCore::SharedStringHash* m_table { nullptr };

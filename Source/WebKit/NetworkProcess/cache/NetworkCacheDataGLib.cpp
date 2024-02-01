@@ -28,7 +28,7 @@
 
 #if USE(GLIB)
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>

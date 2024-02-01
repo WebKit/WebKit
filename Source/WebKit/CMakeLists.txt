@@ -384,8 +384,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Platform/IPC/SharedFileHandle.serialization.in
     Platform/IPC/StreamServerConnection.serialization.in
 
-    Platform/SharedMemory.serialization.in
-
     Shared/AccessibilityPreferences.serialization.in
     Shared/AuxiliaryProcessCreationParameters.serialization.in
     Shared/BackgroundFetchChange.serialization.in

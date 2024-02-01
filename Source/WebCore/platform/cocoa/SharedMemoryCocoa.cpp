@@ -26,12 +26,11 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "ArgumentCoders.h"
 #include "Logging.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/ProcessIdentity.h>
-#include <WebCore/SharedBuffer.h>
+#include "ProcessIdentity.h"
+#include "SharedBuffer.h"
 #include <mach/mach_error.h>
+#include <mach/mach_init.h>
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>
 #include <wtf/MachSendRight.h>
@@ -42,7 +41,7 @@
 #include <mach/memory_entry.h>
 #endif
 
-namespace WebKit {
+namespace WebCore {
 
 #if HAVE(MACH_MEMORY_ENTRY)
 static int toVMMemoryLedger(MemoryLedger memoryLedger)
@@ -77,7 +76,7 @@ void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 #endif
 }
 
-void SharedMemoryHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
+void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
 {
 #if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
     if (!m_handle)
@@ -100,7 +99,7 @@ static inline mach_vm_address_t toVMAddress(void* pointer)
 {
     return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
 }
-    
+
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     ASSERT(size);
@@ -113,7 +112,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
         return nullptr;
     }
 
-    auto sharedMemory = adoptRef(*new SharedMemory);
+    Ref sharedMemory = adoptRef(*new SharedMemory);
     sharedMemory->m_size = size;
     sharedMemory->m_data = toPointer(address);
     sharedMemory->m_protection = Protection::ReadWrite;
@@ -133,7 +132,7 @@ static inline vm_prot_t machProtection(SharedMemory::Protection protection)
     return VM_PROT_NONE;
 }
 
-static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
+static MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
 {
     memory_object_size_t memoryObjectSize = size;
     mach_port_t port = MACH_PORT_NULL;
@@ -159,7 +158,7 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
 
     RELEASE_ASSERT(memoryObjectSize >= size);
 
-    return WTF::MachSendRight::adopt(port);
+    return MachSendRight::adopt(port);
 }
 
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
@@ -170,7 +169,7 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection p
     if (!sendRight)
         return nullptr;
 
-    auto sharedMemory(adoptRef(*new SharedMemory));
+    Ref sharedMemory = adoptRef(*new SharedMemory);
     sharedMemory->m_size = size;
     sharedMemory->m_data = nullptr;
     sharedMemory->m_sendRight = WTFMove(sendRight);
@@ -190,7 +189,7 @@ RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
         return nullptr;
     }
 
-    auto sharedMemory(adoptRef(*new SharedMemory));
+    Ref sharedMemory = adoptRef(*new SharedMemory);
     sharedMemory->m_size = handle.m_size;
     sharedMemory->m_data = toPointer(mappedAddress);
     sharedMemory->m_protection = protection;
@@ -208,7 +207,7 @@ SharedMemory::~SharedMemory()
         }
     }
 }
-    
+
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
     auto sendRight = createSendRight(protection);
@@ -229,4 +228,4 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
 }
 
-} // namespace WebKit
+} // namespace WebCore

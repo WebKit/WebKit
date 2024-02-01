@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SharedMemory.h"
 #include "SharedStringHashTableReadOnly.h"
+#include <WebCore/SharedMemory.h>
 
 namespace WebCore {
 class SecurityOriginData;
@@ -42,7 +42,7 @@ public:
     bool isImported() const { return m_isImported; }
     void setIsImported() { m_isImported = true; }
     bool contains(const WebCore::SecurityOriginData&) const;
-    void setSharedMemory(SharedMemory::Handle&&);
+    void setSharedMemory(WebCore::SharedMemory::Handle&&);
 
 private:
     SharedStringHashTableReadOnly m_serviceWorkerOriginTable;

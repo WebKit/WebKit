@@ -27,7 +27,7 @@ messages -> RemoteVideoFrameObjectHeap NotRefCounted {
     GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read, bool canSendIOSurface) AllowedWhenWaitingForSyncReply
     PixelBuffer(WebKit::RemoteVideoFrameReadReference read) -> (RetainPtr<CVPixelBufferRef> result) Synchronous
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle)
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
     ConvertFrameBuffer(struct WebKit::SharedVideoFrame frame) -> (WebCore::DestinationColorSpace space) Synchronous
 #endif
     ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write) AllowedWhenWaitingForSyncReply

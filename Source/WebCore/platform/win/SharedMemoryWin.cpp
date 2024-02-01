@@ -29,7 +29,7 @@
 
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
+namespace WebCore {
 
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
@@ -95,4 +95,4 @@ auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
     return { Handle(Win32Handle::adopt(duplicatedHandle), m_size) };
 }
 
-} // namespace WebKit
+} // namespace WebCore

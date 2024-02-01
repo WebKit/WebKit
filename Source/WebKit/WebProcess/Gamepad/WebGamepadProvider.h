@@ -38,7 +38,6 @@ enum class EventMakesGamepadsVisible : bool;
 
 namespace WebKit {
 
-class SharedMemory;
 class WebGamepad;
 
 class GamepadData;

@@ -92,9 +92,9 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void setSharedMemory(SharedMemory::Handle&& handle)
+    void setSharedMemory(WebCore::SharedMemory::Handle&& handle)
     {
-        m_frameCount = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite);
+        m_frameCount = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
     }
 
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
@@ -167,7 +167,7 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
-    RefPtr<SharedMemory> m_frameCount;
+    RefPtr<WebCore::SharedMemory> m_frameCount;
     const uint32_t m_numOutputChannels;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
@@ -181,7 +181,7 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemory::Handle&& handle)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
 {
     MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 

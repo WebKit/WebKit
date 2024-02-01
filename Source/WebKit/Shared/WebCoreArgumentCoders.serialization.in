@@ -2381,6 +2381,29 @@ class WebCore::PasteboardCustomData {
     Vector<WebCore::PasteboardCustomData::Entry> data();
 };
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+headers: <wtf/unix/UnixFileDescriptor.h> "ArgumentCodersUnix.h"
+#endif
+#if OS(DARWIN)
+header: <wtf/MachSendRight.h>
+#endif
+#if OS(WINDOWS)
+headers: <wtf/win/Win32Handle.h> "ArgumentCodersWin.h"
+#endif
+
+[CustomHeader, RValue] class WebCore::SharedMemoryHandle {
+#if USE(UNIX_DOMAIN_SOCKETS)
+    [Validator='!!m_handle'] UnixFileDescriptor m_handle;
+#endif
+#if OS(DARWIN)
+    [Validator='!!m_handle'] MachSendRight m_handle;
+#endif
+#if OS(WINDOWS)
+    [Validator='!!m_handle'] Win32Handle m_handle;
+#endif
+    size_t m_size;
+};
+
 class WebCore::DatabaseDetails {
     String name();
     String displayName();

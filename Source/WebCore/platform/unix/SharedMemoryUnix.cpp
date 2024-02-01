@@ -50,7 +50,7 @@
 #include <sys/syscall.h>
 #endif
 
-namespace WebKit {
+namespace WebCore {
 
 UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {
@@ -183,6 +183,6 @@ auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
     return { Handle(WTFMove(duplicate), m_size) };
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif

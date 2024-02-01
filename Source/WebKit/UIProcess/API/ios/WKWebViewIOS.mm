@@ -4180,7 +4180,7 @@ static bool isLockdownModeWarningNeeded()
         if (!imageHandle)
             return completionHandler(nil);
 
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
 
         if (!bitmap)
             return completionHandler(nil);

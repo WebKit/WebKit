@@ -43,7 +43,7 @@ std::optional<SharedMemoryHandle> WebCompiledContentRuleListData::createDataHand
     return data->createHandle(protection);
 }
 
-WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebKit::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
     : identifier(WTFMove(identifier))
     , data(dataHandle ? SharedMemory::map(WTFMove(*dataHandle), SharedMemory::Protection::ReadOnly) : nullptr)
     , actionsOffset(actionsOffset)

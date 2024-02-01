@@ -31,8 +31,8 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
-#include "SharedMemory.h"
 #include <WebCore/MediaDescription.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>

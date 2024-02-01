@@ -75,7 +75,7 @@ private:
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;

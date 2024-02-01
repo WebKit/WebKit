@@ -29,8 +29,8 @@
 #pragma once
 
 #include "DataReference.h"
-#include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <optional>
 
 namespace IPC {
@@ -58,7 +58,7 @@ public:
 #if !USE(UNIX_DOMAIN_SOCKETS)
     struct SerializableBuffer {
         size_t size;
-        std::optional<WebKit::SharedMemory::Handle> handle;
+        std::optional<WebCore::SharedMemory::Handle> handle;
     };
     SharedBufferReference(std::optional<SerializableBuffer>&&);
 #endif
@@ -83,16 +83,16 @@ public:
     // once it's deserialised over IPC.
     RefPtr<WebCore::SharedBuffer> unsafeBuffer() const;
     const uint8_t* data() const;
-    RefPtr<WebKit::SharedMemory> sharedCopy() const;
+    RefPtr<WebCore::SharedMemory> sharedCopy() const;
 
 private:
-    SharedBufferReference(Ref<WebKit::SharedMemory>&& memory, size_t size)
+    SharedBufferReference(Ref<WebCore::SharedMemory>&& memory, size_t size)
         : m_size(size)
         , m_memory(WTFMove(memory)) { }
 
     size_t m_size { 0 };
     RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
-    RefPtr<WebKit::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
+    RefPtr<WebCore::SharedMemory> m_memory; // Only set on the receiver side and if m_size isn't 0.
 };
 
 } // namespace IPC

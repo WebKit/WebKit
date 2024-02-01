@@ -97,7 +97,7 @@ private:
     float m_remoteSampleRate;
 
     RefPtr<Thread> m_renderThread;
-    RefPtr<SharedMemory> m_frameCount;
+    RefPtr<WebCore::SharedMemory> m_frameCount;
     uint32_t m_lastFrameCount { 0 };
     std::atomic<bool> m_shouldStopThread { false };
     bool m_isRealtimeThread { false };

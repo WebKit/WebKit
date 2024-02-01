@@ -28,7 +28,6 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
-#import "SharedMemory.h"
 #import <CoreText/CoreText.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/DataDetectorElementInfo.h>
@@ -37,6 +36,7 @@
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCustomPlatformData.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SharedMemory.h>
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 
@@ -96,10 +96,10 @@ void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const We
     const auto& creationData = platformData.creationData();
     encoder << static_cast<bool>(creationData);
     if (creationData) {
-        std::optional<WebKit::SharedMemory::Handle> handle;
+        std::optional<WebCore::SharedMemory::Handle> handle;
         {
-            auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(creationData->fontFaceData);
-            handle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly);
+            auto sharedMemoryBuffer = WebCore::SharedMemory::copyBuffer(creationData->fontFaceData);
+            handle = sharedMemoryBuffer->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
         }
         encoder << creationData->fontFaceData->size();
         encoder << WTFMove(handle);
@@ -162,14 +162,14 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         if (!bufferSize)
             return std::nullopt;
 
-        auto handle = decoder.decode<std::optional<WebKit::SharedMemory::Handle>>();
+        auto handle = decoder.decode<std::optional<WebCore::SharedMemory::Handle>>();
         if (UNLIKELY(!decoder.isValid()))
             return std::nullopt;
 
         if (!*handle)
             return std::nullopt;
 
-        auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(**handle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto sharedMemoryBuffer = WebCore::SharedMemory::map(WTFMove(**handle), WebCore::SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryBuffer)
             return std::nullopt;
 

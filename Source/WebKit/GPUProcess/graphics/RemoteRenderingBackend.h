@@ -113,8 +113,8 @@ public:
 
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
-    void setSharedMemoryForGetPixelBuffer(RefPtr<SharedMemory> memory) { m_getPixelBufferSharedMemory = WTFMove(memory); }
-    RefPtr<SharedMemory> sharedMemoryForGetPixelBuffer() const { return m_getPixelBufferSharedMemory; }
+    void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTFMove(memory); }
+    RefPtr<WebCore::SharedMemory> sharedMemoryForGetPixelBuffer() const { return m_getPixelBufferSharedMemory; }
 
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
 
@@ -187,7 +187,7 @@ private:
     Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebCore::ProcessIdentity m_resourceOwner;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
-    RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
+    RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
 #if HAVE(IOSURFACE)
     Ref<WebCore::IOSurfacePool> m_ioSurfacePool;
 #endif

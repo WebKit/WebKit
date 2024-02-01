@@ -113,5 +113,6 @@ platform/text/enchant/TextCheckerEnchant.cpp
 platform/text/hyphen/HyphenationLibHyphen.cpp
 
 platform/unix/LoggingUnix.cpp
+platform/unix/SharedMemoryUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp

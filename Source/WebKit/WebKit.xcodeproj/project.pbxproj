@@ -204,7 +204,6 @@
 		1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */; };
 		1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2464F21891E45100234C5B /* APILoaderClient.h */; };
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
-		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A256E3818A1A788006FB922 /* WKNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A256E3618A1A788006FB922 /* WKNavigationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A256E3A18A1A7DF006FB922 /* WKNavigationActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A256E3918A1A7DF006FB922 /* WKNavigationActionInternal.h */; };
 		1A2D956F12848564001EB962 /* AuxiliaryProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D956D12848564001EB962 /* AuxiliaryProcess.h */; };
@@ -3298,7 +3297,6 @@
 		1A2464F21891E45100234C5B /* APILoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APILoaderClient.h; sourceTree = "<group>"; };
 		1A24B5F011F531E800C38269 /* MachUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachUtilities.cpp; sourceTree = "<group>"; };
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
-		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
 		1A256E3518A1A788006FB922 /* WKNavigationAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationAction.mm; sourceTree = "<group>"; };
 		1A256E3618A1A788006FB922 /* WKNavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationAction.h; sourceTree = "<group>"; };
 		1A256E3918A1A7DF006FB922 /* WKNavigationActionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationActionInternal.h; sourceTree = "<group>"; };
@@ -5112,7 +5110,6 @@
 		441379602964F0C2003C34C6 /* CacheStoragePolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStoragePolicy.serialization.in; sourceTree = "<group>"; };
 		442E7BE827B4572B00C69AC1 /* RevealItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RevealItem.mm; sourceTree = "<group>"; };
 		442E7BEA27B4581300C69AC1 /* RevealItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RevealItem.h; sourceTree = "<group>"; };
-		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		4476EF0825BFC8B7004A0587 /* _WKAppHighlightDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAppHighlightDelegate.h; sourceTree = "<group>"; };
 		4482734624528F6000A95493 /* CocoaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaImage.h; sourceTree = "<group>"; };
@@ -6839,7 +6836,6 @@
 		A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKDownload.mm; sourceTree = "<group>"; };
 		A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadInternal.h; sourceTree = "<group>"; };
 		A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadDelegate.h; sourceTree = "<group>"; };
-		A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemory.cpp; sourceTree = "<group>"; };
 		A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionCapabilityGranter.h; sourceTree = "<group>"; };
 		A1AE0EC22B1663D4008A2563 /* ExtensionCapabilityGranter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtensionCapabilityGranter.mm; sourceTree = "<group>"; };
 		A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSampleByteRange.h; sourceTree = "<group>"; };
@@ -11558,7 +11554,6 @@
 				A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */,
 				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,
 				A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */,
-				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
 				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				F4648E90296E81F500744170 /* WebPrivacyHelpers.h */,
 				F4648E91296E81F500744170 /* WebPrivacyHelpers.mm */,
@@ -14065,8 +14060,6 @@
 				0FDCD7F61D47E92A009F08BC /* LogInitialization.h */,
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
 				C0E3AA441209E2BA00A49D01 /* Module.h */,
-				A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */,
-				1A24BED3120894D100FBB059 /* SharedMemory.h */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -16061,7 +16054,6 @@
 				A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */,
 				CD4B4D9D1E765E0000D27092 /* SharedCARingBuffer.h in Headers */,
 				93122C862710CCDF001D819F /* SharedFileHandle.h in Headers */,
-				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,

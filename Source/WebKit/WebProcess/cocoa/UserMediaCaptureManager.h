@@ -28,12 +28,12 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "RemoteCaptureSampleManager.h"
-#include "SharedMemory.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/DisplayCaptureManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

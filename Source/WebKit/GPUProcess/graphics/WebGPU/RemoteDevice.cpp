@@ -165,7 +165,7 @@ void RemoteDevice::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteDevice::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
+void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& handle)
 {
     m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
 }

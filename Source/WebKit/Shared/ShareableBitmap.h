@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "SharedMemory.h"
 #include <WebCore/CopyImageOptions.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/ExportMacros.h>
@@ -98,22 +98,22 @@ class ShareableBitmapHandle  {
 public:
     ShareableBitmapHandle(ShareableBitmapHandle&&) = default;
     explicit ShareableBitmapHandle(const ShareableBitmapHandle&) = default;
-    ShareableBitmapHandle(SharedMemory::Handle&&, const ShareableBitmapConfiguration&);
+    ShareableBitmapHandle(WebCore::SharedMemory::Handle&&, const ShareableBitmapConfiguration&);
 
     ShareableBitmapHandle& operator=(ShareableBitmapHandle&&) = default;
 
-    SharedMemory::Handle& handle() { return m_handle; }
+    WebCore::SharedMemory::Handle& handle() { return m_handle; }
 
     // Take ownership of the memory for process memory accounting purposes.
-    void takeOwnershipOfMemory(MemoryLedger) const;
+    void takeOwnershipOfMemory(WebCore::MemoryLedger) const;
     // Transfer ownership of the memory for process memory accounting purposes.
-    void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
+    void setOwnershipOfMemory(const WebCore::ProcessIdentity&, WebCore::MemoryLedger) const;
 
 private:
     friend struct IPC::ArgumentCoder<ShareableBitmapHandle, void>;
     friend class ShareableBitmap;
 
-    SharedMemory::Handle m_handle;
+    WebCore::SharedMemory::Handle m_handle;
     ShareableBitmapConfiguration m_configuration;
 };
 
@@ -125,7 +125,7 @@ public:
     static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+    static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<WebCore::SharedMemory>&&);
 
     // Create a shareable bitmap from a NativeImage.
 #if USE(CG)
@@ -135,12 +135,12 @@ public:
     static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
 
     // Create a shareable bitmap from a handle.
-    static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
+    static RefPtr<ShareableBitmap> create(Handle&&, WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite);
     
     // Create a shareable bitmap from a ReadOnly handle.
     static std::optional<Ref<ShareableBitmap>> createReadOnly(std::optional<Handle>&&);
 
-    std::optional<Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    std::optional<Handle> createHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const;
     
     // Create a ReadOnly handle.
     std::optional<Handle> createReadOnlyHandle() const;
@@ -184,7 +184,7 @@ public:
 #endif
 
 private:
-    ShareableBitmap(ShareableBitmapConfiguration, Ref<SharedMemory>&&);
+    ShareableBitmap(ShareableBitmapConfiguration, Ref<WebCore::SharedMemory>&&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;
@@ -196,9 +196,9 @@ private:
 #endif
 
     ShareableBitmapConfiguration m_configuration;
-    Ref<SharedMemory> m_sharedMemory;
+    Ref<WebCore::SharedMemory> m_sharedMemory;
 #if USE(CG)
-    std::optional<SharedMemoryHandle> m_ownershipHandle;
+    std::optional<WebCore::SharedMemoryHandle> m_ownershipHandle;
     bool m_releaseBitmapContextDataCalled : 1 { false };
 #endif
 };

@@ -2143,6 +2143,7 @@ platform/ScrollingMomentumCalculator.cpp
 platform/SerializedPlatformDataCue.cpp
 platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp
+platform/SharedMemory.cpp
 platform/SharedStringHash.cpp
 platform/SimpleCaretAnimator.cpp
 platform/SleepDisabler.cpp

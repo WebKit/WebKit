@@ -100,7 +100,7 @@ void RemoteImageBuffer::getPixelBufferWithNewMemory(SharedMemory::Handle&& handl
 {
     assertIsCurrent(workQueue());
     m_backend->setSharedMemoryForGetPixelBuffer(nullptr);
-    auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadWrite);
+    auto sharedMemory = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
     MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped."_s);
     m_backend->setSharedMemoryForGetPixelBuffer(WTFMove(sharedMemory));
     getPixelBuffer(WTFMove(destinationFormat), WTFMove(srcRect), WTFMove(completionHandler));

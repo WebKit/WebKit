@@ -66,6 +66,7 @@ list(APPEND WebCore_SOURCES
     platform/text/LocaleICU.cpp
 
     platform/unix/LoggingUnix.cpp
+    platform/unix/SharedMemoryUnix.cpp
 
     rendering/playstation/RenderThemePlayStation.cpp
 )

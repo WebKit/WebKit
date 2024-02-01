@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkCacheData.h"
 
-#import "SharedMemory.h"
+#import <WebCore/SharedMemory.h>
 #import <dispatch/dispatch.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
@@ -105,12 +105,12 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::Platfor
     return { WTFMove(bodyMap), Data::Backing::Map };
 }
 
-RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
 {
     if (isNull() || !isMap())
         return nullptr;
 
-    return SharedMemory::wrapMap(const_cast<uint8_t*>(data()), m_size, SharedMemory::Protection::ReadOnly);
+    return WebCore::SharedMemory::wrapMap(const_cast<uint8_t*>(data()), m_size, WebCore::SharedMemory::Protection::ReadOnly);
 }
 
 }

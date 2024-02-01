@@ -30,8 +30,8 @@
 
 #include "DataReference.h"
 #include "IPCUtilities.h"
-#include "SharedMemory.h"
 #include "UnixMessage.h"
+#include <WebCore/SharedMemory.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
@@ -172,7 +172,7 @@ bool Connection::processMessage()
     }
 
     Vector<Attachment> attachments(attachmentCount);
-    RefPtr<WebKit::SharedMemory> oolMessageBody;
+    RefPtr<WebCore::SharedMemory> oolMessageBody;
 
     size_t fdIndex = 0;
     for (size_t i = 0; i < attachmentCount; ++i) {
@@ -194,8 +194,8 @@ bool Connection::processMessage()
             return false;
         }
 
-        auto handle = WebKit::SharedMemory::Handle { WTFMove(fd), messageInfo.bodySize() };
-        oolMessageBody = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto handle = WebCore::SharedMemory::Handle { WTFMove(fd), messageInfo.bodySize() };
+        oolMessageBody = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
             ASSERT_NOT_REACHED();
             return false;
@@ -408,11 +408,11 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     size_t messageSizeWithBodyInline = sizeof(MessageInfo) + (outputMessage.attachments().size() * sizeof(AttachmentInfo)) + outputMessage.bodySize();
     if (messageSizeWithBodyInline > messageMaxSize && outputMessage.bodySize()) {
-        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::allocate(outputMessage.bodySize());
+        RefPtr<WebCore::SharedMemory> oolMessageBody = WebCore::SharedMemory::allocate(outputMessage.bodySize());
         if (!oolMessageBody)
             return false;
 
-        auto handle = oolMessageBody->createHandle(WebKit::SharedMemory::Protection::ReadOnly);
+        auto handle = oolMessageBody->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
         if (!handle)
             return false;
 

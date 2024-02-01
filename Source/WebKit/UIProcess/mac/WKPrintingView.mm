@@ -238,7 +238,7 @@ static void pageDidDrawToImage(std::optional<WebKit::ShareableBitmap::Handle>&& 
         ASSERT([view _isPrintingPreview]);
 
         if (imageHandle) {
-            auto image = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+            auto image = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
 
             if (image)
                 view->_pagePreviews.add(iter->value, image);

@@ -92,6 +92,7 @@ platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
 
 platform/unix/LoggingUnix.cpp
+platform/unix/SharedMemoryUnix.cpp
 
 platform/wpe/PlatformScreenWPE.cpp
 

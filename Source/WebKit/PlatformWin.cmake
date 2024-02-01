@@ -43,7 +43,6 @@ list(APPEND WebKit_SOURCES
 
     Platform/win/LoggingWin.cpp
     Platform/win/ModuleWin.cpp
-    Platform/win/SharedMemoryWin.cpp
 
     Shared/API/c/cairo/WKImageCairo.cpp
 

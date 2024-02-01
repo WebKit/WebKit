@@ -28,8 +28,8 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/SharedMemory.h>
 
 namespace IPC {
 
@@ -95,7 +95,7 @@ const uint8_t* SharedBufferReference::data() const
     return downcast<SharedBuffer>(m_buffer.get())->data();
 }
 
-RefPtr<WebKit::SharedMemory> SharedBufferReference::sharedCopy() const
+RefPtr<WebCore::SharedMemory> SharedBufferReference::sharedCopy() const
 {
     if (!m_size)
         return nullptr;

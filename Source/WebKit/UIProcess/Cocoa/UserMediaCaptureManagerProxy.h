@@ -42,12 +42,12 @@
 
 namespace WebCore {
 class PlatformMediaSessionManager;
+class SharedMemory;
 struct VideoPresetData;
 }
 
 namespace WebKit {
 
-class SharedMemory;
 class WebProcessProxy;
 
 class UserMediaCaptureManagerProxy : public IPC::MessageReceiver {

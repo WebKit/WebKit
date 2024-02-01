@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SharedMemory.h"
 #include "SharedStringHashTable.h"
+#include <WebCore/SharedMemory.h>
 #include <WebCore/SharedStringHash.h>
 #include <wtf/RunLoop.h>
 
@@ -44,7 +44,7 @@ public:
 
     SharedStringHashStore(Client&);
 
-    std::optional<SharedMemory::Handle> createSharedMemoryHandle();
+    std::optional<WebCore::SharedMemory::Handle> createSharedMemoryHandle();
 
     void scheduleAddition(WebCore::SharedStringHash);
     void scheduleRemoval(WebCore::SharedStringHash);

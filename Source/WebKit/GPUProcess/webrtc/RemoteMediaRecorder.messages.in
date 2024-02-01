@@ -32,7 +32,7 @@ messages -> RemoteMediaRecorder NotRefCounted {
     Pause() -> ()
     Resume() -> ()
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle)
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
 }
 
 #endif

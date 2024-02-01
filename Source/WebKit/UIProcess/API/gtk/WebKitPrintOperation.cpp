@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
-#include "SharedMemory.h"
 #include "WebKitError.h"
 #include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
@@ -30,6 +29,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SharedMemory.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -361,7 +361,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)

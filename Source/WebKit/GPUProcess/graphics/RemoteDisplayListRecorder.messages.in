@@ -107,7 +107,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
 }
 

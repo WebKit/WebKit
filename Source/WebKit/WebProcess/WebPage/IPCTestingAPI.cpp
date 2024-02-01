@@ -2984,10 +2984,10 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, I
     return object;
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebKit::SharedMemory::Handle&& value)
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::SharedMemory::Handle&& value)
 {
-    using SharedMemory = WebKit::SharedMemory;
-    using Protection = WebKit::SharedMemory::Protection;
+    using SharedMemory = WebCore::SharedMemory;
+    using Protection = WebCore::SharedMemory::Protection;
 
     auto dataSize = value.size();
     auto protection = Protection::ReadWrite;

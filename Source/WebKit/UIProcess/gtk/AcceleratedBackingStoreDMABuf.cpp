@@ -38,6 +38,7 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/SharedMemory.h>
 #include <epoxy/egl.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -477,7 +478,7 @@ void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::
 
 void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBitmap::Handle&& handle)
 {
-    if (auto buffer = BufferSHM::create(id, ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly), m_webPage.deviceScaleFactor()))
+    if (auto buffer = BufferSHM::create(id, ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly), m_webPage.deviceScaleFactor()))
         m_buffers.add(id, WTFMove(buffer));
 }
 

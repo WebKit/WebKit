@@ -63,7 +63,6 @@ Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 Platform/glib/ModuleGlib.cpp
 
 Platform/unix/LoggingUnix.cpp
-Platform/unix/SharedMemoryUnix.cpp
 
 Shared/API/c/cairo/WKImageCairo.cpp
 

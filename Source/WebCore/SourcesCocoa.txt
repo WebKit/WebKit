@@ -312,6 +312,7 @@ platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SharedBufferCocoa.mm
+platform/cocoa/SharedMemoryCocoa.cpp
 platform/cocoa/SystemVersion.mm
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/cocoa/TextRecognitionResultCocoa.mm

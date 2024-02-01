@@ -58,7 +58,6 @@ list(APPEND WebKit_SOURCES
 
     Platform/unix/LoggingUnix.cpp
     Platform/unix/ModuleUnix.cpp
-    Platform/unix/SharedMemoryUnix.cpp
 
     Shared/API/c/cairo/WKImageCairo.cpp
 

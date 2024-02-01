@@ -95,7 +95,7 @@ Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     });
 }
 
-void SourceBufferPrivateRemote::takeOwnershipOfMemory(WebKit::SharedMemory::Handle&& bufferHandle)
+void SourceBufferPrivateRemote::takeOwnershipOfMemory(WebCore::SharedMemory::Handle&& bufferHandle)
 {
     // Take ownership of shared memory and mark it as media-related memory.
     bufferHandle.takeOwnershipOfMemory(MemoryLedger::Media);

@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <variant>
 #include <wtf/RefPtr.h>
 
@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(String&& identifier, Ref<WebCore::SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
         : identifier(WTFMove(identifier))
         , data(WTFMove(data))
         , actionsOffset(actionsOffset)
@@ -50,12 +50,12 @@ public:
     {
     }
 
-    WebCompiledContentRuleListData(String&& identifier, std::optional<WebKit::SharedMemoryHandle>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize);
+    WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize);
 
-    std::optional<SharedMemoryHandle> createDataHandle(SharedMemory::Protection = SharedMemory::Protection::ReadOnly) const;
+    std::optional<WebCore::SharedMemoryHandle> createDataHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadOnly) const;
 
     String identifier;
-    RefPtr<SharedMemory> data;
+    RefPtr<WebCore::SharedMemory> data;
     size_t actionsOffset { 0 };
     size_t actionsSize { 0 };
     size_t urlFiltersBytecodeOffset { 0 };

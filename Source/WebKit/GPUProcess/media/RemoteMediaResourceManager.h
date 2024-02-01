@@ -30,9 +30,9 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "RemoteMediaResourceIdentifier.h"
-#include "SharedMemory.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/PolicyChecker.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/WeakPtr.h>
@@ -73,7 +73,7 @@ private:
     void responseReceived(RemoteMediaResourceIdentifier, const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(RemoteMediaResourceIdentifier, uint64_t, uint64_t);
-    void dataReceived(RemoteMediaResourceIdentifier, IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebKit::SharedMemory::Handle>&&)>&&);
+    void dataReceived(RemoteMediaResourceIdentifier, IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
     void accessControlCheckFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);

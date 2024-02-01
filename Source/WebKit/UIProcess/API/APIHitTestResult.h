@@ -20,13 +20,13 @@
 #pragma once
 
 #include "APIObject.h"
-#include "SharedMemory.h"
 #include "WebHitTestResultData.h"
 #include "WebPageProxy.h"
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>

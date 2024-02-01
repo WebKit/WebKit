@@ -35,7 +35,7 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     Play()
     Pause()
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle)
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle)
     SetShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
 }
 

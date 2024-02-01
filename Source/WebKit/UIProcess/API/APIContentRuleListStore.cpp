@@ -31,7 +31,6 @@
 #include "APIContentRuleList.h"
 #include "NetworkCacheData.h"
 #include "NetworkCacheFileSystem.h"
-#include "SharedMemory.h"
 #include "WebCompiledContentRuleList.h"
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/ContentExtensionCompiler.h>
@@ -39,6 +38,7 @@
 #include <WebCore/ContentExtensionParser.h>
 #include <WebCore/QualifiedName.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <string>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>

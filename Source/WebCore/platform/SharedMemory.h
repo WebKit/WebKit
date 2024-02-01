@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -41,21 +42,11 @@
 #include <wtf/MachSendRight.h>
 #endif
 
-namespace IPC {
-class Decoder;
-class Encoder;
-class Connection;
-
-template<typename, typename> struct ArgumentCoder;
-}
-
 namespace WebCore {
+
 class FragmentedSharedBuffer;
 class ProcessIdentity;
 class SharedBuffer;
-}
-
-namespace WebKit {
 
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
 
@@ -72,16 +63,16 @@ public:
 
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
     explicit SharedMemoryHandle(const SharedMemoryHandle&) = default;
-    SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
+    WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
 
     size_t size() const { return m_size; }
 
     // Take ownership of the memory for process memory accounting purposes.
-    void takeOwnershipOfMemory(MemoryLedger) const;
+    WEBCORE_EXPORT void takeOwnershipOfMemory(MemoryLedger) const;
     // Transfer ownership of the memory for process memory accounting purposes.
-    void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
+    WEBCORE_EXPORT void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor releaseHandle();
@@ -90,9 +81,6 @@ public:
 private:
     friend struct IPC::ArgumentCoder<SharedMemoryHandle, void>;
     friend class SharedMemory;
-#if USE(UNIX_DOMAIN_SOCKETS)
-    friend class IPC::Connection;
-#endif
 
     Type m_handle;
     size_t m_size { 0 };
@@ -105,18 +93,18 @@ public:
     enum class Protection : bool { ReadOnly, ReadWrite };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
-    static RefPtr<SharedMemory> allocate(size_t);
-    static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
-    static RefPtr<SharedMemory> map(Handle&&, Protection);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
-    static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
-    static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
+    WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
 #endif
 
-    ~SharedMemory();
+    WEBCORE_EXPORT ~SharedMemory();
 
-    std::optional<Handle> createHandle(Protection);
+    WEBCORE_EXPORT std::optional<Handle> createHandle(Protection);
 
     size_t size() const { return m_size; }
     void* data() const
@@ -133,11 +121,11 @@ public:
     Protection protection() const { return m_protection; }
 #endif
 
-    Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
+    WEBCORE_EXPORT Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:
 #if OS(DARWIN)
-    WTF::MachSendRight createSendRight(Protection) const;
+    MachSendRight createSendRight(Protection) const;
 #endif
 
     size_t m_size;
@@ -156,4 +144,4 @@ private:
 #endif
 };
 
-} // namespace WebKit
+} // namespace WebCore

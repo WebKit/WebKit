@@ -107,6 +107,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/SearchPopupMenuDB.cpp
+    platform/win/SharedMemoryWin.cpp
     platform/win/SystemInfo.cpp
     platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp

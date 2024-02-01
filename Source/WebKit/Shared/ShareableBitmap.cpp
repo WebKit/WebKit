@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
-#include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/DebugHeap.h>
 
 namespace WebKit {

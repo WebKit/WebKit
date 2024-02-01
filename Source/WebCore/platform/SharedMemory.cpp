@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,9 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "ArgumentCoders.h"
-#include <WebCore/SharedBuffer.h>
+#include "SharedBuffer.h"
 
-namespace WebKit {
-
-using namespace WebCore;
+namespace WebCore {
 
 SharedMemoryHandle::SharedMemoryHandle(SharedMemoryHandle::Type&& handle, size_t size)
     : m_handle(WTFMove(handle))
@@ -81,4 +78,4 @@ void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity&, MemoryLedg
 }
 #endif
 
-} // namespace WebKit
+} // namespace WebCore

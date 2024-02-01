@@ -1254,7 +1254,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
         tracePoint(TakeSnapshotEnd, true);
@@ -2653,9 +2653,9 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
-static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, NSData *highlight)
+static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, NSData *highlight)
 {
-    auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
+    auto sharedMemory = WebCore::SharedMemory::allocate(highlight.length);
     if (sharedMemory) {
         [highlight getBytes:sharedMemory->data() length:highlight.length];
         buffers.append(*sharedMemory);
@@ -2667,7 +2667,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
-    Vector<Ref<WebKit::SharedMemory>> buffers;
+    Vector<Ref<WebCore::SharedMemory>> buffers;
 
     for (NSData *highlight in highlights)
         convertAndAddHighlight(buffers, highlight);
@@ -2682,7 +2682,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
-    Vector<Ref<WebKit::SharedMemory>> buffers;
+    Vector<Ref<WebCore::SharedMemory>> buffers;
     
     convertAndAddHighlight(buffers, highlight);
     _page->restoreAppHighlightsAndScrollToIndex(buffers, 0);

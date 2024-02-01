@@ -38,7 +38,7 @@ messages -> LibWebRTCCodecsProxy NotRefCounted {
     FlushEncoder(WebKit::VideoEncoderIdentifier id) -> ()
     SetEncodeRates(WebKit::VideoEncoderIdentifier id, uint32_t bitRate, uint32_t frameRate)
     SetSharedVideoFrameSemaphore(WebKit::VideoEncoderIdentifier id, IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::VideoEncoderIdentifier id, WebKit::SharedMemory::Handle storageHandle)
+    SetSharedVideoFrameMemory(WebKit::VideoEncoderIdentifier id, WebCore::SharedMemory::Handle storageHandle)
     SetRTCLoggingLevel(WTFLogLevel level)
 }
 

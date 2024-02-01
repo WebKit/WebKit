@@ -76,7 +76,7 @@ private:
 
     // Messages
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
     void newVideoFrameBuffer(RemoteVideoFrameIdentifier, std::optional<SharedVideoFrame::Buffer>&&);
     void newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&&);
 

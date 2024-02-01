@@ -32,11 +32,11 @@
 #include "IPCStreamTesterIdentifier.h"
 #include "MessageReceiver.h"
 #include "ScopedActiveMessageReceiveQueue.h"
-#include "SharedMemory.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include <WebCore/SharedMemory.h>
 #include <atomic>
 #include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>

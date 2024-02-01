@@ -60,7 +60,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     URLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous
 
 #if ENABLE(IPC_TESTING_API)
-    TestIPCSharedMemory(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount, String buffer) Synchronous
+    TestIPCSharedMemory(String pasteboardName, String pasteboardType, WebCore::SharedMemory::Handle handle, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount, String buffer) Synchronous
 #endif
 
 #endif

@@ -55,8 +55,8 @@ public:
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
     WebCore::GraphicsContext& context() final;
-    std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
-    std::optional<ImageBufferBackendHandle> takeBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) final;
+    std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
+    std::optional<ImageBufferBackendHandle> takeBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) final;
 
 private:
     RefPtr<WebCore::NativeImage> copyNativeImage() final;
