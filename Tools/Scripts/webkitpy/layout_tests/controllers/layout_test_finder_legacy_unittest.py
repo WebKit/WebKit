@@ -23,10 +23,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import optparse
+import json
 import unittest
-
-from collections import OrderedDict
 
 from pyfakefs.fake_filesystem_unittest import TestCaseMixin
 
@@ -39,7 +37,11 @@ from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     _is_reference_html_file,
     _supported_test_extensions,
 )
-from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort, unit_test_list
+from webkitpy.layout_tests.models.test import Test
+from webkitpy.port.test import (
+    TestPort,
+    add_unit_tests_to_mock_filesystem,
+)
 
 
 class MockLayoutTestFinder(LayoutTestFinder):
@@ -55,7 +57,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.fs.is_windows_fs = False
         host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
         add_unit_tests_to_mock_filesystem(host.filesystem)
         self.port = TestPort(host)
@@ -66,7 +67,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         self.finder = None
 
     def test_supported_test_extensions(self):
-        self.assertEqual(_supported_test_extensions & Port._supported_reference_extensions, Port._supported_reference_extensions)
+        self.assertEqual(set(_supported_test_extensions) & set(Port._supported_reference_extensions), set(Port._supported_reference_extensions))
 
     def test_is_reference_html_file(self):
         filesystem = MockFileSystem()
@@ -108,13 +109,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = [t.test_path for t in finder.find_tests_by_path([]) if t.test_path.endswith("/http/test.html")]
         self.assertEqual(self.port.name(), "test-mac-leopard")
         self.assertEqual(
-            self.port.baseline_search_path(),
-            [
-                "/test.checkout/LayoutTests/platform/test-mac-leopard",
-                "/test.checkout/LayoutTests/platform/test-mac-snowleopard",
-            ],
-        )
-        self.assertEqual(
             tests,
             [
                 "platform/test-mac-leopard/http/test.html",
@@ -135,11 +129,13 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             tests,
             [
                 'platform/test-mac-leopard/http/test.html',
+                'platform/test-mac-leopard/overridden/test.html',
                 'platform/test-mac-leopard/passes/platform-specific-test.html',
                 'platform/test-mac-leopard/platform-specific-dir/platform-specific-test.html',
                 'platform/test-snow-leopard/http/test.html',
                 'platform/test-snow-leopard/websocket/test.html',
                 'platform/test-win-7sp0/http/test.html',
+                'platform/test-win-7sp0/overridden/test.html',
             ],
         )
         with_slash = [t.test_path for t in finder.find_tests_by_path(['platform/'])]
@@ -155,6 +151,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             tests,
             [
                 'platform/test-mac-leopard/http/test.html',
+                'platform/test-mac-leopard/overridden/test.html',
                 'platform/test-mac-leopard/passes/platform-specific-test.html',
                 'platform/test-mac-leopard/platform-specific-dir/platform-specific-test.html',
             ],
@@ -195,6 +192,73 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
+            ],
+        )
+
+    def test_find_overridden(self):
+        finder = self.finder
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+        tests = [
+            t.test_path for t in finder.find_tests_by_path(["overridden/test.html"])
+        ]
+        self.assertEqual(
+            tests,
+            [
+                "overridden/test.html",
+            ],
+        )
+
+    def test_find_overridden_default(self):
+        finder = self.finder
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+        tests = [
+            t.test_path
+            for t in finder.find_tests_by_path([])
+            if t.test_path.endswith("overridden/test.html")
+        ]
+        self.assertEqual(
+            tests,
+            [
+                "overridden/test.html",
+                "platform/test-mac-leopard/overridden/test.html",
+                "platform/test-win-7sp0/overridden/test.html",
+            ],
+        )
+
+    def test_find_overridden_platform_self(self):
+        finder = self.finder
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+        tests = [
+            t.test_path
+            for t in finder.find_tests_by_path(
+                [
+                    "overridden/test.html",
+                    "platform/test-mac-leopard/overridden/test.html",
+                ]
+            )
+        ]
+        self.assertEqual(
+            tests,
+            [
+                "overridden/test.html",
+                "platform/test-mac-leopard/overridden/test.html",
+            ],
+        )
+
+    def test_find_overridden_platform_other(self):
+        finder = self.finder
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+        tests = [
+            t.test_path
+            for t in finder.find_tests_by_path(
+                ["overridden/test.html", "platform/test-win-7sp0/overridden/test.html"]
+            )
+        ]
+        self.assertEqual(
+            tests,
+            [
+                "overridden/test.html",
+                "platform/test-win-7sp0/overridden/test.html",
             ],
         )
 
@@ -381,6 +445,28 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             tests_found,
         )
 
+    def test_wpt_crash(self):
+        tests_to_find = ["imported/w3c/web-platform-tests"]
+        finder = self.finder
+        tests_found = [
+            t.test_path
+            for t in finder.find_tests_by_path(tests_to_find)
+            if t.is_wpt_crash_test
+        ]
+        self.assertEqual(
+            tests_found,
+            [
+                "imported/w3c/web-platform-tests/crashtests/crash.html",
+                "imported/w3c/web-platform-tests/crashtests/pass.html",
+                "imported/w3c/web-platform-tests/crashtests/timeout.html",
+                "imported/w3c/web-platform-tests/crashtests/dir/test.html",
+                "imported/w3c/web-platform-tests/some/test-crash-crash.html",
+                "imported/w3c/web-platform-tests/some/test-pass-crash.html",
+                "imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html",
+                "imported/w3c/web-platform-tests/some/test-timeout-crash.html",
+            ],
+        )
+
     def test_preserves_order_directories(self):
         tests_to_find = ['http/tests/ssl', 'http/tests/passes']
         finder = self.finder
@@ -448,6 +534,34 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests = [t.test_path for t in finder.find_tests_by_path(['userscripts/resources/*'])]
         self.assertEqual(tests, [])
 
+    def test_order_directory_name(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        dir_names = ["a", "b", "b0", "bA", "b-x", "by", "b_z", "c"]
+        for d in dir_names:
+            fs.maybe_make_directory(fs.join("order", d))
+            fs.write_text_file(fs.join("order", d, "test.html"), "1")
+
+        tests = [t.test_path for t in finder.find_tests_by_path(["order"])]
+        sorted_tests = sorted(tests, key=self.port.test_key)
+        self.assertEqual(tests, sorted_tests)
+        self.assertEqual(
+            tests,
+            [
+                "order/a/test.html",
+                "order/b0/test.html",
+                "order/b-x/test.html",
+                "order/b/test.html",
+                "order/bA/test.html",
+                "order/b_z/test.html",
+                "order/by/test.html",
+                "order/c/test.html",
+            ],
+        )
+
     def test_is_test_file(self):
         finder = self.finder
         self.assertTrue(finder._is_test_file(finder._filesystem, '', 'foo.html'))
@@ -501,3 +615,570 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         self.assertFalse(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html.html"))
         self.assertTrue(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html"))
         self.assertTrue(finder._is_w3c_resource_file(finder._filesystem, finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests", "test.html"))
+
+    def test_find_w3c_resource_file(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        w3c_path = fs.join(self.port.layout_tests_dir(), "imported", "w3c")
+        path = fs.join(w3c_path, "resources", "resource-files.json")
+
+        resource_files_obj = {
+            "directories": [
+                "web-platform-tests/common",
+                "web-platform-tests/dom/nodes/Document-createElement-namespace-tests",
+                "web-platform-tests/fonts",
+                "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/support",
+                "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support",
+                "web-platform-tests/html/browsers/history/the-history-interface/non-automated",
+                "web-platform-tests/html/browsers/history/the-location-interface/non-automated",
+                "web-platform-tests/images",
+                "web-platform-tests/service-workers",
+                "web-platform-tests/tools",
+            ],
+            "files": [
+                "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
+                "web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
+            ],
+        }
+
+        fs.maybe_make_directory(fs.dirname(path))
+        fs.write_text_file(path, json.dumps(resource_files_obj))
+
+        for d in resource_files_obj["directories"]:
+            path = fs.join(w3c_path, d)
+            fs.maybe_make_directory(path)
+            if not fs.exists(fs.join(path, "test.html")):
+                fs.write_text_file(fs.join(path, "test.html"), "foo")
+
+        for f in resource_files_obj["files"]:
+            path = fs.join(w3c_path, f)
+            fs.maybe_make_directory(fs.dirname(path))
+            if not fs.exists(path):
+                fs.write_text_file(path, "foo")
+
+        tests = [t.test_path for t in finder.find_tests_by_path(["imported/w3c"])]
+        self.assertEqual(
+            tests,
+            [
+                "imported/w3c/web-platform-tests/crashtests/crash.html",
+                "imported/w3c/web-platform-tests/crashtests/pass.html",
+                "imported/w3c/web-platform-tests/crashtests/timeout.html",
+                "imported/w3c/web-platform-tests/crashtests/dir/test.html",
+                "imported/w3c/web-platform-tests/some/new.html",
+                "imported/w3c/web-platform-tests/some/test-crash-crash.html",
+                "imported/w3c/web-platform-tests/some/test-pass-crash.html",
+                "imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html",
+                "imported/w3c/web-platform-tests/some/test-timeout-crash.html",
+            ],
+        )
+
+    def test_chooses_best_expectation(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+
+        fs.chdir(self.port.layout_tests_dir())
+        fs.maybe_make_directory("foo")
+        fs.write_text_file(fs.join("foo", "test.html"), "test")
+        fs.write_text_file(fs.join("foo", "test-expected.txt"), "a")
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(), "foo", "test-expected.txt"
+                    ),
+                )
+            ],
+        )
+
+        fs.maybe_make_directory("platform/test-mac-snowleopard/foo")
+        fs.write_text_file(
+            fs.join("platform", "test-mac-snowleopard", "foo", "test-expected.txt"), "b"
+        )
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-snowleopard",
+                        "foo",
+                        "test-expected.txt",
+                    ),
+                )
+            ],
+        )
+
+        fs.maybe_make_directory("platform/test-mac-leopard/foo")
+        fs.write_text_file(
+            fs.join("platform", "test-mac-leopard", "foo", "test-expected.txt"), "c"
+        )
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "foo",
+                        "test-expected.txt",
+                    ),
+                )
+            ],
+        )
+
+    def test_is_websocket_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "http/tests/test.html",
+            "http/tests/websocket/construct-in-detached-frame.html",
+            "http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
+            "http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html",
+            "imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            fs.write_text_file(f, "XXX")
+
+        tests = finder.find_tests_by_path(
+            files + ["http/tests/test.html?websocket"], with_expectations=True
+        )
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="http/tests/test.html",
+                    is_http_test=True,
+                    is_websocket_test=False,
+                ),
+                Test(
+                    test_path="http/tests/websocket/construct-in-detached-frame.html",
+                    is_http_test=True,
+                    is_websocket_test=True,
+                ),
+                Test(
+                    test_path="http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
+                    is_http_test=True,
+                    is_websocket_test=True,
+                ),
+                Test(
+                    test_path="http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html",
+                    is_http_test=True,
+                    is_websocket_test=True,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
+                    is_wpt_test=True,
+                    is_websocket_test=False,
+                ),
+                Test(
+                    test_path="http/tests/test.html?websocket",
+                    is_http_test=True,
+                    is_websocket_test=True,
+                ),
+            ],
+        )
+
+    def test_is_wpt_crash_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "fast/crashtests/test.html",
+            "fast/css/end-of-buffer-crash.html",
+            "imported/w3c/web-platform-tests/editing/run/empty-editable-crash.html",
+            "imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.tentative.html",
+            "imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            fs.write_text_file(f, "XXX")
+
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="fast/crashtests/test.html",
+                    is_wpt_test=False,
+                    is_wpt_crash_test=False,
+                ),
+                Test(
+                    test_path="fast/css/end-of-buffer-crash.html",
+                    is_wpt_test=False,
+                    is_wpt_crash_test=False,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-tests/editing/run/empty-editable-crash.html",
+                    is_wpt_test=True,
+                    is_wpt_crash_test=True,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.tentative.html",
+                    is_wpt_test=True,
+                    is_wpt_crash_test=True,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html",
+                    is_wpt_test=True,
+                    is_wpt_crash_test=True,
+                ),
+            ],
+        )
+
+    def test_overridden_expectations(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+
+        # Sanity check we have the platform expectation
+        self.assertTrue(
+            fs.exists(
+                "/test.checkout/LayoutTests/platform/test-mac-leopard/overridden/test-expected.txt"
+            )
+        )
+
+        # Both generic and platform tests give the platform expectation
+        tests = finder.find_tests_by_path(
+            ["overridden/test.html", "platform/test-mac-leopard/overridden/test.html"],
+            with_expectations=True,
+        )
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="overridden/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.txt",
+                    ),
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+                Test(
+                    test_path="platform/test-mac-leopard/overridden/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.txt",
+                    ),
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+            ],
+        )
+
+        # Remove the platform expectation
+        fs.remove(
+            "/test.checkout/LayoutTests/platform/test-mac-leopard/overridden/test-expected.txt"
+        )
+
+        # Now the generic gives the generic expectation, and the platform None
+        tests = finder.find_tests_by_path(
+            ["overridden/test.html", "platform/test-mac-leopard/overridden/test.html"],
+            with_expectations=True,
+        )
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="overridden/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(), "overridden", "test-expected.txt"
+                    ),
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+                Test(
+                    test_path="platform/test-mac-leopard/overridden/test.html",
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+            ],
+        )
+
+        # Add a platform-in-a-platform
+        fs.maybe_make_directory(
+            "/test.checkout/LayoutTests/platform/test-mac-leopard/platform/test-mac-leopard/overridden"
+        )
+        fs.write_text_file(
+            "/test.checkout/LayoutTests/platform/test-mac-leopard/platform/test-mac-leopard/overridden/test-expected.txt",
+            "foo",
+        )
+
+        # Now the platform gives the platform-in-a-platform
+        tests = finder.find_tests_by_path(
+            ["overridden/test.html", "platform/test-mac-leopard/overridden/test.html"],
+            with_expectations=True,
+        )
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="overridden/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(), "overridden", "test-expected.txt"
+                    ),
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+                Test(
+                    test_path="platform/test-mac-leopard/overridden/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.txt",
+                    ),
+                    expected_image_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "overridden",
+                        "test-expected.png",
+                    ),
+                ),
+            ],
+        )
+
+    def test_overridden_reference_expectation(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+
+        fs.chdir(self.port.layout_tests_dir())
+        fs.maybe_make_directory("foo")
+        fs.write_text_file(fs.join("foo", "test.html"), "test")
+        fs.write_text_file(fs.join("foo", "test-expected.html"), "a")
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    reference_files=(
+                        (
+                            "==",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "foo",
+                                "test-expected.html",
+                            ),
+                        ),
+                    ),
+                )
+            ],
+        )
+
+        fs.maybe_make_directory("platform/test-mac-snowleopard/foo")
+        fs.write_text_file(
+            "platform/test-mac-snowleopard/foo/test-expected-mismatch.html", "b"
+        )
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    reference_files=(
+                        (
+                            "!=",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "platform",
+                                "test-mac-snowleopard",
+                                "foo",
+                                "test-expected-mismatch.html",
+                            ),
+                        ),
+                    ),
+                )
+            ],
+        )
+
+    def test_reference_expectation_order(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+
+        fs.chdir(self.port.layout_tests_dir())
+        fs.maybe_make_directory("foo")
+        fs.write_text_file(fs.join("foo", "test.html"), "test")
+        fs.write_text_file(fs.join("foo", "test-expected.html"), "a")
+        fs.write_text_file(fs.join("foo", "test-expected.xhtml"), "b")
+        fs.write_text_file(fs.join("foo", "test-expected-mismatch.html"), "c")
+        fs.write_text_file(fs.join("foo", "test-expected-mismatch.xhtml"), "d")
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    reference_files=(
+                        (
+                            "==",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "foo",
+                                "test-expected.html",
+                            ),
+                        ),
+                        (
+                            "==",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "foo",
+                                "test-expected.xhtml",
+                            ),
+                        ),
+                        (
+                            "!=",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "foo",
+                                "test-expected-mismatch.html",
+                            ),
+                        ),
+                        (
+                            "!=",
+                            fs.join(
+                                self.port.layout_tests_dir(),
+                                "foo",
+                                "test-expected-mismatch.xhtml",
+                            ),
+                        ),
+                    ),
+                )
+            ],
+        )
+
+    def test_webarchive_expectation_order(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        self.assertEqual(self.port.name(), "test-mac-leopard")
+
+        fs.chdir(self.port.layout_tests_dir())
+        fs.maybe_make_directory("foo")
+        fs.maybe_make_directory("platform/test-mac-leopard/foo")
+        fs.maybe_make_directory("platform/test-mac-snowleopard/foo")
+
+        fs.write_text_file(fs.join("foo", "test.html"), "test")
+        fs.write_text_file(
+            fs.join("platform/test-mac-leopard/foo", "test-expected.webarchive"), "b"
+        )
+
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-leopard",
+                        "foo",
+                        "test-expected.webarchive",
+                    ),
+                )
+            ],
+        )
+
+        # An -expected.txt wins over an -expected.webarchive, even generic.
+        fs.write_text_file(fs.join("foo", "test-expected.txt"), "a")
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(), "foo", "test-expected.txt"
+                    ),
+                )
+            ],
+        )
+
+        # An -expected.txt wins over an -expected.webarchive, even further up the
+        # baseline search path.
+        fs.write_text_file(
+            fs.join("platform/test-mac-snowleopard/foo", "test-expected.txt"), "a"
+        )
+        tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="foo/test.html",
+                    expected_text_path=fs.join(
+                        self.port.layout_tests_dir(),
+                        "platform",
+                        "test-mac-snowleopard",
+                        "foo",
+                        "test-expected.txt",
+                    ),
+                )
+            ],
+        )

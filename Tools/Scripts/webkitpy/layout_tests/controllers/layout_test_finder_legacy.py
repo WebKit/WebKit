@@ -97,20 +97,60 @@ class LayoutTestFinder(object):
             'http' + port.TEST_PATH_SEPARATOR + 'wpt' + port.TEST_PATH_SEPARATOR
         )
 
-    def find_tests(self, options, args, device_type=None):
+    def find_tests(self, options, args, device_type=None, with_expectations=False):
         paths = self._strip_test_dir_prefixes(args)
         if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        tests = self.find_tests_by_path(paths, device_type=device_type)
+        tests = self.find_tests_by_path(paths, device_type=device_type, with_expectations=with_expectations)
         return (paths, tests)
 
-    def find_tests_by_path(self, paths, device_type=None):
+    def find_tests_by_path(self, paths, device_type=None, with_expectations=False):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
         return [
             Test(
                 test_file,
+                reference_files=(
+                    tuple(self._port.reference_files(test_file, device_type)) or None
+                    if with_expectations
+                    else None
+                ),
+                expected_text_path=(
+                    (
+                        self._port.expected_filename(
+                            test_file,
+                            ".txt",
+                            return_default=False,
+                            device_type=device_type,
+                        )
+                        or self._port.expected_filename(
+                            test_file,
+                            ".webarchive",
+                            return_default=False,
+                            device_type=device_type,
+                        )
+                    )
+                    if with_expectations
+                    else None
+                ),
+                expected_image_path=(
+                    self._port.expected_filename(
+                        test_file, ".png", return_default=False, device_type=device_type
+                    )
+                    if with_expectations
+                    else None
+                ),
+                expected_audio_path=(
+                    self._port.expected_filename(
+                        test_file, ".wav", return_default=False, device_type=device_type
+                    )
+                    if with_expectations
+                    else None
+                ),
                 is_http_test=self.http_subdir in test_file,
-                is_websocket_test=self.websocket_subdir in test_file or (self.http_subdir in test_file and 'websocket' in test_file),
+                is_websocket_test=(
+                    self.websocket_subdir in test_file
+                    or (self.http_subdir in test_file and "websocket" in test_file)
+                ),
                 is_wpt_test=self._is_wpt_test(test_file),
                 is_wpt_crash_test=self._is_wpt_crash_test(test_file),
             )

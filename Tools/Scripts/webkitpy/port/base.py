@@ -524,7 +524,7 @@ class Port(object):
         text = string_utils.decode(self._filesystem.read_binary_file(baseline_path), target_type=str)
         return text.replace("\r\n", "\n")
 
-    _supported_reference_extensions = set(['.html', '.xml', '.xhtml', '.htm', '.svg', '.xht'])
+    _supported_reference_extensions = ('.html', '.xml', '.xhtml', '.htm', '.svg', '.xht')
 
     def reference_files(self, test_name, device_type=None):
         """Return a list of expectation (== or !=) and filename pairs"""
