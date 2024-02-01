@@ -615,6 +615,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/MediaPlaybackState.serialization.in \
 	Shared/Model.serialization.in \
 	Shared/ModelProcessConnectionParameters.serialization.in \
+	Shared/MonotonicObjectIdentifier.serialization.in \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
 	Shared/Pasteboard.serialization.in \

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/TextStream.h>
@@ -44,21 +45,6 @@ public:
     { }
 
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
-
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        ASSERT(isValidIdentifier(m_identifier));
-        encoder << m_identifier;
-    }
-    template<typename Decoder> static std::optional<MonotonicObjectIdentifier> decode(Decoder& decoder)
-    {
-        std::optional<uint64_t> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-        ASSERT(isValidIdentifier(*identifier));
-        return MonotonicObjectIdentifier { *identifier };
-    }
 
     friend bool operator==(MonotonicObjectIdentifier, MonotonicObjectIdentifier) = default;
 
@@ -102,6 +88,7 @@ public:
     }
 
 private:
+    friend struct IPC::ArgumentCoder<MonotonicObjectIdentifier, void>;
     template<typename U> friend MonotonicObjectIdentifier<U> makeMonotonicObjectIdentifier(uint64_t);
     friend struct HashTraits<MonotonicObjectIdentifier>;
     template<typename U> friend struct MonotonicObjectIdentifierHash;

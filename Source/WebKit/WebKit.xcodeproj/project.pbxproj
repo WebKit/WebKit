@@ -4916,6 +4916,7 @@
 		3AF5B4742A244FDD004C3D4D /* RemoteGraphicsContextGLProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource113.cpp; sourceTree = "<group>"; };
 		3D3C75952B6452300013828A /* ObjectIdentifierReference.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ObjectIdentifierReference.serialization.in; sourceTree = "<group>"; };
+		3D3C75A22B6875120013828A /* MonotonicObjectIdentifier.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MonotonicObjectIdentifier.serialization.in; sourceTree = "<group>"; };
 		3F418EF51887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPresentationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		3F418EF61887BD97002795FD /* VideoPresentationManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPresentationManagerMessages.h; sourceTree = "<group>"; };
 		3F418EF71887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPresentationManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -8774,6 +8775,7 @@
 				2DA8153328A46A0000CF811C /* ModelProcessConnectionParameters.h */,
 				541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
+				3D3C75A22B6875120013828A /* MonotonicObjectIdentifier.serialization.in */,
 				2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
 				31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */,
