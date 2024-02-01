@@ -705,10 +705,8 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
         }
     }
 
-    if (!source.pad()) {
-        source.setSinkPad(requestPad(m_requestPadCounter, source.allowedCaps(), source.mediaStreamID()));
-        m_requestPadCounter++;
-    }
+    if (!source.pad())
+        source.setSinkPad(requestPad(source.allowedCaps(), source.mediaStreamID()));
 
     auto& sinkPad = source.pad();
     ASSERT(!gst_pad_is_linked(sinkPad.get()));
@@ -728,8 +726,9 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
 #endif
 }
 
-GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLineIndex, const GRefPtr<GstCaps>& allowedCaps, const String& mediaStreamID)
+GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(const GRefPtr<GstCaps>& allowedCaps, const String& mediaStreamID)
 {
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Requesting sink pad for %" GST_PTR_FORMAT " and mediaStreamID %s", allowedCaps.get(), mediaStreamID.ascii().data());
     auto caps = adoptGRef(gst_caps_copy(allowedCaps.get()));
     int availablePayloadType = pickAvailablePayloadType();
     unsigned i = 0;
@@ -753,25 +752,8 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLine
         i++;
     }
 
-    auto requestPad = [&](const String& padId) -> GRefPtr<GstPad> {
-        if (padId == "sink_%u"_s)
-            return adoptGRef(gst_element_request_pad_simple(m_webrtcBin.get(), padId.ascii().data()));
-
-        // FIXME: Restricting caps and codec-preferences breaks caps negotiation of outgoing sources
-        // in some cases.
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Requesting pad %s restricted to %" GST_PTR_FORMAT, padId.ascii().data(), caps.get());
-        auto* padTemplate = gst_element_get_pad_template(m_webrtcBin.get(), "sink_%u");
-        return adoptGRef(gst_element_request_pad(m_webrtcBin.get(), padTemplate, padId.ascii().data(), caps.get()));
-    };
-
-    GRefPtr<GstPad> sinkPad;
-    if (mLineIndex) {
-        auto padId = makeString("sink_"_s, *mLineIndex);
-        sinkPad = adoptGRef(gst_element_get_static_pad(m_webrtcBin.get(), padId.ascii().data()));
-        if (!sinkPad)
-            sinkPad = requestPad(padId);
-    } else
-        sinkPad = requestPad("sink_%u"_s);
+    auto padTemplate = gst_element_get_pad_template(m_webrtcBin.get(), "sink_%u");
+    auto sinkPad = adoptGRef(gst_element_request_pad(m_webrtcBin.get(), padTemplate, nullptr, caps.get()));
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Setting msid to %s on sink pad %" GST_PTR_FORMAT, mediaStreamID.ascii().data(), sinkPad.get());
     if (gstObjectHasProperty(sinkPad.get(), "msid"))
@@ -1092,6 +1074,9 @@ int GStreamerMediaEndpoint::pickAvailablePayloadType()
 
         GRefPtr<GstCaps> codecPreferences;
         g_object_get(current, "codec-preferences", &codecPreferences.outPtr(), nullptr);
+        if (!codecPreferences)
+            continue;
+
         gst_caps_foreach(codecPreferences.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, gpointer data) -> gboolean {
             int payloadType;
             if (!gst_structure_get_int(structure, "payload", &payloadType))
