@@ -148,10 +148,13 @@ static inline void executeInsertTask(HTMLConstructionSiteTask& task)
 
     insert(task);
 
-    task.child->beginParsingChildren();
+    RefPtr element = dynamicDowncast<Element>(task.child);
+    if (!element)
+        return;
 
+    element->beginParsingChildren();
     if (task.selfClosing)
-        task.child->finishParsingChildren();
+        element->finishParsingChildren();
 }
 
 static inline void executeReparentTask(HTMLConstructionSiteTask& task)

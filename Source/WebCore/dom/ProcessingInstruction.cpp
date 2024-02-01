@@ -288,10 +288,4 @@ void ProcessingInstruction::removedFromAncestor(RemovalType removalType, Contain
     styleScope->didChangeActiveStyleSheetCandidates();
 }
 
-void ProcessingInstruction::finishParsingChildren()
-{
-    m_createdByParser = false;
-    CharacterData::finishParsingChildren();
-}
-
 } // namespace

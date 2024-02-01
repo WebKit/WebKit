@@ -867,29 +867,30 @@ void XMLDocumentParser::endElementNs()
         return;
 
     RefPtr<ContainerNode> node = m_currentNode;
-    node->finishParsingChildren();
+    auto* element = dynamicDowncast<Element>(*node);
 
-    if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && isScriptElement(downcast<Element>(*node))) {
+    if (element)
+        element->finishParsingChildren();
+
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && element && isScriptElement(*element)) {
         popCurrentNode();
         node->remove();
         return;
     }
 
-    if (!node->isElementNode() || !m_view) {
+    if (!element || !m_view) {
         popCurrentNode();
         return;
     }
-
-    auto& element = downcast<Element>(*node);
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.
-    if (!element.isConnected()) {
+    if (!element->isConnected()) {
         popCurrentNode();
         return;
     }
 
-    if (!isScriptElement(element)) {
+    if (!isScriptElement(*element)) {
         popCurrentNode();
         return;
     }
@@ -898,7 +899,7 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    auto& scriptElement = downcastScriptElement(element);
+    auto& scriptElement = downcastScriptElement(*element);
     if (scriptElement.prepareScript(m_scriptStartPosition)) {
         // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
@@ -982,7 +983,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     m_currentNode->parserAppendChild(pi);
 
-    pi->finishParsingChildren();
+    pi->setCreatedByParser(false);
 
     if (pi->isCSS())
         m_sawCSS = true;
