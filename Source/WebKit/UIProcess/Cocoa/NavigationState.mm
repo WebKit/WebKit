@@ -77,6 +77,7 @@
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Scope.h>
 #import <wtf/URL.h>
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -95,20 +96,15 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/NavigationStateAdditions.mm>)
-#import <WebKitAdditions/NavigationStateAdditions.mm>
-#endif
+#if HAVE(MARKETPLACE_KIT)
+#import "WebKitSwiftSoftLink.h"
 
-#ifndef DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
-#define DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
-#endif
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKMarketplaceKit)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKMarketplaceKit)
 
-#ifndef NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
-#define NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
-#endif
-
-#ifndef NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
-#define NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
+@interface WKMarketplaceKit : NSObject
++ (void)requestAppInstallationWithTopOrigin:(NSURL *)topOrigin url:(NSURL *)url;
+@end
 #endif
 
 namespace WebKit {
@@ -415,11 +411,41 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
 #endif
 }
 
-DEFINE_NAVIGATION_STATE_APPLICATION_UTILITIES_LINK_HANDLER
+#if HAVE(MARKETPLACE_KIT)
+
+static bool isMarketplaceKitURL(const URL& url)
+{
+    return url.protocolIs("app-distribution"_s) || url.protocolIs("marketplace-kit"_s);
+}
+
+static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& action, WebPageProxy& page)
+{
+    if (!action->shouldOpenExternalSchemes() || !action->isProcessingUserGesture() || action->isRedirect() || action->data().requesterTopOrigin.isNull()) {
+        RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with shouldOpenExternalSchemes: %d, isProcessingUserGesture: %d, isRedirect: %d, requesterTopOriginIsNull: %d", action->shouldOpenExternalSchemes(), action->isProcessingUserGesture(), action->isRedirect(), action->data().requesterTopOrigin.isNull());
+        return;
+    }
+
+    RetainPtr<NSURL> requesterTopOriginURL = static_cast<NSURL *>(action->data().requesterTopOrigin.toURL());
+    RetainPtr<NSURL> url = static_cast<NSURL *>(action->request().url());
+
+    if (!requesterTopOriginURL || !url) {
+        RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with requesterTopOriginURL: %d url: %d", static_cast<bool>(requesterTopOriginURL), static_cast<bool>(url));
+        return;
+    }
+
+    [getWKMarketplaceKitClass() requestAppInstallationWithTopOrigin:requesterTopOriginURL.get() url:url.get()];
+}
+
+#endif // HAVE(MARKETPLACE_KIT)
 
 static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, WTF::Function<void(bool)>&& completionHandler)
 {
-    NAVIGATION_STATE_TRY_INTERCEPT_NAVIGATION
+#if HAVE(MARKETPLACE_KIT)
+    if (isMarketplaceKitURL(navigationAction->request().url())) {
+        interceptMarketplaceKitNavigation(WTFMove(navigationAction), page);
+        return completionHandler(true /* interceptedNavigation */);
+    }
+#endif
 
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
@@ -593,7 +619,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 break;
 
             case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-                NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ALLOW_WITHOUT_APP_LINK
+#if HAVE(MARKETPLACE_KIT)
+                if (isMarketplaceKitURL(navigationAction->request().url())) {
+                    interceptMarketplaceKitNavigation(WTFMove(navigationAction), webPageProxy);
+                    localListener->ignore();
+                    return;
+                }
+#endif
 
                 trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                     if (optimizedLoad) {
