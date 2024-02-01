@@ -2927,7 +2927,6 @@ private:
 
     void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, const WebCore::FrameIdentifier&);
 
-    void closeRemoteFrame(WebCore::FrameIdentifier);
     void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&);
     void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);

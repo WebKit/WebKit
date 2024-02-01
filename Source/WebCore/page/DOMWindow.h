@@ -37,6 +37,7 @@ class Document;
 class Frame;
 class LocalDOMWindow;
 class Location;
+class PageConsoleClient;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
 enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
@@ -60,6 +61,12 @@ public:
     virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState) = 0;
 
     bool closed() const;
+    WEBCORE_EXPORT void close();
+    void close(Document&);
+    virtual void closePage() = 0;
+
+    PageConsoleClient* console() const;
+    CheckedPtr<PageConsoleClient> checkedConsole() const;
 
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&);

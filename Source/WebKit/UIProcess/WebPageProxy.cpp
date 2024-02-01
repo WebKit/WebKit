@@ -13584,17 +13584,6 @@ IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(
     );
 }
 
-void WebPageProxy::closeRemoteFrame(WebCore::FrameIdentifier frameID)
-{
-    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
-    if (!destinationFrame || !destinationFrame->isMainFrame())
-        return;
-
-    ASSERT(destinationFrame->page() == this);
-
-    closePage();
-}
-
 void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
     RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);

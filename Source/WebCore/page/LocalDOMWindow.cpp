@@ -753,20 +753,6 @@ BarProp& LocalDOMWindow::toolbar()
     return *m_toolbar;
 }
 
-PageConsoleClient* LocalDOMWindow::console() const
-{
-    // FIXME: This should not return nullptr when frameless.
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
-    auto* frame = this->frame();
-    return frame->page() ? &frame->page()->console() : nullptr;
-}
-
-CheckedPtr<PageConsoleClient> LocalDOMWindow::checkedConsole() const
-{
-    return console();
-}
-
 DOMApplicationCache& LocalDOMWindow::applicationCache()
 {
     if (!m_applicationCache)
@@ -1105,38 +1091,8 @@ void LocalDOMWindow::blur()
     page->chrome().unfocus();
 }
 
-void LocalDOMWindow::close(Document& document)
+void LocalDOMWindow::closePage()
 {
-    if (!document.canNavigate(protectedFrame().get()))
-        return;
-    close();
-}
-
-void LocalDOMWindow::close()
-{
-    RefPtr frame = this->frame();
-    if (!frame)
-        return;
-
-    RefPtr page = frame->page();
-    if (!page)
-        return;
-
-    if (!frame->isMainFrame())
-        return;
-
-    if (!(page->openedByDOM() || page->backForward().count() <= 1)) {
-        checkedConsole()->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
-        return;
-    }
-
-    if (!frame->checkedLoader()->shouldClose())
-        return;
-
-    ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
-
-    page->setIsClosing();
-
     protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }] {
         // Calling closeWindow() may destroy the page.
         if (auto* page = this->page())

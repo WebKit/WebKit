@@ -382,7 +382,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/loc
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-function-caching.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-function-length.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-function-name.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/the-window-object/closed-attribute.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window.html [ Skip ]
 
 ###############################################################################

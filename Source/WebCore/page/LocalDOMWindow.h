@@ -77,7 +77,6 @@ class Navigator;
 class Node;
 class NodeList;
 class Page;
-class PageConsoleClient;
 class Performance;
 class RequestAnimationFrameCallback;
 class RequestIdleCallback;
@@ -189,8 +188,6 @@ public:
     WEBCORE_EXPORT void focus(bool allowFocus = false);
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
-    WEBCORE_EXPORT void close();
-    void close(Document&);
     void print();
     void stop();
     bool isStopping() const { return m_isStopping; }
@@ -256,9 +253,6 @@ public:
 
     RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
-
-    PageConsoleClient* console() const;
-    CheckedPtr<PageConsoleClient> checkedConsole() const;
 
     void printErrorMessage(const String&) const;
 
@@ -423,6 +417,7 @@ private:
 
     bool isLocalDOMWindow() const final { return true; }
     bool isRemoteDOMWindow() const final { return false; }
+    void closePage() final;
     void eventListenersDidChange() final;
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
 

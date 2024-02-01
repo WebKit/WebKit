@@ -101,11 +101,10 @@ void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
     WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
 }
 
-void WebRemoteFrameClient::close()
+void WebRemoteFrameClient::closePage()
 {
-    // FIXME: <rdar://117381050> Consider if this needs the same logic as WebChromeClient::closeWindow, or refactor to share code.
     if (auto* page = m_frame->page())
-        page->send(Messages::WebPageProxy::CloseRemoteFrame(m_frame->frameID()));
+        page->sendClose();
 }
 
 void WebRemoteFrameClient::focus()

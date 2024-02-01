@@ -26,11 +26,15 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "BackForwardController.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "Location.h"
 #include "Page.h"
+#include "PageConsoleClient.h"
+#include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
@@ -77,6 +81,52 @@ bool DOMWindow::closed() const
 
     RefPtr page = frame->page();
     return !page || page->isClosing();
+}
+
+void DOMWindow::close(Document& document)
+{
+    if (!document.canNavigate(protectedFrame().get()))
+        return;
+    close();
+}
+
+void DOMWindow::close()
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return;
+
+    RefPtr page = frame->page();
+    if (!page)
+        return;
+
+    if (!frame->isMainFrame())
+        return;
+
+    if (!(page->openedByDOM() || page->backForward().count() <= 1)) {
+        checkedConsole()->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
+        return;
+    }
+
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (localFrame && !localFrame->checkedLoader()->shouldClose())
+        return;
+
+    ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
+
+    page->setIsClosing();
+    closePage();
+}
+
+PageConsoleClient* DOMWindow::console() const
+{
+    auto* frame = this->frame();
+    return frame && frame->page() ? &frame->page()->console() : nullptr;
+}
+
+CheckedPtr<PageConsoleClient> DOMWindow::checkedConsole() const
+{
+    return console();
 }
 
 RefPtr<Frame> DOMWindow::protectedFrame() const

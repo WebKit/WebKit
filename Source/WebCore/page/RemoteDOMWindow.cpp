@@ -59,22 +59,16 @@ WindowProxy* RemoteDOMWindow::self() const
     return &m_frame->windowProxy();
 }
 
-void RemoteDOMWindow::close(Document&)
+void RemoteDOMWindow::closePage()
 {
-    // FIXME: <rdar://117381050> Add security checks here equivalent to LocalDOMWindow::close (both with and without Document& parameter).
-    // Or refactor to share code.
     if (!m_frame)
         return;
+    m_frame->client().closePage();
+}
 
-    if (!m_frame->isMainFrame())
-        return;
-
-    RefPtr page = m_frame->page();
-    if (!page)
-        return;
-
-    page->setIsClosing();
-    m_frame->client().close();
+void RemoteDOMWindow::frameDetached()
+{
+    m_frame = nullptr;
 }
 
 void RemoteDOMWindow::focus(LocalDOMWindow&)

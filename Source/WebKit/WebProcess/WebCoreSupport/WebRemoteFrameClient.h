@@ -49,7 +49,7 @@ private:
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
     void broadcastFrameRemovalToOtherProcesses() final;
-    void close() final;
+    void closePage() final;
     void focus() final;
     void unfocus() final;
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
