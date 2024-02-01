@@ -38,11 +38,12 @@ namespace webrtc {
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
     const uint8_t* data,
-    size_t length) {
+    size_t length,
+    const H265SpsParser::SpsState* sps) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1.1 of the H.265 standard.
-  return ParseInternal(H265::ParseRbsp(data, length));
+  return ParseInternal(H265::ParseRbsp(data, length), sps);
 }
 
 bool H265PpsParser::ParsePpsIds(const uint8_t* data,
@@ -90,11 +91,12 @@ absl::optional<uint32_t> H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
 }
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
-    rtc::ArrayView<const uint8_t> buffer) {
+    rtc::ArrayView<const uint8_t> buffer,
+    const H265SpsParser::SpsState* sps) {
   BitstreamReader reader(buffer);
   PpsState pps;
 
-  if(!ParsePpsIdsInternal(reader, pps.id, pps.sps_id)){
+  if(!ParsePpsIdsInternal(reader, pps.pps_id, pps.sps_id)){
     return absl::nullopt;
   }
 
@@ -113,10 +115,12 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   // num_ref_idx_l1_default_active_minus1: ue(v)
   pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
   // init_qp_minus26: se(v)
-  pps.pic_init_qp_minus26 = reader.ReadSignedExponentialGolomb();
+  pps.init_qp_minus26 = reader.ReadSignedExponentialGolomb();
+  if (sps)
+    pps.qp_bd_offset_y = 6 * sps->bit_depth_luma_minus8;
   // Sanity-check parsed value
-  if (pps.pic_init_qp_minus26 > kMaxPicInitQpDeltaValue ||
-      pps.pic_init_qp_minus26 < kMinPicInitQpDeltaValue) {
+  if (pps.init_qp_minus26 > kMaxPicInitQpDeltaValue ||
+      pps.init_qp_minus26 < kMinPicInitQpDeltaValue) {
     return absl::nullopt;
   }
   // constrained_intra_pred_flag: u(1)
