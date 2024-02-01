@@ -101,7 +101,7 @@ public:
 
     void dataDrop(uint32_t dataSegmentIndex);
 
-    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
+    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
 
     void setMemory(Ref<Memory>&& memory)
@@ -128,7 +128,7 @@ public:
 #else
             m_cachedBoundsCheckingSize = memory()->mappedCapacity();
 #endif
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->basePointer(), m_cachedBoundsCheckingSize);
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void>(memory()->basePointer());
             ASSERT(memory()->basePointer() == cachedMemory());
         }
     }
@@ -255,7 +255,7 @@ private:
     void* m_softStackLimit { nullptr };
     JSWebAssemblyInstance* m_owner { nullptr };
     JSGlobalObject* m_globalObject; // This is kept by JSWebAssemblyInstance*.
-    CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
+    CagedPtr<Gigacage::Primitive, void> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
     RefPtr<Memory> m_memory;

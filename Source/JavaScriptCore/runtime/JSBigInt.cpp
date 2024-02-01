@@ -65,7 +65,7 @@ const ClassInfo JSBigInt::s_info = { "BigInt"_s, nullptr, nullptr, nullptr, CREA
 JSBigInt::JSBigInt(VM& vm, Structure* structure, Digit* data, unsigned length)
     : Base(vm, structure)
     , m_length(length)
-    , m_data(vm, this, data, length)
+    , m_data(vm, this, data)
 { }
 
 template<typename Visitor>

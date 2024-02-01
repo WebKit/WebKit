@@ -385,7 +385,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 else
                     jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
             }
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR(), /* validateAuth */ true, /* mayBeNull */ false);
+            jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, scratchOrBoundsCheckingSize, scratchJSR.payloadGPR());
         }
     }
 #endif

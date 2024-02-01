@@ -1145,14 +1145,14 @@ public:
     void encode(Encoder& encoder, const ScopedArgumentsTable& scopedArgumentsTable)
     {
         m_length = scopedArgumentsTable.m_length;
-        m_arguments.encode(encoder, scopedArgumentsTable.m_arguments.get(m_length), m_length);
+        m_arguments.encode(encoder, scopedArgumentsTable.m_arguments.get(), m_length);
     }
 
     ScopedArgumentsTable* decode(Decoder& decoder) const
     {
         ScopedArgumentsTable* scopedArgumentsTable = ScopedArgumentsTable::tryCreate(decoder.vm(), m_length);
         RELEASE_ASSERT(scopedArgumentsTable); // We crash here. This is unlikely to continue execution if we hit this condition when decoding UnlinkedCodeBlock.
-        m_arguments.decode(decoder, scopedArgumentsTable->m_arguments.get(m_length), m_length);
+        m_arguments.decode(decoder, scopedArgumentsTable->m_arguments.get(), m_length);
         return scopedArgumentsTable;
     }
 

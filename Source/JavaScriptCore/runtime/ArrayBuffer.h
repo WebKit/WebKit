@@ -64,7 +64,7 @@ public:
         return adoptRef(*new SharedArrayBufferContents(data, size, maxByteLength, WTFMove(memoryHandle), WTFMove(destructor), mode));
     }
     
-    void* data() const { return m_data.getMayBeNull(m_maxByteLength); }
+    void* data() const { return m_data.getMayBeNull(); }
 
     size_t sizeInBytes(std::memory_order order) const
     {
@@ -94,7 +94,7 @@ public:
     
 private:
     SharedArrayBufferContents(void* data, size_t size, std::optional<size_t> maxByteLength, RefPtr<BufferMemoryHandle> memoryHandle, ArrayBufferDestructorFunction&& destructor, Mode mode)
-        : m_data(data, maxByteLength.value_or(size))
+        : m_data(data)
         , m_destructor(WTFMove(destructor))
         , m_memoryHandle(WTFMove(memoryHandle))
         , m_sizeInBytes(size)
@@ -108,7 +108,7 @@ private:
 #endif
     }
 
-    using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    using DataType = CagedPtr<Gigacage::Primitive, void>;
     DataType m_data;
     ArrayBufferDestructorFunction m_destructor;
     RefPtr<BufferMemoryHandle> m_memoryHandle;
@@ -123,7 +123,7 @@ class ArrayBufferContents final {
 public:
     ArrayBufferContents() = default;
     ArrayBufferContents(void* data, size_t sizeInBytes, std::optional<size_t> maxByteLength, ArrayBufferDestructorFunction&& destructor)
-        : m_data(data, maxByteLength.value_or(sizeInBytes))
+        : m_data(data)
         , m_destructor(WTFMove(destructor))
         , m_sizeInBytes(sizeInBytes)
         , m_maxByteLength(maxByteLength.value_or(sizeInBytes))
@@ -145,11 +145,11 @@ public:
             m_hasMaxByteLength = !!m_shared->maxByteLength();
             m_maxByteLength = m_shared->maxByteLength().value_or(m_sizeInBytes);
         }
-        m_data = DataType { m_shared->data(), m_maxByteLength };
+        m_data = DataType { m_shared->data() };
     }
 
     ArrayBufferContents(void* data, size_t sizeInBytes, size_t maxByteLength, Ref<BufferMemoryHandle>&& memoryHandle)
-        : m_data(data, maxByteLength)
+        : m_data(data)
         , m_memoryHandle(WTFMove(memoryHandle))
         , m_sizeInBytes(sizeInBytes)
         , m_maxByteLength(maxByteLength)
@@ -182,7 +182,7 @@ public:
     
     explicit operator bool() { return !!m_data; }
     
-    void* data() const { return m_data.getMayBeNull(m_maxByteLength); }
+    void* data() const { return m_data.getMayBeNull(); }
     void* dataWithoutPACValidation() const { return m_data.getUnsafe(); }
     size_t sizeInBytes(std::memory_order order = std::memory_order_seq_cst) const
     {
@@ -251,7 +251,7 @@ private:
     void makeShared();
     void copyTo(ArrayBufferContents&);
 
-    using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    using DataType = CagedPtr<Gigacage::Primitive, void>;
     DataType m_data { nullptr };
     ArrayBufferDestructorFunction m_destructor { nullptr };
     RefPtr<SharedArrayBufferContents> m_shared;

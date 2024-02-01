@@ -51,7 +51,7 @@ ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buff
         ASSERT(isAutoLength());
 
     if (m_buffer)
-        m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset, m_byteLength);
+        m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset);
 }
 
 template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor)

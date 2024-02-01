@@ -9250,20 +9250,6 @@ IGNORE_CLANG_WARNINGS_END
             m_out.int64Zero,
             m_heaps.typedArrayProperties);
 
-#if CPU(ARM64E)
-        {
-            PatchpointValue* authenticate = m_out.patchpoint(pointerType());
-            authenticate->appendSomeRegister(storage);
-            authenticate->append(size64Bits, B3::ValueRep(B3::ValueRep::SomeLateRegister));
-            authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.move(params[1].gpr(), params[0].gpr());
-                jit.zeroExtend48ToWord(params[2].gpr(), params[2].gpr()); // See rdar://107561209, rdar://107724053.
-                jit.tagArrayPtr(params[2].gpr(), params[0].gpr());
-            });
-            storage = authenticate;
-        }
-#endif
-
         ValueFromBlock haveStorage = m_out.anchor(storage);
 
         LValue fastResultValue = nullptr;
@@ -12528,7 +12514,7 @@ IGNORE_CLANG_WARNINGS_END
                             else
                                 jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
                         }
-                        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+                        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratchGPR);
                     }
                 }
 
@@ -19347,66 +19333,17 @@ IGNORE_CLANG_WARNINGS_END
         }
     }
 
-    LValue untagArrayPtr(LValue ptr, LValue size)
-    {
-#if CPU(ARM64E)
-        PatchpointValue* authenticate = m_out.patchpoint(pointerType());
-        authenticate->appendSomeRegister(ptr);
-        authenticate->append(size, B3::ValueRep(B3::ValueRep::SomeLateRegister));
-        authenticate->numGPScratchRegisters = 1;
-        authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.move(params[1].gpr(), params[0].gpr());
-            jit.untagArrayPtr(params[2].gpr(), params[0].gpr(), true, params.gpScratch(0));
-        });
-        return authenticate;
-#else
-        UNUSED_PARAM(size);
-        return ptr;
-#endif
-    }
-
-    LValue removeArrayPtrTag(LValue ptr)
-    {
-#if CPU(ARM64E)
-        PatchpointValue* authenticate = m_out.patchpoint(pointerType());
-        authenticate->appendSomeRegister(ptr);
-        authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.move(params[1].gpr(), params[0].gpr());
-            jit.removeArrayPtrTag(params[0].gpr());
-        });
-        return authenticate;
-#endif
-        return ptr;
-    }
-
     LValue caged(Gigacage::Kind kind, LValue ptr, LValue base)
     {
-        auto doUntagArrayPtr = [&](LValue taggedPtr) {
-#if CPU(ARM64E)
-            if (kind == Gigacage::Primitive) {
-#if USE(LARGE_TYPED_ARRAYS)
-                LValue size = m_out.load64(base, m_heaps.JSArrayBufferView_length);
-#else
-                LValue size = m_out.load32(base, m_heaps.JSArrayBufferView_length);
-#endif
-                return untagArrayPtr(taggedPtr, size);
-            }
-            return ptr;
-#else
-            UNUSED_PARAM(taggedPtr);
-            return ptr;
-#endif
-        };
-
 #if GIGACAGE_ENABLED
         if (!Gigacage::isEnabled(kind))
-            return doUntagArrayPtr(ptr);
+            return ptr;
         
         if (kind == Gigacage::Primitive && !Gigacage::disablingPrimitiveGigacageIsForbidden()) {
             if (vm().primitiveGigacageEnabled().isStillValid())
                 m_graph.watchpoints().addLazily(vm().primitiveGigacageEnabled());
             else
-                return doUntagArrayPtr(ptr);
+                return ptr;
         }
         
         LValue basePtr = m_out.constIntPtr(Gigacage::basePtr(kind));
@@ -19431,7 +19368,7 @@ IGNORE_CLANG_WARNINGS_END
 
         UNUSED_PARAM(kind);
         UNUSED_PARAM(base);
-        return doUntagArrayPtr(ptr);
+        return ptr;
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)
@@ -22174,7 +22111,6 @@ IGNORE_CLANG_WARNINGS_END
         LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
         // FIXME: We could probably make this a mask.
         // https://bugs.webkit.org/show_bug.cgi?id=197701
-        vector = removeArrayPtrTag(vector);
         speculate(Uncountable, jsValueValue(vector), m_node, m_out.isZero64(vector));
         m_out.jump(continuation);
 

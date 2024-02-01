@@ -101,7 +101,7 @@ void DirectArguments::visitChildrenImpl(JSCell* thisCell, Visitor& visitor)
     visitor.append(thisObject->m_callee);
 
     if (thisObject->m_mappedArguments)
-        visitor.markAuxiliary(thisObject->m_mappedArguments.get(thisObject->internalLength()));
+        visitor.markAuxiliary(thisObject->m_mappedArguments.get());
     GenericArguments<DirectArguments>::visitChildren(thisCell, visitor);
 }
 
@@ -129,7 +129,7 @@ void DirectArguments::overrideThings(JSGlobalObject* globalObject)
         return;
     }
     bool* overrides = static_cast<bool*>(backingStore);
-    m_mappedArguments.set(vm, this, overrides, internalLength());
+    m_mappedArguments.set(vm, this, overrides);
     for (unsigned i = internalLength(); i--;)
         overrides[i] = false;
 }
@@ -148,7 +148,7 @@ void DirectArguments::unmapArgument(JSGlobalObject* globalObject, unsigned index
     overrideThingsIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    m_mappedArguments.at(index, internalLength()) = true;
+    m_mappedArguments.at(index) = true;
 }
 
 void DirectArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
