@@ -158,11 +158,6 @@ class SummarizedResultsTest(unittest.TestCase):
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
         self.assertNotIn('revision', summary)
 
-    def test_git_revision_exists(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-        self.assertNotEqual(summary['revision'], '')
-
     def test_git_revision_identifier(self):
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
@@ -170,29 +165,33 @@ class SummarizedResultsTest(unittest.TestCase):
             self.assertEqual(summary['revision'], '5@main')
 
     def test_summarized_results_wontfix(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-        self.assertTrue(summary['tests']['failures']['expected']['hang.html']['wontfix'])
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
+            self.assertTrue(summary['tests']['failures']['expected']['hang.html']['wontfix'])
 
     def test_summarized_results_include_passes(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
-        self.assertEqual(summary['tests']['passes']['text.html']['expected'], 'PASS')
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
+            self.assertEqual(summary['tests']['passes']['text.html']['expected'], 'PASS')
 
     def test_summarized_results_world_leaks_disabled(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
-        self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
+            self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')
 
     def test_summarized_run_metadata(self):
-        self.port._options.builder_name = 'dummy builder'
-        summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
-        self.assertEqual(summary['port_name'], 'test-mac-leopard')
-        self.assertEqual(
-            summary['test_configuration'],
-            {'version': 'leopard', 'architecture': 'x86', 'build_type': 'release'},
-        )
-        self.assertEqual(
-            summary['baseline_search_path'],
-            ['platform/test-mac-leopard', 'platform/test-mac-snowleopard'],
-        )
+        with mocks.local.Git(path='/'), OutputCapture():
+            self.port._options.builder_name = 'dummy builder'
+            summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
+            self.assertEqual(summary['port_name'], 'test-mac-leopard')
+            self.assertEqual(
+                summary['test_configuration'],
+                {'version': 'leopard', 'architecture': 'x86', 'build_type': 'release'},
+            )
+            self.assertEqual(
+                summary['baseline_search_path'],
+                ['platform/test-mac-leopard', 'platform/test-mac-snowleopard'],
+            )
