@@ -155,8 +155,12 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
         }
         if (byteIndex >= range.end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
-            if (RefPtr strongGenerator = weakGenerator.get())
-                strongGenerator->removeTask(task.get());
+            // This can be called while we are currently iterating data.taskData in giveResponseToTasksWithFinishedRanges,
+            // as such we can't remove the task from the hash table yet. Queue a task to process deletion.
+            targetQueue->dispatch([weakGenerator, task] {
+                if (RefPtr strongGenerator = weakGenerator.get())
+                    strongGenerator->removeTask(task.get());
+            });
         }
     };
 

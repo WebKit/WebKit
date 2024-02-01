@@ -2765,5 +2765,3 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 # webkit.org/b/267799 [ Ventura wk1 ] 2 tests in media/track are constant crash
 [ Ventura ] media/track/track-in-band-layout.html [ Crash ]
 [ Ventura ] media/track/track-paint-on-captions.html [ Crash ]
-
-webkit.org/b/268480 [ Debug ] http/tests/media/video-throttled-load-metadata.html [ Skip ]
