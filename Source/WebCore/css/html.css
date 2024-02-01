@@ -823,6 +823,13 @@ textarea {
     writing-mode: inherit !important;
 }
 
+/* https://drafts.csswg.org/css-pseudo-4/#first-line-styling */
+::first-line {
+    direction: inherit !important;
+    text-orientation: inherit !important;
+    writing-mode: inherit !important;
+}
+
 input::placeholder {
     white-space: pre;
     word-wrap: normal;
