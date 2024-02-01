@@ -70,7 +70,7 @@ private:
     // Message handlers
     void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
-    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&);
+    void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
     void requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&&);
     void submitFrame();
@@ -78,6 +78,19 @@ private:
     // PlatformXRCoordinator::SessionEventClient
     void sessionDidEnd(XRDeviceIdentifier) final;
     void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) final;
+
+    std::optional<PlatformXR::SessionMode> m_immersiveSessionMode;
+    std::optional<WebCore::SecurityOriginData> m_immersiveSessionSecurityOriginData;
+    std::optional<PlatformXR::Device::FeatureList> m_immersiveSessionGrantedFeatures;
+    enum class ImmersiveSessionState : uint8_t {
+        Idle,
+        RequestingPermissions,
+        PermissionsGranted,
+        SessionRunning
+    };
+    ImmersiveSessionState m_immersiveSessionState { ImmersiveSessionState::Idle };
+    void setImmersiveSessionState(ImmersiveSessionState);
+    void invalidateImmersiveSessionState();
 
     WebPageProxy& m_page;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;

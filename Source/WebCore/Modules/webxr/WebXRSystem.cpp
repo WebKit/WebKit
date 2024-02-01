@@ -402,6 +402,13 @@ void WebXRSystem::resolveFeaturePermissions(XRSessionMode mode, const XRSessionI
         return;
     }
 
+    // Skip platform code for asking for user's permission as we're using simulated ones.
+    if (UNLIKELY(m_testingDevices)) {
+        device->setEnabledFeatures(mode, resolvedFeatures->granted);
+        completionHandler(resolvedFeatures->granted);
+        return;
+    }
+
     // 7. Let (consentRequired, consentOptional, granted) be the fields of result.
     // 8. The user agent MAY at this point ask the user's permission for the calling algorithm to use any of the features
     //    in consentRequired and consentOptional. The results of these prompts should be included when determining if there

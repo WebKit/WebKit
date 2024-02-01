@@ -74,7 +74,7 @@ void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOrigin
     if (!m_xrSystem)
         return;
 
-    m_xrSystem->initializeTrackingAndRendering(securityOriginData, sessionMode, requestedFeatures);
+    m_xrSystem->initializeTrackingAndRendering();
 
     // This is called from the constructor of WebXRSession. Since sessionDidInitializeInputSources()
     // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
