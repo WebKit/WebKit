@@ -525,8 +525,10 @@
 
 (with-filter (state-flag "EnableExperimentalSandbox")
     (allow mach-lookup (global-name "com.apple.system.notification_center")
-        (apply-message-filter (deny mach-message-send))))
-
+        (apply-message-filter
+            (deny mach-message-send)
+            (deny mach-message-send (with no-report) (message-number 1023))
+            (allow mach-message-send (with report) (with telemetry) (notifyd-message-numbers)))))
 
 (managed-configuration-read-public)
 
