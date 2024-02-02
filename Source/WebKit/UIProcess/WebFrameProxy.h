@@ -201,7 +201,6 @@ private:
     String m_title;
     String m_frameName;
     bool m_containsPluginDocument { false };
-    bool m_isDoingServiceWorkerClientNavigation { false };
     WebCore::CertificateInfo m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     WebCore::FrameIdentifier m_frameID;
