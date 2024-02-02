@@ -2368,3 +2368,23 @@ webkit.org/b/268422 fast/events/ios/keyboard-should-not-trigger-resize.html [ Pa
 webkit.org/b/268555 [ Debug ] http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Skip ]
 
 webkit.org/b/268557 [ Debug ] imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-anchor-attribute-003-crash.tentative.html [ Skip ]
+
+# webkit.org/b/268581 (18 webgl/1.0.3/conformance/textures/* tests are consistently/flakily timing out.)
+webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/gl-teximage.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-data.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba4444.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image-rgba5551.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-image.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-svg-image.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/tex-image-with-format-and-type.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
+webgl/1.0.3/conformance/textures/texture-transparent-pixels-initialized.html [ Pass Timeout ]
