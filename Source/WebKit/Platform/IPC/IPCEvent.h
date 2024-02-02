@@ -49,30 +49,20 @@ public:
 
 #if PLATFORM(COCOA)
     void signal();
-    void encode(Encoder&) &&;
-    static std::optional<Signal> decode(Decoder&);
+
+    MachSendRight takeSendRight() { return WTFMove(m_sendRight); }
 #else
     void signal()
     {
         m_semaphore.signal();
     }
 
-    void encode(Encoder& encoder) &&
-    {
-        encoder << m_semaphore;
-    }
-
-    static std::optional<Signal> decode(Decoder& decoder)
-    {
-        std::optional<Semaphore> semaphore = decoder.decode<Semaphore>();
-        if (!semaphore)
-            return std::nullopt;
-
-        return Signal(WTFMove(*semaphore));
-    }
+    const Semaphore& semaphore() const { return m_semaphore; }
 #endif
 
 private:
+    friend struct IPC::ArgumentCoder<Signal, void>;
+
     friend std::optional<EventSignalPair> createEventSignalPair();
 
 #if PLATFORM(COCOA)
