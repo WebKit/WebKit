@@ -38,7 +38,11 @@ namespace WebKit {
 
 LaunchServicesDatabaseManager& LaunchServicesDatabaseManager::singleton()
 {
-    static NeverDestroyed<LaunchServicesDatabaseManager> manager;
+    static LazyNeverDestroyed<LaunchServicesDatabaseManager> manager;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        manager.construct();
+    });
     return manager.get();
 }
 
