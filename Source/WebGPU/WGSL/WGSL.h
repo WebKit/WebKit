@@ -166,6 +166,7 @@ struct BindGroupLayoutEntry {
 
 struct BindGroupLayout {
     // Metal's [[id(n)]] indices are equal to the index into this vector.
+    uint32_t group;
     Vector<BindGroupLayoutEntry> entries;
 };
 

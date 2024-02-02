@@ -779,13 +779,20 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
         return;
 
     auto &pipelineLayout = *optionalPipelineLayout;
-    size_t pipelineLayoutCount = pipelineLayout.bindGroupLayouts.size();
-    if (pipelineEntries.size() < pipelineLayoutCount)
-        pipelineEntries.grow(pipelineLayoutCount);
+    uint32_t maxGroupIndex = 0;
+    auto& deviceLimits = limits();
+    for (auto& bgl : pipelineLayout.bindGroupLayouts)
+        maxGroupIndex = std::max<uint32_t>(maxGroupIndex, bgl.group);
 
-    for (size_t pipelineLayoutIndex = 0; pipelineLayoutIndex < pipelineLayoutCount; ++pipelineLayoutIndex) {
-        auto& bindGroupLayout = pipelineLayout.bindGroupLayouts[pipelineLayoutIndex];
-        auto& entries = pipelineEntries[pipelineLayoutIndex];
+    size_t bindGroupLayoutCount = maxGroupIndex + 1;
+    if (bindGroupLayoutCount > deviceLimits.maxBindGroups)
+        return;
+
+    if (pipelineEntries.size() < bindGroupLayoutCount)
+        pipelineEntries.grow(bindGroupLayoutCount);
+
+    for (auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
+        auto& entries = pipelineEntries[bindGroupLayout.group];
         HashMap<String, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265204 - use a set instead

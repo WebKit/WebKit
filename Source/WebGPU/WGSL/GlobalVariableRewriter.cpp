@@ -148,6 +148,7 @@ private:
     ListHashSet<String> m_reads;
     HashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
     PipelineLayout* m_generatedLayout { nullptr };
     unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
@@ -1117,9 +1118,7 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
 {
     Vector<unsigned> groups;
     for (auto& groupBinding : m_groupBindingMap) {
-        unsigned group = groupBinding.key;
-
-        auto usedResource = usedResources.find(group);
+        auto usedResource = usedResources.find(groupBinding.key);
         if (usedResource == usedResources.end())
             continue;
 
@@ -1130,6 +1129,7 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
         unsigned metalId = 0;
         HashMap<AST::Variable*, unsigned> bufferSizeToOwnerMap;
         for (auto [binding, globalName] : bindingGlobalMap) {
+            unsigned group = groupBinding.key;
             if (!usedBindings.contains(binding))
                 continue;
             if (!m_reads.contains(globalName))
@@ -1143,8 +1143,14 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
 
             entries.append({ metalId, &createArgumentBufferEntry(metalId, *global.declaration) });
 
-            if (m_generatedLayout->bindGroupLayouts.size() <= group)
-                m_generatedLayout->bindGroupLayouts.grow(group + 1);
+            if (auto it = m_generateLayoutGroupMapping.find(groupBinding.key); it != m_generateLayoutGroupMapping.end())
+                group = it->value;
+            else {
+                auto newGroup = m_generatedLayout->bindGroupLayouts.size();
+                m_generateLayoutGroupMapping.add(group, newGroup);
+                m_generatedLayout->bindGroupLayouts.append({ group, { } });
+                group = newGroup;
+            }
 
             BindGroupLayoutEntry entry {
                 .binding = metalId,
@@ -1179,7 +1185,7 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
         if (entries.isEmpty())
             continue;
 
-        groups.append(group);
+        groups.append(groupBinding.key);
         finalizeArgumentBufferStruct(groupBinding.key, entries);
     }
     return groups;
