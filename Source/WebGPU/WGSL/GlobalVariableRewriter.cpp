@@ -1251,7 +1251,7 @@ static AddressSpace addressSpaceForBindingMember(const BindGroupLayoutEntry::Bin
     }, [](const StorageTextureBindingLayout&) {
         return AddressSpace::Handle;
     }, [](const ExternalTextureBindingLayout&) {
-        return AddressSpace::Uniform;
+        return AddressSpace::Handle;
     });
 }
 
