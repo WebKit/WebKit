@@ -1926,6 +1926,18 @@ if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
 endif ()
 
+if (UNIX)
+    check_function_exists(shm_open SHM_OPEN_EXISTS)
+    if (NOT SHM_OPEN_EXISTS)
+        set(CMAKE_REQUIRED_LIBRARIES rt)
+        check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
+        if (SHM_OPEN_REQUIRES_LIBRT)
+            list(APPEND WebCore_PRIVATE_LIBRARIES rt)
+        endif ()
+        unset(CMAKE_REQUIRED_LIBRARIES)
+    endif ()
+endif ()
+
 # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
 # these include directories, libraries or definitions need to be
 # added before the ANGLE directories.
