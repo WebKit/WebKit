@@ -30,15 +30,18 @@
 #import "config.h"
 #import "JSWebExtensionWrapper.h"
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #import "CocoaHelpers.h"
-#import "JSWebExtensionWrappable.h"
 #import "Logging.h"
-#import "WebExtensionAPIRuntime.h"
 #import <JavaScriptCore/JSObjectRef.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "JSWebExtensionWrappable.h"
+#import "WebExtensionAPIRuntime.h"
+#endif
+
 namespace WebKit {
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 WebExtensionCallbackHandler::WebExtensionCallbackHandler(JSValue *callbackFunction)
     : m_callbackFunction(JSValueToObject(callbackFunction.context.JSGlobalContextRef, callbackFunction.JSValueRef, nullptr))
@@ -156,6 +159,8 @@ id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argument
         toJSValueRef(m_globalContext.get(), argumentThree)
     });
 }
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
 
 id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass)
 {
@@ -291,10 +296,7 @@ JSValueRef toJSValueRef(JSContextRef context, NSURL *url, NullOrEmptyString null
     return toJSValueRef(context, url.absoluteURL.absoluteString, nullOrEmptyString);
 }
 
-NSString *toNSString(JSStringRef string)
-{
-    return string ? CFBridgingRelease(JSStringCopyCFString(nullptr, string)) : nil;
-}
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JSValueRef callbackValue, WebExtensionAPIRuntimeBase& runtime)
 {
@@ -311,6 +313,13 @@ RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JS
         return nullptr;
 
     return WebExtensionCallbackHandler::create(context, callbackFunction, runtime);
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
+NSString *toNSString(JSStringRef string)
+{
+    return string ? CFBridgingRelease(JSStringCopyCFString(nullptr, string)) : nil;
 }
 
 JSValueRef deserializeJSONString(JSContextRef context, NSString *jsonString)
@@ -339,8 +348,6 @@ NSString *serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* 
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
 
 using namespace WebKit;
 
