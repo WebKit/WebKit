@@ -167,7 +167,9 @@ private:
 
 #if ENABLE(VP9)
     void setHasVP9HardwareDecoder(bool hasVP9HardwareDecoder) { s_hasVP9HardwareDecoder = hasVP9HardwareDecoder; }
-    void setHasVP9ExtensionSupport(bool hasVP9ExtensionSupport) { s_hasVP9ExtensionSupport = hasVP9ExtensionSupport; }
+#endif
+#if ENABLE(AV1)
+    void setHasAV1HardwareDecoder(bool hasAV1HardwareDecoder) { s_hasAV1HardwareDecoder = hasAV1HardwareDecoder; }
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
@@ -199,7 +201,9 @@ private:
 #endif
 #if ENABLE(VP9)
     static std::optional<bool> s_hasVP9HardwareDecoder;
-    static std::optional<bool> s_hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    static std::optional<bool> s_hasAV1HardwareDecoder;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

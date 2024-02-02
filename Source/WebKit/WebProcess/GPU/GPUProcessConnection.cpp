@@ -299,9 +299,13 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
     m_hasInitialized = true;
     RELEASE_LOG(Process, "%p - GPUProcessConnection::didInitialize", this);
 
-#if ENABLE(VP9) && USE(LIBWEBRTC) && PLATFORM(COCOA)
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+#if ENABLE(VP9)
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(info->hasVP9HardwareDecoder);
-    WebProcess::singleton().libWebRTCCodecs().setHasVP9ExtensionSupport(info->hasVP9ExtensionSupport);
+#endif
+#if ENABLE(AV1)
+    WebProcess::singleton().libWebRTCCodecs().setHasAV1HardwareDecoder(info->hasAV1HardwareDecoder);
+#endif
 #endif
 }
 

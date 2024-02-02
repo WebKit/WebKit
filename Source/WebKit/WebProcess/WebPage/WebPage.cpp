@@ -4624,10 +4624,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         settings.setTrackConfigurationEnabled(true);
     }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageUpdatePreferencesAdditions.cpp>
-#endif
-
 #if ENABLE(PDF_PLUGIN)
     for (auto& pluginView : m_pluginViews)
         pluginView.didChangeSettings();

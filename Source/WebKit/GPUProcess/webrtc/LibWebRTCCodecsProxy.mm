@@ -136,10 +136,6 @@ std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDe
 {
     auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging));
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/LibWebRTCCodecsProxyAdditions.mm>
-#endif
-
     switch (codecType) {
     case VideoCodecType::H264:
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH264Decoder(block.get())).moveToUniquePtr();
@@ -147,8 +143,8 @@ std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDe
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH265Decoder(block.get())).moveToUniquePtr();
     case VideoCodecType::VP9:
         return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalVP9Decoder(block.get())).moveToUniquePtr();
-    default:
-        break;
+    case VideoCodecType::AV1:
+        return createAV1VTBDecoder(block.get()).moveToUniquePtr();
     }
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -41,7 +41,9 @@ struct GPUProcessConnectionInfo {
 #endif
 #if ENABLE(VP9)
     bool hasVP9HardwareDecoder { false };
-    bool hasVP9ExtensionSupport { false };
+#endif
+#if ENABLE(AV1)
+    bool hasAV1HardwareDecoder { false };
 #endif
 };
 

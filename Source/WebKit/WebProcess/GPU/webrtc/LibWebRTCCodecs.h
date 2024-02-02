@@ -164,8 +164,10 @@ public:
     bool supportVP9VTB() const { return m_supportVP9VTB; }
     void setLoggingLevel(WTFLogLevel);
 
-    void setHasVP9ExtensionSupport(bool);
-    bool hasVP9ExtensionSupport() const { return m_hasVP9ExtensionSupport; }
+#if ENABLE(AV1)
+    void setHasAV1HardwareDecoder(bool);
+#endif
+    bool hasAV1HardwareDecoder() const { return m_hasAV1HardwareDecoder; }
 
     void ref() const final { return IPC::WorkQueueMessageReceiver::ref(); }
     void deref() const final { return IPC::WorkQueueMessageReceiver::deref(); }
@@ -226,7 +228,7 @@ private:
     std::optional<WTFLogLevel> m_loggingLevel;
     bool m_useGPUProcess { false };
     bool m_useRemoteFrames { false };
-    bool m_hasVP9ExtensionSupport { false };
+    bool m_hasAV1HardwareDecoder { false };
     bool m_enableAdditionalLogging { false };
 };
 

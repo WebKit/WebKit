@@ -27,13 +27,14 @@
 
 #if PLATFORM(COCOA) && ENABLE(AV1)
 
-#include "AV1Utilities.h"
-
 namespace WebCore {
 
+struct AV1CodecConfigurationRecord;
+struct VideoConfiguration;
 struct MediaCapabilitiesInfo;
 
 std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
+WEBCORE_EXPORT bool av1HardwareDecoderAvailable();
 
 }
 

@@ -481,14 +481,18 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 #if ENABLE(VP9)
 std::optional<bool> GPUProcessProxy::s_hasVP9HardwareDecoder;
-std::optional<bool> GPUProcessProxy::s_hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+std::optional<bool> GPUProcessProxy::s_hasAV1HardwareDecoder;
 #endif
 
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
 #if ENABLE(VP9)
     parameters.hasVP9HardwareDecoder = s_hasVP9HardwareDecoder;
-    parameters.hasVP9ExtensionSupport = s_hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    parameters.hasAV1HardwareDecoder = s_hasAV1HardwareDecoder;
 #endif
 
     if (auto* store = webProcessProxy.websiteDataStore())

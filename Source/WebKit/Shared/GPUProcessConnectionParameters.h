@@ -50,7 +50,9 @@ struct GPUProcessConnectionParameters {
 #endif
 #if ENABLE(VP9)
     std::optional<bool> hasVP9HardwareDecoder;
-    std::optional<bool> hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    std::optional<bool> hasAV1HardwareDecoder;
 #endif
 };
 
