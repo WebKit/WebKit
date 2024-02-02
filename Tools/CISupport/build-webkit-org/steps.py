@@ -865,7 +865,7 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
         super().__init__(*args, **kwargs)
 
     def run(self):
-        self.workerEnvironment[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
+        self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
