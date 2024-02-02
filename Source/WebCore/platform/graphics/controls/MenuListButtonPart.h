@@ -50,3 +50,8 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MenuListButtonPart) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::MenulistButton; } \
+SPECIALIZE_TYPE_TRAITS_END()
+

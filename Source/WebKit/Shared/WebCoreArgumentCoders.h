@@ -99,7 +99,6 @@ namespace WebCore {
 
 class AppKitControlSystemImage;
 class BlobPart;
-class ControlPart;
 class Credential;
 class Cursor;
 class FilterEffect;
@@ -224,12 +223,6 @@ template<> struct ArgumentCoder<WebCore::SharedBuffer> {
 template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static void encode(Encoder&, const WebCore::ScriptBuffer&);
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ControlPart> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::ControlPart&);
-    static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

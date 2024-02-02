@@ -51,3 +51,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SearchFieldResultsPart) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::SearchFieldResultsDecoration || part.type() == WebCore::StyleAppearance::SearchFieldResultsButton; } \
+SPECIALIZE_TYPE_TRAITS_END()

@@ -3269,6 +3269,96 @@ enum class WebCore::StyleAppearance : uint8_t {
     SwitchTrack
 };
 
+header: <WebCore/ControlPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ControlPart subclasses {
+    WebCore::ButtonPart,
+    WebCore::InnerSpinButtonPart,
+    WebCore::MenuListButtonPart,
+    WebCore::MenuListPart,
+    WebCore::MeterPart,
+    WebCore::ProgressBarPart,
+    WebCore::SearchFieldPart,
+    WebCore::SearchFieldResultsPart,
+    WebCore::SearchFieldCancelButtonPart,
+    WebCore::SliderThumbPart,
+    WebCore::SliderTrackPart,
+    WebCore::SwitchThumbPart,
+    WebCore::SwitchTrackPart,
+    WebCore::TextAreaPart,
+    WebCore::TextFieldPart,
+    WebCore::ToggleButtonPart,
+#if ENABLE(APPLE_PAY)
+    WebCore::ApplePayButtonPart,
+#endif
+#if ENABLE(SERVICE_CONTROLS)
+    WebCore::ImageControlsButtonPart,
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    WebCore::ColorWellPart,
+#endif
+}
+
+header: <WebCore/ButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::ButtonPart {
+    WebCore::StyleAppearance type();
+}
+
+header: <WebCore/InnerSpinButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::InnerSpinButtonPart {
+}
+
+header: <WebCore/MenuListButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::MenuListButtonPart {
+}
+
+header: <WebCore/MenuListPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::MenuListPart {
+}
+
+header: <WebCore/SearchFieldPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::SearchFieldPart {
+}
+
+header: <WebCore/SliderThumbPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::SliderThumbPart {
+    WebCore::StyleAppearance type();
+}
+
+header: <WebCore/SearchFieldResultsPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::SearchFieldResultsPart {
+    WebCore::StyleAppearance type();
+}
+
+header: <WebCore/SearchFieldCancelButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::SearchFieldCancelButtonPart {
+}
+
+header: <WebCore/TextAreaPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::TextAreaPart {
+    WebCore::StyleAppearance type();
+}
+
+header: <WebCore/TextFieldPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::TextFieldPart {
+}
+
+header: <WebCore/ToggleButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::ToggleButtonPart {
+    WebCore::StyleAppearance type();
+}
+
+#if ENABLE(SERVICE_CONTROLS)
+header: <WebCore/ImageControlsButtonPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::ImageControlsButtonPart {
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+header: <WebCore/ColorWellPart.h>
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::ColorWellPart {
+}
+#endif
+
 #if ENABLE(APPLE_PAY)
 header: <WebCore/ApplePayButtonPart.h>
 enum class WebCore::ApplePayButtonType : uint8_t {

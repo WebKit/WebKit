@@ -51,3 +51,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToggleButtonPart) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::Checkbox || part.type() == WebCore::StyleAppearance::Radio; } \
+SPECIALIZE_TYPE_TRAITS_END()

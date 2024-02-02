@@ -54,3 +54,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ButtonPart) \
+    static bool isType(const WebCore::ControlPart& part) { return part.type() == WebCore::StyleAppearance::PushButton || part.type() == WebCore::StyleAppearance::SquareButton || part.type() == WebCore::StyleAppearance::Button || part.type() == WebCore::StyleAppearance::DefaultButton; } \
+SPECIALIZE_TYPE_TRAITS_END()

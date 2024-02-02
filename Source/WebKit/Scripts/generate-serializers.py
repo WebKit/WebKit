@@ -32,6 +32,7 @@ import sys
 # AdditionalEncoder - generate serializers for StreamConnectionEncoder in addition to IPC::Encoder.
 # CreateUsing - use a custom function to call instead of the constructor or create.
 # CustomHeader - don't include a header based on the struct/class name. Only needed for non-enum types.
+# DisableMissingMemberCheck - do not check for attributes that are missed during serialization.
 # Alias - this type is not a struct or class, but a typedef.
 # Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
 # RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
@@ -96,6 +97,7 @@ class SerializedType(object):
         self.members_are_subclasses = False
         self.custom_encoder = False
         self.support_wkkeyedcoder = False
+        self.disableMissingMemberCheck = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -119,6 +121,8 @@ class SerializedType(object):
                         self.nested = True
                     elif attribute == 'RefCounted':
                         self.return_ref = True
+                    elif attribute == 'DisableMissingMemberCheck':
+                        self.disableMissingMemberCheck = True
                     elif attribute == 'RValue':
                         self.rvalue = True
                     elif attribute == 'WebKitPlatform':
@@ -167,6 +171,8 @@ class SerializedType(object):
         return 'isValidEnum'
 
     def can_assert_member_order_is_correct(self):
+        if self.disableMissingMemberCheck:
+            return False
         for member in self.members:
             if '()' in member.name:
                 return False
