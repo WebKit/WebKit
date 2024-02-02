@@ -1010,9 +1010,9 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 {
     ASSERT(!permission.isEmpty());
 
-    if (tab && hasPermission(_WKWebExtensionPermissionActiveTab) && hasActiveUserGesture(*tab)) {
-        // An active user gesture grants the "tabs" permission.
-        if (permission == String(_WKWebExtensionPermissionTabs))
+    if (tab && permission == String(_WKWebExtensionPermissionTabs)) {
+        RefPtr temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && temporaryPattern->matchesURL(tab->url()))
             return PermissionState::GrantedExplicitly;
     }
 
@@ -2292,6 +2292,9 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 
     // Nothing else to do if the extension does not have the activeTab permission.
     if (!hasPermission(_WKWebExtensionPermissionActiveTab))
+        return;
+
+    if (!tab.shouldGrantTabPermissionsOnUserGesture())
         return;
 
     auto currentURL = tab.url();

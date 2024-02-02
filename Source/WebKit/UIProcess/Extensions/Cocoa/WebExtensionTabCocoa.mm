@@ -90,6 +90,7 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToDeselect([delegate respondsToSelector:@selector(deselectForWebExtensionContext:completionHandler:)])
     , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateForWebExtensionContext:withOptions:completionHandler:)])
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
+    , m_respondsToShouldGrantTabPermissionsOnUserGesture([delegate respondsToSelector:@selector(shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:)])
 {
     ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
@@ -869,6 +870,14 @@ void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
 
         completionHandler(std::nullopt);
     }).get()];
+}
+
+bool WebExtensionTab::shouldGrantTabPermissionsOnUserGesture() const
+{
+    if (!isValid() || !m_respondsToShouldGrantTabPermissionsOnUserGesture)
+        return true;
+
+    return [m_delegate shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
 WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType, MainWebViewOnly mainWebViewOnly) const

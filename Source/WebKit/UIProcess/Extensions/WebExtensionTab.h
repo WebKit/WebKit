@@ -184,6 +184,8 @@ public:
 
     void close(CompletionHandler<void(Error)>&&);
 
+    bool shouldGrantTabPermissionsOnUserGesture() const;
+
     WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType, MainWebViewOnly = MainWebViewOnly::Yes) const;
 
 #ifdef __OBJC__
@@ -236,6 +238,7 @@ private:
     bool m_respondsToDeselect : 1 { false };
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
+    bool m_respondsToShouldGrantTabPermissionsOnUserGesture : 1 { false };
 };
 
 } // namespace WebKit
