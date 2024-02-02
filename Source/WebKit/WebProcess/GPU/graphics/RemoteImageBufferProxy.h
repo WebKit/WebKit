@@ -36,6 +36,10 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
