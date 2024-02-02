@@ -1619,7 +1619,7 @@ void RenderLayerCompositor::updateBackingSharingAfterDescendantTraversal(Backing
     layer.backing()->clearBackingSharingLayers();
     LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(depth * 2, ' ') << " - is composited; maybe ending existing backing sequence with candidates " << sharingState.backingProviderCandidates() << " stacking context " << sharingState.backingSharingStackingContext());
 
-    if (preDescendantProviderStartLayer && preDescendantProviderStartLayer != sharingState.firstProviderCandidateLayer())
+    if (preDescendantProviderStartLayer && preDescendantProviderStartLayer == sharingState.firstProviderCandidateLayer())
         sharingState.endBackingSharingSequence(layer);
 }
 
