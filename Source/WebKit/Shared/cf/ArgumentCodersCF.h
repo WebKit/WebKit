@@ -102,11 +102,4 @@ template<> struct ArgumentCoder<RetainPtr<SecAccessControlRef>> : CFRetainPtrArg
 };
 #endif
 
-template<> struct ArgumentCoder<SecTrustRef> {
-    template<typename Encoder> static void encode(Encoder&, SecTrustRef);
-};
-template<> struct ArgumentCoder<RetainPtr<SecTrustRef>> : CFRetainPtrArgumentCoder<SecTrustRef> {
-    template<typename Decoder> static std::optional<RetainPtr<SecTrustRef>> decode(Decoder&);
-};
-
 } // namespace IPC

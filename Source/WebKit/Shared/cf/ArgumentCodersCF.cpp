@@ -622,46 +622,6 @@ std::optional<RetainPtr<SecAccessControlRef>> ArgumentCoder<RetainPtr<SecAccessC
 }
 #endif
 
-template<typename Encoder>
-void ArgumentCoder<SecTrustRef>::encode(Encoder& encoder, SecTrustRef trust)
-{
-    auto data = adoptCF(SecTrustSerialize(trust, nullptr));
-    if (!data) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true << data;
-}
-
-template void ArgumentCoder<SecTrustRef>::encode<Encoder>(Encoder&, SecTrustRef);
-template void ArgumentCoder<SecTrustRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecTrustRef);
-
-template<typename Decoder>
-std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> hasTrust;
-    decoder >> hasTrust;
-    if (!hasTrust)
-        return std::nullopt;
-
-    if (!*hasTrust)
-        return { nullptr };
-
-    std::optional<RetainPtr<CFDataRef>> trustData;
-    decoder >> trustData;
-    if (!trustData)
-        return std::nullopt;
-
-    auto trust = adoptCF(SecTrustDeserialize(trustData->get(), nullptr));
-    if (!trust)
-        return std::nullopt;
-
-    return WTFMove(trust);
-}
-
-template std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode<Decoder>(Decoder&);
-
 } // namespace IPC
 
 namespace WTF {

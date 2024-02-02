@@ -44,6 +44,10 @@ additional_forward_declaration: typedef struct __SecCertificate *SecCertificateR
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecCertificate()] SecCertificateRef wrapped by WebKit::CoreIPCSecCertificate {
 }
 
+additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
+}
+
 #endif
 
 #if USE(CG)

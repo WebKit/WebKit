@@ -32,6 +32,7 @@
 #import "MessageSenderInlines.h"
 #import "test.h"
 #import <Foundation/NSValue.h>
+#import <Security/Security.h>
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
@@ -92,7 +93,8 @@ struct CFHolderForTesting {
         RetainPtr<CFDataRef>,
         RetainPtr<CFBooleanRef>,
         RetainPtr<CGColorRef>,
-        RetainPtr<CFDictionaryRef>
+        RetainPtr<CFDictionaryRef>,
+        RetainPtr<SecTrustRef>
     > ValueType;
 
     ValueType value;
@@ -115,6 +117,84 @@ std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decod
     } };
 }
 
+static bool compareSecTrustRefs(SecTrustRef trust1, SecTrustRef trust2)
+{
+    // SecTrust doesn't compare equal after round-tripping through SecTrustSerialize/SecTrustDeserialize <rdar://122051396>
+    // Therefore, we compare all the attributes we can access to verify equality.
+    SecKeyRef pk1 = SecTrustCopyPublicKey(trust1);
+    SecKeyRef pk2 = SecTrustCopyPublicKey(trust2);
+    EXPECT_TRUE(pk1);
+    EXPECT_TRUE(pk2);
+    bool equal = CFEqual(pk1, pk2);
+    CFRelease(pk1);
+    CFRelease(pk2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    equal = (SecTrustGetCertificateCount(trust1) == SecTrustGetCertificateCount(trust2));
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    CFDataRef ex1 = SecTrustCopyExceptions(trust1);
+    CFDataRef ex2 = SecTrustCopyExceptions(trust2);
+    EXPECT_TRUE(ex1);
+    EXPECT_TRUE(ex2);
+    equal = CFEqual(ex1, ex2);
+    CFRelease(ex1);
+    CFRelease(ex2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    CFArrayRef array1, array2;
+    EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    array1 = SecTrustCopyProperties(trust1);
+    array2 = SecTrustCopyProperties(trust2);
+    EXPECT_TRUE(array1);
+    EXPECT_TRUE(array2);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    Boolean bool1, bool2;
+    EXPECT_TRUE(SecTrustGetNetworkFetchAllowed(trust1, &bool1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustGetNetworkFetchAllowed(trust2, &bool2) == errSecSuccess);
+    equal = (bool1 == bool2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    SecTrustResultType result1, result2;
+    EXPECT_TRUE(SecTrustGetTrustResult(trust1, &result1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustGetTrustResult(trust2, &result2) == errSecSuccess);
+    equal = (result1 == result2);
+    EXPECT_TRUE(equal);
+
+    return equal;
+}
+
 inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 {
     auto aObject = a.valueAsCFType();
@@ -128,7 +208,13 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 
     // Sometimes the CF input and CF output fail the CFEqual call above (Such as CFDictionaries containing certain things)
     // In these cases, give the Obj-C equivalent equality check a chance.
-    return [(NSObject *)aObject isEqual: (NSObject *)bObject];
+    if ([(NSObject *)aObject isEqual: (NSObject *)bObject])
+        return true;
+
+    if (CFGetTypeID(aObject) == SecTrustGetTypeID() && CFGetTypeID(bObject) == SecTrustGetTypeID())
+        return compareSecTrustRefs((SecTrustRef)aObject, (SecTrustRef)bObject);
+
+    return false;
 }
 
 struct ObjCHolderForTesting {
@@ -645,6 +731,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     //   - NSRect
     runValueTest([NSValue valueWithRange:NSMakeRange(1, 2)]);
     runValueTest([NSValue valueWithRect:NSMakeRect(1, 2, 79, 80)]);
+
+    // SecTrust -- evaluate the trust of the cert created above
+    SecTrustRef trust = NULL;
+    SecPolicyRef policy = SecPolicyCreateBasicX509();
+    EXPECT_TRUE(SecTrustCreateWithCertificates(cert.get(), policy, &trust) == errSecSuccess);
+    EXPECT_TRUE(trust);
+    runTestCF({ trust });
+
+    EXPECT_TRUE(SecTrustEvaluateWithError(trust, NULL) == errSecSuccess);
+    runTestCF({ trust });
+
+    CFRelease(trust);
+    CFRelease(policy);
 }
 
 #if PLATFORM(MAC)
