@@ -61,8 +61,8 @@ public:
     AuthenticatorCoordinatorClient() = default;
     virtual ~AuthenticatorCoordinatorClient() = default;
 
-    virtual void makeCredential(const LocalFrame&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, MediationRequirement, RequestCompletionHandler&&) = 0;
-    virtual void getAssertion(const LocalFrame&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, MediationRequirement, const ScopeAndCrossOriginParent&, RequestCompletionHandler&&) = 0;
+    virtual void makeCredential(const LocalFrame&, const PublicKeyCredentialCreationOptions&, MediationRequirement, RequestCompletionHandler&&) = 0;
+    virtual void getAssertion(const LocalFrame&, const PublicKeyCredentialRequestOptions&, MediationRequirement, const ScopeAndCrossOriginParent&, RequestCompletionHandler&&) = 0;
     virtual void isConditionalMediationAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void getClientCapabilities(const SecurityOrigin&, CapabilitiesCompletionHandler&&) = 0;

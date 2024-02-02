@@ -216,12 +216,12 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->makeCredential(*weakFrame, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
+            weakThis->m_client->makeCredential(*weakFrame, options, createOptions.mediation, WTFMove(callback));
         };
         return;
     }
     // Async operations are dispatched and handled in the messenger.
-    m_client->makeCredential(*frame, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
+    m_client->makeCredential(*frame, options, createOptions.mediation, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)
@@ -269,10 +269,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         options.extensions->appid = appid;
     }
 
-    // Step 10-12.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin, scopeAndCrossOriginParent.first);
-    auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
-
     // Step 4, 14-19.
     if (!m_client) {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
@@ -295,14 +291,13 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
@@ -311,19 +306,19 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     };
 
     if (m_isCancelling) {
-        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, clientDataJsonHash = WTFMove(clientDataJsonHash), requestOptions = WTFMove(requestOptions), scopeAndCrossOriginParent, callback = WTFMove(callback)]() mutable {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTFMove(requestOptions), scopeAndCrossOriginParent, callback = WTFMove(callback)]() mutable {
             if (!weakThis || !weakFrame)
                 return;
             const auto options = requestOptions.publicKey.value();
             RefPtr frame = weakFrame.get();
             if (!frame)
                 return;
-            weakThis->m_client->getAssertion(*weakFrame, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
         };
         return;
     }
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
