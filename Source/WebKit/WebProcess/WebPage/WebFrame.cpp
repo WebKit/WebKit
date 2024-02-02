@@ -233,6 +233,11 @@ WebCore::LocalFrame* WebFrame::coreLocalFrame() const
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
 
+RefPtr<WebCore::LocalFrame> WebFrame::protectedCoreLocalFrame() const
+{
+    return coreLocalFrame();
+}
+
 WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
 {
     return dynamicDowncast<RemoteFrame>(m_coreFrame.get());

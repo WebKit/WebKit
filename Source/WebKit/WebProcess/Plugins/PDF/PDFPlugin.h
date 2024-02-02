@@ -91,8 +91,6 @@ public:
     void notifyContentScaleFactorChanged(CGFloat scaleFactor);
     void notifyDisplayModeChanged(int);
 
-    void notifySelectionChanged(PDFSelection *);
-
     // HUD Actions.
 #if ENABLE(PDF_HUD)
     void zoomIn() final;

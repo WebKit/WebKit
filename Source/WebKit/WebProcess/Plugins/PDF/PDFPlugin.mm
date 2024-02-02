@@ -473,7 +473,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection
 {
-    _pdfPlugin->notifySelectionChanged(selection);
+    _pdfPlugin->notifySelectionChanged();
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didUpdateLayer:(CALayer *)layer forAnnotation:(PDFAnnotation *)annotation
@@ -1434,13 +1434,6 @@ void PDFPlugin::focusNextAnnotation()
 void PDFPlugin::focusPreviousAnnotation()
 {
     [m_pdfLayerController activateNextAnnotation:true];
-}
-
-void PDFPlugin::notifySelectionChanged(PDFSelection *)
-{
-    if (!m_frame || !m_frame->page())
-        return;
-    m_frame->page()->didChangeSelection(*m_frame->coreLocalFrame());
 }
 
 String PDFPlugin::getSelectionString() const

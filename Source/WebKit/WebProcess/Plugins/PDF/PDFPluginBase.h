@@ -206,6 +206,8 @@ public:
     void maybeClearHighLatencyDataProviderFlag();
 #endif
 
+    void notifySelectionChanged();
+
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     uint64_t streamedBytes() const { return m_streamedBytes; }

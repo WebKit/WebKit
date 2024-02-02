@@ -187,6 +187,13 @@ bool PDFPluginBase::isLocked() const
     return [m_pdfDocument isLocked];
 }
 
+void PDFPluginBase::notifySelectionChanged()
+{
+    if (!m_frame || !m_frame->page())
+        return;
+    m_frame->protectedPage()->didChangeSelection(*m_frame->protectedCoreLocalFrame());
+}
+
 NSData *PDFPluginBase::originalData() const
 {
     return (__bridge NSData *)m_data.get();
