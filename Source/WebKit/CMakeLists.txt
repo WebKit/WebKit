@@ -425,6 +425,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
     Shared/PrintInfo.serialization.in
+    Shared/ProcessQualified.serialization.in
     Shared/RTCNetwork.serialization.in
     Shared/RTCPacketOptions.serialization.in
     Shared/RemoteWorkerInitializationData.serialization.in

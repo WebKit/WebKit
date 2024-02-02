@@ -623,6 +623,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
 	Shared/PrintInfo.serialization.in \
+	Shared/ProcessQualified.serialization.in \
 	Shared/PushMessageForTesting.serialization.in \
 	Shared/RTCNetwork.serialization.in \
 	Shared/RTCPacketOptions.serialization.in \

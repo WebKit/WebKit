@@ -1,0 +1,74 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = ObjectIdentifier<BackForwardItemIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = AtomicObjectIdentifier<DOMCacheIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using FrameIdentifierID = ObjectIdentifier<FrameIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
+
+
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<BackForwardItemIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BackForwardItemIdentifier {
+    WebCore::BackForwardItemIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<DOMCacheIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::DOMCacheIdentifier {
+    WebCore::DOMCacheIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<FrameIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::FrameIdentifier {
+    WebCore::FrameIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<OpaqueOriginIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::OpaqueOriginIdentifierProcessQualified {
+    WebCore::OpaqueOriginIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<PlatformLayerIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlatformLayerIdentifier {
+    WebCore::PlatformLayerIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<SharedWorkerObjectIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::SharedWorkerObjectIdentifier {
+    WebCore::SharedWorkerObjectIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+header: <WebCore/ProcessQualified.h>
+[Alias=class ProcessQualified<WebLockIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::WebLockIdentifier {
+    WebCore::WebLockIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
