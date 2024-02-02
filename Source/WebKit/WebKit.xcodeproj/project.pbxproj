@@ -1331,7 +1331,6 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */; };
 		561A54532B61E49E00073A72 /* CoreIPCSecCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = 561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */; };
-		561A54542B61E49E00073A72 /* CoreIPCSecCertificate.serialization.in in Sources */ = {isa = PBXBuildFile; fileRef = 561A54522B61E49E00073A72 /* CoreIPCSecCertificate.serialization.in */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
 		570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAAC23026F5C00E8FC04 /* NfcService.h */; };
 		570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DAAC02303730300E8FC04 /* NfcConnection.h */; };
@@ -18538,7 +18537,6 @@
 				E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */,
 				413E5C9229B0CF7C002F4987 /* BackgroundFetchStateCocoa.mm in Sources */,
 				1C62747E288B4C3E00CED3A2 /* CocoaHelpers.mm in Sources */,
-				561A54542B61E49E00073A72 /* CoreIPCSecCertificate.serialization.in in Sources */,
 				49DC1DE127E5129100C1CB36 /* CSPExtensionUtilities.mm in Sources */,
 				522F792C28D531970069B45B /* CtapAuthenticator.cpp in Sources */,
 				526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */,
