@@ -512,7 +512,7 @@ void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& 
         propertySet.add(property);
 
     Accessibility::enumerateDescendants<AXCoreObject>(axObject, true, [&propertySet, this] (auto& descendant) {
-        queueNodeUpdate(descendant, { propertySet });
+        queueNodeUpdate(descendant.objectID(), { propertySet });
     });
 }
 
@@ -730,7 +730,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
     for (RefPtr ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (ancestor->isTree()) {
-            queueNodeUpdate(*ancestor, { AXPropertyName::ARIATreeRows });
+            queueNodeUpdate(ancestor->objectID(), { AXPropertyName::ARIATreeRows });
             if (!updateTableAncestorColumns)
                 break;
         }
@@ -1038,12 +1038,12 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     AXLOG(makeString("objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
-    if (axObject.isLabel()) {
-        // Update the labeled objects since one of their labels was removed.
-        auto labeledObjects = axObject.labelForObjects();
-        for (auto& labeledObject : labeledObjects) {
+    auto labeledObjectIDs = axObjectCache() ? axObjectCache()->relatedObjectIDsFor(axObject, AXRelationType::LabelFor, AXObjectCache::UpdateRelations::No) : std::nullopt;
+    if (labeledObjectIDs) {
+        // Update the labeled objects since axObject is one of their labels and it is being removed.
+        for (AXID labeledObjectID : *labeledObjectIDs) {
             // The label/title of an isolated object is computed based on its AccessibilityText propperty, thus update it.
-            queueNodeUpdate(*labeledObject, { AXPropertyName::AccessibilityText });
+            queueNodeUpdate(labeledObjectID, { AXPropertyName::AccessibilityText });
         }
     }
 
@@ -1248,26 +1248,26 @@ AXTreePtr findAXTree(Function<bool(AXTreePtr)>&& match)
 #endif
 }
 
-void AXIsolatedTree::queueNodeUpdate(AXCoreObject& object, const NodeUpdateOptions& options)
+void AXIsolatedTree::queueNodeUpdate(AXID objectID, const NodeUpdateOptions& options)
 {
     ASSERT(isMainThread());
 
     if (!options.shouldUpdateNode && options.properties.size()) {
         // If we're going to recompute all properties for the node (i.e., the node is in m_needsUpdateNode),
         // don't bother queueing any individual property updates.
-        if (m_needsUpdateNode.contains(object.objectID()))
+        if (m_needsUpdateNode.contains(objectID))
             return;
 
-        auto addResult = m_needsPropertyUpdates.add(object.objectID(), options.properties);
+        auto addResult = m_needsPropertyUpdates.add(objectID, options.properties);
         if (!addResult.isNewEntry)
             addResult.iterator->value.formUnion(options.properties);
     }
 
     if (options.shouldUpdateChildren)
-        m_needsUpdateChildren.add(object.objectID());
+        m_needsUpdateChildren.add(objectID);
 
     if (options.shouldUpdateNode)
-        m_needsUpdateNode.add(object.objectID());
+        m_needsUpdateNode.add(objectID);
 
     if (auto* cache = axObjectCache())
         cache->startUpdateTreeSnapshotTimer();

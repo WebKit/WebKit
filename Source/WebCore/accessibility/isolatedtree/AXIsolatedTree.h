@@ -384,7 +384,7 @@ public:
     AXTextMarkerRange selectedTextMarkerRange();
     void setSelectedTextMarkerRange(AXTextMarkerRange&&);
 
-    void queueNodeUpdate(AXCoreObject&, const NodeUpdateOptions&);
+    void queueNodeUpdate(AXID, const NodeUpdateOptions&);
     void processQueuedNodeUpdates();
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
