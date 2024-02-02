@@ -97,6 +97,8 @@ static ManetteGamepad::StandardGamepadButton toStandardGamepadButton(uint16_t ma
         return ManetteGamepad::StandardGamepadButton::DPadLeft;
     case BTN_DPAD_RIGHT:
         return ManetteGamepad::StandardGamepadButton::DPadRight;
+    case BTN_MODE:
+        return ManetteGamepad::StandardGamepadButton::Mode;
     default:
         break;
     }
