@@ -55,6 +55,10 @@
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(PLAYSTATION)
+#include <WebCore/AXObjectCache.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include "WKBrowserEngineDefinitions.h"
 #include "WKFoundation.h"
@@ -208,6 +212,10 @@ using LayerHostingContextID = uint32_t;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 class WebKitWebResourceLoadManager;
+#endif
+
+#if PLATFORM(PLAYSTATION)
+class WebAccessibilityObject;
 #endif
 
 class PageClient : public CanMakeWeakPtr<PageClient> {
@@ -672,6 +680,15 @@ public:
 
 #if USE(WPE_RENDERER)
     virtual UnixFileDescriptor hostFileDescriptor() = 0;
+#endif
+
+#if PLATFORM(PLAYSTATION)
+    virtual void handleAccessibilityNotification(WebAccessibilityObject*, WebCore::AXObjectCache::AXNotification) = 0;
+    virtual void handleAccessibilityTextChange(WebAccessibilityObject*, WebCore::AXTextChange, uint32_t offset, const String&) = 0;
+    virtual void handleAccessibilityLoadingEvent(WebAccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent) = 0;
+    virtual void handleAccessibilityRootObject(WebAccessibilityObject*) = 0;
+    virtual void handleAccessibilityFocusedObject(WebAccessibilityObject*) = 0;
+    virtual void handleAccessibilityHitTest(WebAccessibilityObject*) = 0;
 #endif
 
     virtual void didChangeWebPageID() const { }

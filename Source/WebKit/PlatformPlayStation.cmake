@@ -78,6 +78,9 @@ list(APPEND WebKit_SOURCES
     Shared/libwpe/NativeWebWheelEventLibWPE.cpp
     Shared/libwpe/WebEventFactory.cpp
 
+    Shared/playstation/WebAccessibilityObject.cpp
+    Shared/playstation/WebAccessibilityObjectData.cpp
+
     Shared/unix/AuxiliaryProcessMain.cpp
 
     UIProcess/DefaultUndoController.cpp
@@ -92,6 +95,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
 
+    UIProcess/API/C/playstation/WKAXObject.cpp
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp
     UIProcess/API/C/playstation/WKRunloop.cpp
@@ -115,6 +119,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/playstation/PlayStationWebView.cpp
     UIProcess/playstation/WebPageProxyPlayStation.cpp
     UIProcess/playstation/WebProcessPoolPlayStation.cpp
+    UIProcess/playstation/WebViewAccessibilityClient.cpp
 
     WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp
 
@@ -143,6 +148,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"
+    "${WEBKIT_DIR}/Shared/playstation"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
@@ -244,9 +250,15 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/curl/WKProtectionSpaceCurl.h
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
 
+    UIProcess/API/C/playstation/WKAXObject.h
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.h
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.h
     UIProcess/API/C/playstation/WKRunloop.h
     UIProcess/API/C/playstation/WKView.h
+    UIProcess/API/C/playstation/WKViewAccessibilityClient.h
     UIProcess/API/C/playstation/WKViewClient.h
+)
+
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/playstation/WebAccessibilityObjectData.serialization.in
 )

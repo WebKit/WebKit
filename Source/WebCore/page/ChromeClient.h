@@ -500,7 +500,7 @@ public:
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    virtual void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) = 0;
+    virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) = 0;
     virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) = 0;
     virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent) = 0;
 #endif

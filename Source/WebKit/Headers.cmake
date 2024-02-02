@@ -32,6 +32,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/WKUserContentInjectedFrames.h
     Shared/API/c/WKUserScriptInjectionTime.h
 
+    UIProcess/API/C/WKAXTypes.h
     UIProcess/API/C/WKAuthenticationChallenge.h
     UIProcess/API/C/WKAuthenticationDecisionListener.h
     UIProcess/API/C/WKBackForwardListItemRef.h

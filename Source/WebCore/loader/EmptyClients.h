@@ -184,7 +184,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) final { }
+    void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) final { }
     void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) final { }
     void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent) final { }
 #endif

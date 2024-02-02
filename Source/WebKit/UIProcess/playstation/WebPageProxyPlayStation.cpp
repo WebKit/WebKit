@@ -26,8 +26,11 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
-#include "EditorState.h"
-#include "WebsiteDataStore.h"
+#include "MessageSenderInlines.h"
+#include "PageClient.h"
+#include "WebAccessibilityObject.h"
+#include "WebFrameProxy.h"
+#include "WebPageMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/UserAgent.h>
@@ -67,6 +70,114 @@ void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vect
 
 void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 {
+}
+
+void WebPageProxy::accessibilityNotification(const WebAccessibilityObjectData& data, uint32_t notification)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame || frame->frameLoadState().state() != FrameLoadState::State::Finished)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityNotification(webAXObject.get(), static_cast<WebCore::AXObjectCache::AXNotification>(notification));
+}
+
+void WebPageProxy::accessibilityTextChange(const WebAccessibilityObjectData& data, uint32_t textChange, uint32_t offset, const String& text)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame || frame->frameLoadState().state() != FrameLoadState::State::Finished)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityTextChange(webAXObject.get(), static_cast<WebCore::AXTextChange>(textChange), offset, text);
+}
+
+void WebPageProxy::accessibilityLoadingEvent(const WebAccessibilityObjectData& data, uint32_t loadingEvent)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityLoadingEvent(webAXObject.get(), static_cast<WebCore::AXObjectCache::AXLoadingEvent>(loadingEvent));
+}
+
+void WebPageProxy::accessibilityRootObject()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::AccessibilityRootObject());
+}
+
+void WebPageProxy::didReceiveAccessibilityRootObject(const WebAccessibilityObjectData& data)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXFocusedObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityRootObject(&webAXFocusedObject.releaseNonNull().leakRef());
+}
+
+void WebPageProxy::accessibilityFocusedObject()
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::AccessibilityFocusedObject());
+}
+
+void WebPageProxy::didReceiveAccessibilityFocusedObject(const WebAccessibilityObjectData& data)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXFocusedObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityFocusedObject(&webAXFocusedObject.releaseNonNull().leakRef());
+}
+
+void WebPageProxy::accessibilityHitTest(const WebCore::IntPoint& point)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::AccessibilityHitTest(point));
+}
+
+void WebPageProxy::didReceiveAccessibilityHitTest(const WebAccessibilityObjectData& data)
+{
+    std::optional<WebCore::FrameIdentifier> frameId = data.webFrameID();
+    if (!frameId)
+        return;
+
+    WebFrameProxy* frame = WebFrameProxy::webFrame(*frameId);
+    if (!frame)
+        return;
+
+    RefPtr<WebAccessibilityObject> webAXFocusedObject = WebAccessibilityObject::create(data, frame);
+    pageClient().handleAccessibilityHitTest(&webAXFocusedObject.releaseNonNull().leakRef());
 }
 
 } // namespace WebKit

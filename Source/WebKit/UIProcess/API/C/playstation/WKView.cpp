@@ -151,6 +151,26 @@ bool WKViewIsFullScreen(WKViewRef view)
 #endif
 }
 
+void WKViewSetViewAccessibilityClient(WKViewRef view, const WKViewAccessibilityClientBase* client)
+{
+    WebKit::toImpl(view)->setAccessibilityClient(client);
+}
+
+void WKViewAccessibilityRootObject(WKViewRef view)
+{
+    WebKit::toImpl(view)->accessibilityRootObject();
+}
+
+void WKViewAccessibilityFocusedObject(WKViewRef view)
+{
+    WebKit::toImpl(view)->accessibilityFocusedObject();
+}
+
+void WKViewAccessibilityHitTest(WKViewRef view, const WKPoint& point)
+{
+    return WebKit::toImpl(view)->accessibilityHitTest(WebKit::toIntPoint(point));
+}
+
 void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
 {
     class ViewClient final : public API::Client<WKViewClientBase>, public API::ViewClient {

@@ -30,6 +30,7 @@
 #include "CacheModel.h"
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "ProcessTerminationReason.h"
+#include "WKAXTypes.h"
 #include "WKBundleHitTestResult.h"
 #include "WKContext.h"
 #include "WKCookieManager.h"
@@ -41,6 +42,7 @@
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
@@ -419,6 +421,526 @@ inline WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
     ASSERT_NOT_REACHED();
     return kWKAllowAllStorage;
+}
+
+inline WKAXNotification toAPI(WebCore::AXObjectCache::AXNotification notification)
+{
+    switch (notification) {
+    case WebCore::AXObjectCache::AXNotification::AXAccessKeyChanged:
+        return kWKAXAccessKeyChanged;
+    case WebCore::AXObjectCache::AXNotification::AXActiveDescendantChanged:
+        return kWKAXActiveDescendantChanged;
+    case WebCore::AXObjectCache::AXNotification::AXAnnouncementRequested:
+        return kWKAXAnnouncementRequested;
+    case WebCore::AXObjectCache::AXNotification::AXAutocorrectionOccured:
+        return kWKAXAutocorrectionOccured;
+    case WebCore::AXObjectCache::AXNotification::AXAutofillTypeChanged:
+        return kWKAXAutofillTypeChanged;
+    case WebCore::AXObjectCache::AXNotification::AXCellSlotsChanged:
+        return kWKAXCellSlotsChanged;
+    case WebCore::AXObjectCache::AXNotification::AXCheckedStateChanged:
+        return kWKAXCheckedStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXChildrenChanged:
+        return kWKAXChildrenChanged;
+    case WebCore::AXObjectCache::AXNotification::AXColumnCountChanged:
+        return kWKAXColumnCountChanged;
+    case WebCore::AXObjectCache::AXNotification::AXColumnIndexChanged:
+        return kWKAXColumnIndexChanged;
+    case WebCore::AXObjectCache::AXNotification::AXColumnSpanChanged:
+        return kWKAXColumnSpanChanged;
+    case WebCore::AXObjectCache::AXNotification::AXContentEditableAttributeChanged:
+        return kWKAXContentEditableAttributeChanged;
+    case WebCore::AXObjectCache::AXNotification::AXControlledObjectsChanged:
+        return kWKAXControlledObjectsChanged;
+    case WebCore::AXObjectCache::AXNotification::AXCurrentStateChanged:
+        return kWKAXCurrentStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXDescribedByChanged:
+        return kWKAXDescribedByChanged;
+    case WebCore::AXObjectCache::AXNotification::AXDisabledStateChanged:
+        return kWKAXDisabledStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXDropEffectChanged:
+        return kWKAXDropEffectChanged;
+    case WebCore::AXObjectCache::AXNotification::AXExtendedDescriptionChanged:
+        return kWKAXExtendedDescriptionChanged;
+    case WebCore::AXObjectCache::AXNotification::AXFlowToChanged:
+        return kWKAXFlowToChanged;
+    case WebCore::AXObjectCache::AXNotification::AXFocusableStateChanged:
+        return kWKAXFocusableStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXFocusedUIElementChanged:
+        return kWKAXFocusedUIElementChanged;
+    case WebCore::AXObjectCache::AXNotification::AXFrameLoadComplete:
+        return kWKAXFrameLoadComplete;
+    case WebCore::AXObjectCache::AXNotification::AXGrabbedStateChanged:
+        return kWKAXGrabbedStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXHasPopupChanged:
+        return kWKAXHasPopupChanged;
+    case WebCore::AXObjectCache::AXNotification::AXIdAttributeChanged:
+        return kWKAXIdAttributeChanged;
+    case WebCore::AXObjectCache::AXNotification::AXImageOverlayChanged:
+        return kWKAXImageOverlayChanged;
+    case WebCore::AXObjectCache::AXNotification::AXIsAtomicChanged:
+        return kWKAXIsAtomicChanged;
+    case WebCore::AXObjectCache::AXNotification::AXKeyShortcutsChanged:
+        return kWKAXKeyShortcutsChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLanguageChanged:
+        return kWKAXLanguageChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLayoutComplete:
+        return kWKAXLayoutComplete;
+    case WebCore::AXObjectCache::AXNotification::AXLevelChanged:
+        return kWKAXLevelChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLoadComplete:
+        return kWKAXLoadComplete;
+    case WebCore::AXObjectCache::AXNotification::AXNameChanged:
+        return kWKAXNameChanged;
+    case WebCore::AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
+        return kWKAXNewDocumentLoadComplete;
+    case WebCore::AXObjectCache::AXNotification::AXPageScrolled:
+        return kWKAXPageScrolled;
+    case WebCore::AXObjectCache::AXNotification::AXPlaceholderChanged:
+        return kWKAXPlaceholderChanged;
+    case WebCore::AXObjectCache::AXNotification::AXPopoverTargetChanged:
+        return kWKAXPopoverTargetChanged;
+    case WebCore::AXObjectCache::AXNotification::AXPositionInSetChanged:
+        return kWKAXPositionInSetChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRoleChanged:
+        return kWKAXRoleChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRoleDescriptionChanged:
+        return kWKAXRoleDescriptionChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRowIndexChanged:
+        return kWKAXRowIndexChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRowSpanChanged:
+        return kWKAXRowSpanChanged;
+    case WebCore::AXObjectCache::AXNotification::AXCellScopeChanged:
+        return kWKAXCellScopeChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSelectedChildrenChanged:
+        return kWKAXSelectedChildrenChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSelectedCellsChanged:
+        return kWKAXSelectedCellsChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSelectedStateChanged:
+        return kWKAXSelectedStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSelectedTextChanged:
+        return kWKAXSelectedTextChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSetSizeChanged:
+        return kWKAXSetSizeChanged;
+    case WebCore::AXObjectCache::AXNotification::AXTableHeadersChanged:
+        return kWKAXTableHeadersChanged;
+    case WebCore::AXObjectCache::AXNotification::AXTextCompositionBegan:
+        return kWKAXTextCompositionBegan;
+    case WebCore::AXObjectCache::AXNotification::AXTextCompositionEnded:
+        return kWKAXTextCompositionEnded;
+    case WebCore::AXObjectCache::AXNotification::AXURLChanged:
+        return kWKAXURLChanged;
+    case WebCore::AXObjectCache::AXNotification::AXValueChanged:
+        return kWKAXValueChanged;
+    case WebCore::AXObjectCache::AXNotification::AXVisibilityChanged:
+        return kWKAXVisibilityChanged;
+    case WebCore::AXObjectCache::AXNotification::AXScrolledToAnchor:
+        return kWKAXScrolledToAnchor;
+    case WebCore::AXObjectCache::AXNotification::AXLabelChanged:
+        return kWKAXLabelChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLiveRegionCreated:
+        return kWKAXLiveRegionCreated;
+    case WebCore::AXObjectCache::AXNotification::AXLiveRegionChanged:
+        return kWKAXLiveRegionChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLiveRegionRelevantChanged:
+        return kWKAXLiveRegionRelevantChanged;
+    case WebCore::AXObjectCache::AXNotification::AXLiveRegionStatusChanged:
+        return kWKAXLiveRegionStatusChanged;
+    case WebCore::AXObjectCache::AXNotification::AXMaximumValueChanged:
+        return kWKAXMaximumValueChanged;
+    case WebCore::AXObjectCache::AXNotification::AXMenuListItemSelected:
+        return kWKAXMenuListItemSelected;
+    case WebCore::AXObjectCache::AXNotification::AXMenuListValueChanged:
+        return kWKAXMenuListValueChanged;
+    case WebCore::AXObjectCache::AXNotification::AXMenuClosed:
+        return kWKAXMenuClosed;
+    case WebCore::AXObjectCache::AXNotification::AXMenuOpened:
+        return kWKAXMenuOpened;
+    case WebCore::AXObjectCache::AXNotification::AXMinimumValueChanged:
+        return kWKAXMinimumValueChanged;
+    case WebCore::AXObjectCache::AXNotification::AXMultiSelectableStateChanged:
+        return kWKAXMultiSelectableStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXOrientationChanged:
+        return kWKAXOrientationChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRowCountChanged:
+        return kWKAXRowCountChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRowCollapsed:
+        return kWKAXRowCollapsed;
+    case WebCore::AXObjectCache::AXNotification::AXRowExpanded:
+        return kWKAXRowExpanded;
+    case WebCore::AXObjectCache::AXNotification::AXExpandedChanged:
+        return kWKAXExpandedChanged;
+    case WebCore::AXObjectCache::AXNotification::AXInvalidStatusChanged:
+        return kWKAXInvalidStatusChanged;
+    case WebCore::AXObjectCache::AXNotification::AXPressDidSucceed:
+        return kWKAXPressDidSucceed;
+    case WebCore::AXObjectCache::AXNotification::AXPressDidFail:
+        return kWKAXPressDidFail;
+    case WebCore::AXObjectCache::AXNotification::AXPressedStateChanged:
+        return kWKAXPressedStateChanged;
+    case WebCore::AXObjectCache::AXNotification::AXReadOnlyStatusChanged:
+        return kWKAXReadOnlyStatusChanged;
+    case WebCore::AXObjectCache::AXNotification::AXRequiredStatusChanged:
+        return kWKAXRequiredStatusChanged;
+    case WebCore::AXObjectCache::AXNotification::AXSortDirectionChanged:
+        return kWKAXSortDirectionChanged;
+    case WebCore::AXObjectCache::AXNotification::AXTextChanged:
+        return kWKAXTextChanged;
+    case WebCore::AXObjectCache::AXNotification::AXTextCompositionChanged:
+        return kWKAXTextCompositionChanged;
+    case WebCore::AXObjectCache::AXNotification::AXTextSecurityChanged:
+        return kWKAXTextSecurityChanged;
+    case WebCore::AXObjectCache::AXNotification::AXElementBusyChanged:
+        return kWKAXElementBusyChanged;
+    case WebCore::AXObjectCache::AXNotification::AXDraggingStarted:
+        return kWKAXDraggingStarted;
+    case WebCore::AXObjectCache::AXNotification::AXDraggingEnded:
+        return kWKAXDraggingEnded;
+    case WebCore::AXObjectCache::AXNotification::AXDraggingEnteredDropZone:
+        return kWKAXDraggingEnteredDropZone;
+    case WebCore::AXObjectCache::AXNotification::AXDraggingDropped:
+        return kWKAXDraggingDropped;
+    case WebCore::AXObjectCache::AXNotification::AXDraggingExitedDropZone:
+        return kWKAXDraggingExitedDropZone;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKAXActiveDescendantChanged;
+    }
+}
+
+#if !PLATFORM(COCOA)
+inline WKAXTextChange toAPI(WebCore::AXTextChange textChange)
+{
+    switch (textChange) {
+    case WebCore::AXTextChange::AXTextInserted:
+        return kWKAXTextInserted;
+    case WebCore::AXTextChange::AXTextDeleted:
+        return kWKAXTextDeleted;
+    case WebCore::AXTextChange::AXTextAttributesChanged:
+        return kWKAXTextAttributesChanged;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKAXTextInserted;
+    }
+}
+#endif
+
+inline WKAXLoadingEvent toAPI(WebCore::AXObjectCache::AXLoadingEvent event)
+{
+    switch (event) {
+    case WebCore::AXObjectCache::AXLoadingEvent::AXLoadingStarted:
+        return kWKAXLoadingStarted;
+    case WebCore::AXObjectCache::AXLoadingEvent::AXLoadingReloaded:
+        return kWKAXLoadingReloaded;
+    case WebCore::AXObjectCache::AXLoadingEvent::AXLoadingFailed:
+        return kWKAXLoadingFailed;
+    case WebCore::AXObjectCache::AXLoadingEvent::AXLoadingFinished:
+        return kWKAXLoadingFinished;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKAXLoadingStarted;
+    }
+}
+
+inline WKAXRole toAPI(WebCore::AccessibilityRole role)
+{
+    switch (role) {
+    case WebCore::AccessibilityRole::Application:
+        return kWKApplication;
+    case WebCore::AccessibilityRole::ApplicationAlert:
+        return kWKApplicationAlert;
+    case WebCore::AccessibilityRole::ApplicationAlertDialog:
+        return kWKApplicationAlertDialog;
+    case WebCore::AccessibilityRole::ApplicationDialog:
+        return kWKApplicationDialog;
+    case WebCore::AccessibilityRole::ApplicationGroup:
+        return kWKApplicationGroup;
+    case WebCore::AccessibilityRole::ApplicationLog:
+        return kWKApplicationLog;
+    case WebCore::AccessibilityRole::ApplicationMarquee:
+        return kWKApplicationMarquee;
+    case WebCore::AccessibilityRole::ApplicationStatus:
+        return kWKApplicationStatus;
+    case WebCore::AccessibilityRole::ApplicationTextGroup:
+        return kWKApplicationTextGroup;
+    case WebCore::AccessibilityRole::ApplicationTimer:
+        return kWKApplicationTimer;
+    case WebCore::AccessibilityRole::Audio:
+        return kWKAudio;
+    case WebCore::AccessibilityRole::Blockquote:
+        return kWKBlockquote;
+    case WebCore::AccessibilityRole::Button:
+        return kWKButton;
+    case WebCore::AccessibilityRole::Canvas:
+        return kWKCanvas;
+    case WebCore::AccessibilityRole::Caption:
+        return kWKCaption;
+    case WebCore::AccessibilityRole::Cell:
+        return kWKCell;
+    case WebCore::AccessibilityRole::Checkbox:
+        return kWKCheckBox;
+    case WebCore::AccessibilityRole::Code:
+        return kWKCode;
+    case WebCore::AccessibilityRole::ColorWell:
+        return kWKColorWell;
+    case WebCore::AccessibilityRole::Column:
+        return kWKColumn;
+    case WebCore::AccessibilityRole::ColumnHeader:
+        return kWKColumnHeader;
+    case WebCore::AccessibilityRole::ComboBox:
+        return kWKComboBox;
+    case WebCore::AccessibilityRole::Definition:
+        return kWKDefinition;
+    case WebCore::AccessibilityRole::Deletion:
+        return kWKDeletion;
+    case WebCore::AccessibilityRole::DescriptionList:
+        return kWKDescriptionList;
+    case WebCore::AccessibilityRole::DescriptionListDetail:
+        return kWKDescriptionListDetail;
+    case WebCore::AccessibilityRole::DescriptionListTerm:
+        return kWKDescriptionListTerm;
+    case WebCore::AccessibilityRole::Details:
+        return kWKDetails;
+    case WebCore::AccessibilityRole::Directory:
+        return kWKDirectory;
+    case WebCore::AccessibilityRole::Document:
+        return kWKDocument;
+    case WebCore::AccessibilityRole::DocumentArticle:
+        return kWKDocumentArticle;
+    case WebCore::AccessibilityRole::DocumentMath:
+        return kWKDocumentMath;
+    case WebCore::AccessibilityRole::DocumentNote:
+        return kWKDocumentNote;
+    case WebCore::AccessibilityRole::Feed:
+        return kWKFeed;
+    case WebCore::AccessibilityRole::Figure:
+        return kWKFigure;
+    case WebCore::AccessibilityRole::Footer:
+        return kWKFooter;
+    case WebCore::AccessibilityRole::Footnote:
+        return kWKFootnote;
+    case WebCore::AccessibilityRole::Form:
+        return kWKForm;
+    case WebCore::AccessibilityRole::Generic:
+        return kWKDiv;
+    case WebCore::AccessibilityRole::GraphicsDocument:
+        return kWKGraphicsDocument;
+    case WebCore::AccessibilityRole::GraphicsObject:
+        return kWKGraphicsObject;
+    case WebCore::AccessibilityRole::GraphicsSymbol:
+        return kWKGraphicsSymbol;
+    case WebCore::AccessibilityRole::Grid:
+        return kWKGrid;
+    case WebCore::AccessibilityRole::GridCell:
+        return kWKGridCell;
+    case WebCore::AccessibilityRole::Group:
+        return kWKGroup;
+    case WebCore::AccessibilityRole::Heading:
+        return kWKHeading;
+    case WebCore::AccessibilityRole::HorizontalRule:
+        return kWKHorizontalRule;
+    case WebCore::AccessibilityRole::Ignored:
+        return kWKIgnored;
+    case WebCore::AccessibilityRole::Inline:
+        return kWKInline;
+    case WebCore::AccessibilityRole::Image:
+        return kWKImage;
+    case WebCore::AccessibilityRole::ImageMap:
+        return kWKImageMap;
+    case WebCore::AccessibilityRole::ImageMapLink:
+        return kWKImageMapLink;
+    case WebCore::AccessibilityRole::Incrementor:
+        return kWKIncrementor;
+    case WebCore::AccessibilityRole::Insertion:
+        return kWKInsertion;
+    case WebCore::AccessibilityRole::Label:
+        return kWKLabel;
+    case WebCore::AccessibilityRole::LandmarkBanner:
+        return kWKLandmarkBanner;
+    case WebCore::AccessibilityRole::LandmarkComplementary:
+        return kWKLandmarkComplementary;
+    case WebCore::AccessibilityRole::LandmarkContentInfo:
+        return kWKLandmarkContentInfo;
+    case WebCore::AccessibilityRole::LandmarkDocRegion:
+        return kWKLandmarkDocRegion;
+    case WebCore::AccessibilityRole::LandmarkMain:
+        return kWKLandmarkMain;
+    case WebCore::AccessibilityRole::LandmarkNavigation:
+        return kWKLandmarkNavigation;
+    case WebCore::AccessibilityRole::LandmarkRegion:
+        return kWKLandmarkRegion;
+    case WebCore::AccessibilityRole::LandmarkSearch:
+        return kWKLandmarkSearch;
+    case WebCore::AccessibilityRole::Legend:
+        return kWKLegend;
+    case WebCore::AccessibilityRole::LineBreak:
+        return kWKLineBreak;
+    case WebCore::AccessibilityRole::Link:
+        return kWKLink;
+    case WebCore::AccessibilityRole::List:
+        return kWKList;
+    case WebCore::AccessibilityRole::ListBox:
+        return kWKListBox;
+    case WebCore::AccessibilityRole::ListBoxOption:
+        return kWKListBoxOption;
+    case WebCore::AccessibilityRole::ListItem:
+        return kWKListItem;
+    case WebCore::AccessibilityRole::ListMarker:
+        return kWKListMarker;
+    case WebCore::AccessibilityRole::Mark:
+        return kWKMark;
+    case WebCore::AccessibilityRole::MathElement:
+        return kWKMathElement;
+    case WebCore::AccessibilityRole::Menu:
+        return kWKMenu;
+    case WebCore::AccessibilityRole::MenuBar:
+        return kWKMenuBar;
+    case WebCore::AccessibilityRole::MenuButton:
+        return kWKMenuButton;
+    case WebCore::AccessibilityRole::MenuItem:
+        return kWKMenuItem;
+    case WebCore::AccessibilityRole::MenuItemCheckbox:
+        return kWKMenuItemCheckbox;
+    case WebCore::AccessibilityRole::MenuItemRadio:
+        return kWKMenuItemRadio;
+    case WebCore::AccessibilityRole::MenuListPopup:
+        return kWKMenuListPopup;
+    case WebCore::AccessibilityRole::MenuListOption:
+        return kWKMenuListOption;
+    case WebCore::AccessibilityRole::Meter:
+        return kWKMeter;
+    case WebCore::AccessibilityRole::Model:
+        return kWKModel;
+    case WebCore::AccessibilityRole::Paragraph:
+        return kWKParagraph;
+    case WebCore::AccessibilityRole::PopUpButton:
+        return kWKPopUpButton;
+    case WebCore::AccessibilityRole::Pre:
+        return kWKPre;
+    case WebCore::AccessibilityRole::Presentational:
+        return kWKPresentational;
+    case WebCore::AccessibilityRole::ProgressIndicator:
+        return kWKProgressIndicator;
+    case WebCore::AccessibilityRole::RadioButton:
+        return kWKRadioButton;
+    case WebCore::AccessibilityRole::RadioGroup:
+        return kWKRadioGroup;
+    case WebCore::AccessibilityRole::RowHeader:
+        return kWKRowHeader;
+    case WebCore::AccessibilityRole::Row:
+        return kWKRow;
+    case WebCore::AccessibilityRole::RowGroup:
+        return kWKRowGroup;
+    case WebCore::AccessibilityRole::RubyBase:
+        return kWKRubyBase;
+    case WebCore::AccessibilityRole::RubyBlock:
+        return kWKRubyBlock;
+    case WebCore::AccessibilityRole::RubyInline:
+        return kWKRubyInline;
+    case WebCore::AccessibilityRole::RubyRun:
+        return kWKRubyRun;
+    case WebCore::AccessibilityRole::RubyText:
+        return kWKRubyText;
+    case WebCore::AccessibilityRole::ScrollArea:
+        return kWKScrollArea;
+    case WebCore::AccessibilityRole::ScrollBar:
+        return kWKScrollBar;
+    case WebCore::AccessibilityRole::SearchField:
+        return kWKSearchField;
+    case WebCore::AccessibilityRole::Slider:
+        return kWKSlider;
+    case WebCore::AccessibilityRole::SliderThumb:
+        return kWKSliderThumb;
+    case WebCore::AccessibilityRole::SpinButton:
+        return kWKSpinButton;
+    case WebCore::AccessibilityRole::SpinButtonPart:
+        return kWKSpinButtonPart;
+    case WebCore::AccessibilityRole::Splitter:
+        return kWKSplitter;
+    case WebCore::AccessibilityRole::StaticText:
+        return kWKStaticText;
+    case WebCore::AccessibilityRole::Subscript:
+        return kWKSubscript;
+    case WebCore::AccessibilityRole::Suggestion:
+        return kWKSuggestion;
+    case WebCore::AccessibilityRole::Summary:
+        return kWKSummary;
+    case WebCore::AccessibilityRole::Superscript:
+        return kWKSuperscript;
+    case WebCore::AccessibilityRole::Switch:
+        return kWKSwitch;
+    case WebCore::AccessibilityRole::SVGRoot:
+        return kWKSVGRoot;
+    case WebCore::AccessibilityRole::SVGText:
+        return kWKSVGText;
+    case WebCore::AccessibilityRole::SVGTSpan:
+        return kWKSVGTSpan;
+    case WebCore::AccessibilityRole::SVGTextPath:
+        return kWKSVGTextPath;
+    case WebCore::AccessibilityRole::TabGroup:
+        return kWKTabGroup;
+    case WebCore::AccessibilityRole::TabList:
+        return kWKTabList;
+    case WebCore::AccessibilityRole::TabPanel:
+        return kWKTabPanel;
+    case WebCore::AccessibilityRole::Tab:
+        return kWKTab;
+    case WebCore::AccessibilityRole::Table:
+        return kWKTable;
+    case WebCore::AccessibilityRole::TableHeaderContainer:
+        return kWKTableHeaderContainer;
+    case WebCore::AccessibilityRole::Term:
+        return kWKTerm;
+    case WebCore::AccessibilityRole::TextArea:
+        return kWKTextArea;
+    case WebCore::AccessibilityRole::TextField:
+        return kWKTextField;
+    case WebCore::AccessibilityRole::TextGroup:
+        return kWKTextGroup;
+    case WebCore::AccessibilityRole::Time:
+        return kWKTime;
+    case WebCore::AccessibilityRole::Tree:
+        return kWKTree;
+    case WebCore::AccessibilityRole::TreeGrid:
+        return kWKTreeGrid;
+    case WebCore::AccessibilityRole::TreeItem:
+        return kWKTreeItem;
+    case WebCore::AccessibilityRole::ToggleButton:
+        return kWKToggleButton;
+    case WebCore::AccessibilityRole::Toolbar:
+        return kWKToolbar;
+    case WebCore::AccessibilityRole::Unknown:
+        return kWKUnknown;
+    case WebCore::AccessibilityRole::UserInterfaceTooltip:
+        return kWKUserInterfaceTooltip;
+    case WebCore::AccessibilityRole::Video:
+        return kWKVideo;
+    case WebCore::AccessibilityRole::WebApplication:
+        return kWKWebApplication;
+    case WebCore::AccessibilityRole::WebArea:
+        return kWKWebArea;
+    case WebCore::AccessibilityRole::WebCoreLink:
+        return kWKWebCoreLink;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKAnnotation;
+    }
+
+}
+
+inline WKAXButtonState toAPI(WebCore::AccessibilityButtonState state)
+{
+    switch (state) {
+    case WebCore::AccessibilityButtonState::Off:
+        return kWKButtonStateOff;
+    case WebCore::AccessibilityButtonState::On:
+        return kWKButtonStateOn;
+    case WebCore::AccessibilityButtonState::Mixed:
+        return kWKButtonStateMixed;
+    default:
+        ASSERT_NOT_REACHED();
+        return kWKButtonStateOff;
+    }
 }
 
 } // namespace WebKit

@@ -98,7 +98,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     }
 
     ChromeClient& client = document().frame()->page()->chrome().client();
-    client.postAccessibilityNotification(*static_cast<AccessibilityObject*>(object), notification);
+    client.postAccessibilityNotification(static_cast<AccessibilityObject*>(object), notification);
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
