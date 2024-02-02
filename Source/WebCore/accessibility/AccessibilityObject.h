@@ -387,6 +387,7 @@ public:
     unsigned textLength() const final;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     virtual AXTextRuns textRuns() { return { }; }
+    bool hasTextRuns() final { return textRuns().size(); }
 #endif
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the

@@ -173,6 +173,8 @@ public:
     AXTextMarker nextMarkerFromOffset(unsigned) const;
     // Returns the number of intermediate text markers between this and the root.
     unsigned offsetFromRoot() const;
+    // Starting from this marker, navigate to the last marker in the entire page.
+    AXTextMarker findLast() const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:

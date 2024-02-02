@@ -567,6 +567,8 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
 AXCoreObject* AXIsolatedObject::sibling(AXDirection direction) const
 {
     RefPtr parent = parentObjectUnignored();
+    if (!parent)
+        return nullptr;
     const auto& siblings = parent->children();
     size_t indexOfThis = siblings.find(this);
     if (indexOfThis == notFound)

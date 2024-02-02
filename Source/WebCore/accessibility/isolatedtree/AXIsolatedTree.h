@@ -387,6 +387,11 @@ public:
     void queueNodeUpdate(AXCoreObject&, const NodeUpdateOptions&);
     void processQueuedNodeUpdates();
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    AXTextMarker firstMarker();
+    AXTextMarker lastMarker();
+#endif
+
 private:
     AXIsolatedTree(AXObjectCache&);
     static void storeTree(AXObjectCache&, const Ref<AXIsolatedTree>&);

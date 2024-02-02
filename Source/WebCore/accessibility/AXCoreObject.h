@@ -544,6 +544,7 @@ enum class AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed, Eleme
 
 enum class AccessibilityConversionSpace { Screen, Page };
 
+// FIXME: This should be replaced by AXDirection (or vice versa).
 enum class AccessibilitySearchDirection {
     Next = 1,
     Previous,
@@ -577,6 +578,9 @@ enum class AccessibilitySearchKey {
     FontColorChange,
     Frame,
     Graphic,
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    HasTextRuns,
+#endif
     HeadingLevel1,
     HeadingLevel2,
     HeadingLevel3,
@@ -1108,6 +1112,9 @@ public:
     virtual String description() const = 0;
 
     virtual std::optional<String> textContent() const = 0;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    virtual bool hasTextRuns() = 0;
+#endif
 
     // Methods for determining accessibility text.
     virtual String stringValue() const = 0;

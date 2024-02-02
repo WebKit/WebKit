@@ -390,43 +390,22 @@ static RefPtr<AXIsolatedObject> findObjectWithRuns(AXIsolatedObject& start, AXDi
             return &start;
     }
 
-    RefPtr current = &start;
-    while (current) {
-        if (current != &start) {
-            auto* runs = current->textRuns();
-            if (runs && runs->size())
-                return current;
-        }
+    // FIXME: aria-owns breaks this function, as aria-owns causes the AX tree to be changed, affecting
+    // our search below, but it doesn't actually change text position on the page. So we need to ignore
+    // aria-owns tree changes here in order to behave correctly. We also probably need to do something
+    // about text within aria-hidden containers, which affects the AX tree.
 
-        // FIXME: aria-owns breaks this traversal, as aria-owns causes the AX tree to be changed, affecting
-        // our iteration below, but it doesn't actually change text position on the page. So we need to ignore aria-owns
-        // tree changes here in order to behave correctly.
-        // We also probably need to do something about text within aria-hidden containers, which affects the AX tree.
+    AccessibilitySearchCriteria criteria { &start, direction == AXDirection::Next ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous, emptyString(), 1, false, false };
+    RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(start.treeID()));
+    RefPtr root = tree ? tree->rootNode() : nullptr;
+    if (!root)
+        return nullptr;
+    criteria.anchorObject = root.get();
+    criteria.searchKeys = { AccessibilitySearchKey::HasTextRuns };
 
-        const auto& children = current->children();
-        if (children.size()) {
-            size_t childIndex = direction == AXDirection::Next ? 0 : children.size() - 1;
-            RELEASE_ASSERT(children[childIndex]);
-            current = dynamicDowncast<AXIsolatedObject>(children[childIndex].get());
-            continue;
-        }
-
-        // `current` has no children, meaning it's a leaf node (e.g. it's text, which cannot have children).
-        // Check `current`s siblings.
-        if (auto* sibling = current->sibling(direction)) {
-            current = dynamicDowncast<AXIsolatedObject>(sibling);
-            continue;
-        }
-
-        // We have no children, and no next/previous sibling. Try our parent's sibling.
-        if (auto* parent = current->parentObjectUnignored()) {
-            current = dynamicDowncast<AXIsolatedObject>(parent->sibling(direction));
-            continue;
-        }
-
-        break;
-    }
-    return nullptr;
+    AXCoreObject::AccessibilityChildrenVector results;
+    Accessibility::findMatchingObjects(criteria, results);
+    return results.isEmpty() ? nullptr : dynamicDowncast<AXIsolatedObject>(results[0]);
 }
 
 unsigned AXTextMarker::offsetFromRoot() const
@@ -468,6 +447,31 @@ AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset) const
             break;
 
         --offset;
+    }
+    return marker;
+}
+
+AXTextMarker AXTextMarker::findLast() const
+{
+    RELEASE_ASSERT(!isMainThread());
+
+    if (!isValid())
+        return { };
+    if (!isInTextLeaf()) {
+        auto textLeafMarker = toTextLeafMarker();
+        // We couldn't turn this non-text-leaf marker into a marker pointing to actual text, e.g. because
+        // this marker points at an empty container / group at the end of the document. In this case, we
+        // call ourselves the last marker.
+        if (!textLeafMarker.isValid())
+            return *this;
+        return textLeafMarker.findLast();
+    }
+
+    AXTextMarker marker;
+    auto newMarker = *this;
+    while (newMarker.isValid()) {
+        marker = WTFMove(newMarker);
+        newMarker = marker.findMarker(AXDirection::Next);
     }
     return marker;
 }
@@ -517,7 +521,6 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction) const
         return { };
     if (!isInTextLeaf())
         return toTextLeafMarker().findMarker(direction);
-    RELEASE_ASSERT(isInTextLeaf());
 
     size_t runIndex = runs()->indexForOffset(offset());
     RELEASE_ASSERT(runIndex != notFound);
@@ -549,7 +552,6 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, AXTextUnit textUnit
         return { };
     if (!isInTextLeaf())
         return toTextLeafMarker().findMarker(direction, textUnit, boundary);
-    RELEASE_ASSERT(isInTextLeaf());
 
     if (textUnit == AXTextUnit::Line) {
         size_t runIndex = runs()->indexForOffset(offset());

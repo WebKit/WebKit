@@ -72,7 +72,12 @@ public:
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     const AXTextRuns* textRuns() const;
-#endif
+    bool hasTextRuns() final
+    {
+        const auto* runs = textRuns();
+        return runs && runs->size();
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) final;
