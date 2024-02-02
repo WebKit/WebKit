@@ -111,6 +111,7 @@ WTF_EXTERN_C_END
 #import <PassKitCore/PKError_Private.h>
 #import <PassKitCore/PKPassLibrary.h>
 #import <PassKitCore/PKPayment.h>
+#import <PassKitCore/PKPaymentMerchantSession_Private.h>
 #import <PassKitCore/PKPaymentMethod.h>
 #import <PassKitCore/PKPaymentPass.h>
 #import <PassKitCore/PKPaymentSetupConfiguration_WebKit.h>

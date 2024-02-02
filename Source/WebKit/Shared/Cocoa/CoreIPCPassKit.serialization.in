@@ -23,6 +23,7 @@
 #if USE(PASSKIT)
 
 webkit_platform_headers: "CoreIPCPassKit.h"
+secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
 
 [CustomHeader, WebKitPlatform] class WebKit::CoreIPCPKContact {
     WebKit::CoreIPCPersonNameComponents m_name;
@@ -30,6 +31,23 @@ webkit_platform_headers: "CoreIPCPassKit.h"
     WebKit::CoreIPCCNPhoneNumber m_phoneNumber;
     WebKit::CoreIPCCNPostalAddress m_postalAddress;
     String m_supplementarySublocality;
+}
+
+[WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
+    merchantIdentifier: String
+    merchantSessionIdentifier: String
+    nonce: String
+    epochTimestamp: Number
+    expiresAt: Number
+    domainName: String
+    displayName: String
+    signature: Data
+    retryNonce: String
+    initiativeContext: String
+    initiative: String
+    ampEnrollmentPinning: Data
+    operationalAnalyticsIdentifier: String
+    signedFields: Array<String>
 }
 
 #endif // USE(PASSKIT)

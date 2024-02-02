@@ -169,6 +169,7 @@ struct ObjCHolderForTesting {
         RetainPtr<CNPhoneNumber>,
         RetainPtr<CNPostalAddress>,
         RetainPtr<PKContact>,
+        RetainPtr<PKPaymentMerchantSession>,
 #endif
         RetainPtr<NSValue>
     > ValueType;
@@ -663,6 +664,31 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
     return [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject];
 }
 
+@interface PKPaymentMerchantSession ()
+- (instancetype)initWithMerchantIdentifier:(NSString *)merchantIdentifier
+                 merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                     nonce:(NSString *)nonce
+                            epochTimestamp:(NSUInteger)epochTimestamp
+                                 expiresAt:(NSUInteger)expiresAt
+                               displayName:(NSString *)displayName
+                         initiativeContext:(NSString *)initiativeContext
+                                initiative:(NSString *)initiative
+                      ampEnrollmentPinning:(nullable NSData *)ampEnrollmentPinning
+            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+                              signedFields:(NSArray<NSString *> *)signedFields
+                                 signature:(NSData *)signature;
+
+- (instancetype)initWithMerchantIdentifier:(NSString *)merchantIdentifier
+                 merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                     nonce:(NSString *)nonce
+                            epochTimestamp:(NSUInteger)epochTimestamp
+                                 expiresAt:(NSUInteger)expiresAt
+                                    domain:(NSString *)domainName
+                               displayName:(NSString *)displayName
+            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+                                 signature:(NSData *)signature;
+@end
+
 TEST(IPCSerialization, SecureCoding)
 {
     auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
@@ -698,6 +724,36 @@ TEST(IPCSerialization, SecureCoding)
     RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
     runTestNS({ outputContext.get() });
 #endif // USE(AVFOUNDATION)
+
+    // PKPaymentMerchantSession
+    // This initializer doesn't exercise retryNonce or domain
+    RetainPtr<PKPaymentMerchantSession> session = adoptNS([[PAL::getPKPaymentMerchantSessionClass() alloc]
+        initWithMerchantIdentifier:@"WebKit Open Source Project"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        displayName:@"WebKit"
+        initiativeContext:@"WebKit IPC Testing"
+        initiative:@"WebKit Regression Test Suite"
+        ampEnrollmentPinning:nil
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signedFields:@[ @"FirstField", @"AndTheSecond" ]
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
+
+    // This initializer adds in domain, but retryNonce is still unexercised
+    session = adoptNS([[PAL::getPKPaymentMerchantSessionClass() alloc]
+        initWithMerchantIdentifier:@"WebKit Open Source Project"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        domain:@"webkit.org"
+        displayName:@"WebKit"
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
 }
 
 #endif // PLATFORM(MAC)

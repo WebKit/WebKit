@@ -67,6 +67,8 @@ static ObjectValue valueFromID(id object)
         return CoreIPCCNPostalAddress((CNPostalAddress *)object);
     case IPC::NSType::PKContact:
         return CoreIPCPKContact((PKContact *)object);
+    case IPC::NSType::PKPaymentMerchantSession:
+        return CoreIPCPKPaymentMerchantSession((PKPaymentMerchantSession *)object);
 #endif
     case IPC::NSType::Color:
         return CoreIPCColor((WebCore::CocoaColor *)object);

@@ -297,6 +297,10 @@ template<> Class getClass<PKContact>()
 {
     return PAL::getPKContactClass();
 }
+template<> Class getClass<PKPaymentMerchantSession>()
+{
+    return PAL::getPKPaymentMerchantSessionClass();
+}
 #endif
 
 NSType typeFromObject(id object)
@@ -317,6 +321,8 @@ NSType typeFromObject(id object)
         return NSType::CNPostalAddress;
     if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKContactClass()])
         return NSType::PKContact;
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKPaymentMerchantSessionClass()])
+        return NSType::PKPaymentMerchantSession;
 #endif
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;

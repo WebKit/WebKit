@@ -67,6 +67,7 @@ using ObjectValue = std::variant<
     CoreIPCCNPhoneNumber,
     CoreIPCCNPostalAddress,
     CoreIPCPKContact,
+    CoreIPCPKPaymentMerchantSession,
 #endif
     CoreIPCColor,
 #if ENABLE(DATA_DETECTION)

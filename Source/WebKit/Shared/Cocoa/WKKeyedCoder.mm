@@ -61,6 +61,9 @@
 
 - (void)encodeObject:(id)object forKey:(NSString *)key
 {
+    if (!object)
+        return;
+
     if (!IPC::isSerializableValue(object)) {
         ASSERT_NOT_REACHED_WITH_MESSAGE("WKKeyedCoder attempt to encode object of unsupported type %s", object_getClassName(object));
         return;
@@ -80,12 +83,29 @@
         return nil;
 
     id object = [m_dictionary objectForKey:key];
-    if (![object isKindOfClass:aClass]) {
+    if (object && ![object isKindOfClass:aClass]) {
         m_failedDecoding = YES;
         return nil;
     }
 
     return object;
+}
+
+- (id)decodeObjectOfClasses:(NSSet<Class> *)classes forKey:(NSString *)key
+{
+    if (m_failedDecoding)
+        return nil;
+
+    id object = [m_dictionary objectForKey:key];
+    if (!object)
+        return nil;
+    for (id aClass in classes) {
+        if ([object isKindOfClass:aClass])
+            return object;
+    }
+
+    m_failedDecoding = YES;
+    return nil;
 }
 
 - (id)decodeObjectForKey:(NSString *)key

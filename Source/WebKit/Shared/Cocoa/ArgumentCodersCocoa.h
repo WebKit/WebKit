@@ -53,6 +53,7 @@ OBJC_CLASS AVOutputContext;
 OBJC_CLASS CNPhoneNumber;
 OBJC_CLASS CNPostalAddress;
 OBJC_CLASS PKContact;
+OBJC_CLASS PKPaymentMerchantSession;
 #endif
 
 namespace IPC {
@@ -87,6 +88,7 @@ enum class NSType : uint8_t {
     CNPhoneNumber,
     CNPostalAddress,
     PKContact,
+    PKPaymentMerchantSession,
 #endif
     Color,
 #if ENABLE(DATA_DETECTION)
@@ -126,6 +128,7 @@ template<> Class getClass<AVOutputContext>();
 template<> Class getClass<CNPhoneNumber>();
 template<> Class getClass<CNPostalAddress>();
 template<> Class getClass<PKContact>();
+template<> Class getClass<PKPaymentMerchantSession>();
 #endif
 
 void encodeObjectWithWrapper(Encoder&, id);
