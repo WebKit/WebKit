@@ -102,17 +102,11 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
     "image/heif",
     "image/heif-sequence",
 #endif
-#if USE(CG) || USE(OPENJPEG)
-    "image/jp2",
-#endif
 #if PLATFORM(IOS_FAMILY)
     "image/jp_",
     "image/jpe_",
 #endif
     "image/jpeg",
-#if !USE(CG) && USE(OPENJPEG)
-    "image/jpeg2000",
-#endif
     "image/jpg",
 #if HAVE(JPEGXL) || USE(JPEGXL)
     "image/jxl",

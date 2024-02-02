@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,9 +71,10 @@ TEST(WebKit, AddSupportedAndBogusImageTypesTwice)
     runTest(@[@"public.png", @"public.bogus", @"public.png", @"public.bogus"], @"400x400-green", @"png", 400);
 }
 
-TEST(WebKit, AddUnsupportedImageType)
+TEST(WebKit, AddUnsupportedImageTypes)
 {
-    runTest(@[@"com.truevision.tga-image"], @"100x100-red", @"tga", 100);
+    runTest(@[@"com.truevision.tga-image", @"public.jpeg-2000"], @"100x100-red", @"tga", 100);
+    runTest(@[@"com.truevision.tga-image", @"public.jpeg-2000"], @"100x100-red", @"jp2", 100);
 }
 
 TEST(WebKit, AddUnsupportedAndBogusImageTypes)

@@ -13,6 +13,8 @@
     <img id="image-2" src="">
     <img id="image-3" src="">
     <img id="image-4" src="">
+    <img id="image-5" src="">
+    <img id="image-6" src="">
     <script>
         // The test finishes after getting the results of loading all the images.
         jsTestIsAsync = true;
@@ -22,8 +24,10 @@
         var images = [
             { id: "image-1", src: "resources/100x100-red.psd", isSupported: false },
             { id: "image-2", src: "resources/100x100-red.tga", isSupported: false },
-            { id: "image-3", src: "resources/100x100-red-psd-renamed.png", isSupported: false },
-            { id: "image-4", src: "resources/100x100-red-tga-renamed.png", isSupported: false },
+            { id: "image-3", src: "resources/100x100-red.jp2", isSupported: false },
+            { id: "image-4", src: "resources/100x100-red-psd-renamed.png", isSupported: false },
+            { id: "image-5", src: "resources/100x100-red-tga-renamed.png", isSupported: false },
+            { id: "image-6", src: "resources/100x100-red-jp2-renamed.png", isSupported: false },
         ];
 
         function isSupported(src) {

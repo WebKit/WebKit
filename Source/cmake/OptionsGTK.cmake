@@ -59,7 +59,6 @@ WEBKIT_OPTION_DEFINE(USE_LIBBACKTRACE "Whether to enable usage of libbacktrace."
 WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
@@ -385,13 +384,6 @@ if (USE_LIBHYPHEN)
     find_package(Hyphen)
     if (NOT HYPHEN_FOUND)
        message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
-    endif ()
-endif ()
-
-if (USE_OPENJPEG)
-    find_package(OpenJPEG 2.2.0)
-    if (NOT OpenJPEG_FOUND)
-        message(FATAL_ERROR "libopenjpeg 2.2.0 is required for USE_OPENJPEG.")
     endif ()
 endif ()
 
