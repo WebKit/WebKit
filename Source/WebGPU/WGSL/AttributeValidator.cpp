@@ -248,6 +248,9 @@ void AttributeValidator::visit(AST::Variable& variable)
 
         error(attribute.span(), "invalid attribute for variable declaration");
     }
+
+    if (isResource && (!variable.m_group || !variable.m_binding))
+        error(variable.span(), "resource variables require @group and @binding attributes");
 }
 
 void AttributeValidator::visit(AST::Structure& structure)
