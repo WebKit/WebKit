@@ -28,16 +28,17 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import "ApplePayButtonPart.h"
+#import "ApplePayButtonAppearance.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContextCG.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
 
-ApplePayButtonCocoa::ApplePayButtonCocoa(ApplePayButtonPart& owningPart)
+ApplePayButtonCocoa::ApplePayButtonCocoa(ControlPart& owningPart)
     : PlatformControl(owningPart)
 {
+    ASSERT(m_owningPart.type() == StyleAppearance::ApplePayButton);
 }
 
 static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
@@ -105,16 +106,17 @@ void ApplePayButtonCocoa::draw(GraphicsContext& context, const FloatRoundedRect&
     context.scale(FloatSize(1, -1));
 
     auto logicalRect = borderRect.rect();
-    const auto& applePayButtonPart = owningApplePayButtonPart();
-    
+
+    const auto& applePayButtonAppearance = owningPart().get<ApplePayButtonAppearance>();
+
     PKDrawApplePayButtonWithCornerRadius(
         context.platformContext(),
         CGRectMake(logicalRect.x(), -logicalRect.maxY(), logicalRect.width(), logicalRect.height()),
         1.0,
         largestCornerRadius,
-        toPKPaymentButtonType(applePayButtonPart.buttonType()),
-        toPKPaymentButtonStyle(applePayButtonPart.buttonStyle()),
-        applePayButtonPart.locale()
+        toPKPaymentButtonType(applePayButtonAppearance.buttonType()),
+        toPKPaymentButtonStyle(applePayButtonAppearance.buttonStyle()),
+        applePayButtonAppearance.locale()
     );
 }
 

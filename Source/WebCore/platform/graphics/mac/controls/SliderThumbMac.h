@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-class SliderThumbPart;
+class SliderThumbAppearance;
 
 class SliderThumbMac final : public ControlMac {
 public:
-    SliderThumbMac(SliderThumbPart&, ControlFactoryMac&, NSSliderCell *);
+    SliderThumbMac(ControlPart&, ControlFactoryMac&, NSSliderCell *);
 
 private:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;

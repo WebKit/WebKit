@@ -226,12 +226,6 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::ControlPart> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::ControlPart&);
-    static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
-};
-
 #if ENABLE(DATA_DETECTION)
 
 template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {

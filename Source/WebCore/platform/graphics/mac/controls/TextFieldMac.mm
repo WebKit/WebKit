@@ -31,11 +31,11 @@
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "TextFieldPart.h"
+#import "TextFieldAppearance.h"
 
 namespace WebCore {
 
-TextFieldMac::TextFieldMac(TextFieldPart& owningPart, ControlFactoryMac& controlFactory, NSTextFieldCell* textFieldCell)
+TextFieldMac::TextFieldMac(ControlPart& owningPart, ControlFactoryMac& controlFactory, NSTextFieldCell* textFieldCell)
     : ControlMac(owningPart, controlFactory)
     , m_textFieldCell(textFieldCell)
 {

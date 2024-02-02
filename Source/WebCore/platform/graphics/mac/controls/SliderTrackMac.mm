@@ -33,9 +33,10 @@
 
 namespace WebCore {
 
-SliderTrackMac::SliderTrackMac(SliderTrackPart& part, ControlFactoryMac& controlFactory)
+SliderTrackMac::SliderTrackMac(ControlPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
 {
+    ASSERT(part.type() == StyleAppearance::SliderHorizontal || part.type() == StyleAppearance::SliderVertical);
 }
 
 FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const
@@ -43,7 +44,7 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     static constexpr int sliderTrackWidth = 5;
     float trackWidth = sliderTrackWidth * style.zoomFactor;
 
-    auto& sliderTrackPart = owningSliderTrackPart();
+    auto& sliderTrackPart = owningPart();
     auto rect = bounds;
     
     // Set the height/width and align the location in the center of the difference.
@@ -76,10 +77,14 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     CGContextRef cgContext = context.platformContext();
     CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
-    auto& sliderTrackPart = owningSliderTrackPart();
-
 #if ENABLE(DATALIST_ELEMENT)
-    sliderTrackPart.drawTicks(context, borderRect.rect(), style);
+    if (owningPart().type() == StyleAppearance::SliderHorizontal) {
+        auto& appearance = owningPart().get<SliderTrackHorizontalAppearance>();
+        appearance.drawTicks(context, borderRect.rect(), style);
+    } else {
+        auto& appearance = owningPart().get<SliderTrackVerticalAppearance>();
+        appearance.drawTicks(context, borderRect.rect(), style);
+    }
 #endif
 
     GraphicsContextStateSaver stateSaver(context);
@@ -90,7 +95,7 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     struct CGFunctionCallbacks mainCallbacks = { 0, trackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (sliderTrackPart.type() == StyleAppearance::SliderVertical)
+    if (owningPart().type() == StyleAppearance::SliderVertical)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.maxY()), CGPointMake(logicalRect.maxX(), logicalRect.maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(logicalRect.x(),  logicalRect.y()), CGPointMake(logicalRect.x(), logicalRect.maxY()), mainFunction.get(), false, false));

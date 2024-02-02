@@ -35,12 +35,14 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "SwitchMacUtilities.h"
+#import "SwitchTrackAppearance.h"
+
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
-SwitchTrackMac::SwitchTrackMac(SwitchTrackPart& part, ControlFactoryMac& controlFactory)
+SwitchTrackMac::SwitchTrackMac(ControlPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
 {
     ASSERT(part.type() == StyleAppearance::SwitchTrack);
@@ -159,7 +161,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     GraphicsContextStateSaver stateSaver(context);
 
-    auto isOn = owningPart().isOn();
+    auto isOn = owningPart().get<SwitchTrackAppearance>().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
@@ -167,7 +169,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     auto isInActiveWindow = style.states.contains(ControlStyle::State::WindowActive);
     auto isFocused = style.states.contains(ControlStyle::State::Focused);
     auto needsOnOffLabels = userPrefersWithoutColorDifferentiation();
-    auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
+    auto progress = SwitchMacUtilities::easeInOut(owningPart().get<SwitchThumbAppearance>().progress());
 
     auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
     auto controlSize = controlSizeForSize(logicalBounds.size(), style);

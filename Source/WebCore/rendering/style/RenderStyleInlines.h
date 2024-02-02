@@ -56,7 +56,7 @@
 #include "ViewTimeline.h"
 
 #if ENABLE(APPLE_PAY)
-#include "ApplePayButtonPart.h"
+#include "ApplePayButtonAppearance.h"
 #endif
 
 namespace WebCore {

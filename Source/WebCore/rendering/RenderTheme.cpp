@@ -21,11 +21,11 @@
 #include "config.h"
 #include "RenderTheme.h"
 
-#include "ButtonPart.h"
+#include "ButtonAppearance.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
-#include "ColorWellPart.h"
+#include "ColorWellAppearance.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FileList.h"
@@ -44,35 +44,35 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
-#include "ImageControlsButtonPart.h"
-#include "InnerSpinButtonPart.h"
+#include "ImageControlsButtonAppearance.h"
+#include "InnerSpinButtonAppearance.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
-#include "MenuListButtonPart.h"
-#include "MenuListPart.h"
-#include "MeterPart.h"
+#include "MenuListAppearance.h"
+#include "MenuListButtonAppearance.h"
+#include "MeterAppearance.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "ProgressBarPart.h"
+#include "ProgressBarAppearance.h"
 #include "RenderMeter.h"
 #include "RenderProgress.h"
 #include "RenderStyleSetters.h"
 #include "RenderView.h"
-#include "SearchFieldCancelButtonPart.h"
-#include "SearchFieldPart.h"
-#include "SearchFieldResultsPart.h"
+#include "SearchFieldAppearance.h"
+#include "SearchFieldCancelButtonAppearance.h"
+#include "SearchFieldResultsAppearance.h"
+#include "SliderThumbAppearance.h"
 #include "SliderThumbElement.h"
-#include "SliderThumbPart.h"
-#include "SliderTrackPart.h"
+#include "SliderTrackAppearance.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
-#include "SwitchThumbPart.h"
-#include "SwitchTrackPart.h"
-#include "TextAreaPart.h"
+#include "SwitchThumbAppearance.h"
+#include "SwitchTrackAppearance.h"
+#include "TextAreaAppearance.h"
 #include "TextControlInnerElements.h"
-#include "TextFieldPart.h"
+#include "TextFieldAppearance.h"
 #include "Theme.h"
-#include "ToggleButtonPart.h"
+#include "ToggleButtonAppearance.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgentParts.h"
 #include <wtf/FileSystem.h>
@@ -256,7 +256,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case StyleAppearance::SearchFieldDecoration:
         return adjustSearchFieldDecorationPartStyle(style, element);
     case StyleAppearance::SearchFieldResultsDecoration:
-        return adjustSearchFieldResultsDecorationPartStyle(style, element);
+        return adjustSearchFieldResultsDecorationAppearanceStyle(style, element);
     case StyleAppearance::SearchFieldResultsButton:
         return adjustSearchFieldResultsButtonStyle(style, element);
     case StyleAppearance::Switch:
@@ -409,7 +409,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 }
 
 #if ENABLE(APPLE_PAY)
-static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButtonPart, const RenderObject& renderer)
+static void updateApplePayButtonAppearanceForRenderer(ApplePayButtonAppearance& applePayButtonAppearance, const RenderObject& renderer)
 {
     auto& style = renderer.style();
 
@@ -417,42 +417,42 @@ static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButt
     if (locale.isEmpty())
         locale = defaultLanguage(ShouldMinimizeLanguages::No);
 
-    applePayButtonPart.setButtonType(style.applePayButtonType());
-    applePayButtonPart.setButtonStyle(style.applePayButtonStyle());
-    applePayButtonPart.setLocale(locale);
+    applePayButtonAppearance.setButtonType(style.applePayButtonType());
+    applePayButtonAppearance.setButtonStyle(style.applePayButtonStyle());
+    applePayButtonAppearance.setLocale(locale);
 }
 #endif
 
-static void updateMeterPartForRenderer(MeterPart& meterPart, const RenderMeter& renderMeter)
+static void updateMeterAppearanceForRenderer(MeterAppearance& meterAppearance, const RenderMeter& renderMeter)
 {
     auto element = renderMeter.meterElement();
-    MeterPart::GaugeRegion gaugeRegion;
+    MeterAppearance::GaugeRegion gaugeRegion;
 
     switch (element->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegionOptimum:
-        gaugeRegion = MeterPart::GaugeRegion::Optimum;
+        gaugeRegion = MeterAppearance::GaugeRegion::Optimum;
         break;
     case HTMLMeterElement::GaugeRegionSuboptimal:
-        gaugeRegion = MeterPart::GaugeRegion::Suboptimal;
+        gaugeRegion = MeterAppearance::GaugeRegion::Suboptimal;
         break;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
-        gaugeRegion = MeterPart::GaugeRegion::EvenLessGood;
+        gaugeRegion = MeterAppearance::GaugeRegion::EvenLessGood;
         break;
     }
 
-    meterPart.setGaugeRegion(gaugeRegion);
-    meterPart.setValue(element->value());
-    meterPart.setMinimum(element->min());
-    meterPart.setMaximum(element->max());
+    meterAppearance.setGaugeRegion(gaugeRegion);
+    meterAppearance.setValue(element->value());
+    meterAppearance.setMinimum(element->min());
+    meterAppearance.setMaximum(element->max());
 }
 
-static void updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, const RenderProgress& renderProgress)
+static void updateProgressBarAppearanceForRenderer(ProgressBarAppearance& progressBarAppearance, const RenderProgress& renderProgress)
 {
-    progressBarPart.setPosition(renderProgress.position());
-    progressBarPart.setAnimationStartTime(renderProgress.animationStartTime().secondsSinceEpoch());
+    progressBarAppearance.setPosition(renderProgress.position());
+    progressBarAppearance.setAnimationStartTime(renderProgress.animationStartTime().secondsSinceEpoch());
 }
 
-static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, const RenderObject& renderer)
+static void updateSliderTrackAppearanceForRenderer(SliderTrackAppearance& sliderTrackAppearance, const RenderObject& renderer)
 {
     auto& input = downcast<HTMLInputElement>(*renderer.node());
     ASSERT(input.isRangeControl());
@@ -490,27 +490,27 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
     }
 #endif
 
-    sliderTrackPart.setThumbSize(thumbSize);
-    sliderTrackPart.setTrackBounds(trackBounds);
-    sliderTrackPart.setTickRatios(WTFMove(tickRatios));
+    sliderTrackAppearance.setThumbSize(thumbSize);
+    sliderTrackAppearance.setTrackBounds(trackBounds);
+    sliderTrackAppearance.setTickRatios(WTFMove(tickRatios));
 }
 
-static void updateSwitchThumbPartForRenderer(SwitchThumbPart& switchThumbPart, const RenderObject& renderer)
+static void updateSwitchThumbAppearanceForRenderer(SwitchThumbAppearance& switchThumbAppearance, const RenderObject& renderer)
 {
     auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
     ASSERT(input.isSwitch());
 
-    switchThumbPart.setIsOn(input.isSwitchVisuallyOn());
-    switchThumbPart.setProgress(input.switchAnimationVisuallyOnProgress());
+    switchThumbAppearance.setIsOn(input.isSwitchVisuallyOn());
+    switchThumbAppearance.setProgress(input.switchAnimationVisuallyOnProgress());
 }
 
-static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, const RenderObject& renderer)
+static void updateSwitchTrackAppearanceForRenderer(SwitchTrackAppearance& switchTrackAppearance, const RenderObject& renderer)
 {
     auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
     ASSERT(input.isSwitch());
 
-    switchTrackPart.setIsOn(input.isSwitchVisuallyOn());
-    switchTrackPart.setProgress(input.switchAnimationVisuallyOnProgress());
+    switchTrackAppearance.setIsOn(input.isSwitchVisuallyOn());
+    switchTrackAppearance.setProgress(input.switchAnimationVisuallyOnProgress());
 }
 
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
@@ -523,37 +523,42 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         break;
 
     case StyleAppearance::Checkbox:
+        return ControlPart::create(CheckboxAppearance());
     case StyleAppearance::Radio:
-        return ToggleButtonPart::create(appearance);
+        return ControlPart::create(RadioAppearance());
 
     case StyleAppearance::PushButton:
+        return ControlPart::create(PushButtonAppearance());
     case StyleAppearance::SquareButton:
+        return ControlPart::create(SquareButtonAppearance());
     case StyleAppearance::Button:
+        return ControlPart::create(ButtonAppearance());
     case StyleAppearance::DefaultButton:
-        return ButtonPart::create(appearance);
+        return ControlPart::create(DefaultButtonAppearance());
 
     case StyleAppearance::Menulist:
-        return MenuListPart::create();
+        return ControlPart::create(MenuListAppearance());
 
     case StyleAppearance::MenulistButton:
-        return MenuListButtonPart::create();
+        return ControlPart::create(MenuListButtonAppearance());
 
     case StyleAppearance::Meter:
-        return MeterPart::create();
+        return ControlPart::create(MeterAppearance());
 
     case StyleAppearance::ProgressBar:
-        return ProgressBarPart::create();
+        return ControlPart::create(ProgressBarAppearance());
 
     case StyleAppearance::SliderHorizontal:
+        return ControlPart::create(SliderTrackHorizontalAppearance());
     case StyleAppearance::SliderVertical:
-        return SliderTrackPart::create(appearance);
+        return ControlPart::create(SliderTrackVerticalAppearance());
 
     case StyleAppearance::SearchField:
-        return SearchFieldPart::create();
+        return ControlPart::create(SearchFieldAppearance());
 
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
-        return ApplePayButtonPart::create();
+        return ControlPart::create(ApplePayButtonAppearance());
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
@@ -562,26 +567,27 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 #endif
 
     case StyleAppearance::Listbox:
+        return ControlPart::create(ListBoxAppearance());
     case StyleAppearance::TextArea:
-        return TextAreaPart::create(appearance);
+        return ControlPart::create(TextAreaAppearance());
 
     case StyleAppearance::TextField:
-        return TextFieldPart::create();
+        return ControlPart::create(TextFieldAppearance());
 
     case StyleAppearance::CapsLockIndicator:
         break;
 
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-        return ColorWellPart::create();
+        return ControlPart::create(ColorWellAppearance());
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
-        return ImageControlsButtonPart::create();
+        return ControlPart::create(ImageControlsButtonAppearance());
 #endif
 
     case StyleAppearance::InnerSpinButton:
-        return InnerSpinButtonPart::create();
+        return ControlPart::create(InnerSpinButtonAppearance());
 
 #if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
@@ -592,24 +598,26 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         break;
 
     case StyleAppearance::SearchFieldResultsDecoration:
+        return ControlPart::create(SearchFieldResultsDecorationAppearance());
     case StyleAppearance::SearchFieldResultsButton:
-        return SearchFieldResultsPart::create(appearance);
+        return ControlPart::create(SearchFieldResultsButtonAppearance());
 
     case StyleAppearance::SearchFieldCancelButton:
-        return SearchFieldCancelButtonPart::create();
+        return ControlPart::create(SearchFieldCancelButtonAppearance());
 
     case StyleAppearance::SliderThumbHorizontal:
+        return ControlPart::create(SliderThumbHorizontalAppearance());
     case StyleAppearance::SliderThumbVertical:
-        return SliderThumbPart::create(appearance);
+        return ControlPart::create(SliderThumbVerticalAppearance());
 
     case StyleAppearance::Switch:
         break;
 
     case StyleAppearance::SwitchThumb:
-        return SwitchThumbPart::create();
+        return ControlPart::create(SwitchThumbAppearance());
 
     case StyleAppearance::SwitchTrack:
-        return SwitchTrackPart::create();
+        return ControlPart::create(SwitchTrackAppearance());
     }
 
     ASSERT_NOT_REACHED();
@@ -618,34 +626,47 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
 void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderObject& renderer) const
 {
-    if (auto* meterPart = dynamicDowncast<MeterPart>(part)) {
-        updateMeterPartForRenderer(*meterPart, downcast<RenderMeter>(renderer));
+    ControlAppearance& appearance = part.appearance();
+    if (part.type() == StyleAppearance::Meter) {
+        ASSERT(is<RenderMeter>(renderer));
+        updateMeterAppearanceForRenderer(std::get<MeterAppearance>(appearance), downcast<RenderMeter>(renderer));
         return;
     }
 
-    if (auto* progressBarPart = dynamicDowncast<ProgressBarPart>(part)) {
-        updateProgressBarPartForRenderer(*progressBarPart, downcast<RenderProgress>(renderer));
+    if (part.type() == StyleAppearance::ProgressBar) {
+        ASSERT(is<RenderProgress>(renderer));
+        updateProgressBarAppearanceForRenderer(std::get<ProgressBarAppearance>(appearance), downcast<RenderProgress>(renderer));
         return;
     }
 
-    if (auto* sliderTrackPart = dynamicDowncast<SliderTrackPart>(part)) {
-        updateSliderTrackPartForRenderer(*sliderTrackPart, renderer);
+    if (part.type() == StyleAppearance::SliderHorizontal) {
+        ASSERT(std::holds_alternative<SliderTrackHorizontalAppearance>(appearance));
+        updateSliderTrackAppearanceForRenderer(std::get<SliderTrackHorizontalAppearance>(appearance), renderer);
         return;
     }
 
-    if (auto* switchThumbPart = dynamicDowncast<SwitchThumbPart>(part)) {
-        updateSwitchThumbPartForRenderer(*switchThumbPart, renderer);
+    if (part.type() == StyleAppearance::SliderVertical) {
+        ASSERT(std::holds_alternative<SliderTrackVerticalAppearance>(appearance));
+        updateSliderTrackAppearanceForRenderer(std::get<SliderTrackVerticalAppearance>(appearance), renderer);
         return;
     }
 
-    if (auto* switchTrackPart = dynamicDowncast<SwitchTrackPart>(part)) {
-        updateSwitchTrackPartForRenderer(*switchTrackPart, renderer);
+    if (part.type() == StyleAppearance::SwitchThumb) {
+        ASSERT(std::holds_alternative<SwitchThumbAppearance>(appearance));
+        updateSwitchThumbAppearanceForRenderer(std::get<SwitchThumbAppearance>(appearance), renderer);
+        return;
+    }
+
+    if (part.type() == StyleAppearance::SwitchTrack) {
+        ASSERT(std::holds_alternative<SwitchTrackAppearance>(appearance));
+        updateSwitchTrackAppearanceForRenderer(std::get<SwitchTrackAppearance>(appearance), renderer);
         return;
     }
 
 #if ENABLE(APPLE_PAY)
-    if (auto* applePayButtonPart = dynamicDowncast<ApplePayButtonPart>(part)) {
-        updateApplePayButtonPartForRenderer(*applePayButtonPart, renderer);
+    if (part.type() == StyleAppearance::ApplePayButton) {
+        ASSERT(std::holds_alternative<ApplePayButtonAppearance>(appearance));
+        updateApplePayButtonAppearanceForRenderer(std::get<ApplePayButtonAppearance>(appearance), renderer);
         return;
     }
 #endif
@@ -844,7 +865,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::SearchFieldDecoration:
         return paintSearchFieldDecorationPart(box, paintInfo, integralSnappedRect);
     case StyleAppearance::SearchFieldResultsDecoration:
-        return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
+        return paintSearchFieldResultsDecorationAppearance(box, paintInfo, integralSnappedRect);
     case StyleAppearance::SearchFieldResultsButton:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
     case StyleAppearance::Switch:
@@ -1123,7 +1144,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     case StyleAppearance::Menulist:
     case StyleAppearance::ProgressBar:
     case StyleAppearance::Meter:
-    // FIXME: SearchFieldPart should be included here when making search fields style-able.
+    // FIXME: SearchFieldAppearance should be included here when making search fields style-able.
     case StyleAppearance::TextField:
     case StyleAppearance::TextArea:
         // Test the style to see if the UA border and background match.
@@ -1538,6 +1559,10 @@ void RenderTheme::adjustSwitchThumbOrSwitchTrackStyle(RenderStyle& style) const
 
     style.setGridItemRowStart(position);
     style.setGridItemColumnStart(position);
+}
+
+void RenderTheme::adjustSearchFieldResultsDecorationAppearanceStyle(RenderStyle&, const Element*) const
+{
 }
 
 void RenderTheme::purgeCaches()

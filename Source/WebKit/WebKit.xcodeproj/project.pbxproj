@@ -1679,7 +1679,7 @@
 		8644890B27B47020007A1C66 /* _WKSystemPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890A27B47020007A1C66 /* _WKSystemPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8644890F27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */; };
 		866623F929C2248E0029405A /* WebAutocorrectionData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 866623F829C2248D0029405A /* WebAutocorrectionData.mm */; };
-		86760A6B28DB30DE00D07D06 /* GeneratedSerializers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */; };
+		86760A6B28DB30DE00D07D06 /* GeneratedSerializers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */; settings = {COMPILER_FLAGS = "-Os"; }; };
 		86D1970929AE4E930083B077 /* NetworkProcessConnectionParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */; };
 		86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 86DD518F28EF28E800DF2A58 /* WebEventModifier.h */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
@@ -19142,9 +19142,7 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -19160,25 +19158,19 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

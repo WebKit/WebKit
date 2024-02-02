@@ -27,17 +27,15 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
-#import "SwitchThumbPart.h"
+#import "SwitchThumbAppearance.h"
 
 namespace WebCore {
 
 class SwitchThumbMac final : public ControlMac {
 public:
-    SwitchThumbMac(SwitchThumbPart&, ControlFactoryMac&);
+    SwitchThumbMac(ControlPart&, ControlFactoryMac&);
 
 private:
-    const SwitchThumbPart& owningPart() const { return downcast<SwitchThumbPart>(m_owningPart); }
-
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
     FloatRect rectForBounds(const FloatRect&, const ControlStyle&) const override;

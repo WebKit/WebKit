@@ -33,12 +33,14 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "SwitchMacUtilities.h"
+#import "SwitchThumbAppearance.h"
+
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
-SwitchThumbMac::SwitchThumbMac(SwitchThumbPart& part, ControlFactoryMac& controlFactory)
+SwitchThumbMac::SwitchThumbMac(ControlPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)
 {
     ASSERT(part.type() == StyleAppearance::SwitchThumb);
@@ -67,12 +69,12 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto isOn = owningPart().isOn();
+    auto isOn = owningPart().get<SwitchTrackAppearance>().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);
-    auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
+    auto progress = SwitchMacUtilities::easeInOut(owningPart().get<SwitchTrackAppearance>().progress());
 
     auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
     auto controlSize = controlSizeForSize(logicalBounds.size(), style);

@@ -28,19 +28,17 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
-#import "ProgressBarPart.h"
+#import "ProgressBarAppearance.h"
 
 namespace WebCore {
 
-class ProgressBarPart;
+class ProgressBarAppearance;
 
 class ProgressBarMac final : public ControlMac {
 public:
-    ProgressBarMac(ProgressBarPart&, ControlFactoryMac&);
+    ProgressBarMac(ControlPart&, ControlFactoryMac&);
 
 private:
-    const ProgressBarPart& owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart); }
-
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
 
