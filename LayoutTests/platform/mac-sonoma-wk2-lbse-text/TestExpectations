@@ -2,13 +2,13 @@
 #
 # 1. Run tests against legacy SVG engine
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-sonoma-wk2-pixel \
-#                       --pixel-tests --tolerance=0 svg
+#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
 #
 # 2. Run tests against LBSE
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-sonoma-wk2-lbse-text \
 #                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-sonoma-wk2-pixel \
 #                       --additional-expectations=$PWD/LayoutTests/platform/mac-sonoma-wk2-lbse-text/TestExpectations \
-#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true svg
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true css3/masking imported/w3c/web-platform-tests/svg svg
 #
 # Notes:
 # - 'platform/mac-sonoma-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Sonoma 14.3 using legacy SVG engine
