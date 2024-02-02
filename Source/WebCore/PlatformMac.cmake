@@ -757,6 +757,10 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/mac/UTIUtilities.h
     platform/network/mac/WebCoreURLResponse.h
 
+    rendering/cocoa/RenderThemeCocoa.h
+
+    rendering/ios/RenderThemeIOS.h
+
     testing/MockWebAuthenticationConfiguration.h
 
     testing/cocoa/WebViewVisualIdentificationOverlay.h

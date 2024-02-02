@@ -2371,10 +2371,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/TextBoxSelectableRange.h
     rendering/TransformOperationData.h
 
-    rendering/cocoa/RenderThemeCocoa.h
-
-    rendering/ios/RenderThemeIOS.h
-
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
 
