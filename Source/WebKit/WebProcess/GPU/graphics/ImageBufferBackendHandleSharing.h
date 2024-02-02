@@ -39,7 +39,7 @@ public:
     virtual std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const = 0;
     virtual std::optional<ImageBufferBackendHandle> takeBackendHandle(WebCore::SharedMemory::Protection protection = WebCore::SharedMemory::Protection::ReadWrite) { return createBackendHandle(protection); }
 
-    virtual RefPtr<ShareableBitmap> bitmap() const { return nullptr; }
+    virtual RefPtr<WebCore::ShareableBitmap> bitmap() const { return nullptr; }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     virtual std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() { return std::nullopt; }

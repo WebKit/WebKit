@@ -74,7 +74,6 @@
 #include "RemoteWebInspectorUIMessages.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
-#include "ShareableBitmap.h"
 #include "ShareableBitmapUtilities.h"
 #include "SharedBufferReference.h"
 #include "TextRecognitionUpdateResult.h"
@@ -281,6 +280,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/StaticRange.h>
 #include <WebCore/StyleProperties.h>
@@ -2882,7 +2882,7 @@ void WebPage::setFooterBannerHeight(int height)
 }
 #endif
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& completionHandler)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     std::optional<ShareableBitmap::Handle> handle;
     RefPtr coreFrame = m_mainFrame->coreLocalFrame();
@@ -6188,7 +6188,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>&
     completionHandler(SharedBuffer::create(pdfData.get()));
 }
 
-void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& completionHandler)
+void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     PrintContextAccessScope scope { *this };
     RefPtr frame = WebProcess::singleton().webFrame(frameID);

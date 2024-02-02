@@ -866,7 +866,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(IMAGE_ANALYSIS)
 - (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
-- (void)requestTextRecognition:(NSURL *)imageURL imageData:(WebKit::ShareableBitmap::Handle&&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion;
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(WebCore::ShareableBitmap::Handle&&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion;
 #endif
 
 #if HAVE(UIFINDINTERACTION)
@@ -878,11 +878,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler;
 #endif
 
-- (void)beginTextRecognitionForFullscreenVideo:(WebKit::ShareableBitmap::Handle&&)imageHandle playerViewController:(AVPlayerViewController *)playerViewController;
+- (void)beginTextRecognitionForFullscreenVideo:(WebCore::ShareableBitmap::Handle&&)imageHandle playerViewController:(AVPlayerViewController *)playerViewController;
 - (void)cancelTextRecognitionForFullscreenVideo:(AVPlayerViewController *)controller;
 @property (nonatomic, readonly) BOOL isTextRecognitionInFullscreenVideoEnabled;
 
-- (void)beginTextRecognitionForVideoInElementFullscreen:(WebKit::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds;
+- (void)beginTextRecognitionForVideoInElementFullscreen:(WebCore::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds;
 - (void)cancelTextRecognitionForVideoInElementFullscreen;
 
 - (BOOL)_tryToHandlePressesEvent:(UIPressesEvent *)event;

@@ -28,14 +28,13 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
-#include <WebCore/BitmapImage.h>
-#include <WebCore/CairoOperations.h>
-#include <WebCore/CairoUtilities.h>
-#include <WebCore/GraphicsContextCairo.h>
-#include <WebCore/NotImplemented.h>
+#include "BitmapImage.h"
+#include "CairoOperations.h"
+#include "CairoUtilities.h"
+#include "GraphicsContextCairo.h"
+#include "NotImplemented.h"
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
@@ -54,7 +53,7 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
     return cairo_format_stride_for_width(cairoFormat, size.width());
 }
 
-static inline RefPtr<cairo_surface_t> createSurfaceFromData(void* data, const WebCore::IntSize& size)
+static inline RefPtr<cairo_surface_t> createSurfaceFromData(void* data, const IntSize& size)
 {
     const int stride = cairo_format_stride_for_width(cairoFormat, size.width());
     return adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, size.width(), size.height(), stride));
@@ -115,4 +114,4 @@ void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)
 {
 }
 
-} // namespace WebKit
+} // namespace WebCore

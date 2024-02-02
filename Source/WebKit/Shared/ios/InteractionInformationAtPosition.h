@@ -29,13 +29,13 @@
 
 #include "ArgumentCoders.h"
 #include "InteractionInformationRequest.h"
-#include "ShareableBitmap.h"
 #include <WebCore/Cursor.h>
 #include <WebCore/ElementAnimationContext.h>
 #include <WebCore/ElementContext.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SelectionGeometry.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextIndicator.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -99,7 +99,7 @@ struct InteractionInformationAtPosition {
 #if PLATFORM(MACCATALYST)
     WebCore::IntRect caretRect;
 #endif
-    RefPtr<ShareableBitmap> image;
+    RefPtr<WebCore::ShareableBitmap> image;
     String textBefore;
     String textAfter;
 

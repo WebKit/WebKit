@@ -31,7 +31,6 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
-#import "ShareableBitmap.h"
 #import "VideoPresentationManagerProxy.h"
 #import "WKAnimationDelegate.h"
 #import "WebPageProxy.h"
@@ -42,6 +41,7 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
+#import <WebCore/ShareableBitmap.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>

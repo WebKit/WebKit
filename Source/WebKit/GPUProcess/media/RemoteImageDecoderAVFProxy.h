@@ -28,11 +28,11 @@
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
 #include "MessageReceiver.h"
-#include "ShareableBitmap.h"
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
@@ -61,7 +61,7 @@ private:
     void deleteDecoder(WebCore::ImageDecoderIdentifier);
     void setExpectedContentSize(WebCore::ImageDecoderIdentifier, long long expectedContentSize);
     void setData(WebCore::ImageDecoderIdentifier, const IPC::SharedBufferReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
-    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&&);
+    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void clearFrameBufferCache(WebCore::ImageDecoderIdentifier, size_t index);
 
     void encodedDataStatusChanged(WebCore::ImageDecoderIdentifier);

@@ -46,6 +46,8 @@ struct gbm_bo;
 
 namespace WebCore {
 class IntRect;
+class ShareableBitmap;
+class ShareableBitmapHandle;
 }
 
 namespace WTF {
@@ -54,8 +56,6 @@ class UnixFileDescriptor;
 
 namespace WebKit {
 
-class ShareableBitmap;
-class ShareableBitmapHandle;
 class WebPageProxy;
 enum class DMABufRendererBufferMode : uint8_t;
 
@@ -76,7 +76,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didCreateBuffer(uint64_t id, const WebCore::IntSize&, uint32_t format, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier);
-    void didCreateBufferSHM(uint64_t id, ShareableBitmapHandle&&);
+    void didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmapHandle&&);
     void didDestroyBuffer(uint64_t id);
     void frame(uint64_t id);
     void frameDone();
@@ -194,17 +194,17 @@ private:
 
     class BufferSHM final : public Buffer {
     public:
-        static RefPtr<Buffer> create(uint64_t id, RefPtr<ShareableBitmap>&&, float deviceScaleFactor);
+        static RefPtr<Buffer> create(uint64_t id, RefPtr<WebCore::ShareableBitmap>&&, float deviceScaleFactor);
         ~BufferSHM() = default;
 
     private:
-        BufferSHM(uint64_t id, RefPtr<ShareableBitmap>&&, float deviceScaleFactor);
+        BufferSHM(uint64_t id, RefPtr<WebCore::ShareableBitmap>&&, float deviceScaleFactor);
 
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
         void didUpdateContents() override;
         cairo_surface_t* surface() const override { return m_surface.get(); }
 
-        RefPtr<ShareableBitmap> m_bitmap;
+        RefPtr<WebCore::ShareableBitmap> m_bitmap;
         RefPtr<cairo_surface_t> m_surface;
     };
 

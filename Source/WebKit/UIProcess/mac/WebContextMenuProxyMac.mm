@@ -35,7 +35,6 @@
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"
 #import "ServicesController.h"
-#import "ShareableBitmap.h"
 #import "WKMenuItemIdentifiersPrivate.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuItem.h"
@@ -45,6 +44,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/ShareableBitmap.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>

@@ -416,6 +416,7 @@ platform/graphics/cg/NativeImageCG.cpp
 platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
+platform/graphics/cg/ShareableBitmapCG.mm @no-unify
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
 platform/graphics/cocoa/AV1UtilitiesCocoa.mm @no-unify

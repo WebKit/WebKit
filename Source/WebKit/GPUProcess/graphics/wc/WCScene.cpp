@@ -35,6 +35,7 @@
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
 #include <WebCore/BitmapTexture.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
@@ -257,7 +258,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     RefPtr<WebCore::BitmapTexture> texture;
     bool showFPS = true;
     bool readPixel = false;
-    RefPtr<ShareableBitmap> bitmap;
+    RefPtr<WebCore::ShareableBitmap> bitmap;
 
     if (update.remoteContextHostedIdentifier) {
         showFPS = false;
@@ -275,7 +276,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     if (showFPS)
         m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     if (readPixel) {
-        bitmap = ShareableBitmap::create({ windowSize });
+        bitmap = WebCore::ShareableBitmap::create({ windowSize });
         glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
     }
     m_textureMapper->endPainting();

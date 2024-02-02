@@ -29,7 +29,6 @@
 #if ENABLE(PDF_PLUGIN)
 
 #include "PDFPlugin.h"
-#include "ShareableBitmap.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -74,6 +73,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/CompletionHandler.h>

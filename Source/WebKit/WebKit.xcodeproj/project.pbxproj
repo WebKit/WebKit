@@ -241,7 +241,6 @@
 		1A6280C51919949F006AD9F9 /* WebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C41919949F006AD9F9 /* WebKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C61919950C006AD9F9 /* WebKitPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6280F31919982A006AD9F9 /* WebKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6280F21919982A006AD9F9 /* WebKit.m */; };
-		1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */; };
 		1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */; };
 		1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */; };
 		1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */; };
@@ -2433,7 +2432,6 @@
 		F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */; };
 		F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */ = {isa = PBXBuildFile; fileRef = F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */; };
 		F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */; };
-		F4A7B1C128E4DDC30042C75A /* ShareableBitmapHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */; };
 		F4ABDB632B018C4B00C5471A /* CoreIPCError.h in Headers */ = {isa = PBXBuildFile; fileRef = F4ABDB602B018C1A00C5471A /* CoreIPCError.h */; };
 		F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4ABDB622B018C1B00C5471A /* CoreIPCError.mm */; };
 		F4ABDB732B0417AD00C5471A /* CoreIPCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F4ABDB722B0417AD00C5471A /* CoreIPCLocale.h */; };
@@ -3360,8 +3358,6 @@
 		1A6280C41919949F006AD9F9 /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; };
 		1A6280C61919950C006AD9F9 /* WebKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrivate.h; sourceTree = "<group>"; };
 		1A6280F21919982A006AD9F9 /* WebKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKit.m; sourceTree = "<group>"; };
-		1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmap.cpp; sourceTree = "<group>"; };
-		1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmap.h; sourceTree = "<group>"; };
 		1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingArea.messages.in; sourceTree = "<group>"; };
 		1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessages.h; sourceTree = "<group>"; };
@@ -6433,14 +6429,12 @@
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		848A33AE294AA847002DD640 /* OSX_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = OSX_Private.modulemap; sourceTree = "<group>"; };
 		849944302943E2550086CDBB /* iOS_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iOS_Private.modulemap; sourceTree = "<group>"; };
-		861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShareableBitmap.serialization.in; sourceTree = "<group>"; };
 		8623B1272ACE1B66002BA9EA /* WebPageNetworkParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPageNetworkParameters.serialization.in; sourceTree = "<group>"; };
 		8623B1282ACE1DE4002BA9EA /* ResourceLoadInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ResourceLoadInfo.serialization.in; sourceTree = "<group>"; };
 		863551D229647AB400C2BE98 /* NetworkResourceLoadParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkResourceLoadParameters.serialization.in; sourceTree = "<group>"; };
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
 		8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferencesInternal.h; sourceTree = "<group>"; };
-		8657EE2428EC4A5400FF9B40 /* ShareableBitmap.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShareableBitmap.serialization.in; sourceTree = "<group>"; };
 		8657EE3928EDB8C500FF9B40 /* Pasteboard.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Pasteboard.serialization.in; sourceTree = "<group>"; };
 		866623F829C2248D0029405A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
 		86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializers.mm; sourceTree = "<group>"; };
@@ -7350,7 +7344,6 @@
 		BCFD5489132D82680055D816 /* WKErrorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKErrorCF.cpp; sourceTree = "<group>"; };
 		BCFD548A132D82680055D816 /* WKErrorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorCF.h; sourceTree = "<group>"; };
 		BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewPrivate.h; sourceTree = "<group>"; };
-		C01A260012662F2100C9ED55 /* ShareableBitmapCG.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareableBitmapCG.mm; sourceTree = "<group>"; };
 		C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebKeyboardEvent.h; sourceTree = "<group>"; };
 		C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebKeyboardEventMac.mm; sourceTree = "<group>"; };
 		C0337DAD127A24FE008FF4F4 /* WebEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEvent.cpp; sourceTree = "<group>"; };
@@ -7888,8 +7881,6 @@
 		F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCDate.h; sourceTree = "<group>"; };
 		F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCLocale.mm; sourceTree = "<group>"; };
 		F4A318A7291EFCF600F7A903 /* RemoteMediaPlayerState.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteMediaPlayerState.serialization.in; sourceTree = "<group>"; };
-		F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmapHandle.h; sourceTree = "<group>"; };
-		F4A7B1C228E4FB050042C75A /* ShareableBitmapHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapHandle.cpp; sourceTree = "<group>"; };
 		F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextRecognitionUpdateResult.h; sourceTree = "<group>"; };
 		F4ABDB602B018C1A00C5471A /* CoreIPCError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCError.h; sourceTree = "<group>"; };
 		F4ABDB612B018C1B00C5471A /* CoreIPCError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCError.serialization.in; sourceTree = "<group>"; };
@@ -8834,12 +8825,6 @@
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				5C03D5DD28F765F800D096AF /* SessionState.serialization.in */,
 				1C9F4C0B29E5202B0015819E /* ShapeDetectionIdentifier.h */,
-				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
-				1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */,
-				861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */,
-				8657EE2428EC4A5400FF9B40 /* ShareableBitmap.serialization.in */,
-				F4A7B1C228E4FB050042C75A /* ShareableBitmapHandle.cpp */,
-				F4A7B1C028E4DDC30042C75A /* ShareableBitmapHandle.h */,
 				5121745E164C20E30037A5C1 /* ShareableResource.cpp */,
 				5121745F164C20E30037A5C1 /* ShareableResource.h */,
 				8313F7EA1F7DAE0400B944EB /* SharedStringHashStore.cpp */,
@@ -14451,7 +14436,6 @@
 		C01A25FF12662F2100C9ED55 /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				C01A260012662F2100C9ED55 /* ShareableBitmapCG.mm */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -16054,8 +16038,6 @@
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,
-				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
-				F4A7B1C128E4DDC30042C75A /* ShareableBitmapHandle.h in Headers */,
 				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */,

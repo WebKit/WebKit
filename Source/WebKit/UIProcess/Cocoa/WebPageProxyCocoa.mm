@@ -314,7 +314,7 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment
     });
 }
 
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
+static RefPtr<WebCore::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
 {
     FloatSize originalThumbnailSize([image size]);
     if (originalThumbnailSize.isEmpty())
@@ -323,7 +323,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    auto bitmap = WebKit::ShareableBitmap::create({ resultRect.size() });
+    auto bitmap = WebCore::ShareableBitmap::create({ resultRect.size() });
     if (!bitmap)
         return nullptr;
 
@@ -337,7 +337,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     return bitmap;
 }
 
-RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
+RefPtr<WebCore::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
 {
 #if PLATFORM(IOS_FAMILY)
     auto imageAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);

@@ -29,7 +29,6 @@
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
 #include "PolicyDecision.h"
-#include "ShareableBitmap.h"
 #include "TransactionID.h"
 #include "WKBase.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -42,6 +41,7 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>

@@ -126,7 +126,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -279,7 +279,7 @@ private:
     void didPerformDragOperation(bool handled) override;
     void didHandleDragStartRequest(bool started) override;
     void didHandleAdditionalDragItemsRequest(bool added) override;
-    void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&& image) override;
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image) override;
     void willReceiveEditDragSnapshot() override;
     void didReceiveEditDragSnapshot(std::optional<WebCore::TextIndicatorData>) override;
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
@@ -313,12 +313,12 @@ private:
 
     String sceneID() final;
 
-    void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) final;
+    void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) final;
     void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
     bool isTextRecognitionInFullscreenVideoEnabled() const final;
 
 #if ENABLE(VIDEO)
-    void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect) final;
+    void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect) final;
     void cancelTextRecognitionForVideoInElementFullscreen() final;
 #endif
 

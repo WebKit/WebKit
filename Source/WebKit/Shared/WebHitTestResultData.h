@@ -21,11 +21,11 @@
 
 #include "APIObject.h"
 #include "FrameInfoData.h"
-#include "ShareableBitmap.h"
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
@@ -94,7 +94,7 @@ struct WebHitTestResultData {
     String toolTipText;
     String imageText;
     RefPtr<WebCore::SharedMemory> imageSharedMemory;
-    RefPtr<ShareableBitmap> imageBitmap;
+    RefPtr<WebCore::ShareableBitmap> imageBitmap;
     String sourceImageMIMEType;
     String linkLocalDataMIMEType;
     bool hasLocalDataForLinkURL;
@@ -114,7 +114,7 @@ struct WebHitTestResultData {
     WebHitTestResultData& operator=(const WebHitTestResultData&) = default;
     WebHitTestResultData(const WebCore::HitTestResult&, const String& toolTipText);
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
-    WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, const WebKit::WebHitTestResultData::ElementType&, std::optional<FrameInfoData>&&, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL,
+    WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, const WebKit::WebHitTestResultData::ElementType&, std::optional<FrameInfoData>&&, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL,
 #if PLATFORM(MAC)
         const WebHitTestResultPlatformData&,
 #endif

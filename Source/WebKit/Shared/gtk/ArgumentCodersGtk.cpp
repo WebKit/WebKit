@@ -27,11 +27,11 @@
 #include "ArgumentCodersGtk.h"
 
 #include "DataReference.h"
-#include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Image.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 

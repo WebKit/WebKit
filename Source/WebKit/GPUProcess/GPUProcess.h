@@ -30,11 +30,11 @@
 #include "AuxiliaryProcess.h"
 #include "GPUProcessPreferences.h"
 #include "SandboxExtension.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
@@ -123,7 +123,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #endif
 
 private:

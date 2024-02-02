@@ -38,7 +38,7 @@ public:
     WCBackingStore() { }
     WebCore::ImageBuffer* imageBuffer() { return m_imageBuffer.get(); }
     void setImageBuffer(RefPtr<WebCore::ImageBuffer>&& image) { m_imageBuffer = WTFMove(image); }
-    ShareableBitmap* bitmap() const { return m_bitmap.get(); }
+    WebCore::ShareableBitmap* bitmap() const { return m_bitmap.get(); }
 
 private:
     friend struct IPC::ArgumentCoder<WCBackingStore, void>;
@@ -47,7 +47,7 @@ private:
     std::optional<ImageBufferBackendHandle> handle() const;
 
     RefPtr<WebCore::ImageBuffer> m_imageBuffer;
-    RefPtr<ShareableBitmap> m_bitmap;
+    RefPtr<WebCore::ShareableBitmap> m_bitmap;
 };
 
 } // namespace WebKit

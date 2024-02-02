@@ -634,7 +634,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/SandboxExtension.serialization.in \
 	Shared/ScrollingAccelerationCurve.serialization.in \
 	Shared/SessionState.serialization.in \
-	Shared/ShareableBitmap.serialization.in \
 	Shared/ShareableResource.serialization.in \
 	Shared/SyntheticEditingCommandType.serialization.in \
 	Shared/TextFlags.serialization.in \

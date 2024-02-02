@@ -37,7 +37,6 @@ class GraphicsContext;
 
 namespace WebKit {
 
-class ShareableBitmap;
 struct UpdateInfo;
 
 class DrawingAreaCoordinatedGraphics final : public DrawingArea {

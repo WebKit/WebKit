@@ -30,6 +30,7 @@
 
 #import "ColorWellPart.h"
 #import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
 #import "LocalDefaultSystemAppearance.h"
 
 namespace WebCore {

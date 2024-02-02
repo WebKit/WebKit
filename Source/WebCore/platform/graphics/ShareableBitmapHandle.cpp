@@ -26,10 +26,7 @@
 #include "config.h"
 #include "ShareableBitmapHandle.h"
 
-#include "WebCoreArgumentCoders.h"
-
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmapHandle, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmapHandle);
@@ -45,10 +42,10 @@ void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const
     m_handle.takeOwnershipOfMemory(ledger);
 }
 
-void ShareableBitmapHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& identity, MemoryLedger ledger) const
+void ShareableBitmapHandle::setOwnershipOfMemory(const ProcessIdentity& identity, MemoryLedger ledger) const
 {
     m_handle.setOwnershipOfMemory(identity, ledger);
 }
 
 
-} // namespace WebKit
+} // namespace WebCore

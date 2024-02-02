@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,18 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include "BitmapImage.h"
+#include "GraphicsContextCG.h"
+#include "IOSurface.h"
+#include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
-#include <WebCore/BitmapImage.h>
-#include <WebCore/GraphicsContextCG.h>
-#include <WebCore/IOSurface.h>
-#include <WebCore/ImageBufferUtilitiesCG.h>
-#include <WebCore/NativeImage.h>
-#include <WebCore/PlatformScreen.h>
+#include "NativeImage.h"
+#include "PlatformScreen.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
     : m_size(image.size())
@@ -80,7 +79,7 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-    size_t alignmentMask = WebCore::IOSurface::bytesPerRowAlignment() - 1;
+    size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
     return (bytesPerRow + alignmentMask) & ~alignmentMask;
 #else
     return bytesPerRow;
@@ -276,4 +275,4 @@ void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity& identity)
     m_ownershipHandle->setOwnershipOfMemory(identity, MemoryLedger::Graphics);
 }
 
-} // namespace WebKit
+} // namespace WebCore

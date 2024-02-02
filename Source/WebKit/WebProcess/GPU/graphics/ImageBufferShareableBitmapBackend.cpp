@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ImageBufferShareableBitmapBackend.h"
 
-#include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PixelBuffer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

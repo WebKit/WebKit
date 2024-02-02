@@ -143,7 +143,7 @@ private:
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
     void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
     void destroyGetPixelBufferSharedMemory();
-    void cacheNativeImage(ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
+    void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void cacheFilter(Ref<WebCore::Filter>&&);

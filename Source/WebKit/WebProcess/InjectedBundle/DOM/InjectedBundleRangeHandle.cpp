@@ -27,7 +27,6 @@
 #include "InjectedBundleRangeHandle.h"
 
 #include "InjectedBundleNodeHandle.h"
-#include "ShareableBitmap.h"
 #include "WebImage.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/HeapInlines.h>
@@ -43,6 +42,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/VisibleSelection.h>

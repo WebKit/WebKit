@@ -74,7 +74,7 @@ struct WebKit::InteractionInformationAtPosition {
 #if PLATFORM(MACCATALYST)
     WebCore::IntRect caretRect;
 #endif
-    RefPtr<WebKit::ShareableBitmap> image;
+    RefPtr<WebCore::ShareableBitmap> image;
     String textBefore;
     String textAfter;
 

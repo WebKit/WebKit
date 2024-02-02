@@ -5308,7 +5308,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
             return;
         }
 
-        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](std::optional<WebKit::ShareableBitmapHandle>&& imageData, auto& sourceMIMEType) mutable {
+        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](std::optional<WebCore::ShareableBitmapHandle>&& imageData, auto& sourceMIMEType) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
@@ -5320,7 +5320,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
                 return;
             }
 
-            auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(*imageData));
+            auto imageBitmap = WebCore::ShareableBitmap::create(WTFMove(*imageData));
             if (!imageBitmap) {
                 completion();
                 return;
@@ -12099,9 +12099,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return NO;
 }
 
-- (void)requestTextRecognition:(NSURL *)imageURL imageData:(WebKit::ShareableBitmap::Handle&&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(WebCore::ShareableBitmap::Handle&&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
 {
-    auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(imageData));
+    auto imageBitmap = WebCore::ShareableBitmap::create(WTFMove(imageData));
     if (!imageBitmap) {
         completion({ });
         return;
@@ -12417,7 +12417,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-- (void)beginTextRecognitionForFullscreenVideo:(WebKit::ShareableBitmap::Handle&&)imageData playerViewController:(AVPlayerViewController *)controller
+- (void)beginTextRecognitionForFullscreenVideo:(WebCore::ShareableBitmap::Handle&&)imageData playerViewController:(AVPlayerViewController *)controller
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     ASSERT(_page->preferences().textRecognitionInVideosEnabled());
@@ -12425,7 +12425,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     if (_fullscreenVideoImageAnalysisRequestIdentifier)
         return;
 
-    auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(imageData));
+    auto imageBitmap = WebCore::ShareableBitmap::create(WTFMove(imageData));
     if (!imageBitmap)
         return;
 
@@ -12468,10 +12468,10 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #endif
 }
 
-- (void)beginTextRecognitionForVideoInElementFullscreen:(WebKit::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds
+- (void)beginTextRecognitionForVideoInElementFullscreen:(WebCore::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(bitmapHandle));
+    auto imageBitmap = WebCore::ShareableBitmap::create(WTFMove(bitmapHandle));
     if (!imageBitmap)
         return;
 

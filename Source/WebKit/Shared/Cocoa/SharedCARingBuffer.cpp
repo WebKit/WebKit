@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<SharedMemory> storage)
+SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory> storage)
     : CARingBuffer(bytesPerFrame, frameCount, numChannelStream)
     , m_storage(WTFMove(storage))
 {
@@ -49,7 +49,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Overflowed when trying to compute the storage size");
         return nullptr;
     }
-    auto storage = SharedMemory::map(WTFMove(handle.memory), SharedMemory::Protection::ReadOnly);
+    auto storage = WebCore::SharedMemory::map(WTFMove(handle.memory), WebCore::SharedMemory::Protection::ReadOnly);
     if (!storage) {
         RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Failed to map memory");
         return nullptr;
@@ -75,11 +75,11 @@ std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allo
         RELEASE_LOG_FAULT(Media, "ProducerSharedCARingBuffer::allocate: Overflowed when trying to compute the storage size");
         return std::nullopt;
     }
-    auto sharedMemory = SharedMemory::allocate(checkedSharedMemorySize.value());
+    auto sharedMemory = WebCore::SharedMemory::allocate(checkedSharedMemorySize.value());
     if (!sharedMemory)
         return std::nullopt;
 
-    auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    auto handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
     if (!handle)
         return std::nullopt;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,11 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/SharedMemory.h>
+#include "GraphicsContext.h"
+#include "SharedMemory.h"
 #include <wtf/DebugHeap.h>
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
@@ -96,7 +94,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    
+
     return adoptRef(new ShareableBitmap(configuration, WTFMove(sharedMemory)));
 }
 
@@ -138,7 +136,7 @@ std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(std::optiona
     auto sharedMemory = SharedMemory::map(WTFMove(handle->m_handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return std::nullopt;
-    
+
     return adoptRef(*new ShareableBitmap(handle->m_configuration, sharedMemory.releaseNonNull()));
 }
 
@@ -166,4 +164,4 @@ void* ShareableBitmap::data() const
     return m_sharedMemory->data();
 }
 
-} // namespace WebKit
+} // namespace WebCore

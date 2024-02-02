@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "ShareableBitmap.h"
 #include "ShareableResource.h"
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
@@ -135,6 +134,7 @@
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ShareData.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SliderThumbPart.h>
@@ -255,7 +255,7 @@ std::optional<Ref<Image>> ArgumentCoder<Image>::decode(Decoder& decoder)
     if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
         return std::nullopt;
 
-    std::optional<RefPtr<WebKit::ShareableBitmap>> bitmap;
+    std::optional<RefPtr<WebCore::ShareableBitmap>> bitmap;
     decoder >> bitmap;
     if (!bitmap)
         return std::nullopt;

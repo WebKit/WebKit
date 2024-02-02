@@ -42,10 +42,13 @@ typedef void *EGLImage;
 struct gbm_bo;
 #endif
 
-namespace WebKit {
-
+namespace WebCore {
 class ShareableBitmap;
 class ShareableBitmapHandle;
+}
+
+namespace WebKit {
+
 class WebPage;
 
 class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public IPC::MessageReceiver {
@@ -131,13 +134,13 @@ private:
     class RenderTargetSHMImage final : public RenderTargetColorBuffer {
     public:
         static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
-        RenderTargetSHMImage(uint64_t, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
+        RenderTargetSHMImage(uint64_t, const WebCore::IntSize&, Ref<WebCore::ShareableBitmap>&&, WebCore::ShareableBitmapHandle&&);
         ~RenderTargetSHMImage() = default;
 
     private:
         void didRenderFrame() override;
 
-        Ref<ShareableBitmap> m_bitmap;
+        Ref<WebCore::ShareableBitmap> m_bitmap;
     };
 
     class RenderTargetTexture final : public RenderTarget {

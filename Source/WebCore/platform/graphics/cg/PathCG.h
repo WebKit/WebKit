@@ -37,6 +37,7 @@ typedef struct CGContext* CGContextRef;
 namespace WebCore {
 
 class GraphicsContext;
+class Path;
 class PathStream;
 
 class PathCG final : public PathImpl {

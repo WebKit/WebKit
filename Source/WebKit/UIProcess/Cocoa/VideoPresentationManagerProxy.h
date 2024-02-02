@@ -30,12 +30,12 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
-#include "ShareableBitmap.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/PlatformView.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -183,7 +183,7 @@ public:
 
     void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::PlatformVideoPresentationInterface* returningToStandbyInterface() const;
@@ -228,7 +228,7 @@ private:
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, ShareableBitmap::Handle&& textTrack);
+    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
 

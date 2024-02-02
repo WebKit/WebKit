@@ -30,11 +30,11 @@
 
 #if USE(CAIRO)
 
-#include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
 
 namespace WebKit {

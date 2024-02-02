@@ -48,8 +48,6 @@ using PlatformDropContext = GdkDragContext;
 
 namespace WebKit {
 
-class ShareableBitmap;
-
 class DropTarget {
     WTF_MAKE_NONCOPYABLE(DropTarget); WTF_MAKE_FAST_ALLOCATED;
 public:

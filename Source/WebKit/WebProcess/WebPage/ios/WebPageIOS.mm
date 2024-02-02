@@ -4522,7 +4522,7 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
     reply(pageRects.size());
 }
 
-void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& reply)
+void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& reply)
 {  
     Vector<WebCore::IntRect> pageRects;
     double totalScaleFactor;

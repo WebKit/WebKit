@@ -139,8 +139,6 @@ Shared/WebSQLiteDatabaseTracker.cpp
 
 Shared/cf/CookieStorageUtilsCF.mm
 
-Shared/cg/ShareableBitmapCG.mm
-
 Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp

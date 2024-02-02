@@ -31,7 +31,6 @@
 #include "PDFPluginIdentifier.h"
 #include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
-#include "ShareableBitmap.h"
 #include "WebColorPicker.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
@@ -47,6 +46,7 @@
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <variant>
@@ -296,9 +296,9 @@ public:
     
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
-    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
+    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
 #else
-    virtual void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&&) { }
+    virtual void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&&) { }
 #endif
     virtual void didPerformDragOperation(bool) { }
     virtual void didPerformDragControllerAction() { }
@@ -534,13 +534,13 @@ public:
 
     virtual String sceneID() = 0;
 
-    virtual void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
+    virtual void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
     virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;
 #endif
     virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
 
 #if ENABLE(VIDEO)
-    virtual void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect) { }
+    virtual void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect) { }
     virtual void cancelTextRecognitionForVideoInElementFullscreen() { }
 #endif
 
@@ -592,8 +592,8 @@ public:
     virtual bool hasResizableWindows() const { return false; }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
-    virtual void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+    virtual void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

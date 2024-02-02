@@ -56,6 +56,7 @@ class HTMLPlugInElement;
 class NetscapePlugInStreamLoaderClient;
 class ResourceResponse;
 class Scrollbar;
+class ShareableBitmap;
 class SharedBuffer;
 enum class PlatformCursorType : uint8_t;
 }
@@ -65,7 +66,6 @@ namespace WebKit {
 class PDFIncrementalLoader;
 class PDFPluginAnnotation;
 class PluginView;
-class ShareableBitmap;
 class WebFrame;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -104,7 +104,7 @@ public:
     virtual bool isComposited() const { return false; }
 
     virtual bool shouldCreateTransientPaintingSnapshot() const { return false; }
-    virtual RefPtr<ShareableBitmap> snapshot() { return nullptr; }
+    virtual RefPtr<WebCore::ShareableBitmap> snapshot() { return nullptr; }
     virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
 
     virtual CGFloat scaleFactor() const = 0;

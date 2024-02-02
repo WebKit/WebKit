@@ -2340,6 +2340,8 @@ platform/graphics/RenderingMode.cpp
 platform/graphics/RotationDirection.cpp
 platform/graphics/RoundedRect.cpp
 platform/graphics/ShadowBlur.cpp
+platform/graphics/ShareableBitmap.cpp
+platform/graphics/ShareableBitmapHandle.cpp
 platform/graphics/SourceBrush.cpp
 platform/graphics/SourceBufferPrivate.cpp
 platform/graphics/SourceImage.cpp

@@ -30,10 +30,10 @@
 
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
-#include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/ShareableBitmap.h>
 #include <array>
 #include <epoxy/egl.h>
 #include <wtf/SafeStrerror.h>
@@ -235,7 +235,7 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
 
 std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
 {
-    auto buffer = ShareableBitmap::create({ size });
+    RefPtr buffer = WebCore::ShareableBitmap::create({ size });
     if (!buffer) {
         WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
         return nullptr;
@@ -250,7 +250,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     return makeUnique<RenderTargetSHMImage>(surfaceID, size, Ref { *buffer }, WTFMove(*bufferHandle));
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& bitmap, ShareableBitmap::Handle&& bitmapHandle)
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const WebCore::IntSize& size, Ref<WebCore::ShareableBitmap>&& bitmap, WebCore::ShareableBitmap::Handle&& bitmapHandle)
     : RenderTargetColorBuffer(surfaceID, size)
     , m_bitmap(WTFMove(bitmap))
 {

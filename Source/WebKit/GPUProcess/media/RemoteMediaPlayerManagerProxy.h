@@ -31,9 +31,9 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
-#include "ShareableBitmap.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Lock.h>
 #include <wtf/Logger.h>
 #include <wtf/WeakPtr.h>
@@ -66,7 +66,7 @@ public:
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(const WebCore::MediaPlayerIdentifier&);
 
-    std::optional<ShareableBitmap::Handle> bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
+    std::optional<WebCore::ShareableBitmap::Handle> bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
 
 private:
     // IPC::MessageReceiver

@@ -30,11 +30,10 @@
 
 namespace WebCore {
 class RenderImage;
+class ShareableBitmap;
 }
 
 namespace WebKit {
-
-class ShareableBitmap;
 
 enum class UseSnapshotForTransparentImages : bool { No, Yes };
 enum class AllowAnimatedImages : bool { No, Yes };
@@ -45,6 +44,6 @@ struct CreateShareableBitmapFromImageOptions {
     UseSnapshotForTransparentImages useSnapshotForTransparentImages { UseSnapshotForTransparentImages::No };
 };
 
-RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, CreateShareableBitmapFromImageOptions&& = { });
+RefPtr<WebCore::ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, CreateShareableBitmapFromImageOptions&& = { });
 
 };

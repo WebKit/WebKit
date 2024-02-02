@@ -29,13 +29,14 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include "ImageBufferBackendHandleSharing.h"
+#include <WebCore/ShareableBitmap.h>
 
 namespace WebKit {
 
 WCBackingStore::WCBackingStore(std::optional<ImageBufferBackendHandle>&& handle)
 {
-    if (auto* imageHandle = handle ? std::get_if<ShareableBitmap::Handle>(&*handle) : nullptr)
-        m_bitmap = ShareableBitmap::create(WTFMove(*imageHandle));
+    if (auto* imageHandle = handle ? std::get_if<WebCore::ShareableBitmap::Handle>(&*handle) : nullptr)
+        m_bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle));
 }
 
 std::optional<ImageBufferBackendHandle> WCBackingStore::handle() const

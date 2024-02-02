@@ -30,7 +30,6 @@
 
 #include "ArgumentCodersGtk.h"
 #include "MessageSenderInlines.h"
-#include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/CairoOperations.h>
@@ -39,6 +38,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 #include <cairo.h>
 
 namespace WebKit {

@@ -70,6 +70,8 @@ platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
+platform/graphics/cairo/ShareableBitmapCairo.cpp
+
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 

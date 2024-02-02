@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ShareableBitmap.h"
 #include "WebFindOptions.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>

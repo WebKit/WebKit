@@ -30,11 +30,11 @@
 #include "AuxiliaryProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <memory>
 #include <pal/SessionID.h>
 
@@ -120,7 +120,7 @@ public:
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)

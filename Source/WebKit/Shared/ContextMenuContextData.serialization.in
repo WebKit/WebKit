@@ -29,7 +29,7 @@ class WebKit::ContextMenuContextData {
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData();
     String selectedText();
 #if ENABLE(SERVICE_CONTROLS)
-    std::optional<WebKit::ShareableBitmapHandle> createControlledImageReadOnlyHandle();
+    std::optional<WebCore::ShareableBitmapHandle> createControlledImageReadOnlyHandle();
     Vector<uint8_t> controlledSelectionData();
     Vector<String> selectedTelephoneNumbers();
     bool selectionIsEditable();
@@ -39,8 +39,8 @@ class WebKit::ContextMenuContextData {
     String controlledImageMIMEType();
 #endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    std::optional<WebKit::ShareableBitmapHandle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle();
-    std::optional<WebKit::ShareableBitmapHandle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle();
+    std::optional<WebCore::ShareableBitmapHandle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle();
+    std::optional<WebCore::ShareableBitmapHandle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle();
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     bool hasEntireImage();
 };

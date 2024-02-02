@@ -27,8 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ShareableBitmap.h"
 #include <WebCore/NativeImage.h>
+#include <WebCore/ShareableBitmap.h>
 
 namespace WebKit {
 class RemoteResourceCacheProxy;
@@ -44,11 +44,11 @@ public:
     DestinationColorSpace colorSpace() const final;
     bool isRemoteNativeImageBackendProxy() const final;
 
-    std::optional<ShareableBitmap::Handle> createHandle();
+    std::optional<WebCore::ShareableBitmap::Handle> createHandle();
 private:
-    RemoteNativeImageBackendProxy(Ref<ShareableBitmap>, PlatformImagePtr);
+    RemoteNativeImageBackendProxy(Ref<WebCore::ShareableBitmap>, PlatformImagePtr);
 
-    Ref<ShareableBitmap> m_bitmap;
+    Ref<WebCore::ShareableBitmap> m_bitmap;
     PlatformImageNativeImageBackend m_platformBackend;
 };
 

@@ -29,10 +29,10 @@
 #if ENABLE(WPE_PLATFORM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 

@@ -37,7 +37,6 @@ class IntRect;
 }
 
 namespace WebKit {
-class ShareableBitmap;
 struct UpdateInfo;
 
 class BackingStore {

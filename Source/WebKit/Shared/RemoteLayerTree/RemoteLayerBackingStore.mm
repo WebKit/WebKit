@@ -41,7 +41,6 @@
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerWithInProcessRenderingBackingStore.h"
 #import "RemoteLayerWithRemoteRenderingBackingStore.h"
-#import "ShareableBitmap.h"
 #import "SwapBuffersDisplayRequirement.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPageProxy.h"
@@ -56,6 +55,7 @@
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
+#import <WebCore/ShareableBitmap.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>

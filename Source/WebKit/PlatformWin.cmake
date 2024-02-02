@@ -48,8 +48,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
-    Shared/cairo/ShareableBitmapCairo.cpp
-
     Shared/curl/WebCoreArgumentCodersCurl.cpp
 
     Shared/win/AuxiliaryProcessMainWin.cpp

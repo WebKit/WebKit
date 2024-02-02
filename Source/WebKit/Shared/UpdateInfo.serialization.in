@@ -30,7 +30,7 @@
     WebCore::IntRect updateRectBounds;
     Vector<WebCore::IntRect> updateRects;
     float updateScaleFactor;
-    std::optional<WebKit::ShareableBitmapHandle> bitmapHandle;
+    std::optional<WebCore::ShareableBitmapHandle> bitmapHandle;
     WebCore::IntPoint bitmapOffset;
 }
 

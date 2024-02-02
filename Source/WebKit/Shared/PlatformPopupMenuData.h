@@ -26,8 +26,8 @@
 #pragma once
 
 #include "FontInfo.h"
-#include "ShareableBitmap.h"
 #include <WebCore/PopupMenuStyle.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -45,8 +45,8 @@ struct PlatformPopupMenuData {
     int m_clientInsetRight { 0 };
     int m_popupWidth { 0 };
     int m_itemHeight { 0 };
-    RefPtr<ShareableBitmap> m_notSelectedBackingStore;
-    RefPtr<ShareableBitmap> m_selectedBackingStore;
+    RefPtr<WebCore::ShareableBitmap> m_notSelectedBackingStore;
+    RefPtr<WebCore::ShareableBitmap> m_selectedBackingStore;
 #endif
 };
 

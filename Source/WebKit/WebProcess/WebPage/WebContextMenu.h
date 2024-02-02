@@ -34,7 +34,6 @@ class Image;
 
 namespace WebKit {
 
-class ShareableBitmap;
 class WebPage;
 
 class WebContextMenu : public RefCounted<WebContextMenu> {

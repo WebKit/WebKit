@@ -7417,6 +7417,28 @@ header: <WebCore/VideoTrackPrivate.h>
 };
 
 #endif
+
+header: <WebCore/ShareableBitmap.h>
+[CustomHeader] class WebCore::ShareableBitmapConfiguration {
+    [Validator='m_size->width() >= 0 && m_size->height() >= 0'] WebCore::IntSize m_size;
+    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
+    bool m_isOpaque;
+    unsigned bytesPerPixel();
+    unsigned bytesPerRow();
+#if USE(CG)
+    CGBitmapInfo m_bitmapInfo;
+#endif
+}
+
+[CustomHeader, RValue] class WebCore::ShareableBitmapHandle {
+    WebCore::SharedMemoryHandle m_handle;
+    [Validator='!m_configuration->sizeInBytes().hasOverflowed() && m_handle->size() >= m_configuration->sizeInBytes()'] WebCore::ShareableBitmapConfiguration m_configuration;
+}
+
+[RefCounted, CreateUsing=createReadOnly] class WebCore::ShareableBitmap {
+    std::optional<WebCore::ShareableBitmapHandle> createReadOnlyHandle()
+}
+
 header: <WebCore/FEComposite.h>
 enum class WebCore::CompositeOperationType : uint8_t {
     FECOMPOSITE_OPERATOR_UNKNOWN,

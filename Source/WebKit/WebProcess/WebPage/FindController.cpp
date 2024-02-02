@@ -29,7 +29,6 @@
 #include "DrawingArea.h"
 #include "MessageSenderInlines.h"
 #include "PluginView.h"
-#include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -54,6 +53,7 @@
 #include <WebCore/PluginDocument.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)

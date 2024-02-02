@@ -56,7 +56,7 @@ struct WebKit::WebHitTestResultData {
     String toolTipText;
     String imageText;
     std::optional<WebCore::SharedMemoryHandle> getImageSharedMemoryHandle();
-    RefPtr<WebKit::ShareableBitmap> imageBitmap;
+    RefPtr<WebCore::ShareableBitmap> imageBitmap;
     String sourceImageMIMEType;
     String linkLocalDataMIMEType;
     bool hasLocalDataForLinkURL;

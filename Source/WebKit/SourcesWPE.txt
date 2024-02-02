@@ -80,8 +80,6 @@ Shared/CoordinatedGraphics/SimpleViewportController.cpp
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 
-Shared/cairo/ShareableBitmapCairo.cpp
-
 Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
 Shared/glib/ArgumentCodersGLib.cpp

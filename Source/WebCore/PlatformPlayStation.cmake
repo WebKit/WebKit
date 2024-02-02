@@ -8,6 +8,7 @@ include(platform/TextureMapper.cmake)
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/generic
+    ${WEBCORE_DIR}/platform/graphics/cairo
     ${WEBCORE_DIR}/platform/graphics/egl
     ${WEBCORE_DIR}/platform/graphics/opengl
     ${WEBCORE_DIR}/platform/graphics/libwpe
@@ -41,6 +42,8 @@ list(APPEND WebCore_SOURCES
     platform/generic/KeyedEncoderGeneric.cpp
 
     platform/graphics/PlatformDisplay.cpp
+
+    platform/graphics/cairo/ShareableBitmapCairo.cpp
 
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextLibWPE.cpp

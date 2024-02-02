@@ -31,11 +31,11 @@
 #include "EditorState.h"
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
-#include "ShareableBitmap.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebKit/WKDragDestinationAction.h>
@@ -513,7 +513,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     void startWindowDrag();
 
-    void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&& image);
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *uti, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
     void setPromisedDataForImage(WebCore::Image&, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
@@ -613,8 +613,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
-    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void computeHasVisualSearchResults(const URL& imageURL, WebCore::ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -700,7 +700,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void didFinishPresentation(WKRevealItemPresenter *);
 #endif
 
-    void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect);
+    void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullscreen();
 
 #if HAVE(INLINE_PREDICTIONS)

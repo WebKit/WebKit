@@ -32,12 +32,12 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
 #include "LayerTreeContext.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedMemory.h>
 #include <epoxy/egl.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -358,7 +358,7 @@ void AcceleratedBackingStoreDMABuf::BufferGBM::didUpdateContents()
 }
 #endif
 
-RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferSHM::create(uint64_t id, RefPtr<ShareableBitmap>&& bitmap, float deviceScaleFactor)
+RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferSHM::create(uint64_t id, RefPtr<WebCore::ShareableBitmap>&& bitmap, float deviceScaleFactor)
 {
     if (!bitmap)
         return nullptr;
@@ -366,7 +366,7 @@ RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::Buf
     return adoptRef(*new BufferSHM(id, WTFMove(bitmap), deviceScaleFactor));
 }
 
-AcceleratedBackingStoreDMABuf::BufferSHM::BufferSHM(uint64_t id, RefPtr<ShareableBitmap>&& bitmap, float deviceScaleFactor)
+AcceleratedBackingStoreDMABuf::BufferSHM::BufferSHM(uint64_t id, RefPtr<WebCore::ShareableBitmap>&& bitmap, float deviceScaleFactor)
     : Buffer(id, bitmap->size(), deviceScaleFactor)
     , m_bitmap(WTFMove(bitmap))
 {
@@ -476,9 +476,9 @@ void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::
         m_buffers.add(id, WTFMove(buffer));
 }
 
-void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBitmap::Handle&& handle)
+void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmap::Handle&& handle)
 {
-    if (auto buffer = BufferSHM::create(id, ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly), m_webPage.deviceScaleFactor()))
+    if (auto buffer = BufferSHM::create(id, WebCore::ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly), m_webPage.deviceScaleFactor()))
         m_buffers.add(id, WTFMove(buffer));
 }
 

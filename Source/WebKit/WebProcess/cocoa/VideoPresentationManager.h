@@ -53,6 +53,7 @@ class MachSendRight;
 namespace WebCore {
 class FloatSize;
 class Node;
+class ShareableBitmapHandle;
 }
 
 namespace WebKit {
@@ -63,7 +64,6 @@ class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
 class PlaybackSessionManager;
-class ShareableBitmapHandle;
 class VideoPresentationManager;
 
 class VideoPresentationInterfaceContext
@@ -146,7 +146,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
-    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, ShareableBitmapHandle&&);
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, WebCore::ShareableBitmapHandle&&);
     void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
     void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 

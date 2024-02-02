@@ -30,7 +30,6 @@
 
 #import "MessageSenderInlines.h"
 #import "PasteboardTypes.h"
-#import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
@@ -50,6 +49,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/RenderImage.h>
+#import <WebCore/ShareableBitmap.h>
 #import <WebCore/StringTruncator.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>

@@ -27,7 +27,6 @@
 #include "InjectedBundleNodeHandle.h"
 
 #include "InjectedBundleRangeHandle.h"
-#include "ShareableBitmap.h"
 #include "WebFrame.h"
 #include "WebImage.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -51,6 +50,7 @@
 #include <WebCore/Position.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>

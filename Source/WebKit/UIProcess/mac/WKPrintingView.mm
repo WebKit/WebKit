@@ -32,12 +32,12 @@
 #import "Connection.h"
 #import "Logging.h"
 #import "PrintInfo.h"
-#import "ShareableBitmap.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import <Quartz/Quartz.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
+#import <WebCore/ShareableBitmap.h>
 #import <wtf/RunLoop.h>
 
 #import "PDFKitSoftLink.h"
@@ -225,7 +225,7 @@ struct IPCCallbackContext {
     IPC::Connection::AsyncReplyID callbackID;
 };
 
-static void pageDidDrawToImage(std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)
+static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
@@ -238,7 +238,7 @@ static void pageDidDrawToImage(std::optional<WebKit::ShareableBitmap::Handle>&& 
         ASSERT([view _isPrintingPreview]);
 
         if (imageHandle) {
-            auto image = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+            auto image = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
 
             if (image)
                 view->_pagePreviews.add(iter->value, image);
@@ -523,7 +523,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     scaledPrintingRect.scale(1 / _totalScaleFactorForPrinting);
     WebCore::IntSize imageSize(nsRect.size);
     imageSize.scale(_webFrame->page()->deviceScaleFactor());
-    HashMap<WebCore::IntRect, RefPtr<WebKit::ShareableBitmap>>::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
+    HashMap<WebCore::IntRect, RefPtr<WebCore::ShareableBitmap>>::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
         if ([self _hasPageRects]) {
@@ -540,7 +540,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                auto callback = [context](std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle) {
+                auto callback = [context](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
@@ -557,7 +557,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    RefPtr<WebKit::ShareableBitmap> bitmap = pagePreviewIterator->value;
+    RefPtr<WebCore::ShareableBitmap> bitmap = pagePreviewIterator->value;
 
     WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
     WebCore::GraphicsContextStateSaver stateSaver(context);
