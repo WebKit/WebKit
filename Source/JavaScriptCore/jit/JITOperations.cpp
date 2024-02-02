@@ -2098,6 +2098,53 @@ JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeF
     return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationDefaultDirectCall, UCPURegister, (CallFrame* calleeFrame, DirectCallLinkInfo* callLinkInfo))
+{
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
+
+    CodeSpecializationKind kind = callLinkInfo->specializationKind();
+
+    JSFunction* callee = jsCast<JSFunction*>(calleeFrame->guaranteedJSValueCallee());
+    JSScope* calleeScope = callee->scopeUnchecked();
+    ExecutableBase* executable = callee->executable();
+
+    // FIXME: Support wasm IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=220339
+    CodePtr<JSEntryPtrTag> codePtr;
+    CodeBlock* codeBlock = nullptr;
+    DeferTraps deferTraps(vm); // We can't jettison this code if we're about to link to it.
+
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
+
+        CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, calleeScope, kind, *codeBlockSlot);
+        if (UNLIKELY(scope.exception()))
+            return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
+
+        codeBlock = *codeBlockSlot;
+        ASSERT(codeBlock);
+
+        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
+        if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
+            codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);
+        else
+            codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired);
+    }
+    linkDirectCall(*callLinkInfo, codeBlock, codePtr);
+    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
+    ensureStillAliveHere(owner);
+    return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(codePtr.taggedPtr()));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
 {
     VM& vm = globalObject->vm();

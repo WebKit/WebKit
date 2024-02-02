@@ -46,6 +46,7 @@ class Butterfly;
 class CallFrame;
 class CallLinkInfo;
 class CodeBlock;
+class DirectCallLinkInfo;
 class JSArray;
 class JSBoundFunction;
 class JSCell;
@@ -308,6 +309,7 @@ JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*,
 JSC_DECLARE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationDefaultDirectCall, UCPURegister, (CallFrame*, DirectCallLinkInfo*));
 
 JSC_DECLARE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCompareLessEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));

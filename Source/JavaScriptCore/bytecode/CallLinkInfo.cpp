@@ -551,6 +551,16 @@ void OptimizingCallLinkInfo::initializeFromDFGUnlinkedCallLinkInfo(VM&, const DF
 }
 #endif
 
+DirectCallLinkInfo::DirectCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner, ExecutableBase* executable)
+    : CallLinkInfoBase(CallSiteType::DirectCall)
+    , m_useDataIC(useDataIC)
+    , m_target(useDataIC == UseDataIC::Yes ? LLInt::defaultDirectCallThunk().code() : CodePtr<JSEntryPtrTag>())
+    , m_codeOrigin(codeOrigin)
+    , m_owner(owner)
+    , m_executable(executable)
+{
+}
+
 void DirectCallLinkInfo::reset()
 {
     if (isOnList())
@@ -560,6 +570,8 @@ void DirectCallLinkInfo::reset()
         initialize();
 #endif
     m_target = { };
+    if (isDataIC())
+        m_target = LLInt::defaultDirectCallThunk().code();
     m_codeBlock = nullptr;
 }
 
@@ -568,7 +580,11 @@ void DirectCallLinkInfo::unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeB
     if (isOnList())
         remove();
 
-    if (!!m_target) {
+    bool isLinked = !!m_target;
+    if (isDataIC())
+        isLinked = m_target != LLInt::defaultDirectCallThunk().code();
+
+    if (isLinked) {
         if (m_codeBlock && newCodeBlock && oldCodeBlock == m_codeBlock) {
             ArityCheckMode arityCheck = oldCodeBlock->jitCode()->addressForCall(ArityCheckNotRequired) == m_target ? ArityCheckNotRequired : MustCheckArity;
             auto target = newCodeBlock->jitCode()->addressForCall(arityCheck);
@@ -593,17 +609,15 @@ void DirectCallLinkInfo::visitWeak(VM& vm)
     }
 }
 
-CCallHelpers::JumpList DirectCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
+void DirectCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
 {
     RELEASE_ASSERT(!isTailCall());
 
     if (isDataIC()) {
-        CCallHelpers::JumpList slowPath;
         jit.move(CCallHelpers::TrustedImmPtr(this), BaselineJITRegisters::Call::callLinkInfoGPR);
-        slowPath.append(jit.branchTestPtr(CCallHelpers::Zero, CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfTarget())));
         jit.transferPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfCodeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeCall());
         jit.call(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfTarget()), JSEntryPtrTag);
-        return slowPath;
+        return;
     }
 
     auto codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeCall());
@@ -615,21 +629,19 @@ CCallHelpers::JumpList DirectCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
     jit.addLateLinkTask([this](LinkBuffer&) {
         repatchSpeculatively();
     });
-    return { };
+    return;
 }
 
-CCallHelpers::JumpList DirectCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
+void DirectCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
 {
     RELEASE_ASSERT(isTailCall());
 
     if (isDataIC()) {
-        CCallHelpers::JumpList slowPath;
         jit.move(CCallHelpers::TrustedImmPtr(this), BaselineJITRegisters::Call::callLinkInfoGPR);
-        slowPath.append(jit.branchTestPtr(CCallHelpers::Zero, CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfTarget())));
         prepareForTailCall();
         jit.transferPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfCodeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
         jit.farJump(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfTarget()), JSEntryPtrTag);
-        return slowPath;
+        return;
     }
 
     auto fastPathStart = jit.label();
@@ -649,7 +661,7 @@ CCallHelpers::JumpList DirectCallLinkInfo::emitDirectTailCallFastPath(CCallHelpe
     jit.addLateLinkTask([this](LinkBuffer&) {
         repatchSpeculatively();
     });
-    return { };
+    return;
 }
 
 void DirectCallLinkInfo::initialize()

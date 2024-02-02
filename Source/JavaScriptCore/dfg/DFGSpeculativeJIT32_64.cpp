@@ -936,15 +936,13 @@ void SpeculativeJIT::emitCall(Node* node)
 
             emitStoreCallSiteIndex(callSite);
 
-            auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
+            callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.prepareForTailCall();
             }));
 
             Label slowPath = label();
-            if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
-                slowCases.link(this);
-
+            if (!callLinkInfo->isDataIC()) {
                 silentSpillAllRegisters(InvalidGPRReg);
                 callOperation(operationLinkDirectCall, CCallHelpers::TrustedImmPtr(callLinkInfo), calleePayloadGPR);
                 silentFillAllRegisters();
@@ -960,13 +958,12 @@ void SpeculativeJIT::emitCall(Node* node)
 
         Label mainPath = label();
         emitStoreCallSiteIndex(callSite);
-        auto slowCases = callLinkInfo->emitDirectFastPath(*this);
+        callLinkInfo->emitDirectFastPath(*this);
         Label slowPath = label();
-        if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
+        if (!callLinkInfo->isDataIC()) {
             Jump done = jump();
 
             slowPath = label();
-            slowCases.link(this);
 
             callOperation(operationLinkDirectCall, CCallHelpers::TrustedImmPtr(callLinkInfo), calleePayloadGPR);
             exceptionCheck();

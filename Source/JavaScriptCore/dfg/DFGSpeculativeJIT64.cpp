@@ -1095,7 +1095,7 @@ void SpeculativeJIT::emitCall(Node* node)
         }
 #endif
 
-        auto* callLinkInfo = jitCode()->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic, DirectCallLinkInfo::UseDataIC::No, m_graph.m_codeBlock, executable);
+        auto* callLinkInfo = jitCode()->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic, DirectCallLinkInfo::UseDataIC::Yes, m_graph.m_codeBlock, executable);
         callLinkInfo->setCallType(callType);
         callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 
@@ -1105,14 +1105,12 @@ void SpeculativeJIT::emitCall(Node* node)
             Label mainPath = label();
             emitStoreCallSiteIndex(callSite);
 
-            auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
+            callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.prepareForTailCall();
             }));
             Label slowPath = label();
-            if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
-                slowCases.link(this);
-
+            if (!callLinkInfo->isDataIC()) {
                 silentSpillAllRegisters(InvalidGPRReg);
                 callOperation(operationLinkDirectCall, CCallHelpers::TrustedImmPtr(callLinkInfo), calleeGPR);
                 silentFillAllRegisters();
@@ -1126,13 +1124,12 @@ void SpeculativeJIT::emitCall(Node* node)
         
         Label mainPath = label();
         emitStoreCallSiteIndex(callSite);
-        auto slowCases = callLinkInfo->emitDirectFastPath(*this);
+        callLinkInfo->emitDirectFastPath(*this);
         Label slowPath = label();
-        if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
+        if (!callLinkInfo->isDataIC()) {
             Jump done = jump();
 
             slowPath = label();
-            slowCases.link(this);
             if (isX86())
                 pop(selectScratchGPR(calleeGPR));
 

@@ -414,13 +414,7 @@ struct BaselineUnlinkedCallLinkInfo : public JSC::UnlinkedCallLinkInfo {
 class DirectCallLinkInfo final : public CallLinkInfoBase {
     WTF_MAKE_NONCOPYABLE(DirectCallLinkInfo);
 public:
-    DirectCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner, ExecutableBase* executable)
-        : CallLinkInfoBase(CallSiteType::DirectCall)
-        , m_useDataIC(useDataIC)
-        , m_codeOrigin(codeOrigin)
-        , m_owner(owner)
-        , m_executable(executable)
-    { }
+    DirectCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC, JSCell* owner, ExecutableBase* executable);
 
     ~DirectCallLinkInfo()
     {
@@ -464,6 +458,8 @@ public:
 
     JSCell* owner() const { return m_owner; }
 
+    JSCell* ownerForSlowPath(CallFrame* calleeFrame);
+
     void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock);
 
     void visitWeak(VM&);
@@ -471,8 +467,8 @@ public:
     CodeOrigin codeOrigin() const { return m_codeOrigin; }
     bool isDataIC() const { return m_useDataIC == UseDataIC::Yes; }
 
-    MacroAssembler::JumpList emitDirectFastPath(CCallHelpers&);
-    MacroAssembler::JumpList emitDirectTailCallFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
+    void emitDirectFastPath(CCallHelpers&);
+    void emitDirectTailCallFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
     void setCallTarget(CodeBlock*, CodeLocationLabel<JSEntryPtrTag>);
     void setMaxArgumentCountIncludingThis(unsigned);
     unsigned maxArgumentCountIncludingThis() const { return m_maxArgumentCountIncludingThis; }
@@ -569,6 +565,18 @@ inline CodeOrigin CallLinkInfo::codeOrigin() const
 }
 
 inline JSCell* CallLinkInfo::ownerForSlowPath(CallFrame* calleeFrame)
+{
+    if (m_owner)
+        return m_owner;
+
+    // Right now, IC (Getter, Setter, Proxy IC etc.) / WasmToJS sets nullptr intentionally since we would like to share IC / WasmToJS thunk eventually.
+    // However, in that case, each IC's data side will have CallLinkInfo.
+    // At that time, they should have appropriate owner. So this is a hack only for now.
+    // This should always works since IC only performs regular-calls and it never does tail-calls.
+    return calleeFrame->callerFrame()->codeOwnerCell();
+}
+
+inline JSCell* DirectCallLinkInfo::ownerForSlowPath(CallFrame* calleeFrame)
 {
     if (m_owner)
         return m_owner;
