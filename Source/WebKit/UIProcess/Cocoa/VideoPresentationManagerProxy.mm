@@ -43,6 +43,8 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/NullVideoPresentationInterface.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <WebCore/VideoPresentationInterfaceMac.h>
@@ -547,7 +549,7 @@ VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy
     Ref playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
     auto model = VideoPresentationModelContext::create(*this, playbackSessionModel, contextId);
     Ref playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
-    Ref<PlatformVideoPresentationInterface> interface = PlatformVideoPresentationInterface::create(playbackSessionInterface);
+    Ref<PlatformVideoPresentationInterface> interface = PlatformVideoPresentationInterface::create(playbackSessionInterface.get());
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setVideoPresentationModel(model.ptr());

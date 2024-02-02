@@ -540,6 +540,8 @@ platform/ios/PlatformEventFactoryIOS.mm @no-unify
 platform/ios/PlatformPasteboardIOS.mm
 platform/ios/PlatformScreenIOS.mm
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
+platform/ios/PlaybackSessionInterfaceIOS.mm @no-unify
+platform/ios/PlaybackSessionInterfaceLMK.mm @no-unify
 platform/ios/PreviewConverterIOS.mm
 platform/ios/QuickLook.mm
 platform/ios/ScrollAnimatorIOS.mm

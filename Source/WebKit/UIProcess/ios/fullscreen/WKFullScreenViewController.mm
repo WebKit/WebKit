@@ -39,6 +39,7 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
 #import <WebCore/VideoPresentationInterfaceIOS.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
@@ -47,10 +48,6 @@
 #if PLATFORM(VISION)
 #import "MRUIKitSPI.h"
 #endif
-
-namespace WebCore {
-class PlaybackSessionInterfaceAVKit;
-}
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
@@ -78,7 +75,7 @@ public:
             controller.pictureInPictureActive = active;
     }
 
-    void setInterface(WebCore::PlaybackSessionInterfaceAVKit* interface)
+    void setInterface(WebCore::PlaybackSessionInterfaceIOS* interface)
     {
         if (m_interface == interface)
             return;
@@ -92,7 +89,7 @@ public:
 
 private:
     WeakObjCPtr<WKFullScreenViewController> m_parent;
-    RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
+    RefPtr<WebCore::PlaybackSessionInterfaceIOS> m_interface;
 };
 
 #pragma mark - _WKInsetLabel

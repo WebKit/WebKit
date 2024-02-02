@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+#pragma once
+
+#if PLATFORM(COCOA) && HAVE(AVKIT)
+
+#include "EventListener.h"
+#include "HTMLMediaElementEnums.h"
+#include "PlaybackSessionModel.h"
+#include "Timer.h"
+#include <functional>
+#include <objc/objc.h>
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS WebAVPlayerController;
+
+namespace WebCore {
+class IntRect;
+class PlaybackSessionModel;
+class WebPlaybackSessionChangeObserver;
+
+class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
+    : public PlaybackSessionModelClient
+    , public RefCounted<PlaybackSessionInterfaceIOS> {
+
+public:
+    virtual ~PlaybackSessionInterfaceIOS();
+    virtual WebAVPlayerController *playerController() const = 0;
+    PlaybackSessionModel* playbackSessionModel() const;
+    void durationChanged(double) override = 0;
+    void currentTimeChanged(double currentTime, double anchorTime) override = 0;
+    void bufferedTimeChanged(double) override = 0;
+    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) override = 0;
+    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override = 0;
+    void canPlayFastReverseChanged(bool) override = 0;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override = 0;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override = 0;
+    void wirelessVideoPlaybackDisabledChanged(bool) override = 0;
+    void mutedChanged(bool) override = 0;
+    void volumeChanged(double) override = 0;
+    void modelDestroyed() override;
+
+    void invalidate();
+
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const;
+    const Logger* loggerPtr() const;
+    virtual const char* logClassName() const = 0;
+    WTFLogChannel& logChannel() const;
+#endif
+
+protected:
+    PlaybackSessionInterfaceIOS(PlaybackSessionModel&);
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
+
+};
+
+}
+
+#endif // PLATFORM(COCOA) && HAVE(AVKIT)

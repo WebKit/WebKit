@@ -33,7 +33,7 @@
 #include "MediaPlayerIdentifier.h"
 #include "PlatformImage.h"
 #include "PlatformLayer.h"
-#include "PlaybackSessionInterfaceAVKit.h"
+#include "PlaybackSessionInterfaceIOS.h"
 #include "VideoFullscreenCaptions.h"
 #include "VideoPresentationModel.h"
 #include <objc/objc.h>
@@ -67,10 +67,10 @@ class VideoPresentationInterfaceIOS final
     , public VideoFullscreenCaptions
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop> {
 public:
-    WEBCORE_EXPORT static Ref<VideoPresentationInterfaceIOS> create(PlaybackSessionInterfaceAVKit&);
+    WEBCORE_EXPORT static Ref<VideoPresentationInterfaceIOS> create(PlaybackSessionInterfaceIOS&);
     WEBCORE_EXPORT virtual ~VideoPresentationInterfaceIOS();
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
-    PlaybackSessionInterfaceAVKit& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
+    PlaybackSessionInterfaceIOS& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     // VideoPresentationModelClient
@@ -171,7 +171,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT VideoPresentationInterfaceIOS(PlaybackSessionInterfaceAVKit&);
+    WEBCORE_EXPORT VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS&);
 
     void doSetup();
     void finalizeSetup();
@@ -192,7 +192,7 @@ private:
     Mode m_currentMode;
     Mode m_targetMode;
 
-    Ref<PlaybackSessionInterfaceAVKit> m_playbackSessionInterface;
+    Ref<PlaybackSessionInterfaceIOS> m_playbackSessionInterface;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;

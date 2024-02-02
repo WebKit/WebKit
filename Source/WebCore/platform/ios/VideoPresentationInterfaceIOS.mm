@@ -788,14 +788,14 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 #endif
 @end
 
-Ref<VideoPresentationInterfaceIOS> VideoPresentationInterfaceIOS::create(PlaybackSessionInterfaceAVKit& playbackSessionInterface)
+Ref<VideoPresentationInterfaceIOS> VideoPresentationInterfaceIOS::create(PlaybackSessionInterfaceIOS& playbackSessionInterface)
 {
     Ref<VideoPresentationInterfaceIOS> interface = adoptRef(*new VideoPresentationInterfaceIOS(playbackSessionInterface));
     [interface->m_playerViewControllerDelegate setFullscreenInterface:interface.ptr()];
     return interface;
 }
 
-VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceAVKit& playbackSessionInterface)
+VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)
     , m_playerViewControllerDelegate(adoptNS([[WebAVPlayerViewControllerDelegate alloc] init]))
     , m_watchdogTimer(RunLoop::main(), this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
