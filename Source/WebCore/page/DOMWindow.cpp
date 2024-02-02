@@ -139,4 +139,42 @@ WebCoreOpaqueRoot root(DOMWindow* window)
     return WebCoreOpaqueRoot { window };
 }
 
+WindowProxy* DOMWindow::opener() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    RefPtr openerFrame = frame->opener();
+    if (!openerFrame)
+        return nullptr;
+
+    return &openerFrame->windowProxy();
+}
+
+WindowProxy* DOMWindow::top() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    if (!frame->page())
+        return nullptr;
+
+    return &frame->tree().top().windowProxy();
+}
+
+WindowProxy* DOMWindow::parent() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    RefPtr parentFrame = frame->tree().parent();
+    if (parentFrame)
+        return &parentFrame->windowProxy();
+
+    return &frame->windowProxy();
+}
+
 } // namespace WebCore

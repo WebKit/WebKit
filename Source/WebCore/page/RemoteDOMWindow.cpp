@@ -93,42 +93,10 @@ unsigned RemoteDOMWindow::length() const
     return m_frame->tree().childCount();
 }
 
-WindowProxy* RemoteDOMWindow::top() const
-{
-    if (!m_frame)
-        return nullptr;
-
-    return &m_frame->tree().top().windowProxy();
-}
-
-WindowProxy* RemoteDOMWindow::opener() const
-{
-    if (!m_frame)
-        return nullptr;
-
-    RefPtr openerFrame = m_frame->opener();
-    if (!openerFrame)
-        return nullptr;
-
-    return &openerFrame->windowProxy();
-}
-
 void RemoteDOMWindow::setOpener(WindowProxy*)
 {
     // FIXME: <rdar://118263373> Implement.
     // JSLocalDOMWindow::setOpener has some security checks. Are they needed here?
-}
-
-WindowProxy* RemoteDOMWindow::parent() const
-{
-    if (!m_frame)
-        return nullptr;
-
-    RefPtr parent = m_frame->tree().parent();
-    if (!parent)
-        return nullptr;
-
-    return &parent->windowProxy();
 }
 
 ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)

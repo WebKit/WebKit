@@ -1462,49 +1462,10 @@ void LocalDOMWindow::setStatus(const String& string)
     m_status = string;
 }
 
-WindowProxy* LocalDOMWindow::opener() const
-{
-    // FIXME: <rdar://118263278> Move LocalDOMWindow::opener and RemoteDOMWindow::opener to DOMWindow.
-    RefPtr frame = this->frame();
-    if (!frame)
-        return nullptr;
-
-    RefPtr openerFrame = frame->loader().opener();
-    if (!openerFrame)
-        return nullptr;
-
-    return &openerFrame->windowProxy();
-}
-
 void LocalDOMWindow::disownOpener()
 {
     if (RefPtr frame = this->frame())
         frame->checkedLoader()->setOpener(nullptr);
-}
-
-WindowProxy* LocalDOMWindow::parent() const
-{
-    RefPtr frame = this->frame();
-    if (!frame)
-        return nullptr;
-
-    RefPtr parentFrame = frame->tree().parent();
-    if (parentFrame)
-        return &parentFrame->windowProxy();
-
-    return &frame->windowProxy();
-}
-
-WindowProxy* LocalDOMWindow::top() const
-{
-    RefPtr frame = this->frame();
-    if (!frame)
-        return nullptr;
-
-    if (!frame->page())
-        return nullptr;
-
-    return &frame->tree().top().windowProxy();
 }
 
 String LocalDOMWindow::origin() const

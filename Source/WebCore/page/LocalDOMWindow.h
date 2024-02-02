@@ -225,10 +225,7 @@ public:
     String status() const;
     void setStatus(const String&);
 
-    WindowProxy* opener() const;
     void disownOpener();
-    WindowProxy* parent() const;
-    WindowProxy* top() const;
 
     String origin() const;
     SecurityOrigin* securityOrigin() const;
