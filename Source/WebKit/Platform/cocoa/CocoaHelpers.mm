@@ -270,12 +270,14 @@ id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
 
 NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
 {
+#if JSC_OBJC_API_ENABLED
     if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
         if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
             return nil;
 
         return value._toJSONString;
     }
+#endif
 
     if (auto *data = encodeJSONData(object, options, error))
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -288,12 +290,14 @@ NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
     if (!object)
         return nil;
 
+#if JSC_OBJC_API_ENABLED
     if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
         if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
             return nil;
 
         return [value._toJSONString dataUsingEncoding:NSUTF8StringEncoding];
     }
+#endif
 
     ASSERT(isValidJSONObject(object, options));
 
