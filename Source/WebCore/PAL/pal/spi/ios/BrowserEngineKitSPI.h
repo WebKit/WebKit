@@ -39,4 +39,34 @@
 @property (nonatomic, readonly) BEKeyPressState state;
 @end
 
+@class NSTextAlternatives;
+@class UIKeyEvent;
+@class UITextSuggestion;
+@class UIWKDocumentContext;
+
+@interface BEKeyEntry (ForTesting)
+- (UIKeyEvent *)_uikitKeyEvent;
+- (instancetype)_initWithUIKitKeyEvent:(UIKeyEvent *)keyEvent;
+@end
+
+@interface BETextAlternatives ()
+@property (readonly) BOOL isLowConfidence;
+- (NSTextAlternatives *)_nsTextAlternative;
+- (instancetype)_initWithNSTextAlternatives:(NSTextAlternatives *)nsTextAlternatives;
+@end
+
+@interface BETextDocumentContext ()
+@property (strong, nonatomic, readonly) UIWKDocumentContext *_uikitDocumentContext;
+@property (nonatomic, copy) NSAttributedString *annotatedText;
+@end
+
+@interface BETextDocumentRequest ()
+@property (nonatomic, assign) CGRect _documentRect;
+@end
+
+@interface BETextSuggestion ()
+@property (nonatomic, readonly, strong) UITextSuggestion *_uikitTextSuggestion;
+- (instancetype)_initWithUIKitTextSuggestion:(UITextSuggestion *)suggestion;
+@end
+
 #endif // USE(BROWSERENGINEKIT)

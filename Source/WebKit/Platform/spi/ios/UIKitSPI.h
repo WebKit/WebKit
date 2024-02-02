@@ -426,8 +426,10 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 @property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
 @property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
+#if !HAVE(BROWSER_ENGINE_SUPPORTING_API)
 @property (nonatomic) BOOL bouncesHorizontally;
 @property (nonatomic) BOOL bouncesVertically;
+#endif
 @property (nonatomic, setter=_setAllowsParentToBeginHorizontally:) BOOL _allowsParentToBeginHorizontally;
 @property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
