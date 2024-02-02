@@ -28,6 +28,7 @@
 
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "PlayStationWebView.h"
+#include "WebAccessibilityObject.h"
 #include "WebPageProxy.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
@@ -334,6 +335,36 @@ void PageClientImpl::derefView()
 
 void PageClientImpl::didRestoreScrollPosition()
 {
+}
+
+void PageClientImpl::handleAccessibilityNotification(WebAccessibilityObject* axObject, WebCore::AXObjectCache::AXNotification notification)
+{
+    m_view.handleAccessibilityNotification(axObject, notification);
+}
+
+void PageClientImpl::handleAccessibilityTextChange(WebAccessibilityObject* axObject, WebCore::AXTextChange textChange, uint32_t offset, const String& text)
+{
+    m_view.handleAccessibilityTextChange(axObject, textChange, offset, text);
+}
+
+void PageClientImpl::handleAccessibilityLoadingEvent(WebAccessibilityObject* axObject, WebCore::AXObjectCache::AXLoadingEvent loadingEvent)
+{
+    m_view.handleAccessibilityLoadingEvent(axObject, loadingEvent);
+}
+
+void PageClientImpl::handleAccessibilityRootObject(WebAccessibilityObject* axObject)
+{
+    m_view.handleAccessibilityRootObject(axObject);
+}
+
+void PageClientImpl::handleAccessibilityFocusedObject(WebAccessibilityObject* axObject)
+{
+    m_view.handleAccessibilityFocusedObject(axObject);
+}
+
+void PageClientImpl::handleAccessibilityHitTest(WebAccessibilityObject* axObject)
+{
+    m_view.handleAccessibilityHitTest(axObject);
 }
 
 WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()

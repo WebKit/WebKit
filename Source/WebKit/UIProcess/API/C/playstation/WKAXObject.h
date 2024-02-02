@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBasePlayStation_h
-#define WKBasePlayStation_h
+#pragma once
 
-#ifndef WKBase_h
-#error "Please #include \"WKBase.h\" instead of this file directly."
+#include <WebKit/WKBase.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-typedef const struct OpaqueWKView* WKViewRef;
-typedef const struct OpaqueWKAccessibilityObject* WKAXObjectRef;
+WK_EXPORT WKTypeID WKAXObjectGetTypeID();
+WK_EXPORT WKPageRef WKAXObjectPage(WKAXObjectRef);
+WK_EXPORT WKFrameRef WKAXObjectFrame(WKAXObjectRef);
+WK_EXPORT uint32_t WKAXObjectRole(WKAXObjectRef);
+WK_EXPORT WKStringRef WKAXObjectCopyTitle(WKAXObjectRef);
+WK_EXPORT WKStringRef WKAXObjectCopyDescription(WKAXObjectRef);
+WK_EXPORT WKStringRef WKAXObjectCopyHelpText(WKAXObjectRef);
+WK_EXPORT WKStringRef WKAXObjectCopyURL(WKAXObjectRef);
+WK_EXPORT uint32_t WKAXObjectButtonState(WKAXObjectRef);
+WK_EXPORT WKRectRef WKAXObjectRect(WKAXObjectRef);
+WK_EXPORT WKStringRef WKAXObjectCopyValue(WKAXObjectRef);
+WK_EXPORT WKBooleanRef WKAXObjectIsFocused(WKAXObjectRef);
+WK_EXPORT WKBooleanRef WKAXObjectIsDisabled(WKAXObjectRef);
+WK_EXPORT WKBooleanRef WKAXObjectIsSelected(WKAXObjectRef);
+WK_EXPORT WKBooleanRef WKAXObjectIsVisited(WKAXObjectRef);
+WK_EXPORT WKBooleanRef WKAXObjectIsLinked(WKAXObjectRef);
 
-#endif /* WKBasePlayStation_h */
+#ifdef __cplusplus
+}
+#endif

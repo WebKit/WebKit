@@ -34,6 +34,7 @@
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKURL.h>
+#include <WebKit/WKViewAccessibilityClient.h>
 #include <cairo.h>
 #include <map>
 #include <toolkitten/Application.h>
@@ -229,6 +230,17 @@ WebViewWindow::WebViewWindow(WKPageConfigurationRef configuration, Client&& wind
         nullptr // checkUserMediaPermissionForOrigin
     };
     WKPageSetPageUIClient(page(), &uiClient.base);
+
+    WKViewAccessibilityClientV0 viewAccessibilityClient {
+        { 0, this },
+        nullptr, // accessibilityNotification
+        nullptr, // accessibilityTextChanged
+        nullptr, // accessibilityLoadingEvent
+        nullptr, // accessibilityRootObject
+        nullptr, // accessibilityFocusedObject
+        nullptr, // accessibilityHitTest
+    };
+    WKViewSetViewAccessibilityClient(m_view.get(), &viewAccessibilityClient.base);
 }
 
 WebViewWindow::~WebViewWindow()

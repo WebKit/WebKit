@@ -222,6 +222,12 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
 
+#if PLATFORM(PLAYSTATION)
+    AccessibilityRootObject()
+    AccessibilityFocusedObject()
+    AccessibilityHitTest(WebCore::IntPoint point)
+#endif
+
     # Callbacks.
     GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames) -> (String string)
 #if PLATFORM(COCOA)

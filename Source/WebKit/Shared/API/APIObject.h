@@ -222,6 +222,9 @@ public:
         SoupRequestManager,
         SoupCustomProtocolRequestManager,
 #endif
+#if PLATFORM(PLAYSTATION)
+        AccessibilityObject,
+#endif
     };
 
     virtual ~Object() = default;

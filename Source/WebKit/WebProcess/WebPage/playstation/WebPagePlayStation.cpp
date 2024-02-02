@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "MessageSenderInlines.h"
+#include "WebAccessibilityObjectData.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PointerCharacteristics.h>
@@ -90,6 +93,90 @@ bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)
 void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     notImplemented();
+}
+
+void WebPage::accessibilityRootObject()
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebCore::Page* page = corePage();
+    if (!page)
+        return;
+
+    auto* core = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!core)
+        return;
+
+    auto* document = core->document();
+    if (!document)
+        return;
+
+    WebCore::AXCoreObject* root = document->axObjectCache()->rootObject();
+    if (!root || root->isDetached())
+        return;
+
+    document->updateStyleIfNeeded();
+    send(Messages::WebPageProxy::DidReceiveAccessibilityRootObject(WebAccessibilityObjectData(root)));
+}
+
+void WebPage::accessibilityFocusedObject()
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebCore::Page* page = corePage();
+    if (!page)
+        return;
+
+    auto* core = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!core)
+        return;
+
+    auto* document = core->document();
+    if (!document)
+        return;
+
+    WebCore::AXCoreObject* focused = document->axObjectCache()->focusedObjectForPage(page);
+    if (!focused || focused->isDetached())
+        return;
+
+    document->updateStyleIfNeeded();
+    send(Messages::WebPageProxy::DidReceiveAccessibilityFocusedObject(WebAccessibilityObjectData(focused)));
+}
+
+void WebPage::accessibilityHitTest(const IntPoint& point)
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebCore::Page* page = corePage();
+    if (!page)
+        return;
+
+    auto* core = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!core)
+        return;
+
+    auto* document = core->document();
+    if (!document)
+        return;
+
+    WebCore::AXCoreObject* root = document->axObjectCache()->rootObject();
+    if (!root)
+        return;
+
+    IntPoint contentsPoint = root->documentFrameView()->windowToContents(point);
+    AXCoreObject* axObjectInterface = root->accessibilityHitTest(contentsPoint);
+    if (!axObjectInterface || !axObjectInterface->isAccessibilityObject())
+        return;
+
+    AXCoreObject* axObject = static_cast<AXCoreObject*>(axObjectInterface);
+    if (!axObject || axObject->isDetached())
+        return;
+
+    document->updateStyleIfNeeded();
+    send(Messages::WebPageProxy::DidReceiveAccessibilityHitTest(WebAccessibilityObjectData(axObject)));
 }
 
 } // namespace WebKit

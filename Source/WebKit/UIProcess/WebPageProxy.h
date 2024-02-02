@@ -430,6 +430,10 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
+#if PLATFORM(PLAYSTATION)
+class WebAccessibilityObjectData;
+#endif
+
 struct AppPrivacyReportTestingData;
 struct BackForwardListItemState;
 struct DataDetectionResult;
@@ -2341,6 +2345,18 @@ public:
     void didBeginTextReplacementSession(const WTF::UUID&);
 
     void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool finished);
+#endif
+
+#if PLATFORM(PLAYSTATION)
+    void accessibilityNotification(const WebAccessibilityObjectData&, uint32_t notification);
+    void accessibilityTextChange(const WebAccessibilityObjectData&, uint32_t textChange, uint32_t offset, const String& text);
+    void accessibilityLoadingEvent(const WebAccessibilityObjectData&, uint32_t loadingEvent);
+    void accessibilityRootObject();
+    void accessibilityFocusedObject();
+    void accessibilityHitTest(const WebCore::IntPoint&);
+    void didReceiveAccessibilityRootObject(const WebAccessibilityObjectData&);
+    void didReceiveAccessibilityFocusedObject(const WebAccessibilityObjectData&);
+    void didReceiveAccessibilityHitTest(const WebAccessibilityObjectData&);
 #endif
 
 private:

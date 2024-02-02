@@ -30,6 +30,7 @@
 #include "PageClientImpl.h"
 #include "WKView.h"
 #include "WebPageProxy.h"
+#include "WebViewAccessibilityClient.h"
 
 namespace WebKit {
 
@@ -75,6 +76,18 @@ public:
     void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&);
     void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&);
 #endif
+
+    void setAccessibilityClient(const WKViewAccessibilityClientBase*);
+    void handleAccessibilityNotification(WebAccessibilityObject*, WebCore::AXObjectCache::AXNotification);
+    void handleAccessibilityTextChange(WebAccessibilityObject*, WebCore::AXTextChange, uint32_t, const String&);
+    void handleAccessibilityLoadingEvent(WebAccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent);
+    void accessibilityRootObject();
+    void accessibilityFocusedObject();
+    void accessibilityHitTest(const WebCore::IntPoint&);
+    void handleAccessibilityRootObject(WebAccessibilityObject* axObject);
+    void handleAccessibilityFocusedObject(WebAccessibilityObject* axObject);
+    void handleAccessibilityHitTest(WebAccessibilityObject* axObject);
+
     void setCursor(const WebCore::Cursor&);
 
 private:
@@ -96,6 +109,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_isFullScreen { false };
 #endif
+    WebViewAccessibilityClient m_axClient;
 };
 
 } // namespace WebKit

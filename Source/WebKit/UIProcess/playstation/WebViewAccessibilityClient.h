@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBasePlayStation_h
-#define WKBasePlayStation_h
+#pragma once
 
-#ifndef WKBase_h
-#error "Please #include \"WKBase.h\" instead of this file directly."
-#endif
+#include "APIClient.h"
+#include "WKViewAccessibilityClient.h"
+#include <WebCore/AXObjectCache.h>
+#include <wtf/Forward.h>
 
-typedef const struct OpaqueWKView* WKViewRef;
-typedef const struct OpaqueWKAccessibilityObject* WKAXObjectRef;
+namespace API {
+template<> struct ClientTraits<WKViewAccessibilityClientBase> {
+    typedef std::tuple<WKViewAccessibilityClientV0> Versions;
+};
+}
 
-#endif /* WKBasePlayStation_h */
+namespace WebKit {
+
+class PlayStationWebView;
+class WebAccessibilityObject;
+
+class WebViewAccessibilityClient : public API::Client<WKViewAccessibilityClientBase> {
+public:
+    void accessibilityNotification(PlayStationWebView*, WebAccessibilityObject*, WebCore::AXObjectCache::AXNotification);
+    void accessibilityTextChanged(PlayStationWebView*, WebAccessibilityObject*, WebCore::AXTextChange, uint32_t, const String&);
+    void accessibilityLoadingEvent(PlayStationWebView*, WebAccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent);
+    void handleAccessibilityRootObject(PlayStationWebView*, WebAccessibilityObject*);
+    void handleAccessibilityFocusedObject(PlayStationWebView*, WebAccessibilityObject*);
+    void handleAccessibilityHitTest(PlayStationWebView*, WebAccessibilityObject*);
+};
+
+} // namespace WebKit

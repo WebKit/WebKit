@@ -157,6 +157,10 @@
 #include "RemoteScrollbarsController.h"
 #endif
 
+#if PLATFORM(PLAYSTATION)
+#include "WebAccessibilityObjectData.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -1702,19 +1706,31 @@ void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthent
 #endif
 
 #if PLATFORM(PLAYSTATION)
-void WebChromeClient::postAccessibilityNotification(WebCore::AccessibilityObject&, WebCore::AXObjectCache::AXNotification)
+void WebChromeClient::postAccessibilityNotification(AccessibilityObject* object, AXObjectCache::AXNotification notification)
 {
-    notImplemented();
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebAccessibilityObjectData data(object);
+    protectedPage()->send(Messages::WebPageProxy::AccessibilityNotification(data, static_cast<uint32_t>(notification)));
 }
 
-void WebChromeClient::postAccessibilityNodeTextChangeNotification(WebCore::AccessibilityObject*, WebCore::AXTextChange, unsigned, const String&)
+void WebChromeClient::postAccessibilityNodeTextChangeNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
 {
-    notImplemented();
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebAccessibilityObjectData data(object);
+    protectedPage()->send(Messages::WebPageProxy::AccessibilityTextChange(data, static_cast<uint32_t>(textChange), offset, text));
 }
 
-void WebChromeClient::postAccessibilityFrameLoadingEventNotification(WebCore::AccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent)
+void WebChromeClient::postAccessibilityFrameLoadingEventNotification(AccessibilityObject* object, AXObjectCache::AXLoadingEvent loadingEvent)
 {
-    notImplemented();
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    WebAccessibilityObjectData data(object);
+    protectedPage()->send(Messages::WebPageProxy::AccessibilityLoadingEvent(data, static_cast<uint32_t>(loadingEvent)));
 }
 #endif
 

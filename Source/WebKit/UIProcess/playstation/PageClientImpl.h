@@ -154,6 +154,13 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
+    void handleAccessibilityNotification(WebAccessibilityObject*, WebCore::AXObjectCache::AXNotification) override;
+    void handleAccessibilityTextChange(WebAccessibilityObject*, WebCore::AXTextChange, uint32_t offset, const String&) override;
+    void handleAccessibilityLoadingEvent(WebAccessibilityObject*, WebCore::AXObjectCache::AXLoadingEvent) override;
+    void handleAccessibilityRootObject(WebAccessibilityObject*) override;
+    void handleAccessibilityFocusedObject(WebAccessibilityObject*) override;
+    void handleAccessibilityHitTest(WebAccessibilityObject*) override;
+
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
 
 #if USE(WPE_RENDERER)

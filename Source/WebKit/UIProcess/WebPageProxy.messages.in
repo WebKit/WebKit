@@ -559,6 +559,15 @@ messages -> WebPageProxy {
     SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
+#if PLATFORM(PLAYSTATION)
+    AccessibilityNotification(WebKit::WebAccessibilityObjectData data, uint32_t notification)
+    AccessibilityTextChange(WebKit::WebAccessibilityObjectData data, uint32_t textChange, uint32_t offset, String text)
+    AccessibilityLoadingEvent(WebKit::WebAccessibilityObjectData data, uint32_t loadingEvent)
+    DidReceiveAccessibilityRootObject(WebKit::WebAccessibilityObjectData data)
+    DidReceiveAccessibilityFocusedObject(WebKit::WebAccessibilityObjectData data)
+    DidReceiveAccessibilityHitTest(WebKit::WebAccessibilityObjectData data)
+#endif
+
     DidFindTextManipulationItems(Vector<WebCore::TextManipulationItem> items)
 
 #if ENABLE(MEDIA_USAGE)

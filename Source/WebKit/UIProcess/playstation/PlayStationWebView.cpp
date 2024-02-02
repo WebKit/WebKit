@@ -180,4 +180,54 @@ void PlayStationWebView::setCursor(const WebCore::Cursor& cursor)
         m_client->setCursor(*this, cursor);
 }
 
+void PlayStationWebView::setAccessibilityClient(const WKViewAccessibilityClientBase* client)
+{
+    m_axClient.initialize(client);
+}
+
+void PlayStationWebView::handleAccessibilityNotification(WebAccessibilityObject* axObject, WebCore::AXObjectCache::AXNotification notification)
+{
+    m_axClient.accessibilityNotification(this, axObject, notification);
+}
+
+void PlayStationWebView::handleAccessibilityTextChange(WebAccessibilityObject* axObject, WebCore::AXTextChange textChange, uint32_t offset, const String& text)
+{
+    m_axClient.accessibilityTextChanged(this, axObject, textChange, offset, text);
+}
+
+void PlayStationWebView::handleAccessibilityLoadingEvent(WebAccessibilityObject* axObject, WebCore::AXObjectCache::AXLoadingEvent loadingEvent)
+{
+    m_axClient.accessibilityLoadingEvent(this, axObject, loadingEvent);
+}
+
+void PlayStationWebView::accessibilityRootObject()
+{
+    m_page->accessibilityRootObject();
+}
+
+void PlayStationWebView::handleAccessibilityRootObject(WebAccessibilityObject* axObject)
+{
+    m_axClient.handleAccessibilityRootObject(this, axObject);
+}
+
+void PlayStationWebView::accessibilityFocusedObject()
+{
+    m_page->accessibilityFocusedObject();
+}
+
+void PlayStationWebView::handleAccessibilityFocusedObject(WebAccessibilityObject* axObject)
+{
+    m_axClient.handleAccessibilityFocusedObject(this, axObject);
+}
+
+void PlayStationWebView::accessibilityHitTest(const WebCore::IntPoint& point)
+{
+    m_page->accessibilityHitTest(point);
+}
+
+void PlayStationWebView::handleAccessibilityHitTest(WebAccessibilityObject* axObject)
+{
+    m_axClient.handleAccessibilityHitTest(this, axObject);
+}
+
 } // namespace WebKit

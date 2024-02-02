@@ -33,8 +33,10 @@
 namespace WebKit {
 
 class PlayStationWebView;
+class WebAccessibilityObject;
 
 WK_ADD_API_MAPPING(WKViewRef, PlayStationWebView)
+WK_ADD_API_MAPPING(WKAXObjectRef, WebAccessibilityObject)
 
 template<>
 inline WKViewRef toAPI<>(PlayStationWebView* view)

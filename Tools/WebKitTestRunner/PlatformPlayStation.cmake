@@ -19,6 +19,7 @@ list(APPEND WebKitTestRunner_PRIVATE_LIBRARIES
 )
 
 list(APPEND TestRunnerInjectedBundle_SOURCES
+    InjectedBundle/playstation/AccessibilityControllerPlayStation.cpp
     InjectedBundle/playstation/ActivateFontsPlayStation.cpp
     InjectedBundle/playstation/InjectedBundlePlayStation.cpp
     InjectedBundle/playstation/TestRunnerPlayStation.cpp
