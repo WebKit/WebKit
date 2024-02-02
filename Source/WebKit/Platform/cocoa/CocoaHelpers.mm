@@ -34,7 +34,7 @@
 #import "JSWebExtensionWrapper.h"
 #import "Logging.h"
 #import "WKNSData.h"
-#import <JavaScriptCore/JSValue.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <wtf/FileSystem.h>
 
 namespace WebKit {
