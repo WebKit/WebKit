@@ -241,6 +241,8 @@ public:
         m_temporaryCallFrame = callFrame;
     }
 
+    void* softStackLimit() const { return m_softStackLimit; }
+
 private:
     Instance(VM&, JSGlobalObject*, Ref<Module>&&);
     
