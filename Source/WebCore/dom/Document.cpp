@@ -3566,11 +3566,10 @@ bool Document::isFullyActive() const
     if (!frame || frame->document() != this)
         return false;
 
-    if (frame->isMainFrame())
-        return true;
-
     RefPtr parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent());
-    return parentFrame && parentFrame->document() && parentFrame->document()->isFullyActive();
+    if (!parentFrame)
+        return true;
+    return parentFrame->document() && parentFrame->document()->isFullyActive();
 }
 
 void Document::detachParser()

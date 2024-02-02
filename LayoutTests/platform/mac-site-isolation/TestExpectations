@@ -359,7 +359,6 @@ http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.
 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Skip ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-redirect.html [ Skip ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Skip ]
-http/tests/xmlhttprequest/origin-exact-matching.html [ Skip ]
 http/wpt/cache-storage/quota-third-party.https.html [ Skip ]
 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Skip ]
 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Skip ]
