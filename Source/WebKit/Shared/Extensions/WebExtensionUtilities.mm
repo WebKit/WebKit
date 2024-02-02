@@ -389,7 +389,7 @@ size_t storageSizeOf(NSDictionary<NSString *, NSString *> *keysAndValues)
 
 bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWithError)
 {
-    __block bool itemExceededQuota;
+    __block bool itemExceededQuota = false;
     __block NSString *keyWithError;
 
     [items enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
