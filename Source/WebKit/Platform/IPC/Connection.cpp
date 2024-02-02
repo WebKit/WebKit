@@ -1467,23 +1467,6 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
 }
 #endif
 
-void Connection::Handle::encode(Encoder& encoder)
-{
-    encoder << WTFMove(handle);
-}
-
-std::optional<Connection::Handle> Connection::Handle::decode(Decoder& decoder)
-{
-#if USE(UNIX_DOMAIN_SOCKETS)
-    auto handle = decoder.decode<UnixFileDescriptor>();
-#elif OS(WINDOWS)
-    auto handle = decoder.decode<Win32Handle>();
-#elif OS(DARWIN)
-    auto handle = decoder.decode<MachSendRight>();
-#endif
-    return handle;
-}
-
 const char* errorAsString(Error error)
 {
     switch (error) {

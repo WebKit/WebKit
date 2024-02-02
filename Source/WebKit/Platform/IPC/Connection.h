@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "ConnectionHandle.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
@@ -48,19 +49,10 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-#include <wtf/unix/UnixFileDescriptor.h>
-#endif
-
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#include <wtf/MachSendRight.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
-#endif
-
-#if OS(WINDOWS)
-#include <wtf/win/Win32Handle.h>
 #endif
 
 #if USE(GLIB)
@@ -211,48 +203,13 @@ public:
         virtual ~Client() { }
     };
 
-    struct Identifier;
-    struct Handle {
-        friend struct Identifier;
-        WTF_MAKE_NONCOPYABLE(Handle);
-        Handle() = default;
-        Handle(Handle&&) = default;
-        Handle& operator=(Handle&&) = default;
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-        Handle(UnixFileDescriptor&& inHandle)
-            : handle(WTFMove(inHandle))
-        { }
-        explicit operator bool() const { return !!handle; }
-#elif OS(WINDOWS)
-        Handle(Win32Handle&& inHandle)
-            : handle(WTFMove(inHandle))
-        { }
-        explicit operator bool() const { return !!handle; }
-#elif OS(DARWIN)
-        Handle(MachSendRight&& sendRight)
-            : handle(WTFMove(sendRight))
-        { }
-        explicit operator bool() const { return MACH_PORT_VALID(handle.sendRight()); }
-#endif
-        void encode(Encoder&);
-        static std::optional<Handle> decode(Decoder&);
-
-    private:
-#if USE(UNIX_DOMAIN_SOCKETS)
-        UnixFileDescriptor handle;
-#elif OS(WINDOWS)
-        Win32Handle handle;
-#elif OS(DARWIN)
-        MachSendRight handle;
-#endif
-    };
+    using Handle = ConnectionHandle;
 
     struct Identifier {
         Identifier() = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.handle.release())
+            : Identifier(handle.release())
         {
         }
         explicit Identifier(int handle)
@@ -263,7 +220,7 @@ public:
         int handle { -1 };
 #elif OS(WINDOWS)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.handle.leak())
+            : Identifier(handle.leak())
         {
         }
         explicit Identifier(HANDLE handle)
@@ -274,7 +231,7 @@ public:
         HANDLE handle { 0 };
 #elif OS(DARWIN)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.handle.leakSendRight())
+            : Identifier(handle.leakSendRight())
         {
         }
         explicit Identifier(mach_port_t port)
