@@ -117,11 +117,15 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
         if (name.isEmpty())
             return true;
         return style->containerNames().containsIf([&](auto& scopedName) {
-            // Names from the inner scopes are ignored.
-            // FIXME: Should names from inner scopes be allowed in some cases?
-            if (scopedName.scopeOrdinal > ScopeOrdinal::Element)
-                return false;
-            return scopedName.name == name;
+            auto isNameFromAllowedScope = [&](auto& scopedName) {
+                // Names from :host rules are allowed when the candidate is the host element.
+                auto isHost = element.shadowHost() == &candidateElement;
+                if (scopedName.scopeOrdinal == ScopeOrdinal::Shadow && isHost)
+                    return true;
+                // Otherwise names from the inner scopes are ignored.
+                return scopedName.scopeOrdinal <= ScopeOrdinal::Element;
+            };
+            return isNameFromAllowedScope(scopedName) && scopedName.name == name;
         });
     };
 

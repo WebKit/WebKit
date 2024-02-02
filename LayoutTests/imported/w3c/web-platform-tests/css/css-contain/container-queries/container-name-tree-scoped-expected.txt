@@ -1,4 +1,5 @@
 
 PASS Outer scope query should not match container-name set by :host rule in shadow tree
 PASS Outer scope query should not match container-name set by ::slotted rule in shadow tree
+PASS Inner scope query should match container-name set by :host rule in shadow tree
 
