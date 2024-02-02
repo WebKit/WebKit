@@ -29,6 +29,7 @@
 #include "MemoryPressureMonitor.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
+#include "OverrideLanguages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessMessages.h"
 #include <wtf/Language.h>
@@ -39,7 +40,7 @@ std::optional<MemoryPressureHandler::Configuration> WebProcessPool::s_networkPro
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
-    parameters.languages = userPreferredLanguages();
+    parameters.languages = overrideLanguages().isEmpty() ? userPreferredLanguages() : overrideLanguages();
     parameters.memoryPressureHandlerConfiguration = s_networkProcessMemoryPressureHandlerConfiguration;
 
 #if OS(LINUX)
