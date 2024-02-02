@@ -3040,8 +3040,12 @@ bool AccessibilityObject::isSelected() const
         return true;
 
     // Menu items are considered selectable by assistive technologies
-    if (isMenuItem())
-        return isFocused() || parentObjectUnignored()->activeDescendant() == this;
+    if (isMenuItem()) {
+        if (isFocused())
+            return true;
+        WeakPtr parent = parentObjectUnignored();
+        return parent && parent->activeDescendant() == this;
+    }
 
     return false;
 }

@@ -647,6 +647,7 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
+    // FIXME: We should return true for node-only objects within display:none containers, but we don't.
     auto role = roleValue();
     return role == AccessibilityRole::Ignored || role == AccessibilityRole::Unknown;
 }
