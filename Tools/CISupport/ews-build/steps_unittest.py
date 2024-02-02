@@ -1238,7 +1238,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1255,7 +1255,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--architecture', 'x86_64 arm64', '-hideShellScriptEnvironment', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1271,7 +1271,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --prefix=/app/webkit/WebKitBuild/release/install --gtk | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1287,7 +1287,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --wpe | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1302,7 +1302,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug | perl Tools/Scripts/filter-build-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1335,7 +1335,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1350,7 +1350,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug | perl Tools/Scripts/filter-build-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1474,7 +1474,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1489,7 +1489,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug | perl Tools/Scripts/filter-build-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1514,7 +1514,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release | perl Tools/Scripts/filter-build-webkit'],
                         )
             + 0,
         )
@@ -1529,7 +1529,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug | perl Tools/Scripts/filter-build-webkit'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,

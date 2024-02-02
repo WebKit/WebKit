@@ -3128,7 +3128,9 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
     env = {'MFLAGS': ''}
     warningPattern = '.*arning: .*'
     haltOnFailure = False
-    command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
+    build_command = ['perl', 'Tools/Scripts/build-webkit']
+    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit']
+    command = ['/bin/sh', '-c']
     VALID_ADDITIONAL_ARGUMENTS_LIST = []  # If additionalArguments is added to config.json for CompileWebKit step, it should be added here as well.
 
     def __init__(self, skipUpload=False, **kwargs):
@@ -3149,10 +3151,12 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
 
+        build_command = self.build_command + [f"--{self.getProperty('configuration')}"]
+
         additionalArguments = self.getProperty('additionalArguments')
         for additionalArgument in (additionalArguments or []):
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
-                self.command += [additionalArgument]
+                build_command += [additionalArgument]
         if platform in ('mac', 'ios', 'tvos', 'watchos'):
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
             # be removed here. We can't have build-webkit pass this by default
@@ -3160,22 +3164,23 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             # via xcconfigs until all building of Xcode-based webkit is done in
             # workspaces (rdar://88135402).
             if architecture:
-                self.setCommand(self.command + ['--architecture', architecture])
+                build_command += ['--architecture', f'"{architecture}"']
             if CompileJSC.name not in self.name:
-                self.setCommand(self.command + ['-hideShellScriptEnvironment'])
-            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
+                build_command += ['-hideShellScriptEnvironment']
+            build_command += ['WK_VALIDATE_DEPENDENCIES=YES']
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
                 # so we need to package debug info as dSYMs. Only generating line tables makes
                 # this much faster than full debug info, and crash logs still have line numbers.
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
-                self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
-                self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)'])
+                build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
         if platform == 'gtk':
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
-            self.setCommand(self.command + [f'--prefix={prefix}'])
+            build_command += [f'--prefix={prefix}']
 
-        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
+        build_command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+
+        self.setCommand(self.command + [f"{' '.join(build_command)} | {' '.join(self.filter_command)}"])
 
         return shell.Compile.start(self)
 
@@ -3464,7 +3469,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 class CompileJSC(CompileWebKit):
     name = 'compile-jsc'
     descriptionDone = ['Compiled JSC']
-    command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
+    build_command = ['perl', 'Tools/Scripts/build-jsc']
 
     def start(self):
         self.setProperty('group', 'jsc')
