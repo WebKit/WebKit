@@ -210,6 +210,8 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
 
         @"  browser.test.assertEq(typeof tab.id, 'number')",
         @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+        @"  browser.test.assertEq(tab.url, '')",
+        @"  browser.test.assertEq(tab.title, '')",
 
         @"  browser.test.notifyPass()",
         @"})",
@@ -235,6 +237,85 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
     performMenuItemAction(menuItems.firstObject);
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, ActionMenusWithActiveTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'top-level-1',",
+        @"  title: 'Top Level 1',",
+        @"  contexts: [ 'action' ]",
+        @"})",
+
+        @"browser.menus.create({",
+        @"  id: 'top-level-2',",
+        @"  title: 'Top Level 2',",
+        @"  contexts: [ 'page' ]",
+        @"})",
+
+        @"browser.menus.create({",
+        @"  id: 'top-level-3',",
+        @"  title: 'Top Level 3',",
+        @"  contexts: [ 'action', 'page' ]",
+        @"})",
+
+        @"browser.menus.create({",
+        @"  id: 'top-level-4',",
+        @"  title: 'Top Level 4'",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuItemId, 'top-level-1')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+        @"  browser.test.assertEq(typeof tab.url, 'string')",
+        @"  browser.test.assertTrue(tab.url.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(typeof tab.title, 'string')",
+        @"  browser.test.assertTrue(tab.title.length > 0)",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')"
+    ]);
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
+
+    EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<title>Test</title>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+    [manager runForTimeInterval:2];
+
+    auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
+    auto *menuItems = action.menuItems;
+
+    auto *expectedTitles = @[ @"Top Level 1", @"Top Level 3" ];
+    EXPECT_EQ(menuItems.count, expectedTitles.count);
+
+    [menuItems enumerateObjectsUsingBlock:^(CocoaMenuItem *menuItem, NSUInteger index, BOOL *stop) {
+        EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+        EXPECT_NS_EQUAL(menuItem.title, expectedTitles[index]);
+    }];
+
+    performMenuItemAction(menuItems.firstObject);
+
+    [manager run];
+
+    EXPECT_TRUE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 }
 
 TEST(WKWebExtensionAPIMenus, ActionSubmenus)
