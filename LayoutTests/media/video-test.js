@@ -261,6 +261,39 @@ function waitFor(element, type, silent, success) {
     });
 }
 
+function waitForConditionOrTimeout(condition, silent, completeTimeout, stepTimeout) {
+
+    if (completeTimeout == undefined)
+        completeTimeout = 1000;
+    if (stepTimeout == undefined)
+        stepTimeout = 100;
+
+    return new Promise(resolve => {
+        const initialTimestamp = Date.now();
+
+        function evalConditionOrTimeout() {
+            const result = eval(condition);
+            if (result) {
+                if (!silent)
+                    consoleWrite("EXPECTED (" + condition + ") OK");
+                resolve(result);
+                return;
+            }
+
+            if ((Date.now() - initialTimestamp) > completeTimeout) {
+                if (!silent)
+                    consoleWrite("EXPECTED (" + condition + ") FAIL");
+                resolve(result);
+                return;
+            }
+
+            setTimeout(evalConditionOrTimeout, stepTimeout);
+        }
+
+        evalConditionOrTimeout();
+    });
+}
+
 function waitForAndSucceed(element, type) {
     return waitFor(element, type, false, true);
 }

@@ -324,6 +324,11 @@ webkit.org/b/266195 media/media-source/media-managedmse-multipletracks-bufferedc
 # Support to pause with 0 rate playback seems to work only in GStreamer ports
 media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
 
+# Test was flaky already before 263317 but it does "enhance its flakyness"
+webkit.org/b/263317 media/video-played-collapse.html [ Failure Pass ]
+webkit.org/b/263317 media/media-source/media-controller-media-source-play-then-pause.html [ Pass Timeout ]
+webkit.org/b/263317 media/media-source/media-source-seek-and-play.html [ Pass Timeout ]
+
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]

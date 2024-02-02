@@ -1,0 +1,11 @@
+
+EVENT(canplaythrough)
+RUN('video.play()')
+EXPECTED (video.paused == 'false') OK
+EXPECTED (internals.isPlayerPaused(video) == 'false') OK
+RUN(video.currentTime = 2)
+RUN(video.pause())
+EXPECTED (internals.isPlayerPaused(video)) OK
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

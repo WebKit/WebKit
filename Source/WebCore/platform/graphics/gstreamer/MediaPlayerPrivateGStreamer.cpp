@@ -390,6 +390,18 @@ void MediaPlayerPrivateGStreamer::prepareToPlay()
     }
 }
 
+bool MediaPlayerPrivateGStreamer::isPipelineSeeking(GstState current, GstState pending, GstStateChangeReturn change) const
+{
+    bool isSeeking = m_isSeeking && change == GST_STATE_CHANGE_ASYNC && current == GST_STATE_PAUSED && pending == GST_STATE_PAUSED;
+    return isSeeking;
+}
+bool MediaPlayerPrivateGStreamer::isPipelineSeeking() const
+{
+    GstState current, pending;
+    GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &current, &pending, 0);
+    return isPipelineSeeking(current, pending, change);
+}
+
 void MediaPlayerPrivateGStreamer::play()
 {
     if (isMediaStreamPlayer()) {
@@ -404,7 +416,12 @@ void MediaPlayerPrivateGStreamer::play()
         return;
     }
 
-    if (changePipelineState(GST_STATE_PLAYING)) {
+    if (isPipelineSeeking()) {
+        GST_DEBUG_OBJECT(pipeline(), "pipeline is seeking, let's delay moving the pipeline to playing right now");
+        return;
+    }
+
+    if (changePipelineState(GST_STATE_PLAYING) == ChangePipelineStateResult::Ok) {
         m_isEndReached = false;
         m_isDelayingLoad = false;
         m_preload = MediaPlayer::Preload::Auto;
@@ -430,9 +447,10 @@ void MediaPlayerPrivateGStreamer::pause()
     if (currentState < GST_STATE_PAUSED && pendingState <= GST_STATE_PAUSED)
         return;
 
-    if (changePipelineState(GST_STATE_PAUSED))
+    auto result = changePipelineState(GST_STATE_PAUSED);
+    if (result == ChangePipelineStateResult::Ok)
         GST_INFO_OBJECT(pipeline(), "Pause");
-    else
+    else if (result == ChangePipelineStateResult::Failed)
         loadingFailed(MediaPlayer::NetworkState::Empty);
 }
 
@@ -454,7 +472,14 @@ bool MediaPlayerPrivateGStreamer::paused() const
 
     GstState state, pending;
     auto stateChange = gst_element_get_state(m_pipeline.get(), &state, &pending, 0);
-    bool paused = state <= GST_STATE_PAUSED || (stateChange == GST_STATE_CHANGE_ASYNC && pending == GST_STATE_PAUSED);
+    bool isSeeking = isPipelineSeeking(state, pending, stateChange);
+    if (isSeeking)
+        return !m_isPipelinePlaying;
+
+    bool paused = state <= GST_STATE_PAUSED;
+    // We also consider ourselves as paused if we are transitioning from playing to paused.
+    if (!paused && stateChange == GST_STATE_CHANGE_ASYNC)
+        paused = pending <= GST_STATE_PAUSED;
     GST_LOG_OBJECT(pipeline(), "Paused: %s (state %s, pending %s, state change %s)", boolForPrinting(paused),
         gst_element_state_get_name(state), gst_element_state_get_name(pending), gst_element_state_change_return_get_name(stateChange));
     return paused;
@@ -561,7 +586,7 @@ void MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget& inTarget)
         if (m_isEndReached && (!player->isLooping() || !isSeamlessSeekingEnabled())) {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] reset pipeline");
             m_shouldResetPipeline = true;
-            if (!changePipelineState(GST_STATE_PAUSED))
+            if (changePipelineState(GST_STATE_PAUSED) == ChangePipelineStateResult::Failed)
                 loadingFailed(MediaPlayer::NetworkState::Empty);
         }
     } else {
@@ -940,25 +965,32 @@ void MediaPlayerPrivateGStreamer::sourceSetupCallback(MediaPlayerPrivateGStreame
     player->sourceSetup(sourceElement);
 }
 
-bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
+MediaPlayerPrivateGStreamer::ChangePipelineStateResult MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 {
     ASSERT(m_pipeline);
 
     if (!m_isVisibleInViewport && newState > GST_STATE_PAUSED) {
         GST_DEBUG_OBJECT(pipeline(), "Saving state for when player becomes visible: %s", gst_element_state_get_name(newState));
         m_invisiblePlayerState = newState;
-        return true;
+        return ChangePipelineStateResult::Ok;
     }
 
     GstState currentState, pending;
-    gst_element_get_state(m_pipeline.get(), &currentState, &pending, 0);
+    GstStateChangeReturn change = gst_element_get_state(m_pipeline.get(), &currentState, &pending, 0);
+    if (isPipelineSeeking(currentState, pending, change)) {
+        GST_DEBUG_OBJECT(pipeline(), "rejected state change during seek");
+        return ChangePipelineStateResult::Rejected;
+    }
+
     GST_DEBUG_OBJECT(pipeline(), "Changing state change to %s from %s with %s pending", gst_element_state_get_name(newState),
         gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
 
-    GstStateChangeReturn setStateResult = gst_element_set_state(m_pipeline.get(), newState);
+    change = gst_element_set_state(m_pipeline.get(), newState);
     GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
-    if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE)
-        return false;
+    if (currentState != pausedOrPlaying && change == GST_STATE_CHANGE_FAILURE)
+        return ChangePipelineStateResult::Failed;
+
+    m_isPipelinePlaying = newState == GST_STATE_PLAYING;
 
     // Create a timer when entering the READY state so that we can free resources if we stay for too long on READY.
     // Also lets remove the timer if we request a state change for any state other than READY. See also https://bugs.webkit.org/show_bug.cgi?id=117354
@@ -970,7 +1002,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     } else if (newState != GST_STATE_PAUSED)
         m_pausedTimerHandler.stop();
 
-    return true;
+    return ChangePipelineStateResult::Ok;
 }
 
 void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
@@ -1960,7 +1992,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GST_INFO_OBJECT(pipeline(), "Element %s requested state change to %s", GST_MESSAGE_SRC_NAME(message),
                 gst_element_state_get_name(requestedState));
             m_requestedState = requestedState;
-            if (!changePipelineState(requestedState))
+            if (changePipelineState(requestedState) == ChangePipelineStateResult::Failed)
                 loadingFailed(MediaPlayer::NetworkState::Empty);
         }
         break;

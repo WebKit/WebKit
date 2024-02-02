@@ -4820,6 +4820,12 @@ bool Internals::isPlayerMuted(const HTMLMediaElement& element) const
     return player && player->muted();
 }
 
+bool Internals::isPlayerPaused(const HTMLMediaElement& element) const
+{
+    auto player = element.player();
+    return player && player->paused();
+}
+
 void Internals::beginAudioSessionInterruption()
 {
 #if USE(AUDIO_SESSION)
