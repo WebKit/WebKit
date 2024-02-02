@@ -3980,9 +3980,11 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const T
     } else {
         // Emit the call.
         Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
+        auto calleeMove = m_jit.storeWasmCalleeCalleePatchable();
         CCallHelpers::Call call = m_jit.threadSafePatchableNearCall();
-        m_jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-            unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
+
+        m_jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex, calleeMove] (LinkBuffer& linkBuffer) {
+            unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex, linkBuffer.locationOf<WasmEntryPtrTag>(calleeMove) });
         });
     }
 
@@ -4121,6 +4123,13 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
             // FIXME: This seems wasteful to do two checks just for a nicer error message.
             // We should move just to use a single branch and then figure out what
             // error to use in the exception handler.
+
+            {
+                auto calleeTmp = jsCalleeAnchor;
+                m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation()), calleeTmp);
+                m_jit.loadPtr(Address(calleeTmp), calleeTmp);
+                m_jit.storeWasmCalleeCallee(calleeTmp);
+            }
 
 #if USE(JSVALUE64)
             ASSERT(static_cast<ptrdiff_t>(FuncRefTable::Function::offsetOfInstance() + sizeof(void*)) == FuncRefTable::Function::offsetOfValue());

@@ -48,6 +48,7 @@ public:
 
     Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
+    const uintptr_t* boxedWasmCalleeLoadLocation() const { return m_importableFunction.boxedWasmCalleeLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
     CompactRefPtr<const Wasm::RTT> rtt() const { ASSERT(m_rtt); return m_rtt; }
 
@@ -56,6 +57,7 @@ public:
     static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfSignatureIndex(); }
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
+    static ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation(); }
 
     static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_rtt); }
 

@@ -12572,6 +12572,8 @@ IGNORE_CLANG_WARNINGS_END
                     }
                 }
 
+                jit.storeWasmCalleeCallee(wasmFunction->boxedWasmCalleeLoadLocation());
+
                 // FIXME: Currently we just do an indirect jump. But we should teach the Module
                 // how to repatch us:
                 // https://bugs.webkit.org/show_bug.cgi?id=196570

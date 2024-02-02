@@ -48,6 +48,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     ASSERT(scratch != GPRReg::InvalidGPRReg);
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
 
+    JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfBoxedTargetCalleeLoadLocation(importIndex)), scratch);
+    jit.loadPtr(JIT::Address(scratch), scratch);
+    // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
+    // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
+    jit.storeWasmCalleeCallee(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
+
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
     jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);

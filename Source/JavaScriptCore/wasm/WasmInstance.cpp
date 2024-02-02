@@ -255,6 +255,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             }
 
             Callee& jsEntrypointCallee = calleeGroup()->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+            auto* wasmCallee = calleeGroup()->wasmCalleeFromFunctionIndexSpace(functionIndex);
             WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
             const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
             // FIXME: Say we export local function "foo" at function index 0.
@@ -269,6 +270,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
                 WTF::makeString(functionIndex),
                 jsInstance,
                 jsEntrypointCallee,
+                wasmCallee,
                 entrypointLoadLocation,
                 typeIndex,
                 TypeInformation::getCanonicalRTT(typeIndex));

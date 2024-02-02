@@ -129,11 +129,6 @@ void IPIntPlan::didCompleteCompilation()
             if (m_moduleInformation->usesSIMD(i))
                 JIT_COMMENT(jit, "SIMD function entrypoint");
             JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
-            CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-            jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_calleesVector[i].ptr())), calleeSlot.withOffset(PayloadOffset));
-#if USE(JSVALUE_32_64)
-            jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
-#endif
             jumps[i] = jit.jump();
         }
 
@@ -171,7 +166,7 @@ void IPIntPlan::didCompleteCompilation()
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
             Ref<JSEntrypointCallee> callee = JSEntrypointCallee::create();
-            std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
+            std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), m_callees[functionIndex].ptr(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {

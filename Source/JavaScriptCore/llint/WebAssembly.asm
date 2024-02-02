@@ -995,25 +995,39 @@ wasmOp(ret_void, WasmRetVoid, macro(ctx)
 end)
 
 macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
+    # First, prepare the new stack frame
+    # We do this before the CCall so it can write stuff into the new frame from CPP
+    wgetu(ctx, m_stackOffset, ws1)
+    lshifti 3, ws1
+if ARMv7
+    subp cfr, ws1, ws1
+    move ws1, sp
+else
+    subp cfr, ws1, sp
+end
+
+if ASSERT_ENABLED
+    if ARMv7
+        move 0xBEEF, a0
+        storep a0, PayloadOffset + Callee[sp]
+        move 0, a0
+        storep a0, TagOffset + Callee[sp]
+    else
+        move 0xBEEF, a0
+        storep a0, Callee[sp]
+    end
+end
+
     callWasmCallSlowPath(
         slowPath,
         # callee is r0 and targetWasmInstance is r1
         macro (calleeEntryPoint, targetWasmInstance)
-            move calleeEntryPoint, ws0
-
             loadi CallSiteIndex[cfr], PC
+
+            move calleeEntryPoint, ws0
 
             # the call might throw (e.g. indirect call with bad signature)
             btpz targetWasmInstance, .throw
-
-            wgetu(ctx, m_stackOffset, ws1)
-            lshifti 3, ws1
-if ARMv7
-            subp cfr, ws1, ws1
-            move ws1, sp
-else
-            subp cfr, ws1, sp
-end
 
             wgetu(ctx, m_numberOfStackArgs, ws1)
 

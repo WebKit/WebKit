@@ -895,6 +895,56 @@ public:
         // Ready for a jump!
         move(newFramePointer, stackPointerRegister);
     }
+
+    static Address addressOfCalleeCalleeFromCallerPerspective(int offset)
+    {
+        CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, 0);
+        return calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register)))
+            // calleeFrame is from the caller's perspective
+            .withOffset(-safeCast<int>(sizeof(CallerFrameAndPC)))
+            .withOffset(PayloadOffset)
+            .withOffset(offset);
+    }
+
+    // This function is used to store the wasm callee in case this function hasn't tiered up yet.
+    // The LLInt/IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
+    void storeWasmCalleeCallee(RegisterID value, int offset = 0)
+    {
+        JIT_COMMENT(*this, "< Store Callee's wasm callee");
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
+#if USE(JSVALUE64)
+        storePtr(value, addr);
+#elif USE(JSVALUE32_64)
+        store32(value, addr.withOffset(PayloadOffset));
+        store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
+#else
+#error "Unsupported configuration"
+#endif
+    }
+
+    void storeWasmCalleeCallee(const uintptr_t* boxedWasmCalleeLoadLocation)
+    {
+        ASSERT(boxedWasmCalleeLoadLocation);
+        JIT_COMMENT(*this, "> ", RawHex(*boxedWasmCalleeLoadLocation));
+        move(TrustedImmPtr(*boxedWasmCalleeLoadLocation), scratchRegister());
+        storeWasmCalleeCallee(scratchRegister());
+    }
+
+    DataLabelPtr storeWasmCalleeCalleePatchable()
+    {
+        JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
+        auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0);
+#if USE(JSVALUE64)
+        storePtr(scratchRegister(), addr);
+#elif USE(JSVALUE32_64)
+        store32(scratchRegister(), addr.withOffset(PayloadOffset));
+        store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
+#else
+#error "Unsupported configuration"
+#endif
+        return patch;
+    }
     
     // These operations clobber all volatile registers. They assume that there is room on the top of
     // stack to marshall call arguments.

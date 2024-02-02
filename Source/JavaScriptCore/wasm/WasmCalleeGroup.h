@@ -157,6 +157,14 @@ public:
         return &m_wasmIndirectCallEntryPoints[calleeIndex];
     }
 
+    // This is the callee used by LLInt/IPInt, not by the JS->Wasm entrypoint
+    Wasm::Callee* wasmCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        return m_wasmIndirectCallWasmCallees[calleeIndex].get();
+    }
+
     CodePtr<WasmEntryPtrTag> wasmToWasmExitStub(unsigned functionIndex)
     {
         return m_wasmToWasmExitStubs[functionIndex].code();
@@ -196,6 +204,7 @@ private:
     RefPtr<LLIntCallees> m_llintCallees;
     HashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
+    FixedVector<RefPtr<Wasm::Callee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<EntryPlan> m_plan;
     CallsiteCollection m_callsiteCollection;

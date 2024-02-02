@@ -4594,6 +4594,13 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
         calleeInstance = otherScratches.gpr(0);
         jsCalleeAnchor = otherScratches.gpr(1);
 
+        {
+            auto calleeTmp = jsCalleeAnchor;
+            m_jit.loadPtr(Address(calleePtr, WebAssemblyFunctionBase::offsetOfBoxedWasmCalleeLoadLocation()), calleeTmp);
+            m_jit.loadPtr(Address(calleeTmp), calleeTmp);
+            m_jit.storeWasmCalleeCallee(calleeTmp);
+        }
+
         m_jit.loadPtr(MacroAssembler::Address(calleePtr, WebAssemblyFunctionBase::offsetOfInstance()), jsCalleeAnchor);
         m_jit.loadPtr(MacroAssembler::Address(calleePtr, WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation()), calleeCode);
         m_jit.loadPtr(MacroAssembler::Address(jsCalleeAnchor, JSWebAssemblyInstance::offsetOfInstance()), calleeInstance);

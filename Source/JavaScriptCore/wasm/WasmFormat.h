@@ -717,6 +717,8 @@ struct UnlinkedWasmToWasmCall {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
     size_t functionIndexSpace;
+    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
+
 };
 
 #if ENABLE(JIT)
@@ -741,6 +743,8 @@ struct InternalFunction {
     unsigned osrEntryScratchBufferSize { 0 };
 };
 
+static constexpr uintptr_t NullWasmCallee = 0;
+
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts
 // with all imports, and then all internal functions. WasmToWasmImportableFunction and FunctionIndexSpace are only
 // meant as fast lookup tables for these opcodes and do not own code.
@@ -749,10 +753,12 @@ struct WasmToWasmImportableFunction {
     using LoadLocation = CodePtr<WasmEntryPtrTag>*;
     static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, typeIndex); }
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
+    static ptrdiff_t offsetOfBoxedWasmCalleeLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, boxedWasmCalleeLoadLocation); }
 
     // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     TypeIndex typeIndex { TypeDefinition::invalidIndex };
     LoadLocation entrypointLoadLocation { };
+    const uintptr_t* boxedWasmCalleeLoadLocation { &NullWasmCallee };
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
