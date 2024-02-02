@@ -1612,7 +1612,8 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
     auto pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
     if (!pseudoId)
         return CSSComputedStyleDeclaration::createEmpty(element);
-    return CSSComputedStyleDeclaration::create(element, Style::PseudoElementIdentifier { *pseudoId });
+    // FIXME: CSSSelector::parsePseudoElement should never return PseudoId::None.
+    return CSSComputedStyleDeclaration::create(element, pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { *pseudoId }));
 }
 
 RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
