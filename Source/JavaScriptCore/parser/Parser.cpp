@@ -5271,8 +5271,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     bool baseIsSuper = match(SUPER);
     bool previousBaseWasSuper = false;
     bool baseIsImport = match(IMPORT);
+    bool baseIsAsyncKeyword = false;
 
-    bool baseIsNewTarget = false;
     if (newCount && match(DOT)) {
         next();
         if (matchContextualKeyword(m_vm.propertyNames->target)) {
@@ -5280,7 +5280,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             bool isClassFieldInitializer = m_parserState.isParsingClassFieldInitializer;
             bool isFunctionEvalContextType = m_isInsideOrdinaryFunction && (closestOrdinaryFunctionScope->evalContextType() == EvalContextType::FunctionEvalContext || closestOrdinaryFunctionScope->evalContextType() == EvalContextType::InstanceFieldEvalContext);
             semanticFailIfFalse(currentScope()->isFunction() || currentScope()->isStaticBlock() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is only valid inside functions or static blocks");
-            baseIsNewTarget = true;
             if (currentScope()->isArrowFunction()) {
                 semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCode() || isFunctionEvalContextType || isClassFieldInitializer, "new.target is not valid inside arrow functions in global code");
                 currentScope()->setInnerArrowFunctionUsesNewTarget();
@@ -5292,11 +5291,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             failIfTrue(match(IDENT), "\"new.\" can only be followed with target");
             failDueToUnexpectedToken();
         }
-    }
-
-    bool baseIsAsyncKeyword = false;
-
-    if (baseIsSuper) {
+    } else if (baseIsSuper) {
         ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
         ScopeRef classScope = closestClassScopeOrTopLevelScope();
         bool isClassFieldInitializer = classScope.index() > closestOrdinaryFunctionScope.index();
@@ -5345,7 +5340,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             consumeOrFail(CLOSEPAREN, "import call expects one or two arguments");
             base = context.createImportExpr(location, expr, optionExpression, expressionStart, expressionEnd, lastTokenEndPosition());
         }
-    } else if (!baseIsNewTarget) {
+    } else {
         const bool isAsync = matchContextualKeyword(m_vm.propertyNames->async);
 
         if (TreeExpression argumentsDotLengthExpression = tryParseArgumentsDotLengthForFastPath(context))
