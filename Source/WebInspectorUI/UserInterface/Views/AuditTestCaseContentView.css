@@ -107,7 +107,7 @@
     display: inline-block;
     min-width: var(--metadata-width);
     margin-inline-start: var(--audit-test-horizontal-space);
-    font-size: 12px;
+    font-size: 0.75rem;
     text-align: center;
     font-weight: bold;
 }
@@ -144,7 +144,7 @@
 
 .content-view.audit-test-case > section table > tr > td:first-child {
     font-family: -webkit-system-font, sans-serif;
-    font-size: 11px;
+    font-size: 0.7rem;
     font-variant-numeric: tabular-nums;
     text-align: end;
     vertical-align: top;

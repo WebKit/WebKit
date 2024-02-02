@@ -69,7 +69,7 @@
 }
 
 .content-view.audit-test-group > header > .information > p {
-    font-size: 1.25em;
+    font-size: 1.25rem;
 }
 
 .content-view.audit-test-group > header > nav {
@@ -130,7 +130,7 @@
 .content-view.audit-test-group > header > .percentage-pass {
     width: var(--metadata-width);
     margin-inline-start: var(--audit-test-horizontal-space);
-    font-size: 16px;
+    font-size: 1rem;
     text-align: center;
     font-weight: bold;
     /* FIXME: Use CSS4 color blend functions once they're available. */
@@ -138,7 +138,7 @@
 }
 
 .content-view.audit-test-group > header > .percentage-pass > span {
-    font-size: 24px;
+    font-size: 1.5rem;
     /* FIXME: Use CSS4 color blend functions once they're available. */
     color: hsla(0, 0%, 0%, 0.65);
 }

@@ -65,7 +65,7 @@
     left: 0;
     z-index: calc(var(--z-index-popover) + 1);
     padding: 8px;
-    font-size: 13px;
+    font-size: 0.8rem;
     text-align: center;
     color: var(--text-color-secondary);
 }
