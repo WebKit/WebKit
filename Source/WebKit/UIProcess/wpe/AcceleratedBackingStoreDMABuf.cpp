@@ -95,7 +95,7 @@ void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::
 void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBitmap::Handle&& handle)
 {
     auto* display = wpe_view_get_display(m_wpeView.get());
-    auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto bitmap = ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return;
 

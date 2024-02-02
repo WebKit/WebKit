@@ -51,6 +51,7 @@ list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND TestWebCore_LIBRARIES
+    rt
     GTK::GTK
 )
 

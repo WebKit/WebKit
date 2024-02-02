@@ -78,6 +78,7 @@ set(WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES
 
 set(WPEPlatform_LIBRARIES
     Epoxy::Epoxy
+    rt
     WTF
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
