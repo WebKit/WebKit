@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {HTML} at (0,0) size 800x84
+    RenderBody {BODY} at (8,16) size 784x52
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 371x18
+          text run at (0,0) width 371: "Both dialogs should have the same shades of background."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 402x18
+          text run at (0,0) width 402: "The popover should have a completely-transparent ::backdrop."
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600 [bgcolor=#0000001A]
+layer at (50,100) size 156x32 clip at (53,103) size 150x26
+  RenderBlock (positioned) {DIALOG} at (50,100) size 157x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 143x18
+      text run at (7,7) width 143: "This is a modal dialog"
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (50,150) size 169x32 clip at (53,153) size 163x26
+  RenderBlock (positioned) {DIALOG} at (50,150) size 169x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 155x18
+      text run at (7,7) width 155: "This is a dialog popover"

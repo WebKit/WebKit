@@ -4554,7 +4554,7 @@ imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-004-d
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/editing/run/caret-navigation-around-line-break.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nesting.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nesting.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
 media/media-can-play-h265-video.html [ Failure ]

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="author" href="mailto:masonf@chromium.org">
+<link rel=help href="https://html.spec.whatwg.org/multipage/popover.html">
 <link rel=help href="https://open-ui.org/components/popover.research.explainer">
 <meta name="timeout" content="long">
 <script src="/resources/testharness.js"></script>
@@ -324,6 +325,7 @@ window.onload = () => {
               // handler should run, set a new type, and that type should end up
               // as the final result.
               assert_false(popover.matches(':popover-open'));
+              assert_true(gotEvent);
               if (inEventType === undefined || (method ==="idl" && inEventType === null)) {
                 assert_throws_dom("NotSupportedError",() => popover.showPopover(),'We should have removed the popover attribute, so showPopover should throw');
               } else {

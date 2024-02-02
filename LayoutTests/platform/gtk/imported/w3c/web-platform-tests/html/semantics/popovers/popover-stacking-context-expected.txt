@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (320,205) size 210x240 clip at (321,206) size 193x223 scrollWidth 388 scrollHeight 252
+  RenderBlock (positioned) {DIV} at (320,205) size 210x240 [bgcolor=#FFFFFF] [border: (1px solid #FF0000)]
+    RenderBlock (anonymous) at (5,5) size 185x18
+      RenderText {#text} at (0,0) size 94x17
+        text run at (0,0) width 94: "Inside popover"
+    RenderBlock (anonymous) at (5,231) size 185x18
+      RenderText {#text} at (0,0) size 120x17
+        text run at (0,0) width 120: "Bottom of popover"
+layer at (325,228) size 185x156
+  RenderBlock (relative positioned) zI: 2 {DIV} at (5,23) size 185x156 [bgcolor=#90EE90] [border: (1px solid #000000)]
+    RenderBlock (anonymous) at (17,17) size 151x18
+      RenderText {#text} at (0,0) size 59x17
+        text run at (0,0) width 59: "z-index 2"
+layer at (352,295) size 151x52
+  RenderBlock (relative positioned) zI: 1 {DIV} at (17,87) size 151x52 [bgcolor=#FFC0CB] [border: (1px solid #000000)]
+    RenderText zI: 1 {#text} at (17,17) size 59x17
+      text run at (17,17) width 59: "z-index 1"
+layer at (362,263) size 151x52
+  RenderBlock (relative positioned) zI: 3 {DIV} at (17,35) size 151x52 [bgcolor=#ADD8E6] [border: (1px solid #000000)]
+    RenderText zI: 3 {#text} at (17,17) size 59x17
+      text run at (17,17) width 59: "z-index 3"

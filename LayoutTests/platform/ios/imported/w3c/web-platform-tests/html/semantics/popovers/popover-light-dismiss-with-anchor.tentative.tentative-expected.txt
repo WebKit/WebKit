@@ -1,0 +1,6 @@
+Popover1 anchor (no action) Inside popover 1  Popover 2
+
+FAIL Clicking inside a child popover shouldn't close either popover assert_true: popover1 should be open expected true got false
+FAIL Clicking inside a parent popover should close child popover assert_true: expected true got false
+FAIL Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed assert_false: popover1 should close expected false got true
+

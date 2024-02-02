@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (50,100) size 30x30
+  RenderBlock (positioned) {DIV} at (50,100) size 30x30
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (337,384) size 126x32 clip at (340,387) size 120x26
+  RenderBlock (positioned) {DIV} at (337,384) size 126x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 112x18
+      text run at (7,7) width 112: "This is popover 3"

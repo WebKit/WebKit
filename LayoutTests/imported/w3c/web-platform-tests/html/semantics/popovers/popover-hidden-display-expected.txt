@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (10,10) size 314x64 clip at (13,13) size 308x58
+  RenderBlock (positioned) {DIV} at (10,10) size 314x64 [bgcolor=#008000] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 259x18
+      text run at (7,7) width 259: "This content should be visible and green"
+layer at (10,110) size 314x64 clip at (13,113) size 308x58
+  RenderBlock (positioned) {DIV} at (10,110) size 314x64 [bgcolor=#008000] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 259x18
+      text run at (7,7) width 259: "This content should be visible and green"
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (10,210) size 314x64 clip at (13,213) size 308x58
+  RenderBlock (positioned) {DIV} at (10,210) size 314x64 [bgcolor=#008000] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 259x18
+      text run at (7,7) width 259: "This content should be visible and green"

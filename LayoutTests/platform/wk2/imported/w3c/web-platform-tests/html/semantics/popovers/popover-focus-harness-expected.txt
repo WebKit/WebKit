@@ -1,0 +1,4 @@
+Button1 Button2 Button3
+
+FAIL Test sendShiftTab assert_equals: Shift-Tab should move back to button 1 expected Element node <button id="button1" tabindex="0">Button1</button> but got Element node <button id="button2" tabindex="0">Button2</button>
+

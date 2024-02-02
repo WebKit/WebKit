@@ -1,0 +1,23 @@
+layer at (0,0) size 785x1725
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1725
+  RenderBlock {HTML} at (0,0) size 785x1725
+    RenderBody {BODY} at (8,8) size 769x1709
+      RenderBlock {DIV} at (0,0) size 769x200
+      RenderBlock {P} at (0,216) size 769x18
+        RenderText {#text} at (0,0) size 474x18
+          text run at (0,0) width 474: "There should be a green box attached to the right side of each orange box."
+      RenderBlock {DIV} at (25,259) size 719x100
+        RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (25,384) size 719x100
+        RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (0,509) size 769x1200
+layer at (0,100) size 785x600
+  RenderBlock (positioned) at (0,0) size 785x600
+layer at (343,350) size 100x100
+  RenderBlock (positioned) {DIV} at (342,250) size 101x100 [bgcolor=#00FF00]
+layer at (0,100) size 785x600
+  RenderBlock (positioned) at (0,0) size 785x600
+layer at (343,350) size 100x100
+  RenderBlock (positioned) {DIV} at (342,250) size 101x100 [bgcolor=#00FF00]
+scrolled to 0,100

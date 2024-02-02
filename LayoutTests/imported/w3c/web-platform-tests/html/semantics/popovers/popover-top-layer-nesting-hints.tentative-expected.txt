@@ -1,0 +1,27 @@
+Single popover=hint ancestor
+Nested auto/hint ancestors
+Nested auto/hint ancestors, target is auto
+Unrelated hint, target=hint
+Unrelated hint, target=auto
+
+PASS Single popover=hint ancestor with dialog
+PASS Single popover=hint ancestor with dialog, top layer element *is* a popover
+PASS Single popover=hint ancestor with fullscreen
+PASS Single popover=hint ancestor with fullscreen, top layer element *is* a popover
+FAIL Nested auto/hint ancestors with dialog assert_equals: Incorrect behavior expected true but got false
+PASS Nested auto/hint ancestors with dialog, top layer element *is* a popover
+FAIL Nested auto/hint ancestors with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Nested auto/hint ancestors with fullscreen, top layer element *is* a popover
+FAIL Nested auto/hint ancestors, target is auto with dialog assert_equals: Incorrect behavior expected true but got false
+PASS Nested auto/hint ancestors, target is auto with dialog, top layer element *is* a popover
+FAIL Nested auto/hint ancestors, target is auto with fullscreen assert_equals: Incorrect behavior expected true but got false
+PASS Nested auto/hint ancestors, target is auto with fullscreen, top layer element *is* a popover
+FAIL Unrelated hint, target=hint with dialog assert_equals: Incorrect behavior expected true but got false
+PASS Unrelated hint, target=hint with dialog, top layer element *is* a popover
+FAIL Unrelated hint, target=hint with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Unrelated hint, target=hint with fullscreen, top layer element *is* a popover
+FAIL Unrelated hint, target=auto with dialog assert_equals: Incorrect behavior expected true but got false
+PASS Unrelated hint, target=auto with dialog, top layer element *is* a popover
+FAIL Unrelated hint, target=auto with fullscreen assert_equals: Incorrect behavior expected true but got false
+PASS Unrelated hint, target=auto with fullscreen, top layer element *is* a popover
+

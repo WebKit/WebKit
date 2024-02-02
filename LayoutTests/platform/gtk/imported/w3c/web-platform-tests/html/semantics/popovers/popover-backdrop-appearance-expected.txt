@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,16) size 784x36
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 753x35
+          text run at (0,0) width 465: "Test for [popover]::backdrop presence and stacking order. The test passes "
+          text run at (465,0) width 288: "if there are 3 stacked boxes, with the brightest"
+          text run at (0,18) width 83: "green on top."
+layer at (50,50) size 200x200
+  RenderBlock (positioned) zI: 100 at (50,50) size 200x200 [bgcolor=#003200]
+layer at (70,70) size 61x32 clip at (73,73) size 55x26
+  RenderBlock (positioned) {DIV} at (70,70) size 61x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 47x17
+      text run at (7,7) width 47: "Bottom"
+    RenderText {#text} at (0,0) size 0x0
+layer at (100,100) size 200x200
+  RenderBlock (positioned) zI: -100 at (100,100) size 200x200 [bgcolor=#008200]
+layer at (120,120) size 59x32 clip at (123,123) size 53x26
+  RenderBlock (positioned) {DIV} at (120,120) size 59x32 [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 45x17
+      text run at (7,7) width 45: "Middle"
+    RenderText {#text} at (0,0) size 0x0
+layer at (150,150) size 200x200
+  RenderBlock (positioned) at (150,150) size 200x200 [bgcolor=#00D200]
+layer at (170,170) size 39x32 clip at (173,173) size 33x26
+  RenderBlock (positioned) {DIV} at (170,170) size 39x32 [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 25x17
+      text run at (7,7) width 25: "Top"

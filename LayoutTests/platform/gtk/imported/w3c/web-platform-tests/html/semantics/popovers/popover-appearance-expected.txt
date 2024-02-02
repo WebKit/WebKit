@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 351x17
+          text run at (0,0) width 351: "There should be four popovers with similar appearance."
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (224,100) size 52x32 clip at (227,103) size 46x26
+  RenderBlock (positioned) {DIV} at (224,100) size 52x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 38x17
+      text run at (7,7) width 38: "Blank"
+    RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (327,100) size 46x32 clip at (330,103) size 40x26
+  RenderBlock (positioned) {DIV} at (327,100) size 46x32 [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 32x17
+      text run at (7,7) width 32: "Auto"
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (419,100) size 62x32 clip at (422,103) size 56x26
+  RenderBlock (positioned) {DIV} at (419,100) size 62x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 48x17
+      text run at (7,7) width 48: "Manual"
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (521,100) size 58x32 clip at (524,103) size 52x26
+  RenderBlock (positioned) {DIV} at (521,100) size 58x32 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+    RenderText {#text} at (7,7) size 44x17
+      text run at (7,7) width 44: "Invalid"

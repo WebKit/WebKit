@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x440
+  RenderBlock {HTML} at (0,0) size 800x440
+    RenderBody {BODY} at (8,16) size 784x409
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 474x18
+          text run at (0,0) width 474: "There should be a green box attached to the right side of each orange box."
+      RenderBlock {DIV} at (15,34) size 754x50
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (15,99) size 754x50
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (15,164) size 754x50
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (15,229) size 754x50
+        RenderInline {SPAN} at (0,0) size 50x50 [color=#FFA500]
+          RenderText {#text} at (0,0) size 50x50
+            text run at (0,0) width 50: "X"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (15,294) size 754x50
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (15,359) size 754x50
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFA500]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (375,275) size 50x50
+  RenderBlock (positioned) {DIV} at (375,275) size 50x50 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (375,275) size 50x50
+  RenderBlock (positioned) {DIV} at (375,275) size 50x50 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (23,230) size 50x50
+  RenderBlock (positioned) {DIV} at (23,230) size 50x50 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (375,275) size 50x50
+  RenderBlock (positioned) {DIV} at (375,275) size 50x50 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (375,275) size 50x50
+  RenderBlock (positioned) {DIV} at (375,275) size 50x50 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderBlock (positioned) at (0,0) size 800x600
+layer at (375,275) size 50x50
+  RenderBlock (positioned) {DIV} at (375,275) size 50x50 [bgcolor=#00FF00]

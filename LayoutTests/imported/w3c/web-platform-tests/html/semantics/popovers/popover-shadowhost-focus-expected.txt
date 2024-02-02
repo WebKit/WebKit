@@ -1,0 +1,6 @@
+
+PASS autofocus=true, delegatesfocus=false
+PASS autofocus=true, delegatesfocus=true
+PASS autofocus=false, delegatesfocus=false
+PASS autofocus=false, delegatesfocus=true
+
