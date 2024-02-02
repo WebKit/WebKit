@@ -384,7 +384,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 
-#if HAVE(BROWSER_ENGINE_SUPPORTING_API)
+#if USE(APPLE_INTERNAL_SDK) || HAVE(BROWSER_ENGINE_SUPPORTING_API)
 #import <AVFoundation/AVVideoPerformanceMetrics.h>
 @interface AVVideoPerformanceMetrics (AVVideoPerformanceMetricsDisplayCompositedVideoFrames)
 @property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
