@@ -33,7 +33,7 @@
 #include "Gradient.h"
 #include "ReferencedSVGResources.h"
 #include "RenderLayer.h"
-#include "RenderSVGResourceMarker.h"
+#include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
 #include "SVGMarkerElement.h"

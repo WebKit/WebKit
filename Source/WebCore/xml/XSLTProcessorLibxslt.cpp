@@ -27,7 +27,7 @@
 #include "XSLTProcessor.h"
 
 #include "CachedResourceLoader.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"

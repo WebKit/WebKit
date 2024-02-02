@@ -23,7 +23,7 @@
 #include "SVGTitleElement.h"
 
 #include "Document.h"
-#include "SVGNames.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
 

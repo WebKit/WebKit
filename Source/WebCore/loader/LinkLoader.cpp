@@ -40,7 +40,7 @@
 #include "ContainerNode.h"
 #include "CrossOriginAccessControl.h"
 #include "DefaultResourceLoadPriority.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FetchRequestDestination.h"
 #include "FrameLoader.h"
 #include "HTMLSrcsetParser.h"

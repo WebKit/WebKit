@@ -23,8 +23,10 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "ElementChildIteratorInlines.h"
 #include "RenderLayer.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourcePatternInlines.h"
 #include "RenderSVGShape.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"

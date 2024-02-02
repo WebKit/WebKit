@@ -27,6 +27,7 @@
 
 #include "CSSParserContext.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

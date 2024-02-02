@@ -31,7 +31,7 @@
 #include "ContentData.h"
 #include "CursorData.h"
 #include "CursorList.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FillLayer.h"
 #include "RenderStyleInlines.h"
 #include "SVGURIReference.h"

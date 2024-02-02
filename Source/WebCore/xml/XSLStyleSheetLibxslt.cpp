@@ -24,7 +24,7 @@
 #if ENABLE(XSLT)
 
 #include "CachedResourceLoader.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
 #include "Page.h"

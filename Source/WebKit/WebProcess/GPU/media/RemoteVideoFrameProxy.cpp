@@ -81,7 +81,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
 }
 
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy& baseVideoFrame)
-    : VideoFrame(baseVideoFrame.presentationTime(), baseVideoFrame.isMirrored(), baseVideoFrame.rotation(), PlatformVideoColorSpace { baseVideoFrame.colorSpace() })
+    : VideoFrame(baseVideoFrame.presentationTime(), baseVideoFrame.isMirrored(), baseVideoFrame.rotation(), WebCore::PlatformVideoColorSpace { baseVideoFrame.colorSpace() })
     , m_baseVideoFrame(&baseVideoFrame)
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
@@ -141,7 +141,7 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 }
 #endif
 
-Ref<VideoFrame> RemoteVideoFrameProxy::clone()
+Ref<WebCore::VideoFrame> RemoteVideoFrameProxy::clone()
 {
     return adoptRef(*new RemoteVideoFrameProxy(cloneConstructor, *this));
 }

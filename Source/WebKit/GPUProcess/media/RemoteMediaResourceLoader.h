@@ -29,6 +29,7 @@
 
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 

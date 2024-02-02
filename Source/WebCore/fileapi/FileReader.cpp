@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FileReader.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "EventLoop.h"
 #include "EventNames.h"

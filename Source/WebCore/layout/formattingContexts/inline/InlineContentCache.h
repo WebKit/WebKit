@@ -28,6 +28,7 @@
 #include "FormattingConstraints.h"
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
+#include "LineLayoutResult.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/IsoMallocInlines.h>
 

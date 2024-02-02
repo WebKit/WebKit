@@ -38,7 +38,7 @@
 #include "CachedResourceRequest.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "InspectorInstrumentation.h"

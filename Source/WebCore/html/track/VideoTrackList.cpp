@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ContextDestructionObserverInlines.h"
 #include "ScriptExecutionContext.h"
 #include "VideoTrack.h"
 

@@ -33,23 +33,23 @@
 namespace WebKit {
 class RemoteResourceCacheProxy;
 
-class RemoteNativeImageBackendProxy final : public NativeImageBackend {
+class RemoteNativeImageBackendProxy final : public WebCore::NativeImageBackend {
 public:
-    static std::unique_ptr<RemoteNativeImageBackendProxy> create(NativeImage&);
+    static std::unique_ptr<RemoteNativeImageBackendProxy> create(WebCore::NativeImage&);
     ~RemoteNativeImageBackendProxy() final;
 
-    const PlatformImagePtr& platformImage() const final;
-    IntSize size() const final;
+    const WebCore::PlatformImagePtr& platformImage() const final;
+    WebCore::IntSize size() const final;
     bool hasAlpha() const final;
-    DestinationColorSpace colorSpace() const final;
+    WebCore::DestinationColorSpace colorSpace() const final;
     bool isRemoteNativeImageBackendProxy() const final;
 
     std::optional<WebCore::ShareableBitmap::Handle> createHandle();
 private:
-    RemoteNativeImageBackendProxy(Ref<WebCore::ShareableBitmap>, PlatformImagePtr);
+    RemoteNativeImageBackendProxy(Ref<WebCore::ShareableBitmap>, WebCore::PlatformImagePtr);
 
     Ref<WebCore::ShareableBitmap> m_bitmap;
-    PlatformImageNativeImageBackend m_platformBackend;
+    WebCore::PlatformImageNativeImageBackend m_platformBackend;
 };
 
 }

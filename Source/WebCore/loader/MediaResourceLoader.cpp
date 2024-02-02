@@ -33,7 +33,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
