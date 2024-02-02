@@ -45,6 +45,7 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
 {
     m_pendingCommandBuffers = [NSMutableSet set];
     m_createdNotCommittedBuffers = [NSMutableOrderedSet orderedSet];
+    m_openCommandEncoders = [NSMapTable strongToStrongObjectsMapTable];
 }
 
 Queue::Queue(Device& device)
@@ -89,18 +90,40 @@ void Queue::finalizeBlitCommandEncoder()
     }
 }
 
+id<MTLCommandEncoder> Queue::encoderForBuffer(id<MTLCommandBuffer> commandBuffer) const
+{
+    if (!commandBuffer)
+        return nil;
+
+    return [m_openCommandEncoders objectForKey:commandBuffer];
+}
+
+void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLCommandEncoder> commandEncoder)
+{
+    if (!commandBuffer)
+        return;
+
+    if (!commandEncoder)
+        [m_openCommandEncoders removeObjectForKey:commandBuffer];
+    else
+        [m_openCommandEncoders setObject:commandEncoder forKey:commandBuffer];
+}
+
 id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
 {
     constexpr auto maxCommandBufferCount = 64;
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
         id<MTLCommandBuffer> buffer = [m_createdNotCommittedBuffers objectAtIndex:0];
         [m_createdNotCommittedBuffers removeObjectAtIndex:0];
+        id<MTLCommandEncoder> existingEncoder = [m_openCommandEncoders objectForKey:buffer];
+        [existingEncoder endEncoding];
         commitMTLCommandBuffer(buffer);
         [buffer waitUntilCompleted];
     }
 
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
     [m_createdNotCommittedBuffers addObject:buffer];
+
     return buffer;
 }
 
@@ -140,11 +163,11 @@ void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandl
     callbacks.append(WTFMove(completionHandler));
 }
 
-bool Queue::validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
+NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
         if (!isValidToUseWith(command.get(), *this) || command.get().bufferMapCount())
-            return false;
+            return command.get().lastError();
     }
 
     // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
@@ -152,7 +175,7 @@ bool Queue::validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& 
 
     // There's only one queue right now, so there is no need to make sure that the command buffers are being submitted to the correct queue.
 
-    return true;
+    return nil;
 }
 
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
@@ -179,6 +202,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
     [m_pendingCommandBuffers addObject:commandBuffer];
     [commandBuffer commit];
+    [m_openCommandEncoders removeObjectForKey:commandBuffer];
     [m_createdNotCommittedBuffers removeObject:commandBuffer];
     ++m_submittedCommandBufferCount;
 }
@@ -190,8 +214,8 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
         return;
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
-    if (!validateSubmit(commands)) {
-        device->generateAValidationError("Validation failure."_s);
+    if (NSString* error = errorValidatingSubmit(commands)) {
+        device->generateAValidationError(error ?: @"Validation failure.");
         return;
     }
 
@@ -206,7 +230,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
             device->generateAValidationError("Command buffer appears twice."_s);
             return;
         }
-        command.makeInvalid();
+        command.makeInvalid(@"command buffer was submitted");
     }
 
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
@@ -256,7 +280,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data,
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writebuffer
 
-    if (!validateWriteBuffer(buffer, bufferOffset, size) || &buffer.device() != device) {
+    if (!validateWriteBuffer(buffer, bufferOffset, size) || !isValidToUseWith(buffer, *this)) {
         device->generateAValidationError("Validation failure."_s);
         return;
     }
@@ -385,12 +409,12 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
 
     RELEASE_ASSERT(data);
-    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || &texture.device() != device) {
+    if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || !isValidToUseWith(texture, *this)) {
         device->generateAValidationError("Validation failure."_s);
         return;
     }
 
-    if (!dataSize)
+    if (!dataSize || texture.isDestroyed())
         return;
 
     uint32_t blockSize = Texture::texelBlockSize(textureFormat);

@@ -46,12 +46,13 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, Device& device)
     : m_device(device)
     , m_renderBundleEncoder(encoder)
     , m_renderBundlesResources(resources)
     , m_descriptor(descriptor)
     , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(descriptor.colorFormats, descriptor.colorFormatCount) : Vector<WGPUTextureFormat>())
+    , m_commandCount(commandCount)
 {
     if (m_descriptorColorFormats.size())
         m_descriptor.colorFormats = &m_descriptorColorFormats[0];
@@ -59,8 +60,9 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Re
     ASSERT(m_renderBundleEncoder || m_renderBundlesResources.count);
 }
 
-RenderBundle::RenderBundle(Device& device)
+RenderBundle::RenderBundle(Device& device, NSString* errorString)
     : m_device(device)
+    , m_lastErrorString(errorString)
 {
 }
 
@@ -92,6 +94,11 @@ void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
     float twoFloats[2] = { m_minDepth, m_maxDepth };
     for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
         m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, twoFloats, sizeof(float) * 2);
+}
+
+uint64_t RenderBundle::drawCount() const
+{
+    return m_commandCount;
 }
 
 bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor& descriptor) const
@@ -147,6 +154,11 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
 bool RenderBundle::validatePipeline(const RenderPipeline*)
 {
     return true;
+}
+
+NSString* RenderBundle::lastError() const
+{
+    return m_lastErrorString;
 }
 
 } // namespace WebGPU

@@ -56,9 +56,9 @@ void RenderPassEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat ind
     wgpuRenderPassEncoderSetIndexBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
-void RenderPassEncoderImpl::setVertexBuffer(Index32 slot, const Buffer& buffer, std::optional<Size64> offset, std::optional<Size64> size)
+void RenderPassEncoderImpl::setVertexBuffer(Index32 slot, const Buffer* buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderPassEncoderSetVertexBuffer(m_backing.get(), slot, m_convertToBackingContext->convertToBacking(buffer), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderPassEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? m_convertToBackingContext->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderPassEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,

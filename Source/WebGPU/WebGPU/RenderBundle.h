@@ -61,13 +61,13 @@ class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, encoder, descriptor, device));
+        return adoptRef(*new RenderBundle(resources, encoder, descriptor, commandCount, device));
     }
-    static Ref<RenderBundle> createInvalid(Device& device)
+    static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
     {
-        return adoptRef(*new RenderBundle(device));
+        return adoptRef(*new RenderBundle(device, errorString));
     }
 
     ~RenderBundle();
@@ -83,16 +83,20 @@ public:
     void updateMinMaxDepths(float minDepth, float maxDepth);
     bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&) const;
     bool validatePipeline(const RenderPipeline*);
+    uint64_t drawCount() const;
+    NSString* lastError() const;
 
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, Device&);
-    RenderBundle(Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, Device&);
+    RenderBundle(Device&, NSString*);
 
     const Ref<Device> m_device;
     RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
     WGPURenderBundleEncoderDescriptor m_descriptor;
     Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    NSString* m_lastErrorString { nil };
+    uint64_t m_commandCount { 0 };
     float m_minDepth { 0.f };
     float m_maxDepth { 1.f };
 };

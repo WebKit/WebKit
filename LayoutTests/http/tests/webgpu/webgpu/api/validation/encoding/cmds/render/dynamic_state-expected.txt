@@ -1,1 +1,9 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :setViewport,x_y_width_height_nonnegative:
+PASS :setViewport,xy_rect_contained_in_attachment:
+PASS :setViewport,depth_rangeAndOrder:
+PASS :setScissorRect,x_y_width_height_nonnegative:
+PASS :setScissorRect,xy_rect_contained_in_attachment:
+PASS :setBlendConstant:
+PASS :setStencilReference:
+

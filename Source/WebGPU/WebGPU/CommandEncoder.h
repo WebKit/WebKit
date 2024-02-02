@@ -86,16 +86,20 @@ public:
 
     bool isValid() const { return m_commandBuffer; }
     void lock(bool);
+    bool isLocked() const;
+    bool isFinished() const;
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> = nil);
     static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
-    void makeInvalid();
-    void makeSubmitInvalid();
+    void makeInvalid(NSString* = nil);
+    void makeSubmitInvalid(NSString* = nil);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
+    void endEncoding(id<MTLCommandEncoder>);
+    void setLastError(NSString*);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
@@ -105,14 +109,15 @@ private:
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
-    bool validateComputePassDescriptor(const WGPUComputePassDescriptor&) const;
-    bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
+    NSString* errorValidatingComputePassDescriptor(const WGPUComputePassDescriptor&) const;
+    NSString* errorValidatingRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
+    void setExistingEncoder(id<MTLCommandEncoder>);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
-
+    id<MTLCommandEncoder> m_existingCommandEncoder { nil };
     struct PendingTimestampWrites {
         Ref<QuerySet> querySet;
         uint32_t queryIndex;
@@ -120,6 +125,7 @@ private:
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
+    NSString* m_lastErrorString { nil };
     int m_bufferMapCount { 0 };
     bool m_makeSubmitInvalid { false };
 

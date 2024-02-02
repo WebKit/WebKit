@@ -56,7 +56,7 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_texture; }
+    bool isValid() const;
 
     id<MTLTexture> texture() const { return m_texture; }
     id<MTLTexture> parentTexture() const;

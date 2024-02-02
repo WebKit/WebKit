@@ -26,6 +26,10 @@
 #import "config.h"
 #import "CommandsMixin.h"
 
+#import "Buffer.h"
+#import "Device.h"
+#import "RenderPipeline.h"
+
 namespace WebGPU {
 
 bool CommandsMixin::prepareTheEncoderState() const
@@ -42,6 +46,34 @@ bool CommandsMixin::prepareTheEncoderState() const
         // FIXME: "Generate a validation error"
         return false;
     }
+}
+
+NSString* CommandsMixin::encoderStateName() const
+{
+    switch (m_state) {
+    case EncoderState::Open:
+        return @"Open";
+    case EncoderState::Locked:
+        return @"Locked";
+    case EncoderState::Ended:
+        return @"Ended";
+    }
+}
+
+bool CommandsMixin::computedSizeOverflows(const Buffer& buffer, uint64_t offset, uint64_t& size)
+{
+    if (size == WGPU_WHOLE_SIZE) {
+        auto localSize = checkedDifference<uint64_t>(buffer.size(), offset);
+        if (localSize.hasOverflowed())
+            return true;
+
+        size = localSize.value();
+    }
+
+    if (offset + size > buffer.size())
+        return true;
+
+    return false;
 }
 
 } // namespace WebGPU

@@ -129,6 +129,8 @@ public:
 
     static bool isStencilOnlyFormat(MTLPixelFormat);
     bool shouldStopCaptureAfterSubmit();
+    id<MTLBuffer> placeholderBuffer() const;
+    id<MTLTexture> placeholderTexture() const;
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -177,6 +179,9 @@ private:
     id<NSObject> m_deviceObserver { nil };
 
     HardwareCapabilities m_capabilities { };
+
+    id<MTLBuffer> m_placeholderBuffer { nil };
+    id<MTLTexture> m_placeholderTexture { nil };
 
     const Ref<Adapter> m_adapter;
 #if HAVE(COREVIDEO_METAL_SUPPORT)

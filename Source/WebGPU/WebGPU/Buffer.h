@@ -70,7 +70,7 @@ public:
     void unmap();
     void setLabel(String&&);
 
-    bool isValid() const { return m_buffer; }
+    bool isValid() const;
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     enum class State : uint8_t {
@@ -88,11 +88,13 @@ public:
 
     Device& device() const { return m_device; }
     bool isDestroyed() const;
-    void setCommandEncoder(CommandEncoder&) const;
+    void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
+    uint32_t maxIndex(MTLIndexType) const;
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
     Buffer(Device&);
+    void recomputeMaxIndexValues() const;
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
     NSString* errorValidatingMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
@@ -114,6 +116,8 @@ private:
 
     const Ref<Device> m_device;
     mutable WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable uint16_t m_max16BitIndex { USHRT_MAX };
+    mutable uint32_t m_max32BitIndex { UINT32_MAX };
 };
 
 } // namespace WebGPU

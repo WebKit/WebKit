@@ -144,11 +144,16 @@ bool TextureView::isDestroyed() const
     return m_parentTexture.isDestroyed();
 }
 
+bool TextureView::isValid() const
+{
+    return m_texture || isDestroyed();
+}
+
 void TextureView::destroy()
 {
-    m_texture = nil;
+    m_texture = m_device->placeholderTexture();
     if (m_commandEncoder)
-        m_commandEncoder.get()->makeInvalid();
+        m_commandEncoder.get()->makeSubmitInvalid();
 
     m_commandEncoder = nullptr;
 }

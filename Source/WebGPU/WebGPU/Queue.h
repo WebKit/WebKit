@@ -75,18 +75,20 @@ public:
     void waitUntilIdle();
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
     id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
+    void commitMTLCommandBuffer(id<MTLCommandBuffer>);
+    void setEncoderForBuffer(id<MTLCommandBuffer>, id<MTLCommandEncoder>);
+    id<MTLCommandEncoder> encoderForBuffer(id<MTLCommandBuffer>) const;
 
 private:
     Queue(id<MTLCommandQueue>, Device&);
     Queue(Device&);
 
-    bool validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>&) const;
+    NSString* errorValidatingSubmit(const Vector<std::reference_wrapper<CommandBuffer>>&) const;
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
 
     void ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
-    void commitMTLCommandBuffer(id<MTLCommandBuffer>);
     bool isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
 
@@ -107,6 +109,7 @@ private:
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
     NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers { nil };
     NSMutableOrderedSet<id<MTLCommandBuffer>> *m_createdNotCommittedBuffers { nil };
+    NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> *m_openCommandEncoders;
 };
 
 } // namespace WebGPU

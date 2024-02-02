@@ -61,7 +61,7 @@ public:
     void destroy();
     void setLabel(String&&);
 
-    bool isValid() const { return m_texture; }
+    bool isValid() const;
 
     static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels

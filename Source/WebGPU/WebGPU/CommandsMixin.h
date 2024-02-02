@@ -27,10 +27,15 @@
 
 namespace WebGPU {
 
+class Buffer;
+class Device;
+
 // https://gpuweb.github.io/gpuweb/#gpucommandsmixin
 class CommandsMixin {
 protected:
     bool prepareTheEncoderState() const;
+    NSString* encoderStateName() const;
+    static bool computedSizeOverflows(const Buffer&, uint64_t offset, uint64_t& size);
 
     enum class EncoderState : uint8_t {
         Open,

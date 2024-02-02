@@ -134,7 +134,7 @@ private:
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
     unsigned m_functionConstantIndex { 0 };
-    AST::Continuing*m_continuing;
+    AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
 };
 

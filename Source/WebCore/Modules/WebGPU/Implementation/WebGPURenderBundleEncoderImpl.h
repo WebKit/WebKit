@@ -60,7 +60,7 @@ private:
     void setPipeline(const RenderPipeline&) final;
 
     void setIndexBuffer(const Buffer&, IndexFormat, std::optional<Size64> offset, std::optional<Size64>) final;
-    void setVertexBuffer(Index32 slot, const Buffer&, std::optional<Size64> offset, std::optional<Size64>) final;
+    void setVertexBuffer(Index32 slot, const Buffer*, std::optional<Size64> offset, std::optional<Size64>) final;
 
     void draw(Size32 vertexCount, std::optional<Size32> instanceCount,
         std::optional<Size32> firstVertex, std::optional<Size32> firstInstance) final;

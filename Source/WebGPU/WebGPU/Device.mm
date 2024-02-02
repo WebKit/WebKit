@@ -183,6 +183,17 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     m_coreVideoTextureCache = coreVideoTextureCache;
 #endif
     GPUFrameCapture::registerForFrameCapture(m_device);
+
+    m_placeholderBuffer = safeCreateBuffer(1, MTLStorageModeShared);
+    auto desc = [MTLTextureDescriptor new];
+    desc.width = 1;
+    desc.height = 1;
+    desc.mipmapLevelCount = 1;
+    desc.pixelFormat = MTLPixelFormatR8Unorm;
+    desc.textureType = MTLTextureType2D;
+    desc.storageMode = MTLStorageModeShared;
+    desc.usage = MTLTextureUsageShaderRead;
+    m_placeholderTexture = [m_device newTextureWithDescriptor:desc];
 }
 
 Device::Device(Adapter& adapter)
@@ -248,6 +259,16 @@ bool Device::getLimits(WGPUSupportedLimits& limits)
 
     limits.limits = m_capabilities.limits;
     return true;
+}
+
+id<MTLBuffer> Device::placeholderBuffer() const
+{
+    return m_placeholderBuffer;
+}
+
+id<MTLTexture> Device::placeholderTexture() const
+{
+    return m_placeholderTexture;
 }
 
 Queue& Device::getQueue()

@@ -885,6 +885,12 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     Vector<id<MTLResource>> stageResources[stagesPlusUndefinedCount][maxResourceUsageValue];
     Vector<BindGroupEntryUsageData> stageResourceUsages[stagesPlusUndefinedCount][maxResourceUsageValue];
     auto& bindGroupLayoutEntries = bindGroupLayout.entries();
+    Vector<WGPUBindGroupEntry> descriptorEntries(descriptor.entries, descriptor.entryCount);
+    std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupEntry& a, const WGPUBindGroupEntry& b) {
+        return a.binding < b.binding;
+    });
+    BindGroup::DynamicBuffersContainer dynamicBuffers;
+
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
@@ -910,6 +916,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             return BindGroup::createInvalid(*this);
 
         bool bindingContainedInStage = false;
+        bool appendedBufferToDynamicBuffers = false;
         for (ShaderStage stage : stagesPlusUndefined) {
             auto bindingIndex = entry.binding;
             auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(bindingIndex, stage);
@@ -929,38 +936,47 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiBuffer = WebGPU::fromAPI(entry.buffer);
+                id<MTLBuffer> buffer = apiBuffer.buffer();
+                uint32_t entrySize = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
+                if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
+                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.size() });
+                    appendedBufferToDynamicBuffers = true;
+                }
+
                 if (!apiBuffer.isValid() || &apiBuffer.device() != this) {
                     if (!apiBuffer.isDestroyed())
                         generateAValidationError("Buffer is invalid or created from a different device"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                id<MTLBuffer> buffer = apiBuffer.buffer();
-                if (entry.offset >= buffer.length || !hasProperUsageFlags(layoutBinding->type, apiBuffer.usage())) {
-                    generateAValidationError("Unexpected buffer length or type"_s);
                     return BindGroup::createInvalid(*this);
                 }
 
                 auto& deviceLimits = limits();
                 const bool isUniformBuffer = layoutBinding->type == WGPUBufferBindingType_Uniform;
                 const bool isStorageBuffer = layoutBinding->type == WGPUBufferBindingType_Storage || layoutBinding->type == WGPUBufferBindingType_ReadOnlyStorage;
-                if ((isUniformBuffer && (entry.offset % deviceLimits.minUniformBufferOffsetAlignment))
-                    || (isStorageBuffer && (entry.offset % deviceLimits.minStorageBufferOffsetAlignment))) {
-                    generateAValidationError("Buffer offset is not a multiple of the device buffer alignment"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                uint32_t entrySize = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
-                if ((isUniformBuffer && entrySize > deviceLimits.maxUniformBufferBindingSize)
-                    || (isStorageBuffer && entrySize > deviceLimits.maxStorageBufferBindingSize)) {
-                    generateAValidationError("Buffer size is larger than the device limits"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (isStorageBuffer && entrySize % 4) {
-                    generateAValidationError("Storage buffer size is not multiple of 4"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!entrySize || entrySize > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
-                    generateAValidationError("Buffer size is invalid"_s);
-                    return BindGroup::createInvalid(*this);
+                if (!apiBuffer.isDestroyed()) {
+                    if (entry.offset >= buffer.length || !hasProperUsageFlags(layoutBinding->type, apiBuffer.usage())) {
+                        generateAValidationError("Unexpected buffer length or type"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && (entry.offset % deviceLimits.minUniformBufferOffsetAlignment))
+                        || (isStorageBuffer && (entry.offset % deviceLimits.minStorageBufferOffsetAlignment))) {
+                        generateAValidationError("Buffer offset is not a multiple of the device buffer alignment"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && entrySize > deviceLimits.maxUniformBufferBindingSize)
+                        || (isStorageBuffer && entrySize > deviceLimits.maxStorageBufferBindingSize)) {
+                        generateAValidationError("Buffer size is larger than the device limits"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (isStorageBuffer && entrySize % 4) {
+                        generateAValidationError("Storage buffer size is not multiple of 4"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!entrySize || entrySize > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
+                        generateAValidationError("Buffer size is invalid"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
                 }
 
                 if (stage != ShaderStage::Undefined) {
@@ -1001,46 +1017,48 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiTextureView = WebGPU::fromAPI(entry.textureView);
-                if (!apiTextureView.isValid()) {
-                    if (!apiTextureView.isDestroyed())
+                id<MTLTexture> texture = apiTextureView.texture();
+                if (!apiTextureView.isDestroyed()) {
+                    if (!apiTextureView.isValid()) {
                         generateAValidationError("Underlying texture is not valid"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (&apiTextureView.device() != this) {
-                    generateAValidationError("Underlying texture was created from a different device"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                auto textureUsage = apiTextureView.usage();
-                if ((textureEntry && !(textureUsage & WGPUTextureUsage_TextureBinding)) || (storageTextureEntry && !(textureUsage & WGPUTextureUsage_StorageBinding))) {
-                    generateAValidationError("Storage texture did not have storage usage or texture view did not have texture binding"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView.sampleCount())) {
-                    generateAValidationError("Bind group entry multisampled state does not match underlying texture"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!bindGroupLayout.isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, *this)) {
-                    generateAValidationError("Bind group entry sampleType does not match TextureView sampleType"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
-                    generateAValidationError("Bind group entry viewDimension does not match TextureView viewDimension"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
-                    generateAValidationError("Bind group storage texture entry format does not match TextureView format"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (storageTextureEntry && apiTextureView.texture().mipmapLevelCount != 1) {
-                    generateAValidationError("Storage textures must have a single mip level"_s);
-                    return BindGroup::createInvalid(*this);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (&apiTextureView.device() != this) {
+                        generateAValidationError("Underlying texture was created from a different device"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    auto textureUsage = apiTextureView.usage();
+                    if ((textureEntry && !(textureUsage & WGPUTextureUsage_TextureBinding)) || (storageTextureEntry && !(textureUsage & WGPUTextureUsage_StorageBinding))) {
+                        generateAValidationError("Storage texture did not have storage usage or texture view did not have texture binding"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView.sampleCount())) {
+                        generateAValidationError("Bind group entry multisampled state does not match underlying texture"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!bindGroupLayout.isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, *this)) {
+                        generateAValidationError("Bind group entry sampleType does not match TextureView sampleType"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
+                        generateAValidationError("Bind group entry viewDimension does not match TextureView viewDimension"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
+                        generateAValidationError("Bind group storage texture entry format does not match TextureView format"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (storageTextureEntry && apiTextureView.texture().mipmapLevelCount != 1) {
+                        generateAValidationError("Storage textures must have a single mip level"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !hasFeature(WGPUFeatureName_Float32Filterable)))) {
+                        generateAValidationError("Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
                 }
 
-                id<MTLTexture> texture = apiTextureView.texture();
-                if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !hasFeature(WGPUFeatureName_Float32Filterable)))) {
-                    generateAValidationError("Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled"_s);
-                    return BindGroup::createInvalid(*this);
-                }
                 if (stage != ShaderStage::Undefined)
                     [argumentEncoder[stage] setTexture:texture atIndex:index];
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
@@ -1105,15 +1123,27 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout.fragmentArgumentEncoder().label;
     argumentBuffer[ShaderStage::Compute].label = bindGroupLayout.computeArgumentEncoder().label;
 
-    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), *this);
+    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), *this);
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, Device& device)
+bool BindGroup::isValid() const
+{
+    return !!bindGroupLayout();
+}
+
+const BindGroupLayout* BindGroup::bindGroupLayout() const
+{
+    return m_bindGroupLayout.get();
+}
+
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
     , m_device(device)
     , m_resources(WTFMove(resources))
+    , m_bindGroupLayout(&bindGroupLayout)
+    , m_dynamicBuffers(WTFMove(dynamicBuffers))
 {
 }
 
@@ -1123,6 +1153,12 @@ BindGroup::BindGroup(Device& device)
 }
 
 BindGroup::~BindGroup() = default;
+
+const BindGroup::BufferAndType* BindGroup::dynamicBuffer(uint32_t i) const
+{
+    ASSERT(i < m_dynamicBuffers.size());
+    return i < m_dynamicBuffers.size() ? &m_dynamicBuffers[i] : nullptr;
+}
 
 void BindGroup::setLabel(String&& label)
 {

@@ -304,7 +304,7 @@ class DeviceHolder {
    */
   endTestScope() {
     assert(this.state === 'acquired');
-    const kTimeout = 5000;
+    const kTimeout = 15000;
 
     // Time out if attemptEndTestScope (popErrorScope or onSubmittedWorkDone) never completes. If
     // this rejects, the device won't be reused, so it's OK that popErrorScope calls may not have

@@ -38,7 +38,7 @@ interface mixin GPURenderEncoderBase {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, last two parameters should have default value of 0
     undefined setIndexBuffer(GPUBuffer buffer, GPUIndexFormat indexFormat, optional GPUSize64 offset, optional GPUSize64 size);
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, last two parameters should have default value of 0
-    undefined setVertexBuffer(GPUIndex32 slot, GPUBuffer buffer, optional GPUSize64 offset, optional GPUSize64 size);
+    undefined setVertexBuffer(GPUIndex32 slot, GPUBuffer? buffer, optional GPUSize64 offset, optional GPUSize64 size);
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, last two parameters should have default value of 0, first 1
     undefined draw(GPUSize32 vertexCount, optional GPUSize32 instanceCount,

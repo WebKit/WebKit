@@ -32,9 +32,18 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
+#import "IsValidToUseWith.h"
 #import "QuerySet.h"
 
 namespace WebGPU {
+
+#define RETURN_IF_FINISHED() \
+if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
+    m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \
+    return; \
+} \
+if (!m_computeCommandEncoder || !m_parentEncoder->isValid()) \
+    return;
 
 ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
@@ -52,16 +61,19 @@ ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeComma
     }
 }
 
-ComputePassEncoder::ComputePassEncoder(CommandEncoder& parentEncoder, Device& device)
+ComputePassEncoder::ComputePassEncoder(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
     : m_device(device)
     , m_parentEncoder(parentEncoder)
+    , m_lastErrorString(errorString)
 {
     m_parentEncoder->lock(true);
 }
 
 ComputePassEncoder::~ComputePassEncoder()
 {
-    [m_computeCommandEncoder endEncoding];
+    if (m_computeCommandEncoder)
+        m_parentEncoder->endEncoding(m_computeCommandEncoder);
+    m_computeCommandEncoder = nil;
 }
 
 using EntryUsage = OptionSet<BindGroupEntryUsage>;
@@ -122,9 +134,15 @@ static bool addResourceToActiveResources(id<MTLResource> mtlResource, OptionSet<
 void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer)
 {
     if (!m_pipeline) {
-        makeInvalid();
+        makeInvalid(@"pipeline is not set prior to dispatch");
         return;
     }
+
+    if (NSString *error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
+        makeInvalid(error);
+        return;
+    }
+    [m_computeCommandEncoder setComputePipelineState:m_pipeline->computePipelineState()];
 
     HashMap<void*, EntryMap> usagesForResource;
     if (indirectBuffer)
@@ -132,6 +150,16 @@ void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer
 
     auto& pipelineLayout = m_pipeline->pipelineLayout();
     auto pipelineLayoutCount = pipelineLayout.numberOfBindGroupLayouts();
+    for (auto& kvp : m_bindGroups) {
+        auto bindGroupIndex = kvp.key;
+        if (!kvp.value.get()) {
+            makeInvalid(@"bind group was deallocated");
+            return;
+        }
+        auto& group = *kvp.value.get();
+        [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
+    }
+
     for (auto& kvp : m_bindGroupResources) {
         auto bindGroupIndex = kvp.key;
         if (bindGroupIndex >= pipelineLayoutCount)
@@ -184,33 +212,89 @@ void ComputePassEncoder::executePreDispatchCommands(id<MTLBuffer> indirectBuffer
 
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
+    RETURN_IF_FINISHED();
+    executePreDispatchCommands();
+    auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
+    if (x > dimensionMax || y > dimensionMax || z > dimensionMax) {
+        makeInvalid();
+        return;
+    }
+
     if (!(x * y * z))
         return;
 
-    executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
+}
+
+id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buffer& indirectBuffer, uint64_t indirectOffset)
+{
+    static id<MTLComputePipelineState> computePipelineState = nil;
+    id<MTLDevice> device = m_device->device();
+    if (!computePipelineState) {
+        auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
+        NSError *error = nil;
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        id<MTLLibrary> library = [device newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void cs(device const uint* indirectBuffer, device uint* dispatchCallBuffer, uint index [[thread_position_in_grid]]) { dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, indirectBuffer[index] > %u); }", dimensionMax] options:options error:&error];
+        if (error)
+            return nil;
+
+        id<MTLFunction> function = [library newFunctionWithName:@"cs"];
+        computePipelineState = [device newComputePipelineStateWithFunction:function error:&error];
+
+        if (error)
+            return nil;
+    }
+
+    static id<MTLBuffer> dispatchCallBuffer = [device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
+    [m_computeCommandEncoder setComputePipelineState:computePipelineState];
+    [m_computeCommandEncoder setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
+    [m_computeCommandEncoder setBuffer:dispatchCallBuffer offset:0 atIndex:1];
+    [m_computeCommandEncoder dispatchThreads:MTLSizeMake(3, 1, 1) threadsPerThreadgroup:MTLSizeMake(3, 1, 1)];
+    return dispatchCallBuffer;
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    if ((indirectOffset % 4) || !(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset + 3 * sizeof(uint32_t) > indirectBuffer.buffer().length)) {
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(indirectBuffer, *this)) {
         makeInvalid();
         return;
     }
 
-    if (&indirectBuffer.device() != m_device.ptr()) {
+    if ((indirectOffset % 4) || !(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset + 3 * sizeof(uint32_t) > indirectBuffer.size())) {
         makeInvalid();
         return;
     }
 
-    executePreDispatchCommands(indirectBuffer.buffer());
-    [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
+    indirectBuffer.setCommandEncoder(m_parentEncoder);
+    if (indirectBuffer.isDestroyed())
+        return;
+
+    if (id<MTLBuffer> dispatchBuffer = runPredispatchIndirectCallValidation(indirectBuffer, indirectOffset)) {
+        executePreDispatchCommands(indirectBuffer.buffer());
+        [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:dispatchBuffer indirectBufferOffset:0 threadsPerThreadgroup:m_threadsPerThreadgroup];
+    } else
+        makeInvalid(@"GPUComputePassEncoder.dispatchWorkgroupsIndirect: Unable to validate dispatch size");
 }
 
 void ComputePassEncoder::endPass()
 {
-    if (m_debugGroupStackSize || !isValid()) {
-        m_parentEncoder->makeInvalid();
+    if (m_passEnded) {
+        m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as pass is already ended", __PRETTY_FUNCTION__]);
+        return;
+    }
+    m_passEnded = true;
+
+    RETURN_IF_FINISHED();
+
+    auto passIsValid = isValid();
+    if (m_debugGroupStackSize || !passIsValid) {
+        m_parentEncoder->endEncoding(m_computeCommandEncoder);
+        m_computeCommandEncoder = nil;
+        m_parentEncoder->makeInvalid([NSString stringWithFormat:@"ComputePassEncoder.endPass failure, m_debugGroupStackSize = %llu, isValid = %d, error = %@", m_debugGroupStackSize, passIsValid, m_lastErrorString]);
         return;
     }
 
@@ -218,13 +302,14 @@ void ComputePassEncoder::endPass()
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
-    [m_computeCommandEncoder endEncoding];
+    m_parentEncoder->endEncoding(m_computeCommandEncoder);
     m_computeCommandEncoder = nil;
     m_parentEncoder->lock(false);
 }
 
 void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
+    RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
 
     if (!prepareTheEncoderState())
@@ -235,20 +320,32 @@ void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
 
 bool ComputePassEncoder::validatePopDebugGroup() const
 {
+    if (!m_parentEncoder->isLocked())
+        return false;
+
     if (!m_debugGroupStackSize)
         return false;
 
     return true;
 }
 
-void ComputePassEncoder::makeInvalid()
+void ComputePassEncoder::makeInvalid(NSString* errorString)
 {
-    [m_computeCommandEncoder endEncoding];
+    m_lastErrorString = errorString;
+
+    if (!m_computeCommandEncoder) {
+        m_parentEncoder->makeInvalid(@"RenderPassEncoder.makeInvalid");
+        return;
+    }
+
+    m_parentEncoder->setLastError(errorString);
+    m_parentEncoder->endEncoding(m_computeCommandEncoder);
     m_computeCommandEncoder = nil;
 }
 
 void ComputePassEncoder::popDebugGroup()
 {
+    RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
 
     if (!prepareTheEncoderState())
@@ -265,6 +362,7 @@ void ComputePassEncoder::popDebugGroup()
 
 void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
+    RETURN_IF_FINISHED();
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
 
     if (!prepareTheEncoderState())
@@ -288,6 +386,23 @@ static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource,
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(group, *this)) {
+        makeInvalid(@"GPUComputePassEncoder.setBindGroup: invalid bind group");
+        return;
+    }
+
+    if (groupIndex >= m_device->limits().maxBindGroups) {
+        makeInvalid(@"GPUComputePassEncoder.setBindGroup: groupIndex >= limits.maxBindGroups");
+        return;
+    }
+
+    auto* bindGroupLayout = group.bindGroupLayout();
+    if (!bindGroupLayout || !bindGroupLayout->validateDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
+        makeInvalid(@"GPUComputePassEncoder.setBindGroup: insufficient dynamic offsets in layout for bind group");
+        return;
+    }
+
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
@@ -306,13 +421,13 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
     }
 
     m_bindGroupResources.set(groupIndex, resourceList);
-    [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
+    m_bindGroups.set(groupIndex, group);
 }
 
 void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 {
-    if (!pipeline.isValid()) {
-        m_device->generateAValidationError("invalid ComputePipeline in ComputePassEncoder.setPipeline"_s);
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(pipeline, *this)) {
         makeInvalid();
         return;
     }
@@ -321,7 +436,6 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
     m_computeDynamicOffsets.resize(m_pipeline->pipelineLayout().sizeOfComputeDynamicOffsets());
 
     ASSERT(pipeline.computePipelineState());
-    [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];
     m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }
 
@@ -329,6 +443,8 @@ void ComputePassEncoder::setLabel(String&& label)
 {
     m_computeCommandEncoder.label = label;
 }
+
+#undef RETURN_IF_FINISHED
 
 } // namespace WebGPU
 

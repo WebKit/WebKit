@@ -27,6 +27,7 @@
 
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -36,6 +37,7 @@ struct WGPUPipelineLayoutImpl {
 
 namespace WebGPU {
 
+class BindGroup;
 class BindGroupLayout;
 class Device;
 
@@ -77,7 +79,8 @@ public:
     const Vector<uint32_t>* vertexOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* fragmentOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* computeOffsets(uint32_t, const Vector<uint32_t>&);
-
+    using BindGroupHashMap = HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    NSString* errorValidatingBindGroupCompatibility(const BindGroupHashMap&) const;
 private:
     PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&&, Device&);
     PipelineLayout(Device&);

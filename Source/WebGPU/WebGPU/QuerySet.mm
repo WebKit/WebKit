@@ -47,7 +47,7 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 
     switch (type) {
     case WGPUQueryType_Timestamp: {
-        if (!std::binary_search(features().begin(), features().end(), WGPUFeatureName_TimestampQuery))
+        if (!hasFeature(WGPUFeatureName_TimestampQuery))
             return QuerySet::createInvalid(*this);
 
         ASSERT(baseCapabilities().timestampCounterSet);
@@ -56,7 +56,10 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         descriptor.label = fromAPI(label);
         descriptor.storageMode = MTLStorageModePrivate;
         descriptor.sampleCount = count;
-        auto timestampBuffer = [m_device newCounterSampleBufferWithDescriptor:descriptor error:nil];
+        NSError *error;
+        auto timestampBuffer = [m_device newCounterSampleBufferWithDescriptor:descriptor error:&error];
+        if (error)
+            WTFLogAlways("GPUDevice.createQuerySet failed: newCounterSampleBufferWithDescriptor: descriptor.counterSet %@, count %d, error %@", descriptor.counterSet, descriptor.sampleCount, error);
         return timestampBuffer ? QuerySet::create(timestampBuffer, count, type, *this) : QuerySet::createInvalid(*this);
     }
     case WGPUQueryType_Occlusion: {
@@ -75,6 +78,7 @@ QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Dev
     , m_count(count)
     , m_type(type)
 {
+    RELEASE_ASSERT(m_type != WGPUQueryType_Force32);
 }
 
 QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
@@ -83,12 +87,14 @@ QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, uint32_t count, WGPUQueryT
     , m_count(count)
     , m_type(type)
 {
+    RELEASE_ASSERT(m_type != WGPUQueryType_Force32);
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary)
         m_overrideLocations = Vector<std::optional<OverrideLocation>>(m_count);
 }
 
 QuerySet::QuerySet(Device& device)
     : m_device(device)
+    , m_type(WGPUQueryType_Force32)
 {
 }
 
@@ -96,11 +102,17 @@ QuerySet::~QuerySet() = default;
 
 bool QuerySet::isValid() const
 {
-    return m_visibilityBuffer || m_timestampBuffer;
+    return isDestroyed() || m_visibilityBuffer || m_timestampBuffer;
+}
+
+bool QuerySet::isDestroyed() const
+{
+    return m_destroyed;
 }
 
 void QuerySet::destroy()
 {
+    m_destroyed = true;
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
@@ -161,7 +173,7 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
 void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_cachedCommandEncoder = commandEncoder;
-    if (!isValid())
+    if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
 

@@ -74,6 +74,7 @@ public:
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_timestampBuffer; }
     void setCommandEncoder(CommandEncoder&) const;
+    bool isDestroyed() const;
 private:
     QuerySet(id<MTLBuffer>, uint32_t, WGPUQueryType, Device&);
     QuerySet(id<MTLCounterSampleBuffer>, uint32_t, WGPUQueryType, Device&);
@@ -84,7 +85,7 @@ private:
     id<MTLBuffer> m_visibilityBuffer { nil };
     id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
     uint32_t m_count { 0 };
-    WGPUQueryType m_type { WGPUQueryType_Force32 };
+    const WGPUQueryType m_type { WGPUQueryType_Force32 };
 
     // rdar://91371495 is about how we can't just naively transform PassDescriptor.timestampWrites into MTLComputePassDescriptor.sampleBufferAttachments.
     // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
@@ -98,6 +99,7 @@ private:
     };
     Vector<std::optional<OverrideLocation>> m_overrideLocations;
     mutable WeakPtr<CommandEncoder> m_cachedCommandEncoder;
+    bool m_destroyed { false };
 };
 
 } // namespace WebGPU

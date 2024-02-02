@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "GPUIndexFormat.h"
 #include "GPUIntegralTypes.h"
 #include "GPURenderBundleDescriptor.h"
@@ -56,7 +57,7 @@ public:
     void setPipeline(const GPURenderPipeline&);
 
     void setIndexBuffer(const GPUBuffer&, GPUIndexFormat, std::optional<GPUSize64> offset, std::optional<GPUSize64>);
-    void setVertexBuffer(GPUIndex32 slot, const GPUBuffer&, std::optional<GPUSize64> offset, std::optional<GPUSize64>);
+    void setVertexBuffer(GPUIndex32 slot, const GPUBuffer*, std::optional<GPUSize64> offset, std::optional<GPUSize64>);
 
     void draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
         std::optional<GPUSize32> firstVertex, std::optional<GPUSize32> firstInstance);
@@ -71,7 +72,7 @@ public:
     void setBindGroup(GPUIndex32, const GPUBindGroup&,
         std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets);
 
-    void setBindGroup(GPUIndex32, const GPUBindGroup&,
+    ExceptionOr<void> setBindGroup(GPUIndex32, const GPUBindGroup&,
         const Uint32Array& dynamicOffsetsData,
         GPUSize64 dynamicOffsetsDataStart,
         GPUSize32 dynamicOffsetsDataLength);

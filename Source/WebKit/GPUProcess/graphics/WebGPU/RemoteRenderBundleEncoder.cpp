@@ -85,7 +85,12 @@ void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, W
     if (!convertedBuffer)
         return;
 
-    m_backing->setVertexBuffer(slot, *convertedBuffer, offset, size);
+    m_backing->setVertexBuffer(slot, convertedBuffer, offset, size);
+}
+
+void RemoteRenderBundleEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+{
+    m_backing->setVertexBuffer(slot, nullptr, offset, size);
 }
 
 void RemoteRenderBundleEncoder::draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,

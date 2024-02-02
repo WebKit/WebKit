@@ -170,7 +170,7 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, st
             // https://bugs.webkit.org/show_bug.cgi?id=254258
             UNUSED_PARAM(earlyCompileShaderModule);
         }
-        dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
+
         return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, originalOverrideNames, WTFMove(originalFunctionNames), object);
     }
 

@@ -50,6 +50,7 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
             depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
             occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
             timestampWrites.convertToBacking(),
+            maxDrawCount,
         };
     }
 
@@ -57,7 +58,7 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
     GPUQuerySet* occlusionQuerySet { nullptr };
     GPURenderPassTimestampWrites timestampWrites;
-    GPUSize64 maxDrawCount;
+    std::optional<GPUSize64> maxDrawCount;
 };
 
 }

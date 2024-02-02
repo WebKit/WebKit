@@ -68,9 +68,15 @@ void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer&
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer& buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    if (!buffer) {
+        auto sendResult = send(Messages::RemoteRenderPassEncoder::UnsetVertexBuffer(slot, offset, size));
+        UNUSED_VARIABLE(sendResult);
+        return;
+    }
+
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(*buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;

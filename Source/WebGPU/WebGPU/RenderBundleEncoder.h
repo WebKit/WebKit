@@ -78,9 +78,9 @@ public:
     {
         return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, descriptor, device));
     }
-    static Ref<RenderBundleEncoder> createInvalid(Device& device)
+    static Ref<RenderBundleEncoder> createInvalid(Device& device, NSString* errorString)
     {
-        return adoptRef(*new RenderBundleEncoder(device));
+        return adoptRef(*new RenderBundleEncoder(device, errorString));
     }
 
     ~RenderBundleEncoder();
@@ -96,10 +96,8 @@ public:
     void setBindGroup(uint32_t groupIndex, const BindGroup&, std::optional<Vector<uint32_t>>&& dynamicOffsets);
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
-    void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
+    void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, uint64_t size);
     void setLabel(String&&);
-
-    Device& device() const { return m_device; }
 
     bool isValid() const { return m_indirectCommandBuffer; }
     void replayCommands(RenderPassEncoder&);
@@ -108,29 +106,49 @@ public:
     static constexpr uint32_t defaultSampleMask = UINT32_MAX;
 
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
+    Device& device() const { return m_device; }
 
 private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WGPURenderBundleEncoderDescriptor&, Device&);
-    RenderBundleEncoder(Device&);
+    RenderBundleEncoder(Device&, NSString*);
 
     bool validatePopDebugGroup() const;
     id<MTLIndirectRenderCommand> currentRenderCommand();
 
-    void makeInvalid();
-    void executePreDrawCommands();
+    void makeInvalid(NSString* = nil);
+    bool executePreDrawCommands();
     void endCurrentICB();
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages, const BindGroupEntryUsageData::Resource&);
     void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
     bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
     void finalizeRenderCommand();
+    bool validToEncodeCommand() const;
+    bool returnIfEncodingIsFinished(NSString* errorString);
+    bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
+    bool runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    NSString* errorValidatingDraw() const;
+    NSString* errorValidatingDrawIndexed() const;
+    uint32_t maxVertexBufferIndex() const;
+    uint32_t maxBindGroupIndex() const;
+    void recordCommand(WTF::Function<bool(void)>&&);
+
+    const Ref<Device> m_device;
+    WeakPtr<Buffer> m_indexBuffer;
+    MTLIndexType m_indexType { MTLIndexTypeUInt16 };
+    NSUInteger m_indexBufferOffset { 0 };
+    NSUInteger m_indexBufferSize { 0 };
+    WeakPtr<RenderPipeline> m_pipeline;
+    uint32_t m_maxVertexBufferSlot { 0 };
+    uint32_t m_maxBindGroupSlot { 0 };
+    using UtilizedBufferIndicesContainer = HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    UtilizedBufferIndicesContainer m_utilizedBufferIndices;
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
     uint64_t m_currentCommandIndex { 0 };
-    id<MTLBuffer> m_indexBuffer { nil };
     id<MTLRenderPipelineState> m_currentPipelineState { nil };
     id<MTLDepthStencilState> m_depthStencilState { nil };
     MTLCullMode m_cullMode { MTLCullModeNone };
@@ -141,8 +159,6 @@ private:
     float m_depthBiasClamp { 0 };
 
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
-    MTLIndexType m_indexType { MTLIndexTypeUInt16 };
-    NSUInteger m_indexBufferOffset { 0 };
     Vector<WTF::Function<bool(void)>> m_recordedCommands;
     NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>* m_resources;
     struct BufferAndOffset {
@@ -150,13 +166,13 @@ private:
         uint64_t offset { 0 };
         uint32_t dynamicOffsetCount { 0 };
         const uint32_t* dynamicOffsets { nullptr };
+        uint64_t size { 0 };
     };
     Vector<BufferAndOffset> m_vertexBuffers;
     Vector<BufferAndOffset> m_fragmentBuffers;
-    const Ref<Device> m_device;
-    const RenderPipeline* m_pipeline { nullptr };
     using BindGroupDynamicOffsetsContainer = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     std::optional<BindGroupDynamicOffsetsContainer> m_bindGroupDynamicOffsets;
+    HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
     NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
@@ -167,8 +183,10 @@ private:
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
     WGPURenderBundleEncoderDescriptor m_descriptor;
     Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    NSString* m_lastErrorString { nil };
     bool m_requiresCommandReplay { false };
     bool m_requiresMetalWorkaround { true };
+    bool m_finished { false };
     uint32_t m_sampleMask { defaultSampleMask };
 };
 

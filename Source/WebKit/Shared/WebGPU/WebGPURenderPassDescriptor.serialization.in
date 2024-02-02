@@ -26,5 +26,6 @@
     std::optional<WebKit::WebGPU::RenderPassDepthStencilAttachment> depthStencilAttachment;
     std::optional<WebKit::WebGPUIdentifier> occlusionQuerySet;
     std::optional<WebKit::WebGPU::RenderPassTimestampWrites> timestampWrites;
+    std::optional<uint64_t> maxDrawCount;
 };
 #endif

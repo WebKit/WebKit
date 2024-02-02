@@ -41,8 +41,6 @@ static constexpr uint32_t largeReasonableLimit()
 
 // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
 
-// FIXME: https://github.com/gpuweb/gpuweb/issues/2749 we need more limits.
-
 static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> device)
 {
     id<MTLCounterSet> timestampCounterSet = nil;
@@ -66,12 +64,12 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
         timestampCounterSet = nil;
 
     return {
-        [device argumentBuffersSupport],
-        false, // To be filled in by the caller.
-        timestampCounterSet,
-        statisticCounterSet,
-        false, // To be filled in by the caller.
-        counterSamplingAPI,
+        .argumentBuffersTier = [device argumentBuffersSupport],
+        .supportsNonPrivateDepthStencilTextures = false, // To be filled in by the caller.
+        .timestampCounterSet = timestampCounterSet,
+        .statisticCounterSet = statisticCounterSet,
+        .canPresentRGB10A2PixelFormats = false, // To be filled in by the caller.
+        .counterSamplingAPI = counterSamplingAPI,
     };
 }
 
@@ -82,8 +80,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     features.append(WGPUFeatureName_DepthClipControl);
     features.append(WGPUFeatureName_Depth32FloatStencil8);
 
-    if (baseCapabilities.timestampCounterSet)
-        features.append(WGPUFeatureName_TimestampQuery);
+    UNUSED_PARAM(baseCapabilities);
 
 #if PLATFORM(MAC)
     if (device.supportsBCTextureCompression)
@@ -523,7 +520,7 @@ static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& prev
 static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const HardwareCapabilities::BaseCapabilities& previous, const HardwareCapabilities::BaseCapabilities& next)
 {
     ASSERT(previous.argumentBuffersTier == next.argumentBuffersTier);
-    ASSERT(!previous.timestampCounterSet || [previous.timestampCounterSet isEqual:next.timestampCounterSet]);
+    ASSERT((!previous.timestampCounterSet && !next.timestampCounterSet) || [previous.timestampCounterSet isEqual:next.timestampCounterSet]);
     ASSERT(!previous.statisticCounterSet || [previous.statisticCounterSet isEqual:next.statisticCounterSet]);
     ASSERT(previous.counterSamplingAPI == next.counterSamplingAPI);
     return {
