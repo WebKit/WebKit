@@ -77,19 +77,6 @@ public:
     uint64_t version() const { return m_reference.version(); }
     Reference reference() const { return m_reference; }
 
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << m_reference;
-    }
-    template<typename Decoder> static std::optional<ObjectIdentifierReadReference> decode(Decoder& decoder)
-    {
-        std::optional<Reference> reference;
-        decoder >> reference;
-        if (!decoder.isValid())
-            return std::nullopt;
-        return ObjectIdentifierReadReference { WTFMove(*reference) };
-    }
-
 private:
     Reference m_reference;
 };
