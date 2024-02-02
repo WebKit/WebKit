@@ -376,7 +376,7 @@ bool RenderPassEncoder::executePreDrawCommands(id<MTLBuffer> indirectBuffer)
         return false;
     }
 
-    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
+    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, m_pipeline->vertexStageInBufferCount())) {
         makeInvalid(error);
         return false;
     }

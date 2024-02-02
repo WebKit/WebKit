@@ -98,7 +98,7 @@ private:
     id<MTLCommandQueue> m_commandQueue { nil };
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
-    WeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
+    ThreadSafeWeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };

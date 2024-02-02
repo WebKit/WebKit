@@ -92,6 +92,7 @@ public:
     const RequiredBufferIndicesContainer& requiredBufferIndices() const { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const;
     MTLIndexType stripIndexFormat() const;
+    size_t vertexStageInBufferCount() const;
 
 private:
     RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor*, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor&, RequiredBufferIndicesContainer&&, Device&);

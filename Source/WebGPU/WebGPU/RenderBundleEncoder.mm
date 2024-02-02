@@ -263,7 +263,7 @@ bool RenderBundleEncoder::executePreDrawCommands()
     if (!icbCommand)
         return true;
 
-    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
+    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, m_pipeline->vertexStageInBufferCount())) {
         makeInvalid(error);
         return false;
     }

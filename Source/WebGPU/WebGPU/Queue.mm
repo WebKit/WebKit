@@ -185,6 +185,9 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
     [commandBuffer addScheduledHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
+        auto device = protectedThis->m_device.get();
+        if (!device || !device->device())
+            return;
         protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_scheduledCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
@@ -192,6 +195,9 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
         }, CompletionHandlerCallThread::AnyThread));
     }];
     [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer> commandBuffer) {
+        auto device = protectedThis->m_device.get();
+        if (!device || !device->device())
+            return;
         protectedThis->scheduleWork(CompletionHandler<void(void)>([commandBuffer, protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
             [protectedThis->m_pendingCommandBuffers removeObject:commandBuffer];
@@ -209,7 +215,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
 void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
-    auto* device = m_device.get();
+    auto device = m_device.get();
     if (!device)
         return;
 
@@ -274,7 +280,7 @@ void Queue::waitUntilIdle()
 
 void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data, size_t size)
 {
-    auto* device = m_device.get();
+    auto device = m_device.get();
     if (!device)
         return;
 
@@ -315,7 +321,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data,
 
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, void* data, size_t size)
 {
-    auto* device = m_device.get();
+    auto device = m_device.get();
     if (!device)
         return;
 
@@ -379,23 +385,24 @@ static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const 
 
 const Device& Queue::device() const
 {
-    auto* device = m_device.get();
+    auto device = m_device.get();
     RELEASE_ASSERT(device);
     return *device;
 }
 
 void Queue::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
 {
-    if (!m_device.get())
+    auto device = m_device.get();
+    if (!device)
         return;
 
     ensureBlitCommandEncoder();
-    CommandEncoder::clearTexture(destination, slice, m_device.get()->device(), m_blitCommandEncoder);
+    CommandEncoder::clearTexture(destination, slice, device->device(), m_blitCommandEncoder);
 }
 
 void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
 {
-    auto* device = m_device.get();
+    auto device = m_device.get();
     if (destination.nextInChain || dataLayout.nextInChain || !device)
         return;
 
@@ -701,10 +708,11 @@ void Queue::setLabel(String&& label)
 
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
 {
-    if (!m_device.get())
+    auto device = m_device.get();
+    if (!device)
         return;
 
-    m_device.get()->instance().scheduleWork(WTFMove(workItem));
+    device->instance().scheduleWork(WTFMove(workItem));
 }
 
 } // namespace WebGPU
