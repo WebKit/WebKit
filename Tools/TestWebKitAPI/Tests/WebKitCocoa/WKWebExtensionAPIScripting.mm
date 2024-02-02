@@ -480,22 +480,25 @@ TEST(WKWebExtensionAPIScripting, World)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"const tabs = await browser?.tabs?.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
-
         @"function testWorld() {",
         @"  if (world)",
         @"    browser.test.notifyPass()",
         @"  else",
-        @"    console.log(undefined)",
+        @"    throw 'Variable not defined'",
         @"}",
 
-        @"var results = await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'ISOLATED'}, func: testWorld })",
-        @"browser.test.assertEq(results[0]?.error, 'A JavaScript exception occurred')",
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status === 'complete') {",
 
-        @"await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'MAIN'}, func: testWorld })",
+        @"    var results = await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'ISOLATED'}, func: testWorld })",
+        @"    browser.test.assertEq(results[0]?.error, 'A JavaScript exception occurred')",
+
+        @"    await browser?.scripting?.executeScript( { target: { tabId: tabId, world: 'MAIN'}, func: testWorld })",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
     ]);
-
 
     static auto *resources = @{
         @"background.js": backgroundScript,
