@@ -340,7 +340,11 @@ NSString *serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* 
 
 } // namespace WebKit
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
 using namespace WebKit;
+
+#if JSC_OBJC_API_ENABLED
 
 @implementation JSValue (WebKitExtras)
 
@@ -413,4 +417,4 @@ using namespace WebKit;
 
 @end
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // JSC_OBJC_API_ENABLED

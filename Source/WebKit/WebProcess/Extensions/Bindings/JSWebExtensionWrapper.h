@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #include "Logging.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -34,10 +32,9 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS JSValue;
 OBJC_CLASS NSString;
 
-#ifdef __OBJC__
+#if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 @interface JSValue (WebKitExtras)
 - (NSString *)_toJSONString;
@@ -51,7 +48,9 @@ OBJC_CLASS NSString;
 - (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(JSValue *result, JSValue *error))completionHandler;
 @end
 
-#endif // __OBJC__
+#endif // JSC_OBJC_API_ENABLED && defined(__OBJC__)
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 
