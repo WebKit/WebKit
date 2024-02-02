@@ -40,21 +40,28 @@ try {
     // Not an object
     set1.isSubsetOf(1);
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSubsetOf expects the first parameter to be an object")
+    if (e != "TypeError: Set operation expects first argument to be an object")
         throw e;
 }
 
 try {
     set1.isSubsetOf({ });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSubsetOf expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
         throw e;
 }
 
 try {
     set1.isSubsetOf({ size:NaN });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSubsetOf expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
+        throw e;
+}
+
+try {
+    set1.isSubsetOf({ size: -3483548834553454.543543354 });
+} catch (e) {
+    if (e != "RangeError: Set operation expects first argument to have non-negative 'size' property")
         throw e;
 }
 

@@ -47,21 +47,28 @@ try {
     // Not an object
     set1.isDisjointFrom(1);
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isDisjointFrom expects the first parameter to be an object")
+    if (e != "TypeError: Set operation expects first argument to be an object")
         throw e;
 }
 
 try {
     set1.isDisjointFrom({ });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isDisjointFrom expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
         throw e;
 }
 
 try {
     set1.isDisjointFrom({ size:NaN });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isDisjointFrom expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
+        throw e;
+}
+
+try {
+    set1.isDisjointFrom({ size: -30 });
+} catch (e) {
+    if (e != "RangeError: Set operation expects first argument to have non-negative 'size' property")
         throw e;
 }
 

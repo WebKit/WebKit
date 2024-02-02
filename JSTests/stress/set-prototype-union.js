@@ -30,21 +30,28 @@ try {
     // Not an object
     set1.union(1);
 } catch (e) {
-    if (e != "TypeError: Set.prototype.union expects the first parameter to be an object")
+    if (e != "TypeError: Set operation expects first argument to be an object")
         throw e;
 }
 
 try {
     set1.union({ });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.union expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
         throw e;
 }
 
 try {
     set1.union({ size:NaN });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.union expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
+        throw e;
+}
+
+try {
+    set1.union({ size: -435.2221 });
+} catch (e) {
+    if (e != "RangeError: Set operation expects first argument to have non-negative 'size' property")
         throw e;
 }
 
