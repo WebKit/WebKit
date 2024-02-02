@@ -117,13 +117,10 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
 
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isAnimatedLengthAttribute(attrName)) {
-        InstanceInvalidationGuard guard(*this);
-        setPresentationalHintStyleIsDirty();
-        return;
-    }
-
     if (PropertyRegistry::isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+        if (PropertyRegistry::isAnimatedLengthAttribute(attrName))
+            setPresentationalHintStyleIsDirty();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (auto* patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(renderer()))

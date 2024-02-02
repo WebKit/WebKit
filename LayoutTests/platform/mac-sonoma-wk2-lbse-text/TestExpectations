@@ -357,7 +357,6 @@ svg/as-image/img-preserveAspectRatio-support-1.html                       [ Imag
 
 # Pattern problems
 imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual.svg    [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual.svg [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/pservers-grad-06-b.svg                                      [ Failure ]
 svg/custom/js-late-pattern-and-object-creation.svg                          [ Failure ]
 svg/custom/js-late-pattern-creation.svg                                     [ Failure ]

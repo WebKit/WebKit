@@ -125,7 +125,7 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
 
     auto patternTransform = m_attributes->patternTransform();
     if (!patternTransform.isIdentity())
-        patternSpaceTransform.multiply(patternSpaceTransform);
+        patternSpaceTransform = patternTransform * patternSpaceTransform;
 
     // Build pattern.
     return Pattern::create({ copiedImage.releaseNonNull() }, { true, true, patternSpaceTransform });
