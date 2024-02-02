@@ -1,0 +1,17 @@
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = async () => {
+    let iframe0 = document.createElement('iframe');
+    iframe0.src = 'data:application/pdf,x';
+    document.body.append(iframe0);
+
+    await caches.has('a');
+    await caches.has('a');
+
+    $vm.print('before');
+    iframe0.remove();
+    $vm.print('after');
+  };
+</script>
+<p>This test passes if it does not timeout.</p>
