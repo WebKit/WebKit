@@ -2579,6 +2579,3 @@ fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
 webkit.org/b/267352 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
 
 webkit.org/b/267612 [ Ventura+ Release x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Failure ]
-
-# Asserts in debug 'global-attributes'.
-webkit.org/b/267993 [ Debug ] imported/w3c/web-platform-tests/html/dom/elements/global-attributes/the-anchor-attribute-003-crash.tentative.html [ Skip ]

@@ -3900,8 +3900,6 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         return (boxInfo) ? std::max<LayoutUnit>(0, cb->clientLogicalWidth() - (cb->logicalWidth() - boxInfo->logicalWidth())) : cb->clientLogicalWidth();
     }
 
-    ASSERT(containingBlock.isInFlowPositioned());
-
     return downcast<RenderInline>(containingBlock).innerPaddingBoxWidth();
 }
 
@@ -3934,7 +3932,6 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         return result;
     }
         
-    ASSERT(containingBlock.isInFlowPositioned());
     return downcast<RenderInline>(containingBlock).innerPaddingBoxHeight();
 }
 
