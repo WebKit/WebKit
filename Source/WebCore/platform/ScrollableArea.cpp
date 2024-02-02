@@ -195,6 +195,14 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
     setCurrentScrollType(previousScrollType);
 }
 
+void ScrollableArea::scrollToPositionWithoutAnimation(ScrollbarOrientation orientation, float position)
+{
+    if (orientation == ScrollbarOrientation::Horizontal)
+        scrollToPositionWithoutAnimation(FloatPoint(position, scrollAnimator().currentPosition().y()));
+    else
+        scrollToPositionWithoutAnimation(FloatPoint(scrollAnimator().currentPosition().x(), position));
+}
+
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
