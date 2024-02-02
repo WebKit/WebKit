@@ -27,8 +27,8 @@
 #include "TypeCheck.h"
 
 #include "AST.h"
+#include "ASTScopedVisitorInlines.h"
 #include "ASTStringDumper.h"
-#include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ConstantFunctions.h"
 #include "ContextProviderInlines.h"
@@ -68,7 +68,10 @@ static ASCIILiteral bindingKindToString(Binding::Kind kind)
     }
 }
 
-class TypeChecker : public AST::Visitor, public ContextProvider<Binding> {
+class TypeChecker : public AST::ScopedVisitor<Binding> {
+    using Base  = AST::ScopedVisitor<Binding>;
+    using Base::visit;
+
 public:
     TypeChecker(ShaderModule&);
 
@@ -98,7 +101,6 @@ public:
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
-    void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
     void visit(AST::LoopStatement&) override;
     void visit(AST::WhileStatement&) override;
@@ -336,7 +338,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> TypeChecker::check()
 {
-    AST::Visitor::visit(m_shaderModule);
+    Base::visit(m_shaderModule);
 
     if (shouldDumpInferredTypes) {
         for (auto& error : m_errors)
@@ -517,7 +519,7 @@ void TypeChecker::visit(AST::Function& function)
         ContextScope functionContext(this);
         for (unsigned i = 0; i < parameters.size(); ++i)
             introduceValue(function.parameters()[i].name(), parameters[i]);
-        AST::Visitor::visit(function.body());
+        Base::visit(function.body());
     }
 
     const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType);
@@ -706,7 +708,7 @@ void TypeChecker::visit(AST::IfStatement& statement)
 
     visit(statement.trueBody());
     if (statement.maybeFalseBody())
-        AST::Visitor::visit(*statement.maybeFalseBody());
+        visit(*statement.maybeFalseBody());
 }
 
 void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
@@ -734,17 +736,11 @@ void TypeChecker::visit(AST::ReturnStatement& statement)
     }
 }
 
-void TypeChecker::visit(AST::CompoundStatement& statement)
-{
-    ContextScope blockScope(this);
-    AST::Visitor::visit(statement);
-}
-
 void TypeChecker::visit(AST::ForStatement& statement)
 {
     ContextScope forScope(this);
     if (auto* initializer = statement.maybeInitializer())
-        AST::Visitor::visit(*initializer);
+        Base::visit(*initializer);
 
     if (auto* test = statement.maybeTest()) {
         auto* testType = infer(*test);
@@ -753,7 +749,7 @@ void TypeChecker::visit(AST::ForStatement& statement)
     }
 
     if (auto* update = statement.maybeUpdate())
-        AST::Visitor::visit(*update);
+        Base::visit(*update);
 
     visit(statement.body());
 }
@@ -764,9 +760,9 @@ void TypeChecker::visit(AST::LoopStatement& statement)
     visitAttributes(statement.attributes());
 
     for (auto& statement : statement.body())
-        AST::Visitor::visit(statement);
+        Base::visit(statement);
 
-    if (auto continuing = statement.continuing())
+    if (auto& continuing = statement.continuing())
         visit(*continuing);
 }
 
@@ -1430,7 +1426,7 @@ void TypeChecker::visit(AST::Continuing& continuing)
     visitAttributes(continuing.attributes);
 
     for (auto& statement : continuing.body)
-        AST::Visitor::visit(statement);
+        Base::visit(statement);
 
     if (auto* breakIf = continuing.breakIf) {
         auto* type = infer(*breakIf);
@@ -1442,7 +1438,7 @@ void TypeChecker::visit(AST::Continuing& continuing)
 void TypeChecker::visitAttributes(AST::Attribute::List& attributes)
 {
     for (auto& attribute : attributes)
-        AST::Visitor::visit(attribute);
+        Base::visit(attribute);
 }
 
 // Private helpers
@@ -1598,7 +1594,7 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
 const Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
-    AST::Visitor::visit(expression);
+    Base::visit(expression);
     ASSERT(m_inferredType);
 
     if (shouldDumpInferredTypes) {
@@ -1621,7 +1617,7 @@ const Type* TypeChecker::resolve(AST::Expression& type)
     if (is<AST::IdentifierExpression>(type))
         inferred(lookupType(downcast<AST::IdentifierExpression>(type).identifier()));
     else
-        AST::Visitor::visit(type);
+        Base::visit(type);
     ASSERT(m_inferredType);
 
     if (std::holds_alternative<Types::TypeConstructor>(*m_inferredType)) {

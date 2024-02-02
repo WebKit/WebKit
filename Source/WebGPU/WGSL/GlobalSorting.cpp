@@ -26,10 +26,9 @@
 #include "config.h"
 #include "GlobalSorting.h"
 
-#include "ASTFunction.h"
 #include "ASTIdentifierExpression.h"
+#include "ASTScopedVisitorInlines.h"
 #include "ASTVariableStatement.h"
-#include "ASTVisitor.h"
 #include "ContextProviderInlines.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
@@ -168,18 +167,17 @@ private:
 
 struct Empty { };
 
-class GraphBuilder : public AST::Visitor, public ContextProvider<Empty> {
+class GraphBuilder : public AST::ScopedVisitor<Empty> {
     static constexpr unsigned s_maxExpressionDepth = 512;
+
+    using Base = AST::ScopedVisitor<Empty>;
+    using Base::visit;
 
 public:
     static Result<void> visit(Graph&, Graph::Node&);
 
-    using AST::Visitor::visit;
-
-    void visit(AST::Function&) override;
+    void visit(AST::Parameter&) override;
     void visit(AST::VariableStatement&) override;
-    void visit(AST::CompoundStatement&) override;
-    void visit(AST::ForStatement&) override;
     void visit(AST::Expression&) override;
     void visit(AST::IdentifierExpression&) override;
 
@@ -207,37 +205,16 @@ GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
 {
 }
 
-void GraphBuilder::visit(AST::Function& function)
+void GraphBuilder::visit(AST::Parameter& parameter)
 {
-    ContextScope functionScope(this);
-
-    for (auto& parameter : function.parameters()) {
-        AST::Visitor::visit(parameter.typeName());
-        introduceVariable(parameter.name());
-    }
-
-    AST::Visitor::visit(function.body());
-
-    if (function.maybeReturnType())
-        AST::Visitor::visit(*function.maybeReturnType());
+    introduceVariable(parameter.name());
+    Base::visit(parameter.typeName());
 }
 
 void GraphBuilder::visit(AST::VariableStatement& variable)
 {
     introduceVariable(variable.variable().name());
-    AST::Visitor::visit(variable);
-}
-
-void GraphBuilder::visit(AST::CompoundStatement& statement)
-{
-    ContextScope blockScope(this);
-    AST::Visitor::visit(statement);
-}
-
-void GraphBuilder::visit(AST::ForStatement& statement)
-{
-    ContextScope forScope(this);
-    AST::Visitor::visit(statement);
+    Base::visit(variable);
 }
 
 void GraphBuilder::visit(AST::Expression& expression)
@@ -248,7 +225,7 @@ void GraphBuilder::visit(AST::Expression& expression)
         return;
     }
 
-    AST::Visitor::visit(expression);
+    Base::visit(expression);
 }
 
 void GraphBuilder::visit(AST::IdentifierExpression& identifier)

@@ -504,7 +504,7 @@ void Visitor::visit(AST::LoopStatement& loopStatement)
         checkErrorAndVisit(attribute);
     for (auto& statement : loopStatement.body())
         checkErrorAndVisit(statement);
-    if (auto continuing = loopStatement.continuing())
+    if (auto& continuing = loopStatement.continuing())
         checkErrorAndVisit(*continuing);
 }
 

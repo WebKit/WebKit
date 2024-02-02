@@ -27,7 +27,7 @@
 #include "MangleNames.h"
 
 #include "AST.h"
-#include "ASTVisitor.h"
+#include "ASTScopedVisitorInlines.h"
 #include "CallGraph.h"
 #include "ContextProviderInlines.h"
 #include "WGSL.h"
@@ -65,8 +65,9 @@ struct MangledName {
     }
 };
 
-class NameManglerVisitor : public AST::Visitor, public ContextProvider<MangledName> {
-    using ContextProvider = ContextProvider<MangledName>;
+class NameManglerVisitor : public AST::ScopedVisitor<MangledName> {
+    using Base = AST::ScopedVisitor<MangledName>;
+    using Base::visit;
 
 public:
     NameManglerVisitor(const CallGraph& callGraph, PrepareResult& result)
@@ -82,10 +83,6 @@ public:
     void visit(AST::VariableStatement&) override;
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
-    void visit(AST::CompoundStatement&) override;
-    void visit(AST::ForStatement&) override;
-    void visit(AST::LoopStatement&) override;
-    void visit(AST::Continuing&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::FieldAccessExpression&) override;
 
@@ -107,12 +104,11 @@ private:
 
 void NameManglerVisitor::run()
 {
-    AST::Visitor::visit(m_callGraph.ast());
+    Base::visit(m_callGraph.ast());
 }
 
 void NameManglerVisitor::visit(AST::Function& function)
 {
-
     String originalName = function.name();
     introduceVariable(function.name(), MangledName::Function);
     auto it = m_result.entryPoints.find(originalName);
@@ -120,14 +116,12 @@ void NameManglerVisitor::visit(AST::Function& function)
         it->value.originalName = originalName;
         it->value.mangledName = function.name();
     }
-
-    ContextScope functionScope(this);
-    AST::Visitor::visit(function);
+    Base::visit(function);
 }
 
 void NameManglerVisitor::visit(AST::Parameter& parameter)
 {
-    AST::Visitor::visit(parameter.typeName());
+    Base::visit(parameter.typeName());
     introduceVariable(parameter.name(), MangledName::Parameter);
 }
 
@@ -138,7 +132,7 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     NameMap fieldMap;
     m_indexPerType[WTF::enumToUnderlyingType(MangledName::Field)] = 0;
     for (auto& member : structure.members()) {
-        AST::Visitor::visit(member.type());
+        Base::visit(member.type());
         auto mangledName = makeMangledName(member.name(), MangledName::Field);
         fieldMap.add(member.name(), mangledName);
         m_callGraph.ast().replace(&member.name(), AST::Identifier::makeWithSpan(member.name().span(), mangledName.toString()));
@@ -159,33 +153,9 @@ void NameManglerVisitor::visit(AST::VariableStatement& variable)
 
 void NameManglerVisitor::visitVariableDeclaration(AST::Variable& variable, MangledName::Kind kind)
 {
-    AST::Visitor::visit(variable);
+    Base::visit(variable);
 
     introduceVariable(variable.name(), kind);
-}
-
-void NameManglerVisitor::visit(AST::CompoundStatement& statement)
-{
-    ContextScope blockScope(this);
-    AST::Visitor::visit(statement);
-}
-
-void NameManglerVisitor::visit(AST::ForStatement& statement)
-{
-    ContextScope forScope(this);
-    AST::Visitor::visit(statement);
-}
-
-void NameManglerVisitor::visit(AST::LoopStatement& statement)
-{
-    ContextScope loopScope(this);
-    AST::Visitor::visit(statement);
-}
-
-void NameManglerVisitor::visit(AST::Continuing& continuing)
-{
-    ContextScope continuingScope(this);
-    AST::Visitor::visit(continuing);
 }
 
 void NameManglerVisitor::visit(AST::IdentifierExpression& identifier)
@@ -195,7 +165,7 @@ void NameManglerVisitor::visit(AST::IdentifierExpression& identifier)
 
 void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
 {
-    AST::Visitor::visit(access);
+    Base::visit(access);
 
     auto* baseType = access.base().inferredType();
     if (auto* reference = std::get_if<Types::Reference>(baseType))

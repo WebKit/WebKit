@@ -173,6 +173,8 @@
 		97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C942A2512F7009CEB0E /* ConstantValue.cpp */; };
 		97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C952A2512F7009CEB0E /* ConstantValue.h */; };
 		97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C962A2512F7009CEB0E /* ConstantFunctions.h */; };
+		97E709522B6ACCB50080E489 /* ASTScopedVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */; };
+		97E709552B6AD0030080E489 /* ASTScopedVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
@@ -460,6 +462,8 @@
 		97E21C942A2512F7009CEB0E /* ConstantValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantValue.cpp; sourceTree = "<group>"; };
 		97E21C952A2512F7009CEB0E /* ConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantValue.h; sourceTree = "<group>"; };
 		97E21C962A2512F7009CEB0E /* ConstantFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantFunctions.h; sourceTree = "<group>"; };
+		97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTScopedVisitor.h; sourceTree = "<group>"; };
+		97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTScopedVisitorInlines.h; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
 		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
 		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -751,6 +755,8 @@
 				3A9D029F298390A000888A75 /* ASTPointerDereference.h */,
 				97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
+				97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */,
+				97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */,
 				3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */,
 				3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */,
 				3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */,
@@ -867,6 +873,8 @@
 				3A9D02A0298390A000888A75 /* ASTPointerDereference.h in Headers */,
 				97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
+				97E709522B6ACCB50080E489 /* ASTScopedVisitor.h in Headers */,
+				97E709552B6AD0030080E489 /* ASTScopedVisitorInlines.h in Headers */,
 				3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */,
 				3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */,
 				3A12AEB328FCE94C00C1B975 /* ASTStageAttribute.h in Headers */,
