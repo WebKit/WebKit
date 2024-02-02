@@ -3539,7 +3539,6 @@ webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-re
 fast/canvas/canvas-blending-text.html [ Pass Failure ]
 
 # webkit.org/b/201982 These are flaky failures on iOS
-fast/images/exif-orientation-svg-feimage.html [ Pass Failure ]
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
 fast/images/image-orientation-none.html [ Pass Failure ]
 
