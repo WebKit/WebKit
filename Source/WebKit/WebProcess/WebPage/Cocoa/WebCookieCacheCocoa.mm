@@ -28,6 +28,7 @@
 
 #import "NetworkProcessConnection.h"
 #import "WebProcess.h"
+#import <WebCore/HTTPCookieAcceptPolicy.h>
 #import <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
@@ -38,8 +39,8 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
 {
     if (!m_inMemoryStorageSession) {
         String sessionName = makeString("WebKitInProcessStorage-", getCurrentProcessID());
-        auto cookieAcceptPolicy = WebProcess::singleton().ensureNetworkProcessConnection().cookieAcceptPolicy();
-        auto storageSession = WebCore::createPrivateStorageSession(sessionName.createCFString().get(), cookieAcceptPolicy);
+        // WebCookieJar performs cookies blocking check, so accept policy can be AlwaysAccept in the cache.
+        auto storageSession = WebCore::createPrivateStorageSession(sessionName.createCFString().get(), HTTPCookieAcceptPolicy::AlwaysAccept);
         auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), WTFMove(storageSession), WTFMove(cookieStorage), NetworkStorageSession::IsInMemoryCookieStore::Yes);
     }

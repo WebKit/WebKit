@@ -620,11 +620,6 @@ void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)
     m_connection->send(Messages::NetworkProcessConnection::SetOnLineState(isOnLine), 0);
 }
 
-void NetworkConnectionToWebProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
-{
-    m_connection->send(Messages::NetworkProcessConnection::CookieAcceptPolicyChanged(newPolicy), 0);
-}
-
 void NetworkConnectionToWebProcess::removeLoadIdentifier(WebCore::ResourceLoaderIdentifier identifier)
 {
     RELEASE_ASSERT(identifier);

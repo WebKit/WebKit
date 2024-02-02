@@ -45,7 +45,6 @@ struct Cookie;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 class SecurityOriginData;
-enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
 namespace WebKit {
@@ -59,9 +58,9 @@ enum class WebsiteDataType : uint32_t;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
+    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, httpCookieAcceptPolicy));
+        return adoptRef(*new NetworkProcessConnection(connectionIdentifier));
     }
     ~NetworkProcessConnection();
     
@@ -83,7 +82,6 @@ public:
     std::optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
 #endif
 
-    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy() const { return m_cookieAcceptPolicy; }
     bool cookiesEnabled() const;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
@@ -96,7 +94,7 @@ public:
     void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
 
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
+    NetworkProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -107,7 +105,6 @@ private:
     void didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
     void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, WebCore::ResourceError&&);
     void setOnLineState(bool isOnLine);
-    void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
 
@@ -131,7 +128,6 @@ private:
 
     RefPtr<WebSWClientConnection> m_swConnection;
     RefPtr<WebSharedWorkerObjectConnection> m_sharedWorkerConnection;
-    WebCore::HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
 };
 
 } // namespace WebKit

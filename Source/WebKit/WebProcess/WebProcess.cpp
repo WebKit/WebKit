@@ -1200,7 +1200,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     if (!m_networkProcessConnection) {
         auto connectionInfo = getNetworkProcessConnection(Ref { *parentProcessConnection() });
 
-        m_networkProcessConnection = NetworkProcessConnection::create(IPC::Connection::Identifier { WTFMove(connectionInfo.connection) }, connectionInfo.cookieAcceptPolicy);
+        m_networkProcessConnection = NetworkProcessConnection::create(IPC::Connection::Identifier { WTFMove(connectionInfo.connection) });
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(connectionInfo.auditToken ? std::optional(connectionInfo.auditToken->auditToken()) : std::nullopt);
 #endif

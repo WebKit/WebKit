@@ -382,11 +382,11 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&)>&& completionHandler)
 {
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers) {
-        completionHandler({ }, HTTPCookieAcceptPolicy::Never);
+        completionHandler({ });
         return;
     }
 
@@ -396,8 +396,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
-    auto* storage = storageSession(sessionID);
-    completionHandler(WTFMove(connectionIdentifiers->client), storage ? storage->cookieAcceptPolicy() : HTTPCookieAcceptPolicy::Never);
+    completionHandler(WTFMove(connectionIdentifiers->client));
 
     connection->setOnLineState(NetworkStateNotifier::singleton().onLine());
 
@@ -551,12 +550,6 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSessio
 #elif USE(CURL) || USE(SOUP)
     return makeUnique<WebCore::NetworkStorageSession>(sessionID);
 #endif
-}
-
-void NetworkProcess::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
-{
-    for (auto& connection : m_webProcessConnections.values())
-        connection->cookieAcceptPolicyChanged(newPolicy);
 }
 
 WebCore::NetworkStorageSession* NetworkProcess::storageSession(PAL::SessionID sessionID) const

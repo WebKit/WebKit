@@ -22,7 +22,6 @@
 
 [RValue] struct WebKit::NetworkProcessConnectionInfo {
     IPC::Connection::Handle connection;
-    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
     std::optional<WebKit::CoreIPCAuditToken> auditToken;
 #endif

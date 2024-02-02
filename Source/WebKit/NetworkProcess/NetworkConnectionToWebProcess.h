@@ -210,8 +210,6 @@ public:
 
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
 
-    void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
-
     void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
     RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(WebCore::ResourceLoaderIdentifier);
 

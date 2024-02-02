@@ -80,9 +80,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy)
+NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier))
-    , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
     m_connection->open(*this);
 
@@ -243,20 +242,6 @@ void NetworkProcessConnection::didFinishPreconnection(WebCore::ResourceLoaderIde
 void NetworkProcessConnection::setOnLineState(bool isOnLine)
 {
     WebProcess::singleton().webLoaderStrategy().setOnLineState(isOnLine);
-}
-
-bool NetworkProcessConnection::cookiesEnabled() const
-{
-    return m_cookieAcceptPolicy != HTTPCookieAcceptPolicy::Never;
-}
-
-void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
-{
-    if (m_cookieAcceptPolicy == newPolicy)
-        return;
-
-    m_cookieAcceptPolicy = newPolicy;
-    WebProcess::singleton().cookieJar().clearCache();
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
