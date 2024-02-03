@@ -180,7 +180,9 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     WebKit::WebFullScreenManagerProxy::FullscreenState m_fullscreenState { WebKit::WebFullScreenManagerProxy::FullscreenState::NotInFullscreen };
+#if ENABLE(WPE_PLATFORM)
     bool m_viewWasAlreadyInFullScreen { false };
+#endif
 #endif
 
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
