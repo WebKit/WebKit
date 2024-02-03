@@ -111,7 +111,6 @@ class FontPlatformData;
 class FragmentedSharedBuffer;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
-class ScriptBuffer;
 class SerializedScriptValue;
 class SharedBuffer;
 class StickyPositionViewportConstraints;
@@ -208,11 +207,6 @@ template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
 template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
     static void encode(Encoder&, const WebCore::FragmentedSharedBuffer&);
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
-    static void encode(Encoder&, const WebCore::ScriptBuffer&);
-    static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

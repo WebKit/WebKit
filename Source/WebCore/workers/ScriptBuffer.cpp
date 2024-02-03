@@ -35,6 +35,25 @@
 
 namespace WebCore {
 
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+static std::optional<ShareableResource::Handle> tryConvertToShareableResourceHandle(const ScriptBuffer& script)
+{
+    if (!script.containsSingleFileMappedSegment())
+        return std::nullopt;
+
+    auto& segment = script.buffer()->begin()->segment;
+    auto sharedMemory = SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return std::nullopt;
+
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, segment->size());
+    if (!shareableResource)
+        return std::nullopt;
+
+    return shareableResource->createHandle();
+}
+#endif
+
 ScriptBuffer::ScriptBuffer(const String& string)
 {
     append(string);
@@ -76,6 +95,30 @@ void ScriptBuffer::append(const String& string)
 void ScriptBuffer::append(const FragmentedSharedBuffer& buffer)
 {
     m_buffer.append(buffer);
+}
+
+std::optional<ScriptBuffer> ScriptBuffer::fromIPCData(IPCData&& ipcData)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    return WTF::switchOn(WTFMove(ipcData), [](ShareableResourceHandle&& handle) -> std::optional<ScriptBuffer> {
+        if (RefPtr buffer = WTFMove(handle).tryWrapInSharedBuffer())
+            return ScriptBuffer { WTFMove(buffer) };
+        return std::nullopt;
+    }, [](RefPtr<FragmentedSharedBuffer>&& buffer) -> std::optional<ScriptBuffer> {
+        return ScriptBuffer { WTFMove(buffer) };
+    });
+#else
+    return ScriptBuffer { WTFMove(ipcData) };
+#endif
+}
+
+auto ScriptBuffer::ipcData() const -> IPCData
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    if (auto handle = tryConvertToShareableResourceHandle(*this))
+        return { WTFMove(*handle) };
+#endif
+    return m_buffer.get();
 }
 
 bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
