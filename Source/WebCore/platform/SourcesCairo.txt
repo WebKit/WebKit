@@ -21,13 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-platform/graphics/cairo/CairoUtilities.cpp @no-unify
 platform/graphics/cairo/CairoOperations.cpp
+platform/graphics/cairo/CairoUtilities.cpp @no-unify
 platform/graphics/cairo/FloatRectCairo.cpp
 platform/graphics/cairo/FontCairo.cpp
 platform/graphics/cairo/GradientCairo.cpp
-platform/graphics/cairo/GraphicsContextGLCairo.cpp
 platform/graphics/cairo/GraphicsContextCairo.cpp
+platform/graphics/cairo/GraphicsContextGLCairo.cpp
 platform/graphics/cairo/ImageBufferCairoBackend.cpp
 platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp
 platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp
@@ -37,3 +37,4 @@ platform/graphics/cairo/NativeImageCairo.cpp
 platform/graphics/cairo/PathCairo.cpp
 platform/graphics/cairo/PatternCairo.cpp
 platform/graphics/cairo/RefPtrCairo.cpp
+platform/graphics/cairo/ShareableBitmapCairo.cpp

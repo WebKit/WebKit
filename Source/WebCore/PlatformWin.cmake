@@ -14,7 +14,6 @@ endif ()
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
-    "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
@@ -53,8 +52,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/PlatformDisplay.cpp
 
     platform/graphics/angle/PlatformDisplayANGLE.cpp
-
-    platform/graphics/cairo/ShareableBitmapCairo.cpp
 
     platform/graphics/egl/GLContext.cpp
 
