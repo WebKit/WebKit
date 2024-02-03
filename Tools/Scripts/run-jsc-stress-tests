@@ -2501,10 +2501,10 @@ def prepareBundle
             # Check for and copy JavaScriptCore.dll and WTF.dll for dynamic builds
             javaScriptCoreDLLPath = File.join(originalJSCDir, "JavaScriptCore.dll")
             wtfDLLPath = File.join(originalJSCDir, "WTF.dll")
-            if (File.exists?(javaScriptCoreDLLPath))
+            if (File.exist?(javaScriptCoreDLLPath))
                 source = source + [javaScriptCoreDLLPath]
             end
-            if (File.exists?(wtfDLLPath))
+            if (File.exist?(wtfDLLPath))
                 source = source + [wtfDLLPath]
             end
 

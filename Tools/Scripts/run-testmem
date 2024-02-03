@@ -109,7 +109,7 @@ end
 
 def getTestmemPath
     path = Pathname.new(getBuildDirectory).join("testmem").to_s
-    if !File.exists?(path) && !$dryRun
+    if !File.exist?(path) && !$dryRun
         puts "Error: no testmem binary found in <build>/Release"
         exit 1
     end
