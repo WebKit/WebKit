@@ -122,7 +122,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // If you're hitting this, it probably means that you've put an NS type inside a CF container.
     // Try round-tripping the container through an NS type instead.
-    ASSERT_NOT_REACHED();
     return CFType::Unknown;
 }
 
@@ -190,8 +189,6 @@ void ArgumentCoder<CFTypeRef>::encode(Encoder& encoder, CFTypeRef typeRef)
     case CFType::Unknown:
         break;
     }
-
-    ASSERT_NOT_REACHED();
 }
 
 template void ArgumentCoder<CFTypeRef>::encode<Encoder>(Encoder&, CFTypeRef);
@@ -341,10 +338,9 @@ void ArgumentCoder<CFArrayRef>::encode(Encoder& encoder, CFArrayRef array)
 
     CFArrayGetValues(array, CFRangeMake(0, size), values.data());
 
-    HashSet<CFIndex> invalidIndices;
+    HashSet<CFIndex, WTF::IntHash<CFIndex>, WTF::UnsignedWithZeroKeyHashTraits<CFIndex>> invalidIndices;
     for (CFIndex i = 0; i < size; ++i) {
         // Ignore values we don't support.
-        ASSERT(typeFromCFTypeRef(values[i]) != CFType::Unknown);
         if (typeFromCFTypeRef(values[i]) == CFType::Unknown)
             invalidIndices.add(i);
     }
@@ -452,8 +448,6 @@ void ArgumentCoder<CFDictionaryRef>::encode(Encoder& encoder, CFDictionaryRef di
         ASSERT(values[i]);
 
         // Ignore keys/values we don't support.
-        ASSERT(typeFromCFTypeRef(keys[i]) != CFType::Unknown);
-        ASSERT(typeFromCFTypeRef(values[i]) != CFType::Unknown);
         if (typeFromCFTypeRef(keys[i]) == CFType::Unknown || typeFromCFTypeRef(values[i]) == CFType::Unknown)
             invalidKeys.add(keys[i]);
     }

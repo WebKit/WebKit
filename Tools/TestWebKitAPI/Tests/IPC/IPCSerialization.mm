@@ -88,14 +88,24 @@ struct CFHolderForTesting {
     }
 
     typedef std::variant<
+        RetainPtr<CFArrayRef>,
+        RetainPtr<CFBooleanRef>,
+        RetainPtr<CFCharacterSetRef>,
+        RetainPtr<CFDataRef>,
+        RetainPtr<CFDateRef>,
+        RetainPtr<CFDictionaryRef>,
+        // FIXME: Test CFNullRef. It can be serialized, but doesn't have a direct serializer.
+        RetainPtr<CFNumberRef>,
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
-        RetainPtr<CFDataRef>,
-        RetainPtr<CFBooleanRef>,
         RetainPtr<CGColorRef>,
-        RetainPtr<CFDictionaryRef>,
+        RetainPtr<CGColorSpaceRef>,
+        RetainPtr<SecCertificateRef>,
 #if HAVE(SEC_KEYCHAIN)
         RetainPtr<SecKeychainItemRef>,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+        RetainPtr<SecAccessControlRef>,
 #endif
         RetainPtr<SecTrustRef>
     > ValueType;
@@ -120,7 +130,7 @@ std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decod
     } };
 }
 
-static bool compareSecTrustRefs(SecTrustRef trust1, SecTrustRef trust2)
+static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
 {
     // SecTrust doesn't compare equal after round-tripping through SecTrustSerialize/SecTrustDeserialize <rdar://122051396>
     // Therefore, we compare all the attributes we can access to verify equality.
@@ -198,6 +208,54 @@ static bool compareSecTrustRefs(SecTrustRef trust1, SecTrustRef trust2)
     return equal;
 }
 
+CFHolderForTesting cfHolder(CFTypeRef type)
+{
+    EXPECT_NOT_NULL(type); // FIXME: Test null somehow if possible.
+    CFTypeID typeID = CFGetTypeID(type);
+    if (typeID == CFArrayGetTypeID())
+        return { (CFArrayRef)type };
+    if (typeID == CFBooleanGetTypeID())
+        return { (CFBooleanRef)type };
+    if (typeID == CFCharacterSetGetTypeID())
+        return { (CFCharacterSetRef)type };
+    if (typeID == CFDataGetTypeID())
+        return { (CFDataRef)type };
+    if (typeID == CFDateGetTypeID())
+        return { (CFDateRef)type };
+    if (typeID == CFDictionaryGetTypeID())
+        return { (CFDictionaryRef)type };
+    if (typeID == CFNullGetTypeID())
+        return { }; // FIXME: Test CFNullRef.
+    if (typeID == CFNumberGetTypeID())
+        return { (CFNumberRef)type };
+    if (typeID == CFStringGetTypeID())
+        return { (CFStringRef)type };
+    if (typeID == CFURLGetTypeID())
+        return { (CFURLRef)type };
+    if (typeID == CGColorSpaceGetTypeID())
+        return { (CGColorSpaceRef)type };
+    if (typeID == CGColorGetTypeID())
+        return { (CGColorRef)type };
+    if (typeID == SecCertificateGetTypeID())
+        return { (SecCertificateRef)type };
+#if HAVE(SEC_KEYCHAIN)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (typeID == SecKeychainItemGetTypeID())
+        return { (SecKeychainItemRef)type };
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    if (typeID == SecAccessControlGetTypeID())
+        return { (SecAccessControlRef)type };
+#endif
+    if (typeID == SecTrustGetTypeID())
+        return { (SecTrustRef)type };
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+bool arraysEqual(CFArrayRef, CFArrayRef);
+
 inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 {
     auto aObject = a.valueAsCFType();
@@ -214,10 +272,33 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
     if ([(NSObject *)aObject isEqual: (NSObject *)bObject])
         return true;
 
-    if (CFGetTypeID(aObject) == SecTrustGetTypeID() && CFGetTypeID(bObject) == SecTrustGetTypeID())
-        return compareSecTrustRefs((SecTrustRef)aObject, (SecTrustRef)bObject);
+    auto aTypeID = CFGetTypeID(aObject);
+    auto bTypeID = CFGetTypeID(bObject);
+    if (aTypeID == SecTrustGetTypeID() && bTypeID == SecTrustGetTypeID())
+        return secTrustRefsEqual((SecTrustRef)aObject, (SecTrustRef)bObject);
+
+    if (aTypeID == CFArrayGetTypeID() && bTypeID == CFArrayGetTypeID())
+        return arraysEqual((CFArrayRef)aObject, (CFArrayRef)bObject);
 
     return false;
+}
+
+inline bool operator!=(const CFHolderForTesting& a, const CFHolderForTesting& b)
+{
+    return !(a == b);
+}
+
+bool arraysEqual(CFArrayRef a, CFArrayRef b)
+{
+    auto aCount = CFArrayGetCount(a);
+    auto bCount = CFArrayGetCount(b);
+    if (aCount != bCount)
+        return false;
+    for (CFIndex i = 0; i < aCount; i++) {
+        if (cfHolder(CFArrayGetValueAtIndex(a, i)) != cfHolder(CFArrayGetValueAtIndex(b, i)))
+            return false;
+    }
+    return true;
 }
 
 struct ObjCHolderForTesting {
@@ -546,17 +627,21 @@ TEST(IPCSerialization, Basic)
         EXPECT_TRUE(done);
     };
 
-    auto runTestCF = [](CFHolderForTesting&& holderArg) {
+    auto runTestCFWithExpectedResult = [](const CFHolderForTesting& holderArg, const CFHolderForTesting& expectedResult) {
         __block bool done = false;
-        __block CFHolderForTesting holder = WTFMove(holderArg);
+        __block CFHolderForTesting holder = expectedResult;
         auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holder), ^(CFHolderForTesting&& result) {
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holderArg), ^(CFHolderForTesting&& result) {
             EXPECT_TRUE(holder == result);
             done = true;
         });
 
         // The completion handler should be called synchronously, so this should be true already.
         EXPECT_TRUE(done);
+    };
+
+    auto runTestCF = [&] (const CFHolderForTesting& holderArg) {
+        runTestCFWithExpectedResult(holderArg, holderArg);
     };
 
     // NSString/CFString
@@ -765,17 +850,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     runValueTest([NSValue valueWithRect:NSMakeRect(1, 2, 79, 80)]);
 
     // SecTrust -- evaluate the trust of the cert created above
-    SecTrustRef trust = NULL;
-    SecPolicyRef policy = SecPolicyCreateBasicX509();
-    EXPECT_TRUE(SecTrustCreateWithCertificates(cert.get(), policy, &trust) == errSecSuccess);
-    EXPECT_TRUE(trust);
-    runTestCF({ trust });
+    SecTrustRef trustRef = NULL;
+    auto policy = adoptCF(SecPolicyCreateBasicX509());
+    EXPECT_TRUE(SecTrustCreateWithCertificates(cert.get(), policy.get(), &trustRef) == errSecSuccess);
+    EXPECT_TRUE(trustRef);
+    auto trust = adoptCF(trustRef);
+    runTestCF({ trust.get() });
 
-    EXPECT_TRUE(SecTrustEvaluateWithError(trust, NULL) == errSecSuccess);
-    runTestCF({ trust });
-
-    CFRelease(trust);
-    CFRelease(policy);
+    EXPECT_TRUE(SecTrustEvaluateWithError(trust.get(), NULL) == errSecSuccess);
+    runTestCF({ trust.get() });
 
     // SecKeychainItem
 #if HAVE(SEC_KEYCHAIN)
@@ -799,6 +882,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     destroyTempKeychain(tempKeychain);
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // HAVE(SEC_KEYCHAIN)
+
+    NSArray *nestedArray = @[
+        @YES,
+        @(5.4),
+        NSData.data,
+        // FIXME: Test the remainder of the CFTypeRef types in an array.
+        @{ @"key": NSNull.null }
+    ];
+    runTestCFWithExpectedResult({ (__bridge CFArrayRef)@[
+        nestedArray,
+        (id)trust.get(),
+        NSUUID.UUID, // Removed when encoding because CFUUIDRef is not a recognized type in CFArrayRef or CFDictionaryRef
+        @{
+            @"should be removed before encoding" : NSUUID.UUID,
+            NSUUID.UUID : @"should also be removed before encoding"
+        }
+    ] }, { (__bridge CFArrayRef)@[
+        nestedArray,
+        (id)trust.get(),
+        @{ }
+    ] });
 }
 
 #if PLATFORM(MAC)
