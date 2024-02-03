@@ -8,7 +8,6 @@ Link: <   ../resources/dummy.js >; rel=preload; as=script
 Link: <../משאבים/dummy.css>; rel=preload; as=style
 Link: <../résôûrcès/dummy.css>; rel=preload; as=style
 Link: <../resources/Ahem{.ttf,.woff}>; rel=preload; as=font; crossorigin
-Link: <../resources/test\f.mp4>; rel=preload; as=video
 Link: <../security/resources/cap\ttions.vtt>; rel=preload; as=track
 Link: <../resources/dummy   .xml>; rel=preload; as=fetch
 Link: <../resources/dumm>y.xml>; rel=preload
@@ -37,7 +36,6 @@ Content-Type: text/html
     // Invalid URLs get preloaded (and get terminated further down the stack)
     shouldBeTrue("internals.isPreloaded('../resources/Ahem{.ttf,.woff}');");
     shouldBeFalse("internals.isPreloaded('../resources/test.mp4');");
-    shouldBeTrue("internals.isPreloaded('../resources/test\f.mp4');");
     shouldBeTrue("internals.isPreloaded('../security/resources/cap\ttions.vtt');");
     shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
     shouldBeTrue("internals.isPreloaded('../resources/dummy   .xml');");

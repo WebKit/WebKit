@@ -5,7 +5,7 @@
 <script>
 var tests = [
     ['no',  'script-src https:  taco', 'resources/script.js'],
-    ['yes', 'script-src https:  \x08', 'resources/script.js'],
+    ['yes', 'script-src https:  \xEA', 'resources/script.js'],
     ['no',  'script-src \'none\'', 'resources/script.js'],
     ['yes', '\t\t\tscript-src    http://127.0.0.1:8000  \t\t  https:', 'resources/script.js']
 ];

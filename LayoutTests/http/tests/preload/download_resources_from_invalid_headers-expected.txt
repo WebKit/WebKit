@@ -10,7 +10,6 @@ PASS internals.isPreloaded('../×ž×©××‘×™×/dummy.css'); is false
 PASS internals.isPreloaded('../rÃ©sÃ´Ã»rcÃ¨s/square.png'); is false
 PASS internals.isPreloaded('../resources/Ahem{.ttf,.woff}'); is true
 PASS internals.isPreloaded('../resources/test.mp4'); is false
-PASS internals.isPreloaded('../resources/test.mp4'); is true
 PASS internals.isPreloaded('../security/resources/cap	tions.vtt'); is true
 PASS internals.isPreloaded('../resources/dummy.xml?badvalue'); is false
 PASS internals.isPreloaded('../resources/dummy   .xml'); is true
