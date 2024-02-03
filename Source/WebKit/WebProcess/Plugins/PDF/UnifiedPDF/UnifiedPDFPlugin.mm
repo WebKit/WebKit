@@ -1039,7 +1039,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                     return true;
 
                 if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()]) {
-                    setActiveAnnotation(annotation.get());
+                    setActiveAnnotation(WTFMove(annotation));
                     return true;
                 }
                 if ([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()]) {
@@ -1260,7 +1260,7 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
 
         m_selectionTrackingData.marqueeSelectionRect = computeMarqueeSelectionRect(pagePoint, m_selectionTrackingData.startPagePoint);
         auto page = m_documentLayout.pageAtIndex(pageIndex);
-        return setCurrentSelection([page.get() selectionForRect:m_selectionTrackingData.marqueeSelectionRect]);
+        return setCurrentSelection([page selectionForRect:m_selectionTrackingData.marqueeSelectionRect]);
     }
 
     switch (m_selectionTrackingData.granularity) {
@@ -1363,8 +1363,8 @@ void UnifiedPDFPlugin::zoomOut()
 
 CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
-    auto pageSpaceBounds = IntRect([annotation.get() bounds]);
-    if (auto pageIndex = m_documentLayout.indexForPage([annotation.get() page])) {
+    auto pageSpaceBounds = IntRect([annotation bounds]);
+    if (auto pageIndex = m_documentLayout.indexForPage([annotation page])) {
         auto documentSpacePoint = convertFromPageToDocument({ pageSpaceBounds.x(), pageSpaceBounds.y() }, pageIndex.value());
 
         // The origin of an annotation in page space and document space are opposite

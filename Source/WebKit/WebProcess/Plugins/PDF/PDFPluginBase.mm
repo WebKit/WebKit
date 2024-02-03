@@ -352,8 +352,8 @@ void PDFPluginBase::maybeClearHighLatencyDataProviderFlag()
     if (!m_pdfDocument || !m_documentFinishedLoading)
         return;
 
-    if ([m_pdfDocument.get() respondsToSelector:@selector(setHasHighLatencyDataProvider:)])
-        [m_pdfDocument.get() setHasHighLatencyDataProvider:NO];
+    if ([m_pdfDocument respondsToSelector:@selector(setHasHighLatencyDataProvider:)])
+        [m_pdfDocument setHasHighLatencyDataProvider:NO];
 }
 
 void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& streamLoaderClient, uint64_t requestIdentifier, uint64_t position, size_t count)
