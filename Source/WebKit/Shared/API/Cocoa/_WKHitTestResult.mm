@@ -100,6 +100,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->linkSuggestedFilename();
 }
 
+- (NSString *)imageSuggestedFilename
+{
+    return _hitTestResult->imageSuggestedFilename();
+}
+
 - (NSString *)imageMIMEType
 {
     return _hitTestResult->sourceImageMIMEType();

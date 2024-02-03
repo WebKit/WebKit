@@ -68,6 +68,18 @@ static String linkLocalDataMIMETypeFromHitTestResult(const HitTestResult& hitTes
     return webFrame->mimeTypeForResourceWithURL(hitTestResult.absoluteLinkURL());
 }
 
+static String imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTestResult)
+{
+    if (!hitTestResult.hasEntireImage())
+        return nullString();
+
+    RefPtr webFrame = webFrameFromHitTestResult(hitTestResult);
+    if (!webFrame)
+        return nullString();
+
+    return webFrame->suggestedFilenameForResourceWithURL(hitTestResult.absoluteImageURL());
+}
+
 WebHitTestResultData::WebHitTestResultData()
 {
 }
@@ -92,12 +104,14 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , frameInfo(frameInfoDataFromHitTestResult(hitTestResult))
     , toolTipText(toolTipText)
     , hasLocalDataForLinkURL(hitTestResult.hasLocalDataForLinkURL())
+    , hasEntireImage(hitTestResult.hasEntireImage())
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
 
     elementType = elementTypeFromHitTestResult(hitTestResult);
     linkLocalDataMIMEType = linkLocalDataMIMETypeFromHitTestResult(hitTestResult);
+    imageSuggestedFilename = imageSuggestedFilenameFromHitTestResult(hitTestResult);
 }
 
 WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, bool includeImage)
@@ -119,12 +133,14 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     , elementType(ElementType::None)
     , frameInfo(frameInfoDataFromHitTestResult(hitTestResult))
     , hasLocalDataForLinkURL(hitTestResult.hasLocalDataForLinkURL())
+    , hasEntireImage(hitTestResult.hasEntireImage())
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
 
     elementType = elementTypeFromHitTestResult(hitTestResult);
     linkLocalDataMIMEType = linkLocalDataMIMETypeFromHitTestResult(hitTestResult);
+    imageSuggestedFilename = imageSuggestedFilenameFromHitTestResult(hitTestResult);
 
     if (!includeImage)
         return;
@@ -156,7 +172,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     }
 }
 
-WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL,
+WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, const String& imageSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebCore::SharedMemory::Handle>&& imageHandle, const RefPtr<WebCore::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType, const String& linkLocalDataMIMEType, bool hasLocalDataForLinkURL, bool hasEntireImage,
 #if PLATFORM(MAC)
     const WebHitTestResultPlatformData& platformData,
 #endif
@@ -168,6 +184,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , linkLabel(linkLabel)
         , linkTitle(linkTitle)
         , linkSuggestedFilename(linkSuggestedFilename)
+        , imageSuggestedFilename(imageSuggestedFilename)
         , isContentEditable(isContentEditable)
         , elementBoundingBox(elementBoundingBox)
         , isScrollbar(isScrollbar)
@@ -185,6 +202,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , sourceImageMIMEType(sourceImageMIMEType)
         , linkLocalDataMIMEType(linkLocalDataMIMEType)
         , hasLocalDataForLinkURL(hasLocalDataForLinkURL)
+        , hasEntireImage(hasEntireImage)
 #if PLATFORM(MAC)
         , platformData(platformData)
 #endif
