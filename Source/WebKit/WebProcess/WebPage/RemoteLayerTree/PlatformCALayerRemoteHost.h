@@ -33,6 +33,7 @@ class PlatformCALayerRemoteHost final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    std::optional<WebCore::LayerHostingContextIdentifier> hostingContextIdentifier() const final { return m_identifier; }
 
 private:
     PlatformCALayerRemoteHost(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);

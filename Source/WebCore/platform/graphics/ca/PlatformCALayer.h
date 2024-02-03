@@ -101,6 +101,7 @@ public:
     virtual ~PlatformCALayer();
 
     PlatformLayerIdentifier layerID() const { return m_layerID; }
+    virtual std::optional<WebCore::LayerHostingContextIdentifier> hostingContextIdentifier() const { return std::nullopt; }
 
     enum class Type : uint8_t {
         Cocoa,
