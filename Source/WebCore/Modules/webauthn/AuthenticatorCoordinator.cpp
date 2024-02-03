@@ -167,10 +167,6 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
 
     options.extensions = extensionInputs;
 
-    // Step 14-16.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
-    auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
-
     // Step 4, 18-22.
     if (!m_client) {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
@@ -193,14 +189,13 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
@@ -209,7 +204,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     };
 
     if (m_isCancelling) {
-        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, clientDataJsonHash = WTFMove(clientDataJsonHash), createOptions = WTFMove(createOptions), callback = WTFMove(callback)]() mutable {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, createOptions = WTFMove(createOptions), callback = WTFMove(callback)]() mutable {
             if (!weakThis || !weakFrame)
                 return;
             const auto options = createOptions.publicKey.value();
