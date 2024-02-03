@@ -122,10 +122,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
         return false;
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-    if (!localFrame)
-        return false;
-
-    if (!localFrame->checkedLoader()->shouldSuppressTextInputFromEditing())
+    if (localFrame && !localFrame->checkedLoader()->shouldSuppressTextInputFromEditing())
         return false;
 
     if (auto* textEvent = dynamicDowncast<TextEvent>(event))
