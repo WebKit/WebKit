@@ -1320,10 +1320,10 @@ const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionService
 
 #if ENABLE(APPLE_PAY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
 
-void WebPageProxy::Internals::getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPageProxy::Internals::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    completionHandler(nullString());
+    completionHandler(nullString(), nullString());
 }
 
 #endif

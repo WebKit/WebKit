@@ -55,9 +55,9 @@ UIViewController *NetworkConnectionToWebProcess::paymentCoordinatorPresentingVie
 }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-void NetworkConnectionToWebProcess::getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
 {
-    networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetWindowSceneIdentifierForPaymentPresentation(webPageProxyIdentifier), WTFMove(completionHandler));
+    networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyIdentifier), WTFMove(completionHandler));
 }
 #endif
 
