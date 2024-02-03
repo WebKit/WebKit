@@ -519,11 +519,20 @@ upconvert:
 
 static inline bool needsTurkishCasingRules(const AtomString& localeIdentifier)
 {
-    // Either "tr" or "az" locale, with case sensitive comparison and allowing for an ignored subtag.
+    // Either "tr" or "az" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
     UChar first = localeIdentifier[0];
     UChar second = localeIdentifier[1];
     return ((isASCIIAlphaCaselessEqual(first, 't') && isASCIIAlphaCaselessEqual(second, 'r'))
         || (isASCIIAlphaCaselessEqual(first, 'a') && isASCIIAlphaCaselessEqual(second, 'z')))
+        && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
+}
+
+static inline bool needsGreekUppercasingRules(const AtomString& localeIdentifier)
+{
+    // The "el" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
+    UChar first = localeIdentifier[0];
+    UChar second = localeIdentifier[1];
+    return (isASCIIAlphaCaselessEqual(first, 'e') && isASCIIAlphaCaselessEqual(second, 'l'))
         && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
 }
 
@@ -568,27 +577,32 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& local
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
     // and that the only affected character is lowercase "i".
-    if (!needsTurkishCasingRules(localeIdentifier) || find('i') == notFound)
+    const char* locale;
+    if (needsTurkishCasingRules(localeIdentifier) && find('i') != notFound) {
+        // Passing in the hardcoded locale "tr" is more efficient than
+        // allocating memory just to turn localeIdentifier into a C string, and we assume
+        // there is no difference between the uppercasing for "tr" and "az" locales.
+        locale = "tr";
+    } else if (needsGreekUppercasingRules(localeIdentifier))
+        locale = "el";
+    else
         return convertToUppercaseWithoutLocale();
 
     if (m_length > MaxLength)
         CRASH();
     int length = m_length;
 
-    // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
-    // allocating memory just to turn localeIdentifier into a C string, and we assume
-    // there is no difference between the uppercasing for "tr" and "az" locales.
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     const UChar* source16 = upconvertedCharacters;
     UChar* data16;
     auto newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
-    int realLength = u_strToUpper(data16, length, source16, length, "tr", &status);
+    int realLength = u_strToUpper(data16, length, source16, length, locale, &status);
     if (U_SUCCESS(status) && realLength == length)
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16, length, "tr", &status);
+    u_strToUpper(data16, realLength, source16, length, locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
