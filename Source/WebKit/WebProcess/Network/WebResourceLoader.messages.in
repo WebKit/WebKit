@@ -36,7 +36,7 @@ messages -> WebResourceLoader LegacyReceiver {
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
-    DidReceiveResource(WebKit::ShareableResource::Handle resource)
+    DidReceiveResource(WebCore::ShareableResource::Handle resource)
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

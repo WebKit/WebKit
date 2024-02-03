@@ -27,34 +27,32 @@
 
 #if ENABLE(SHAREABLE_RESOURCE)
 
-#include <WebCore/SharedMemory.h>
+#include "SharedMemory.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class SharedBuffer;
-}
 
-namespace WebKit {
-    
+class SharedBuffer;
+
 class ShareableResourceHandle {
     WTF_MAKE_NONCOPYABLE(ShareableResourceHandle);
 public:
     ShareableResourceHandle(ShareableResourceHandle&&) = default;
-    ShareableResourceHandle(WebCore::SharedMemory::Handle&&, unsigned, unsigned);
+    WEBCORE_EXPORT ShareableResourceHandle(SharedMemory::Handle&&, unsigned, unsigned);
 
     ShareableResourceHandle& operator=(ShareableResourceHandle&&) = default;
 
     unsigned size() const { return m_size; }
 
-    RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() &&;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> tryWrapInSharedBuffer() &&;
 
 private:
     friend struct IPC::ArgumentCoder<ShareableResourceHandle, void>;
     friend class ShareableResource;
 
-    WebCore::SharedMemory::Handle m_handle;
+    SharedMemory::Handle m_handle;
     unsigned m_offset { 0 };
     unsigned m_size { 0 };
 };
@@ -64,30 +62,30 @@ public:
     using Handle = ShareableResourceHandle;
 
     // Create a shareable resource that uses malloced memory.
-    static RefPtr<ShareableResource> create(Ref<WebCore::SharedMemory>&&, unsigned offset, unsigned size);
+    WEBCORE_EXPORT static RefPtr<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
     static RefPtr<ShareableResource> map(Handle&&);
 
-    std::optional<Handle> createHandle();
+    WEBCORE_EXPORT std::optional<Handle> createHandle();
 
-    ~ShareableResource();
+    WEBCORE_EXPORT ~ShareableResource();
 
     const uint8_t* data() const;
     unsigned size() const;
-    
+
 private:
     friend class ShareableResourceHandle;
 
-    ShareableResource(Ref<WebCore::SharedMemory>&&, unsigned offset, unsigned size);
-    RefPtr<WebCore::SharedBuffer> wrapInSharedBuffer();
+    ShareableResource(Ref<SharedMemory>&&, unsigned offset, unsigned size);
+    RefPtr<SharedBuffer> wrapInSharedBuffer();
 
-    Ref<WebCore::SharedMemory> m_sharedMemory;
+    Ref<SharedMemory> m_sharedMemory;
 
     const unsigned m_offset;
     const unsigned m_size;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(SHAREABLE_RESOURCE)

@@ -28,12 +28,12 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "PolicyDecision.h"
-#include "ShareableResource.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteData.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/ShareableResource.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Hasher.h>
@@ -105,8 +105,8 @@ class SpeculativeLoadManager;
 
 struct MappedBody {
 #if ENABLE(SHAREABLE_RESOURCE)
-    RefPtr<ShareableResource> shareableResource;
-    std::optional<ShareableResource::Handle> shareableResourceHandle;
+    RefPtr<WebCore::ShareableResource> shareableResource;
+    std::optional<WebCore::ShareableResource::Handle> shareableResourceHandle;
 #endif
 };
 

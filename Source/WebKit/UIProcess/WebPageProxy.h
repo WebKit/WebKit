@@ -341,6 +341,7 @@ typedef struct _WPEView WPEView;
 namespace WebCore {
 class ShareableBitmap;
 class ShareableBitmapHandle;
+class ShareableResourceHandle;
 }
 
 namespace WebKit {
@@ -385,7 +386,6 @@ class RemoteScrollingCoordinatorProxy;
 class RevealItem;
 class SandboxExtensionHandle;
 class SecKeyProxyStore;
-class ShareableResourceHandle;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
@@ -2764,7 +2764,7 @@ private:
 
 #if USE(QUICK_LOOK)
     void didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti);
-    void didFinishLoadForQuickLookDocumentInMainFrame(ShareableResourceHandle&&);
+    void didFinishLoadForQuickLookDocumentInMainFrame(WebCore::ShareableResourceHandle&&);
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
 

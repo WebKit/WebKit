@@ -170,7 +170,7 @@ def types_that_must_be_moved():
         'WebKit::WebIDBResult',
         'WebKit::LoadParameters',
         'WebCore::ShareableBitmap::Handle',
-        'WebKit::ShareableResource::Handle',
+        'WebCore::ShareableResource::Handle',
         'WebCore::SharedMemory::Handle',
         'WebKit::SharedVideoFrame',
         'WebKit::SharedVideoFrame::Buffer',

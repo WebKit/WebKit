@@ -30,7 +30,6 @@
 #include "IdentifierTypes.h"
 #include "MessageReceiver.h"
 #include "NavigatingToAppBoundDomain.h"
-#include "ShareableResource.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"

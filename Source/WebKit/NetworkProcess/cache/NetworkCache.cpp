@@ -507,7 +507,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (auto sharedMemory = bodyData.tryCreateSharedMemory()) {
-            mappedBody.shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
+            mappedBody.shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
             if (!mappedBody.shareableResource) {
                 if (completionHandler)
                     completionHandler(WTFMove(mappedBody));

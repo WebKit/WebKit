@@ -2141,6 +2141,7 @@ platform/ScrollbarTheme.cpp
 platform/ScrollbarThemeComposite.cpp
 platform/ScrollingMomentumCalculator.cpp
 platform/SerializedPlatformDataCue.cpp
+platform/ShareableResource.cpp
 platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp
 platform/SharedMemory.cpp

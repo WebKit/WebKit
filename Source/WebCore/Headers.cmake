@@ -1755,6 +1755,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SearchPopupMenu.h
     platform/SerializedPlatformDataCue.h
     platform/SerializedPlatformDataCueValue.h
+    platform/ShareableResource.h
     platform/SharedBuffer.h
     platform/SharedBufferChunkReader.h
     platform/SharedMemory.h

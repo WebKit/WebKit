@@ -27,9 +27,9 @@
 
 #include "NetworkCacheStorage.h"
 #include "PrivateRelayed.h"
-#include "ShareableResource.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/ShareableResource.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
@@ -62,7 +62,7 @@ public:
     const std::optional<WebCore::ResourceRequest>& redirectRequest() const { return m_redirectRequest; }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-    std::optional<ShareableResource::Handle> shareableResourceHandle() const;
+    std::optional<WebCore::ShareableResource::Handle> shareableResourceHandle() const;
 #endif
 
     bool needsValidation() const;
@@ -86,7 +86,7 @@ private:
     std::optional<WebCore::ResourceRequest> m_redirectRequest;
     mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
 #if ENABLE(SHAREABLE_RESOURCE)
-    mutable RefPtr<ShareableResource> m_shareableResource;
+    mutable RefPtr<WebCore::ShareableResource> m_shareableResource;
 #endif
 
     Storage::Record m_sourceStorageRecord { };

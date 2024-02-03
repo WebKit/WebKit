@@ -7343,6 +7343,15 @@ struct WebCore::OrganizationStorageAccessPromptQuirk {
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairings;
 };
 
+#if ENABLE(SHAREABLE_RESOURCE)
+header: <WebCore/ShareableResource.h>
+[CustomHeader, RValue] class WebCore::ShareableResourceHandle {
+    WebCore::SharedMemoryHandle m_handle;
+    unsigned m_offset;
+    [Validator='!(Checked<unsigned> { *m_offset } + *m_size).hasOverflowed() && (*m_offset + *m_size <= m_handle->size())'] unsigned m_size;
+}
+#endif
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 [RValue] class WebCore::DynamicContentScalingDisplayList {
     Ref<WebCore::SharedBuffer> displayList();

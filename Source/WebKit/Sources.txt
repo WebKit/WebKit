@@ -228,7 +228,6 @@ Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
 Shared/ScrollingAccelerationCurve.cpp
 Shared/SessionState.cpp
-Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp

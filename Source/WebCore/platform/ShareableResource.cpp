@@ -28,12 +28,10 @@
 
 #if ENABLE(SHAREABLE_RESOURCE)
 
-#include "ArgumentCoders.h"
-#include <WebCore/SharedBuffer.h>
+#include "SharedBuffer.h"
 #include <wtf/CheckedArithmetic.h>
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, unsigned offset, unsigned size)
     : m_handle(WTFMove(handle))
@@ -112,6 +110,6 @@ unsigned ShareableResource::size() const
     return m_size;
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(SHAREABLE_RESOURCE)

@@ -52,7 +52,6 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RevealItem.h"
-#import "ShareableResource.h"
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
@@ -74,6 +73,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/ShareableResource.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>

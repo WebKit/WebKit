@@ -426,7 +426,7 @@ messages -> WebPageProxy {
 
 #if USE(QUICK_LOOK)
     DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
-    DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::ShareableResource::Handle resource)
+    DidFinishLoadForQuickLookDocumentInMainFrame(WebCore::ShareableResource::Handle resource)
     RequestPasswordForQuickLookDocumentInMainFrame(String fileName) -> (String password)
 #endif
 

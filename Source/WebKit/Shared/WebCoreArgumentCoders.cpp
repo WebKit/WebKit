@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "ShareableResource.h"
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
@@ -134,6 +133,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SliderThumbPart.h>

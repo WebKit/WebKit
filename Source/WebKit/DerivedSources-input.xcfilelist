@@ -318,7 +318,6 @@ $(PROJECT_DIR)/Shared/SameDocumentNavigationType.serialization.in
 $(PROJECT_DIR)/Shared/SandboxExtension.serialization.in
 $(PROJECT_DIR)/Shared/ScrollingAccelerationCurve.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
-$(PROJECT_DIR)/Shared/ShareableResource.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/SyntheticEditingCommandType.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in

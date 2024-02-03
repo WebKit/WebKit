@@ -26,6 +26,9 @@
 
 #pragma once
 
+#include <optional>
+#include <span>
+
 namespace WebCore {
 
 class BitReader {

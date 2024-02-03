@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkResourceLoader.h"
 
+#include "ArgumentCoders.h"
 #include "EarlyHintsResourceLoader.h"
 #include "FormDataReference.h"
 #include "LoadedWebArchive.h"
@@ -74,6 +75,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ViolationReportType.h>
 #include <wtf/CallbackAggregator.h>
