@@ -553,48 +553,6 @@ std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRe
     return colorSpace;
 }
 
-#if HAVE(SEC_KEYCHAIN)
-template<typename Encoder>
-void ArgumentCoder<SecKeychainItemRef>::encode(Encoder& encoder, SecKeychainItemRef keychainItem)
-{
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CFDataRef data;
-    if (SecKeychainItemCreatePersistentReference(keychainItem, &data) == errSecSuccess) {
-        encoder << data;
-        CFRelease(data);
-    }
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-template void ArgumentCoder<SecKeychainItemRef>::encode<Encoder>(Encoder&, SecKeychainItemRef);
-template void ArgumentCoder<SecKeychainItemRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecKeychainItemRef);
-
-std::optional<RetainPtr<SecKeychainItemRef>> ArgumentCoder<RetainPtr<SecKeychainItemRef>>::decode(Decoder& decoder)
-{
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
-
-    std::optional<RetainPtr<CFDataRef>> data;
-    decoder >> data;
-    if (!data)
-        return std::nullopt;
-
-    CFDataRef dref = data->get();
-    // SecKeychainItemCopyFromPersistentReference() cannot handle 0-length CFDataRefs.
-    if (!CFDataGetLength(dref))
-        return std::nullopt;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    SecKeychainItemRef item;
-    if (SecKeychainItemCopyFromPersistentReference(dref, &item) != errSecSuccess || !item)
-        return std::nullopt;
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    return adoptCF(item);
-}
-#endif
-
 #if HAVE(SEC_ACCESS_CONTROL)
 template<typename Encoder>
 void ArgumentCoder<SecAccessControlRef>::encode(Encoder& encoder, SecAccessControlRef accessControl)

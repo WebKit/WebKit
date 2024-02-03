@@ -57,3 +57,11 @@ additional_forward_declaration: typedef struct CGColor *CGColorRef
 }
 
 #endif
+
+#if HAVE(SEC_KEYCHAIN)
+
+additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainItemRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecKeychainItem()] SecKeychainItemRef wrapped by WebKit::CoreIPCSecKeychainItem {
+}
+
+#endif

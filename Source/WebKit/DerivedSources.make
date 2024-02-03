@@ -684,6 +684,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/cf/CoreIPCBoolean.serialization.in \
 	Shared/cf/CoreIPCNumber.serialization.in \
 	Shared/cf/CoreIPCSecCertificate.serialization.in \
+	Shared/cf/CoreIPCSecKeychainItem.serialization.in \
 	Shared/cf/CoreIPCSecTrust.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \

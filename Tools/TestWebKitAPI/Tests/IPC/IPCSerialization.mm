@@ -94,6 +94,9 @@ struct CFHolderForTesting {
         RetainPtr<CFBooleanRef>,
         RetainPtr<CGColorRef>,
         RetainPtr<CFDictionaryRef>,
+#if HAVE(SEC_KEYCHAIN)
+        RetainPtr<SecKeychainItemRef>,
+#endif
         RetainPtr<SecTrustRef>
     > ValueType;
 
@@ -499,6 +502,35 @@ static RetainPtr<NSPersonNameComponents> personNameComponentsForTesting()
     return components;
 }
 
+#if HAVE(SEC_KEYCHAIN)
+static SecKeychainRef getTempKeychain()
+{
+    SecKeychainRef keychainRef = NULL;
+    uuid_t uu;
+    char pass[PATH_MAX];
+
+    uuid_generate_random(uu);
+    uuid_unparse_upper(uu, pass);
+    UInt32 passLen = (UInt32)strlen(pass);
+    NSString* path = [NSString stringWithFormat:@"%@/%s", NSTemporaryDirectory(), pass];
+
+    [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
+    EXPECT_TRUE(SecKeychainCreate(path.fileSystemRepresentation, passLen, pass, false, NULL, &keychainRef) == errSecSuccess);
+    EXPECT_NOT_NULL(keychainRef);
+    EXPECT_TRUE(SecKeychainUnlock(keychainRef, passLen, pass, TRUE) == errSecSuccess);
+
+    return keychainRef;
+}
+
+static void destroyTempKeychain(SecKeychainRef keychainRef)
+{
+    if (keychainRef) {
+        SecKeychainDelete(keychainRef);
+        CFRelease(keychainRef);
+    }
+}
+#endif // HAVE(SEC_KEYCHAIN)
+
 TEST(IPCSerialization, Basic)
 {
     auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
@@ -744,6 +776,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     CFRelease(trust);
     CFRelease(policy);
+
+    // SecKeychainItem
+#if HAVE(SEC_KEYCHAIN)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // Store the certificate created above into the temp keychain
+    SecKeychainRef tempKeychain = getTempKeychain();
+    CFDataRef certData = NULL;
+    EXPECT_TRUE(SecItemExport(cert.get(), kSecFormatX509Cert, kSecItemPemArmour, nil, &certData) == errSecSuccess);
+    CFArrayRef items = NULL;
+    EXPECT_TRUE(SecKeychainItemImport(certData, CFSTR(".pem"), NULL, NULL, 0, NULL, tempKeychain, &items) == errSecSuccess);
+    EXPECT_NOT_NULL(items);
+    EXPECT_GT(CFArrayGetCount(items), 0);
+
+    SecKeychainItemRef keychainItemRef = (SecKeychainItemRef)CFArrayGetValueAtIndex(items, 0);
+    EXPECT_NOT_NULL(keychainItemRef);
+    runTestCF({ keychainItemRef });
+
+    CFRelease(items);
+    CFRelease(certData);
+
+    destroyTempKeychain(tempKeychain);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif // HAVE(SEC_KEYCHAIN)
 }
 
 #if PLATFORM(MAC)

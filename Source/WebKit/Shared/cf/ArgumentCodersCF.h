@@ -30,10 +30,6 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
 
-#if HAVE(SEC_KEYCHAIN)
-#include <Security/SecKeychainItem.h>
-#endif
-
 typedef struct CGColorSpace* CGColorSpaceRef;
 
 namespace IPC {
@@ -83,15 +79,6 @@ template<> struct ArgumentCoder<CGColorSpaceRef> {
 template<> struct ArgumentCoder<RetainPtr<CGColorSpaceRef>> : CFRetainPtrArgumentCoder<CGColorSpaceRef> {
     static std::optional<RetainPtr<CGColorSpaceRef>> decode(Decoder&);
 };
-
-#if HAVE(SEC_KEYCHAIN)
-template<> struct ArgumentCoder<SecKeychainItemRef> {
-    template<typename Encoder> static void encode(Encoder&, SecKeychainItemRef);
-};
-template<> struct ArgumentCoder<RetainPtr<SecKeychainItemRef>> : CFRetainPtrArgumentCoder<SecKeychainItemRef> {
-    static std::optional<RetainPtr<SecKeychainItemRef>> decode(Decoder&);
-};
-#endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
 template<> struct ArgumentCoder<SecAccessControlRef> {
