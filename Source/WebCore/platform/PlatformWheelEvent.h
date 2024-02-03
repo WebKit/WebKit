@@ -156,6 +156,7 @@ public:
 #if ENABLE(ASYNC_SCROLLING)
     bool useLatchedEventElement() const;
     bool isGestureContinuation() const; // The fingers-down part of the gesture excluding momentum.
+    bool shouldConsultDelta() const;
     bool shouldResetLatching() const;
     bool isEndOfMomentumScroll() const;
 #else
@@ -223,6 +224,14 @@ inline bool PlatformWheelEvent::useLatchedEventElement() const
 inline bool PlatformWheelEvent::isGestureContinuation() const
 {
     return m_phase == PlatformWheelEventPhase::Changed;
+}
+
+inline bool PlatformWheelEvent::shouldConsultDelta() const
+{
+    return m_phase == PlatformWheelEventPhase::Began
+        || m_phase == PlatformWheelEventPhase::Changed
+        || m_momentumPhase == PlatformWheelEventPhase::Began
+        || m_momentumPhase == PlatformWheelEventPhase::Changed;
 }
 
 inline bool PlatformWheelEvent::shouldResetLatching() const
