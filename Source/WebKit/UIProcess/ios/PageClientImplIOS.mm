@@ -51,6 +51,7 @@
 #import "WKGeolocationProviderIOS.h"
 #import "WKPasswordView.h"
 #import "WKProcessPoolInternal.h"
+#import "WKVisibilityPropagationView.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewIOS.h"
@@ -229,6 +230,13 @@ void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerH
     [contentView() _gpuProcessDidCreateContextForVisibilityPropagation];
 }
 #endif // ENABLE(GPU_PROCESS)
+
+#if USE(EXTENSIONKIT)
+UIView *PageClientImpl::createVisibilityPropagationView()
+{
+    return [contentView() _createVisibilityPropagationView];
+}
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)

@@ -33,6 +33,7 @@
 #import "GPUProcessProxy.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
@@ -54,6 +55,7 @@
 #import <wtf/LoggerHelper.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -71,6 +73,9 @@
 
 @interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
+#if USE(EXTENSIONKIT)
+@property (nonatomic, strong) PlatformView *visibilityPropagationView;
+#endif
 @end
 
 @implementation WKLayerHostView {
@@ -78,6 +83,7 @@
     WeakObjCPtr<UIWindow> _window;
 #endif
 #if USE(EXTENSIONKIT)
+    RetainPtr<PlatformView> _visibilityPropagationView;
 @public
     RetainPtr<BELayerHierarchyHostingView> _hostingView;
 #endif
@@ -122,6 +128,20 @@
     return [super window];
 }
 #endif
+
+#if USE(EXTENSIONKIT)
+- (PlatformView *)visibilityPropagationView
+{
+    return _visibilityPropagationView.get();
+}
+
+- (void)setVisibilityPropagationView:(PlatformView *)visibilityPropagationView
+{
+    [_visibilityPropagationView removeFromSuperview];
+    _visibilityPropagationView = visibilityPropagationView;
+    [self addSubview:_visibilityPropagationView.get()];
+}
+#endif // USE(EXTENSIONKIT)
 
 @end
 
@@ -849,6 +869,11 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
 
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
+#if USE(EXTENSIONKIT)
+        if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
+            [view setVisibilityPropagationView:visibilityPropagationView];
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     auto* rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootNode();
     UIView *parentView = rootNode ? rootNode->uiView() : nil;
@@ -1191,6 +1216,11 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 
     auto& [model, interface] = ensureModelAndInterface(contextId);
 
+#if USE(EXTENSIONKIT)
+    if (auto layerHostView = dynamic_objc_cast<WKLayerHostView>(model->layerHostView()))
+        [layerHostView setVisibilityPropagationView:nil];
+#endif
+
     [model->layerHostView() removeFromSuperview];
     interface->removeCaptionsLayer();
     if (auto playerLayer = model->playerLayer()) {
@@ -1220,7 +1250,7 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
     MachSendRight fenceSendRight;
 #if PLATFORM(IOS_FAMILY)
 #if USE(EXTENSIONKIT)
-    RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
+    auto view = dynamic_objc_cast<WKLayerHostView>(model->layerHostView());
     if (view && view->_hostingView) {
         auto hostingUpdateCoordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithError:nil];
         [hostingUpdateCoordinator addLayerHierarchyHostingView:view->_hostingView.get()];

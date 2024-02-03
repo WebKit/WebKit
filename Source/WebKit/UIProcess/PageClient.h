@@ -80,6 +80,7 @@ OBJC_CLASS NSSet;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIScrollView;
+OBJC_CLASS UIView;
 OBJC_CLASS WKBaseScrollView;
 OBJC_CLASS WKBEScrollViewScrollUpdate;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -371,7 +372,10 @@ public:
 #if ENABLE(GPU_PROCESS)
     virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
 #endif
+#if USE(EXTENSIONKIT)
+    virtual UIView *createVisibilityPropagationView() { return nullptr; }
 #endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
     virtual void gpuProcessDidFinishLaunching() { }

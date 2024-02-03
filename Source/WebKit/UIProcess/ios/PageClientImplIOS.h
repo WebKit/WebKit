@@ -82,6 +82,9 @@ private:
 #if ENABLE(GPU_PROCESS)
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) override;
 #endif // ENABLE(GPU_PROCESS)
+#if USE(EXTENSIONKIT)
+    UIView *createVisibilityPropagationView() override;
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
