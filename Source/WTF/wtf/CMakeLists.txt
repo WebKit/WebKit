@@ -392,6 +392,7 @@ set(WTF_PUBLIC_HEADERS
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
+    text/AdaptiveStringSearcher.h
     text/AtomString.h
     text/AtomStringHash.h
     text/AtomStringImpl.h

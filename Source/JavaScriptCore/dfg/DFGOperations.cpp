@@ -2608,7 +2608,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
     String search = searchCell->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    size_t matchStart = string.find(search);
+    size_t matchStart = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(search));
     if (matchStart == notFound)
         return stringCell;
 
@@ -2808,7 +2808,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObjec
     auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t result = thisViewWithString.view.find(otherViewWithString.view);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view);
     if (result == notFound)
         return toUCPUStrictInt32(-1);
     return toUCPUStrictInt32(result);
@@ -2853,7 +2853,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGl
     if (static_cast<unsigned>(length) < otherViewWithString.view.length() + pos)
         return toUCPUStrictInt32(-1);
 
-    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view, pos);
     if (result == notFound)
         return toUCPUStrictInt32(-1);
     return toUCPUStrictInt32(result);
