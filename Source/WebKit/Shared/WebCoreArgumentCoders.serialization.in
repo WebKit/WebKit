@@ -7137,6 +7137,11 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessageP
     WebCore::SerializedScriptValue::Internals m_internals;
 };
 
+header: <WebCore/SharedBuffer.h>
+[RefCounted] class WebCore::SharedBuffer {
+    Ref<WebCore::FragmentedSharedBuffer> asFragmentedSharedBuffer();
+};
+
 #if !USE(COORDINATED_GRAPHICS)
 [RefCounted] class WebCore::FilterOperation subclasses {
     WebCore::BasicColorMatrixFilterOperation

@@ -695,4 +695,9 @@ RefPtr<SharedBuffer> utf8Buffer(const String& string)
     return SharedBuffer::create(WTFMove(buffer));
 }
 
+Ref<SharedBuffer> SharedBuffer::create(Ref<FragmentedSharedBuffer>&& fragmentedBuffer)
+{
+    return fragmentedBuffer->makeContiguous();
+}
+
 } // namespace WebCore

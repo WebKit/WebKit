@@ -512,18 +512,6 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
     return SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
 }
 
-void ArgumentCoder<WebCore::SharedBuffer>::encode(Encoder& encoder, const WebCore::SharedBuffer& buffer)
-{
-    encoder << static_cast<const WebCore::FragmentedSharedBuffer&>(buffer);
-}
-
-std::optional<Ref<WebCore::SharedBuffer>> ArgumentCoder<WebCore::SharedBuffer>::decode(Decoder& decoder)
-{
-    if (auto buffer = decoder.decode<Ref<FragmentedSharedBuffer>>())
-        return (*buffer)->makeContiguous();
-    return std::nullopt;
-}
-
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
 static std::optional<ShareableResource::Handle> tryConvertToShareableResourceHandle(const ScriptBuffer& script)
 {

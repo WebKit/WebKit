@@ -280,6 +280,8 @@ public:
         }
     }
 
+    WEBCORE_EXPORT static Ref<SharedBuffer> create(Ref<FragmentedSharedBuffer>&&);
+
     WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
@@ -298,6 +300,8 @@ public:
 #if USE(GLIB)
     WEBCORE_EXPORT GRefPtr<GBytes> createGBytes() const;
 #endif
+
+    Ref<FragmentedSharedBuffer> asFragmentedSharedBuffer() const { return const_cast<SharedBuffer&>(*this); }
 
 private:
     WEBCORE_EXPORT SharedBuffer();

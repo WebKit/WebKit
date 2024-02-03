@@ -210,11 +210,6 @@ template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::SharedBuffer> {
-    static void encode(Encoder&, const WebCore::SharedBuffer&);
-    static std::optional<Ref<WebCore::SharedBuffer>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static void encode(Encoder&, const WebCore::ScriptBuffer&);
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
