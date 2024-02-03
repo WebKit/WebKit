@@ -44,7 +44,6 @@ struct AuthenticatorResponseBaseData {
 struct AuthenticatorAttestationResponseData {
     RefPtr<ArrayBuffer> rawId;
     std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
-    RefPtr<ArrayBuffer> clientDataJSON;
     RefPtr<ArrayBuffer> attestationObject;
     Vector<WebCore::AuthenticatorTransport> transports;
 };
@@ -52,7 +51,6 @@ struct AuthenticatorAttestationResponseData {
 struct AuthenticatorAssertionResponseData {
     RefPtr<ArrayBuffer> rawId;
     std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
-    RefPtr<ArrayBuffer> clientDataJSON;
     RefPtr<ArrayBuffer> authenticatorData;
     RefPtr<ArrayBuffer> signature;
     RefPtr<ArrayBuffer> userHandle;
@@ -72,13 +70,11 @@ struct AuthenticatorResponseData {
             isAuthenticatorAttestationResponse = true;
             rawId = v.rawId;
             extensionOutputs = v.extensionOutputs;
-            clientDataJSON = v.clientDataJSON;
             attestationObject = v.attestationObject;
             transports = v.transports;
         }, [&](const AuthenticatorAssertionResponseData& v) {
             rawId = v.rawId;
             extensionOutputs = v.extensionOutputs;
-            clientDataJSON = v.clientDataJSON;
             authenticatorData = v.authenticatorData;
             signature = v.signature;
             userHandle = v.userHandle;
@@ -92,8 +88,6 @@ struct AuthenticatorResponseData {
 
     // Extensions
     std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
-
-    RefPtr<ArrayBuffer> clientDataJSON;
 
     // AuthenticatorAttestationResponse
     RefPtr<ArrayBuffer> attestationObject;
@@ -111,12 +105,12 @@ struct AuthenticatorResponseData {
             return nullptr;
 
         if (isAuthenticatorAttestationResponse && attestationObject)
-            return AuthenticatorAttestationResponseData { rawId, extensionOutputs, clientDataJSON, attestationObject, transports };
+            return AuthenticatorAttestationResponseData { rawId, extensionOutputs, attestationObject, transports };
 
         if (!authenticatorData || !signature)
             return AuthenticatorResponseBaseData { rawId, extensionOutputs };
 
-        return AuthenticatorAssertionResponseData { rawId, extensionOutputs, clientDataJSON, authenticatorData, signature, userHandle };
+        return AuthenticatorAssertionResponseData { rawId, extensionOutputs, authenticatorData, signature, userHandle };
     }
 };
     
