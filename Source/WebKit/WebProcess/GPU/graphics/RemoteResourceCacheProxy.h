@@ -50,10 +50,12 @@ class RemoteResourceCacheProxy : public WebCore::RenderingResource::Observer {
 public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
+    void connectGPUProcess();
+    void abandonGPUProcess();
 
     void cacheImageBuffer(RemoteImageBufferProxy&);
     RefPtr<RemoteImageBufferProxy> cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
-    void forgetImageBuffer(WebCore::RenderingResourceIdentifier);
+    void uncacheImageBuffer(WebCore::RenderingResourceIdentifier);
 
     WebCore::NativeImage* cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
 
@@ -72,8 +74,6 @@ public:
     void releaseAllImageResources();
     
     unsigned imagesCount() const;
-
-    void clear();
 
 private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>>;

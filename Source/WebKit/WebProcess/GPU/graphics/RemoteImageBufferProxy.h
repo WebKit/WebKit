@@ -43,6 +43,7 @@ class Connection;
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
+class RemoteSerializedImageBufferProxy;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
     friend class RemoteSerializedImageBufferProxy;
@@ -57,7 +58,7 @@ public:
         auto info = populateBackendInfo<BackendType>(backendParameters);
         return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy));
     }
-
+    static Ref<RemoteImageBufferProxy> create(std::unique_ptr<RemoteSerializedImageBufferProxy>, RemoteRenderingBackendProxy&);
     ~RemoteImageBufferProxy();
 
     WebCore::ImageBufferBackend* ensureBackend() const final;
@@ -107,15 +108,12 @@ private:
 };
 
 class RemoteSerializedImageBufferProxy : public WebCore::SerializedImageBuffer {
-    friend class RemoteRenderingBackendProxy;
+    friend class RemoteImageBufferProxy;
 public:
+    RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
     ~RemoteSerializedImageBufferProxy();
 
-    static RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, RemoteRenderingBackendProxy&);
-
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier() { return m_renderingResourceIdentifier; }
-
-    RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
 
     size_t memoryCost() const final
     {

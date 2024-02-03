@@ -1009,10 +1009,12 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
 
 RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
-    if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
-        return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
-    auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
-    return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTFMove(remote), protectedPage()->ensureRemoteRenderingBackendProxy());
+    if (is<RemoteSerializedImageBufferProxy>(imageBuffer)) {
+        auto remote = std::unique_ptr<RemoteSerializedImageBufferProxy>(static_cast<RemoteSerializedImageBufferProxy*>(imageBuffer.release()));
+        return protectedPage()->ensureRemoteRenderingBackendProxy().moveToImageBuffer(WTFMove(remote));
+    }
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
+
 }
 #endif
 

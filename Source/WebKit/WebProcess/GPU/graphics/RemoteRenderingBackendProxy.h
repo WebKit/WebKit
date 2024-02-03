@@ -86,11 +86,10 @@ public:
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
-    void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
-    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
+    std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);
+    Ref<RemoteImageBufferProxy> moveToImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>);
 
-    void createRemoteImageBuffer(WebCore::ImageBuffer&);
+    void createRemoteImageBuffer(RemoteImageBufferProxy&);
     bool isCached(const WebCore::ImageBuffer&) const;
 
     // IPC::MessageReceiver
@@ -172,7 +171,7 @@ private:
     // Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
-    void disconnectGPUProcess();
+    void abandonGPUProcess();
     void ensureGPUProcessConnection();
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
