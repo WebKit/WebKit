@@ -50,6 +50,12 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
     m_bufferSet = collection->layerTreeContext().ensureRemoteRenderingBackendProxy().createRemoteImageBufferSet();
 }
 
+RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()
+{
+    if (m_bufferSet)
+        m_bufferSet->close();
+}
+
 bool RemoteLayerWithRemoteRenderingBackingStore::hasFrontBuffer() const
 {
     return m_contentsBufferHandle || !m_cleared;

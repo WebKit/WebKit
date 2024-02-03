@@ -89,6 +89,9 @@ public:
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
     template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout);
 
+    void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
+    void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
+
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
 

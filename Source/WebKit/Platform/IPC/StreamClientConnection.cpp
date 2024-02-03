@@ -150,4 +150,14 @@ Connection& StreamClientConnection::connectionForTesting()
     return m_connection.get();
 }
 
+void StreamClientConnection::addWorkQueueMessageReceiver(ReceiverName name, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, uint64_t destinationID)
+{
+    m_connection->addWorkQueueMessageReceiver(name, workQueue, receiver, destinationID);
+}
+
+void StreamClientConnection::removeWorkQueueMessageReceiver(ReceiverName name, uint64_t destinationID)
+{
+    m_connection->removeWorkQueueMessageReceiver(name, destinationID);
+}
+
 }
