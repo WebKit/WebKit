@@ -44,9 +44,6 @@
 #include "RenderView.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGPathData.h"
-#include "SVGRenderingContext.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -144,8 +141,6 @@ void RenderSVGShape::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), RepaintOutlineBounds::No);
     if (m_needsShapeUpdate) {
-        // FIXME: [LBSE] Upstream SVGLengthContext changes
-        // graphicsElement().updateLengthContext();
         updateShapeFromElement();
 
         m_needsShapeUpdate = false;
@@ -153,10 +148,6 @@ void RenderSVGShape::layout()
     }
 
     updateLayerTransform();
-
-    // Invalidate all resources of this client if our layout changed.
-    if (everHadLayout() && selfNeedsLayout())
-        SVGResourcesCache::clientLayoutChanged(*this);
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();

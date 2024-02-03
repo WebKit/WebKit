@@ -30,7 +30,6 @@
 
 namespace WebCore {
 
-class LegacyRenderSVGResourceContainer;
 class RenderSVGViewportContainer;
 class SVGSVGElement;
 
@@ -57,10 +56,6 @@ public:
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
     bool hasRelativeDimensions() const final;
-
-    // The flag is cleared at the beginning of each layout() pass. Elements then call this
-    // method during layout when they are invalidated by a filter.
-    static void addResourceForClientInvalidation(LegacyRenderSVGResourceContainer*);
 
     bool shouldApplyViewportClip() const;
 
@@ -95,10 +90,6 @@ private:
 
     void willBeDestroyed() final;
 
-    void insertedIntoTree(IsInternalMove) final;
-    void willBeRemovedFromTree(IsInternalMove) final;
-
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void updateFromStyle() final;
     bool needsHasSVGTransformFlags() const final;
     void updateLayerTransform() final;
@@ -125,7 +116,6 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
-    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
 };
 
 } // namespace WebCore

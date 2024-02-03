@@ -191,7 +191,6 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
         }
     }
 
-    // FIXME: [LBSE] Implement support for patterns
     if (svgStyle.fillPaintType() >= SVGPaintType::URINone) {
         auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(svgStyle.fillPaintUri(), document);
         if (!resourceID.isEmpty())

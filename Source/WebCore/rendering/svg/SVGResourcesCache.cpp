@@ -110,8 +110,9 @@ static bool hasResourcesRequiringRemovalOnClientLayoutChange(SVGResources& resou
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
 
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
@@ -131,12 +132,13 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
 
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    ASSERT(!renderer.element() || renderer.element()->isSVGElement());
-
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
+
+    ASSERT(!renderer.element() || renderer.element()->isSVGElement());
 
     if (!renderer.parent())
         return;
@@ -199,13 +201,14 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Verify that LBSE does not make use of SVGResourcesCache.
+    if (renderer.document().settings().layerBasedSVGEngineEnabled())
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+
     if (renderer.isAnonymous())
         return;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
@@ -217,13 +220,15 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
 
 void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 {
-    if (renderer.isAnonymous())
-        return;
-
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // While LBSE does not make use of SVGResourcesCache, we might get here after switching from legacy to LBSE
+    // and destructing the legacy tree -- when LBSE is already activated - don't assert here that this is not reached.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
         return;
 #endif
+
+    if (renderer.isAnonymous())
+        return;
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
@@ -236,6 +241,8 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // While LBSE does not make use of SVGResourcesCache, we might get here after switching from legacy to LBSE
+    // and destructing the legacy tree -- when LBSE is already activated - don't assert here that this is not reached.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
         return;
 #endif
@@ -249,6 +256,8 @@ void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // While LBSE does not make use of SVGResourcesCache, we might get here after switching from legacy to LBSE
+    // and destructing the legacy tree -- when LBSE is already activated - don't assert here that this is not reached.
     if (resource.document().settings().layerBasedSVGEngineEnabled())
         return;
 #endif

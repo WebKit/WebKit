@@ -97,6 +97,13 @@ void RenderSVGBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) con
 
 void RenderSVGBlock::willBeDestroyed()
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        RenderBlockFlow::willBeDestroyed();
+        return;
+    }
+#endif
+
     SVGResourcesCache::clientDestroyed(*this);
     RenderBlockFlow::willBeDestroyed();
 }
@@ -104,10 +111,13 @@ void RenderSVGBlock::willBeDestroyed()
 void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (diff == StyleDifference::Layout && !document().settings().layerBasedSVGEngineEnabled())
-#else
-    if (diff == StyleDifference::Layout)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        RenderBlockFlow::styleDidChange(diff, oldStyle);
+        return;
+    }
 #endif
+
+    if (diff == StyleDifference::Layout)
         setNeedsBoundariesUpdate();
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());

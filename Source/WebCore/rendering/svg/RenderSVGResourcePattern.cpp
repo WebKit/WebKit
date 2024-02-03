@@ -29,7 +29,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderStyle.h"
-#include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

@@ -51,7 +51,6 @@
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
@@ -281,13 +280,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* container = dynamicDowncast<RenderSVGContainer>(parent)) {
-        svgBuilder().attach(*container, WTFMove(child), beforeChild);
-        return;
-    }
-#endif
-
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
         svgBuilder().attach(*container, WTFMove(child), beforeChild);
         return;
@@ -396,18 +388,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
     if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent))
         return svgBuilder().detach(*svgInline, child);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGContainer>(parent))
-        return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
-#endif
-
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent))
         return svgBuilder().detach(*container, child);
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent))
-        return svgBuilder().detach(*svgRoot, child);
-#endif
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
         return svgBuilder().detach(*svgRoot, child);

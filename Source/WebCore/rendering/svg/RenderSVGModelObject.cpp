@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2009, Google Inc. All rights reserved.
- * Copyright (C) 2020, 2021, 2022 Igalia S.L.
+ * Copyright (C) 2020, 2021, 2022, 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +33,6 @@
 #include "RenderSVGModelObject.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "LegacyRenderSVGResource.h"
 #include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
@@ -48,7 +47,6 @@
 #include "SVGLocatable.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
-#include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
@@ -148,12 +146,6 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
     quads.append(localToAbsoluteQuad(FloatRect { { }, m_layoutRect.size() }, UseTransforms, wasFixed));
 }
 
-void RenderSVGModelObject::willBeDestroyed()
-{
-    SVGResourcesCache::clientDestroyed(*this);
-    RenderLayerModelObject::willBeDestroyed();
-}
-
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderLayerModelObject::styleDidChange(diff, oldStyle);
@@ -164,8 +156,6 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
     bool hasSVGMask = false;
     if (hasSVGMask && hasLayer() && style().visibility() != Visibility::Visible)
         layer()->setHasVisibleContent();
-
-    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
 
 void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const

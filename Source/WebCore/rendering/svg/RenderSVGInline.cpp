@@ -152,6 +152,13 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
 
 void RenderSVGInline::willBeDestroyed()
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        RenderInline::willBeDestroyed();
+        return;
+    }
+#endif
+
     SVGResourcesCache::clientDestroyed(*this);
     RenderInline::willBeDestroyed();
 }
@@ -159,13 +166,14 @@ void RenderSVGInline::willBeDestroyed()
 void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (!document().settings().layerBasedSVGEngineEnabled() && diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
-#else
-    if (diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        RenderInline::styleDidChange(diff, oldStyle);
+        return;
+    }
 #endif
 
+    if (diff == StyleDifference::Layout)
+        setNeedsBoundariesUpdate();
     RenderInline::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }

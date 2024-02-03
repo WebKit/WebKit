@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2011 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021, 2022, 2023 Igalia S.L.
+ * Copyright (C) 2021, 2022, 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,29 +30,18 @@
 #include "FrameView.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "IntRect.h"
-#include "Logging.h"
 #include "ReferencedSVGResources.h"
-#include "RenderElementInlines.h"
-#include "RenderLayer.h"
 #include "RenderLayerInlines.h"
 #include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGText.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
-#include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGNames.h"
-#include "SVGPathData.h"
 #include "SVGRenderStyle.h"
-#include "SVGRenderingContext.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

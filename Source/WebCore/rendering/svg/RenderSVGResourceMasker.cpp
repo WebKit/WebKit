@@ -35,9 +35,6 @@
 #include "SVGContainerLayout.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
-#include "SVGRenderingContext.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

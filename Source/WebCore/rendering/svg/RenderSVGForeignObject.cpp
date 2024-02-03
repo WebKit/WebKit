@@ -27,7 +27,6 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
-#include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -36,8 +35,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
-#include "SVGRenderingContext.h"
-#include "SVGResourcesCache.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -107,16 +104,11 @@ void RenderSVGForeignObject::layout()
     auto height = useForeignObjectElement.height().value(lengthContext);
     m_viewport = { x, y, width, height };
 
-    bool layoutChanged = everHadLayout() && selfNeedsLayout();
     RenderSVGBlock::layout();
     ASSERT(!needsLayout());
 
     setLocation(enclosingLayoutRect(m_viewport).location());
     updateLayerTransform();
-
-    // Invalidate all resources of this client if our layout changed.
-    if (layoutChanged)
-        SVGResourcesCache::clientLayoutChanged(*this);
 
     repainter.repaintAfterLayout();
 }
