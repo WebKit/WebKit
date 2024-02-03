@@ -1418,11 +1418,12 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
     return true;
 }
 
-CGRect PDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+CGRect PDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
     auto documentSize = contentSizeRespectingZoom();
     auto annotationBounds = [m_pdfLayerController boundsForAnnotation:annotation.get()];
-    annotationBounds.origin.y = documentSize.height - annotationBounds.origin.y - annotationBounds.size.height;
+    annotationBounds.origin.y = documentSize.height - annotationBounds.origin.y - annotationBounds.size.height - m_scrollOffset.height();
+    annotationBounds.origin.x -= m_scrollOffset.width();
     return annotationBounds;
 }
 

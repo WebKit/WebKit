@@ -822,6 +822,18 @@ WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::I
     return roundedIntPoint(transformedPoint);
 }
 
+WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPlugin(const WebCore::IntPoint& point) const
+{
+    auto transformedPoint = FloatPoint { point };
+
+    transformedPoint.scale(m_documentLayout.scale());
+    transformedPoint.move(sidePaddingWidth(), 0);
+    transformedPoint.scale(m_scaleFactor);
+    transformedPoint.moveBy(-FloatPoint(m_scrollOffset));
+
+    return roundedIntPoint(transformedPoint);
+}
+
 std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocumentPoint(const WebCore::IntPoint& point) const
 {
     for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
@@ -1318,7 +1330,7 @@ void UnifiedPDFPlugin::zoomOut()
 
 #endif // ENABLE(PDF_HUD)
 
-CGRect UnifiedPDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
+CGRect UnifiedPDFPlugin::pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>& annotation) const
 {
     auto pageSpaceBounds = IntRect([annotation.get() bounds]);
     if (auto pageIndex = m_documentLayout.indexForPage([annotation.get() page])) {
@@ -1328,9 +1340,8 @@ CGRect UnifiedPDFPlugin::boundsForAnnotation(RetainPtr<PDFAnnotation>& annotatio
         // in the Y axis so we need to perform a flip
         documentSpacePoint.setY(documentSpacePoint.y() - pageSpaceBounds.height());
 
-        documentSpacePoint.scale(m_documentLayout.scale());
-        pageSpaceBounds.scale(m_documentLayout.scale());
-        return { documentSpacePoint, pageSpaceBounds.size() };
+        pageSpaceBounds.scale(m_documentLayout.scale() * m_scaleFactor);
+        return { convertFromDocumentToPlugin(documentSpacePoint), pageSpaceBounds.size() };
     }
     ASSERT_NOT_REACHED();
     return pageSpaceBounds;

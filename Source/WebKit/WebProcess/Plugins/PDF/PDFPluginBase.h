@@ -192,7 +192,7 @@ public:
     virtual void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) = 0;
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
 
-    virtual CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;
+    virtual CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const = 0;
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 

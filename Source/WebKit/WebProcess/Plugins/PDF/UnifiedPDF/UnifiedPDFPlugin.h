@@ -61,7 +61,7 @@ public:
     };
     using PDFElementTypes = OptionSet<PDFElementType>;
 
-    CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
+    CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
     void startAnnotationTracking(RetainPtr<PDFAnnotation>&&);
     void finishAnnotationTracking();
@@ -235,6 +235,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromDocumentToPlugin(const WebCore::IntPoint&) const;
     std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::IntPoint&) const;
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;

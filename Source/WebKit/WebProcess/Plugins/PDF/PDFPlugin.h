@@ -104,7 +104,7 @@ public:
     void performWebSearch(NSString *);
     void performSpotlightSearch(NSString *);
 
-    CGRect boundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
+    CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 
