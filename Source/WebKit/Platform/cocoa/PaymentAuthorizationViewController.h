@@ -50,7 +50,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void present(UIViewController *, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    void presentInScene(const String&, CompletionHandler<void(bool)>&&) final;
+    void presentInScene(const String& sceneIdentifier, const String& bundleIdentifier, CompletionHandler<void(bool)>&&) final;
 #endif
 #endif
 

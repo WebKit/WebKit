@@ -156,7 +156,7 @@ void PaymentAuthorizationViewController::present(UIViewController *presentingVie
 }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-void PaymentAuthorizationViewController::presentInScene(const String&, CompletionHandler<void(bool)>&& completionHandler)
+void PaymentAuthorizationViewController::presentInScene(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(false);
