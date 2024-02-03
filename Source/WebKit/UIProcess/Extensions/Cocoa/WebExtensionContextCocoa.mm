@@ -3295,7 +3295,7 @@ bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTa
 {
     incrementActionCountForTab(tab, 1);
 
-    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(_WKWebExtensionPermissionActiveTab)))
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(url, &tab)))
         return false;
 
     m_matchedRules.append({
