@@ -131,9 +131,9 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
         return nullptr;
 
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
+    instance->m_size = size;
     instance->m_data = data;
     instance->m_fileDescriptor = WTFMove(fileDescriptor);
-    instance->m_size = size;
     return instance;
 }
 
@@ -144,16 +144,17 @@ RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
         return nullptr;
 
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
-    instance->m_data = data;
     instance->m_size = handle.size();
+    instance->m_data = data;
+    instance->m_fileDescriptor = WTFMove(handle.m_handle);
     return instance;
 }
 
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, int fileDescriptor)
 {
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
-    instance->m_data = data;
     instance->m_size = size;
+    instance->m_data = data;
     instance->m_fileDescriptor = UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
     instance->m_isWrappingMap = true;
     return instance;
