@@ -33,11 +33,7 @@
 // Note: SPI usage should be limited to testing purposes and binary compatibility with clients
 // of existing WebKit SPI.
 #import <BrowserEngineKit/BrowserEngineKit_Private.h>
-#endif
-
-@interface BEKeyEntry (Staging_121227027)
-@property (nonatomic, readonly) BEKeyPressState state;
-@end
+#else
 
 @class NSTextAlternatives;
 @class UIKeyEvent;
@@ -67,6 +63,12 @@
 @interface BETextSuggestion ()
 @property (nonatomic, readonly, strong) UITextSuggestion *_uikitTextSuggestion;
 - (instancetype)_initWithUIKitTextSuggestion:(UITextSuggestion *)suggestion;
+@end
+
+#endif
+
+@interface BEKeyEntry (Staging_121227027)
+@property (nonatomic, readonly) BEKeyPressState state;
 @end
 
 #endif // USE(BROWSERENGINEKIT)
