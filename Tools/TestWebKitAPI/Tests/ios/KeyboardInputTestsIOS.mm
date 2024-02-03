@@ -1335,6 +1335,32 @@ TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
 
 #endif // HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 
+TEST(KeyboardInputTests, ImplementAllOptionalTextInputTraits)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto traits = [webView effectiveTextInputTraits];
+    EXPECT_EQ(traits.autocapitalizationType, UITextAutocapitalizationTypeSentences);
+    EXPECT_EQ(traits.spellCheckingType, UITextSpellCheckingTypeDefault);
+    EXPECT_EQ(traits.smartQuotesType, UITextSmartQuotesTypeDefault);
+    EXPECT_EQ(traits.smartDashesType, UITextSmartDashesTypeDefault);
+    EXPECT_EQ(traits.smartInsertDeleteType, UITextSmartInsertDeleteTypeDefault);
+    EXPECT_EQ(traits.keyboardType, UIKeyboardTypeDefault);
+    EXPECT_EQ(traits.keyboardAppearance, UIKeyboardAppearanceDefault);
+    EXPECT_EQ(traits.returnKeyType, UIReturnKeyDefault);
+    EXPECT_FALSE(traits.enablesReturnKeyAutomatically);
+    EXPECT_FALSE(traits.secureTextEntry);
+    EXPECT_NULL(traits.textContentType);
+    EXPECT_NULL(traits.passwordRules);
+#if USE(BROWSERENGINEKIT)
+    auto extendedTraits = [webView extendedTextInputTraits];
+    EXPECT_FALSE(extendedTraits.singleLineDocument);
+    EXPECT_TRUE(extendedTraits.typingAdaptationEnabled);
+    EXPECT_NULL(extendedTraits.insertionPointColor);
+    EXPECT_NULL(extendedTraits.selectionHandleColor);
+    EXPECT_NULL(extendedTraits.selectionHighlightColor);
+#endif
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

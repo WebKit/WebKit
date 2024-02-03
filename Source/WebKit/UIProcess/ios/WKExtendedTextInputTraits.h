@@ -41,7 +41,9 @@
 @property (nonatomic) UITextSpellCheckingType spellCheckingType;
 @property (nonatomic) UITextSmartQuotesType smartQuotesType;
 @property (nonatomic) UITextSmartDashesType smartDashesType;
+#if HAVE(INLINE_PREDICTIONS)
 @property (nonatomic) UITextInlinePredictionType inlinePredictionType;
+#endif
 @property (nonatomic) UIKeyboardType keyboardType;
 @property (nonatomic) UIKeyboardAppearance keyboardAppearance;
 @property (nonatomic) UIReturnKeyType returnKeyType;
@@ -53,6 +55,9 @@
 @property (nonatomic) BOOL typingAdaptationDisabled;
 #endif
 @property (nonatomic, copy) UITextContentType textContentType;
+@property (nonatomic, copy) UITextInputPasswordRules *passwordRules;
+@property (nonatomic) UITextSmartInsertDeleteType smartInsertDeleteType;
+@property (nonatomic) BOOL enablesReturnKeyAutomatically;
 
 @property (nonatomic, strong) UIColor *insertionPointColor;
 #if USE(BROWSERENGINEKIT)
