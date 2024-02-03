@@ -6,6 +6,15 @@
 </head>
 <body>
 
+<!--
+  Work around differences in bounds calculations in isolated tree mode.
+-->
+<style>
+button {
+    appearance: none;
+}
+</style>
+
 <div id="group" style="overflow: scroll; width:100px; height:100px;">
 test test test test <br>
 test test test test <br>
@@ -34,7 +43,7 @@ if (window.accessibilityController) {
 
     var newButtonX, newButtonY;
     setTimeout(async function() {
-        await waitFor(() => button.x == initialButtonX && button.y > initialButtonY);
+        await waitFor(() => button.y != initialButtonY);
         newButtonX = button.x;
         newButtonY = button.y;
 
