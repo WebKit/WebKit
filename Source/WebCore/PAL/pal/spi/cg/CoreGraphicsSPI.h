@@ -406,6 +406,8 @@ CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
+CGSize CGDisplayScreenSize(CGDirectDisplayID);
+
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
 

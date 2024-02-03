@@ -70,6 +70,7 @@ public:
     void focusPreviousAnnotation() final;
 
     void attemptToUnlockPDF(const String& password) final;
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
@@ -80,6 +81,8 @@ private:
     void teardown() override;
 
     void installPDFDocument() override;
+
+    float scaleForActualSize() const;
 
     CGFloat scaleFactor() const override;
     CGSize contentSizeRespectingZoom() const final;

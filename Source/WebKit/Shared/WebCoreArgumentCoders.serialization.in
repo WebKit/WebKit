@@ -2235,6 +2235,7 @@ header: <WebCore/ScreenProperties.h>
     bool screenHasInvertedColors;
     bool screenSupportsHighDynamicRange;
 #if PLATFORM(MAC)
+    WebCore::FloatSize screenSize;
     bool screenIsMonochrome;
     uint32_t displayMask;
     WebCore::PlatformGPUID gpuID;

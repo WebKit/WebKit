@@ -51,6 +51,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
@@ -387,6 +388,36 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
 
         [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
     }
+}
+
+float UnifiedPDFPlugin::scaleForActualSize() const
+{
+#if PLATFORM(MAC)
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return 1;
+
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return 1;
+
+    auto* screenData = WebCore::screenData(webPage->corePage()->displayID());
+    if (!screenData)
+        return 1;
+
+    if (!m_documentLayout.pageCount() || documentSize().isEmpty())
+        return 1;
+
+    auto firstPageBounds = m_documentLayout.boundsForPageAtIndex(0);
+    if (firstPageBounds.isEmpty())
+        return 1;
+
+    constexpr auto pdfDotsPerInch = 72.0;
+    auto screenDPI = screenData->screenDPI();
+    float pixelSize = screenDPI * firstPageBounds.width() / pdfDotsPerInch;
+
+    return pixelSize / size().width();
+#endif
+    return 1;
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
@@ -1130,7 +1161,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
         zoomOut();
         break;
     case ContextMenuItemTag::ActualSize:
-        setPageScaleFactor(1, std::nullopt);
+        setPageScaleFactor(scaleForActualSize(), std::nullopt);
         break;
     }
 }

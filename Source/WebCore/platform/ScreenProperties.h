@@ -45,10 +45,12 @@ struct ScreenData {
     bool screenHasInvertedColors { false };
     bool screenSupportsHighDynamicRange { false };
 #if PLATFORM(MAC)
+    FloatSize screenSize; // In millimeters.
     bool screenIsMonochrome { false };
     uint32_t displayMask { 0 };
     PlatformGPUID gpuID { 0 };
     DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
+    WEBCORE_EXPORT double screenDPI() const;
 #endif
 #if PLATFORM(GTK)
     IntSize screenSize; // In millimeters.
