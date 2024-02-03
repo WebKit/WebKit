@@ -50,6 +50,7 @@ class FloatPoint;
 class FloatSize;
 class GraphicsContext;
 class FragmentedSharedBuffer;
+class ShareableBitmap;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -62,6 +63,7 @@ public:
     virtual ~Image();
     
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
+    WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&);
     WEBCORE_EXPORT static bool supportsType(const String&);
     static bool isPDFResource(const String& mimeType, const URL&);
     static bool isPostScriptResource(const String& mimeType, const URL&);
@@ -158,6 +160,8 @@ public:
 #endif
 
     virtual void dump(WTF::TextStream&) const;
+
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
 protected:
     WEBCORE_EXPORT Image(ImageObserver* = nullptr);

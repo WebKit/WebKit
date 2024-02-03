@@ -140,11 +140,6 @@ template<> struct ArgumentCoder<WebCore::Credential> {
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::Credential&);
 };
 
-template<> struct ArgumentCoder<WebCore::Image> {
-    static void encode(Encoder&, const WebCore::Image&);
-    static std::optional<Ref<WebCore::Image>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);

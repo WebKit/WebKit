@@ -234,37 +234,6 @@ bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
     return true;
 }
 
-void ArgumentCoder<Image>::encode(Encoder& encoder, const Image& image)
-{
-    RefPtr bitmap = ShareableBitmap::create({ IntSize(image.size()) });
-    auto graphicsContext = bitmap->createGraphicsContext();
-    encoder << !!graphicsContext;
-    if (!graphicsContext)
-        return;
-
-    graphicsContext->drawImage(const_cast<Image&>(image), IntPoint());
-    
-    encoder << bitmap;
-}
-
-std::optional<Ref<Image>> ArgumentCoder<Image>::decode(Decoder& decoder)
-{
-    std::optional<bool> didCreateGraphicsContext;
-    decoder >> didCreateGraphicsContext;
-    if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
-        return std::nullopt;
-
-    std::optional<RefPtr<WebCore::ShareableBitmap>> bitmap;
-    decoder >> bitmap;
-    if (!bitmap)
-        return std::nullopt;
-    
-    RefPtr image = bitmap.value()->createImage();
-    if (!image)
-        return std::nullopt;
-    return image.releaseNonNull();
-}
-
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
     encoder << font.attributes();

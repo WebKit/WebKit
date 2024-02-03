@@ -35,6 +35,7 @@
 #include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "SVGImage.h"
+#include "ShareableBitmap.h"
 #include "SharedBuffer.h"
 #include <math.h>
 #include <wtf/MainThread.h>
@@ -109,6 +110,16 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     }
 
     return BitmapImage::create(&observer);
+}
+
+std::optional<Ref<Image>> Image::create(RefPtr<ShareableBitmap>&& bitmap)
+{
+    if (!bitmap)
+        return std::nullopt;
+    RefPtr image = bitmap->createImage();
+    if (!image)
+        return std::nullopt;
+    return image.releaseNonNull();
 }
 
 bool Image::supportsType(const String& type)
@@ -384,6 +395,17 @@ void Image::startAnimationAsynchronously()
 DestinationColorSpace Image::colorSpace()
 {
     return DestinationColorSpace::SRGB();
+}
+
+RefPtr<ShareableBitmap> Image::toShareableBitmap() const
+{
+    RefPtr bitmap = ShareableBitmap::create({ IntSize(size()) });
+    std::unique_ptr graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    graphicsContext->drawImage(const_cast<Image&>(*this), IntPoint());
+    return bitmap;
 }
 
 void Image::dump(TextStream& ts) const
