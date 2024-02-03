@@ -42,6 +42,8 @@ struct PDFContextMenu;
 class WebFrame;
 class WebMouseEvent;
 
+enum class WebEventModifier : uint8_t;
+
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
 public:
     static Ref<UnifiedPDFPlugin> create(WebCore::HTMLPlugInElement&);
@@ -154,6 +156,19 @@ private:
     static constexpr int invalidContextMenuItemTag { -1 };
 #endif
 
+    enum class SelectionGranularity : uint8_t {
+        Character,
+        Word,
+        Line,
+    };
+    enum class SelectionCommitReason : bool { SelectionIsNoLongerActive, ReceivedMouseUp };
+
+    SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
+    void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity, OptionSet<WebEventModifier>);
+    void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
+    void setCurrentSelection(RetainPtr<PDFSelection>&&);
+    void commitCurrentSelection(SelectionCommitReason);
+
     String getSelectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
@@ -246,6 +261,18 @@ private:
 
     RetainPtr<PDFAnnotation> m_trackedAnnotation;
 
+    struct SelectionTrackingData {
+        bool shouldExtendCurrentSelection { false };
+        bool shouldMakeMarqueeSelection { false };
+        bool isActive { false };
+        SelectionGranularity granularity { SelectionGranularity::Character };
+        PDFDocumentLayout::PageIndex startPageIndex;
+        WebCore::IntPoint startPagePoint;
+        RetainPtr<PDFSelection> selectionToExtendWith;
+        WebCore::IntRect marqueeSelectionRect;
+    };
+    SelectionTrackingData m_selectionTrackingData;
+    RetainPtr<PDFSelection> m_currentSelection;
 };
 
 } // namespace WebKit

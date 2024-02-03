@@ -32,6 +32,7 @@
 #include "PDFKitSPI.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
+#include "WebEventModifier.h"
 #include "WebEventType.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyMessages.h"
@@ -835,12 +836,12 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForDocume
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const WebCore::IntPoint& point) const
 {
     auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(point));
-    auto nearestPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
-    if (!nearestPageIndex)
+    auto pageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
+    if (!pageIndex)
         return nullptr;
 
-    auto page = m_documentLayout.pageAtIndex(nearestPageIndex.value());
-    return [page annotationAtPoint:convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex.value())];
+    auto page = m_documentLayout.pageAtIndex(pageIndex.value());
+    return [page annotationAtPoint:convertFromDocumentToPage(pointInDocumentSpace, pageIndex.value())];
 }
 
 static AffineTransform documentSpaceToPageSpaceTransform(const IntDegrees& pageRotation, const FloatRect& pageBounds)
@@ -956,6 +957,12 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     m_lastMousePositionInPluginCoordinates = convertFromRootViewToPlugin(event.position());
+    auto pointInDocumentSpace = convertFromPluginToDocument(m_lastMousePositionInPluginCoordinates);
+    auto pageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
+    if (!pageIndex)
+        return false;
+
+    auto pointInPageSpace = convertFromDocumentToPage(pointInDocumentSpace, *pageIndex);
 
     switch (event.type()) {
     case WebEventType::MouseMove:
@@ -974,7 +981,9 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 handleMouseDraggedOffTrackedAnnotation();
                 return true;
             }
-            return false;
+
+            continueTrackingSelection(*pageIndex, pointInPageSpace);
+            return true;
         }
         default:
             return false;
@@ -982,10 +991,6 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     case WebEventType::MouseDown:
         switch (event.button()) {
         case WebMouseEventButton::Left: {
-            auto pointInDocumentSpace = convertFromPluginToDocument(convertFromRootViewToPlugin(event.position()));
-            auto nearestPageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
-            if (!nearestPageIndex)
-                return false;
             if (RetainPtr<PDFAnnotation> annotation = annotationForRootViewPoint(event.position())) {
                 if (([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] || [annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()]) && [annotation isReadOnly])
                     return true;
@@ -1000,12 +1005,17 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 }
                 return false;
             }
+
+            beginTrackingSelection(*pageIndex, pointInPageSpace, selectionGranularityForMouseEvent(event), event.modifiers());
+
             return false;
         }
         default:
             return false;
         }
     case WebEventType::MouseUp:
+        commitCurrentSelection(SelectionCommitReason::ReceivedMouseUp);
+
         switch (event.button()) {
         case WebMouseEventButton::Left:
             if (m_trackedAnnotation) {
@@ -1162,9 +1172,89 @@ bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
     return false;
 }
 
+#pragma mark Selections
+
+auto UnifiedPDFPlugin::selectionGranularityForMouseEvent(const WebMouseEvent& event) const -> SelectionGranularity
+{
+    if (event.clickCount() == 2)
+        return SelectionGranularity::Word;
+    if (event.clickCount() == 3)
+        return SelectionGranularity::Line;
+    return SelectionGranularity::Character;
+}
+
+void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity selectionGranularity, OptionSet<WebEventModifier> mouseEventModifiers)
+{
+    m_selectionTrackingData.isActive = true;
+    m_selectionTrackingData.granularity = selectionGranularity;
+    m_selectionTrackingData.startPageIndex = pageIndex;
+    m_selectionTrackingData.startPagePoint = pagePoint;
+    m_selectionTrackingData.marqueeSelectionRect = { };
+    m_selectionTrackingData.shouldMakeMarqueeSelection = mouseEventModifiers.contains(WebEventModifier::AltKey);
+    m_selectionTrackingData.shouldExtendCurrentSelection = mouseEventModifiers.contains(WebEventModifier::ShiftKey);
+
+    // FIXME: <https://webkit.org/b/268617>  Selections should be extensible on shift-click.
+    if (m_selectionTrackingData.shouldExtendCurrentSelection)
+        notImplemented();
+
+    continueTrackingSelection(pageIndex, pagePoint);
+}
+
+static IntRect computeMarqueeSelectionRect(const WebCore::IntPoint& point1, const WebCore::IntPoint& point2)
+{
+    auto marqueeRectLocation { point1.shrunkTo(point2) };
+    IntSize marqueeRectSize { point1 - point2 };
+    return { marqueeRectLocation.x(), marqueeRectLocation.y(), std::abs(marqueeRectSize.width()), std::abs(marqueeRectSize.height()) };
+}
+
+void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint)
+{
+    m_selectionTrackingData.isActive = true;
+
+    if (m_selectionTrackingData.shouldMakeMarqueeSelection) {
+        if (m_selectionTrackingData.startPageIndex != pageIndex)
+            return;
+
+        m_selectionTrackingData.marqueeSelectionRect = computeMarqueeSelectionRect(pagePoint, m_selectionTrackingData.startPagePoint);
+        auto page = m_documentLayout.pageAtIndex(pageIndex);
+        return setCurrentSelection([page.get() selectionForRect:m_selectionTrackingData.marqueeSelectionRect]);
+    }
+
+    switch (m_selectionTrackingData.granularity) {
+    case SelectionGranularity::Character: {
+        auto fromPage = m_documentLayout.pageAtIndex(m_selectionTrackingData.startPageIndex);
+        auto toPage = m_documentLayout.pageAtIndex(pageIndex);
+        RetainPtr<PDFSelection> selection = [m_pdfDocument selectionFromPage:fromPage.get() atPoint:m_selectionTrackingData.startPagePoint toPage:toPage.get() atPoint:pagePoint];
+        if (m_selectionTrackingData.shouldExtendCurrentSelection)
+            [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
+        setCurrentSelection(WTFMove(selection));
+        break;
+    }
+    // FIXME: <https://webkit.org/b/268616> Selection tracking should be able to reason at word/line granularity.
+    case SelectionGranularity::Word:
+    case SelectionGranularity::Line:
+        notImplemented();
+    }
+}
+
+void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
+{
+    m_currentSelection = WTFMove(selection);
+    if (!m_selectionTrackingData.isActive)
+        commitCurrentSelection(SelectionCommitReason::SelectionIsNoLongerActive);
+}
+
+void UnifiedPDFPlugin::commitCurrentSelection(SelectionCommitReason reason)
+{
+    if (reason == SelectionCommitReason::ReceivedMouseUp && !std::exchange(m_selectionTrackingData.isActive, false))
+        return;
+    notifySelectionChanged();
+    m_selectionTrackingData.selectionToExtendWith = nullptr;
+}
+
 String UnifiedPDFPlugin::getSelectionString() const
 {
-    return emptyString();
+    return m_currentSelection.get().string;
 }
 
 bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint&) const
@@ -1176,6 +1266,8 @@ FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *) const
 {
     return { };
 }
+
+#pragma mark -
 
 unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount)
 {
