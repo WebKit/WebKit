@@ -183,8 +183,13 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             return HashSet<WebCore::PlatformLayerIdentifier>();
         }).iterator->value.add(rootNode->layerID());
         rootNode->setRemoteContextHostedIdentifier(*contextHostedID);
-        if (auto* remoteRootNode = nodeForID(m_hostingLayers.get(*contextHostedID)))
+        if (auto* remoteRootNode = nodeForID(m_hostingLayers.get(*contextHostedID))) {
+#if PLATFORM(IOS_FAMILY)
+            [remoteRootNode->uiView() addSubview:rootNode->uiView()];
+#else
             [remoteRootNode->layer() addSublayer:rootNode->layer()];
+#endif
+        }
     }
 
     for (auto& changedLayer : transaction.changedLayerProperties()) {
@@ -378,7 +383,11 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
     if (auto* hostIdentifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&properties.additionalData)) {
         m_hostingLayers.set(*hostIdentifier, properties.layerID);
         if (auto* hostedNode = nodeForID(m_hostedLayers.get(*hostIdentifier)))
+#if PLATFORM(IOS_FAMILY)
+            [node->uiView() addSubview:hostedNode->uiView()];
+#else
             [node->layer() addSublayer:hostedNode->layer()];
+#endif
     }
 
     m_nodes.add(properties.layerID, WTFMove(node));
