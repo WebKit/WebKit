@@ -305,13 +305,13 @@ void MediaSessionManagerGLib::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingTitle = nowPlayingInfo->title;
 
     double duration = nowPlayingInfo->duration;
-    if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
+    if (std::isfinite(duration) && !std::isnan(duration))
         m_lastUpdatedNowPlayingDuration = duration;
 
     m_lastUpdatedNowPlayingInfoUniqueIdentifier = nowPlayingInfo->uniqueIdentifier;
 
     double currentTime = nowPlayingInfo->currentTime;
-    if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime() && nowPlayingInfo->supportsSeeking)
+    if (std::isfinite(currentTime) && !std::isnan(currentTime) && nowPlayingInfo->supportsSeeking)
         m_lastUpdatedNowPlayingElapsedTime = currentTime;
 
     m_nowPlayingActive = nowPlayingInfo->allowsNowPlayingControlsVisibility;

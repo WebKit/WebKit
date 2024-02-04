@@ -52,7 +52,7 @@ MediaController::MediaController(ScriptExecutionContext& context)
     , m_paused(false)
     , m_defaultPlaybackRate(1)
     , m_volume(1)
-    , m_position(MediaPlayer::invalidTime())
+    , m_position(std::numeric_limits<double>::quiet_NaN())
     , m_muted(false)
     , m_readyState(HAVE_NOTHING)
     , m_playbackState(WAITING)
@@ -141,7 +141,7 @@ double MediaController::currentTime() const
     if (m_mediaElements.isEmpty())
         return 0;
 
-    if (m_position == MediaPlayer::invalidTime()) {
+    if (std::isnan(m_position)) {
         // Some clocks may return times outside the range of [0..duration].
         m_position = std::max<double>(0, std::min(duration(), m_clock->currentTime()));
         m_clearPositionTimer.startOneShot(0_s);
@@ -548,7 +548,7 @@ void MediaController::asyncEventTimerFired()
 
 void MediaController::clearPositionTimerFired()
 {
-    m_position = MediaPlayer::invalidTime();
+    m_position = std::numeric_limits<double>::quiet_NaN();
 }
 
 bool MediaController::hasAudio() const

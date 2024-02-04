@@ -1278,10 +1278,10 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 
     bool supportsSeeking = m_element.supportsSeeking();
     double rate = 1.0;
-    double duration = supportsSeeking ? m_element.duration() : MediaPlayer::invalidTime();
+    double duration = supportsSeeking ? m_element.duration() : std::numeric_limits<double>::quiet_NaN();
     double currentTime = m_element.currentTime();
     if (!std::isfinite(currentTime) || !supportsSeeking)
-        currentTime = MediaPlayer::invalidTime();
+        currentTime = std::numeric_limits<double>::quiet_NaN();
     auto sourceApplicationIdentifier = m_element.sourceApplicationIdentifier();
 #if PLATFORM(COCOA)
     // FIXME: Eventually, this should be moved into HTMLMediaElement, so all clients

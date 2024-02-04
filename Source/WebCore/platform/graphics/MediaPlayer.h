@@ -426,7 +426,6 @@ public:
     bool seeking() const;
     void seeked(const MediaTime&);
 
-    static double invalidTime() { return -1.0;}
     MediaTime duration() const;
     MediaTime currentTime() const;
 
