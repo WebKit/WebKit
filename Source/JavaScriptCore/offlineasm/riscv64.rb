@@ -1624,7 +1624,7 @@ class Instruction
             riscv64ValidateOperands(operands, [RegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
         when /^rv_b(eq|ne|gt|ge|gtu|geu|lt|le|ltu|leu)$/
-            riscv64ValidateOperands(operands, [RegisterID, RegisterID, LocalLabelReference])
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID, LocalLabelReference], [RegisterID, RegisterID, LabelReference])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[2].asmLabel}"
         when /^rv_b(eqz|nez|lez|ltz|gez|gtz)$/
             riscv64ValidateOperands(operands, [RegisterID, LocalLabelReference])

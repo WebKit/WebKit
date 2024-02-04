@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER) && CPU(RISCV64)
 
 #include "AssemblerBuffer.h"
+#include "AssemblerCommon.h"
 #include "RISCV64Registers.h"
 #include <tuple>
 
