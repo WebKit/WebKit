@@ -58,6 +58,8 @@ class FragmentedSharedBuffer;
 class SubresourceLoader;
 class TextResourceDecoder;
 
+template<typename> class CachedResourceHandle;
+
 enum class CachePolicy : uint8_t;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
@@ -133,6 +135,7 @@ public:
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
+    RefPtr<const CookieJar> protectedCookieJar() const;
     Type type() const { return m_type; }
     String mimeType() const { return response().mimeType(); }
     long long expectedContentLength() const { return response().expectedContentLength(); }
@@ -279,15 +282,16 @@ public:
 
     bool varyHeaderValuesMatch(const ResourceRequest&);
 
-    bool isCacheValidator() const { return m_resourceToRevalidate; }
-    CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
+    bool isCacheValidator() const { return !!m_resourceToRevalidate; }
+    CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate.get(); }
+    CachedResourceHandle<CachedResource> protectedResourceToRevalidate() const;
 
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);
     virtual void switchClientsToRevalidatedResource();
     void clearResourceToRevalidate();
     void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
-    bool validationInProgress() const { return m_proxyResource; }
+    bool validationInProgress() const { return !!m_proxyResource; }
     bool validationCompleting() const { return m_proxyResource && m_proxyResource->m_switchingClientsToRevalidatedResource; }
 
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
@@ -382,6 +386,7 @@ private:
     SingleThreadWeakHashMap<CachedResourceClient, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
 
     // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
+    // FIXME: This should use a smart pointer.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
     Vector<std::pair<String, String>> m_varyingHeaderValues;
@@ -390,10 +395,10 @@ private:
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
     // to to be clients of m_resourceToRevalidate and the resource is deleted. If not, the field is zeroed and this
     // resources becomes normal resource load.
-    CachedResource* m_resourceToRevalidate { nullptr };
+    WeakPtr<CachedResource> m_resourceToRevalidate;
 
     // If this field is non-null, the resource has a proxy for checking whether it is still up to date (see m_resourceToRevalidate).
-    CachedResource* m_proxyResource { nullptr };
+    WeakPtr<CachedResource> m_proxyResource;
 
     String m_fragmentIdentifierForRequest;
 
@@ -439,8 +444,8 @@ public:
 private:
     void timerFired();
 
-    CachedResource& m_resource;
-    CachedResourceClient& m_client;
+    WeakRef<CachedResource> m_resource;
+    SingleThreadWeakRef<CachedResourceClient> m_client;
     Timer m_timer;
 };
 

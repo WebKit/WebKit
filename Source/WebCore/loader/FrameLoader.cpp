@@ -2046,6 +2046,11 @@ DocumentLoader* FrameLoader::activeDocumentLoader() const
     return m_documentLoader.get();
 }
 
+RefPtr<DocumentLoader> FrameLoader::protectedActiveDocumentLoader() const
+{
+    return activeDocumentLoader();
+}
+
 bool FrameLoader::isLoading() const
 {
     DocumentLoader* docLoader = activeDocumentLoader();
