@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+* Copyright (C) 2016-2024 Apple, Inc. All Rights Reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -23,18 +23,22 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/uievents/#idl-inputevent
+
 [
     Exposed=Window
 ] interface InputEvent : UIEvent {
     constructor([AtomString] DOMString type, optional InputEventInit eventInitDict);
 
     readonly attribute DOMString inputType;
-    readonly attribute DOMString? data;
+    readonly attribute USVString? data;
     [ImplementedAs=isInputMethodComposing] readonly attribute boolean isComposing;
     readonly attribute DataTransfer? dataTransfer;
 
     sequence<StaticRange> getTargetRanges();
 };
+
+// https://w3c.github.io/uievents/#idl-inputeventinit
 
 dictionary InputEventInit : UIEventInit {
     DOMString? data = null;
