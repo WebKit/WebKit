@@ -1477,9 +1477,10 @@ static inline bool isInlineFlowOrEmptyText(const RenderObject& renderer)
 
 UChar RenderText::previousCharacter() const
 {
-    // find previous text renderer if one exists
     const RenderObject* previousText = this;
     while ((previousText = previousText->previousInPreOrder())) {
+        if (!previousText->isInFlow())
+            continue;
         if (!isInlineFlowOrEmptyText(*previousText))
             break;
     }
