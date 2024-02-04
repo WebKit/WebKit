@@ -788,10 +788,14 @@ String AccessibilityRenderObject::stringValue() const
     if (isWebArea())
         return { };
 
-#if PLATFORM(IOS_FAMILY)
-    if (isInputTypePopupButton())
-        return textUnderElement();
-#endif
+    if (isDateTime()) {
+        String value;
+        Accessibility::enumerateDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value] (const auto& object) {
+            if (object.isStaticText())
+                value = value + object.stringValue();
+        });
+        return value;
+    }
 
     if (auto* renderFileUploadControl = dynamicDowncast<RenderFileUploadControl>(m_renderer.get()))
         return renderFileUploadControl->fileTextValue();
@@ -2295,7 +2299,7 @@ void AccessibilityRenderObject::addTextFieldChildren()
     RefPtr node = dynamicDowncast<HTMLInputElement>(this->node());
     if (!node)
         return;
-    
+
     auto* spinButtonElement = dynamicDowncast<SpinButtonElement>(node->innerSpinButtonElement());
     if (!spinButtonElement)
         return;

@@ -713,7 +713,6 @@ public:
 #if PLATFORM(IOS_FAMILY)
     int accessibilitySecureFieldLength() override;
     bool hasTouchEventListener() const override;
-    bool isInputTypePopupButton() const override;
 #endif
 
     // allows for an AccessibilityObject to update its render tree or perform

@@ -791,6 +791,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Meter, NSAccessibilityLevelIndicatorRole },
         { AccessibilityRole::Incrementor, NSAccessibilityIncrementorRole },
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
+        { AccessibilityRole::DateTime, NSAccessibilityTextFieldRole },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
         { AccessibilityRole::Code, NSAccessibilityGroupRole },
         { AccessibilityRole::ColorWell, NSAccessibilityColorWellRole },

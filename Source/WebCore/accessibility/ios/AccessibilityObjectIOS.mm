@@ -134,13 +134,6 @@ bool AccessibilityObject::hasTouchEventListener() const
     return false;
 }
 
-bool AccessibilityObject::isInputTypePopupButton() const
-{
-    if (is<HTMLInputElement>(node()))
-        return roleValue() == AccessibilityRole::PopUpButton;
-    return false;
-}
-
 void AccessibilityObject::setLastPresentedTextPrediction(Node& previousCompositionNode, CompositionState state, const String& text, size_t location, bool handlingAcceptedCandidate)
 {
 #if HAVE(INLINE_PREDICTIONS)

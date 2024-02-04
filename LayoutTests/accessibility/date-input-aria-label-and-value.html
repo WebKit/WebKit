@@ -6,92 +6,77 @@
 </head>
 <body>
 
-<input id="date-input" type="date" value="2022-02-02" />
+<input id="date-input" type="date" value="2022-11-21" />
 
 <script>
-var testOutput = "Tests that aria-label and aria-valuenow update correctly for date inputs.\n\n";
+var output = "Tests that subfield values update correctly for date inputs.\n\n";
 
-function outputString(message) {
-    testOutput += (`\n${message}\n`);
-}
-
-function keyDown(key, repeat = 1, message = "") {
-    if (message) 
-        outputString(message + ` (x${repeat})`);
-
-    for (let i = 0 ; i < repeat ; i++) 
+function keyDown(key, repeat = 1) {
+    for (let i = 0; i < repeat; i++)
         eventSender.keyDown(key);
 }
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
-    var axDateFieldWrapper = accessibilityController.accessibleElementById("date-input")
-            .childAtIndex(0)
-            .childAtIndex(0);
+    const dateInput = document.getElementById("date-input");
+    var axDateInput = accessibilityController.accessibleElementById("date-input");
 
-    setTimeout(async function() {
-        async function expectChildToHaveARIAValueAttributes(childIndex, description) {
-            let result = await expectAsync(`axDateFieldWrapper.childAtIndex(${childIndex}).intValue`, `${description}`);
+    function getAndLogSubfields(axElement) {
+        let subfields = axElement.childAtIndex(0).childAtIndex(0).children;
+        subfields.forEach((child) => {
+            output += `${child.description} ${child.role} ${child.stringValue}\n`;
+        });
+        return subfields;
+    }
 
-            result += await expectAsync(`axDateFieldWrapper.childAtIndex(${childIndex}).valueDescription`, `"AXValueDescription: ${description}"`);
+    output+= "Original subfield values:\n";
+    var subfields = getAndLogSubfields(axDateInput);
 
-            return result;
-        }
-        
-        function expectChildToHaveARIALabel(childIndex, labelText) {
-            return expect(`platformValueForW3CName(axDateFieldWrapper.childAtIndex(${childIndex}))`, labelText);
-        }
-        
-        const dateInput = document.getElementById("date-input");
-
-        outputString("Checking ARIA Labels for sub-fields");
-        testOutput += expectChildToHaveARIALabel(0, `"month"`);
-        testOutput += expectChildToHaveARIALabel(1, `"day"`);
-        testOutput += expectChildToHaveARIALabel(2, `"year"`);
-        
-        outputString("Focusing date element and pressing up arrow to increment the first field.");
+    setTimeout(async () => {
+        output += "\nFocus date element and press up arrow to increment the month field:\n";
         dateInput.focus();
         keyDown("upArrow");
+        output += await expectAsync("subfields[0].intValue", "12");
 
-        testOutput += await expectChildToHaveARIAValueAttributes(0, 3);
+        output += "\nPress down arrow twice to decrement the month field.\n";
+        keyDown("downArrow", 2);
+        output += await expectAsync("subfields[0].intValue", "10");
 
-        keyDown("downArrow", 2, "Simulating down arrow press to decrement the first field.");
-        testOutput += await expectChildToHaveARIAValueAttributes(0, 1);
-
-        outputString("Simulating tab key to move to the next field in the date input.");
+        output += "\nPress the tab key to move to the day field in the date input.\n";
         keyDown("\t");
-        testOutput += await expectChildToHaveARIAValueAttributes(1, 2);
+        output += await expectAsync("subfields[2].intValue", "21");
 
-        outputString("Simulating typing \"10\" in the second input field.");
+        output += "\nType 10 in the day subfield.\n";
         keyDown("1");
         keyDown("0")
-        testOutput += await expectChildToHaveARIAValueAttributes(1, 10);
+        output += await expectAsync("subfields[2].intValue", "10");
 
-        outputString("Simulating down arrow press to decrement the second field value.")
+        output += "\nPress down arrow to decrement the day field.\n";
         keyDown("downArrow");
-        testOutput += await expectChildToHaveARIAValueAttributes(1, 9);
+        output += await expectAsync("subfields[2].intValue", "9");
 
-        keyDown("upArrow", 2, "Simulating up arrow press to increment the second field value.");
-        testOutput += await expectChildToHaveARIAValueAttributes(1, 11);
+        output += "\nPress up arrow twice to increment the day field.\n";
+        keyDown("upArrow", 2);
+        output += await expectAsync("subfields[2].intValue", "11");
 
-        outputString("Simulating tab key to move to the next field in the date input.");
+        output += "\nPress tab to move to the year field in the date input.\n";
         keyDown("\t");
-        testOutput += await expectChildToHaveARIAValueAttributes(2, 2022);
+        output += await expectAsync("subfields[4].intValue", "2022");
 
-        keyDown("downArrow", 10, "Simulating down arrow press to decrement the third field value.");
-        testOutput += await expectChildToHaveARIAValueAttributes(2, 2012);
+        output+= "\nPress down arrow 10 times to decrement the year field.\n";
+        keyDown("downArrow", 10);
+        output += await expectAsync("subfields[4].intValue", "2012");
 
-        outputString("Simulating up arrow press to increment the third field value.")
+        output += "\nPress up arrow to increment the year field.\n";
         keyDown("upArrow");
-        testOutput += await expectChildToHaveARIAValueAttributes(2, 2013);
+        output += await expectAsync("subfields[4].intValue", "2013");
 
-        outputString("Manually setting the date input's value via JavaScript.")
-        dateInput.value = "2023-12-30";
-        testOutput += await expectChildToHaveARIAValueAttributes(0, 12);
-        testOutput += await expectChildToHaveARIAValueAttributes(1, 30);
-        testOutput += await expectChildToHaveARIAValueAttributes(2, 2023);
+        output += "\nSet the date via JavaScript.\n";
+        dateInput.value = "2023-12-31";
+        await expectAsync("axDateInput.childAtIndex(0).childAtIndex(0).children[4].intValue", "2023");
+        getAndLogSubfields(axDateInput);
 
-        debug(testOutput);
+        debug(output);
         finishJSTest();
     });
 }

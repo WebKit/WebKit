@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="time" id="inputtime1" aria-label="(Between: 07:00 AM-09:00 AM)" min="07:00" max="09:00" step="300" placeholder="00:00 AM" value="08:00">
+<input type="time" id="inputtime2" min="07:00" max="09:00" step="300" value="07:30">
+
+<script>
+let output = "This tests input type=time label and value properties.\n\n";
+
+if (window.accessibilityController) {
+    var inputtime = accessibilityController.accessibleElementById("inputtime1");
+    output += expect("inputtime.title", "'AXTitle: (Between: 07:00 AM-09:00 AM)'");
+    output += `${inputtime.stringValue}\n`;
+
+    inputtime = accessibilityController.accessibleElementById("inputtime2");
+    output += expect("inputtime.title", "'AXTitle: '");
+    output += `${inputtime.stringValue}\n`;
+
+    debug(output);
+}
+</script>
+</body>
+</html>

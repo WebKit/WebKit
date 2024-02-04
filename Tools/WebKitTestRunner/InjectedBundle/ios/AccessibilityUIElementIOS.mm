@@ -519,7 +519,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
-    return createJSString();
+    return concatenateAttributeAndValue(@"AXTitle", [m_element accessibilityLabel]);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()

@@ -1029,11 +1029,10 @@ AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame* frame)
         return nullptr;
     return getOrCreate(frame->view());
 }    
-    
+
 AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 {
     RefPtr<AccessibilityObject> obj;
-
     // will be filled in...
     switch (role) {
     case AccessibilityRole::ImageMapLink:
@@ -1058,7 +1057,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
         obj = AccessibilitySpinButtonPart::create();
         break;
     default:
-        obj = nullptr;
+        break;
     }
 
     if (!obj)

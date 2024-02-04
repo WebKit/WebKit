@@ -340,11 +340,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
             return AccessibilityRole::RadioButton;
         if (input->isTextButton())
             return buttonRoleType();
-        // On iOS, the date field and time field are popup buttons. On other platforms they are text fields.
-#if PLATFORM(IOS_FAMILY)
-        if (input->isDateField() || input->isTimeField())
-            return AccessibilityRole::PopUpButton;
-#endif
+        if (input->isDateField() || input->isDateTimeLocalField() || input->isMonthField() || input->isTimeField() || input->isWeekField())
+            return AccessibilityRole::DateTime;
 #if ENABLE(INPUT_TYPE_COLOR)
         if (input->isColorControl())
             return AccessibilityRole::ColorWell;

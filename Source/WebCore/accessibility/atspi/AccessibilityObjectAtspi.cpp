@@ -298,6 +298,8 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Canvas;
     case AccessibilityRole::HorizontalRule:
         return Atspi::Role::Separator;
+    case AccessibilityRole::DateTime:
+        return Atspi::Role::Entry;
     case AccessibilityRole::SpinButton:
         return Atspi::Role::SpinButton;
     case AccessibilityRole::Tab:
