@@ -311,16 +311,42 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& style)
     return computedVisualOverflowForDecorations(style, underlineOffset);
 }
 
+static inline float inlineBoxContentBoxHeight(const InlineIterator::InlineBox& inlineBox)
+{
+    auto contentBoxHeight = inlineBox.logicalHeight();
+    if (!inlineBox.isRootInlineBox())
+        contentBoxHeight -= (inlineBox.renderer().borderAndPaddingBefore() + inlineBox.renderer().borderAndPaddingAfter());
+    return contentBoxHeight;
+}
+
 float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
     if (!isAlignedForUnder(style))
         return computedUnderlineOffset({ style, { } });
 
-    auto inlineBoxContentBoxHeight = inlineBox.logicalHeight();
-    if (!inlineBox.isRootInlineBox())
-        inlineBoxContentBoxHeight -= (inlineBox.renderer().borderAndPaddingBefore() + inlineBox.renderer().borderAndPaddingAfter());
     auto textRunOffset = boxOffsetFromBottomMost(inlineBox.lineBox(), inlineBox.renderer(), inlineBox.logicalTop(), inlineBox.logicalBottom());
-    return computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight, textRunOffset } });
+    return computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset } });
+}
+
+float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
+{
+    auto writingMode = style.writingMode();
+    if (isHorizontalWritingMode(writingMode))
+        return { };
+
+    if (!style.textDecorationsInEffect().contains(TextDecorationLine::Underline))
+        return { };
+
+    auto underlinePosition = style.textUnderlinePosition();
+    // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
+    // If 'left' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
+    auto overBecomesUnder = (underlinePosition == TextUnderlinePosition::Left && writingMode == WritingMode::SidewaysLr)
+        || (underlinePosition == TextUnderlinePosition::Right && (writingMode == WritingMode::VerticalLr || writingMode == WritingMode::VerticalRl || writingMode == WritingMode::SidewaysRl));
+
+    if (!overBecomesUnder)
+        return { };
+
+    return inlineBoxContentBoxHeight(inlineBox);
 }
 
 }

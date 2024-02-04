@@ -661,7 +661,10 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             auto overlineOffset = [&] {
                 if (!computedTextDecorationType.contains(TextDecorationLine::Overline))
                     return 0.f;
-                return autoTextDecorationThickness - textDecorationThickness - (decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
+                auto baseOffset = overlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style);
+                baseOffset += (autoTextDecorationThickness - textDecorationThickness);
+                auto wavyOffset = decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
+                return baseOffset - wavyOffset;
             };
 
             return TextDecorationPainter::BackgroundDecorationGeometry {
