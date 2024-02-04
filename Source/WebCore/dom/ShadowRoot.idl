@@ -23,6 +23,8 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://dom.spec.whatwg.org/#interface-shadowroot
+
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
@@ -31,7 +33,7 @@
     readonly attribute ShadowRootMode mode;
     readonly attribute boolean delegatesFocus;
     [ImplementedAs=slotAssignmentMode, EnabledBySetting=ImperativeSlotAPIEnabled] readonly attribute SlotAssignmentMode slotAssignment;
-    [ImplementedAs=isCloneable, EnabledBySetting=DeclarativeShadowRootsEnabled] readonly attribute boolean cloneable;
+    [ImplementedAs=isClonable, EnabledBySetting=DeclarativeShadowRootsEnabled] readonly attribute boolean clonable;
     readonly attribute Element host;
     attribute EventHandler onslotchange;
 };

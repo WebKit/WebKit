@@ -584,7 +584,7 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
 void Element::cloneShadowTreeIfPossible(Element& newHost)
 {
     RefPtr oldShadowRoot = this->shadowRoot();
-    if (!oldShadowRoot || !oldShadowRoot->isCloneable())
+    if (!oldShadowRoot || !oldShadowRoot->isClonable())
         return;
 
     Ref clonedShadowRoot = [&] {
@@ -2961,7 +2961,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
         return Exception { ExceptionCode::TypeError };
     Ref shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment,
         init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No,
-        init.cloneable ? ShadowRoot::Cloneable::Yes : ShadowRoot::Cloneable::No,
+        init.clonable ? ShadowRoot::Clonable::Yes : ShadowRoot::Clonable::No,
         isPrecustomizedOrDefinedCustomElement() ? ShadowRoot::AvailableToElementInternals::Yes : ShadowRoot::AvailableToElementInternals::No);
     addShadowRoot(shadow.copyRef());
     return shadow.get();
@@ -2969,7 +2969,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 
 ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, bool delegatesFocus)
 {
-    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus, /* cloneable */ true });
+    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus, /* clonable */ true });
     if (exceptionOrShadowRoot.hasException())
         return exceptionOrShadowRoot.releaseException();
     Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
