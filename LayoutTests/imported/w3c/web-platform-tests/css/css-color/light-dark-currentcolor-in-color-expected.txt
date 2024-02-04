@@ -1,0 +1,4 @@
+Text should be green
+
+PASS curentColor in light-dark() refers to parent color
+

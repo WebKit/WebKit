@@ -7432,6 +7432,8 @@ webkit.org/b/264830 [ Debug ] fast/rendering/render-list-marker-select.html [ Sk
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002.html [ ImageOnlyFailure ]
+
 http/tests/site-isolation/touch-events [ Skip ]
 
 # CSS syntax

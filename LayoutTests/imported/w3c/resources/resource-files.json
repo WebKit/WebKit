@@ -1282,6 +1282,7 @@
         "web-platform-tests/css/css-color/oklch-005-ref.html",
         "web-platform-tests/css/css-color/oklch-006-ref.html",
         "web-platform-tests/css/css-color/oklch-007-ref.html",
+        "web-platform-tests/css/css-color/oklch-l-over-1-ref.html",
         "web-platform-tests/css/css-color/opacity-overlapping-letters-ref.html",
         "web-platform-tests/css/css-color/out-of-gamut-legacy-rgb-ref.html",
         "web-platform-tests/css/css-color/prophoto-rgb-003-ref.html",
