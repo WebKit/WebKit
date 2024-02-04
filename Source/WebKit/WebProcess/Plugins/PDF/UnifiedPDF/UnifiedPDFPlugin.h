@@ -136,8 +136,12 @@ private:
     bool handleMouseLeaveEvent(const WebMouseEvent&) override;
     bool handleContextMenuEvent(const WebMouseEvent&) override;
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
+
+    // Editing commands
     bool handleEditingCommand(const String& commandName, const String& argument) override;
     bool isEditingCommandEnabled(const String& commandName) override;
+    bool forwardEditingCommandToEditor(const String& commandName, const String& argument) const;
+    void selectAll();
 
     enum class ContextMenuItemTag : uint8_t {
         OpenWithPreview,

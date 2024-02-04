@@ -1197,12 +1197,15 @@ bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
     return false;
 }
 
+#pragma mark Editing Commands
+
 bool UnifiedPDFPlugin::handleEditingCommand(const String& commandName, const String& argument)
 {
-    if (!m_frame || !m_frame->coreLocalFrame())
-        return false;
-    if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s) {
-        m_frame->coreLocalFrame()->checkedEditor()->command(commandName).execute(argument);
+    if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s)
+        return forwardEditingCommandToEditor(commandName, argument);
+
+    if (commandName == "selectAll"_s) {
+        selectAll();
         return true;
     }
     return false;
@@ -1212,7 +1215,21 @@ bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
     if (commandName == "ScrollPageBackward"_s || commandName == "ScrollPageForward"_s)
         return true;
+    if (commandName == "selectAll"_s)
+        return true;
     return false;
+}
+
+bool UnifiedPDFPlugin::forwardEditingCommandToEditor(const String& commandName, const String& argument) const
+{
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+    return m_frame->coreLocalFrame()->checkedEditor()->command(commandName).execute(argument);
+}
+
+void UnifiedPDFPlugin::selectAll()
+{
+    setCurrentSelection([m_pdfDocument selectionForEntireDocument]);
 }
 
 #pragma mark Selections
