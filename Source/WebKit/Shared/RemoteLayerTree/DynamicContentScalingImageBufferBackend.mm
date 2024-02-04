@@ -33,6 +33,7 @@
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/PixelBuffer.h>
+#import <WebCore/SharedMemory.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/IsoMallocInlines.h>
 #import <wtf/MachSendRight.h>
@@ -44,6 +45,8 @@ template<> struct WTF::CFTypeTrait<CAMachPortRef> {
 };
 
 namespace WebKit {
+
+using namespace WebCore;
 
 static CFDictionaryRef makeContextOptions(const DynamicContentScalingImageBufferBackend::Parameters& parameters)
 {
