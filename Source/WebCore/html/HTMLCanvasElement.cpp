@@ -975,6 +975,8 @@ void HTMLCanvasElement::eventListenersDidChange()
 
 void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+
     if (needsPreparationForDisplay()) {
         oldDocument.clearCanvasPreparation(*this);
         removeObserver(oldDocument);

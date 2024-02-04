@@ -226,6 +226,15 @@ TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const Med
 {
 }
 
+void TextTrackCue::didMoveToNewDocument(Document& newDocument)
+{
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+    if (RefPtr cueNode = m_cueNode)
+        cueNode->setTreeScopeRecursively(newDocument);
+    if (RefPtr displayTree = m_displayTree)
+        displayTree->setTreeScopeRecursively(newDocument);
+}
+
 ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();

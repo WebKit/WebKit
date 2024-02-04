@@ -723,6 +723,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 
 void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
@@ -730,6 +731,13 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
         oldDocument.decrementLoadEventDelayCount();
         newDocument.incrementLoadEventDelayCount();
     }
+
+    if (RefPtr audioTracks = m_audioTracks)
+        audioTracks->didMoveToNewDocument(newDocument);
+    if (RefPtr textTracks = m_textTracks)
+        textTracks->didMoveToNewDocument(newDocument);
+    if (RefPtr videoTracks = m_videoTracks)
+        videoTracks->didMoveToNewDocument(newDocument);
 
     unregisterWithDocument(oldDocument);
     registerWithDocument(newDocument);
@@ -8098,7 +8106,7 @@ bool HTMLMediaElement::ensureMediaControls()
         return true;
 
     auto mediaControlsScripts = RenderTheme::singleton().mediaControlsScripts();
-    if (mediaControlsScripts.isEmpty())
+    if (mediaControlsScripts.isEmpty() || isSuspended())
         return false;
 
     INFO_LOG(LOGIDENTIFIER);
@@ -8376,6 +8384,7 @@ bool HTMLMediaElement::canProduceAudio() const
 
 bool HTMLMediaElement::isSuspended() const
 {
+    ASSERT(Node::scriptExecutionContext() == ActiveDOMObject::scriptExecutionContext());
     return document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped();
 }
 

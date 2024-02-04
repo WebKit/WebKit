@@ -58,6 +58,8 @@ public:
     using RefCounted<TrackListBase>::deref;
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
+    void didMoveToNewDocument(Document&);
+
     WebCoreOpaqueRoot opaqueRoot();
 
     using OpaqueRootObserver = WTF::Observer<WebCoreOpaqueRoot()>;
