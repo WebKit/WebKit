@@ -117,7 +117,7 @@ void RemoteScrollingCoordinatorProxy::handleWheelEvent(const WebWheelEvent& whee
     // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
     // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
     if (platformWheelEvent.phase() == PlatformWheelEventPhase::Began)
-        m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
+        m_scrollingTree->setClientAllowedMainFrameRubberBandableEdges(rubberBandableEdges);
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
     if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling)) {

@@ -141,7 +141,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhase::Began)
-            scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
+            scrollingTree->setClientAllowedMainFrameRubberBandableEdges(rubberBandableEdges);
 
         auto processingSteps = scrollingTree->determineWheelEventProcessing(platformWheelEvent);
         bool useMainThreadForScrolling = processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling);

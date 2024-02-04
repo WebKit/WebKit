@@ -255,7 +255,7 @@ OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWh
     // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
     // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began)
-        scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
+        scrollingTree->setClientAllowedMainFrameRubberBandableEdges(rubberBandableEdges);
 
     return scrollingTree->determineWheelEventProcessing(wheelEvent);
 }

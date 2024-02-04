@@ -166,8 +166,8 @@ public:
     void setMainFramePinnedState(RectEdges<bool>);
 
     // Can be called from any thread. Will update what edges allow rubber-banding.
-    WEBCORE_EXPORT void setMainFrameCanRubberBand(RectEdges<bool>);
-    bool mainFrameCanRubberBandOnSide(BoxSide);
+    WEBCORE_EXPORT void setClientAllowedMainFrameRubberBandableEdges(RectEdges<bool>);
+    bool clientAllowsMainFrameRubberBandingOnSide(BoxSide);
 
     bool isHandlingProgrammaticScroll() const { return m_isHandlingProgrammaticScroll; }
     void setIsHandlingProgrammaticScroll(bool isHandlingProgrammaticScroll) { m_isHandlingProgrammaticScroll = isHandlingProgrammaticScroll; }
@@ -320,7 +320,7 @@ private:
     TreeState m_treeState WTF_GUARDED_BY_LOCK(m_treeStateLock);
 
     struct SwipeState {
-        RectEdges<bool> canRubberBand  { true, true, true, true };
+        RectEdges<bool> clientAllowedRubberBandableEdges  { true, true, true, true };
         RectEdges<bool> mainFramePinnedState { true, true, true, true };
         ScrollPinningBehavior scrollPinningBehavior { ScrollPinningBehavior::DoNotPin };
     };

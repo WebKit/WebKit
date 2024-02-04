@@ -277,7 +277,7 @@ RectEdges<bool> ScrollingTreeScrollingNodeDelegateMac::edgePinnedState() const
 bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide(BoxSide side) const
 {
     if (scrollingNode().isRootNode())
-        return scrollingTree().mainFrameCanRubberBandOnSide(side);
+        return scrollingTree().clientAllowsMainFrameRubberBandingOnSide(side);
 
     switch (side) {
     case BoxSide::Top:
