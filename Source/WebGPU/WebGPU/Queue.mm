@@ -409,11 +409,20 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 
     auto dataByteSize = dataSize;
+    if (!dataByteSize) {
+        device->generateAValidationError("GPUQueue.writeTexture: data byte size is zero"_s);
+        return;
+    }
 
     auto& texture = fromAPI(destination.texture);
     auto textureFormat = texture.format();
-    if (Texture::isDepthOrStencilFormat(textureFormat))
+    if (Texture::isDepthOrStencilFormat(textureFormat)) {
         textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
+        if (textureFormat == WGPUTextureFormat_Undefined) {
+            device->generateAValidationError("Invalid depth-stencil format"_s);
+            return;
+        }
+    }
 
     RELEASE_ASSERT(data);
     if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || !isValidToUseWith(texture, *this)) {
@@ -436,6 +445,20 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
     if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
         bytesPerRow = size.height ? (dataSize / size.height) : dataSize;
+
+    switch (texture.dimension()) {
+    case WGPUTextureDimension_1D:
+        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension1D);
+        break;
+    case WGPUTextureDimension_2D:
+        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension2D);
+        break;
+    case WGPUTextureDimension_3D:
+        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension3D);
+        break;
+    case WGPUTextureDimension_Force32:
+        break;
+    }
 
     NSUInteger rowsPerImage = (dataLayout.rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED) ? size.height : dataLayout.rowsPerImage;
     NSUInteger bytesPerImage = bytesPerRow * rowsPerImage;
@@ -506,7 +529,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
             return;
         }
 
-        ASSERT(heightForMetal == 1);
         bytesPerRow = 0;
         bytesPerImage = 0;
     }
@@ -520,10 +542,23 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         auto maxZ = std::max<size_t>(1, size.depthOrArrayLayers);
         newData.resize(newBytesPerImage * maxZ);
         memset(&newData[0], 0, newData.size());
+
+        auto verticalOffset = checkedProduct<uint64_t>(maxY ? (maxY - 1) : 0, bytesPerRow);
+        ASSERT(maxZ);
+        auto depthOffset = checkedProduct<uint64_t>(maxZ - 1, bytesPerImage);
+        auto maxResult = checkedSum<uint64_t>(verticalOffset.value(), depthOffset.value(), newBytesPerRow);
+        if (verticalOffset.hasOverflowed() || depthOffset.hasOverflowed() || maxResult.hasOverflowed()) {
+            device->generateAValidationError("Result overflows uin64_t"_s);
+            return;
+        }
+
         for (size_t z = 0; z < maxZ; ++z) {
             for (size_t y = 0; y < maxY; ++y) {
                 auto sourceBytes = static_cast<const uint8_t*>(data) + y * bytesPerRow + z * bytesPerImage;
-                RELEASE_ASSERT(y * bytesPerRow + z * bytesPerImage + newBytesPerRow <= dataByteSize);
+                if (y * bytesPerRow + z * bytesPerImage + newBytesPerRow > dataByteSize) {
+                    device->generateAValidationError("dataByteSize was too small"_s);
+                    return;
+                }
                 auto destBytes = &newData[0] + y * newBytesPerRow + z * newBytesPerImage;
                 memcpy(destBytes, sourceBytes, newBytesPerRow);
             }
@@ -614,7 +649,10 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    auto newBufferSize = static_cast<NSUInteger>(dataByteSize - dataLayout.offset);
+    auto newBufferSize = static_cast<NSUInteger>(dataByteSize);
+    if (!newBufferSize)
+        return;
+
     bool noCopy = newBufferSize >= largeBufferSize;
     id<MTLBuffer> temporaryBuffer = noCopy ? [device->device() newBufferWithBytesNoCopy:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared deallocator:nil] : [device->device() newBufferWithBytes:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)

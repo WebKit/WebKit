@@ -910,6 +910,22 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     if (sourceBytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
         sourceBytesPerRow = sourceBuffer.length;
 
+    auto blockSize = Texture::texelBlockSize(Texture::aspectSpecificFormat(destinationTexture.format(), destination.aspect));
+    switch (destinationTexture.dimension()) {
+    case WGPUTextureDimension_1D:
+        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension1D);
+        break;
+    case WGPUTextureDimension_2D:
+        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
+        break;
+    case WGPUTextureDimension_3D:
+        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension3D);
+        break;
+    case WGPUTextureDimension_Force32:
+        break;
+    }
+
+
     MTLBlitOption options = MTLBlitOptionNone;
     switch (destination.aspect) {
     case WGPUTextureAspect_All:
@@ -1203,7 +1219,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         return;
     }
 
-    auto logicalSize = fromAPI(source.texture).logicalMiplevelSpecificTextureExtent(source.mipLevel);
+    auto logicalSize = sourceTexture.logicalMiplevelSpecificTextureExtent(source.mipLevel);
     auto widthForMetal = std::min(copySize.width, logicalSize.width);
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
@@ -1213,6 +1229,21 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     NSUInteger destinationBytesPerRow = destination.layout.bytesPerRow;
     if (destinationBytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
         destinationBytesPerRow = destinationBuffer.length;
+
+    auto blockSize = Texture::texelBlockSize(Texture::aspectSpecificFormat(sourceTexture.format(), source.aspect));
+    switch (sourceTexture.dimension()) {
+    case WGPUTextureDimension_1D:
+        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension1D);
+        break;
+    case WGPUTextureDimension_2D:
+        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
+        break;
+    case WGPUTextureDimension_3D:
+        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension3D);
+        break;
+    case WGPUTextureDimension_Force32:
+        break;
+    }
 
     auto rowsPerImage = destination.layout.rowsPerImage;
     if (rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED)
