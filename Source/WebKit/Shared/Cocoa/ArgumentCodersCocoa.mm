@@ -642,6 +642,11 @@ template<> void encodeObjectDirectly<CFTypeRef>(Encoder& encoder, CFTypeRef cf)
     ArgumentCoder<CFTypeRef>::encode(encoder, cf);
 }
 
+template<> void encodeObjectDirectly<CFTypeRef>(StreamConnectionEncoder& encoder, CFTypeRef cf)
+{
+    ArgumentCoder<CFTypeRef>::encode(encoder, cf);
+}
+
 template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<CFTypeRef>(Decoder& decoder)
 {
     auto result = ArgumentCoder<RetainPtr<CFTypeRef>>::decode(decoder);

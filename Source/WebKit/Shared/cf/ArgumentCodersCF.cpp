@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ArgumentCodersCF.h"
 
+#include "ArgumentCodersCocoa.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -50,32 +51,7 @@
 namespace IPC {
 using namespace WebCore;
 
-enum class CFType : uint8_t {
-    CFArray,
-    CFBoolean,
-    CFCharacterSet,
-    CFData,
-    CFDate,
-    CFDictionary,
-    CFNull,
-    CFNumber,
-    CFString,
-    CFURL,
-    SecCertificate,
-#if HAVE(SEC_KEYCHAIN)
-    SecKeychainItem,
-#endif
-#if HAVE(SEC_ACCESS_CONTROL)
-    SecAccessControl,
-#endif
-    SecTrust,
-    CGColorSpace,
-    CGColor,
-    Nullptr,
-    Unknown,
-};
-
-static CFType typeFromCFTypeRef(CFTypeRef type)
+CFType typeFromCFTypeRef(CFTypeRef type)
 {
     if (!type)
         return CFType::Nullptr;
@@ -321,72 +297,6 @@ std::optional<RetainPtr<CFTypeRef>> ArgumentCoder<RetainPtr<CFTypeRef>>::decode(
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
-}
-
-template<typename Encoder>
-void ArgumentCoder<CFArrayRef>::encode(Encoder& encoder, CFArrayRef array)
-{
-    if (!array) {
-        encoder << true;
-        return;
-    }
-
-    encoder << false;
-
-    CFIndex size = CFArrayGetCount(array);
-    Vector<CFTypeRef, 32> values(size);
-
-    CFArrayGetValues(array, CFRangeMake(0, size), values.data());
-
-    HashSet<CFIndex, WTF::IntHash<CFIndex>, WTF::UnsignedWithZeroKeyHashTraits<CFIndex>> invalidIndices;
-    for (CFIndex i = 0; i < size; ++i) {
-        // Ignore values we don't support.
-        if (typeFromCFTypeRef(values[i]) == CFType::Unknown)
-            invalidIndices.add(i);
-    }
-
-    encoder << static_cast<uint64_t>(size - invalidIndices.size());
-
-    for (CFIndex i = 0; i < size; ++i) {
-        if (invalidIndices.contains(i))
-            continue;
-        encoder << values[i];
-    }
-}
-
-template void ArgumentCoder<CFArrayRef>::encode<Encoder>(Encoder&, CFArrayRef);
-template void ArgumentCoder<CFArrayRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFArrayRef);
-
-std::optional<RetainPtr<CFArrayRef>> ArgumentCoder<RetainPtr<CFArrayRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return std::nullopt;
-
-    if (*isNull)
-        return {{ nullptr }};
-
-    std::optional<uint64_t> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-
-    auto array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-
-    for (size_t i = 0; i < *size; ++i) {
-        std::optional<RetainPtr<CFTypeRef>> element;
-        decoder >> element;
-        if (!element)
-            return std::nullopt;
-
-        if (!*element)
-            continue;
-        
-        CFArrayAppendValue(array.get(), element->get());
-    }
-
-    return WTFMove(array);
 }
 
 template<typename Encoder>

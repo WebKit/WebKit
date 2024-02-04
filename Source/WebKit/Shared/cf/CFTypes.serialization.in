@@ -28,6 +28,9 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
 }
 
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFArray()] CFArrayRef wrapped by WebKit::CoreIPCCFArray {
+}
+
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
 }
 

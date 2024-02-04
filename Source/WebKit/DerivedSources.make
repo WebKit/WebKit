@@ -682,6 +682,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/RemoteLayerTree/RemoteScrollingUIState.serialization.in \
 	Shared/cf/CFTypes.serialization.in \
 	Shared/cf/CoreIPCBoolean.serialization.in \
+	Shared/cf/CoreIPCCFArray.serialization.in \
 	Shared/cf/CoreIPCNumber.serialization.in \
 	Shared/cf/CoreIPCSecCertificate.serialization.in \
 	Shared/cf/CoreIPCSecKeychainItem.serialization.in \

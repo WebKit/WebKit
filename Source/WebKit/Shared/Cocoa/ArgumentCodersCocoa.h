@@ -26,6 +26,7 @@
 #pragma once
 
 #import "ArgumentCoders.h"
+#import "CoreIPCRetainPtr.h"
 
 #if PLATFORM(COCOA)
 
@@ -59,25 +60,6 @@ OBJC_CLASS PKPaymentMerchantSession;
 namespace IPC {
 
 #ifdef __OBJC__
-
-template<typename T>
-class CoreIPCRetainPtr : public RetainPtr<T> {
-public:
-    CoreIPCRetainPtr()
-        : RetainPtr<T>()
-    {
-    }
-
-    CoreIPCRetainPtr(T *object)
-        : RetainPtr<T>(object)
-    {
-    }
-
-    CoreIPCRetainPtr(RetainPtr<T>&& object)
-        : RetainPtr<T>(WTFMove(object))
-    {
-    }
-};
 
 enum class NSType : uint8_t {
 #if USE(AVFOUNDATION)
@@ -115,6 +97,32 @@ enum class NSType : uint8_t {
 NSType typeFromObject(id);
 bool isSerializableValue(id);
 
+enum class CFType : uint8_t {
+    CFArray,
+    CFBoolean,
+    CFCharacterSet,
+    CFData,
+    CFDate,
+    CFDictionary,
+    CFNull,
+    CFNumber,
+    CFString,
+    CFURL,
+    SecCertificate,
+#if HAVE(SEC_KEYCHAIN)
+    SecKeychainItem,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    SecAccessControl,
+#endif
+    SecTrust,
+    CGColorSpace,
+    CGColor,
+    Nullptr,
+    Unknown,
+};
+CFType typeFromCFTypeRef(CFTypeRef);
+
 #if ENABLE(DATA_DETECTION)
 template<> Class getClass<DDScannerResult>();
 #if PLATFORM(MAC)
@@ -136,6 +144,8 @@ std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Cla
 
 template<typename T> void encodeObjectDirectly(Encoder&, T *);
 template<typename T> void encodeObjectDirectly(Encoder&, T);
+template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T *);
+template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T);
 template<typename T> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
@@ -184,6 +194,12 @@ template<typename T> struct ArgumentCoder<T *> {
 template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
     template<typename U = T>
     static void encode(Encoder& encoder, const CoreIPCRetainPtr<U>& object)
+    {
+        encodeObjectDirectly<U>(encoder, object.get());
+    }
+
+    template<typename U = T>
+    static void encode(StreamConnectionEncoder& encoder, const CoreIPCRetainPtr<U>& object)
     {
         encodeObjectDirectly<U>(encoder, object.get());
     }

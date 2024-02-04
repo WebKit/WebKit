@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,16 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+namespace IPC {
 
-#include "CoreIPCRetainPtr.h"
-#include <wtf/ArgumentCoder.h>
-
-namespace WebKit {
-
-class CoreIPCCFType {
-    WTF_MAKE_FAST_ALLOCATED;
+template<typename T>
+class CoreIPCRetainPtr : public RetainPtr<T> {
 public:
-    CoreIPCCFType(CFTypeRef cfType)
-        : m_cfType(cfType)
-    {
-    }
-
-    CoreIPCCFType(RetainPtr<CFTypeRef>&& cfType)
-        : m_cfType(WTFMove(cfType))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (__bridge id)(m_cfType.get()); }
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCCFType, void>;
-
-    IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
+    CoreIPCRetainPtr() = default;
+    CoreIPCRetainPtr(T *object)
+        : RetainPtr<T>(object) { }
+    CoreIPCRetainPtr(RetainPtr<T>&& object)
+        : RetainPtr<T>(WTFMove(object)) { }
 };
 
-} // namespace WebKit
-
-#endif // PLATFORM(COCOA)
+}

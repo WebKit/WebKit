@@ -1464,6 +1464,8 @@
 		5C4609E8224317BB009943C2 /* _WKContentRuleListActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4609E422430E4D009943C2 /* _WKContentRuleListActionInternal.h */; };
 		5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */; };
 		5C5139DB25927D80009C3E30 /* WKContentRuleListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5139DA259277A2009C3E30 /* WKContentRuleListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C5786902B6EFA29005D51D5 /* CoreIPCCFArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */; };
+		5C5786922B6EFFFF005D51D5 /* CoreIPCRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */; };
 		5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5921,6 +5923,10 @@
 		5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentSetupConfigurationWebKit.h; sourceTree = "<group>"; };
 		5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentSetupFeaturesWebKit.h; sourceTree = "<group>"; };
 		5C53DCE024465BF900A93124 /* PaymentSetupConfigurationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentSetupConfigurationCocoa.mm; sourceTree = "<group>"; };
+		5C57868D2B6EF92F005D51D5 /* CoreIPCCFArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFArray.h; sourceTree = "<group>"; };
+		5C57868E2B6EF92F005D51D5 /* CoreIPCCFArray.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFArray.serialization.in; sourceTree = "<group>"; };
+		5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFArray.mm; sourceTree = "<group>"; };
+		5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCRetainPtr.h; sourceTree = "<group>"; };
 		5C5CEC382209583200D6BBB0 /* DaemonEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonEntryPoint.h; sourceTree = "<group>"; };
 		5C5CEC392209583200D6BBB0 /* DaemonEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonEntryPoint.mm; sourceTree = "<group>"; };
 		5C5D2387227A1891000B9BDA /* _WKCustomHeaderFieldsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKCustomHeaderFieldsInternal.h; sourceTree = "<group>"; };
@@ -8652,7 +8658,6 @@
 				518E8EF116B208F000E91429 /* Authentication */,
 				5C139DAE29DB845500D5117B /* AuxiliaryProcessExtensions */,
 				1AAF0C4712B16328008E49E2 /* cf */,
-				C01A25FF12662F2100C9ED55 /* cg */,
 				37C4C0901814B37B003688B9 /* cocoa */,
 				5C1579F82717AF2200ED5280 /* Daemon */,
 				51E351C2180F2C8500E53BE9 /* Databases */,
@@ -8833,8 +8838,6 @@
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				5C03D5DD28F765F800D096AF /* SessionState.serialization.in */,
 				1C9F4C0B29E5202B0015819E /* ShapeDetectionIdentifier.h */,
-				5121745E164C20E30037A5C1 /* ShareableResource.cpp */,
-				5121745F164C20E30037A5C1 /* ShareableResource.h */,
 				8313F7EA1F7DAE0400B944EB /* SharedStringHashStore.cpp */,
 				8313F7E91F7DAE0300B944EB /* SharedStringHashStore.h */,
 				8313F7E81F7DAE0300B944EB /* SharedStringHashTable.cpp */,
@@ -9014,6 +9017,9 @@
 				5104F5A11F19D7CF004CF821 /* CookieStorageUtilsCF.mm */,
 				51D194392AEC9BC900E8E475 /* CoreIPCBoolean.h */,
 				51D1943A2AEC9BC900E8E475 /* CoreIPCBoolean.serialization.in */,
+				5C57868D2B6EF92F005D51D5 /* CoreIPCCFArray.h */,
+				5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */,
+				5C57868E2B6EF92F005D51D5 /* CoreIPCCFArray.serialization.in */,
 				F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */,
 				F4EFF36A2AF0267200479AB8 /* CoreIPCNumber.serialization.in */,
 				561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */,
@@ -11264,6 +11270,7 @@
 				51AD568D2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.h */,
 				51AD568E2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.mm */,
 				51AD568F2B1C46F0001A0ECB /* CoreIPCPersonNameComponents.serialization.in */,
+				5C5786912B6EFFFF005D51D5 /* CoreIPCRetainPtr.h */,
 				5197FAD92AFD33B2009180C5 /* CoreIPCSecureCoding.h */,
 				5197FADA2AFD33B2009180C5 /* CoreIPCSecureCoding.mm */,
 				5197FAD12AFD33B0009180C5 /* CoreIPCSecureCoding.serialization.in */,
@@ -14447,13 +14454,6 @@
 			path = c;
 			sourceTree = "<group>";
 		};
-		C01A25FF12662F2100C9ED55 /* cg */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = cg;
-			sourceTree = "<group>";
-		};
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -15608,6 +15608,7 @@
 				F4EFF36D2AF0267300479AB8 /* CoreIPCNumber.h in Headers */,
 				5157AE0A2B23E96A00C0E095 /* CoreIPCPassKit.h in Headers */,
 				51AD56912B1C4704001A0ECB /* CoreIPCPersonNameComponents.h in Headers */,
+				5C5786922B6EFFFF005D51D5 /* CoreIPCRetainPtr.h in Headers */,
 				561A54532B61E49E00073A72 /* CoreIPCSecCertificate.h in Headers */,
 				5197FAE92AFD33CF009180C5 /* CoreIPCSecureCoding.h in Headers */,
 				5197FAE52AFD33CF009180C5 /* CoreIPCString.h in Headers */,
@@ -18452,6 +18453,7 @@
 				5131D5452AE9D5140016EF39 /* ArgumentCodersCF.cpp in Sources */,
 				51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */,
 				5187BDEA2AFF5419008A6EE5 /* CoreIPCArray.mm in Sources */,
+				5C5786902B6EFA29005D51D5 /* CoreIPCCFArray.mm in Sources */,
 				519F6F7F2B2D7A4500559CB3 /* CoreIPCCFURL.mm in Sources */,
 				5157AE032B23C34700C0E095 /* CoreIPCContacts.mm in Sources */,
 				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
@@ -19146,9 +19148,7 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -19164,25 +19164,19 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "CoreIPCCFArray.h"
 
-#if PLATFORM(COCOA)
+#if USE(CF)
 
-#include "CoreIPCRetainPtr.h"
-#include <wtf/ArgumentCoder.h>
+#import "CoreIPCCFType.h"
+#import "CoreIPCTypes.h"
+#import <wtf/cf/VectorCF.h>
 
 namespace WebKit {
 
-class CoreIPCCFType {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CoreIPCCFType(CFTypeRef cfType)
-        : m_cfType(cfType)
-    {
+CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
+{
+    CFIndex count = array ? CFArrayGetCount(array) : 0;
+    for (CFIndex i = 0; i < count; i++) {
+        CFTypeRef element = CFArrayGetValueAtIndex(array, i);
+        if (IPC::typeFromCFTypeRef(element) == IPC::CFType::Unknown)
+            continue;
+        m_array.append(makeUniqueRef<CoreIPCCFType>(element));
     }
+}
 
-    CoreIPCCFType(RetainPtr<CFTypeRef>&& cfType)
-        : m_cfType(WTFMove(cfType))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (__bridge id)(m_cfType.get()); }
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCCFType, void>;
-
-    IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
-};
+RetainPtr<CFArrayRef> CoreIPCCFArray::createCFArray() const
+{
+    return WTF::createCFArray(m_array, [] (const CoreIPCCFType& element) {
+        return element.toID();
+    });
+}
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
+#endif // USE(CF)

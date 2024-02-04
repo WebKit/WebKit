@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,10 +22,10 @@
 
 #if USE(CF)
 
-webkit_platform_headers: "CoreIPCCFType.h"
+webkit_platform_headers: "CoreIPCCFArray.h"
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFType {
-    IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFArray {
+    Vector<UniqueRef<WebKit::CoreIPCCFType>> array();
 }
 
-#endif // USE(CF)
+#endif
