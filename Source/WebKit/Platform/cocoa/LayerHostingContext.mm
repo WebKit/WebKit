@@ -131,6 +131,9 @@ LayerHostingContext::LayerHostingContext()
 
 LayerHostingContext::~LayerHostingContext()
 {
+#if USE(EXTENSIONKIT)
+    [m_hostable invalidate];
+#endif
 }
 
 void LayerHostingContext::setRootLayer(CALayer *rootLayer)
