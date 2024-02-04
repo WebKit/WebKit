@@ -86,23 +86,6 @@ Ref<WheelEvent> WheelEvent::create(const AtomString& type, const Init& initializ
     return adoptRef(*new WheelEvent(type, initializer));
 }
 
-void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-{
-    if (isBeingDispatched())
-        return;
-    
-    initMouseEvent(eventNames().wheelEvent, true, true, WTFMove(view), 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, enumToUnderlyingType(MouseButton::Left), nullptr);
-
-    // Normalize to 120 multiple for compatibility with IE.
-    m_wheelDelta = { rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier };
-    m_deltaX = wheelDeltaToDelta(rawDeltaX);
-    m_deltaY = wheelDeltaToDelta(rawDeltaY);
-
-    m_deltaMode = DOM_DELTA_PIXEL;
-
-    m_underlyingPlatformEvent = std::nullopt;
-}
-
 EventInterface WheelEvent::eventInterface() const
 {
     return WheelEventInterfaceType;
