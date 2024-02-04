@@ -167,13 +167,20 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     auto& styleToUse = context.lineStyle;
     auto& fontMetrics = styleToUse.metricsOfPrimaryFont();
     auto underlineOffset = 0.f;
+    auto textUnderlinePosition = styleToUse.textUnderlinePosition();
 
     if (isAlignedForUnder(styleToUse)) {
         ASSERT(context.textUnderlinePositionUnder);
-        // Position underline relative to the bottom edge of the lowest element's content box.
-        auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f);
-        desiredOffset += styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse);
-        underlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
+        // FIXME: This needs to be flipped for sideways-lr.
+        if (textUnderlinePosition == TextUnderlinePosition::Right) {
+            // In vertical typographic modes, the underline is aligned as for under, except it is always aligned to the right edge of the text.
+            underlineOffset = 0.f - (styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse));
+        } else {
+            // Position underline relative to the bottom edge of the lowest element's content box.
+            auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f);
+            desiredOffset += styleToUse.textUnderlineOffset().lengthOr(0.f) + defaultGap(styleToUse);
+            underlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
+        }
     } else {
         switch (styleToUse.textUnderlinePosition()) {
         case TextUnderlinePosition::Left:
@@ -209,7 +216,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
 {
     // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
     if (underlineOffset)
-        *underlineOffset += 1;
+        *underlineOffset += *underlineOffset >= 0 ? 1 : -1;
 
     auto decoration = lineStyle.textDecorationsInEffect();
     if (decoration.isEmpty())

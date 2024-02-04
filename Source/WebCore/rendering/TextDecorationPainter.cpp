@@ -283,7 +283,6 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
         };
         applyShadowIfNeeded();
 
-        // FIXME: Add support to handle left/right case
         if (decorationType.contains(TextDecorationLine::Underline) && !underlineRect.isEmpty())
             paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
         if (decorationType.contains(TextDecorationLine::Overline) && !overlineRect.isEmpty())

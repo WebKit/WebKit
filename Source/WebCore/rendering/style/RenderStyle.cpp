@@ -717,7 +717,10 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         || m_rareInheritedData->textUnderlinePosition != other.m_rareInheritedData->textUnderlinePosition) {
         // Underlines are always drawn outside of their textbox bounds when text-underline-position: under;
         // is specified. We can take an early out here.
-        if (textUnderlinePosition() == TextUnderlinePosition::Under || other.textUnderlinePosition() == TextUnderlinePosition::Under)
+        auto isVertialWritingMode = isVerticalWritingMode() || other.isVerticalWritingMode();
+        auto isAlignedForUnder = textUnderlinePosition() == TextUnderlinePosition::Under || other.textUnderlinePosition() == TextUnderlinePosition::Under
+            || (isVertialWritingMode && (textUnderlinePosition() == TextUnderlinePosition::Right || other.textUnderlinePosition() == TextUnderlinePosition::Right || textUnderlinePosition() == TextUnderlinePosition::Left || other.textUnderlinePosition() == TextUnderlinePosition::Left));
+        if (isAlignedForUnder)
             return true;
         return visualOverflowForDecorations(*this) != visualOverflowForDecorations(other);
     }
