@@ -385,7 +385,6 @@ svg/batik/text/textEffect2.svg                                                  
 svg/batik/text/textProperties.svg                                                                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-precision-001.svg [ ImageOnlyFailure ]
 svg/clip-path/clip-path-use-referencing-clipped-text.html                                         [ ImageOnlyFailure ]
-svg/custom/use-on-clip-path-with-transformation.svg                                               [ Failure ]
 svg/repaint/image-with-clip-path.svg                                                              [ ImageOnlyFailure ]
 
 # Masking problems
