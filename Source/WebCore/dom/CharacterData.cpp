@@ -44,8 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {
-    // Unable to ref the document as it may have started destruction.
-    willBeDeletedFrom(document());
+    willBeDeletedFrom(RefAllowingPartiallyDestroyed<Document> { document() });
 }
 
 static bool canUseSetDataOptimization(const CharacterData& node)

@@ -133,10 +133,8 @@ CheckedRef<Style::Scope> ShadowRoot::checkedStyleScope() const
 void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     DocumentFragment::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    if (removalType.disconnectedFromDocument) {
-        // Unable to ref the document as it may have started destruction.
-        document().didRemoveInDocumentShadowRoot(*this);
-    }
+    if (removalType.disconnectedFromDocument)
+        RefAllowingPartiallyDestroyed<Document> { document() }->didRemoveInDocumentShadowRoot(*this);
 }
 
 void ShadowRoot::childrenChanged(const ChildChange& childChange)

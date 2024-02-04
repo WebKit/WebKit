@@ -134,8 +134,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->willRemoveAllChildren(*this);
 
-        // Unable to ref the document here because it may have started destruction.
-        document().nodeChildrenWillBeRemoved(*this);
+        RefAllowingPartiallyDestroyed<Document> { document() }->nodeChildrenWillBeRemoved(*this);
 
         while (RefPtr child = m_firstChild) {
             if (is<Element>(*child))
@@ -220,8 +219,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         if (UNLIKELY(isShadowRoot() || isInShadowTree()))
             containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
 
-        // Unable to ref the document as it may have started destruction.
-        document().nodeWillBeRemoved(childToRemove);
+        RefAllowingPartiallyDestroyed<Document> { document() }->nodeWillBeRemoved(childToRemove);
 
         ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
         ASSERT(!childToRemove.isDocumentFragment());
@@ -398,10 +396,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    if (!isDocumentNode()) {
-        // Unable to ref the document as it may have started destruction.
-        willBeDeletedFrom(document());
-    }
+    if (!isDocumentNode())
+        willBeDeletedFrom(RefAllowingPartiallyDestroyed<Document> { document() });
     removeDetachedChildren();
 }
 
@@ -740,8 +736,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& oldChild)
 {
-    // Unable to ref the document as it may have started destruction.
-    InspectorInstrumentation::didRemoveDOMNode(oldChild.document(), oldChild);
+    InspectorInstrumentation::didRemoveDOMNode(RefAllowingPartiallyDestroyed<Document> { oldChild.document() }, oldChild);
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -822,9 +817,9 @@ void ContainerNode::stringReplaceAll(String&& string)
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
 {
-    // Unable to ref the document as it may have started destruction.
-    if (document().svgExtensions() && !is<SVGUseElement>(shadowHost()))
-        document().accessSVGExtensions().rebuildElements();
+    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    if (document->svgExtensions() && !is<SVGUseElement>(shadowHost()))
+        document->accessSVGExtensions().rebuildElements();
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -992,17 +987,17 @@ ExceptionOr<void> ContainerNode::appendChild(ChildChange::Source source, Node& n
 
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
-    // Unable to ref the document as it may have started destruction.
-    document().incDOMTreeVersion();
+    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    document->incDOMTreeVersion();
 
     if (change.affectsElements == ChildChange::AffectsElements::Yes)
-        document().invalidateAccessKeyCache();
+        document->invalidateAccessKeyCache();
 
     // FIXME: Unclear why it's always safe to skip this when parser is adding children.
     // FIXME: Seems like it's equally safe to skip for TextInserted and TextRemoved as for TextChanged.
     // FIXME: Should use switch for change type so we remember to update when adding new types.
     if (change.source == ChildChange::Source::API && change.type != ChildChange::Type::TextChanged)
-        document().updateRangesAfterChildrenChanged(*this);
+        document->updateRangesAfterChildrenChanged(*this);
 
     if (change.affectsElements == ChildChange::AffectsElements::Yes)
         invalidateNodeListAndCollectionCachesInAncestors();
@@ -1081,13 +1076,11 @@ static void dispatchChildInsertionEvents(Node& child)
 static void dispatchChildRemovalEvents(Ref<Node>& child)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(child));
-    // Unable to ref the document as it may have started destruction.
-    InspectorInstrumentation::willRemoveDOMNode(child->document(), child.get());
+    RefAllowingPartiallyDestroyed<Document> document = child->document();
+    InspectorInstrumentation::willRemoveDOMNode(document, child.get());
 
     if (child->isInShadowTree())
         return;
-
-    Ref document = child->document();
 
     // dispatch pre-removal mutation events
     if (child->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeRemoved))

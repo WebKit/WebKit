@@ -138,8 +138,7 @@ void Attr::detachFromElementWithValue(const AtomString& value)
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     m_element = nullptr;
-    // Unable to ref the document here because it may have started destruction.
-    setTreeScopeRecursively(document());
+    setTreeScopeRecursively(RefAllowingPartiallyDestroyed<Document> { document() });
 }
 
 void Attr::attachToElement(Element& element)
