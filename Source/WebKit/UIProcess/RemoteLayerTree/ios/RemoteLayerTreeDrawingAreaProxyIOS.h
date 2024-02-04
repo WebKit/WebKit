@@ -38,6 +38,11 @@ public:
     RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxyIOS();
 
+    bool isRemoteLayerTreeDrawingAreaProxyIOS() const final { return true; }
+
+    void scheduleDisplayRefreshCallbacksForAnimation();
+    void pauseDisplayRefreshCallbacksForAnimation();
+
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
@@ -47,11 +52,16 @@ private:
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
 
+    void didRefreshDisplay() override;
+
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
 
     WKDisplayLinkHandler *displayLinkHandler();
 
     RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
+
+    bool m_needsDisplayRefreshCallbacksForDrawing { false };
+    bool m_needsDisplayRefreshCallbacksForAnimation { false };
 };
 
 } // namespace WebKit

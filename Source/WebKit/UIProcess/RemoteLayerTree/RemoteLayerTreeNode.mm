@@ -268,7 +268,9 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     m_effectStack->setEffects(WTFMove(clonedEffects));
     m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY)
+    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime());
+#else
     m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime());
 #endif
 

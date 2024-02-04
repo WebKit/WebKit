@@ -42,6 +42,8 @@ public:
     void applyEffectsFromScrollingThread(MonotonicTime now) const;
 #endif
 
+    void applyEffectsFromMainThread(PlatformLayer*, MonotonicTime now) const;
+
     void clear(PlatformLayer*);
 
 private:

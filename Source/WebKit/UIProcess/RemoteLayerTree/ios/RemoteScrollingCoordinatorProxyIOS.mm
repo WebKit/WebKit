@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
+#import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
@@ -385,15 +386,55 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
     return activePoint;
 }
 
+void RemoteScrollingCoordinatorProxyIOS::displayDidRefresh(PlatformDisplayID displayID)
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    updateAnimations();
+#endif
+}
+
+RemoteLayerTreeDrawingAreaProxyIOS& RemoteScrollingCoordinatorProxyIOS::drawingAreaIOS() const
+{
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
+    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyIOS());
+    return *static_cast<RemoteLayerTreeDrawingAreaProxyIOS*>(drawingArea);
+}
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
     m_animatedNodeLayerIDs.add(node.layerID());
+    drawingAreaIOS().scheduleDisplayRefreshCallbacksForAnimation();
 }
 
 void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
 {
     m_animatedNodeLayerIDs.remove(node.layerID());
+    if (m_animatedNodeLayerIDs.isEmpty())
+        drawingAreaIOS().pauseDisplayRefreshCallbacksForAnimation();
+}
+
+void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
+{
+    // FIXME: Rather than using 'now' at the point this is called, we
+    // should probably be using the timestamp of the (next?) display
+    // link update or vblank refresh.
+    auto now = MonotonicTime::now();
+
+    auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
+
+    auto animatedNodeLayerIDs = std::exchange(m_animatedNodeLayerIDs, { });
+    for (auto animatedNodeLayerID : animatedNodeLayerIDs) {
+        auto* animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
+        auto* effectStack = animatedNode->effectStack();
+        effectStack->applyEffectsFromMainThread(animatedNode->layer(), now);
+
+        // We can clear the effect stack if it's empty, but the previous
+        // call to applyEffects() is important so that the base values
+        // were re-applied.
+        if (effectStack->hasEffects())
+            m_animatedNodeLayerIDs.add(animatedNodeLayerID);
+    }
 }
 #endif
 

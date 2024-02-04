@@ -54,6 +54,10 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
 }
 #endif
 
+void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer*, MonotonicTime) const
+{
+}
+
 void RemoteAcceleratedEffectStack::clear(PlatformLayer*)
 {
 }

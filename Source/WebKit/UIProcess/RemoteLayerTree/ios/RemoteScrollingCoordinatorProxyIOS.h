@@ -38,11 +38,13 @@ enum class TouchAction : uint8_t;
 
 namespace WebKit {
 
+class RemoteLayerTreeDrawingAreaProxyIOS;
 class RemoteLayerTreeNode;
 
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
+    ~RemoteScrollingCoordinatorProxyIOS() = default;
 
     UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;
 
@@ -67,11 +69,15 @@ public:
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
+    void animationsWereAddedToNode(RemoteLayerTreeNode&) override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+    void updateAnimations();
 #endif
 
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
+
 private:
+    RemoteLayerTreeDrawingAreaProxyIOS& drawingAreaIOS() const;
     bool propagatesMainFrameScrolls() const override { return false; }
 
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) override;
