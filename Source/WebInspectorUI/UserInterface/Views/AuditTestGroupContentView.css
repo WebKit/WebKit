@@ -131,7 +131,7 @@
     width: var(--metadata-width);
     margin-inline-start: var(--audit-test-horizontal-space);
     font-size: 16px;
-    text-align: center;
+    text-align: end;
     font-weight: bold;
     /* FIXME: Use CSS4 color blend functions once they're available. */
     color: hsla(0, 0%, 0%, 0.5);
