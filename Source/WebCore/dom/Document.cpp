@@ -175,6 +175,7 @@
 #include "NoiseInjectionPolicy.h"
 #include "NotificationController.h"
 #include "OpportunisticTaskScheduler.h"
+#include "OrientationNotifier.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -608,7 +609,6 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
 #endif
     , m_xmlVersion("1.0"_s)
-    , m_constantPropertyMap(makeUnique<ConstantPropertyMap>(*this))
     , m_intersectionObserversInitialUpdateTimer(*this, &Document::intersectionObserversInitialUpdateTimerFired)
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -623,7 +623,6 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
-    , m_orientationNotifier(currentOrientation(frame))
     , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_documentClasses(documentClasses)
     , m_latestFocusTrigger { FocusTrigger::Other }
@@ -663,7 +662,9 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     ASSERT(!m_undoManager);
     ASSERT(!m_editor);
     ASSERT(!m_reportingScope);
+    ASSERT(!hasEmptySecurityOriginPolicyAndContentSecurityPolicy() || !hasInitializedSecurityOriginPolicyOrContentSecurityPolicy());
     m_constructionDidFinish = true;
+
 }
 
 void Document::createNewIdentifier()
@@ -7274,9 +7275,8 @@ void Document::initSecurityContext()
     if (!m_frame) {
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
-        setCookieURL(URL({ }, emptyString()));
-        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createOpaque()));
-        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { emptyString() }, *this));
+        ASSERT(m_cookieURL.isNull());
+        setEmptySecurityOriginPolicyAndContentSecurityPolicy();
         return;
     }
 
@@ -9204,11 +9204,28 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
     m_inDocumentShadowRoots.remove(shadowRoot);
 }
 
+ConstantPropertyMap& Document::constantProperties() const
+{
+    if (!m_constantPropertyMap) {
+        auto& thisDocument = const_cast<Document&>(*this);
+        thisDocument.m_constantPropertyMap = makeUnique<ConstantPropertyMap>(thisDocument);
+    }
+    return *m_constantPropertyMap;
+}
+
 void Document::orientationChanged(IntDegrees orientation)
 {
     LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    m_orientationNotifier.orientationChanged(orientation);
+    if (CheckedPtr notifier = m_orientationNotifier.get())
+        notifier->orientationChanged(orientation);
+}
+
+OrientationNotifier& Document::orientationNotifier()
+{
+    if (!m_orientationNotifier)
+        m_orientationNotifier = makeUnique<OrientationNotifier>(currentOrientation(frame()));
+    return *m_orientationNotifier;
 }
 
 #if ENABLE(MEDIA_STREAM)

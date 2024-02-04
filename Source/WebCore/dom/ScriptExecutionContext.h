@@ -391,6 +391,9 @@ protected:
     void regenerateIdentifier();
 
 private:
+
+    std::unique_ptr<ContentSecurityPolicy> makeEmptyContentSecurityPolicy() final;
+
     // The following addMessage function is deprecated.
     // Callers should try to create the ConsoleMessage themselves.
     virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;

@@ -35,7 +35,7 @@
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
-#include "OrientationNotifier.h"
+#include "IntDegrees.h"
 #include "PageIdentifier.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include "PseudoElementIdentifier.h"
@@ -187,6 +187,7 @@ class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
 class NodeList;
+class OrientationNotifier;
 class Page;
 class PaintWorklet;
 class PaintWorkletGlobalScope;
@@ -1702,10 +1703,10 @@ public:
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
 
-    ConstantPropertyMap& constantProperties() const { return *m_constantPropertyMap; }
+    ConstantPropertyMap& constantProperties() const;
 
     void orientationChanged(IntDegrees orientation);
-    OrientationNotifier& orientationNotifier() { return m_orientationNotifier; }
+    OrientationNotifier& orientationNotifier();
 
     WEBCORE_EXPORT const AtomString& bgColor() const;
     WEBCORE_EXPORT void setBgColor(const AtomString&);
@@ -2325,7 +2326,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
 
-    OrientationNotifier m_orientationNotifier;
+    std::unique_ptr<OrientationNotifier> m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;
     RefPtr<StringCallback> m_consoleMessageListener;
 
