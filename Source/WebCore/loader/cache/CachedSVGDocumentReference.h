@@ -50,7 +50,7 @@ public:
 private:
     String m_url;
     CachedResourceHandle<CachedSVGDocument> m_document;
-    bool m_loadRequested;
+    bool m_loadRequested { false };
 };
 
 } // namespace WebCore

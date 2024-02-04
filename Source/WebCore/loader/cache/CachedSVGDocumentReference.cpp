@@ -36,15 +36,13 @@ namespace WebCore {
 
 CachedSVGDocumentReference::CachedSVGDocumentReference(const String& url)
     : m_url(url)
-    , m_document(nullptr)
-    , m_loadRequested(false)
 {
 }
 
 CachedSVGDocumentReference::~CachedSVGDocumentReference()
 {
-    if (m_document)
-        m_document->removeClient(*this);
+    if (CachedResourceHandle document = m_document)
+        document->removeClient(*this);
 }
 
 void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
@@ -57,8 +55,8 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
     CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), fetchOptions);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
     m_document = loader.requestSVGDocument(WTFMove(request)).value_or(nullptr);
-    if (m_document)
-        m_document->addClient(*this);
+    if (CachedResourceHandle document = m_document)
+        document->addClient(*this);
 
     m_loadRequested = true;
 }

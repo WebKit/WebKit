@@ -61,6 +61,11 @@ CachedResourceHandleBase::~CachedResourceHandleBase()
         m_resource->unregisterHandle(this);
 }
 
+CachedResource* CachedResourceHandleBase::get() const
+{
+    return m_resource.get();
+}
+
 void CachedResourceHandleBase::setResource(CachedResource* resource)
 {
     if (resource == m_resource)

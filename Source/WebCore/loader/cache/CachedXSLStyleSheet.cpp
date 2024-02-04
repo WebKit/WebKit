@@ -44,6 +44,11 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::S
 
 CachedXSLStyleSheet::~CachedXSLStyleSheet() = default;
 
+RefPtr<TextResourceDecoder> CachedXSLStyleSheet::protectedDecoder() const
+{
+    return m_decoder;
+}
+
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedStyleSheetClient::expectedType());
@@ -53,20 +58,20 @@ void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 
 void CachedXSLStyleSheet::setEncoding(const String& chs)
 {
-    m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 String CachedXSLStyleSheet::encoding() const
 {
-    return String::fromLatin1(m_decoder->encoding().name());
+    return String::fromLatin1(protectedDecoder()->encoding().name());
 }
 
 void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
-        auto contiguousData = data->makeContiguous();
+        Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_sheet = m_decoder->decodeAndFlush(contiguousData->data(), encodedSize());
+        m_sheet = protectedDecoder()->decodeAndFlush(contiguousData->data(), encodedSize());
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;

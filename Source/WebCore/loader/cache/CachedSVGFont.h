@@ -51,7 +51,7 @@ private:
 
     RefPtr<SharedBuffer> m_convertedFont;
     RefPtr<SVGDocument> m_externalSVGDocument;
-    SVGFontElement* m_externalSVGFontElement;
+    WeakPtr<SVGFontElement, WeakPtrImplWithEventTargetData> m_externalSVGFontElement;
     const Ref<const Settings> m_settings;
 };
 
