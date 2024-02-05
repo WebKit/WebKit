@@ -200,14 +200,6 @@ ParserError BytecodeGenerator::generate(unsigned& size)
         if (m_needToInitializeArguments)
             initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
-        if (m_restParameter) {
-            // We should move moving m_restParameter->emit(*this) to initializeDefaultParameterValuesAndSetupFunctionScopeStack
-            // as an optimization if we can prove that change has no side effect.
-            asyncFuncParametersTryCatchWrap([&] {
-                m_restParameter->emit(*this);
-            });
-        }
-
         {
             bool shouldHoistInEval = m_codeType == EvalCode && !m_ecmaMode.isStrict();
             RefPtr<RegisterID> temp = newTemporary();
@@ -1184,6 +1176,9 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
 
             parameter.first->bindValue(*this, temp.get());
         }
+
+        if (m_restParameter)
+            m_restParameter->emit(*this);
 
         // Final act of weirdness for default parameters. If a "var" also
         // has the same name as a parameter, it should start out as the

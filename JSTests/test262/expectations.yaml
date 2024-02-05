@@ -857,8 +857,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/assignment/S11.13.1_A7_T3.js:
   default: 'Test262Error: Expected a DummyError but got a Test262Error'
   strict mode: 'Test262Error: Expected a DummyError but got a Test262Error'
@@ -1015,10 +1013,6 @@ test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-valu
 test/language/expressions/dynamic-import/import-assertions/2nd-param-get-assert-error.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected an error, but observed no error'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected an error, but observed no error'
-test/language/expressions/function/scope-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/generators/scope-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
@@ -1031,10 +1025,6 @@ test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-sim
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
-test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
@@ -1268,10 +1258,6 @@ test/language/statements/for/dstr/var-ary-ptrn-elem-id-iter-val-array-prototype.
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
-test/language/statements/function/scope-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/statements/generators/scope-param-rest-elem-var-open.js:
-  default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
