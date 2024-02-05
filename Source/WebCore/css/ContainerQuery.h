@@ -53,10 +53,13 @@ enum class Axis : uint8_t {
 };
 OptionSet<Axis> requiredAxesForFeature(const MQ::Feature&);
 
+enum class ContainsUnknownFeature : bool { No, Yes };
+
 struct ContainerQuery {
     AtomString name;
-    OptionSet<CQ::Axis> axisFilter;
     MQ::Condition condition;
+    OptionSet<CQ::Axis> requiredAxes;
+    ContainsUnknownFeature containsUnknownFeature;
 };
 
 void serialize(StringBuilder&, const ContainerQuery&);

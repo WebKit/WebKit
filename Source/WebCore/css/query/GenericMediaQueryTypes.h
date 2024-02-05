@@ -110,7 +110,8 @@ void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& fun
     }, [&](const MQ::Feature& feature) {
         function(feature);
     }, [&](const MQ::GeneralEnclosed&) {
-        return;
+        MQ::Feature dummy { };
+        function(dummy);
     });
 }
 

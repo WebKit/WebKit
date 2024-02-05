@@ -28,10 +28,10 @@ PASS ((height) or (height))
 PASS ((height) or (width) or (width))
 PASS ((width) or (height) or (width))
 PASS ((width) or (width) or (height))
-FAIL ((unknown) or (width) or (width)) assert_equals: expected "false" but got "true"
-FAIL ((width) or (unknown) or (width)) assert_equals: expected "false" but got "true"
-FAIL ((width) or (width) or (unknown)) assert_equals: expected "false" but got "true"
-FAIL ((unknown) or (height) or (width)) assert_equals: expected "false" but got "true"
+PASS ((unknown) or (width) or (width))
+PASS ((width) or (unknown) or (width))
+PASS ((width) or (width) or (unknown))
+PASS ((unknown) or (height) or (width))
 PASS (not ((width) and (width)))
 PASS (not ((width) and (height)))
 PASS ((width) and (not ((height) or (width))))

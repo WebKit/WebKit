@@ -40,13 +40,10 @@ public:
     static Vector<const MQ::FeatureSchema*> featureSchemas();
 
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
-    std::optional<MQ::Feature> consumeFeature(CSSParserTokenRange&);
 
 private:
     ContainerQueryParser(const MediaQueryParserContext& context)
         : GenericMediaQueryParser(context) { }
-
-    OptionSet<CQ::Axis> m_requiredAxes;
 };
 
 }

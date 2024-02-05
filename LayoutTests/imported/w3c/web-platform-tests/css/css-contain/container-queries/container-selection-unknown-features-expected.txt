@@ -3,7 +3,7 @@ Green
 Green
 Green
 
-FAIL width query with (foo: bar) assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL width query with foo(bar) assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS width query with (foo: bar)
+PASS width query with foo(bar)
 PASS style query with (foo: bar)
 

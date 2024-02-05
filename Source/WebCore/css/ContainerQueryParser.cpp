@@ -64,23 +64,20 @@ std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CS
 
     auto name = consumeName();
 
-    m_requiredAxes = { };
-
     auto condition = consumeCondition(range);
     if (!condition)
         return { };
 
-    return CQ::ContainerQuery { name, m_requiredAxes, *condition };
-}
+    auto requiredAxes = OptionSet<CQ::Axis> { };
+    auto containsUnknownFeature = CQ::ContainsUnknownFeature::No;
 
-std::optional<MQ::Feature> ContainerQueryParser::consumeFeature(CSSParserTokenRange& range)
-{
-    auto sizeFeature = MQ::GenericMediaQueryParser<ContainerQueryParser>::consumeFeature(range);
-    if (!sizeFeature)
-        return { };
+    traverseFeatures(*condition, [&](auto& feature) {
+        requiredAxes.add(CQ::requiredAxesForFeature(feature));
+        if (!feature.schema)
+            containsUnknownFeature = CQ::ContainsUnknownFeature::Yes;
+    });
 
-    m_requiredAxes.add(CQ::requiredAxesForFeature(*sizeFeature));
-    return sizeFeature;
+    return CQ::ContainerQuery { name, *condition, requiredAxes, containsUnknownFeature };
 }
 
 }

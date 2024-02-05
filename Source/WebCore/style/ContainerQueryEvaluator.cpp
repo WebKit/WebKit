@@ -65,9 +65,13 @@ auto ContainerQueryEvaluator::featureEvaluationContextForQuery(const CQ::Contain
     // considered to just those with a matching query container name."
     // https://drafts.csswg.org/css-contain-3/#container-rule
 
+    // "If the <container-query> contains unknown or unsupported container features, no query container will be selected."
+    if (containerQuery.containsUnknownFeature == CQ::ContainsUnknownFeature::Yes)
+        return { };
+
     auto* cachedQueryContainers = m_selectorMatchingState ? &m_selectorMatchingState->queryContainers : nullptr;
 
-    auto* container = selectContainer(containerQuery.axisFilter, containerQuery.name, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
+    auto* container = selectContainer(containerQuery.requiredAxes, containerQuery.name, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
     if (!container)
         return { };
 
