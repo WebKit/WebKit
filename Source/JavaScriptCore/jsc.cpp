@@ -120,6 +120,7 @@
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -812,6 +813,10 @@ private:
             Identifier dollarVMIdentifier = Identifier::fromString(vm, "$vm"_s);
             rememberDontEnumProperty(filter, dollarVMIdentifier.impl(), 0 | PropertyAttribute::DontEnum);
         }
+
+#if PLATFORM(COCOA)
+        enableAllSDKAlignedBehaviors();
+#endif
     }
 
 public:
