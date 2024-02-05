@@ -3211,7 +3211,10 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             if triggers or not self.skipUpload:
                 steps_to_add = [ArchiveBuiltProduct()]
                 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
-                    steps_to_add.extend([GenerateS3URL(), UploadFileToS3()])
+                    steps_to_add.extend([
+                        GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}"),
+                        UploadFileToS3(f"WebKitBuild/{self.getProperty('configuration')}.zip", links={self.name: 'Archive'}),
+                    ])
                 else:
                     # S3 might not be configured on local instances, achieve similar functionality without S3.
                     steps_to_add.extend([UploadBuiltProduct()])
@@ -4941,8 +4944,16 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     haltOnFailure = True
     flunkOnFailure = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, file, links=None, **kwargs):
         super().__init__(timeout=31 * 60, logEnviron=False, **kwargs)
+        self.file = file
+        self.links = links or dict()
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
 
     @defer.inlineCallbacks
     def run(self):
@@ -4953,11 +4964,17 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
             return defer.returnValue(rc)
 
         self.env = dict(UPLOAD_URL=s3url)
-        configuration = self.getProperty('configuration')
-        workersrc = f'WebKitBuild/{configuration}.zip'
 
-        self.command = ['python3', 'Tools/Scripts/upload-file-to-url', '--filename', workersrc]
+        self.command = ['python3', 'Tools/Scripts/upload-file-to-url', '--filename', self.file]
         rc = yield super().run()
+
+        if rc in [SUCCESS, WARNINGS] and getattr(self.build, 's3_archives', None):
+            for step_name, message in self.links.items():
+                step = self.getLastBuildStepByName(step_name)
+                if not step:
+                    continue
+                step.addURL(message, self.build.s3_archives[-1])
+
         return defer.returnValue(rc)
 
     def doStepIf(self, step):
@@ -4976,14 +4993,16 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
 class GenerateS3URL(master.MasterShellCommandNewStyle):
     name = 'generate-s3-url'
     descriptionDone = ['Generated S3 URL']
-    identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
-    change_id = WithProperties('%(change_id)s')
-    command = ['python3', '../Shared/generate-s3-url', '--change-id', change_id, '--identifier', identifier]
     haltOnFailure = False
     flunkOnFailure = False
 
-    def __init__(self, **kwargs):
-        kwargs['command'] = self.command
+    def __init__(self, identifier, **kwargs):
+        self.identifier = identifier
+        kwargs['command'] = [
+            'python3', '../Shared/generate-s3-url',
+            '--change-id', WithProperties('%(change_id)s'),
+            '--identifier', self.identifier,
+        ]
         super().__init__(logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
@@ -4993,15 +5012,19 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
 
         rc = yield super().run()
 
+        self.build.s3url = ''
+        if not getattr(self.build, 's3_archives', None):
+            self.build.s3_archives = []
+
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
         match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
         # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
 
-        self.build.s3url = ''
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
         if match:
             self.build.s3url = match.group('url')
             print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
+            self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{self.getProperty('change_id')}.zip")
             defer.returnValue(rc)
         else:
             print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')

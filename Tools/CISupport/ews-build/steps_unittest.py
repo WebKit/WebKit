@@ -4621,11 +4621,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self):
-        self.setupStep(GenerateS3URL())
-        self.setProperty('fullPlatform', 'mac-highsierra')
-        self.setProperty('configuration', 'release')
-        self.setProperty('architecture', 'x86_64')
+    def configureStep(self, identifier='mac-highsierra-x86_64-release'):
+        self.setupStep(GenerateS3URL(identifier))
         self.setProperty('change_id', '1234')
 
     def disabled_test_success(self):
@@ -4644,9 +4641,7 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             return self.runStep()
 
     def test_failure(self):
-        self.configureStep()
-        self.setProperty('fullPlatform', 'ios-simulator-16')
-        self.setProperty('configuration', 'debug')
+        self.configureStep('ios-simulator-16-x86_64-debug')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/generate-s3-url',
@@ -4737,9 +4732,8 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(UploadFileToS3())
+        self.setupStep(UploadFileToS3('WebKitBuild/release.zip'))
         self.build.s3url = 'https://test-s3-url'
-        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
