@@ -41,6 +41,18 @@ namespace WebKit {
 struct PDFContextMenu;
 class WebFrame;
 class WebMouseEvent;
+enum class WebEventType : uint8_t;
+enum class WebMouseEventButton : int8_t;
+
+class AnnotationTrackingState {
+public:
+    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, const WebEventType&, const WebMouseEventButton&);
+    void finishAnnotationTracking(const WebEventType&, const WebMouseEventButton&);
+    const PDFAnnotation* trackedAnnotation() const { return m_trackedAnnotation.get(); }
+private:
+    void handleMouseDraggedOffTrackedAnnotation();
+    RetainPtr<PDFAnnotation> m_trackedAnnotation;
+};
 
 enum class WebEventModifier : uint8_t;
 
@@ -63,9 +75,6 @@ public:
 
     CGRect pluginBoundsForAnnotation(RetainPtr<PDFAnnotation>&) const final;
     void setActiveAnnotation(RetainPtr<PDFAnnotation>&&) final;
-    void startAnnotationTracking(RetainPtr<PDFAnnotation>&&);
-    void finishAnnotationTracking();
-    void handleMouseDraggedOffTrackedAnnotation();
     void focusNextAnnotation() final;
     void focusPreviousAnnotation() final;
 
@@ -267,7 +276,7 @@ private:
     float m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };
 
-    RetainPtr<PDFAnnotation> m_trackedAnnotation;
+    AnnotationTrackingState m_annotationTrackingState;
 
     struct SelectionTrackingData {
         bool shouldExtendCurrentSelection { false };
