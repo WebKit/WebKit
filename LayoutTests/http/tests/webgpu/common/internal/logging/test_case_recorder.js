@@ -1,20 +1,19 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import { SkipTestCase, UnexpectedPassError } from '../../framework/fixture.js';
-import { globalTestConfig } from '../../framework/test_config.js';
-import { now, assert } from '../../util/util.js';
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/import { SkipTestCase, UnexpectedPassError } from '../../framework/fixture.js';import { globalTestConfig } from '../../framework/test_config.js';import { now, assert } from '../../util/util.js';
 
-import { LogMessageWithStack } from './log_message.js';
-var LogSeverity;
-(function (LogSeverity) {
-  LogSeverity[(LogSeverity['NotRun'] = 0)] = 'NotRun';
-  LogSeverity[(LogSeverity['Skip'] = 1)] = 'Skip';
-  LogSeverity[(LogSeverity['Pass'] = 2)] = 'Pass';
-  LogSeverity[(LogSeverity['Warn'] = 3)] = 'Warn';
-  LogSeverity[(LogSeverity['ExpectFailed'] = 4)] = 'ExpectFailed';
-  LogSeverity[(LogSeverity['ValidationFailed'] = 5)] = 'ValidationFailed';
-  LogSeverity[(LogSeverity['ThrewException'] = 6)] = 'ThrewException';
-})(LogSeverity || (LogSeverity = {}));
+import { LogMessageWithStack } from './log_message.js';var
+
+
+LogSeverity = /*#__PURE__*/function (LogSeverity) {LogSeverity[LogSeverity["NotRun"] = 0] = "NotRun";LogSeverity[LogSeverity["Skip"] = 1] = "Skip";LogSeverity[LogSeverity["Pass"] = 2] = "Pass";LogSeverity[LogSeverity["Warn"] = 3] = "Warn";LogSeverity[LogSeverity["ExpectFailed"] = 4] = "ExpectFailed";LogSeverity[LogSeverity["ValidationFailed"] = 5] = "ValidationFailed";LogSeverity[LogSeverity["ThrewException"] = 6] = "ThrewException";return LogSeverity;}(LogSeverity || {});
+
+
+
+
+
+
+
+
 
 const kMaxLogStacks = 2;
 const kMinSeverityForStack = LogSeverity.Warn;
@@ -36,6 +35,7 @@ function logSeverityToString(status) {
 
 /** Holds onto a LiveTestCaseResult owned by the Logger, and writes the results into it. */
 export class TestCaseRecorder {
+
   nonskippedSubcaseCount = 0;
   inSubCase = false;
   subCaseStatus = LogSeverity.NotRun;

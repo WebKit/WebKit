@@ -1,10 +1,9 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ export const description = `
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/export const description = `
 Tests writes from different invocations to adjacent scalars do not interfere.
 This is especially interesting when the scalar type is narrower than 32-bits.
-`;
-import { makeTestGroup } from '../../../../common/framework/test_group.js';
+`;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../gpu_test.js';
 import { PRNG } from '../../../util/prng.js';
 
@@ -43,8 +42,17 @@ export const g = makeTestGroup(GPUTest);
 //     addressSpace: workgroup|storage
 //          Where dst is allocated.
 
+
+
 const kAddressSpaces = ['workgroup', 'storage'];
 const kPatterns = [0, 1, 2, 3];
+
+
+
+
+
+
+
 
 // For simplicity, make the entire source (and destination) array fit
 // in workgroup memory.
@@ -206,7 +214,7 @@ function runTest(t) {
   const hostSrcBuf = t.device.createBuffer({
     size: bufByteSize,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE,
-    mappedAtCreation: true,
+    mappedAtCreation: true
   });
   {
     const hostSrcUint16 = new Uint16Array(hostSrcBuf.getMappedRange());
@@ -217,25 +225,25 @@ function runTest(t) {
 
   const srcBuf = t.device.createBuffer({
     size: bufByteSize,
-    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE,
+    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE
   });
   const dstBuf = t.device.createBuffer({
     size: bufByteSize,
-    usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE,
+    usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE
   });
 
   const shaderText = makeShaderText(t.params);
   const shader = t.device.createShaderModule({ code: shaderText });
   const pipeline = t.device.createComputePipeline({
     layout: 'auto',
-    compute: { module: shader, entryPoint: 'adjacent_writes' },
+    compute: { module: shader, entryPoint: 'adjacent_writes' }
   });
   const bindGroup = t.device.createBindGroup({
     layout: pipeline.getBindGroupLayout(0),
     entries: [
-      { binding: 0, resource: { buffer: srcBuf } },
-      { binding: 1, resource: { buffer: dstBuf } },
-    ],
+    { binding: 0, resource: { buffer: srcBuf } },
+    { binding: 1, resource: { buffer: dstBuf } }]
+
   });
 
   const encoder = t.device.createCommandEncoder();
@@ -253,12 +261,12 @@ function runTest(t) {
   t.expectGPUBufferValuesEqual(dstBuf, expected);
 }
 
-g.test('f16')
-  .desc(
-    `Check that writes by different invocations to adjacent f16 values in an array do not interfere with each other.`
-  )
-  .params(u => u.combine('addressSpace', kAddressSpaces).combine('pattern', kPatterns))
-  .beforeAllSubcases(t => {
-    t.selectDeviceOrSkipTestCase('shader-f16');
-  })
-  .fn(t => runTest(t));
+g.test('f16').
+desc(
+  `Check that writes by different invocations to adjacent f16 values in an array do not interfere with each other.`
+).
+params((u) => u.combine('addressSpace', kAddressSpaces).combine('pattern', kPatterns)).
+beforeAllSubcases((t) => {
+  t.selectDeviceOrSkipTestCase('shader-f16');
+}).
+fn((t) => runTest(t));

@@ -1,0 +1,60 @@
+
+PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=true
+PASS :createRenderPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=false
+PASS :createRenderPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=true
+PASS :beginRenderPass,at_over:limitTest="atDefault";testValueName="atLimit"
+PASS :beginRenderPass,at_over:limitTest="atDefault";testValueName="overLimit"
+PASS :beginRenderPass,at_over:limitTest="underDefault";testValueName="atLimit"
+PASS :beginRenderPass,at_over:limitTest="underDefault";testValueName="overLimit"
+PASS :beginRenderPass,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit"
+PASS :beginRenderPass,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit"
+PASS :beginRenderPass,at_over:limitTest="atMaximum";testValueName="atLimit"
+PASS :beginRenderPass,at_over:limitTest="atMaximum";testValueName="overLimit"
+PASS :beginRenderPass,at_over:limitTest="overMaximum";testValueName="atLimit"
+PASS :beginRenderPass,at_over:limitTest="overMaximum";testValueName="overLimit"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="atLimit"
+FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit" assert_unreached:
+  - EXPECTATION FAILED: no error when one was expected:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
+ Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit"
+FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit" assert_unreached:
+  - EXPECTATION FAILED: no error when one was expected:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
+ Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit"
+FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit" assert_unreached:
+  - EXPECTATION FAILED: no error when one was expected:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
+ Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit"
+FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit" assert_unreached:
+  - EXPECTATION FAILED: no error when one was expected:
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
+ Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="overMaximum";testValueName="atLimit"
+PASS :createRenderBundle,at_over:limitTest="overMaximum";testValueName="overLimit"
+PASS :validate,maxColorAttachmentBytesPerSample:
+PASS :validate,kMaxColorAttachmentsToTest:
+

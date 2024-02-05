@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Importing binding name 'effectiveViewDimensionForTexture' is not found.
+
+Harness Error (FAIL), message = Unhandled rejection: Importing binding name 'effectiveViewDimensionForTexture' is not found.
+
+

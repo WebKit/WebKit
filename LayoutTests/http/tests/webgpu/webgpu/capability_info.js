@@ -822,4 +822,3 @@ export const kKnownWGSLLanguageFeatures = [
 'packed_4x8_integer_dot_product',
 'unrestricted_pointer_parameters',
 'pointer_composite_access'];
-//# sourceMappingURL=capability_info.js.map

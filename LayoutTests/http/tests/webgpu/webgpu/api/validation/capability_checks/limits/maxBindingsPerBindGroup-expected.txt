@@ -1,0 +1,301 @@
+
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit"
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";createPipelineType="createComputePipeline";async=true
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createRenderPipeline";async=false
+FAIL :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createRenderPipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+FAIL :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+              @fragment fn mainFS() -> @location(0) vec4f {
+                return vec4f(1);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createComputePipeline";async=false
+FAIL :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";createPipelineType="createComputePipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @compute @workgroup_size(1) fn main() {
+                _ = v;
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";createPipelineType="createComputePipeline";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createRenderPipeline";async=false
+FAIL :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createRenderPipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+FAIL :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+              @fragment fn mainFS() -> @location(0) vec4f {
+                return vec4f(1);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createComputePipeline";async=false
+FAIL :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";createPipelineType="createComputePipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(1000) var<uniform> v: f32;
+              @compute @workgroup_size(1) fn main() {
+                _ = v;
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=false
+FAIL :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(33267) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+FAIL :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(33267) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+              @fragment fn mainFS() -> @location(0) vec4f {
+                return vec4f(1);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=false
+FAIL :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(33267) var<uniform> v: f32;
+              @compute @workgroup_size(1) fn main() {
+                _ = v;
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=false
+FAIL :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(65535) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+FAIL :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(65535) var<uniform> v: f32;
+              @vertex fn mainVS() -> @builtin(position) vec4f {
+                return vec4f(v);
+              }
+              @fragment fn mainFS() -> @location(0) vec4f {
+                return vec4f(1);
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=false
+FAIL :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT:
+              @group(0) @binding(65535) var<uniform> v: f32;
+              @compute @workgroup_size(1) fn main() {
+                _ = v;
+              }
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:195:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:234:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:491:24
+    shouldRejectConditionally@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:489:37
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:685:43
+    testCreatePipeline@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:683:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:56:35
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/maxBindingsPerBindGroup.spec.js:50:20
+  - EXPECTATION FAILED: unexpected validation error: Binding index is invalid
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:408:16
+ Reached unreachable code
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";createPipelineType="createComputePipeline";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createRenderPipeline";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createRenderPipelineWithFragmentStage";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";createPipelineType="createComputePipeline";async=true
+PASS :validate:
+
