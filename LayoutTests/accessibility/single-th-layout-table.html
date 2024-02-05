@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="../resources/accessibility-helper.js"></script>
+    <script src="../resources/js-test.js"></script>
+</head>
+
+<body>
+<table id="table1">
+    <tr id="row1"> 
+        <th id="cell1">Cell 1</th>
+        <th id="cell2">Cell 2</th>
+    </tr>
+</table>
+
+<script>
+let output = "Tests that tables with a single row of all headers are not exposed as data tables.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("!accessibilityController.accessibleElementById('table1')", "true");
+    table = accessibilityController.accessibleElementById('table1')
+
+    output += "\nAdding another row to #table1...\n";
+    let trElement = document.createElement("tr");
+    trElement.innerHTML = "<td>Cell 3</td><td>Cell 4</td>";
+    document.getElementById("row1").after(trElement);
+
+    setTimeout(async function () {
+        await waitFor(() => { 
+            table = accessibilityController.accessibleElementById('table1');
+            return table != null;
+        });
+        output += "\n#table1 is not ignored.\n";
+        output += expect("table.role", "'AXRole: AXTable'");
+        output += expect("table.columnCount", "2");
+        output += expect("table.rowCount", "2");
+
+        debug(output);
+        finishJSTest();
+    })
+}
+</script>
+</body>
+</html>
