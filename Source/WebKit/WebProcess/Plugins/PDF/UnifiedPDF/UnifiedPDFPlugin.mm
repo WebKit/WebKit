@@ -1165,7 +1165,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
         zoomOut();
         break;
     case ContextMenuItemTag::ActualSize:
-        setPageScaleFactor(scaleForActualSize(), std::nullopt);
+        m_view->setPageScaleFactor(scaleForActualSize(), std::nullopt);
         break;
     }
 }
@@ -1372,12 +1372,12 @@ id UnifiedPDFPlugin::accessibilityAssociatedPluginParentForElement(Element*) con
 
 void UnifiedPDFPlugin::zoomIn()
 {
-    setPageScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
+    m_view->setPageScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
 }
 
 void UnifiedPDFPlugin::zoomOut()
 {
-    setPageScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
+    m_view->setPageScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale), std::nullopt);
 }
 
 #endif // ENABLE(PDF_HUD)

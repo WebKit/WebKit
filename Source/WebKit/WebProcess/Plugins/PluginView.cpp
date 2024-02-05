@@ -333,12 +333,11 @@ void PluginView::didEndMagnificationGesture()
 
 void PluginView::setPageScaleFactor(double scaleFactor, std::optional<IntPoint> origin)
 {
-    m_webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
-    m_webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
-
     if (!m_isInitialized)
         return;
 
+    m_webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
+    m_webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
     m_plugin->setPageScaleFactor(scaleFactor, origin);
 }
 
