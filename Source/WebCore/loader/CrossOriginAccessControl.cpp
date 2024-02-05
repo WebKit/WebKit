@@ -123,7 +123,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     }
 
     if (includeFetchMetadata) {
-        auto requestOrigin = SecurityOrigin::create(request.url());
+        Ref requestOrigin = SecurityOrigin::create(request.url());
         if (requestOrigin->isPotentiallyTrustworthy()) {
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, "cors"_s);
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, "empty"_s);
@@ -156,7 +156,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         }
     }
 
-    if (auto* documentLoader = document.loader())
+    if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     if (crossOriginAttribute.isNull()) {

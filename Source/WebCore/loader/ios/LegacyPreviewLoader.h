@@ -67,6 +67,9 @@ private:
     void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&&) final;
     void providePasswordForPreviewConverter(PreviewConverter&, Function<void(const String&)>&&) final;
 
+    RefPtr<PreviewConverter> protectedConverter() const;
+    Ref<LegacyPreviewLoaderClient> protectedClient() const;
+
     RefPtr<PreviewConverter> m_converter;
     Ref<LegacyPreviewLoaderClient> m_client;
     SharedBufferBuilder m_originalData;

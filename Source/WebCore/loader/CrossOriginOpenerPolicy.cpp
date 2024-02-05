@@ -80,7 +80,7 @@ static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& rep
     if (endpoint.isEmpty())
         return;
 
-    auto report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+    Ref report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
         body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
         body.setString("previousResponseURL"_s, coopOrigin.isSameOriginAs(previousResponseOrigin) ? PingLoader::sanitizeURLForReport(previousResponseURL) : String());
@@ -97,7 +97,7 @@ static void sendViolationReportWhenNavigatingAwayFromCOOPResponse(ReportingClien
     if (endpoint.isEmpty())
         return;
 
-    auto report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
+    Ref report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), endpoint, [&](auto& body) {
         body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
         body.setString("nextResponseURL"_s, coopOrigin.isSameOriginAs(nextResponseOrigin) || isCOOPResponseNavigationSource ? PingLoader::sanitizeURLForReport(nextResponseURL) : String());

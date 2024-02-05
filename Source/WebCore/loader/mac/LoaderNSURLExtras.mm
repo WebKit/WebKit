@@ -91,7 +91,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
 NSString *filenameByFixingIllegalCharacters(NSString *string)
 {
-    auto filename = adoptNS([string mutableCopy]);
+    RetainPtr filename = adoptNS([string mutableCopy]);
 
     // Strip null characters.
     unichar nullChar = 0;

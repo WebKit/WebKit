@@ -49,7 +49,7 @@ namespace WebCore {
 
 static ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(const Document& document)
 {
-    if (auto* page = document.page())
+    if (RefPtr page = document.page())
         return page->shouldRelaxThirdPartyCookieBlocking();
     return ShouldRelaxThirdPartyCookieBlocking::No;
 }
@@ -68,11 +68,11 @@ SameSiteInfo CookieJar::sameSiteInfo(const Document& document, IsForDOMCookieAcc
 {
     RefPtr frame = document.frame();
     if (frame && frame->loader().client().isRemoteWorkerFrameLoaderClient()) {
-        auto domain = RegistrableDomain(document.securityOrigin().data());
+        RegistrableDomain domain(document.securityOrigin().data());
         return { domain.matches(document.firstPartyForCookies()), false, true };
     }
 
-    if (auto* loader = document.loader())
+    if (RefPtr loader = document.loader())
         return SameSiteInfo::create(loader->request(), isAccessForDOM);
     return { };
 }

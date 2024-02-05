@@ -35,20 +35,20 @@ namespace WebCore {
 
 static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
-    for (auto& loader : copyToVector(loaders.values()))
+    for (RefPtr loader : copyToVector(loaders.values()))
         loader->schedule(pair);
 }
 
 static void unscheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
-    for (auto& loader : copyToVector(loaders.values()))
+    for (RefPtr loader : copyToVector(loaders.values()))
         loader->unschedule(pair);
 }
 
 void DocumentLoader::schedule(SchedulePair& pair)
 {
-    if (mainResourceLoader())
-        mainResourceLoader()->schedule(pair);
+    if (RefPtr loader = mainResourceLoader())
+        loader->schedule(pair);
     scheduleAll(m_subresourceLoaders, pair);
     scheduleAll(m_plugInStreamLoaders, pair);
     scheduleAll(m_multipartSubresourceLoaders, pair);
@@ -56,8 +56,8 @@ void DocumentLoader::schedule(SchedulePair& pair)
 
 void DocumentLoader::unschedule(SchedulePair& pair)
 {
-    if (mainResourceLoader())
-        mainResourceLoader()->unschedule(pair);
+    if (RefPtr loader = mainResourceLoader())
+        loader->unschedule(pair);
     unscheduleAll(m_subresourceLoaders, pair);
     unscheduleAll(m_plugInStreamLoaders, pair);
     unscheduleAll(m_multipartSubresourceLoaders, pair);

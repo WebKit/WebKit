@@ -83,9 +83,10 @@ class NetworkResourceLoader final
     , public WebCore::CrossOriginAccessControlCheckDisabler
 #if ENABLE(CONTENT_FILTERING)
     , public WebCore::ContentFilterClient
+#else
+    , public CanMakeWeakPtr<NetworkResourceLoader>
 #endif
-    , public WebCore::ReportingClient
-    , public CanMakeWeakPtr<NetworkResourceLoader> {
+    , public WebCore::ReportingClient {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&& reply = nullptr)
     {
