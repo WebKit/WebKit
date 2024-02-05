@@ -38,7 +38,6 @@
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
-#import <wtf/WeakPtr.h>
 #import <wtf/text/WTFString.h>
 
 struct WGPUDeviceImpl {
@@ -67,7 +66,7 @@ class ShaderModule;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
-class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>, public CanMakeWeakPtr<Device> {
+class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
