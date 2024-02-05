@@ -71,6 +71,10 @@
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/StackVisitor.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include <pal/system/ios/UserInterfaceIdiom.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -423,10 +427,13 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
     // Twitter.com video embeds have controls that are too tiny and
     // show page behind fullscreen.
     // (Ref: rdar://121473410)
+    // YouTube.com does not provide AirPlay controls in fullscreen
+    // (Ref: rdar://121471373)
     if (!m_shouldDisableElementFullscreen) {
         m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s)
             || isDomain("instagram.com"_s)
-            || isEmbedDomain("twitter.com"_s);
+            || isEmbedDomain("twitter.com"_s)
+            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isDomain("youtube.com"_s) || isEmbedDomain("youtube.com"_s)));
     }
 
     return m_shouldDisableElementFullscreen.value();
