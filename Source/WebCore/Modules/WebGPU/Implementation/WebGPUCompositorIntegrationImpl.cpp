@@ -47,7 +47,8 @@ CompositorIntegrationImpl::~CompositorIntegrationImpl() = default;
 
 void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
-    m_presentationContext->present();
+    if (auto* presentationContext = m_presentationContext.get())
+        presentationContext->present();
 
     m_onSubmittedWorkScheduledCallback(WTFMove(completionHandler));
 }
@@ -57,9 +58,14 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 {
     m_renderBuffers.clear();
 
-    static_cast<PresentationContext*>(m_presentationContext.get())->unconfigure();
-    m_presentationContext->setSize(width, height);
+    if (auto* presentationContext = m_presentationContext.get()) {
+        static_cast<PresentationContext*>(presentationContext)->unconfigure();
+        presentationContext->setSize(width, height);
+    }
 
+    constexpr int max2DTextureSize = 16384;
+    width = std::max(1, std::min(max2DTextureSize, width));
+    height = std::max(1, std::min(max2DTextureSize, height));
     m_renderBuffers.append(WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()));
     m_renderBuffers.append(WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()));
 
