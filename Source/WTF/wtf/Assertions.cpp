@@ -284,30 +284,48 @@ void WTFReportBacktraceWithPrefix(const char* prefix)
     WTFReportBacktraceWithPrefixAndPrintStream(out, prefix);
 }
 
+static constexpr int kDefaultFramesToShow = 31;
+static constexpr int kDefaultFramesToSkip = 2;
+
+void WTFReportBacktraceWithStackDepth(int framesToShow)
+{
+    WTFReportBacktraceWithPrefixAndStackDepth("", framesToShow);
+}
+
+void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToShow)
+{
+    int frames = framesToShow + kDefaultFramesToSkip;
+    Vector<void*> samples;
+    samples.reserveInitialCapacity(frames);
+
+    WTFGetBacktrace(samples.data(), &frames);
+    CrashLogPrintStream out;
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples.data() + kDefaultFramesToSkip, framesToShow, prefix);
+    else
+        out.print("%sno stacktrace available", prefix);
+}
+
 void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* prefix)
 {
-    static constexpr int framesToShow = 31;
-    static constexpr int framesToSkip = 2;
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* samples[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    if (frames > framesToSkip)
-        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + framesToSkip, frames - framesToSkip, prefix);
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + kDefaultFramesToSkip, frames - kDefaultFramesToSkip, prefix);
     else
         out.print("%sno stacktrace available", prefix);
 }
 
 void WTFReportBacktrace()
 {
-    static constexpr int framesToShow = 31;
-    static constexpr int framesToSkip = 2;
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* samples[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    if (frames > framesToSkip)
-        WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktrace(samples + kDefaultFramesToSkip, frames - kDefaultFramesToSkip);
     else
         CrashLogPrintStream { }.print("no stacktrace available");
 }
@@ -604,10 +622,8 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 #if !RELEASE_LOG_DISABLED
 void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 {
-    static constexpr int framesToShow = 32;
-    static constexpr int framesToSkip = 2;
-    void* stack[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* stack[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
     WTFGetBacktrace(stack, &frames);
     StackTraceSymbolResolver { { stack, static_cast<size_t>(frames) } }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
 #if USE(OS_LOG)
