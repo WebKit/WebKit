@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
+<title>Test that MESSAGE_CHECKs in NetworkConnectionToWebProcess are working correctly</title>
+<script src="../resources/ipc.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+    if (window.IPC) {
+        IPC.sendMessage('Networking', 0, IPC.messages.NetworkResourceLoader_ContinueDidReceiveResponse.name, []);
+
+        asyncFlush('Networking').then(() => {
+            console.log("Should have crashed!");
+            testRunner.notifyDone();
+        });
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>

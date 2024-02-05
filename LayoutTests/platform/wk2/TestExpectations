@@ -685,6 +685,7 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
+[ Debug ] ipc/validate-message-check-in-networkconnectiontowebproces-crash.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-testOnlyIPC.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
