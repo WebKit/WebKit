@@ -713,8 +713,8 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 http/tests/inspector/network/local-resource-override-mapped-to-directory.html [ Pass ]
 http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Pass ]
 
-# Network throttling is currently only enabled on Cocoa platforms.
-http/tests/inspector/network/setEmulatedConditions.html [ Pass ]
+# Network throttling is currently disabled pending rdar://122224142 (Per process network link conditioner SPI).
+http/tests/inspector/network/setEmulatedConditions.html [ Skip ]
 
 # Content Extensions tests must be enabled explicitly on mac-wk2.
 http/tests/contentextensions [ Pass ]
