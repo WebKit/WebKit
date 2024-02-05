@@ -538,6 +538,10 @@ void Plan::reallyAdd(CommonData* commonData)
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
         commonData->recordedStatuses = WTFMove(m_recordedStatuses);
     }
+
+    ASSERT(m_vm->heap.isDeferred());
+    for (auto* callLinkInfo : commonData->m_directCallLinkInfos)
+        callLinkInfo->validateSpeculativeRepatchOnMainThread(*m_vm);
 }
 
 bool Plan::isStillValidOnMainThread()
