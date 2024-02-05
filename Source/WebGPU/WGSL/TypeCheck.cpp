@@ -82,6 +82,7 @@ public:
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
     void visit(AST::TypeAlias&) override;
+    void visit(AST::ConstAssert&) override;
 
     // Attributes
     void visit(AST::AlignAttribute&) override;
@@ -377,6 +378,27 @@ void TypeChecker::visit(AST::TypeAlias& alias)
 {
     auto* type = resolve(alias.type());
     introduceType(alias.name(), type);
+}
+
+void TypeChecker::visit(AST::ConstAssert& assertion)
+{
+    auto* testType = infer(assertion.test());
+    if (!unify(m_types.boolType(), testType)) {
+        typeError(InferBottom::No, assertion.test().span(), "const assertion condition must be a bool, got '", *testType, "'");
+        return;
+    }
+
+    if (isBottom(testType))
+        return;
+
+    auto constantValue = assertion.test().constantValue();
+    if (!constantValue) {
+        typeError(InferBottom::No, assertion.test().span(), "const assertion requires a const-expression");
+        return;
+    }
+
+    if (!std::get<bool>(*constantValue))
+        typeError(InferBottom::No, assertion.span(), "const assertion failed");
 }
 
 void TypeChecker::visit(AST::VariableStatement& statement)

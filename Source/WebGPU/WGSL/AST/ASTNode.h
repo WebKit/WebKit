@@ -50,6 +50,7 @@ enum class NodeKind : uint8_t {
     StageAttribute,
     WorkgroupSizeAttribute,
 
+    ConstAssert,
     Directive,
     DiagnosticDirective,
 
@@ -86,6 +87,7 @@ enum class NodeKind : uint8_t {
     CallStatement,
     CompoundAssignmentStatement,
     CompoundStatement,
+    ConstAssertStatement,
     ContinueStatement,
     DecrementIncrementStatement,
     DiscardStatement,

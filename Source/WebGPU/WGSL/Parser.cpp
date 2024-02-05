@@ -574,6 +574,9 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
     } else if (current().type == TokenType::KeywordAlias) {
         PARSE(alias, TypeAlias);
         return { alias };
+    } else if (current().type ==  TokenType::KeywordConstAssert) {
+        PARSE(assert, ConstAssert);
+        return { assert };
     }
 
     PARSE(attributes, Attributes);
@@ -596,6 +599,15 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
     default:
         FAIL("Trying to parse a GlobalDecl, expected 'const', 'fn', 'override', 'struct' or 'var'."_s);
     }
+}
+
+template<typename Lexer>
+Result<AST::ConstAssert::Ref> Parser<Lexer>::parseConstAssert()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordConstAssert);
+    PARSE(test, Expression);
+    RETURN_ARENA_NODE(ConstAssert, WTFMove(test));
 }
 
 template<typename Lexer>
@@ -1169,6 +1181,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         PARSE(rhs, Expression);
         CONSUME_TYPE(Semicolon);
         RETURN_ARENA_NODE(PhonyAssignmentStatement, WTFMove(rhs));
+    }
+    case TokenType::KeywordConstAssert: {
+        PARSE(assert, ConstAssert);
+        RETURN_ARENA_NODE(ConstAssertStatement, WTFMove(assert));
     }
     default:
         FAIL("Not a valid statement"_s);

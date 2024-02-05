@@ -54,6 +54,7 @@ public:
     virtual void visit(AST::Variable&);
     virtual void visit(AST::Structure&);
     virtual void visit(AST::TypeAlias&);
+    virtual void visit(AST::ConstAssert&);
 
     // Attribute
     virtual void visit(AST::Attribute&);
@@ -102,6 +103,7 @@ public:
     virtual void visit(AST::CallStatement&);
     virtual void visit(AST::CompoundAssignmentStatement&);
     virtual void visit(AST::CompoundStatement&);
+    virtual void visit(AST::ConstAssertStatement&);
     virtual void visit(AST::ContinueStatement&);
     virtual void visit(AST::DecrementIncrementStatement&);
     virtual void visit(AST::DiscardStatement&);

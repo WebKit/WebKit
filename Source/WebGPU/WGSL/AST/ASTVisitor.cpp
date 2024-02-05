@@ -85,6 +85,9 @@ void Visitor::visit(AST::Declaration& declaration)
     case AST::NodeKind::TypeAlias:
         checkErrorAndVisit(downcast<AST::TypeAlias>(declaration));
         break;
+    case AST::NodeKind::ConstAssert:
+        checkErrorAndVisit(downcast<AST::ConstAssert>(declaration));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled Declaration");
     }
@@ -93,6 +96,11 @@ void Visitor::visit(AST::Declaration& declaration)
 void Visitor::visit(AST::TypeAlias& alias)
 {
     visit(alias.type());
+}
+
+void Visitor::visit(AST::ConstAssert& assertion)
+{
+    visit(assertion.test());
 }
 
 // Attribute
@@ -400,6 +408,9 @@ void Visitor::visit(Statement& statement)
     case AST::NodeKind::CompoundStatement:
         checkErrorAndVisit(downcast<AST::CompoundStatement>(statement));
         break;
+    case AST::NodeKind::ConstAssertStatement:
+        checkErrorAndVisit(downcast<AST::ConstAssertStatement>(statement));
+        break;
     case AST::NodeKind::ContinueStatement:
         checkErrorAndVisit(downcast<AST::ContinueStatement>(statement));
         break;
@@ -466,6 +477,11 @@ void Visitor::visit(CompoundStatement& compoundStatement)
 {
     for (auto& statement : compoundStatement.statements())
         checkErrorAndVisit(statement);
+}
+
+void Visitor::visit(AST::ConstAssertStatement& statement)
+{
+    checkErrorAndVisit(statement.assertion());
 }
 
 void Visitor::visit(AST::ContinueStatement&)

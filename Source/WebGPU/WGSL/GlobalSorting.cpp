@@ -131,12 +131,14 @@ public:
     FixedVector<Node>& nodes() { return m_nodes; }
     Node* addNode(unsigned index, AST::Declaration& astNode)
     {
-        if (m_nodeMap.find(astNode.name()) != m_nodeMap.end())
+        bool isConstAssert = is<AST::ConstAssert>(astNode);
+        if (!isConstAssert && m_nodeMap.find(astNode.name()) != m_nodeMap.end())
             return nullptr;
 
         m_nodes[index] = Node(index, astNode);
         auto* node = &m_nodes[index];
-        m_nodeMap.add(astNode.name(), node);
+        if (!isConstAssert)
+            m_nodeMap.add(astNode.name(), node);
         return node;
     }
     Node* getNode(const AST::Identifier& identifier)
@@ -150,7 +152,10 @@ public:
     EdgeSet& edges() { return m_edges; }
     void addEdge(Node& source, Node& target)
     {
-        dataLogLnIf(shouldLogGlobalSorting, "addEdge: source: ", source.astNode().name(), ", target: ", target.astNode().name());
+        if constexpr (shouldLogGlobalSorting) {
+            String sourceNodeName = is<AST::ConstAssert>(source.astNode()) ? "const_assert"_s : source.astNode().name().id();
+            dataLogLnIf(shouldLogGlobalSorting, "addEdge: source: ", sourceNodeName, ", target: ", target.astNode().name());
+        }
         auto result = m_edges.add(Edge(source, target));
         Edge& edge = *result.iterator;
         source.outgoingEdges().add(edge);
@@ -277,7 +282,10 @@ static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
 
     std::function<void(Graph::Node&, unsigned)> processNode;
     processNode = [&](Graph::Node& node, unsigned currentIndex) {
-        dataLogLnIf(shouldLogGlobalSorting, "Process: ", node.astNode().name());
+        if constexpr (shouldLogGlobalSorting) {
+            String nodeName = is<AST::ConstAssert>(node.astNode()) ? "const_assert"_s : node.astNode().name().id();
+            dataLogLn("Process: ", nodeName);
+        }
         list.append(node.astNode());
         for (auto edge : node.incomingEdges()) {
             auto& source = edge.source();
