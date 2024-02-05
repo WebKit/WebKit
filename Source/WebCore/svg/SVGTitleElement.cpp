@@ -24,6 +24,7 @@
 
 #include "Document.h"
 #include "SVGNames.h"
+#include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -44,20 +45,32 @@ Ref<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Docum
 Node::InsertedIntoAncestorResult SVGTitleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    document().titleElementAdded(*this);
+    if (insertionType.connectedToDocument && parentNode() == document().documentElement())
+        document().titleElementAdded(*this);
     return result;
+}
+
+static bool isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, ContainerNode& oldParentOfRemovedTree)
+{
+    if (!title.parentNode() && is<SVGSVGElement>(oldParentOfRemovedTree) && title.document().documentElement() == &oldParentOfRemovedTree)
+        return true;
+    if (title.parentNode() && is<SVGSVGElement>(*title.parentNode()) && !title.parentNode()->parentNode() && is<Document>(oldParentOfRemovedTree))
+        return true;
+    return false;
 }
 
 void SVGTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    document().titleElementRemoved(*this);
+    if (removalType.disconnectedFromDocument && isTitleElementRemovedFromSVGSVGElement(*this, oldParentOfRemovedTree))
+        document().titleElementRemoved(*this);
 }
 
 void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
-    document().titleElementTextChanged(*this);
+    if (isConnected() && parentNode() == document().documentElement())
+        document().titleElementTextChanged(*this);
 }
 
 }
