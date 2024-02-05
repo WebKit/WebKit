@@ -44,7 +44,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
     DestroyVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID);
 #endif
-    [EnabledIf='allowTestOnlyIPC()'] SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
+    SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
