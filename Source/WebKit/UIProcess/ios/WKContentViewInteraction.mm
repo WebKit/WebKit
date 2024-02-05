@@ -4438,7 +4438,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     if (action == @selector(_swapCharacters:))
-        return editorState.selectionIsRange && editorState.isContentRichlyEditable && [super canPerformAction:action withSender:sender];
+        return editorState.isContentRichlyEditable && [super canPerformAction:action withSender:sender];
 #endif
 
     if (action == @selector(paste:) || action == @selector(_pasteAsQuotation:) || action == @selector(_pasteAndMatchStyle:) || action == @selector(pasteAndMatchStyle:)) {

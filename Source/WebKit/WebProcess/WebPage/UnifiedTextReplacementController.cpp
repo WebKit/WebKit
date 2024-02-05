@@ -30,7 +30,9 @@
 
 #include "Logging.h"
 #include "WebPage.h"
+#include "WebUnifiedTextReplacementContextData.h"
 #include <WebCore/DocumentMarkerController.h>
+#include <WebCore/HTMLConverter.h>
 #include <WebCore/TextIterator.h>
 
 namespace WebKit {
@@ -41,22 +43,41 @@ UnifiedTextReplacementController::UnifiedTextReplacementController(WebPage& webP
 {
 }
 
-void UnifiedTextReplacementController::didBeginTextReplacementSession(const WTF::UUID& uuid)
+void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didBeginTextReplacementSession (%s)", uuid.toString().utf8().data());
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s)", uuid.toString().utf8().data());
 
     if (!m_webPage)
         return;
 
-    auto contextRange = m_webPage->rangeSelectionContext();
+    auto* corePage = m_webPage->corePage();
+    if (!corePage)
+        return;
+
+    Ref frame = CheckedRef(corePage->focusController())->focusedOrMainFrame();
+
+    auto contextRange = m_webPage->autocorrectionContextRange();
     if (!contextRange)
         return;
 
     auto liveRange = createLiveRange(*contextRange);
 
-    ASSERT(!m_sessionRanges.contains(uuid));
+    ASSERT(!m_contextRanges.contains(uuid));
 
-    m_sessionRanges.set(uuid, liveRange);
+    m_contextRanges.set(uuid, liveRange);
+
+    auto selectedTextRange = frame->selection().selection().firstRange();
+
+    auto attributedStringFromRange = attributedString(*contextRange);
+
+    auto selectedTextCharacterRange = WebCore::characterRange(*contextRange, *selectedTextRange);
+
+    completionHandler({ WebUnifiedTextReplacementContextData { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
+}
+
+void UnifiedTextReplacementController::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebKit::WebUnifiedTextReplacementContextData>& contexts)
+{
+    RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::didBeginTextReplacementSession (%s) [received contexts: %zu]", uuid.toString().utf8().data(), contexts.size());
 }
 
 void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
@@ -66,9 +87,9 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
     if (!m_webPage)
         return;
 
-    ASSERT(m_sessionRanges.contains(uuid));
+    ASSERT(m_contextRanges.contains(uuid));
 
-    auto liveRange = m_sessionRanges.get(uuid);
+    auto liveRange = m_contextRanges.get(uuid);
     auto sessionRange = makeSimpleRange(liveRange);
     if (!sessionRange)
         return;

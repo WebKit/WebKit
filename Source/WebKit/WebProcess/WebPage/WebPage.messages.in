@@ -760,7 +760,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    DidBeginTextReplacementSession(WTF::UUID uuid)
+    WillBeginTextReplacementSession(WTF::UUID uuid) -> (Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
+
+    DidBeginTextReplacementSession(WTF::UUID uuid, Vector<WebKit::WebUnifiedTextReplacementContextData> contexts)
 
     TextReplacementSessionDidReceiveReplacements(WTF::UUID uuid, Vector<WebKit::WebTextReplacementData> replacements, struct WebKit::WebUnifiedTextReplacementContextData context, bool finished)
 #endif

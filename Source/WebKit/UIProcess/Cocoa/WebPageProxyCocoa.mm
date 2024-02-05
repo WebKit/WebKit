@@ -1092,9 +1092,15 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
 #endif // ENABLE(EXTENSION_CAPABILITIES)
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebPageProxy::didBeginTextReplacementSession(const WTF::UUID& uuid)
+
+void WebPageProxy::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    send(Messages::WebPage::DidBeginTextReplacementSession(uuid));
+    sendWithAsyncReply(Messages::WebPage::WillBeginTextReplacementSession(uuid), WTFMove(completionHandler));
+}
+
+void WebPageProxy::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebKit::WebUnifiedTextReplacementContextData>& contexts)
+{
+    send(Messages::WebPage::DidBeginTextReplacementSession(uuid, contexts));
 }
 
 void WebPageProxy::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)

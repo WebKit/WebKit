@@ -46,14 +46,16 @@ class UnifiedTextReplacementController final {
 public:
     explicit UnifiedTextReplacementController(WebPage&);
 
-    void didBeginTextReplacementSession(const WTF::UUID&);
+    void willBeginTextReplacementSession(const WTF::UUID&, CompletionHandler<void(const Vector<WebKit::WebUnifiedTextReplacementContextData>&)>&&);
+
+    void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebKit::WebUnifiedTextReplacementContextData>&);
 
     void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebKit::WebTextReplacementData>&, const WebKit::WebUnifiedTextReplacementContextData&, bool);
 
 private:
     WeakPtr<WebPage> m_webPage;
 
-    HashMap<WTF::UUID, Ref<WebCore::Range>> m_sessionRanges;
+    HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
 };
 
 } // namespace WebKit

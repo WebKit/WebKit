@@ -25,8 +25,16 @@
 
 #pragma once
 
-#include <wtf/UUID.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+namespace WTF {
+class UUID;
+}
+
+namespace WebCore {
+struct AttributedString;
+struct CharacterRange;
+}
 
 namespace WebKit {
 
@@ -37,3 +45,5 @@ struct WebUnifiedTextReplacementContextData {
 };
 
 }
+
+#endif

@@ -846,16 +846,15 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 }
 #endif
 
-std::optional<SimpleRange> WebPage::rangeSelectionContext() const
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    return frame->selection().rangeByExtendingCurrentSelection(TextGranularity::ParagraphGranularity);
+    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, WTFMove(completionHandler));
 }
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid)
+void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebKit::WebUnifiedTextReplacementContextData>& contexts)
 {
-    m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid);
+    m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid, contexts);
 }
 
 void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
@@ -863,6 +862,54 @@ void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid
     m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
 }
 #endif
+
+std::optional<SimpleRange> WebPage::autocorrectionContextRange()
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+
+    VisiblePosition contextStartPosition;
+
+    VisiblePosition startPosition = frame->selection().selection().start();
+    VisiblePosition endPosition = frame->selection().selection().end();
+
+    constexpr unsigned minContextWordCount = 10;
+    constexpr unsigned maxContextLength = 100;
+
+    auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+    if (startPosition != firstPositionInEditableContent) {
+        contextStartPosition = startPosition;
+        unsigned totalContextLength = 0;
+
+        for (unsigned i = 0; i < minContextWordCount; ++i) {
+            auto previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
+            if (previousPosition.isNull())
+                break;
+
+            auto currentWordRange = makeSimpleRange(previousPosition, contextStartPosition);
+            if (currentWordRange) {
+                auto currentWord = WebCore::plainTextReplacingNoBreakSpace(*currentWordRange);
+                totalContextLength += currentWord.length();
+            }
+
+            if (totalContextLength >= maxContextLength)
+                break;
+
+            contextStartPosition = previousPosition;
+        }
+
+        VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
+        if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
+            contextStartPosition = sentenceContextStartPosition;
+    }
+
+    if (endPosition != endOfEditableContent(endPosition)) {
+        VisiblePosition nextPosition = endOfSentence(endPosition);
+        if (nextPosition.isNotNull() && nextPosition > endPosition)
+            endPosition = nextPosition;
+    }
+
+    return makeSimpleRange(contextStartPosition, endPosition);
+}
 
 } // namespace WebKit
 
