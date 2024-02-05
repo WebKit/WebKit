@@ -3859,6 +3859,8 @@ LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject& containingBlock, RenderFragmentContainer* fragment, bool checkForPerpendicularWritingMode) const
 {
+    ASSERT(containingBlock.canContainAbsolutelyPositionedObjects() || containingBlock.canContainFixedPositionObjects());
+
     if (checkForPerpendicularWritingMode && containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
@@ -3900,13 +3902,17 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         return (boxInfo) ? std::max<LayoutUnit>(0, cb->clientLogicalWidth() - (cb->logicalWidth() - boxInfo->logicalWidth())) : cb->clientLogicalWidth();
     }
 
-    ASSERT(containingBlock.isInFlowPositioned());
+    if (auto* inlineBox = dynamicDowncast<RenderInline>(containingBlock))
+        return inlineBox->innerPaddingBoxWidth();
 
-    return downcast<RenderInline>(containingBlock).innerPaddingBoxWidth();
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject& containingBlock, bool checkForPerpendicularWritingMode) const
 {
+    ASSERT(containingBlock.canContainAbsolutelyPositionedObjects() || containingBlock.canContainFixedPositionObjects());
+
     if (checkForPerpendicularWritingMode && containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, nullptr, false);
 
@@ -3915,16 +3921,16 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
             return height.value();
     }
 
-    if (containingBlock.isRenderBox()) {
+    if (auto* box = dynamicDowncast<RenderBox>(containingBlock)) {
         bool isFixedPosition = isFixedPositioned();
 
         if (isFixedPosition) {
-            if (auto* renderView = dynamicDowncast<RenderView>(containingBlock))
+            if (auto* renderView = dynamicDowncast<RenderView>(*box))
                 return renderView->clientLogicalHeightForFixedPosition();
         }
 
-        auto* containingBlockAsRenderBlock = dynamicDowncast<RenderBlock>(containingBlock);
-        const RenderBlock& cb = containingBlockAsRenderBlock ? *containingBlockAsRenderBlock : *containingBlock.containingBlock();
+        auto* containingBlockAsRenderBlock = dynamicDowncast<RenderBlock>(*box);
+        const RenderBlock& cb = containingBlockAsRenderBlock ? *containingBlockAsRenderBlock : *box->containingBlock();
         LayoutUnit result = cb.clientLogicalHeight();
         RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
         if (fragmentedFlow && fragmentedFlow->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode()) {
@@ -3933,9 +3939,12 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         }
         return result;
     }
-        
-    ASSERT(containingBlock.isInFlowPositioned());
-    return downcast<RenderInline>(containingBlock).innerPaddingBoxHeight();
+
+    if (auto* inlineBox = dynamicDowncast<RenderInline>(containingBlock))
+        return inlineBox->innerPaddingBoxHeight();
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth, RenderFragmentContainer* fragment)
