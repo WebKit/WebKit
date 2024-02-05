@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.42.5
+================
+
+What's new in WebKitGTK 2.42.5?
+
+  - Fix webkit_web_context_allow_tls_certificate_for_host to handle IPv6 URIs produced by SoupURI.
+  - Ignore stops with offset zero before last one when rendering gradients with cairo.
+  - Write bwrapinfo.json to disk for xdg-desktop-portal.
+  - Fix gamepads detection by correctly handling focused window in GTK4.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.42.4
 ================
 
