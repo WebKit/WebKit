@@ -413,7 +413,7 @@ EOF
 
 void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject, JSPropertyNameAccumulatorRef propertyNames)
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return;
 
@@ -430,7 +430,7 @@ EOF
 
 bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName)
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return false;
 
@@ -479,9 +479,11 @@ EOF
             push(@contents, <<EOF);
 
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (UNLIKELY(${functionEarlyReturnCondition}))
+    RefPtr impl = to${implementationClassName}(context, thisObject);
+    if (UNLIKELY(${functionEarlyReturnCondition})) {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
         return ${defaultEarlyReturnValue};
+    }
 
     RELEASE_LOG_DEBUG(Extensions, "Called function ${call} (%{public}lu %{public}s) in %{public}s world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8().data());
 EOF
@@ -518,6 +520,22 @@ EOF
             my $hasOptionalAsLastArgument = 1 if $lastParameter && $lastParameter->extendedAttributes->{"Optional"};
             my $hasSimpleOptionalArgumentHandling = !$optionalArgumentCount || ($hasOptionalAsLastArgument && ($argumentCount <= 2 || $requiredArgumentCount >= $argumentCount - 1));
             my $argumentIndexConditon = undef;
+
+            if ($needsPage) {
+                push(@contents, "    RefPtr page = toWebPage(context);\n");
+                push(@contents, "    if (UNLIKELY(!page)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
+                push(@contents, "        return ${defaultEarlyReturnValue};\n");
+                push(@contents, "    }\n\n");
+            }
+
+            if ($needsFrame) {
+                push(@contents, "    RefPtr frame = toWebFrame(context);\n");
+                push(@contents, "    if (UNLIKELY(!frame)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
+                push(@contents, "        return ${defaultEarlyReturnValue};\n");
+                push(@contents, "    }\n\n");
+            }
 
             if (!$hasSimpleOptionalArgumentHandling) {
                 push(@contents, "    ssize_t argumentIndex = -1;\n") unless $processArgumentsLeftToRight;
@@ -679,10 +697,10 @@ EOF
             unshift(@parameters, "context") if $needsScriptContext;
 
             unshift(@methodSignatureNames, "page") if $needsPage;
-            unshift(@parameters, "toWebPage(context).get()") if $needsPage;
+            unshift(@parameters, "*page") if $needsPage;
 
             unshift(@methodSignatureNames, "frame") if $needsFrame;
-            unshift(@parameters, "toWebFrame(context).get()") if $needsFrame;
+            unshift(@parameters, "*frame") if $needsFrame;
 
             push(@methodSignatureNames, "outExceptionString") if $needsExceptionString;
             push(@parameters, "&exceptionString") if $needsExceptionString;
@@ -719,7 +737,7 @@ EOF
 
             if ($needsExceptionString && !$isVoidReturn) {
                 push(@contents, <<EOF);
-    NSString *exceptionString = nil;
+    NSString *exceptionString;
     JSValueRef result = ${returnExpression};
 
     if (UNLIKELY(exceptionString)) {
@@ -732,7 +750,7 @@ EOF
 EOF
             } elsif ($needsExceptionString && $isVoidReturn) {
                 push(@contents, <<EOF);
-    NSString *exceptionString = nil;
+    NSString *exceptionString;
     ${functionCall};
 
     if (UNLIKELY(exceptionString)) {
@@ -755,7 +773,7 @@ EOF
 
 ${functionSignature}
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(${functionEarlyReturnCondition}))
         return JSValueMakeUndefined(context);
 
@@ -814,17 +832,20 @@ EOF
             my $getterName = $self->_getterName($attribute);
             my $call = _callString($idlType, $attribute, 0);
 
+            my $needsFrame = $attribute->extendedAttributes->{"NeedsFrame"};
+            my $needsPage = $attribute->extendedAttributes->{"NeedsPage"};
+
             my @methodSignatureNames = ();
             my @parameters = ();
 
             push(@methodSignatureNames, "context") if $attribute->extendedAttributes->{"NeedsScriptContext"};
             push(@parameters, "context") if $attribute->extendedAttributes->{"NeedsScriptContext"};
 
-            push(@methodSignatureNames, "page") if $attribute->extendedAttributes->{"NeedsPage"};
-            push(@parameters, "toWebPage(context).get()") if $attribute->extendedAttributes->{"NeedsPage"};
+            push(@methodSignatureNames, "page") if $needsPage;
+            push(@parameters, "*page") if $needsPage;
 
-            push(@methodSignatureNames, "frame") if $attribute->extendedAttributes->{"NeedsFrame"};
-            push(@parameters, "toWebFrame(context).get()") if $attribute->extendedAttributes->{"NeedsFrame"};
+            push(@methodSignatureNames, "frame") if $needsFrame;
+            push(@parameters, "*frame") if $needsFrame;
 
             my $getterExpression = $self->_functionCall($attribute, \@methodSignatureNames, \@parameters, $interface, $getterName);
 
@@ -847,11 +868,32 @@ EOF
             push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
             push(@contents, <<EOF);
-    ${implementationClassName}* impl = to${implementationClassName}(context, object);
+    RefPtr impl = to${implementationClassName}(context, object);
     if (UNLIKELY(${getterEarlyReturnCondition}))
         return JSValueMakeUndefined(context);
 
     RELEASE_LOG_DEBUG(Extensions, "Called getter ${call} in %{public}s world", toDebugString(impl->contentWorldType()).utf8().data());
+EOF
+
+            if ($needsPage) {
+                push(@contents, "\n");
+                push(@contents, "    RefPtr page = toWebPage(context);\n");
+                push(@contents, "    if (UNLIKELY(!page)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
+                push(@contents, "        return JSValueMakeUndefined(context);\n");
+                push(@contents, "    }\n");
+            }
+
+            if ($needsFrame) {
+                push(@contents, "\n");
+                push(@contents, "    RefPtr frame = toWebFrame(context);\n");
+                push(@contents, "    if (UNLIKELY(!frame)) {\n");
+                push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
+                push(@contents, "        return JSValueMakeUndefined(context);\n");
+                push(@contents, "    }\n");
+            }
+
+            push(@contents, <<EOF);
 
     return @{[$self->_returnExpression($attribute, $getterExpression, $interface)]};
 }
@@ -869,12 +911,11 @@ EOF
                 push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
                 push(@contents, <<EOF);
-    ${implementationClassName}* impl = to${implementationClassName}(context, object);
+    RefPtr impl = to${implementationClassName}(context, object);
     if (UNLIKELY(${setterEarlyReturnCondition}))
         return false;
 
     RELEASE_LOG_DEBUG(Extensions, "Called setter ${call} in %{public}s world", toDebugString(impl->contentWorldType()).utf8().data());
-
 EOF
 
                 my $platformValue;
@@ -884,6 +925,24 @@ EOF
                     $self->_installAutomaticExceptions(\@contents, $attribute, $idlType, "platformValue", $attribute->name, "false", \%contentsIncludes, $attribute);
                 } else {
                     $platformValue = $self->_platformTypeConstructor($attribute, "value");
+                }
+
+                if ($needsPage) {
+                    push(@contents, "\n");
+                    push(@contents, "    RefPtr page = toWebPage(context);\n");
+                    push(@contents, "    if (UNLIKELY(!page)) {\n");
+                    push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Page could not be found for JSContextRef\");\n");
+                    push(@contents, "        return false;\n");
+                    push(@contents, "    }\n");
+                }
+
+                if ($needsFrame) {
+                    push(@contents, "\n");
+                    push(@contents, "    RefPtr frame = toWebFrame(context);\n");
+                    push(@contents, "    if (UNLIKELY(!frame)) {\n");
+                    push(@contents, "        RELEASE_LOG_ERROR(Extensions, \"Frame could not be found for JSContextRef\");\n");
+                    push(@contents, "        return false;\n");
+                    push(@contents, "    }\n");
                 }
 
                 push(@contents, <<EOF);
@@ -1384,10 +1443,12 @@ sub _platformTypeVariableDeclaration
         "NSObject"      => 1,
     );
 
+    my $isObjCType = $objCTypes{$platformType};
+
     my $nullValue = "nullptr";
     $nullValue = "false" if $platformType eq "bool";
     $nullValue = "std::numeric_limits<double>::quiet_NaN()" if $platformType eq "double";
-    $nullValue = "nil" if $objCTypes{$platformType};
+    $nullValue = "nil" if $isObjCType;
     $nullValue = "JSValueMakeUndefined(context)" if $platformType eq "JSValueRef";
 
     my $defaultValue = $signature->extendedAttributes->{"DefaultValue"};
@@ -1400,7 +1461,7 @@ sub _platformTypeVariableDeclaration
     if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "double" or $platformType eq "bool") {
         $platformType .= " ";
     } else {
-        $platformType .= $objCTypes{$platformType} ? " *" : "* ";
+        $platformType .= $isObjCType ? " *" : "* ";
     }
 
     $platformType = "" if $hideType;
@@ -1408,6 +1469,7 @@ sub _platformTypeVariableDeclaration
     return "$platformType$variableName = $condition && $constructor;" if $condition && $platformType eq "bool ";
     return "$platformType$variableName = $condition ? $constructor : $nullValue;" if $condition;
     return "$platformType$variableName = $constructor;" if $constructor;
+    return "$platformType$variableName;" if !$hideType && ($platformType =~ /^RefPtr/ || $isObjCType);
     return "$platformType$variableName = $nullValue;";
 }
 
@@ -1580,7 +1642,7 @@ sub _dynamicAttributesImplementation
 
 void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject, JSPropertyNameAccumulatorRef propertyNames)
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return;
 
@@ -1629,7 +1691,7 @@ EOF
 
 bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName)
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return false;
 
@@ -1663,7 +1725,7 @@ EOF
 
 JSValueRef ${className}::getProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
+    RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return JSValueMakeUndefined(context);
 

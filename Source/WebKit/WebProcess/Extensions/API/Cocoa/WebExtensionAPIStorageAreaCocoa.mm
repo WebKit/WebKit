@@ -64,7 +64,7 @@ bool WebExtensionAPIStorageArea::isPropertyAllowed(ASCIILiteral propertyName, We
     return false;
 }
 
-void WebExtensionAPIStorageArea::get(WebPage* page, id items, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIStorageArea::get(WebPage& page, id items, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get
 
@@ -104,7 +104,7 @@ void WebExtensionAPIStorageArea::get(WebPage* page, id items, Ref<WebExtensionCa
         keysVector = { key };
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page->webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> dataJSON, WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page.webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> dataJSON, WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else {
@@ -119,7 +119,7 @@ void WebExtensionAPIStorageArea::get(WebPage* page, id items, Ref<WebExtensionCa
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::getBytesInUse(WebPage* page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIStorageArea::getBytesInUse(WebPage& page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/getBytesInUse
 
@@ -135,7 +135,7 @@ void WebExtensionAPIStorageArea::getBytesInUse(WebPage* page, id keys, Ref<WebEx
     else if (NSString *key = dynamic_objc_cast<NSString>(keys))
         keysVector = { key };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(page->webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<size_t> size, WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetBytesInUse(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<size_t> size, WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -143,7 +143,7 @@ void WebExtensionAPIStorageArea::getBytesInUse(WebPage* page, id keys, Ref<WebEx
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::set(WebPage* page, NSDictionary *items, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIStorageArea::set(WebPage& page, NSDictionary *items, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
 
@@ -179,7 +179,7 @@ void WebExtensionAPIStorageArea::set(WebPage* page, NSDictionary *items, Ref<Web
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page->webPageProxyIdentifier(), m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSet(page.webPageProxyIdentifier(), m_type, encodeJSONString(serializedData)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -187,7 +187,7 @@ void WebExtensionAPIStorageArea::set(WebPage* page, NSDictionary *items, Ref<Web
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::remove(WebPage* page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIStorageArea::remove(WebPage& page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/remove
 
@@ -196,7 +196,7 @@ void WebExtensionAPIStorageArea::remove(WebPage* page, id keys, Ref<WebExtension
 
     Vector<String> keysVector = [keys isKindOfClass:NSArray.class] ? makeVector<String>((NSArray *)keys) : Vector<String> { keys };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageRemove(page->webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageRemove(page.webPageProxyIdentifier(), m_type, keysVector), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -204,9 +204,9 @@ void WebExtensionAPIStorageArea::remove(WebPage* page, id keys, Ref<WebExtension
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::clear(WebPage* page, Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIStorageArea::clear(WebPage& page, Ref<WebExtensionCallbackHandler>&& callback)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageClear(page->webPageProxyIdentifier(), m_type), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageClear(page.webPageProxyIdentifier(), m_type), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -214,7 +214,7 @@ void WebExtensionAPIStorageArea::clear(WebPage* page, Ref<WebExtensionCallbackHa
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIStorageArea::setAccessLevel(WebPage* page, NSDictionary *accessOptions, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIStorageArea::setAccessLevel(WebPage& page, NSDictionary *accessOptions, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     static auto *requiredKeys = @[
         accessLevelKey,
@@ -235,7 +235,7 @@ void WebExtensionAPIStorageArea::setAccessLevel(WebPage* page, NSDictionary *acc
 
     WebExtensionStorageAccessLevel accessLevel = [accessLevelString isEqualToString:accessLevelTrustedContexts] ? WebExtensionStorageAccessLevel::TrustedContexts : WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSetAccessLevel(page->webPageProxyIdentifier(), m_type, accessLevel), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageSetAccessLevel(page.webPageProxyIdentifier(), m_type, accessLevel), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebKit::WebExtensionContext::ErrorString error) {
         if (error)
             callback->reportError(error.value());
         else

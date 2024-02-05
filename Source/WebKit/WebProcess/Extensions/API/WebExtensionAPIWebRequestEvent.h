@@ -50,8 +50,8 @@ public:
 
     const ListenerVector& listeners() const { return m_listeners; }
 
-    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString);
-    void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
+    void addListener(WebPage&, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString);
+    void removeListener(WebPage&, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
     void invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const ResourceLoadInfo&);

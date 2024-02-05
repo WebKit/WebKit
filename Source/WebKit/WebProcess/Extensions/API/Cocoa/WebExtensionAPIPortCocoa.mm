@@ -113,7 +113,7 @@ void WebExtensionAPIPort::setError(JSValue *error)
     m_error = error;
 }
 
-void WebExtensionAPIPort::postMessage(WebFrame *frame, NSString *message, NSString **outExceptionString)
+void WebExtensionAPIPort::postMessage(WebFrame& frame, NSString *message, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#postmessage
 

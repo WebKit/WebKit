@@ -58,7 +58,7 @@ public:
 
     void getPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void openPopup(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void openPopup(WebPage&, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     WebExtensionAPIEvent& onClicked();
 

@@ -291,11 +291,11 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
     return true;
 }
 
-id WebExtensionAPIMenus::createMenu(WebPage* page, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/create
 
-    m_pageProxyIdentifier = page->webPageProxyIdentifier();
+    m_pageProxyIdentifier = page.webPageProxyIdentifier();
 
     std::optional<WebExtensionMenuItemParameters> parameters;
     RefPtr<WebExtensionCallbackHandler> clickCallback;
@@ -324,11 +324,11 @@ id WebExtensionAPIMenus::createMenu(WebPage* page, NSDictionary *properties, Ref
     return toMenuIdentifierWebAPI(parameters.value().identifier);
 }
 
-void WebExtensionAPIMenus::update(WebPage* page, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIMenus::update(WebPage& page, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/update
 
-    m_pageProxyIdentifier = page->webPageProxyIdentifier();
+    m_pageProxyIdentifier = page.webPageProxyIdentifier();
 
     if (!validateObject(identifier, @"identifier", [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil], outExceptionString))
         return;

@@ -154,11 +154,11 @@ NSArray *WebExtensionAPIExtension::getViews(JSContextRef context, NSDictionary *
     return [result copy];
 }
 
-bool WebExtensionAPIExtension::isInIncognitoContext(WebPage* page)
+bool WebExtensionAPIExtension::isInIncognitoContext(WebPage& page)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/inIncognitoContext
 
-    return page->usesEphemeralSession();
+    return page.usesEphemeralSession();
 }
 
 void WebExtensionAPIExtension::isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&& callback)

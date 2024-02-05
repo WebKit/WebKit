@@ -410,7 +410,7 @@ void WebExtensionAPIWindows::createWindow(NSDictionary *data, Ref<WebExtensionCa
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPIWindows::get(WebPage* page, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWindows::get(WebPage& page, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/get
 
@@ -423,7 +423,7 @@ void WebExtensionAPIWindows::get(WebPage* page, double windowID, NSDictionary *i
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page->webPageProxyIdentifier(), windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page.webPageProxyIdentifier(), windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
         if (error) {
             callback->reportError(error.value());
             return;
@@ -438,7 +438,7 @@ void WebExtensionAPIWindows::get(WebPage* page, double windowID, NSDictionary *i
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPIWindows::getCurrent(WebPage* page, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWindows::getCurrent(WebPage& page, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/getCurrent
 
@@ -447,7 +447,7 @@ void WebExtensionAPIWindows::getCurrent(WebPage* page, NSDictionary *info, Ref<W
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page->webPageProxyIdentifier(), WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page.webPageProxyIdentifier(), WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
         if (error) {
             callback->reportError(error.value());
             return;

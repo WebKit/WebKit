@@ -247,7 +247,7 @@ double WebExtensionAPIRuntime::getFrameId(JSValue *target)
     if (!target)
         return WebExtensionFrameConstants::None;
 
-    auto frame = WebFrame::contentFrameForWindowOrFrameElement(target.context.JSGlobalContextRef, target.JSValueRef);
+    RefPtr frame = WebFrame::contentFrameForWindowOrFrameElement(target.context.JSGlobalContextRef, target.JSValueRef);
     if (!frame)
         return WebExtensionFrameConstants::None;
 
@@ -293,7 +293,7 @@ JSValue *WebExtensionAPIRuntime::lastError()
     return m_lastError.get();
 }
 
-void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID, NSString *messageJSON, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
@@ -307,10 +307,10 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID,
     WebExtensionMessageSenderParameters sender {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
-        toWebExtensionFrameIdentifier(*frame),
-        frame->page()->webPageProxyIdentifier(),
+        toWebExtensionFrameIdentifier(frame),
+        frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
-        frame->url(),
+        frame.url(),
     };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, sender), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> replyJSON, std::optional<String> error) {
@@ -328,7 +328,7 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame *frame, NSString *extensionID,
     }, extensionContext().identifier());
 }
 
-RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame* frame, JSContextRef context, NSString *extensionID, NSDictionary *options, NSString **outExceptionString)
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSContextRef context, NSString *extensionID, NSDictionary *options, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
 
@@ -341,10 +341,10 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame* frame, JSC
     WebExtensionMessageSenderParameters sender {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
-        toWebExtensionFrameIdentifier(*frame),
-        frame->page()->webPageProxyIdentifier(),
+        toWebExtensionFrameIdentifier(frame),
+        frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
-        frame->url(),
+        frame.url(),
     };
 
     auto port = WebExtensionAPIPort::create(forMainWorld(), runtime(), extensionContext(), WebExtensionContentWorldType::Main, resolvedName, sender);
@@ -360,7 +360,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame* frame, JSC
     return port;
 }
 
-void WebExtensionAPIRuntime::sendNativeMessage(WebFrame* frame, NSString *applicationID, NSString *messageJSON, Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPIRuntime::sendNativeMessage(WebFrame& frame, NSString *applicationID, NSString *messageJSON, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendNativeMessage
 
@@ -379,7 +379,7 @@ void WebExtensionAPIRuntime::sendNativeMessage(WebFrame* frame, NSString *applic
     }, extensionContext().identifier());
 }
 
-RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame* frame, JSContextRef context, NSString *applicationID)
+RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connectNative(WebFrame& frame, JSContextRef context, NSString *applicationID)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connectNative
 

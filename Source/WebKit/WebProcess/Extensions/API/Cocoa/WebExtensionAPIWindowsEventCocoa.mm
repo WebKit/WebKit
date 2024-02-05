@@ -55,27 +55,20 @@ void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, Optio
     }
 }
 
-void WebExtensionAPIWindowsEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
+void WebExtensionAPIWindowsEvent::addListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
-    ASSERT(page);
-
     OptionSet<WindowTypeFilter> windowTypeFilter;
     if (!WebExtensionAPIWindows::parseWindowTypesFilter(filter, windowTypeFilter, @"filters", outExceptionString))
         return;
 
-    m_pageProxyIdentifier = page->webPageProxyIdentifier();
+    m_pageProxyIdentifier = page.webPageProxyIdentifier();
     m_listeners.append({ listener, windowTypeFilter });
-
-    if (!page)
-        return;
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
 
-void WebExtensionAPIWindowsEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
+void WebExtensionAPIWindowsEvent::removeListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener)
 {
-    ASSERT(page);
-
     auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
     });
@@ -83,7 +76,7 @@ void WebExtensionAPIWindowsEvent::removeListener(WebPage* page, RefPtr<WebExtens
     if (!removedCount)
         return;
 
-    ASSERT(page->webPageProxyIdentifier() == m_pageProxyIdentifier);
+    ASSERT(page.webPageProxyIdentifier() == m_pageProxyIdentifier);
 
     WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }

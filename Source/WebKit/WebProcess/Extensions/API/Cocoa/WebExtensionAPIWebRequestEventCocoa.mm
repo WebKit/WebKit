@@ -60,10 +60,8 @@ void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *a
     }
 }
 
-void WebExtensionAPIWebRequestEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
+void WebExtensionAPIWebRequestEvent::addListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
 {
-    ASSERT(page);
-
     _WKWebExtensionWebRequestFilter *parsedFilter;
     if (filter) {
         parsedFilter = [[_WKWebExtensionWebRequestFilter alloc] initWithDictionary:filter outErrorMessage:outExceptionString];
@@ -71,16 +69,14 @@ void WebExtensionAPIWebRequestEvent::addListener(WebPage* page, RefPtr<WebExtens
             return;
     }
 
-    m_pageProxyIdentifier = page->webPageProxyIdentifier();
+    m_pageProxyIdentifier = page.webPageProxyIdentifier();
     m_listeners.append({ listener, parsedFilter });
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
 
-void WebExtensionAPIWebRequestEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
+void WebExtensionAPIWebRequestEvent::removeListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener)
 {
-    ASSERT(page);
-
     auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
     });
@@ -88,7 +84,7 @@ void WebExtensionAPIWebRequestEvent::removeListener(WebPage* page, RefPtr<WebExt
     if (!removedCount)
         return;
 
-    ASSERT(page->webPageProxyIdentifier() == m_pageProxyIdentifier);
+    ASSERT(page.webPageProxyIdentifier() == m_pageProxyIdentifier);
 
     WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }

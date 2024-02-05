@@ -44,8 +44,8 @@ public:
 #if PLATFORM(COCOA)
     using ClickHandlerMap = HashMap<String, Ref<WebExtensionCallbackHandler>>;
 
-    id createMenu(WebPage*, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(WebPage*, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    id createMenu(WebPage&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage&, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void remove(id identifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void removeAll(Ref<WebExtensionCallbackHandler>&&);

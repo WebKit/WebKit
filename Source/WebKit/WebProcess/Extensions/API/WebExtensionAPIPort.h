@@ -51,7 +51,7 @@ public:
     WebExtensionContentWorldType targetContentWorldType() const { return m_targetContentWorldType; }
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
 
-    void postMessage(WebFrame*, NSString *, NSString **outExceptionString);
+    void postMessage(WebFrame&, NSString *, NSString **outExceptionString);
     void disconnect();
 
     bool disconnected() const { return m_disconnected; }

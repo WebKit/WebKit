@@ -49,7 +49,7 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
-    bool isInIncognitoContext(WebPage*);
+    bool isInIncognitoContext(WebPage&);
     void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);
     void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
 

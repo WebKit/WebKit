@@ -72,7 +72,7 @@ static NSArray<NSDictionary *> *toWebAPI(Vector<WebExtensionFrameParameters> all
     }).get();
 }
 
-void WebExtensionAPIWebNavigation::getAllFrames(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWebNavigation::getAllFrames(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getAllFrames
 
@@ -99,7 +99,7 @@ void WebExtensionAPIWebNavigation::getAllFrames(WebPage* webPage, NSDictionary *
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIWebNavigation::getFrame(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getFrame
 
