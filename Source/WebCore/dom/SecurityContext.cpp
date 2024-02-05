@@ -43,14 +43,22 @@ void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& sec
 {
     m_securityOriginPolicy = WTFMove(securityOriginPolicy);
     m_haveInitializedSecurityOrigin = true;
+    m_hasEmptySecurityOriginPolicy = false;
+}
+
+ContentSecurityPolicy* SecurityContext::contentSecurityPolicy()
+{
+    if (!m_contentSecurityPolicy && m_hasEmptyContentSecurityPolicy)
+        m_contentSecurityPolicy = makeEmptyContentSecurityPolicy();
+    return m_contentSecurityPolicy.get();
 }
 
 SecurityOrigin* SecurityContext::securityOrigin() const
 {
-    if (!m_securityOriginPolicy)
+    RefPtr policy = securityOriginPolicy();
+    if (!policy)
         return nullptr;
-
-    return &m_securityOriginPolicy->origin();
+    return &policy->origin();
 }
 
 RefPtr<SecurityOrigin> SecurityContext::protectedSecurityOrigin() const
@@ -58,9 +66,17 @@ RefPtr<SecurityOrigin> SecurityContext::protectedSecurityOrigin() const
     return securityOrigin();
 }
 
+SecurityOriginPolicy* SecurityContext::securityOriginPolicy() const
+{
+    if (!m_securityOriginPolicy && m_hasEmptySecurityOriginPolicy)
+        const_cast<SecurityContext&>(*this).m_securityOriginPolicy = SecurityOriginPolicy::create(SecurityOrigin::createOpaque());
+    return m_securityOriginPolicy.get();
+}
+
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
     m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);
+    m_hasEmptyContentSecurityPolicy = false;
 }
 
 bool SecurityContext::isSecureTransitionTo(const URL& url) const
@@ -205,7 +221,7 @@ void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyCo
 
 CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy()
 {
-    return m_contentSecurityPolicy.get();
+    return contentSecurityPolicy();
 }
 
 }

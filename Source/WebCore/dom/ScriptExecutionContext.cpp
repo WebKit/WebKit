@@ -122,6 +122,11 @@ ScriptExecutionContext::ScriptExecutionContext(ScriptExecutionContextIdentifier 
 {
 }
 
+std::unique_ptr<ContentSecurityPolicy> ScriptExecutionContext::makeEmptyContentSecurityPolicy()
+{
+    return makeUnique<ContentSecurityPolicy>(URL { emptyString() }, *this);
+}
+
 void ScriptExecutionContext::regenerateIdentifier()
 {
     Locker locker { allScriptExecutionContextsMapLock };
