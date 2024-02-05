@@ -118,13 +118,18 @@ void WebFullScreenManager::videoControlsManagerDidChange()
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
-    if (!m_element || !is<WebCore::HTMLVideoElement>(currentPlaybackControlsElement)) {
+    if (!m_element) {
         setPIPStandbyElement(nullptr);
         return;
     }
 
-    setPIPStandbyElement(downcast<WebCore::HTMLVideoElement>(currentPlaybackControlsElement));
+    RefPtr currentPlaybackControlsElement = dynamicDowncast<WebCore::HTMLVideoElement>(m_page->playbackSessionManager().currentPlaybackControlsElement());
+    if (!currentPlaybackControlsElement) {
+        setPIPStandbyElement(nullptr);
+        return;
+    }
+
+    setPIPStandbyElement(currentPlaybackControlsElement.get());
 #endif
 }
 
