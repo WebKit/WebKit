@@ -960,13 +960,13 @@ sub determineXcodeSDK
     determineXcodeSDKPlatformName();  # This can set $xcodeSDK if --sdk was used.
     return if defined $xcodeSDK;
 
-    $xcodeSDK = $xcodeSDKPlatformName eq "maccatalyst" ? "macosx" : $xcodeSDKPlatformName;
+    $xcodeSDK = willUseMacCatalystSDK() ? "macosx" : $xcodeSDKPlatformName;
 
     # Prefer the internal version of an sdk, if it exists.
     my @availableSDKs = availableXcodeSDKs();
 
     foreach my $sdk (@availableSDKs) {
-        next if $sdk ne "$xcodeSDKPlatformName.internal";
+        next if $sdk ne (willUseMacCatalystSDK() ? "macosx.internal" : "$xcodeSDKPlatformName.internal");
         $xcodeSDK = $sdk;
         last;
     }
