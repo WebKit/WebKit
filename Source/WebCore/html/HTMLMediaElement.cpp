@@ -4557,26 +4557,6 @@ bool HTMLMediaElement::canPlay() const
     return paused() || ended() || m_readyState < HAVE_METADATA;
 }
 
-double HTMLMediaElement::percentLoaded() const
-{
-    if (!m_player)
-        return 0;
-    MediaTime duration = m_player->duration();
-
-    if (!duration || duration.isPositiveInfinite() || duration.isNegativeInfinite())
-        return 0;
-
-    MediaTime buffered = MediaTime::zeroTime();
-    bool ignored;
-    auto& timeRanges = m_player->buffered();
-    for (unsigned i = 0; i < timeRanges.length(); ++i) {
-        MediaTime start = timeRanges.start(i, ignored);
-        MediaTime end = timeRanges.end(i, ignored);
-        buffered += end - start;
-    }
-    return buffered.toDouble() / duration.toDouble();
-}
-
 void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
 {
     if (isPlaying() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
