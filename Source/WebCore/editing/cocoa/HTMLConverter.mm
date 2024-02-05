@@ -235,7 +235,7 @@ private:
     void _addTableForElement(Element* tableElement);
     void _addTableCellForElement(Element* tableCellElement);
     void _addMarkersToList(NSTextList *list, NSRange range);
-    void _processText(Text&);
+    void _processText(CharacterData&);
     void _adjustTrailingNewline();
 };
 
@@ -2033,24 +2033,24 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         _exitBlockquote();
 }
 
-void HTMLConverter::_processText(Text& text)
+void HTMLConverter::_processText(CharacterData& characterData)
 {
-    if (m_ignoreUserSelectNoneContent && m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(text))
+    if (m_ignoreUserSelectNoneContent && m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(characterData))
         return;
     NSUInteger textLength = [_attrStr length];
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
 
-    String originalString = text.data();
+    String originalString = characterData.data();
     unsigned startOffset = 0;
     unsigned endOffset = originalString.length();
-    if (&text == m_start.containerNode()) {
+    if (&characterData == m_start.containerNode()) {
         startOffset = m_start.offsetInContainerNode();
         _domRangeStartIndex = [_attrStr length];
         _flags.reachedStart = YES;
     }
-    if (&text == m_end.containerNode()) {
+    if (&characterData == m_end.containerNode()) {
         endOffset = m_end.offsetInContainerNode();
         _flags.reachedEnd = YES;
     }
@@ -2060,7 +2060,7 @@ void HTMLConverter::_processText(Text& text)
 
     // FIXME: Use RenderText's content instead.
     bool wasSpace = false;
-    if (_caches->propertyValueForNode(text, CSSPropertyWhiteSpace).startsWith("pre"_s)) {
+    if (_caches->propertyValueForNode(characterData, CSSPropertyWhiteSpace).startsWith("pre"_s)) {
         if (textLength && originalString.length() && _flags.isSoft) {
             unichar c = originalString.characterAt(0);
             if (c == '\n' || c == '\r' || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter || c == NSFormFeedCharacter || c == WebNextLineCharacter)
@@ -2083,7 +2083,7 @@ void HTMLConverter::_processText(Text& text)
                     builder.append(c);
                 else {
                     if (!noBreakSpaceRepresentation)
-                        noBreakSpaceRepresentation = _caches->propertyValueForNode(text, CSSPropertyWebkitNbspMode) == "space"_s ? ' ' : noBreakSpace;
+                        noBreakSpaceRepresentation = _caches->propertyValueForNode(characterData, CSSPropertyWebkitNbspMode) == "space"_s ? ' ' : noBreakSpace;
                     builder.append(noBreakSpaceRepresentation);
                 }
                 wasSpace = false;
@@ -2096,7 +2096,7 @@ void HTMLConverter::_processText(Text& text)
     }
 
     if (outputString.length()) {
-        String textTransform = _caches->propertyValueForNode(text, CSSPropertyTextTransform);
+        String textTransform = _caches->propertyValueForNode(characterData, CSSPropertyTextTransform);
         if (textTransform == "capitalize"_s)
             outputString = capitalize(outputString, ' '); // FIXME: Needs to take locale into account to work correctly.
         else if (textTransform == "uppercase"_s)
@@ -2107,7 +2107,7 @@ void HTMLConverter::_processText(Text& text)
         [_attrStr replaceCharactersInRange:rangeToReplace withString:outputString];
         rangeToReplace.length = outputString.length();
         if (rangeToReplace.length)
-            [_attrStr setAttributes:aggregatedAttributesForAncestors(text) range:rangeToReplace];
+            [_attrStr setAttributes:aggregatedAttributesForAncestors(characterData) range:rangeToReplace];
         _flags.isSoft = wasSpace;
     }
 }
@@ -2171,8 +2171,8 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                 _exitElement(*element, depth, std::min(startIndex, [_attrStr length]));
             }
         }
-    } else if (RefPtr text = dynamicDowncast<Text>(node))
-        _processText(*text);
+    } else if (node.nodeType() == Node::TEXT_NODE)
+        _processText(downcast<CharacterData>(node));
 
     if (isEnd)
         _flags.reachedEnd = YES;
