@@ -8447,16 +8447,9 @@ String HTMLMediaElement::mediaSessionTitle() const
     if (!title.isEmpty())
         return title;
 
-    title = m_currentSrc.host().toString();
-#if PLATFORM(COCOA)
-    if (!title.isEmpty())
-        title = decodeHostName(title);
-#endif
-    if (!title.isEmpty()) {
-        auto domain = RegistrableDomain { m_currentSrc };
-        if (!domain.isEmpty())
-            title = domain.string();
-    }
+    auto domain = RegistrableDomain { m_currentSrc };
+    if (!domain.isEmpty())
+        title = domain.string();
 
     return title;
 }
