@@ -79,6 +79,8 @@ public:
     WEBCORE_EXPORT Ref<AcceleratedEffect> clone() const;
     WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&) const;
 
+    WEBCORE_EXPORT void apply(Seconds, AcceleratedEffectValues&);
+
     // Encoding and decoding support
     AnimationEffectTiming timing() const { return m_timing; }
     const Vector<Keyframe>& keyframes() const { return m_keyframes; }

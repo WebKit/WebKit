@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebKit {
@@ -45,21 +46,59 @@ RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(Seconds acceleratedTi
 }
 
 #if PLATFORM(MAC)
-void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer*, MonotonicTime)
+void RemoteAcceleratedEffectStack::initEffectsFromScrollingThread(PlatformLayer *layer, MonotonicTime now)
 {
+    ASSERT(!m_opacityPresentationModifier);
+
+    auto computedValues = computeValues(now);
+    auto *opacity = @(computedValues.opacity);
+
+    m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:1];
+    m_opacityPresentationModifier = adoptNS([[CAPresentationModifier alloc] initWithKeyPath:@"opacity" initialValue:opacity additive:NO group:m_presentationModifierGroup.get()]);
+
+    [layer addPresentationModifier:m_opacityPresentationModifier.get()];
+
+    [m_presentationModifierGroup flushWithTransaction];
 }
 
-void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime) const
+void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime now) const
 {
+    auto computedValues = computeValues(now);
+    auto *opacity = @(computedValues.opacity);
+    [m_opacityPresentationModifier setValue:opacity];
+    [m_presentationModifierGroup flush];
 }
 #endif
 
-void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer*, MonotonicTime) const
+void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now) const
 {
+    auto computedValues = computeValues(now);
+    [layer setOpacity:computedValues.opacity];
 }
 
-void RemoteAcceleratedEffectStack::clear(PlatformLayer*)
+AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTime now) const
 {
+    auto values = m_baseValues;
+    auto currentTime = now.secondsSinceEpoch() - m_acceleratedTimelineTimeOrigin;
+    for (auto& effect : m_primaryLayerEffects)
+        effect->apply(currentTime, values);
+    return values;
+}
+
+void RemoteAcceleratedEffectStack::clear(PlatformLayer *layer)
+{
+    if (!m_presentationModifierGroup) {
+        ASSERT(!m_opacityPresentationModifier);
+        return;
+    }
+
+    ASSERT(m_opacityPresentationModifier);
+
+    [layer removePresentationModifier:m_opacityPresentationModifier.get()];
+    [m_presentationModifierGroup flushWithTransaction];
+
+    m_opacityPresentationModifier = nil;
+    m_presentationModifierGroup = nil;
 }
 
 } // namespace WebKit

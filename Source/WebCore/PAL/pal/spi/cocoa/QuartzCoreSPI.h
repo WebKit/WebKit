@@ -129,6 +129,7 @@ typedef struct _CARenderContext CARenderContext;
 @interface CAPresentationModifierGroup : NSObject
 + (instancetype)groupWithCapacity:(NSUInteger)capacity;
 - (void)flush;
+- (void)flushWithTransaction;
 @end
 
 @interface CAPresentationModifier : NSObject
