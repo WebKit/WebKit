@@ -1,4 +1,24 @@
 =================
+WPE WebKit 2.42.5
+=================
+
+What's new in WPE WebKit 2.42.5?
+
+  - Fix webkit_web_context_allow_tls_certificate_for_host to handle IPv6 URIs
+    produced by SoupURI.
+  - Ignore stops with offset zero before last one when rendering gradients
+    with Cairo.
+  - Write bwrapinfo.json to disk for xdg-desktop-portal.
+  - Support gamepad button sixteen (center button in center cluster).
+  - Update quirks to fix compatibility issues in a number of websites,
+    including bing.com, nfl.com, msn.com, bankofamerica.com, outlook.live.com,
+    hulu.com, jsfiddle.net, vote.gov, youtube.com, airtable.com, gizmodo.com,
+    and ceac.state.gov among others.
+  - Fix incorrent periodic deletion of LocalStorage and IndexedDB databases
+    for all websites.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.42.4
 =================
 
