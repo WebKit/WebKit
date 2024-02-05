@@ -2713,6 +2713,13 @@
    },
    {
       "emails" : [
+         "estaggs@apple.com"
+      ],
+      "github" : "esstaggs",
+      "name" : "Eric Staggs"
+   },
+   {
+      "emails" : [
          "ericu@chromium.org"
       ],
       "name" : "Eric Uhrhane",
