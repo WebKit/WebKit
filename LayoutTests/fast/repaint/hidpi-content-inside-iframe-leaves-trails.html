@@ -14,8 +14,9 @@ var repaintRects;
 function test() {
   setTimeout(function() {
     var iframeDocument = window.frames["embeddedFrame"].document;
-    iframeDocument.getElementById("foo").style.left = "50px";
-    iframeDocument.body.offsetWidth;
+    var positioned = iframeDocument.getElementById("foo");
+    positioned.style.left = "50px";
+    positioned.offsetHeight;
     if (window.testRunner && window.internals) {
         repaintRects = internals.repaintRectsAsText();
         shouldNotBe("repaintRects.indexOf('rect 0 0 101.50 100')", "-1");
