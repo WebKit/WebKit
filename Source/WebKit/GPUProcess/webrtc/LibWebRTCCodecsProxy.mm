@@ -167,10 +167,11 @@ static bool validateCodecString(VideoCodecType codecType, const String& codecStr
         ASSERT(codecString.startsWith("vp09.0"_s));
         return true;
     case VideoCodecType::AV1:
-        if (codecString.startsWith("av01."_s) && codecString.length() > 7)
+        ASSERT(codecString.startsWith("av01."_s));
+        if (!codecString.startsWith("av01."_s) || codecString.length() < 7)
             return false;
         auto profile = codecString[5];
-        return profile == '0' || profile == '1' || profile == '2';
+        return (profile == '0' || profile == '1' || profile == '2') && codecString[6] == '.';
     }
     ASSERT_NOT_REACHED();
     return true;
