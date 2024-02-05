@@ -52,6 +52,14 @@ public:
 
     WEBCORE_EXPORT String serializationForBasicAuthorizationHeader() const;
 
+    struct NonPlatformData {
+        String user;
+        String password;
+        CredentialPersistence persistence;
+    };
+
+    WEBCORE_EXPORT NonPlatformData nonPlatformData() const;
+
 protected:
     WEBCORE_EXPORT CredentialBase();
     WEBCORE_EXPORT CredentialBase(const String& user, const String& password, CredentialPersistence);

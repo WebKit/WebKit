@@ -132,13 +132,6 @@ struct Record;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<WebCore::Credential> {
-    static void encode(Encoder&, const WebCore::Credential&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Credential&);
-    static void encodePlatformData(Encoder&, const WebCore::Credential&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::Credential&);
-};
-
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);

@@ -196,44 +196,6 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-void ArgumentCoder<Credential>::encode(Encoder& encoder, const Credential& credential)
-{
-    if (credential.encodingRequiresPlatformData()) {
-        encoder << true;
-        encodePlatformData(encoder, credential);
-        return;
-    }
-
-    encoder << false;
-    encoder << credential.user() << credential.password();
-    encoder << credential.persistence();
-}
-
-bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
-{
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return false;
-
-    if (hasPlatformData)
-        return decodePlatformData(decoder, credential);
-
-    String user;
-    if (!decoder.decode(user))
-        return false;
-
-    String password;
-    if (!decoder.decode(password))
-        return false;
-
-    CredentialPersistence persistence;
-    if (!decoder.decode(persistence))
-        return false;
-    
-    credential = Credential(user, password, persistence);
-    return true;
-}
-
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
     encoder << font.attributes();

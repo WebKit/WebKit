@@ -48,21 +48,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::Credential>::encodePlatformData(Encoder& encoder, const WebCore::Credential& credential)
-{
-    NSURLCredential *nsCredential = credential.nsCredential();
-    encoder << nsCredential;
-}
-
-bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, WebCore::Credential& credential)
-{
-    std::optional<RetainPtr<NSURLCredential>> nsCredential = decoder.decode<RetainPtr<NSURLCredential>>();
-    if (!nsCredential)
-        return false;
-    credential = WebCore::Credential { nsCredential->get() };
-    return true;
-}
-
 #if ENABLE(VIDEO)
 void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const WebCore::SerializedPlatformDataCueValue& value)
 {

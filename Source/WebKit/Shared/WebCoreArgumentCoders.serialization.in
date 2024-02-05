@@ -6016,6 +6016,36 @@ class WebCore::ProtectionSpace {
 #endif
 };
 
+header: <WebCore/Credential.h>
+[Nested] struct WebCore::Credential::NonPlatformData {
+    String user;
+    String password;
+    WebCore::CredentialPersistence persistence;
+}
+
+#if PLATFORM(COCOA)
+[CreateUsing=fromIPCData] class WebCore::Credential {
+    std::variant<WebCore::Credential::NonPlatformData, RetainPtr<NSURLCredential>> ipcData();
+};
+#endif
+
+#if USE(SOUP)
+[Nested] struct WebCore::Credential::PlatformData {
+    GRefPtr<GTlsCertificate> certificate;
+    WebCore::CredentialPersistence persistence;
+};
+
+[CreateUsing=fromIPCData] class WebCore::Credential {
+    std::variant<WebCore::Credential::NonPlatformData, WebCore::Credential::PlatformData> ipcData();
+};
+#endif
+
+#if USE(CURL)
+class WebCore::Credential {
+    WebCore::Credential::NonPlatformData nonPlatformData();
+};
+#endif // USE(CURL)
+
 #if ENABLE(GPU_PROCESS)
 header: <WebCore/BarcodeDetectorOptionsInterface.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::BarcodeDetectorOptions {

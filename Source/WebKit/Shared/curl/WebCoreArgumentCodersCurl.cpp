@@ -40,17 +40,6 @@ namespace IPC {
 
 using namespace WebCore;
 
-void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<Credential>::decodePlatformData(Decoder&, Credential&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ArgumentCoder<CurlProxySettings>::encode(Encoder& encoder, const CurlProxySettings& settings)
 {
     encoder << settings.mode();

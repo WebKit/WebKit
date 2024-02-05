@@ -50,4 +50,24 @@ bool Credential::platformCompare(const Credential& a, const Credential& b)
     return a.certificate() == b.certificate();
 }
 
+Credential Credential::fromIPCData(IPCData&& ipcData)
+{
+    return WTF::switchOn(WTFMove(ipcData), [](NonPlatformData&& data) {
+        return Credential { data.user, data.password, data.persistence };
+    }, [](PlatformData&& data) {
+        return Credential { data.certificate.get(), data.persistence };
+    });
+}
+
+auto Credential::ipcData() const -> IPCData
+{
+    if (encodingRequiresPlatformData()) {
+        return PlatformData {
+            m_certificate,
+            persistence()
+        };
+    }
+    return nonPlatformData();
+}
+
 } // namespace WebCore

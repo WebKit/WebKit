@@ -50,6 +50,11 @@ public:
     {
     }
 
+    Credential(NonPlatformData&& data)
+        : CredentialBase(data.user, data.password, data.persistence)
+    {
+    }
+
     Credential(const Credential& original, CredentialPersistence persistence)
         : CredentialBase(original, persistence)
     {

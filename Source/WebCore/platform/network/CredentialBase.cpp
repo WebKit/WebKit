@@ -101,4 +101,13 @@ String CredentialBase::serializationForBasicAuthorizationHeader() const
     return makeString("Basic ", base64Encoded(credentialStringData));
 }
 
+auto CredentialBase::nonPlatformData() const -> NonPlatformData
+{
+    return {
+        user(),
+        password(),
+        persistence()
+    };
 }
+
+} // namespace WebCore
