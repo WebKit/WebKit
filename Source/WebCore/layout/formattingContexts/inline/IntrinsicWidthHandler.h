@@ -64,6 +64,7 @@ private:
     const InlineItemList& m_inlineItemList;
     const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
 
+    std::optional<InlineLayoutUnit> m_maximumContentWidthBetweenLineBreaks { };
     std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
