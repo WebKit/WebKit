@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 import argparse
 import boto3
+import os
+import socket
 
 from botocore.config import Config
 
-S3_DEFAULT_BUCKET = 'archives.webkit.org'
-S3_EWS_BUCKET = 'ews-archives.webkit.org'
+custom_suffix = ''
+hostname = socket.gethostname().strip()
+if 'dev' in hostname:
+    custom_suffix = '-dev'
+if 'uat' in hostname:
+    custom_suffix = '-uat'
+
+S3_DEFAULT_BUCKET = f'archives.webkit{custom_suffix}.org'
+S3_EWS_BUCKET = f'ews-archives.webkit{custom_suffix}.org'
 
 def generateS3URL(bucket, identifier, revision):
     key = '/'.join([identifier, revision + '.zip'])

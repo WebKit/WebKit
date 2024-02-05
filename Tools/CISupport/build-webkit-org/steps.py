@@ -37,12 +37,20 @@ if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
     sys.exit(1)
 
+CURRENT_HOSTNAME = socket.gethostname().strip()
+
+custom_suffix = ''
+if 'dev' in CURRENT_HOSTNAME:
+    custom_suffix = '-dev'
+if 'uat' in CURRENT_HOSTNAME:
+    custom_suffix = '-uat'
+
 BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
-CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
+S3_BUCKET = f'archives.webkit{custom_suffix}.org'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
@@ -559,9 +567,11 @@ class UploadMinifiedBuiltProduct(UploadBuiltProduct):
 
 
 class DownloadBuiltProduct(shell.ShellCommandNewStyle):
-    command = ["python3", "Tools/CISupport/download-built-product",
+    command = [
+        "python3", "Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
-        WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")]
+        WithProperties(S3URL + S3_BUCKET + "/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip"),
+    ]
     name = "download-built-product"
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]

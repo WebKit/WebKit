@@ -53,9 +53,11 @@ custom_suffix = get_custom_suffix()
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
+S3_BUCKET = f'ews-archives.webkit{custom_suffix}.org'
 S3_RESULTS_URL = f'https://ews-build{custom_suffix}.s3-us-west-2.amazonaws.com/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
-EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
+EWS_BUILD_HOSTNAMES = ['ews-build.webkit.org', 'ews-build']
+TESTING_ENVIRONMENT_HOSTNAMES = ['ews-build.webkit-uat.org', 'ews-build-uat', 'ews-build.webkit-dev.org', 'ews-build-dev']
 EWS_URL = 'https://ews.webkit.org/'
 RESULTS_DB_URL = 'https://results.webkit.org/'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -2178,7 +2180,7 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
         rc = SKIPPED
-        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+        if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
             rc = yield self.set_cq_minus_flag_on_patch(patch_id)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
@@ -2210,7 +2212,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         repository_url = self.getProperty('repository', '')
         pr_json = yield self.get_pr_json(pr_number, repository_url)
 
-        if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
+        if CURRENT_HOSTNAME not in EWS_BUILD_HOSTNAMES:
             yield self._addToLog('stdio', 'Skipping this step on non-production instance.\n')
         else:
             is_hash_outdated = yield self._is_hash_outdated(pr_json)
@@ -2304,7 +2306,7 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
         return buildstep.BuildStep.getResultSummary(self)
 
     def doStepIf(self, step):
-        return self.getProperty('github.number') and CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return self.getProperty('github.number') and CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -2690,7 +2692,7 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         return buildstep.BuildStep.getResultSummary(self)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES
 
 
 class UnApplyPatch(CleanWorkingDirectory):
@@ -3208,10 +3210,10 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             triggers = self.getProperty('triggers', None)
             if triggers or not self.skipUpload:
                 steps_to_add = [ArchiveBuiltProduct()]
-                if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+                if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
                     steps_to_add.extend([GenerateS3URL(), UploadFileToS3()])
                 else:
-                    # S3 might not be configured on uat or local instances, achieve similar functionality without S3.
+                    # S3 might not be configured on local instances, achieve similar functionality without S3.
                     steps_to_add.extend([UploadBuiltProduct()])
                 if triggers:
                     steps_to_add.append(Trigger(
@@ -4246,7 +4248,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         super().setLayoutTestCommand()
-        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+        if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
             self.setCommand(
                 self.command + [
                     '--builder-name', self.getProperty('buildername', ''),
@@ -4959,7 +4961,7 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
         return defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -5009,7 +5011,7 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
         return results == SUCCESS
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -5048,7 +5050,7 @@ class TransferToS3(master.MasterShellCommandNewStyle):
         defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
 
     def hideStepIf(self, results, step):
         return results == SUCCESS and self.getProperty('sensitive', False)
@@ -5060,9 +5062,11 @@ class TransferToS3(master.MasterShellCommandNewStyle):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ['python3', 'Tools/CISupport/download-built-product',
-               WithProperties('--%(configuration)s'),
-               WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip')]
+    command = [
+        'python3', 'Tools/CISupport/download-built-product',
+        WithProperties('--%(configuration)s'),
+        WithProperties(S3URL + S3_BUCKET + '/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(change_id)s.zip'),
+    ]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
@@ -5077,8 +5081,8 @@ class DownloadBuiltProduct(shell.ShellCommand):
         super().__init__(logEnviron=False, **kwargs)
 
     def start(self):
-        # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
-        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+        # Only try to download from S3 on the official deployments <https://webkit.org/b/230006>
+        if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
             return shell.ShellCommand.start(self)
         self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
         self.finished(SKIPPED)
@@ -5797,7 +5801,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         return shell.ShellCommand.getResultSummary(self)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES
 
     def hash_from_commit_text(self, commit_text):
         match = self.HASH_RE.search(commit_text)
@@ -6444,7 +6448,7 @@ class PushPullRequestBranch(shell.ShellCommandNewStyle):
         return super().getResultSummary()
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number') and self.getProperty('github.head.ref') and self.getProperty('github.head.repo.full_name')
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.number') and self.getProperty('github.head.ref') and self.getProperty('github.head.repo.full_name')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -6554,7 +6558,7 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
         return defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number')
+        return CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.number')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
