@@ -51,13 +51,13 @@ class ShadowRoot final : public CanMakeCheckedPtr, public DocumentFragment, publ
 public:
 
     enum class DelegatesFocus : bool { No, Yes };
-    enum class Cloneable : bool { No, Yes };
+    enum class Clonable : bool { No, Yes };
     enum class AvailableToElementInternals : bool { No, Yes };
 
     static Ref<ShadowRoot> create(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named,
-        DelegatesFocus delegatesFocus = DelegatesFocus::No, Cloneable cloneable = Cloneable::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
+        DelegatesFocus delegatesFocus = DelegatesFocus::No, Clonable clonable = Clonable::No, AvailableToElementInternals availableToElementInternals = AvailableToElementInternals::No)
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, cloneable, availableToElementInternals));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, availableToElementInternals));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -88,7 +88,7 @@ public:
     bool containsFocusedElement() const { return m_containsFocusedElement; }
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
-    bool isCloneable() const { return m_isCloneable; }
+    bool isClonable() const { return m_isClonable; }
 
     bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
     void setIsAvailableToElementInternals(bool flag) { m_availableToElementInternals = flag; }
@@ -147,7 +147,7 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, Cloneable, AvailableToElementInternals);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, DelegatesFocus, Clonable, AvailableToElementInternals);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     bool childTypeAllowed(NodeType) const override;
@@ -161,7 +161,7 @@ private:
 
     bool m_hasBegunDeletingDetachedChildren : 1 { false };
     bool m_delegatesFocus : 1 { false };
-    bool m_isCloneable : 1 { false };
+    bool m_isClonable : 1 { false };
     bool m_containsFocusedElement : 1 { false };
     bool m_availableToElementInternals : 1 { false };
     bool m_isDeclarativeShadowRoot : 1 { false };

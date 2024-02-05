@@ -602,7 +602,7 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
     for (auto& ancestor : ancestors) {
         if (action == Range::Extract || action == Range::Clone) {
             if (auto shadowRoot = dynamicDowncast<ShadowRoot>(ancestor.get())) {
-                if (!shadowRoot->isCloneable())
+                if (!shadowRoot->isClonable())
                     continue;
             }
             Ref clonedAncestor = ancestor->cloneNode(false); // Might have been removed already during mutation event.
