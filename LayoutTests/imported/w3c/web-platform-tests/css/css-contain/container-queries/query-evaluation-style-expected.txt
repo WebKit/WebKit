@@ -21,10 +21,10 @@ PASS style((--baz: qux) or (--baz: qux))
 FAIL style((--baz: qux) or (--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
 FAIL style((--foo: bar) or (--baz: qux) or (--foo: bar)) assert_equals: expected "true" but got "false"
 FAIL style((--foo: bar) or (--foo: bar) or (--baz: qux)) assert_equals: expected "true" but got "false"
-FAIL style((unknown) or (--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
-FAIL style((--foo: bar) or (unknown) or (--foo: bar)) assert_equals: expected "true" but got "false"
-FAIL style((--foo: bar) or (--foo: bar) or (unknown)) assert_equals: expected "true" but got "false"
-FAIL style((unknown) or (--baz: qux) or (--foo: bar)) assert_equals: expected "true" but got "false"
+PASS style((unknown) or (--foo: bar) or (--foo: bar))
+PASS style((--foo: bar) or (unknown) or (--foo: bar))
+PASS style((--foo: bar) or (--foo: bar) or (unknown))
+PASS style((unknown) or (--baz: qux) or (--foo: bar))
 PASS style(not ((--foo: bar) and (--foo: bar)))
 FAIL style(not ((--foo: bar) and (--baz: qux))) assert_equals: expected "true" but got "false"
 PASS style((--foo: bar) and (not ((--baz: qux) or (--foo: bar))))

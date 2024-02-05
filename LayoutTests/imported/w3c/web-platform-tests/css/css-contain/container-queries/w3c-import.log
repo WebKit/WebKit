@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/animation-container-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/animation-container-type-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/animation-nested-animation.html
@@ -58,6 +59,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-name-tree-scoped.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-selection-unknown-features.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-selection.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation-after-load.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-size-invalidation.html
@@ -161,6 +163,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-013.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-content-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-evaluation-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/query-evaluation.html
