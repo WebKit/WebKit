@@ -28,27 +28,65 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
+#include "HostWindow.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
+#include "ScreenProperties.h"
 #include "Widget.h"
 
 namespace WebCore {
 
-int screenDepth(Widget*)
+#if ENABLE(WPE_PLATFORM)
+static PlatformDisplayID widgetDisplayID(Widget* widget)
 {
+    if (!widget)
+        return 0;
+
+    auto* view = widget->root();
+    if (!view)
+        return 0;
+
+    auto* hostWindow = view->hostWindow();
+    if (!hostWindow)
+        return 0;
+
+    return hostWindow->displayID();
+}
+#endif
+
+int screenDepth(Widget* widget)
+{
+#if ENABLE(WPE_PLATFORM)
+    auto* data = screenData(widgetDisplayID(widget));
+    return data ? data->screenDepth : 24;
+#else
+    UNUSED_PARAM(widget);
     notImplemented();
     return 24;
+#endif
 }
 
-int screenDepthPerComponent(Widget*)
+int screenDepthPerComponent(Widget* widget)
 {
+#if ENABLE(WPE_PLATFORM)
+    auto* data = screenData(widgetDisplayID(widget));
+    return data ? data->screenDepthPerComponent : 8;
+#else
+    UNUSED_PARAM(widget);
     notImplemented();
     return 8;
+#endif
 }
 
-bool screenIsMonochrome(Widget*)
+bool screenIsMonochrome(Widget* widget)
 {
+#if ENABLE(WPE_PLATFORM)
+    return screenDepth(widget) < 2;
+#else
+    UNUSED_PARAM(widget);
     notImplemented();
     return false;
+#endif
 }
 
 bool screenHasInvertedColors()
@@ -58,17 +96,21 @@ bool screenHasInvertedColors()
 
 double screenDPI()
 {
+#if ENABLE(WPE_PLATFORM)
+    auto* data = screenData(primaryScreenDisplayID());
+    return data ? data->dpi : 96.;
+#else
     notImplemented();
     return 96;
-}
-
-void setScreenDPIObserverHandler(Function<void()>&&, void*)
-{
-    notImplemented();
+#endif
 }
 
 FloatRect screenRect(Widget* widget)
 {
+#if ENABLE(WPE_PLATFORM)
+    if (auto* data = screenData(widgetDisplayID(widget)))
+        return data->screenRect;
+#endif
     // WPE can't offer any more useful information about the screen size,
     // so we use the Widget's bounds rectangle (size of which equals the WPE view size).
 
@@ -79,6 +121,10 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
+#if ENABLE(WPE_PLATFORM)
+    if (auto* data = screenData(widgetDisplayID(widget)))
+        return data->screenAvailableRect;
+#endif
     return screenRect(widget);
 }
 

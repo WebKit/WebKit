@@ -751,6 +751,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updateAfterDrawingAreaCreation(parameters);
 
+    if (parameters.displayID)
+        windowScreenDidChange(*parameters.displayID, parameters.nominalFramesPerSecond);
+
     WebStorageNamespaceProvider::incrementUseCount(sessionStorageNamespaceIdentifier());
 
     updatePreferences(parameters.store);

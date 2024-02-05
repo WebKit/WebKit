@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2023,2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,21 @@
 
 #pragma once
 
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+
 #include <WebCore/ScreenProperties.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
+#if PLATFORM(GTK)
 typedef struct _GdkMonitor GdkMonitor;
+using PlatformMonitor = GdkMonitor;
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+typedef struct _WPEMonitor WPEMonitor;
+using PlatformMonitor = WPEMonitor;
+#endif
 
 namespace WebKit {
 
@@ -43,20 +51,24 @@ class ScreenManager {
 public:
     static ScreenManager& singleton();
 
-    PlatformDisplayID displayID(GdkMonitor*) const;
-    GdkMonitor* monitor(PlatformDisplayID) const;
+    PlatformDisplayID displayID(PlatformMonitor*) const;
+    PlatformMonitor* monitor(PlatformDisplayID) const;
 
     WebCore::ScreenProperties collectScreenProperties() const;
 
 private:
     ScreenManager();
 
-    void addMonitor(GdkMonitor*);
-    void removeMonitor(GdkMonitor*);
+    static PlatformDisplayID generatePlatformDisplayID(PlatformMonitor*);
+
+    void addMonitor(PlatformMonitor*);
+    void removeMonitor(PlatformMonitor*);
     void propertiesDidChange() const;
 
-    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
-    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
+    HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))

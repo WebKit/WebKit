@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,6 @@
 
 #pragma once
 
-#include "WPEDisplayWayland.h"
-#include "WPEMonitor.h"
-#include "WPEWaylandCursor.h"
-#include "WPEWaylandSeat.h"
+#include "WPEMonitorWayland.h"
 
-struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
-WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
-WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
-struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
+WPEMonitor* wpeMonitorWaylandCreate(guint32, struct wl_output*);

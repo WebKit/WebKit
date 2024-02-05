@@ -29,9 +29,9 @@
 #include "WPEDisplayWaylandPrivate.h"
 #include "WPEEGLError.h"
 #include "WPEExtensions.h"
+#include "WPEMonitorWaylandPrivate.h"
 #include "WPEViewWayland.h"
 #include "WPEWaylandCursor.h"
-#include "WPEWaylandOutput.h"
 #include "WPEWaylandSeat.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
@@ -59,7 +59,7 @@ struct _WPEDisplayWaylandPrivate {
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
-    Vector<std::unique_ptr<WPE::WaylandOutput>, 1> wlOutputs;
+    Vector<GRefPtr<WPEMonitor>, 1> monitors;
     GRefPtr<GSource> eventSource;
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayWayland, wpe_display_wayland, WPE_TYPE_DISPLAY, WPEDisplay,
@@ -156,7 +156,10 @@ static void wpeDisplayWaylandDispose(GObject* object)
 
     priv->wlSeat = nullptr;
     priv->wlCursor = nullptr;
-    priv->wlOutputs.clear();
+    while (!priv->monitors.isEmpty()) {
+        auto monitor = priv->monitors.takeLast();
+        wpe_monitor_invalidate(monitor.get());
+    }
     g_clear_pointer(&priv->linuxDMABuf, zwp_linux_dmabuf_v1_destroy);
     g_clear_pointer(&priv->wlSHM, wl_shm_destroy);
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);
@@ -180,16 +183,29 @@ const struct wl_registry_listener registryListener = {
         // FIXME: support zxdg_shell_v6?
         else if (!std::strcmp(interface, "wl_seat"))
             priv->wlSeat = makeUnique<WPE::WaylandSeat>(static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, std::min<uint32_t>(version, 8))));
-        else if (!std::strcmp(interface, "wl_output"))
-            priv->wlOutputs.append(makeUnique<WPE::WaylandOutput>(static_cast<struct wl_output*>(wl_registry_bind(registry, name, &wl_output_interface, std::min<uint32_t>(version, 2)))));
-        else if (!std::strcmp(interface, "wl_shm"))
+        else if (!std::strcmp(interface, "wl_output")) {
+            GRefPtr<WPEMonitor> monitor = adoptGRef(wpeMonitorWaylandCreate(name, static_cast<struct wl_output*>(wl_registry_bind(registry, name, &wl_output_interface, std::min<uint32_t>(version, 2)))));
+            auto* monitorPtr = monitor.get();
+            priv->monitors.append(WTFMove(monitor));
+            wpe_display_monitor_added(WPE_DISPLAY(display), monitorPtr);
+        } else if (!std::strcmp(interface, "wl_shm"))
             priv->wlSHM = static_cast<struct wl_shm*>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
         else if (!std::strcmp(interface, "zwp_linux_dmabuf_v1"))
             priv->linuxDMABuf = static_cast<struct zwp_linux_dmabuf_v1*>(wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, std::min<uint32_t>(version, 4)));
     },
     // global_remove
-    [](void*, struct wl_registry*, uint32_t)
+    [](void* data, struct wl_registry*, uint32_t name)
     {
+        auto* display = WPE_DISPLAY_WAYLAND(data);
+        auto* priv = display->priv;
+        auto index = priv->monitors.findIf([name](const auto& monitor) {
+            return wpe_monitor_get_id(monitor.get()) == name;
+        });
+        if (index != notFound) {
+            auto monitor = priv->monitors[index];
+            priv->monitors.remove(index);
+            wpe_display_monitor_removed(WPE_DISPLAY(display), monitor.get());
+        }
     },
 };
 
@@ -312,6 +328,20 @@ static GList* wpeDisplayWaylandGetPreferredDMABufFormats(WPEDisplay* display)
     return g_list_reverse(preferredFormats);
 }
 
+static guint wpeDisplayWaylandGetNMonitors(WPEDisplay* display)
+{
+    return WPE_DISPLAY_WAYLAND(display)->priv->monitors.size();
+}
+
+static WPEMonitor* wpeDisplayWaylandGetMonitor(WPEDisplay* display, guint index)
+{
+    auto* priv = WPE_DISPLAY_WAYLAND(display)->priv;
+    if (priv->monitors.isEmpty() || index >= priv->monitors.size())
+        return nullptr;
+
+    return priv->monitors[index].get();
+}
+
 struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland* display)
 {
     return display->priv->xdgWMBase;
@@ -327,11 +357,11 @@ WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland* display)
     return display->priv->wlCursor.get();
 }
 
-WPE::WaylandOutput* wpeDisplayWaylandGetOutput(WPEDisplayWayland* display, struct wl_output* output)
+WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland* display, struct wl_output* output)
 {
-    for (const auto& wlOutput : display->priv->wlOutputs) {
-        if (wlOutput->output() == output)
-            return wlOutput.get();
+    for (const auto& monitor : display->priv->monitors) {
+        if (wpe_monitor_wayland_get_wl_output(WPE_MONITOR_WAYLAND(monitor.get())) == output)
+            return monitor.get();
     }
 
     return nullptr;
@@ -353,6 +383,8 @@ static void wpe_display_wayland_class_init(WPEDisplayWaylandClass* displayWaylan
     displayClass->get_egl_display = wpeDisplayWaylandGetEGLDisplay;
     displayClass->get_keymap = wpeDisplayWaylandGetKeymap;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayWaylandGetPreferredDMABufFormats;
+    displayClass->get_n_monitors = wpeDisplayWaylandGetNMonitors;
+    displayClass->get_monitor = wpeDisplayWaylandGetMonitor;
 }
 
 /**

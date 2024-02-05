@@ -108,6 +108,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         m_wpeView = adoptGRef(wpe_view_new(display));
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
+        updateDisplayID();
         g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));
@@ -116,6 +117,10 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         g_signal_connect(m_wpeView.get(), "notify::scale", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
+        }), this);
+        g_signal_connect(m_wpeView.get(), "notify::monitor", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            webView.updateDisplayID();
         }), this);
         g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
             auto& webView = *reinterpret_cast<View*>(userData);
@@ -763,6 +768,20 @@ void View::updateAcceleratedSurface(uint64_t surfaceID)
 {
     if (m_backingStore)
         m_backingStore->updateSurfaceID(surfaceID);
+}
+
+void View::updateDisplayID()
+{
+    auto* monitor = wpe_view_get_monitor(m_wpeView.get());
+    if (!monitor)
+        return;
+
+    auto displayID = wpe_monitor_get_id(monitor);
+    if (displayID == m_displayID)
+        return;
+
+    m_displayID = displayID;
+    m_pageProxy->windowScreenDidChange(m_displayID);
 }
 
 #if ENABLE(TOUCH_EVENTS)

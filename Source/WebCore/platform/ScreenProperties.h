@@ -52,7 +52,7 @@ struct ScreenData {
     DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
     WEBCORE_EXPORT double screenDPI() const;
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     IntSize screenSize; // In millimeters.
     double dpi;
 #endif

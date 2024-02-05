@@ -118,7 +118,7 @@
     Vector<String> mediaMIMETypes;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     WebCore::ScreenProperties screenProperties;
 #endif
 

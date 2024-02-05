@@ -27,7 +27,6 @@
 #include "WPEViewWayland.h"
 
 #include "WPEDisplayWaylandPrivate.h"
-#include "WPEWaylandOutput.h"
 #include "WPEWaylandSHMPool.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
@@ -143,7 +142,8 @@ struct _WPEViewWaylandPrivate {
     std::unique_ptr<DMABufFeedback> pendingDMABufFeedback;
     std::unique_ptr<DMABufFeedback> committedDMABufFeedback;
 
-    Vector<WPE::WaylandOutput*, 1> wlOutputs;
+    Vector<GRefPtr<WPEMonitor>, 1> monitors;
+    GRefPtr<WPEMonitor> currentMonitor;
 
     GRefPtr<WPEBuffer> buffer;
     struct wl_callback* frameCallback;
@@ -213,11 +213,14 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
 #endif
 };
 
-static void wpe_view_wayland_update_scale(WPEViewWayland* view)
+static void wpeViewWaylandUpdateScale(WPEViewWayland* view)
 {
+    if (view->priv->monitors.isEmpty())
+        return;
+
     double scale = 1;
-    for (const auto* output : view->priv->wlOutputs)
-        scale = std::max(scale, output->scale());
+    for (const auto& monitor : view->priv->monitors)
+        scale = std::max(scale, wpe_monitor_get_scale(monitor.get()));
 
     if (wl_surface_get_version(view->priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
         wl_surface_set_buffer_scale(view->priv->wlSurface, scale);
@@ -230,27 +233,40 @@ static const struct wl_surface_listener surfaceListener = {
     [](void* data, struct wl_surface*, struct wl_output* wlOutput)
     {
         auto* view = WPE_VIEW_WAYLAND(data);
-        auto* output = wpeDisplayWaylandGetOutput(WPE_DISPLAY_WAYLAND(wpe_view_get_display(WPE_VIEW(view))), wlOutput);
-        if (!output)
+        auto* monitor = wpeDisplayWaylandFindMonitor(WPE_DISPLAY_WAYLAND(wpe_view_get_display(WPE_VIEW(view))), wlOutput);
+        if (!monitor)
             return;
 
-        view->priv->wlOutputs.append(output);
-        wpe_view_wayland_update_scale(view);
-        output->addScaleObserver(view, [](WPEViewWayland* view) {
-            wpe_view_wayland_update_scale(view);
-        });
+        // For now we just use the last entered monitor as current, but we could do someting smarter.
+        bool monitorChanged = false;
+        if (view->priv->currentMonitor.get() != monitor) {
+            view->priv->currentMonitor = monitor;
+            monitorChanged = true;
+        }
+        view->priv->monitors.append(monitor);
+        wpeViewWaylandUpdateScale(view);
+        if (monitorChanged)
+            g_object_notify(G_OBJECT(view), "monitor");
+        g_signal_connect_object(monitor, "notify::scale", G_CALLBACK(+[](WPEViewWayland* view) {
+            wpeViewWaylandUpdateScale(view);
+        }), view, G_CONNECT_SWAPPED);
     },
     // leave
     [](void* data, struct wl_surface*, struct wl_output* wlOutput)
     {
         auto* view = WPE_VIEW_WAYLAND(data);
-        auto* output = wpeDisplayWaylandGetOutput(WPE_DISPLAY_WAYLAND(wpe_view_get_display(WPE_VIEW(view))), wlOutput);
-        if (!output)
+        auto* monitor = wpeDisplayWaylandFindMonitor(WPE_DISPLAY_WAYLAND(wpe_view_get_display(WPE_VIEW(view))), wlOutput);
+        if (!monitor)
             return;
 
-        view->priv->wlOutputs.removeLast(output);
-        wpe_view_wayland_update_scale(view);
-        output->removeScaleObserver(view);
+        view->priv->monitors.removeLast(monitor);
+        if (!view->priv->monitors.isEmpty())
+            view->priv->currentMonitor = view->priv->monitors.last();
+        else
+            view->priv->currentMonitor = nullptr;
+        wpeViewWaylandUpdateScale(view);
+        g_object_notify(G_OBJECT(view), "monitor");
+        g_signal_handlers_disconnect_by_data(monitor, view);
     },
 #ifdef WL_SURFACE_PREFERRED_BUFFER_SCALE_SINCE_VERSION
     // preferred_buffer_scale
@@ -350,11 +366,22 @@ static void wpeViewWaylandConstructed(GObject* object)
     }
 
     wl_display_roundtrip(wpe_display_wayland_get_wl_display(display));
+
+    // Set the first monitor as the default one until enter monitor is emitted.
+    if (wpe_display_get_n_monitors(WPE_DISPLAY(display))) {
+        priv->currentMonitor = wpe_display_get_monitor(WPE_DISPLAY(display), 0);
+        auto scale = wpe_monitor_get_scale(priv->currentMonitor.get());
+        if (wl_surface_get_version(priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
+            wl_surface_set_buffer_scale(priv->wlSurface, scale);
+        wpe_view_set_scale(WPE_VIEW(object), scale);
+    }
 }
 
 static void wpeViewWaylandDispose(GObject* object)
 {
     auto* priv = WPE_VIEW_WAYLAND(object)->priv;
+    priv->currentMonitor = nullptr;
+    priv->monitors.clear();
     g_clear_pointer(&priv->xdgToplevel, xdg_toplevel_destroy);
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
     g_clear_pointer(&priv->xdgSurface, xdg_surface_destroy);
@@ -533,6 +560,12 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, GEr
     return TRUE;
 }
 
+static WPEMonitor* wpeViewWaylandGetMonitor(WPEView* view)
+{
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    return priv->currentMonitor.get();
+}
+
 static gboolean wpeViewWaylandSetFullscreen(WPEView* view, gboolean fullscreen)
 {
     auto* priv = WPE_VIEW_WAYLAND(view)->priv;
@@ -611,6 +644,7 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewWaylandClass);
     viewClass->render_buffer = wpeViewWaylandRenderBuffer;
+    viewClass->get_monitor = wpeViewWaylandGetMonitor;
     viewClass->set_fullscreen = wpeViewWaylandSetFullscreen;
     viewClass->get_preferred_dma_buf_formats = wpeViewWaylandGetPreferredDMABufFormats;
     viewClass->set_cursor_from_name = wpeViewWaylandSetCursorFromName;

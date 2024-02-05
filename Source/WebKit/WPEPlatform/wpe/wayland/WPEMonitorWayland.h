@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WPEMonitorWayland_h
+#define WPEMonitorWayland_h
 
-#include "WPEDisplayWayland.h"
-#include "WPEMonitor.h"
-#include "WPEWaylandCursor.h"
-#include "WPEWaylandSeat.h"
+#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/wayland/wpe-wayland.h> can be included directly."
+#endif
 
-struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
-WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
-WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
-struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);
+#include <glib-object.h>
+#include <wayland-client.h>
+#include <wpe/wpe-platform.h>
+
+G_BEGIN_DECLS
+
+#define WPE_TYPE_MONITOR_WAYLAND (wpe_monitor_wayland_get_type())
+WPE_API G_DECLARE_FINAL_TYPE (WPEMonitorWayland, wpe_monitor_wayland, WPE, MONITOR_WAYLAND, WPEMonitor)
+
+WPE_API struct wl_output *wpe_monitor_wayland_get_wl_output (WPEMonitorWayland *monitor);
+
+G_END_DECLS
+
+#endif /* WPEMonitorWayland_h */

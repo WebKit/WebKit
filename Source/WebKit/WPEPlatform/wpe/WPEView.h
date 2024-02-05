@@ -41,26 +41,28 @@ WPE_DECLARE_DERIVABLE_TYPE (WPEView, wpe_view, WPE, VIEW, GObject)
 typedef struct _WPEBuffer WPEBuffer;
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEEvent WPEEvent;
+typedef struct _WPEMonitor WPEMonitor;
 
 struct _WPEViewClass
 {
     GObjectClass parent_class;
 
-    gboolean (* render_buffer)                 (WPEView    *view,
-                                                WPEBuffer  *buffer,
-                                                GError    **error);
-    gboolean (* set_fullscreen)                (WPEView    *view,
-                                                gboolean    fullscreen);
-    GList   *(* get_preferred_dma_buf_formats) (WPEView    *view);
-    void     (* set_cursor_from_name)          (WPEView    *view,
-                                                const char *name);
-    void     (* set_cursor_from_bytes)         (WPEView    *view,
-                                                GBytes     *bytes,
-                                                guint       width,
-                                                guint       height,
-                                                guint       stride,
-                                                guint       hotspot_x,
-                                                guint       hotspot_y);
+    gboolean    (* render_buffer)                 (WPEView    *view,
+                                                   WPEBuffer  *buffer,
+                                                   GError    **error);
+    WPEMonitor *(* get_monitor)                   (WPEView    *view);
+    gboolean    (* set_fullscreen)                (WPEView    *view,
+                                                   gboolean    fullscreen);
+    GList      *(* get_preferred_dma_buf_formats) (WPEView    *view);
+    void        (* set_cursor_from_name)          (WPEView    *view,
+                                                   const char *name);
+    void        (* set_cursor_from_bytes)         (WPEView    *view,
+                                                   GBytes     *bytes,
+                                                   guint       width,
+                                                   guint       height,
+                                                   guint       stride,
+                                                   guint       hotspot_x,
+                                                   guint       hotspot_y);
 
     gpointer padding[32];
 };
@@ -115,6 +117,7 @@ WPE_API void         wpe_view_set_cursor_from_bytes         (WPEView     *view,
 WPE_API WPEViewState wpe_view_get_state                     (WPEView     *view);
 WPE_API void         wpe_view_set_state                     (WPEView     *view,
                                                              WPEViewState state);
+WPE_API WPEMonitor  *wpe_view_get_monitor                   (WPEView     *view);
 WPE_API gboolean     wpe_view_fullscreen                    (WPEView     *view);
 WPE_API gboolean     wpe_view_unfullscreen                  (WPEView     *view);
 WPE_API gboolean     wpe_view_render_buffer                 (WPEView     *view,

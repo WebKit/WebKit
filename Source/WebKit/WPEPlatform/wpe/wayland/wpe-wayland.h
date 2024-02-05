@@ -28,6 +28,7 @@
 #define __WPE_WAYLAND_H_INSIDE__
 
 #include <wpe/wayland/WPEDisplayWayland.h>
+#include <wpe/wayland/WPEMonitorWayland.h>
 #include <wpe/wayland/WPEViewWayland.h>
 
 #undef __WPE_WAYLAND_H_INSIDE__

@@ -9800,6 +9800,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.minimumUnobscuredSize = internals().minimumUnobscuredSize;
     parameters.maximumUnobscuredSize = internals().maximumUnobscuredSize;
     parameters.viewExposedRect = internals().viewExposedRect;
+    if (m_displayID) {
+        parameters.displayID = m_displayID;
+        parameters.nominalFramesPerSecond = drawingArea.displayNominalFramesPerSecond();
+    }
     parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
     parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;

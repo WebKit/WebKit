@@ -155,6 +155,10 @@ private:
     void setViewState(OptionSet<WebCore::ActivityState>);
     void handleKeyboardEvent(struct wpe_input_keyboard_event*);
 
+#if ENABLE(WPE_PLATFORM)
+    void updateDisplayID();
+#endif
+
 #if ENABLE(TOUCH_EVENTS) && ENABLE(WPE_PLATFORM)
     Vector<WebKit::WebPlatformTouchPoint> touchPointsForEvent(WPEEvent*);
 #endif
@@ -176,6 +180,7 @@ private:
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEView> m_wpeView;
     std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
+    uint32_t m_displayID { 0 };
 #endif
 
 #if ENABLE(FULLSCREEN_API)

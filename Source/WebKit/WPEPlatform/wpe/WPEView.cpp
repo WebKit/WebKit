@@ -82,6 +82,7 @@ enum {
     PROP_WIDTH,
     PROP_HEIGHT,
     PROP_SCALE,
+    PROP_MONITOR,
 
     N_PROPERTIES
 };
@@ -140,6 +141,9 @@ static void wpeViewGetProperty(GObject* object, guint propId, GValue* value, GPa
         break;
     case PROP_SCALE:
         g_value_set_double(value, wpe_view_get_scale(view));
+        break;
+    case PROP_MONITOR:
+        g_value_set_object(value, wpe_view_get_monitor(view));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -224,6 +228,18 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             nullptr, nullptr,
             1., G_MAXDOUBLE, 1.,
             WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WPEView:monitor:
+     *
+     * The current #WPEMonitor of the view.
+     */
+    sObjProperties[PROP_MONITOR] =
+        g_param_spec_object(
+            "monitor",
+            nullptr, nullptr,
+            WPE_TYPE_MONITOR,
+            WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
@@ -569,6 +585,22 @@ void wpe_view_set_state(WPEView* view, WPEViewState state)
     auto previousState = view->priv->state;
     view->priv->state = state;
     g_signal_emit(view, signals[STATE_CHANGED], 0, previousState);
+}
+
+/**
+ * wpe_view_get_monitor:
+ * @view: a #WPEView
+ *
+ * Get current #WPEMonitor of @view
+ *
+ * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ */
+WPEMonitor* wpe_view_get_monitor(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->get_monitor ? viewClass->get_monitor(view) : nullptr;
 }
 
 /**

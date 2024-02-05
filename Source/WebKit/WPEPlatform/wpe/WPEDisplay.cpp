@@ -61,6 +61,15 @@ struct _WPEDisplayPrivate {
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
 
+enum {
+    MONITOR_ADDED,
+    MONITOR_REMOVED,
+
+    LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0, };
+
 /**
  * wpe_display_error_quark:
  *
@@ -84,6 +93,39 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayClass);
     objectClass->dispose = wpeDisplayDispose;
+
+    /**
+     * WPEDisplay::monitor-added:
+     * @display: a #WPEDisplay
+     * @monitor: the #WPEMonitor added
+     *
+     * Emitted when a monitor is added
+     */
+    signals[MONITOR_ADDED] = g_signal_new(
+        "monitor-added",
+        G_TYPE_FROM_CLASS(displayClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        WPE_TYPE_MONITOR);
+
+    /**
+     * WPEDisplay::monitor-removed:
+     * @display: a #WPEDisplay
+     * @monitor: the #WPEMonitor removed
+     *
+     * Emitted after a monitor is removed.
+     * Note that the monitor is always invalidated before this signal is emitted.
+     */
+    signals[MONITOR_REMOVED] = g_signal_new(
+        "monitor-removed",
+        G_TYPE_FROM_CLASS(displayClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        WPE_TYPE_MONITOR);
 }
 
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
@@ -303,6 +345,77 @@ GList* wpe_display_get_preferred_dma_buf_formats(WPEDisplay* display)
     }
 
     return display->priv->preferredDMABufFormats;
+}
+
+/**
+ * wpe_display_get_n_monitors:
+ * @display: a #WPEDisplay
+ *
+ * Get the number of monitors of @display
+ *
+ * Returns: the number of monitors
+ */
+guint wpe_display_get_n_monitors(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), 0);
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    if (!wpeDisplayClass->get_n_monitors)
+        return 0;
+
+    return wpeDisplayClass->get_n_monitors(display);
+}
+
+/**
+ * wpe_display_get_monitor:
+ * @display: a #WPEDisplay
+ * @index: the number of the monitor
+ *
+ * Get the monitor of @display at @index
+ *
+ * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ */
+WPEMonitor* wpe_display_get_monitor(WPEDisplay* display, guint index)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+
+    auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
+    if (!wpeDisplayClass->get_monitor)
+        return nullptr;
+
+    return wpeDisplayClass->get_monitor(display, index);
+}
+
+/**
+ * wpe_display_monitor_added:
+ * @display: a #WPEDisplay
+ * @monitor: the #WPEMonitor added
+ *
+ * Emit the signal #WPEDisplay::monitor-added.
+ */
+void wpe_display_monitor_added(WPEDisplay* display, WPEMonitor* monitor)
+{
+    g_return_if_fail(WPE_IS_DISPLAY(display));
+    g_return_if_fail(WPE_IS_MONITOR(monitor));
+
+    g_signal_emit(display, signals[MONITOR_ADDED], 0, monitor);
+}
+
+/**
+ * wpe_display_monitor_removed:
+ * @display: a #WPEDisplay
+ * @monitor: the #WPEMonitor removed
+ *
+ * Emit the signal #WPEDisplay::monitor-removed.
+ * Note that wpe_monitor_invalidate() is called before the signal is emitted.
+ */
+void wpe_display_monitor_removed(WPEDisplay* display, WPEMonitor* monitor)
+{
+    g_return_if_fail(WPE_IS_DISPLAY(display));
+    g_return_if_fail(WPE_IS_MONITOR(monitor));
+
+    wpe_monitor_invalidate(monitor);
+    g_signal_emit(display, signals[MONITOR_REMOVED], 0, monitor);
 }
 
 static bool isSotfwareRast()

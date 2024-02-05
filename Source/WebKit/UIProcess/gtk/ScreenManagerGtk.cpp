@@ -27,8 +27,6 @@
 #include "ScreenManager.h"
 
 #include "GtkSettingsManager.h"
-#include "WebProcessMessages.h"
-#include "WebProcessPool.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PlatformScreen.h>
 #include <cmath>
@@ -36,13 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-ScreenManager& ScreenManager::singleton()
-{
-    static NeverDestroyed<ScreenManager> manager;
-    return manager;
-}
-
-static PlatformDisplayID generatePlatformDisplayID()
+PlatformDisplayID ScreenManager::generatePlatformDisplayID(GdkMonitor*)
 {
     static PlatformDisplayID id;
     return ++id;
@@ -82,41 +74,6 @@ ScreenManager::ScreenManager()
         manager->propertiesDidChange();
     }), this);
 #endif
-}
-
-PlatformDisplayID ScreenManager::displayID(GdkMonitor* monitor) const
-{
-    return m_monitorToDisplayIDMap.get(monitor);
-}
-
-GdkMonitor* ScreenManager::monitor(PlatformDisplayID displayID) const
-{
-    for (const auto& iter : m_monitorToDisplayIDMap) {
-        if (iter.value == displayID)
-            return iter.key;
-    }
-    return nullptr;
-}
-
-void ScreenManager::addMonitor(GdkMonitor* monitor)
-{
-    m_monitors.append(monitor);
-    m_monitorToDisplayIDMap.add(monitor, generatePlatformDisplayID());
-}
-
-void ScreenManager::removeMonitor(GdkMonitor* monitor)
-{
-    m_monitorToDisplayIDMap.remove(monitor);
-    m_monitors.removeFirstMatching([monitor](const auto& item) {
-        return item.get() == monitor;
-    });
-}
-
-void ScreenManager::propertiesDidChange() const
-{
-    auto properties = collectScreenProperties();
-    for (auto& pool : WebProcessPool::allProcessPools())
-        pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
 }
 
 ScreenProperties ScreenManager::collectScreenProperties() const

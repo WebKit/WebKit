@@ -444,6 +444,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
 
 std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyMac::displayNominalFramesPerSecond()
 {
+    if (!m_displayID)
+        return std::nullopt;
     return displayLink().nominalFramesPerSecond();
 }
 

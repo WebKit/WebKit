@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 
 #include "ScreenProperties.h"
 #include <wtf/NeverDestroyed.h>
@@ -72,4 +72,4 @@ const ScreenData* screenData(PlatformDisplayID screenDisplayID)
 
 } // namespace WebCore
 
-#endif // PLATFORM(COCOA) || PLATFORM(GTK)
+#endif // PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))

@@ -48,12 +48,15 @@
 #include <wpe/wpe.h>
 #endif
 
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+#include "ScreenManager.h"
+#endif
+
 #if PLATFORM(GTK)
 #if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
 #include "GtkSettingsManager.h"
-#include "ScreenManager.h"
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -159,6 +162,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(GTK)
     parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
     parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
+#endif
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (usingWPEPlatformAPI)
+        parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
 #endif
 }
 

@@ -2239,7 +2239,7 @@ header: <WebCore/ScreenProperties.h>
     WebCore::PlatformGPUID gpuID;
     WebCore::DynamicRangeMode preferredDynamicRangeMode;
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     WebCore::IntSize screenSize;
     double dpi;
 #endif

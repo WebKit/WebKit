@@ -105,6 +105,9 @@ struct WebPageCreationParameters {
 
     std::optional<WebCore::FloatRect> viewExposedRect;
 
+    std::optional<uint32_t> displayID;
+    std::optional<unsigned> nominalFramesPerSecond;
+
     bool alwaysShowsHorizontalScroller;
     bool alwaysShowsVerticalScroller;
 
