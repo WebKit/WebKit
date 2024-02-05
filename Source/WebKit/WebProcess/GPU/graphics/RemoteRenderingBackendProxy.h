@@ -51,6 +51,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -138,7 +139,6 @@ public:
 
 #if PLATFORM(COCOA)
     Vector<SwapBuffersDisplayRequirement> prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&&);
-    void didPrepareForDisplay(RemoteImageBufferSetProxy&);
 #endif
 
     void finalizeRenderingUpdate();
@@ -159,6 +159,7 @@ public:
     IPC::Connection* connection() { return m_connection.get(); }
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+    Ref<WorkQueue> workQueue() { return m_queue; }
 
     static constexpr Seconds defaultTimeout = 15_s;
 private:
@@ -200,8 +201,8 @@ private:
     MarkSurfacesAsVolatileRequestIdentifier m_currentVolatilityRequest;
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
     HashMap<RemoteImageBufferSetIdentifier, WeakPtr<RemoteImageBufferSetProxy>> m_bufferSets;
-    HashMap<RemoteImageBufferSetIdentifier, RefPtr<RemoteImageBufferSetProxy>> m_bufferSetsInDisplay;
     SerialFunctionDispatcher& m_dispatcher;
+    Ref<WorkQueue> m_queue;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

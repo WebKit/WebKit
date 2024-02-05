@@ -34,6 +34,7 @@ class RemoteDisplayListRecorderProxy;
 class RemoteLayerWithRemoteRenderingBackingStore : public RemoteLayerBackingStore {
 public:
     RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote*);
+    ~RemoteLayerWithRemoteRenderingBackingStore();
 
     bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
 

@@ -29,6 +29,7 @@
 #include "BufferAndBackendInfo.h"
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
+#include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <wtf/SystemTracing.h>
 
@@ -41,14 +42,14 @@ class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteIm
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteImageBufferSetProxyFlushFence> create(std::optional<IPC::Event> event, RenderingUpdateID renderingUpdateID)
+    static Ref<RemoteImageBufferSetProxyFlushFence> create(IPC::Event event, RenderingUpdateID renderingUpdateID)
     {
         return adoptRef(*new RemoteImageBufferSetProxyFlushFence { WTFMove(event), renderingUpdateID });
     }
 
     ~RemoteImageBufferSetProxyFlushFence()
     {
-        if (!m_signaled)
+        if (m_signalIsPending)
             tracePoint(FlushRemoteImageBufferEnd, reinterpret_cast<uintptr_t>(this), 1u);
     }
 
@@ -58,16 +59,17 @@ public:
         Locker locker { m_lock };
         if (!m_handles)
             m_condition.waitFor(m_lock, timeout.secondsUntilDeadline());
-        ASSERT(!m_signaled);
-        m_signaled = !m_event || m_event->waitFor(timeout);
-        if (m_signaled)
+        ASSERT(m_event);
+        if (m_signalIsPending && m_event->waitFor(timeout))
+            m_signalIsPending = false;
+        if (!m_signalIsPending)
             tracePoint(FlushRemoteImageBufferEnd, reinterpret_cast<uintptr_t>(this), 0u);
-        return m_signaled && m_handles;
+        return !m_signalIsPending && m_handles;
     }
 
     std::optional<IPC::Event> tryTakeEvent()
     {
-        if (!m_signaled)
+        if (m_signalIsPending)
             return std::nullopt;
         Locker locker { m_lock };
         return std::exchange(m_event, std::nullopt);
@@ -86,6 +88,11 @@ public:
         return std::exchange(m_handles, std::nullopt);
     }
 
+    void setWaitingForSignal()
+    {
+        m_signalIsPending = true;
+    }
+
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
 
 private:
@@ -97,7 +104,7 @@ private:
     }
     Lock m_lock;
     Condition m_condition;
-    std::atomic<bool> m_signaled { false };
+    std::atomic<bool> m_signalIsPending { false };
     std::optional<IPC::Event> WTF_GUARDED_BY_LOCK(m_lock) m_event;
     std::optional<BufferSetBackendHandle> m_handles WTF_GUARDED_BY_LOCK(m_lock);
     RenderingUpdateID m_renderingUpdateID;
@@ -173,8 +180,8 @@ RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy
 
 RemoteImageBufferSetProxy::~RemoteImageBufferSetProxy()
 {
-    if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->releaseRemoteImageBufferSet(*this);
+    Locker locker { m_lock };
+    ASSERT(m_closed);
 }
 
 void RemoteImageBufferSetProxy::addRequestedVolatility(OptionSet<BufferInSetType> request)
@@ -198,6 +205,8 @@ void RemoteImageBufferSetProxy::clearVolatilityUntilAfter(MarkSurfacesAsVolatile
 #if PLATFORM(COCOA)
 void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBufferForDisplayOutputData outputData, RenderingUpdateID renderingUpdateID)
 {
+    ASSERT(!isMainRunLoop());
+    Locker locker { m_lock };
     if (m_pendingFlush && m_pendingFlush->renderingUpdateID() == renderingUpdateID) {
         BufferSetBackendHandle handle;
 
@@ -214,11 +223,28 @@ void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBuffer
         handle.secondaryBackBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.secondaryBack);
 
         m_pendingFlush->setHandles(WTFMove(handle));
+
+        m_prepareForDisplayIsPending = false;
+        if (m_closed && m_streamConnection) {
+            m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+            m_streamConnection = nullptr;
+        }
     }
-    if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->didPrepareForDisplay(*this);
 }
 #endif
+
+void RemoteImageBufferSetProxy::close()
+{
+    assertIsMainRunLoop();
+    Locker locker { m_lock };
+    m_closed = true;
+    if (!m_prepareForDisplayIsPending && m_streamConnection) {
+        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+        m_streamConnection = nullptr;
+    }
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->releaseRemoteImageBufferSet(*this);
+}
 
 void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float scale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose)
 {
@@ -231,35 +257,49 @@ void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float 
     m_remoteNeedsConfigurationUpdate = true;
 }
 
+void RemoteImageBufferSetProxy::createFlushFence()
+{
+    ASSERT(m_remoteRenderingBackendProxy);
+
+    std::optional<IPC::Event> event;
+    if (m_pendingFlush)
+        event = m_pendingFlush->tryTakeEvent();
+    if (!event) {
+        auto pair = IPC::createEventSignalPair();
+        if (!pair)
+            return;
+
+        event = WTFMove(pair->event);
+        send(Messages::RemoteImageBufferSet::SetFlushSignal(WTFMove(pair->signal)));
+    }
+
+    m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(WTFMove(*event), m_remoteRenderingBackendProxy->renderingUpdateID());
+}
+
 std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType flushType)
 {
     if (!m_remoteRenderingBackendProxy)
         return nullptr;
 
-    std::optional<IPC::Event> event;
+    Locker locker { m_lock };
+    ASSERT(m_pendingFlush && m_pendingFlush->renderingUpdateID() == m_remoteRenderingBackendProxy->renderingUpdateID());
+    if (!m_pendingFlush)
+        return nullptr;
+
     if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) {
-        if (m_pendingFlush)
-            event = m_pendingFlush->tryTakeEvent();
-        if (!event) {
-            auto pair = IPC::createEventSignalPair();
-            if (!pair)
-                return nullptr;
-
-            event = WTFMove(pair->event);
-            send(Messages::RemoteImageBufferSet::SetFlushSignal(WTFMove(pair->signal)));
-        }
-
+        m_pendingFlush->setWaitingForSignal();
         send(Messages::RemoteImageBufferSet::Flush());
     }
-
-    m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(WTFMove(event), m_remoteRenderingBackendProxy->renderingUpdateID());
 
     return makeUnique<RemoteImageBufferSetProxyFlusher>(m_identifier, Ref { *m_pendingFlush }, m_generation);
 }
 
 void RemoteImageBufferSetProxy::willPrepareForDisplay()
 {
-    if (m_remoteNeedsConfigurationUpdate && m_remoteRenderingBackendProxy) {
+    if (!m_remoteRenderingBackendProxy)
+        return;
+
+    if (m_remoteNeedsConfigurationUpdate) {
         send(Messages::RemoteImageBufferSet::UpdateConfiguration(m_size, m_renderingMode, m_scale, m_colorSpace, m_pixelFormat));
 
         OptionSet<WebCore::ImageBufferOptions> options;
@@ -269,14 +309,30 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
         m_displayListRecorder = m_remoteRenderingBackendProxy->createDisplayListRecorder(m_displayListIdentifier, m_size, m_renderingPurpose, m_scale, m_colorSpace, m_pixelFormat, options);
     }
     m_remoteNeedsConfigurationUpdate = false;
+
+
+    Locker locker { m_lock };
+    createFlushFence();
+
+    if (!m_streamConnection) {
+        m_streamConnection = &m_remoteRenderingBackendProxy->streamConnection();
+        m_streamConnection->addWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_remoteRenderingBackendProxy->workQueue(), *this, m_identifier.toUInt64());
+    }
+    m_prepareForDisplayIsPending = true;
 }
 
 void RemoteImageBufferSetProxy::remoteBufferSetWasDestroyed()
 {
+    Locker locker { m_lock };
     if (m_pendingFlush) {
         m_pendingFlush->setHandles(BufferSetBackendHandle { });
         m_pendingFlush = nullptr;
     }
+    if (m_streamConnection) {
+        m_streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), m_identifier.toUInt64());
+        m_streamConnection = nullptr;
+    }
+    m_prepareForDisplayIsPending = false;
     m_generation++;
     m_remoteNeedsConfigurationUpdate = true;
 }

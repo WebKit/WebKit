@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteImageBufferSetProxy NotRefCounted  {
+messages -> RemoteImageBufferSetProxy {
 #if PLATFORM(COCOA)
     DidPrepareForDisplay(struct WebKit::ImageBufferSetPrepareBufferForDisplayOutputData outputData, WebKit::RenderingUpdateID renderingUpdateID)
 #endif

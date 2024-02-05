@@ -70,6 +70,7 @@ std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create
 RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
     : m_parameters(parameters)
     , m_dispatcher(dispatcher)
+    , m_queue(WorkQueue::create("RemoteRenderingBackendProxy", WorkQueue::QOS::UserInteractive))
 {
 }
 
@@ -141,7 +142,6 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
         bufferSet.value->remoteBufferSetWasDestroyed();
         send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet.value->identifier(), bufferSet.value->displayListResourceIdentifier()));
     }
-    m_bufferSetsInDisplay.clear();
 }
 
 void RemoteRenderingBackendProxy::disconnectGPUProcess()
@@ -378,9 +378,6 @@ Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageB
         perLayerData.bufferSet->clearVolatilityUntilAfter(m_currentVolatilityRequest);
         perLayerData.bufferSet->willPrepareForDisplay();
 
-        auto addResult = m_bufferSetsInDisplay.add(perLayerData.bufferSet->identifier(), perLayerData.bufferSet);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-
         return ImageBufferSetPrepareBufferForDisplayInputData {
             perLayerData.bufferSet->identifier(),
             perLayerData.dirtyRegion,
@@ -408,12 +405,6 @@ Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageB
             displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
     }
     return result;
-}
-
-void RemoteRenderingBackendProxy::didPrepareForDisplay(RemoteImageBufferSetProxy& bufferSet)
-{
-    bool success = m_bufferSetsInDisplay.remove(bufferSet.identifier());
-    ASSERT_UNUSED(success, success);
 }
 #endif
 
@@ -470,13 +461,6 @@ bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, I
         if (imageBuffer)
             imageBuffer->didReceiveMessage(connection, decoder);
         // Messages to already removed instances are ok.
-        return true;
-    }
-    if (decoder.messageReceiverName() == Messages::RemoteImageBufferSetProxy::messageReceiverName()) {
-        RefPtr bufferSet = m_bufferSetsInDisplay.get(RemoteImageBufferSetIdentifier { decoder.destinationID() });
-        ASSERT(bufferSet);
-        if (bufferSet)
-            bufferSet->didReceiveMessage(connection, decoder);
         return true;
     }
     return false;
