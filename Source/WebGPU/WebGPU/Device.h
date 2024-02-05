@@ -106,7 +106,7 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
-    bool isValid() const { return m_device; }
+    bool isValid() const;
     bool isLost() const { return m_isLost; }
     const WGPULimits& limits() const { return m_capabilities.limits; }
     const Vector<WGPUFeatureName>& features() const { return m_capabilities.features; }
@@ -130,6 +130,7 @@ public:
     bool shouldStopCaptureAfterSubmit();
     id<MTLBuffer> placeholderBuffer() const;
     id<MTLTexture> placeholderTexture() const;
+    bool isDestroyed() const;
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -175,6 +176,7 @@ private:
 
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };
+    bool m_destroyed { false };
     id<NSObject> m_deviceObserver { nil };
 
     HardwareCapabilities m_capabilities { };

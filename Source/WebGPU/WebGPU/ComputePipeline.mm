@@ -117,8 +117,8 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
     auto pipeline = createComputePipeline(descriptor, true);
-    instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
-        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
+    instance().scheduleWork([pipeline, callback = WTFMove(callback), protectedThis = Ref { *this }]() mutable {
+        callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
     });
 }
 

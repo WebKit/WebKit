@@ -1508,7 +1508,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
 {
     auto pipeline = createRenderPipeline(descriptor, true);
     instance().scheduleWork([protectedThis = Ref { *this }, pipeline, callback = WTFMove(callback)]() mutable {
-        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
+        callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
     });
 }
 

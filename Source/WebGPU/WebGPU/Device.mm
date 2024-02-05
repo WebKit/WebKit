@@ -128,6 +128,11 @@ bool Device::shouldStopCaptureAfterSubmit()
     return GPUFrameCapture::shouldStopCaptureAfterSubmit();
 }
 
+bool Device::isDestroyed() const
+{
+    return m_destroyed;
+}
+
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
@@ -238,7 +243,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
 
 void Device::destroy()
 {
-    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-destroy
+    m_destroyed = true;
 
     loseTheDevice(WGPUDeviceLostReason_Destroyed);
 }
@@ -427,6 +432,11 @@ void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)
         loseTheDevice(WGPUDeviceLostReason_Destroyed);
     else if (!m_adapter->isValid())
         loseTheDevice(WGPUDeviceLostReason_Undefined);
+}
+
+bool Device::isValid() const
+{
+    return m_device;
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)

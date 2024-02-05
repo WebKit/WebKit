@@ -187,9 +187,6 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
         });
     }
 
-    if (!pixelBuffer)
-        return;
-
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor, pixelBuffer);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
