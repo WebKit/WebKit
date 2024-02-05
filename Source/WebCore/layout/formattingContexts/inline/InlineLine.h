@@ -46,7 +46,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line() = default;
 
-    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
+    void initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     // Reserved for TextOnlySimpleLineBuilder

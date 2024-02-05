@@ -92,7 +92,7 @@ private:
     LineLayoutResult::PlacedFloatList m_placedFloats;
     LineLayoutResult::SuspendedFloatList m_suspendedFloats;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
-    Vector<InlineItem> m_lineSpanningInlineBoxes;
+    Vector<InlineItem, 1> m_lineSpanningInlineBoxes;
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
 };
