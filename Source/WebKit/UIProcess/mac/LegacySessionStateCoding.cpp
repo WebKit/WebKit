@@ -68,6 +68,8 @@ static const uint32_t maximumSessionStateDataSize = 2 * 1024 * 1024;
 static const uint32_t maximumSessionStateDataSize = std::numeric_limits<uint32_t>::max();
 #endif
 
+static const uint32_t maximumFrameStateTargetLength = 16 * 1024;
+
 template<typename T> void isValidEnum(T);
 
 
@@ -346,7 +348,10 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
     if (frameState.stateObjectData)
         encoder << frameState.stateObjectData.value();
 
-    encoder << frameState.target;
+    if (frameState.target.length() < maximumFrameStateTargetLength)
+        encoder << frameState.target;
+    else
+        encoder << emptyAtom();
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: iOS should not use the legacy session state encoder.
@@ -428,15 +433,21 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
         auto url = item.pageState.mainFrameState.urlString.createCFString();
         auto title = item.pageState.title.createCFString();
         auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
+
+        // We allow the first item to be unlimited in size. We refrain from serializing the data for subsequent items if they would cause us to trip over the maximumSessionStateDataSize limit.
         auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item.pageState.mainFrameState) : nullptr;
+        if (data) {
+            totalDataSize += CFDataGetLength(data.get());
+            if (totalDataSize > maximumSessionStateDataSize && CFArrayGetCount(entries.get()) > 0)
+                data = nullptr;
+        }
+
         auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.pageState.shouldOpenExternalURLsPolicy);
         auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
         RetainPtr<CFDictionaryRef> entryDictionary;
 
         if (data) {
-            totalDataSize += CFDataGetLength(data.get());
-
             entryDictionary = createDictionary({
                 { sessionHistoryEntryURLKey, url.get() },
                 { sessionHistoryEntryTitleKey, title.get() },
