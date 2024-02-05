@@ -494,9 +494,11 @@ typedef enum {
 - (UIEventButtonMask)_buttonMask;
 @end
 
+#if USE(BROWSERENGINEKIT)
 @interface UIKeyEvent : NSObject
 - (instancetype)initWithWebEvent:(WebEvent *)webEvent;
 @end
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
@@ -654,8 +656,10 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 - (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
 @end
 
+#if USE(BROWSERENGINEKIT)
 @interface UIKeyEvent (IPI)
 @property (nonatomic, readonly) WebEvent *webEvent;
 @end
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)
