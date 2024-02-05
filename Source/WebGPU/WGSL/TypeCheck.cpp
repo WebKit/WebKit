@@ -221,14 +221,30 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
             auto maybeAddressSpace = addressSpace(type.arguments()[0]);
             if (!maybeAddressSpace)
                 return m_types.bottomType();
+            auto addressSpace = *maybeAddressSpace;
 
             auto* elementType = resolve(type.arguments()[1]);
             if (isBottom(elementType))
                 return m_types.bottomType();
 
+            if (UNLIKELY(!elementType->isStorable())) {
+                typeError(InferBottom::No, type.span(), "'", *elementType, "' cannot be used as the store type of a pointer");
+                return m_types.bottomType();
+            }
+
+            if (UNLIKELY(std::holds_alternative<Types::Atomic>(*elementType) && addressSpace != AddressSpace::Storage && addressSpace != AddressSpace::Workgroup)) {
+                typeError(InferBottom::No, type.span(), "'", *elementType, "' atomic variables must have <storage> or <workgroup> address space");
+                return m_types.bottomType();
+            }
+
+            if (UNLIKELY(elementType->containsRuntimeArray() && addressSpace != AddressSpace::Storage)) {
+                typeError(InferBottom::No, type.span(), "runtime-sized arrays can only be used in the <storage> address space");
+                return m_types.bottomType();
+            }
+
             AccessMode accessMode;
             if (argumentCount > 2) {
-                if (*maybeAddressSpace != AddressSpace::Storage) {
+                if (addressSpace != AddressSpace::Storage) {
                     typeError(InferBottom::No, type.arguments()[2].span(), "only pointers in <storage> address space may specify an access mode");
                     return m_types.bottomType();
                 }
@@ -238,7 +254,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
                     return m_types.bottomType();
                 accessMode = *maybeAccessMode;
             } else {
-                switch (*maybeAddressSpace) {
+                switch (addressSpace) {
                 case AddressSpace::Function:
                 case AddressSpace::Private:
                 case AddressSpace::Workgroup:
@@ -252,7 +268,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
                 }
             }
 
-            return m_types.pointerType(*maybeAddressSpace, elementType, accessMode);
+            return m_types.pointerType(addressSpace, elementType, accessMode);
         }
     ));
 
@@ -358,9 +374,17 @@ std::optional<FailedCheck> TypeChecker::check()
 void TypeChecker::visit(AST::Structure& structure)
 {
     HashMap<String, const Type*> fields;
-    for (auto& member : structure.members()) {
+    for (unsigned i = 0; i < structure.members().size(); ++i) {
+        auto& member = structure.members()[i];
         visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
+
+        if (UNLIKELY(memberType->containsRuntimeArray() && i != structure.members().size() - 1)) {
+            typeError(InferBottom::No, member.span(), "runtime arrays may only appear as the last member of a struct");
+            introduceType(structure.name(), m_types.bottomType());
+            return;
+        }
+
         auto result = fields.add(member.name().id(), memberType);
         ASSERT_UNUSED(result, result.isNewEntry);
     }

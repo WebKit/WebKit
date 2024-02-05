@@ -272,6 +272,8 @@ struct Type : public std::variant<
     unsigned alignment() const;
     Packing packing() const;
     bool isConstructible() const;
+    bool isStorable() const;
+    bool containsRuntimeArray() const;
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;

@@ -519,6 +519,88 @@ bool Type::isConstructible() const
         });
 }
 
+// https://www.w3.org/TR/WGSL/#storable
+bool Type::isStorable() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+                return true;
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector& vector) -> bool {
+            return vector.element->isStorable();
+        },
+        [&](const Matrix& matrix) -> bool {
+            return matrix.element->isStorable();
+        },
+        [&](const Array& array) -> bool {
+            return array.element->isStorable();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->isStorable())
+                    return false;
+            }
+            return true;
+        },
+        [&](const TextureStorage&) -> bool {
+            return true;
+        },
+        [&](const TextureDepth&) -> bool {
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return false;
+        });
+}
+
+bool Type::containsRuntimeArray() const
+{
+    if (auto* array = std::get_if<Types::Array>(this))
+        return !array->size;
+    if (auto* structure = std::get_if<Types::Struct>(this))
+        return structure->structure.members().last().type().inferredType()->containsRuntimeArray();
+    return false;
+}
+
 bool isPrimitive(const Type* type, Primitive::Kind kind)
 {
     auto* primitive = std::get_if<Primitive>(type);
