@@ -152,12 +152,14 @@ public:
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
+    using WindowIdentifierVector = Vector<WebExtensionWindowIdentifier>;
     using TabIdentifierMap = HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
     using TabMapValueIterator = TabIdentifierMap::ValuesIteratorRange;
     using PageTabIdentifierMap = WeakHashMap<WebPageProxy, WebExtensionTabIdentifier>;
     using PopupPageActionMap = WeakHashMap<WebPageProxy, Ref<WebExtensionAction>>;
 
     using WindowVector = Vector<Ref<WebExtensionWindow>>;
+    using TabVector = Vector<Ref<WebExtensionTab>>;
     using TabSet = HashSet<Ref<WebExtensionTab>>;
 
     using PopulateTabs = WebExtensionWindow::PopulateTabs;
@@ -186,6 +188,8 @@ public:
     enum class WindowIsClosing : bool { No, Yes };
     enum class ReloadFromOrigin : bool { No, Yes };
     enum class UserTriggered : bool { No, Yes };
+    enum class SuppressEvents : bool { No, Yes };
+    enum class UpdateWindowOrder : bool { No, Yes };
     enum class IgnoreExtensionAccess : bool { No, Yes };
 
     enum class Error : uint8_t {
@@ -312,29 +316,34 @@ public:
 
     Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *) const;
     RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    void forgetWindow(WebExtensionWindowIdentifier) const;
 
     Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *) const;
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
+    void forgetTab(WebExtensionTabIdentifier) const;
 
     WindowVector openWindows() const;
-    TabMapValueIterator openTabs() const { return m_tabMap.values(); }
+    TabVector openTabs() const;
 
     RefPtr<WebExtensionWindow> focusedWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionWindow> frontmostWindow(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
 
-    void didOpenWindow(const WebExtensionWindow&);
-    void didCloseWindow(const WebExtensionWindow&);
-    void didFocusWindow(WebExtensionWindow*);
+    bool isValidWindow(const WebExtensionWindow&);
+    bool isValidTab(const WebExtensionTab&);
 
-    void didOpenTab(const WebExtensionTab&);
-    void didCloseTab(const WebExtensionTab&, WindowIsClosing = WindowIsClosing::No);
+    void didOpenWindow(WebExtensionWindow&, UpdateWindowOrder = UpdateWindowOrder::Yes, SuppressEvents = SuppressEvents::No);
+    void didCloseWindow(WebExtensionWindow&);
+    void didFocusWindow(const WebExtensionWindow*, SuppressEvents = SuppressEvents::No);
+
+    void didOpenTab(WebExtensionTab&, SuppressEvents = SuppressEvents::No);
+    void didCloseTab(WebExtensionTab&, WindowIsClosing = WindowIsClosing::No, SuppressEvents = SuppressEvents::No);
     void didActivateTab(const WebExtensionTab&, const WebExtensionTab* previousTab = nullptr);
     void didSelectOrDeselectTabs(const TabSet&);
 
     void didMoveTab(const WebExtensionTab&, size_t oldIndex, const WebExtensionWindow* oldWindow = nullptr);
-    void didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab);
+    void didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab);
     void didChangeTabProperties(WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
@@ -780,8 +789,8 @@ private:
     NativePortMap m_nativePortMap;
 
     mutable WindowIdentifierMap m_windowMap;
-    Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;
-    std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
+    mutable WindowIdentifierVector m_windowOrderVector;
+    mutable std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
 
     mutable TabIdentifierMap m_tabMap;
     PageTabIdentifierMap m_extensionPageTabMap;

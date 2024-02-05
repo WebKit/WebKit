@@ -195,7 +195,8 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab() const
         return nullptr;
 
     THROW_UNLESS([activeTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by activeTabForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
-    auto result = m_extensionContext->getOrCreateTab(activeTab);
+
+    Ref result = m_extensionContext->getOrCreateTab(activeTab);
 
     auto *tabs = [m_delegate tabsForWebExtensionContext:m_extensionContext->wrapper()];
     THROW_UNLESS([tabs isKindOfClass:NSArray.class], @"Object returned by tabsForWebExtensionContext: is not an array");
@@ -296,6 +297,11 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
 
         completionHandler(std::nullopt);
     }).get()];
+}
+
+bool WebExtensionWindow::isOpen() const
+{
+    return m_isOpen && isValid();
 }
 
 bool WebExtensionWindow::isFocused() const

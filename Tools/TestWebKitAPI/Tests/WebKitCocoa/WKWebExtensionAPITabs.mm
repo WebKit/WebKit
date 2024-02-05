@@ -553,40 +553,42 @@ TEST(WKWebExtensionAPITabs, Query)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const allWindows = await browser.windows.getAll({ populate: true })",
-        @"const windowIdOne = allWindows[0].id",
-        @"const windowIdTwo = allWindows[1].id",
+        @"browser.test.assertEq(allWindows?.length, 2, 'There should be 2 windows')",
 
-        @"const tabIdOne = allWindows[0].tabs[0].id",
-        @"const tabIdTwo = allWindows[0].tabs[1].id",
-        @"const tabIdThree = allWindows[1].tabs[0].id",
-        @"const tabIdFour = allWindows[1].tabs[1].id",
-        @"const tabIdFive = allWindows[1].tabs[2].id",
+        @"const windowIdOne = allWindows?.[0]?.id",
+        @"const windowIdTwo = allWindows?.[1]?.id",
+
+        @"const tabIdOne = allWindows?.[0]?.tabs?.[0]?.id",
+        @"const tabIdTwo = allWindows?.[0]?.tabs?.[1]?.id",
+        @"const tabIdThree = allWindows?.[1]?.tabs?.[0]?.id",
+        @"const tabIdFour = allWindows?.[1]?.tabs?.[1]?.id",
+        @"const tabIdFive = allWindows?.[1]?.tabs?.[2]?.id",
 
         @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
         @"const tabsInWindowTwo = await browser.tabs.query({ windowId: windowIdTwo })",
-        @"browser.test.assertEq(tabsInWindowOne.length, 2, 'There should be 2 tabs in the first window')",
-        @"browser.test.assertEq(tabsInWindowTwo.length, 3, 'There should be 3 tabs in the second window')",
+        @"browser.test.assertEq(tabsInWindowOne?.length, 2, 'There should be 2 tabs in the first window')",
+        @"browser.test.assertEq(tabsInWindowTwo?.length, 3, 'There should be 3 tabs in the second window')",
 
         @"const thirdTab = await browser.tabs.query({ index: 0, windowId: windowIdTwo })",
-        @"browser.test.assertEq(thirdTab[0].id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
+        @"browser.test.assertEq(thirdTab?.[0]?.id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
 
         @"const activeTabs = await browser.tabs.query({ active: true })",
-        @"browser.test.assertEq(activeTabs.length, 2, 'There should be 2 active tabs across all windows')",
+        @"browser.test.assertEq(activeTabs?.length, 2, 'There should be 2 active tabs across all windows')",
 
         @"const hiddenTabs = await browser.tabs.query({ hidden: true })",
-        @"browser.test.assertEq(hiddenTabs.length, 3, 'There should be 3 hidden tabs across all windows')",
+        @"browser.test.assertEq(hiddenTabs?.length, 3, 'There should be 3 hidden tabs across all windows')",
 
         @"const lastFocusedTabs = await browser.tabs.query({ lastFocusedWindow: true })",
-        @"browser.test.assertEq(lastFocusedTabs.length, 2, 'There should be 2 tabs in the last focused window')",
+        @"browser.test.assertEq(lastFocusedTabs?.length, 2, 'There should be 2 tabs in the last focused window')",
 
         @"const pinnedTabs = await browser.tabs.query({ pinned: true })",
-        @"browser.test.assertEq(pinnedTabs.length, 0, 'There should be no pinned tabs')",
+        @"browser.test.assertEq(pinnedTabs?.length, 0, 'There should be no pinned tabs')",
 
         @"const loadingTabs = await browser.tabs.query({ status: 'loading' })",
-        @"browser.test.assertEq(loadingTabs.length, 0, 'There should be no tabs loading')",
+        @"browser.test.assertEq(loadingTabs?.length, 0, 'There should be no tabs loading')",
 
         @"const completeTabs = await browser.tabs.query({ status: 'complete' })",
-        @"browser.test.assertEq(completeTabs.length, 5, 'There should be 5 tabs with loading complete')",
+        @"browser.test.assertEq(completeTabs?.length, 5, 'There should be 5 tabs with loading complete')",
 
         @"browser.test.notifyPass()"
     ]);
@@ -616,40 +618,49 @@ TEST(WKWebExtensionAPITabs, QueryWithPrivateAccess)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const allWindows = await browser.windows.getAll({ populate: true })",
-        @"const windowIdOne = allWindows[0].id",
-        @"const windowIdTwo = allWindows[1].id",
+        @"const normalWindows = allWindows.filter(window => !window.incognito)",
+        @"const incognitoWindows = allWindows.filter(window => window.incognito)",
 
-        @"const tabIdOne = allWindows[0].tabs[0].id",
-        @"const tabIdTwo = allWindows[0].tabs[1].id",
-        @"const tabIdThree = allWindows[1].tabs[0].id",
-        @"const tabIdFour = allWindows[1].tabs[1].id",
-        @"const tabIdFive = allWindows[1].tabs[2].id",
+        @"const windowIdOne = normalWindows?.[0]?.id",
+        @"const windowIdTwo = normalWindows?.[1]?.id",
+        @"const incognitoWindowId = incognitoWindows?.[0]?.id",
+
+        @"const tabIdOne = normalWindows?.[0]?.tabs?.[0]?.id",
+        @"const tabIdTwo = normalWindows?.[0]?.tabs?.[1]?.id",
+        @"const tabIdThree = normalWindows?.[1]?.tabs?.[0]?.id",
+        @"const tabIdFour = normalWindows?.[1]?.tabs?.[1]?.id",
+        @"const tabIdFive = normalWindows?.[1]?.tabs?.[2]?.id",
+        @"const incognitoTabIdOne = incognitoWindows?.[0]?.tabs?.[0]?.id",
+        @"const incognitoTabIdTwo = incognitoWindows?.[0]?.tabs?.[1]?.id",
 
         @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
         @"const tabsInWindowTwo = await browser.tabs.query({ windowId: windowIdTwo })",
-        @"browser.test.assertEq(tabsInWindowOne.length, 2, 'There should be 2 tabs in the first window')",
-        @"browser.test.assertEq(tabsInWindowTwo.length, 3, 'There should be 3 tabs in the second window')",
+        @"const tabsInIncognitoWindow = await browser.tabs.query({ windowId: incognitoWindowId })",
+
+        @"browser.test.assertEq(tabsInWindowOne?.length, 2, 'There should be 2 tabs in the first normal window')",
+        @"browser.test.assertEq(tabsInWindowTwo?.length, 3, 'There should be 3 tabs in the second normal window')",
+        @"browser.test.assertEq(tabsInIncognitoWindow?.length, 2, 'There should be 2 tabs in the incognito window')",
 
         @"const thirdTab = await browser.tabs.query({ index: 0, windowId: windowIdTwo })",
-        @"browser.test.assertEq(thirdTab[0].id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
+        @"browser.test.assertEq(thirdTab?.[0]?.id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
 
         @"const activeTabs = await browser.tabs.query({ active: true })",
-        @"browser.test.assertEq(activeTabs.length, 3, 'There should be 3 active tabs across all windows')",
+        @"browser.test.assertEq(activeTabs?.length, 3, 'There should be 3 active tabs across all windows')",
 
         @"const hiddenTabs = await browser.tabs.query({ hidden: true })",
-        @"browser.test.assertEq(hiddenTabs.length, 4, 'There should be 4 hidden tabs across all windows')",
+        @"browser.test.assertEq(hiddenTabs?.length, 4, 'There should be 4 hidden tabs across all windows')",
 
         @"const lastFocusedTabs = await browser.tabs.query({ lastFocusedWindow: true })",
-        @"browser.test.assertEq(lastFocusedTabs.length, 2, 'There should be 2 tabs in the last focused window')",
+        @"browser.test.assertEq(lastFocusedTabs?.length, 2, 'There should be 2 tabs in the last focused window')",
 
         @"const pinnedTabs = await browser.tabs.query({ pinned: true })",
-        @"browser.test.assertEq(pinnedTabs.length, 0, 'There should be no pinned tabs')",
+        @"browser.test.assertEq(pinnedTabs?.length, 0, 'There should be no pinned tabs')",
 
         @"const loadingTabs = await browser.tabs.query({ status: 'loading' })",
-        @"browser.test.assertEq(loadingTabs.length, 0, 'There should be no tabs loading')",
+        @"browser.test.assertEq(loadingTabs?.length, 0, 'There should be no tabs loading')",
 
         @"const completeTabs = await browser.tabs.query({ status: 'complete' })",
-        @"browser.test.assertEq(completeTabs.length, 7, 'There should be 7 tabs with loading complete')",
+        @"browser.test.assertEq(completeTabs?.length, 7, 'There should be 7 tabs with loading complete')",
 
         @"browser.test.notifyPass()"
     ]);

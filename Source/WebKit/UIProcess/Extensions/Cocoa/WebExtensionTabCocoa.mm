@@ -111,9 +111,9 @@ bool WebExtensionTab::operator==(const WebExtensionTab& other) const
 WebExtensionTabParameters WebExtensionTab::parameters() const
 {
     bool hasPermission = extensionHasPermission();
-    auto window = this->window();
+    RefPtr window = this->window();
     auto index = this->index();
-    auto parentTab = this->parentTab();
+    RefPtr parentTab = this->parentTab();
 
     return {
         identifier(),
@@ -277,7 +277,7 @@ size_t WebExtensionTab::index() const
     if (!isValid() || !m_respondsToWindow)
         return notFound;
 
-    auto window = this->window();
+    RefPtr window = this->window();
     if (!window)
         return notFound;
 
@@ -294,6 +294,7 @@ RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
         return nullptr;
 
     THROW_UNLESS([parentTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by parentTabForWebExtensionContext: does not conform to the _WKWebExtensionTab protocol");
+
     return m_extensionContext->getOrCreateTab(parentTab);
 }
 
@@ -325,6 +326,7 @@ WKWebView *WebExtensionTab::mainWebView() const
         return nil;
 
     THROW_UNLESS([mainWebView isKindOfClass:WKWebView.class], @"Object returned by mainWebViewForWebExtensionContext: is not a WKWebView");
+    THROW_UNLESS(mainWebView.configuration._webExtensionController, @"WKWebView returned by mainWebViewForWebExtensionContext: is not configured with a _WKWebExtensionController");
     THROW_UNLESS(mainWebView.configuration._webExtensionController == extensionContext()->extensionController()->wrapper(), @"WKWebView returned by mainWebViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context");
 
     if (m_respondsToWebViews) {
@@ -348,6 +350,7 @@ NSArray *WebExtensionTab::webViews() const
 
     for (WKWebView *webView in webViews) {
         THROW_UNLESS([webView isKindOfClass:WKWebView.class], @"Object in array returned by webViewsForWebExtensionContext: is not a WKWebView");
+        THROW_UNLESS(webView.configuration._webExtensionController, @"WKWebView returned by webViewsForWebExtensionContext: is not configured with a _WKWebExtensionController");
         THROW_UNLESS(webView.configuration._webExtensionController == extensionContext()->extensionController()->wrapper(), @"WKWebView returned by webViewsForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context");
     }
 
@@ -368,12 +371,17 @@ String WebExtensionTab::title() const
     return tabTitle;
 }
 
+bool WebExtensionTab::isOpen() const
+{
+    return m_isOpen && isValid();
+}
+
 bool WebExtensionTab::isActive() const
 {
     if (!isValid())
         return false;
 
-    auto window = this->window();
+    RefPtr window = this->window();
     return window ? window->activeTab() == this : false;
 }
 
@@ -437,7 +445,7 @@ bool WebExtensionTab::isPrivate() const
     if (!isValid())
         return false;
 
-    auto window = this->window();
+    RefPtr window = this->window();
     if (!window)
         return false;
 

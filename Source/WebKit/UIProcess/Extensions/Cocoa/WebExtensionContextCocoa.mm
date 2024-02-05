@@ -682,7 +682,7 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
 
     // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
     constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
-    for (auto& tab : openTabs()) {
+    for (Ref tab : openTabs()) {
         for (auto& matchPattern : matchPatterns) {
             if (matchPattern->matchesURL(tab->url()))
                 didChangeTabProperties(tab, changedProperties);
@@ -777,7 +777,7 @@ bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& 
     removeInjectedContent(matchPatternsToRemove);
 
     // Clear activeTab permissions if the patterns match.
-    for (auto& tab : openTabs()) {
+    for (Ref tab : openTabs()) {
         auto temporaryPattern = tab->temporaryPermissionMatchPattern();
         if (!temporaryPattern)
             continue;
@@ -1333,17 +1333,17 @@ Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWi
 {
     ASSERT(delegate);
 
-    for (auto& window : m_windowMap.values()) {
+    for (Ref window : m_windowMap.values()) {
         if (window->delegate() == delegate)
             return window;
     }
 
-    auto window = adoptRef(new WebExtensionWindow(*this, delegate));
-    m_windowMap.set(window->identifier(), *window);
+    Ref window = adoptRef(*new WebExtensionWindow(*this, delegate));
+    m_windowMap.set(window->identifier(), window);
 
     RELEASE_LOG_DEBUG(Extensions, "Window %{public}llu was created", window->identifier().toUInt64());
 
-    return window.releaseNonNull();
+    return window;
 }
 
 RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess) const
@@ -1378,7 +1378,7 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
 
     if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Window %{public}llu has nil delegate; reference not removed via didCloseWindow: before release", result->identifier().toUInt64());
-        m_windowMap.remove(result->identifier());
+        forgetWindow(result->identifier());
         return nullptr;
     }
 
@@ -1388,21 +1388,30 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
     return result;
 }
 
+void WebExtensionContext::forgetWindow(WebExtensionWindowIdentifier identifier) const
+{
+    if (m_focusedWindowIdentifier == identifier)
+        m_focusedWindowIdentifier = std::nullopt;
+
+    m_windowOrderVector.removeAll(identifier);
+    m_windowMap.remove(identifier);
+}
+
 Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate) const
 {
     ASSERT(delegate);
 
-    for (auto& tab : m_tabMap.values()) {
+    for (Ref tab : m_tabMap.values()) {
         if (tab->delegate() == delegate)
             return tab;
     }
 
-    auto tab = adoptRef(new WebExtensionTab(*this, delegate));
-    m_tabMap.set(tab->identifier(), *tab);
+    Ref tab = adoptRef(*new WebExtensionTab(*this, delegate));
+    m_tabMap.set(tab->identifier(), tab);
 
     RELEASE_LOG_DEBUG(Extensions, "Tab %{public}llu was created", tab->identifier().toUInt64());
 
-    return tab.releaseNonNull();
+    return tab;
 }
 
 RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess) const
@@ -1410,7 +1419,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier id
     if (!isValid(identifier))
         return nullptr;
 
-    auto* result = m_tabMap.get(identifier);
+    RefPtr result = m_tabMap.get(identifier);
     if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu was not found", identifier.toUInt64());
         return nullptr;
@@ -1418,7 +1427,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier id
 
     if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", identifier.toUInt64());
-        m_tabMap.remove(identifier);
+        forgetTab(identifier);
         return nullptr;
     }
 
@@ -1466,7 +1475,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
 
     if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
-        m_tabMap.remove(result->identifier());
+        forgetTab(result->identifier());
         return nullptr;
     }
 
@@ -1515,7 +1524,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 
     if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
-        m_tabMap.remove(result->identifier());
+        forgetTab(result->identifier());
         return nullptr;
     }
 
@@ -1523,6 +1532,11 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
         return nullptr;
 
     return result;
+}
+
+void WebExtensionContext::forgetTab(WebExtensionTabIdentifier identifier) const
+{
+    m_tabMap.remove(identifier);
 }
 
 void WebExtensionContext::populateWindowsAndTabs()
@@ -1537,29 +1551,47 @@ void WebExtensionContext::populateWindowsAndTabs()
 
         for (id<_WKWebExtensionWindow> windowDelegate in openWindows) {
             THROW_UNLESS([windowDelegate conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object in array returned by webExtensionController:openWindowsForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
-
-            auto window = getOrCreateWindow(windowDelegate);
-            m_openWindowIdentifiers.append(window->identifier());
-
-            // Request the tabs here so they will be registered and populate openTabs().
-            window->tabs();
+            didOpenWindow(getOrCreateWindow(windowDelegate), UpdateWindowOrder::No, SuppressEvents::Yes);
         }
     }
 
     if ([delegate respondsToSelector:@selector(webExtensionController:focusedWindowForExtensionContext:)]) {
         id<_WKWebExtensionWindow> focusedWindow = [delegate webExtensionController:extensionController()->wrapper() focusedWindowForExtensionContext:wrapper()];
         THROW_UNLESS(!focusedWindow || [focusedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:focusedWindowForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
+        didFocusWindow(focusedWindow ? getOrCreateWindow(focusedWindow).ptr() : nullptr, SuppressEvents::Yes);
+    }
+}
 
-        m_focusedWindowIdentifier = focusedWindow ? std::optional(getOrCreateWindow(focusedWindow)->identifier()) : std::nullopt;
-    } else
-        m_focusedWindowIdentifier = !m_openWindowIdentifiers.isEmpty() ? std::optional(m_openWindowIdentifiers.first()) : std::nullopt;
+bool WebExtensionContext::isValidWindow(const WebExtensionWindow& window)
+{
+    return window.isValid() && window.extensionContext() == this && m_windowMap.get(window.identifier()) == &window;
+}
+
+bool WebExtensionContext::isValidTab(const WebExtensionTab& tab)
+{
+    return tab.isValid() && tab.extensionContext() == this && m_tabMap.get(tab.identifier()) == &tab;
 }
 
 WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
 {
-    return WTF::compactMap(m_openWindowIdentifiers, [&](auto& identifier) -> RefPtr<WebExtensionWindow> {
-        return m_windowMap.get(identifier);
+    return WTF::map(m_windowOrderVector, [&](auto& identifier) -> Ref<WebExtensionWindow> {
+        RefPtr window = m_windowMap.get(identifier);
+        ASSERT(window && window->isOpen());
+        return *window;
     });
+}
+
+WebExtensionContext::TabVector WebExtensionContext::openTabs() const
+{
+    TabVector result;
+    result.reserveInitialCapacity(m_tabMap.size());
+
+    for (Ref tab : m_tabMap.values()) {
+        if (tab->isOpen())
+            result.append(WTFMove(tab));
+    }
+
+    return result;
 }
 
 RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
@@ -1571,50 +1603,59 @@ RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAcc
 
 RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (!m_openWindowIdentifiers.isEmpty())
-        return getWindow(m_openWindowIdentifiers.first(), std::nullopt, ignoreExtensionAccess);
+    if (!m_windowOrderVector.isEmpty())
+        return getWindow(m_windowOrderVector.first(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
-void WebExtensionContext::didOpenWindow(const WebExtensionWindow& window)
+void WebExtensionContext::didOpenWindow(WebExtensionWindow& window, UpdateWindowOrder updateWindowOrder, SuppressEvents suppressEvents)
 {
-    ASSERT(window.extensionContext() == this);
-    ASSERT(m_windowMap.contains(window.identifier()));
-    ASSERT(m_windowMap.get(window.identifier()) == &window);
+    ASSERT(isValidWindow(window));
+
+    // The window might already be open, don't log an error.
+    if (window.isOpen())
+        return;
 
     RELEASE_LOG_DEBUG(Extensions, "Opened window %{public}llu", window.identifier().toUInt64());
 
-    m_focusedWindowIdentifier = window.identifier();
+    window.didOpen();
 
-    m_openWindowIdentifiers.removeAll(window.identifier());
-    m_openWindowIdentifiers.insert(0, window.identifier());
+    ASSERT(!m_windowOrderVector.contains(window.identifier()));
 
-    // Request the tabs here so they will be registered and populate openTabs().
-    window.tabs();
+    if (updateWindowOrder == UpdateWindowOrder::Yes) {
+        m_focusedWindowIdentifier = window.identifier();
+        m_windowOrderVector.insert(0, window.identifier());
+    } else {
+        if (m_windowOrderVector.isEmpty())
+            m_focusedWindowIdentifier = window.identifier();
+        m_windowOrderVector.append(window.identifier());
+    }
 
-    if (!isLoaded() || !window.extensionHasAccess())
+    for (Ref tab : window.tabs())
+        didOpenTab(tab);
+
+    if (!isLoaded() || !window.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnCreated, window.parameters());
 }
 
-void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
+void WebExtensionContext::didCloseWindow(WebExtensionWindow& window)
 {
-    ASSERT(window.extensionContext() == this);
-    ASSERT(m_windowMap.contains(window.identifier()));
-    ASSERT(m_windowMap.get(window.identifier()) == &window);
+    ASSERT(isValidWindow(window));
+
+    // The window might already be closed, don't log an error.
+    if (!window.isOpen())
+        return;
 
     RELEASE_LOG_DEBUG(Extensions, "Closed window %{public}llu", window.identifier().toUInt64());
 
     Ref protectedWindow { window };
 
-    if (m_focusedWindowIdentifier == window.identifier())
-        m_focusedWindowIdentifier = std::nullopt;
+    window.didClose();
+    forgetWindow(window.identifier());
 
-    m_openWindowIdentifiers.removeAll(window.identifier());
-    m_windowMap.remove(window.identifier());
-
-    for (auto& tab : window.tabs())
+    for (Ref tab : window.tabs())
         didCloseTab(tab, WindowIsClosing::Yes);
 
     if (!isLoaded() || !window.extensionHasAccess())
@@ -1623,9 +1664,12 @@ void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnRemoved, window.minimalParameters());
 }
 
-void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
+void WebExtensionContext::didFocusWindow(const WebExtensionWindow* window, SuppressEvents suppressEvents)
 {
-    ASSERT(!window || window && window->extensionContext() == this);
+    ASSERT(!window || isValidWindow(*window));
+
+    if (window && !window->isOpen())
+        return;
 
     if (window)
         RELEASE_LOG_DEBUG(Extensions, "Focused window %{public}llu", window->identifier().toUInt64());
@@ -1635,47 +1679,54 @@ void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
     m_focusedWindowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
     if (window) {
-        ASSERT(m_openWindowIdentifiers.contains(window->identifier()));
-        m_openWindowIdentifiers.removeAll(window->identifier());
-        m_openWindowIdentifiers.insert(0, window->identifier());
+        ASSERT(m_windowOrderVector.contains(window->identifier()));
+        m_windowOrderVector.removeAll(window->identifier());
+        m_windowOrderVector.insert(0, window->identifier());
     }
 
-    if (!isLoaded() || (window && !window->extensionHasAccess()))
+    if (!isLoaded() || (window && !window->extensionHasAccess()) || suppressEvents == SuppressEvents::Yes)
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnFocusChanged, window ? std::optional(window->minimalParameters()) : std::nullopt);
 }
 
-void WebExtensionContext::didOpenTab(const WebExtensionTab& tab)
+void WebExtensionContext::didOpenTab(WebExtensionTab& tab, SuppressEvents suppressEvents)
 {
-    ASSERT(tab.extensionContext() == this);
-    ASSERT(m_tabMap.contains(tab.identifier()));
-    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+    ASSERT(isValidTab(tab));
+
+    // The tab might already be open, don't log an error.
+    if (tab.isOpen())
+        return;
 
     RELEASE_LOG_DEBUG(Extensions, "Opened tab %{public}llu", tab.identifier().toUInt64());
 
-    if (!isLoaded() || !tab.extensionHasAccess())
+    tab.didOpen();
+
+    if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
     fireTabsCreatedEventIfNeeded(tab.parameters());
 }
 
-void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosing windowIsClosing)
+void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing windowIsClosing, SuppressEvents suppressEvents)
 {
-    ASSERT(tab.extensionContext() == this);
-    ASSERT(m_tabMap.contains(tab.identifier()));
-    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+    ASSERT(isValidTab(tab));
+
+    // The tab might already be closed, don't log an error.
+    if (!tab.isOpen())
+        return;
 
     RELEASE_LOG_DEBUG(Extensions, "Closed tab %{public}llu %{public}s", tab.identifier().toUInt64(), windowIsClosing == WindowIsClosing::Yes ? "(window closing)" : "");
 
     Ref protectedTab { tab };
 
-    m_tabMap.remove(tab.identifier());
+    tab.didClose();
+    forgetTab(tab.identifier());
 
-    if (!isLoaded() || !tab.extensionHasAccess())
+    if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
-    auto window = tab.window();
+    RefPtr window = tab.window();
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     fireTabsRemovedEventIfNeeded(tab.identifier(), windowIdentifier, windowIsClosing);
@@ -1683,10 +1734,12 @@ void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosin
 
 void WebExtensionContext::didActivateTab(const WebExtensionTab& tab, const WebExtensionTab* previousTab)
 {
-    ASSERT(tab.extensionContext() == this);
-    ASSERT(!previousTab || (previousTab && previousTab->extensionContext() == this));
-    ASSERT(m_tabMap.contains(tab.identifier()));
-    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+    ASSERT(isValidTab(tab));
+    ASSERT(!previousTab || isValidTab(*previousTab));
+
+    // The window and tab might still be opening, don't log an error.
+    if (!tab.isOpen())
+        return;
 
     didSelectOrDeselectTabs({ const_cast<WebExtensionTab&>(tab) });
 
@@ -1695,7 +1748,7 @@ void WebExtensionContext::didActivateTab(const WebExtensionTab& tab, const WebEx
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    auto window = tab.window();
+    RefPtr window = tab.window();
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
     auto previousTabIdentifier = previousTab ? previousTab->identifier() : WebExtensionTabConstants::NoneIdentifier;
 
@@ -1706,11 +1759,15 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
 {
     HashMap<WebExtensionWindowIdentifier, Vector<WebExtensionTabIdentifier>> windowToTabs;
 
-    for (auto& tab : tabs) {
-        ASSERT(tab->extensionContext() == this);
+    for (Ref tab : tabs) {
+        ASSERT(isValidTab(tab));
 
-        auto window = tab->window();
-        if (!window || !window->extensionHasAccess())
+        // The window and tabs might still be opening, don't log an error.
+        if (!tab->isOpen())
+            continue;
+
+        RefPtr window = tab->window();
+        if (!window || !window->extensionHasAccess() || !window->isOpen())
             continue;
 
         windowToTabs.ensure(window->identifier(), [&] {
@@ -1718,7 +1775,7 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
 
             Vector<WebExtensionTabIdentifier> result;
 
-            for (auto& tab : window->tabs()) {
+            for (Ref tab : window->tabs()) {
                 if (!tab->isSelected())
                     continue;
 
@@ -1731,7 +1788,7 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
         });
     }
 
-    if (!isLoaded())
+    if (!isLoaded() || windowToTabs.isEmpty())
         return;
 
     for (auto& entry : windowToTabs)
@@ -1740,8 +1797,13 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
 
 void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex, const WebExtensionWindow* oldWindow)
 {
-    ASSERT(tab.extensionContext() == this);
-    ASSERT(!oldWindow || (oldWindow && oldWindow->extensionContext() == this));
+    ASSERT(isValidTab(tab));
+    ASSERT(!oldWindow || isValidWindow(*oldWindow));
+
+    if (!tab.isOpen()) {
+        RELEASE_LOG_ERROR(Extensions, "Moved tab %{public}llu to index %{public}zu from window %{public}llu, but tab is not open", tab.identifier().toUInt64(), oldIndex, oldWindow->identifier().toUInt64());
+        return;
+    }
 
     if (oldWindow)
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to index %{public}zu from window %{public}llu", tab.identifier().toUInt64(), oldIndex, oldWindow->identifier().toUInt64());
@@ -1751,7 +1813,7 @@ void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex
     if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    auto window = tab.window();
+    RefPtr window = tab.window();
     if (oldWindow && window && oldWindow != window) {
         fireTabsDetachedEventIfNeeded(tab.identifier(), oldWindow->identifier(), oldIndex);
         fireTabsAttachedEventIfNeeded(tab.identifier(), window->identifier(), tab.index());
@@ -1761,10 +1823,18 @@ void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex
     }
 }
 
-void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab)
+void WebExtensionContext::didReplaceTab(WebExtensionTab& oldTab, WebExtensionTab& newTab)
 {
-    ASSERT(oldTab.extensionContext() == this);
-    ASSERT(newTab.extensionContext() == this);
+    ASSERT(isValidTab(oldTab));
+    ASSERT(isValidTab(newTab));
+
+    if (!oldTab.isOpen()) {
+        RELEASE_LOG_ERROR(Extensions, "Replaced tab %{public}llu with tab %{public}llu, but old tab is not open", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
+        return;
+    }
+
+    didCloseTab(oldTab, WindowIsClosing::No, SuppressEvents::Yes);
+    didOpenTab(newTab, SuppressEvents::Yes);
 
     RELEASE_LOG_DEBUG(Extensions, "Replaced tab %{public}llu with tab %{public}llu", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
 
@@ -1776,7 +1846,11 @@ void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const Web
 
 void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
 {
-    ASSERT(tab.extensionContext() == this);
+    ASSERT(isValidTab(tab));
+
+    // The tab might still be opening, don't log an error.
+    if (!tab.isOpen())
+        return;
 
     RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (0x%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
 
@@ -1918,7 +1992,8 @@ void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier page
 
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnBeforeRequest, WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders, WebExtensionEventListenerType::WebRequestOnSendHeaders };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo));
     });
 }
@@ -1931,7 +2006,8 @@ void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIden
 
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnBeforeRedirect };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tab->identifier(), windowIdentifier, response, loadInfo, request));
     });
 
@@ -1947,7 +2023,8 @@ void WebExtensionContext::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier
 
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnAuthRequired };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tab->identifier(), windowIdentifier, challenge, loadInfo));
     });
 }
@@ -1960,7 +2037,8 @@ void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier 
 
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnHeadersReceived, WebExtensionEventListenerType::WebRequestOnResponseStarted };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tab->identifier(), windowIdentifier, response, loadInfo));
     });
 }
@@ -1973,7 +2051,8 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
 
     auto eventTypes = { WebExtensionEventListenerType::WebRequestOnErrorOccurred, WebExtensionEventListenerType::WebRequestOnCompleted };
     wakeUpBackgroundContentIfNecessaryToFireEvents(eventTypes, [&] {
-        auto windowIdentifier = tab->window() ? tab->window()->identifier() : WebExtensionWindowConstants::NoneIdentifier;
+        RefPtr window = tab->window();
+        auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
         sendToProcessesForEvents(eventTypes, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
     });
 }
