@@ -102,6 +102,7 @@
                   { "name": "gtk-linux-bot-19", "platform": "gtk" },
                   { "name": "gtk-linux-bot-20", "platform": "gtk" },
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
+                  { "name": "gtk-linux-bot-22", "platform": "gtk" },
 
                   { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                   { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -471,10 +472,16 @@
                     "workernames": ["gtk-linux-bot-9"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Debian-11-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-10"]
+                  },
+                  {
+                    "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
+                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--no-experimental-features"],
+                    "workernames": ["gtk-linux-bot-22"]
                   },
                   {
                     "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "NoInstallDependenciesBuildFactory",
@@ -684,6 +691,7 @@
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                     "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
                                      "GTK-Linux-64-bit-Release-Clang-Build",
+                                     "GTK-Linux-64-bit-Release-Debian-11-Build",
                                      "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
