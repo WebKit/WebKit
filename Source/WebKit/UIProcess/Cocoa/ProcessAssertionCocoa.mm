@@ -358,6 +358,10 @@ static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType asse
     }
 }
 
+#if USE(EXTENSIONKIT)
+Lock ProcessAssertion::s_capabilityLock;
+#endif
+
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
     : m_assertionType(assertionType)
     , m_pid(pid)
@@ -465,6 +469,7 @@ void ProcessAssertion::acquireSync()
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().data(), m_pid);
 #if USE(EXTENSIONKIT)
+    Locker locker { s_capabilityLock };
     if (m_process && m_capability) {
         NSError *error = nil;
         m_grant = [m_process grantCapability:m_capability->platformCapability().get() error:&error];
@@ -500,6 +505,7 @@ ProcessAssertion::~ProcessAssertion()
     }
 
 #if USE(EXTENSIONKIT)
+    Locker locker { s_capabilityLock };
     [m_grant invalidateWithError:nil];
 #endif
 }

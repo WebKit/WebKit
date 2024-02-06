@@ -116,8 +116,9 @@ private:
     Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
 #if USE(EXTENSIONKIT)
+    static Lock s_capabilityLock;
     std::optional<AssertionCapability> m_capability;
-    RetainPtr<_SEGrant> m_grant;
+    RetainPtr<_SEGrant> m_grant WTF_GUARDED_BY_LOCK(s_capabilityLock);
     RetainPtr<_SEExtensionProcess> m_process;
 #endif
 };
