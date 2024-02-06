@@ -839,12 +839,11 @@ bool TIntermAggregate::isConstantNullValue() const
 
 const TConstantUnion *TIntermAggregate::getConstantValue() const
 {
-    if (!hasConstantValue())
+    if (!hasConstantValue() || mArguments.empty())
     {
         return nullptr;
     }
     ASSERT(isConstructor());
-    ASSERT(mArguments.size() > 0u);
 
     TConstantUnion *constArray = nullptr;
     if (isArray())
