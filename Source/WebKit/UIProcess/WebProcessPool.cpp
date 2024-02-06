@@ -982,10 +982,7 @@ void WebProcessPool::prewarmProcess()
 
     WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance");
 
-    auto lockdownMode = WebProcessProxy::LockdownMode::Disabled;
-    if (!m_processes.isEmpty())
-        lockdownMode = m_processes.last()->lockdownMode();
-
+    auto lockdownMode = lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     createNewWebProcess(nullptr, lockdownMode, WebProcessProxy::IsPrewarmed::Yes);
 }
 
