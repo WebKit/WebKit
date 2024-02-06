@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+
+<body>
+<div id="editor" contenteditable="true"></div>
+<script>
+
+const incorrectPhrase = "aaaa bbbb cccc dddd";
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+function runTest()
+{
+    var editor = document.getElementById("editor");
+    editor.focus();
+
+    document.execCommand("InsertText", false, incorrectPhrase);
+
+    // Add a word separator so that both spelling and grammar markers will appear.
+    document.execCommand("InsertText", false, " ");
+
+    const first = editor.childNodes[0];
+    const range = document.createRange();
+    range.setStart(first, 9);
+    range.setEnd(first, 14);
+
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    testRunner.execCommand("DeleteBackward");
+
+    shouldBe("internals.hasSpellingMarker(0, 4)", "true");
+
+    editor.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+UIHelper.setSpellCheckerResults({
+    "aaaa bbbb cccc dddd\u00A0" : [
+        { type : "spelling", from : 0, to : 4 },
+    ]
+}).then(runTest);
+
+</script>
+</body>
+</html>

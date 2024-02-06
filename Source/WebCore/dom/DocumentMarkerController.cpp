@@ -644,13 +644,19 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
         // FIXME: No obvious reason this should be iOS-specific. Remove the #if at some point.
         auto targetStartOffset = clampTo<unsigned>(static_cast<int>(marker.startOffset()) + delta);
         auto targetEndOffset = clampTo<unsigned>(static_cast<int>(marker.endOffset()) + delta);
-        if (targetStartOffset >= node.length() || targetEndOffset <= 0) {
-            list->remove(i);
-            continue;
-        }
 #endif
 
         if (marker.startOffset() >= startOffset) {
+            // There is no need to adjust or remove the marker if it's before the start of the
+            // text being removed.
+
+#if PLATFORM(IOS_FAMILY)
+            if (targetStartOffset >= node.length() || targetEndOffset <= 0) {
+                list->remove(i);
+                continue;
+            }
+#endif
+
             ASSERT((int)marker.startOffset() + delta >= 0);
             marker.shiftOffsets(delta);
             didShiftMarker = true;

@@ -1,0 +1,2 @@
+PASS internals.hasSpellingMarker(0, 4) is true
+aaaa bbbb dddd 
