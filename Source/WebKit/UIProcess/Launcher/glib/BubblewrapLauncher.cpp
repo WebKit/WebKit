@@ -872,7 +872,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     // full permissions unless it can identify you as a snap or flatpak.
     // The easiest method is for us to pretend to be a flatpak and if that
     // fails just blocking portals entirely as it just becomes a sandbox escape.
-    GUniquePtr<char> instanceID(g_strdup_printf("webkit-%d-%lu", getpid(), launchOptions.processIdentifier.toUInt64()));
+    GUniquePtr<char> instanceID(g_strdup_printf("webkit-%d-%" PRIu64, getpid(), launchOptions.processIdentifier.toUInt64()));
     int flatpakInfoFd = createFlatpakInfo(instanceID.get());
     if (flatpakInfoFd != -1) {
         g_subprocess_launcher_take_fd(launcher, flatpakInfoFd, flatpakInfoFd);
