@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {defs} at (0,0) size 100x100
+layer at (0.09,0.09) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0.09,0.09) size 0.81x0.81
+layer at (0.09,0.09) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.31x0.31 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.25] [cy=0.25] [r=0.15]
+layer at (0.59,0.09) size 1x1
+  RenderSVGEllipse {circle} at (0.50,0) size 0.31x0.31 [fill={[type=SOLID] [color=#008000]}] [cx=0.75] [cy=0.25] [r=0.15]
+layer at (0.09,0.59) size 1x1
+  RenderSVGEllipse {circle} at (0,0.50) size 0.31x0.31 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.25] [cy=0.75] [r=0.15]
+layer at (0.59,0.59) size 1x1
+  RenderSVGEllipse {circle} at (0.50,0.50) size 0.31x0.31 [fill={[type=SOLID] [color=#800080]}] [cx=0.75] [cy=0.75] [r=0.15]
+layer at (0.44,0.44) size 1x1
+  RenderSVGEllipse {circle} at (0.34,0.34) size 0.13x0.13 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.05]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {use} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,-11.05) size 296x45 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-11.05) size 295.25x44
+layer at (0,-11.05) size 295x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 296x44 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 289x14
+      RenderSVGInlineText {#text} at (0,0) size 289x14
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 288.05: "For this test case to be successful, the"
+    RenderSVGInlineText {#text} at (288,0) size 8x14
+      chunk 1 text run 1 at (288.05,0.00) startOffset 0 endOffset 1 width 7.20: " "
+    RenderSVGTSpan {tspan} at (0,0) size 281x14
+      RenderSVGInlineText {#text} at (0,15) size 281x14
+        chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 280.85: "five dots should fit in the rectangle. "
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGTSpan {tspan} at (0,0) size 65x14
+      RenderSVGInlineText {#text} at (0,30) size 65x14
+        chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 64.81: "Bug 14924"
+    RenderSVGInlineText {#text} at (0,0) size 0x0

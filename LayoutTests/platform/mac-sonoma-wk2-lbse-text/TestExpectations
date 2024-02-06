@@ -356,35 +356,20 @@ svg/as-background-image/background-image-preserveaspectRatio-support.html [ Imag
 svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
 
 # Pattern problems
-imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual.svg    [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/pservers-grad-06-b.svg                                      [ Failure ]
-svg/custom/js-late-pattern-and-object-creation.svg                          [ Failure ]
 svg/custom/js-late-pattern-creation.svg                                     [ Failure ]
 svg/custom/nested-pattern-boundingBoxModeContent.svg                        [ Failure ]
-svg/custom/non-scaling-stroke.svg                                           [ ImageOnlyFailure ]
 svg/custom/pattern-content-inheritance-cycle.svg                            [ ImageOnlyFailure ]
-svg/custom/pattern-deep-referencing.svg                                     [ Failure ]
-svg/custom/pattern-incorrect-tiling.svg                                     [ Failure ]
-svg/custom/pattern-referencing-preserve-aspect-ratio.svg                    [ Failure ]
-svg/custom/pattern-rotate.svg                                               [ Failure ]
-svg/custom/pattern-scaled-pattern-space.svg                                 [ Failure ]
-svg/custom/pattern-scaling.svg                                              [ Failure ]
-svg/custom/pattern-skew-transformed.svg                                     [ Failure ]
 svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml                 [ ImageOnlyFailure ]
-svg/custom/pattern-with-transformation.svg                                  [ Failure ]
 svg/custom/stroked-pattern.svg                                              [ Failure ]
-svg/custom/transformed-pattern-clamp-svg-root.svg                           [ Failure ]
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml              [ Failure ]
 svg/transforms/text-with-pattern-with-svg-transform.svg                     [ Failure ]
 
 # Clipping problems
 css3/masking/reference-clip-path-change-repaint.html                                              [ Failure ]
 imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg                           [ ImageOnlyFailure ]
-svg/W3C-SVG-1.1/masking-path-04-b.svg                                                             [ ImageOnlyFailure ]
-svg/batik/text/textEffect2.svg                                                                    [ ImageOnlyFailure ]
 svg/batik/text/textProperties.svg                                                                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-precision-001.svg [ ImageOnlyFailure ]
-svg/clip-path/clip-path-use-referencing-clipped-text.html                                         [ ImageOnlyFailure ]
 svg/repaint/image-with-clip-path.svg                                                              [ ImageOnlyFailure ]
 
 # Masking problems

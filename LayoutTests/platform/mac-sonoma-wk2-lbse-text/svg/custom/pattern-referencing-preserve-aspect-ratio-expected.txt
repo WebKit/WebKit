@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0.50,0.50) size 30x40
+  RenderSVGHiddenContainer {pattern} at (0.50,0.50) size 29x39
+layer at (0.50,0.50) size 29x39
+  RenderSVGRect {rect} at (0,0) size 29x39 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+layer at (5,5) size 21x21
+  RenderSVGTransformableContainer {g} at (4.50,4.50) size 20x20
+layer at (5,5) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
+layer at (10.50,10.50) size 4x4
+  RenderSVGEllipse {circle} at (5.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
+layer at (15.50,10.50) size 4x4
+  RenderSVGEllipse {circle} at (10.50,5.50) size 3x3 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
+layer at (10,19) size 10x2
+  RenderSVGPath {path} at (5,14) size 10x1.77 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 C 12.9227 21.34 17.0773 21.34 20 19"]
+layer at (80,0) size 20x80
+  RenderSVGRect {rect} at (80,0) size 20x80 [fill={[type=SOLID] [color=#000000]}] [x=80.00] [y=0.00] [width=20.00] [height=80.00]
+layer at (100,0) size 40x80
+  RenderSVGRect {rect} at (100,0) size 40x80 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=40.00] [height=80.00]
