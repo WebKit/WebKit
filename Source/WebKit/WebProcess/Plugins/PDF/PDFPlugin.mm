@@ -798,13 +798,10 @@ PlatformLayer* PDFPlugin::platformLayer() const
     return m_containerLayer.get();
 }
 
-void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
+bool PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
-    if (size() == pluginSize)
-        return;
-
-    LOG_WITH_STREAM(PDF, stream << "PDFPlugin::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
-    PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
+    if (!PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform))
+        return false;
 
     [m_pdfLayerController setFrameSize:pluginSize];
 
@@ -821,6 +818,8 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransfo
 
     [m_contentLayer setSublayerTransform:transform];
     [CATransaction commit];
+
+    return true;
 }
 
 IntPoint PDFPlugin::convertFromPluginToPDFView(const IntPoint& point) const

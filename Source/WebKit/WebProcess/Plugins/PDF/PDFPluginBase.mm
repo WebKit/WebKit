@@ -435,14 +435,24 @@ void PDFPluginBase::tryRunScriptsInPDFDocument()
     m_didRunScripts = true;
 }
 
-void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
+bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
+    auto oldSize = m_size;
+    auto oldRootViewToPluginTransform = m_rootViewToPluginTransform;
+
     m_size = pluginSize;
     m_rootViewToPluginTransform = valueOrDefault(pluginToRootViewTransform.inverse());
+
+    if (m_size == oldSize && m_rootViewToPluginTransform == oldRootViewToPluginTransform)
+        return false;
+
+    LOG_WITH_STREAM(PDF, stream << "PDFPluginBase::geometryDidChange - size " << pluginSize << " pluginToRootViewTransform " << pluginToRootViewTransform);
 
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocation();
 #endif
+
+    return true;
 }
 
 void PDFPluginBase::visibilityDidChange(bool visible)

@@ -148,7 +148,7 @@ private:
 
     void installPDFDocument() override;
 
-    void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) override;
+    bool geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) override;
     void deviceScaleFactorChanged(float) override;
 
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) override;

@@ -492,14 +492,13 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     scheduleRenderingUpdate();
 }
 
-void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
+bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
-    if (size() == pluginSize)
-        return;
-
-    PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform);
+    if (!PDFPluginBase::geometryDidChange(pluginSize, pluginToRootViewTransform))
+        return false;
 
     updateLayout();
+    return true;
 }
 
 IntRect UnifiedPDFPlugin::availableContentsRect() const
