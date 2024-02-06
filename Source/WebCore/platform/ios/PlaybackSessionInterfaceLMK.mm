@@ -128,6 +128,21 @@ void PlaybackSessionInterfaceLMK::volumeChanged(double)
 
 }
 
+void PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
+{
+    ASSERT(isUIThread());
+    invalidate();
+}
+
+void PlaybackSessionInterfaceLMK::invalidate()
+{
+    if (!m_playbackSessionModel)
+        return;
+
+    m_playbackSessionModel->removeClient(*this);
+    m_playbackSessionModel = nullptr;
+}
+
 #if !RELEASE_LOG_DISABLED
 const char* PlaybackSessionInterfaceLMK::logClassName() const
 {

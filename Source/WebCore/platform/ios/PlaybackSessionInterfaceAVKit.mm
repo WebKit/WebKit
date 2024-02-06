@@ -87,7 +87,12 @@ WebAVPlayerController *PlaybackSessionInterfaceAVKit::playerController() const
 
 void PlaybackSessionInterfaceAVKit::invalidate()
 {
+    if (!m_playbackSessionModel)
+        return;
+
     [m_playerController setDelegate:nullptr];
+    m_playbackSessionModel->removeClient(*this);
+    m_playbackSessionModel = nullptr;
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)

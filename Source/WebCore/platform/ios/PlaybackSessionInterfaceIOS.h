@@ -69,7 +69,7 @@ public:
     void volumeChanged(double) override = 0;
     void modelDestroyed() override;
 
-    void invalidate();
+    virtual void invalidate() = 0;
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;

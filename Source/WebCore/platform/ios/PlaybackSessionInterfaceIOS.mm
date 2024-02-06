@@ -50,17 +50,7 @@ PlaybackSessionInterfaceIOS::PlaybackSessionInterfaceIOS(PlaybackSessionModel& m
 
 PlaybackSessionInterfaceIOS::~PlaybackSessionInterfaceIOS()
 {
-    ASSERT(isUIThread());
-    invalidate();
-}
 
-void PlaybackSessionInterfaceIOS::invalidate()
-{
-    if (!m_playbackSessionModel)
-        return;
-
-    m_playbackSessionModel->removeClient(*this);
-    m_playbackSessionModel = nullptr;
 }
 
 PlaybackSessionModel* PlaybackSessionInterfaceIOS::playbackSessionModel() const

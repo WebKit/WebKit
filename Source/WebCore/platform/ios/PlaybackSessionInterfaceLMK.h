@@ -48,7 +48,7 @@ public:
     void wirelessVideoPlaybackDisabledChanged(bool) override;
     void mutedChanged(bool) override;
     void volumeChanged(double) override;
-
+    void invalidate() override;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override;
 #endif
