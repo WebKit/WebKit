@@ -1055,14 +1055,12 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
     return renderer && !renderer->isInline() && (renderer->isRenderTable() || renderer->isImage() || renderer->isHR());
 }
 
-bool areIdenticalElements(const Node& first, const Node& second)
+Element* elementIfEquivalent(const Element& first, Node& second)
 {
-    auto* firstElement = dynamicDowncast<Element>(first);
     auto* secondElement = dynamicDowncast<Element>(second);
-    if (!firstElement || !secondElement)
-        return false;
-
-    return firstElement->hasTagName(secondElement->tagQName()) && firstElement->hasEquivalentAttributes(*secondElement);
+    if (secondElement && first.hasTagName(secondElement->tagQName()) && first.hasEquivalentAttributes(*secondElement))
+        return secondElement;
+    return nullptr;
 }
 
 bool isNonTableCellHTMLBlockElement(const Node* node)

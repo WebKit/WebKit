@@ -102,7 +102,7 @@ bool isNonTableCellHTMLBlockElement(const Node*);
 
 bool isNodeVisiblyContainedWithin(Node&, const SimpleRange&);
 
-bool areIdenticalElements(const Node&, const Node&);
+Element* elementIfEquivalent(const Element&, Node&);
 
 bool positionBeforeOrAfterNodeIsCandidate(Node&);
 

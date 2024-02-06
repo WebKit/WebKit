@@ -1277,15 +1277,20 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
         startNode = startNode->parentNode();
     }
 
-    RefPtr previousSibling { startNode->previousSibling() };
-    if (!previousSibling || !areIdenticalElements(*startNode, *previousSibling))
+    RefPtr element = dynamicDowncast<Element>(*startNode);
+    if (!element)
         return false;
 
-    Ref previousElement = downcast<Element>(previousSibling.releaseNonNull());
-    Ref element = downcast<Element>(*startNode);
+    RefPtr previousSibling { startNode->previousSibling() };
+    if (!previousSibling)
+        return false;
+    RefPtr previousElement = elementIfEquivalent(*element, *previousSibling);
+    if (!previousElement)
+        return false;
+
     RefPtr startChild = element->firstChild();
     ASSERT(startChild);
-    mergeIdenticalElements(previousElement, element);
+    mergeIdenticalElements(*previousElement, *element);
 
     // FIXME: Inconsistent that we use computeOffsetInContainerNode for start, but deprecatedEditingOffset for end.
     unsigned startOffset = startChild->computeNodeIndex();
@@ -1310,15 +1315,20 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
     if (endNode->hasTagName(brTag))
         return false;
 
-    RefPtr nextSibling { endNode->nextSibling() };
-    if (!nextSibling || !areIdenticalElements(*endNode, *nextSibling))
+    RefPtr element = dynamicDowncast<Element>(*endNode);
+    if (!element)
         return false;
 
-    Ref nextElement = downcast<Element>(nextSibling.releaseNonNull());
-    Ref element = downcast<Element>(*endNode);
+    RefPtr nextSibling { endNode->nextSibling() };
+    if (!nextSibling)
+        return false;
+    RefPtr nextElement = elementIfEquivalent(*element, *nextSibling);
+    if (!nextElement)
+        return false;
+
     RefPtr nextChild = nextElement->firstChild();
 
-    mergeIdenticalElements(element, nextElement);
+    mergeIdenticalElements(*element, *nextElement);
 
     bool shouldUpdateStart = start.containerNode() == endNode;
     unsigned endOffset = nextChild ? nextChild->computeNodeIndex() : nextElement->countChildNodes();
@@ -1352,14 +1362,18 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
 
-    if (nextSibling && nextSibling->hasEditableStyle() && areIdenticalElements(element, *nextSibling))
-        mergeIdenticalElements(element, downcast<Element>(*nextSibling));
+    if (nextSibling && nextSibling->hasEditableStyle()) {
+        if (RefPtr nextElement = elementIfEquivalent(element, *nextSibling))
+            mergeIdenticalElements(element, *nextElement);
+    }
 
     if (auto* previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
-        RefPtr mergedElement { previousSibling->nextSibling() };
-        ASSERT(mergedElement);
-        if (mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))
-            mergeIdenticalElements(*previousSiblingElement, downcast<Element>(*mergedElement));
+        RefPtr mergedElementNode { previousSibling->nextSibling() };
+        ASSERT(mergedElementNode);
+        if (mergedElementNode->hasEditableStyle()) {
+            if (RefPtr mergedElement = elementIfEquivalent(*previousSiblingElement, *mergedElementNode))
+                mergeIdenticalElements(*previousSiblingElement, *mergedElement);
+        }
     }
 
     // FIXME: We should probably call updateStartEnd if the start or end was in the node
