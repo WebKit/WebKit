@@ -272,10 +272,10 @@ void CanvasRenderingContext2DBase::reset()
     m_cachedContents.emplace<CachedContentsTransparent>();
 
     clearAccumulatedDirtyRect();
-    resetTransform();
-
-    canvasBase().resetGraphicsContextState();
-    clearCanvas();
+    if (auto* c = canvasBase().existingDrawingContext()) {
+        canvasBase().resetGraphicsContextState();
+        c->clearRect(FloatRect { { }, canvasBase().size() });
+    }
 }
 
 CanvasRenderingContext2DBase::State::State()
