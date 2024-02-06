@@ -154,7 +154,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
-#include "VideoPresentationInterfaceIOS.h"
+#include "VideoPresentationInterfaceAVKit.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
