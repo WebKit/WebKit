@@ -8303,6 +8303,28 @@ void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, S
     m_findMatchesClient->didGetImageForMatchResult(this, image.ptr(), matchIndex);
 }
 
+void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, TextIndicatorData&& indicatorData, uint64_t lifetime)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    RefPtr rootFrameParent = frame->rootFrame()->parentFrame();
+    if (!rootFrameParent) {
+        setTextIndicator(WTFMove(indicatorData), lifetime);
+        return;
+    }
+
+    ASSERT(m_preferences->siteIsolationEnabled());
+
+    auto parentFrameID = rootFrameParent->frameID();
+    auto textBoundingRect = indicatorData.textBoundingRectInRootViewCoordinates;
+    sendToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteViewCoordinatesToRootView(frameID, textBoundingRect), [protectedThis = Ref { *this }, indicatorData = WTFMove(indicatorData), rootFrameParent = WTFMove(rootFrameParent), lifetime](FloatRect rect) mutable {
+        indicatorData.textBoundingRectInRootViewCoordinates = rect;
+        protectedThis->setTextIndicatorFromFrame(rootFrameParent->rootFrame()->frameID(), WTFMove(indicatorData), lifetime);
+    });
+}
+
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)
 {
     // FIXME: Make TextIndicatorWindow a platform-independent presentational thing ("TextIndicatorPresentation"?).

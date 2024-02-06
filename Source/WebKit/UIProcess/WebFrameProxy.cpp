@@ -658,6 +658,14 @@ RefPtr<WebFrameProxy> WebFrameProxy::previousSibling() const
     return (--it)->ptr();
 }
 
+Ref<WebFrameProxy> WebFrameProxy::rootFrame()
+{
+    Ref rootFrame = *this;
+    while (rootFrame->m_parentFrame && rootFrame->m_parentFrame->m_process == m_process)
+        rootFrame = *rootFrame->m_parentFrame;
+    return rootFrame;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

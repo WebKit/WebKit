@@ -161,6 +161,7 @@ public:
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
     WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
+    Ref<WebFrameProxy> rootFrame();
     WebProcessProxy& process() const { return m_process.get(); }
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(WebProcessProxy& process) { m_process = process; }

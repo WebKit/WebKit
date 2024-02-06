@@ -2188,6 +2188,8 @@ private:
     static void setHasLaunchedWebContentProcess();
 #endif
 
+    void remoteViewCoordinatesToRootView(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
+
     WebCore::PageIdentifier m_identifier;
 
     RefPtr<WebCore::Page> m_page;
