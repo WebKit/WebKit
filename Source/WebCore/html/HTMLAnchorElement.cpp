@@ -591,7 +591,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     URL completedURL = document().completeURL(url.toString());
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-    if (DataDetection::isDataDetectorLink(*this) && DataDetection::canPresentDataDetectorsUIForElement(*this)) {
+    if (DataDetection::canPresentDataDetectorsUIForElement(*this)) {
         if (auto* page = document().page()) {
             if (page->chrome().client().showDataDetectorsUIForElement(*this, event))
                 return;
