@@ -4944,10 +4944,11 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     haltOnFailure = True
     flunkOnFailure = True
 
-    def __init__(self, file, links=None, **kwargs):
+    def __init__(self, file, links=None, content_type=None, **kwargs):
         super().__init__(timeout=31 * 60, logEnviron=False, **kwargs)
         self.file = file
         self.links = links or dict()
+        self.content_type = content_type
 
     def getLastBuildStepByName(self, name):
         for step in reversed(self.build.executedSteps):
@@ -4965,7 +4966,13 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
 
         self.env = dict(UPLOAD_URL=s3url)
 
-        self.command = ['python3', 'Tools/Scripts/upload-file-to-url', '--filename', self.file]
+        self.command = [
+            'python3', 'Tools/Scripts/upload-file-to-url',
+            '--filename', self.file,
+        ]
+        if self.content_type:
+            self.command += ['--content-type', self.content_type]
+
         rc = yield super().run()
 
         if rc in [SUCCESS, WARNINGS] and getattr(self.build, 's3_archives', None):
@@ -4996,13 +5003,18 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
     haltOnFailure = False
     flunkOnFailure = False
 
-    def __init__(self, identifier, **kwargs):
+    def __init__(self, identifier, extension='zip', content_type=None, **kwargs):
         self.identifier = identifier
+        self.extension = extension
         kwargs['command'] = [
             'python3', '../Shared/generate-s3-url',
             '--change-id', WithProperties('%(change_id)s'),
             '--identifier', self.identifier,
         ]
+        if extension:
+            kwargs['command'] += ['--extension', extension]
+        if content_type:
+            kwargs['command'] += ['--content-type', content_type]
         super().__init__(logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
@@ -5024,7 +5036,7 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
         if match:
             self.build.s3url = match.group('url')
             print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
-            self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{self.getProperty('change_id')}.zip")
+            self.build.s3_archives.append(S3URL + f"{S3_BUCKET}/{self.identifier}/{self.getProperty('change_id')}.{self.extension}")
             defer.returnValue(rc)
         else:
             print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')

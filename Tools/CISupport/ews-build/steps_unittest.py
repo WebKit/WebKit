@@ -4621,8 +4621,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self, identifier='mac-highsierra-x86_64-release'):
-        self.setupStep(GenerateS3URL(identifier))
+    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None):
+        self.setupStep(GenerateS3URL(identifier, extension=extension, content_type=content_type))
         self.setProperty('change_id', '1234')
 
     def disabled_test_success(self):
@@ -4632,7 +4632,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/generate-s3-url',
                                               '--change-id', '1234',
-                                              '--identifier', 'mac-highsierra-x86_64-release'
+                                              '--identifier', 'mac-highsierra-x86_64-release',
+                                              '--extension', 'zip',
                                               ])
             + 0,
         )
@@ -4647,6 +4648,28 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
                                               '../Shared/generate-s3-url',
                                               '--change-id', '1234',
                                               '--identifier', 'ios-simulator-16-x86_64-debug',
+                                              '--extension', 'zip',
+                                              ])
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
+
+        try:
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]), open(os.devnull, 'w') as null:
+                sys.stdout = null
+                return self.runStep()
+        finally:
+            sys.stdout = sys.__stdout__
+
+    def test_failure_with_extension(self):
+        self.configureStep('macos-arm64-release-compile-webkit', extension='txt', content_type='text/plain')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python3',
+                                              '../Shared/generate-s3-url',
+                                              '--change-id', '1234',
+                                              '--identifier', 'macos-arm64-release-compile-webkit',
+                                              '--extension', 'txt',
+                                              '--content-type', 'text/plain',
                                               ])
             + 2,
         )
@@ -4731,8 +4754,8 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self):
-        self.setupStep(UploadFileToS3('WebKitBuild/release.zip'))
+    def configureStep(self, file='WebKitBuild/release.zip', content_type=None):
+        self.setupStep(UploadFileToS3(file, content_type=content_type))
         self.build.s3url = 'https://test-s3-url'
 
     def test_success(self):
@@ -4744,6 +4767,23 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
+                        timeout=1860,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded archive to S3')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
+
+    def test_success_content_type(self):
+        self.configureStep(file='WebKitBuild/build-log.txt', content_type='text/plain')
+        self.assertEqual(UploadFileToS3.haltOnFailure, True)
+        self.assertEqual(UploadFileToS3.flunkOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/build-log.txt', '--content-type', 'text/plain'],
                         timeout=1860,
                         )
             + 0,
