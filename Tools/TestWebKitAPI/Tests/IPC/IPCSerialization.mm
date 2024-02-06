@@ -684,6 +684,10 @@ TEST(IPCSerialization, Basic)
         runTestNS({ numberVariant });
     };
 
+    // CFCharacterSet
+    auto characterSet = adoptCF(CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline));
+    runTestCF({ characterSet.get() });
+
     // NSNumber
     runNumberTest([NSNumber numberWithChar: CHAR_MIN]);
     runNumberTest([NSNumber numberWithUnsignedChar: CHAR_MAX]);
