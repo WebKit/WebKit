@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventTrackingRegions.h"
+#include "LayerHostingContextIdentifier.h"
 #include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollSnapOffsetsInfo.h"
@@ -209,6 +210,7 @@ public:
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
+    WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

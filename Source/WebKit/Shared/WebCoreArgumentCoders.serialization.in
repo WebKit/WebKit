@@ -3938,6 +3938,7 @@ header: <WebCore/ScrollingStateNode.h>
     OverflowScrollingNode
     KeyboardScrollData
     OverlayScrollbarsEnabled
+    LayerHostingContextIdentifier
 };
 #endif
 

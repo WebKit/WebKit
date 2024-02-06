@@ -3883,6 +3883,10 @@ bool RenderLayerCompositor::isLayerForIFrameWithScrollCoordinatedContents(const 
     if (!renderWidget)
         return false;
 
+    auto* frame = renderWidget->frameOwnerElement().contentFrame();
+    if (frame && is<RemoteFrame>(frame))
+        return renderWidget->hasLayer() && renderWidget->layer()->isComposited();
+
     auto* contentDocument = renderWidget->frameOwnerElement().contentDocument();
     if (!contentDocument)
         return false;
@@ -5267,6 +5271,12 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
     if (changes & ScrollingNodeChangeFlags::Layer)
         scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer() });
 
+    if (auto* renderWidget = dynamicDowncast<RenderWidget>(layer.renderer())) {
+        if (auto* frame = renderWidget->frameOwnerElement().contentFrame()) {
+            if (is<RemoteFrame>(frame))
+                scrollingCoordinator->setLayerHostingContextIdentifierForFrameHostingNode(newNodeID, dynamicDowncast<RemoteFrame>(frame)->layerHostingContextIdentifier());
+        }
+    }
     return newNodeID;
 }
 

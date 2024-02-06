@@ -265,6 +265,9 @@ enum class ScrollingStateNodeProperty : uint64_t {
     ViewportConstraints                         = 1LLU << 1, // Same value as ScrollableAreaSize, RelatedOverflowScrollingNodes and OverflowScrollingNode
     // ScrollingStateOverflowScrollProxyNode
     OverflowScrollingNode                       = 1LLU << 1, // Same value as ScrollableAreaSize, ViewportConstraints and RelatedOverflowScrollingNodes
+    // ScrollingStateFrameHostingNode
+    LayerHostingContextIdentifier               = 1LLU << 1,
+
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {

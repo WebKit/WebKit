@@ -421,6 +421,15 @@ void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrol
     stateNode->setMouseMovedInContentArea(state);
 }
 
+void AsyncScrollingCoordinator::setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID scrollingNodeID, std::optional<LayerHostingContextIdentifier> identifier)
+{
+    auto stateNode = dynamicDowncast<ScrollingStateFrameHostingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    ASSERT(stateNode);
+    if (!stateNode)
+        return;
+    stateNode->setLayerHostingContextIdentifier(identifier);
+}
+
 void AsyncScrollingCoordinator::setScrollbarEnabled(Scrollbar& scrollbar)
 {
     ASSERT(isMainThread());
