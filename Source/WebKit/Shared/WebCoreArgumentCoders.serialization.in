@@ -7601,6 +7601,14 @@ header: <WebCore/ShareableBitmap.h>
     std::optional<WebCore::ShareableBitmapHandle> createReadOnlyHandle()
 }
 
+#if ENABLE(DATA_DETECTION)
+header: <WebCore/DataDetectorElementInfo.h>
+struct WebCore::DataDetectorElementInfo {
+    RetainPtr<DDScannerResult> result;
+    WebCore::IntRect elementBounds;
+};
+#endif
+
 header: <WebCore/FEComposite.h>
 enum class WebCore::CompositeOperationType : uint8_t {
     FECOMPOSITE_OPERATOR_UNKNOWN,

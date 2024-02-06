@@ -217,30 +217,6 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
-#if ENABLE(DATA_DETECTION)
-
-void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, const WebCore::DataDetectorElementInfo& info)
-{
-    encoder << info.result.get();
-    encoder << info.elementBounds;
-}
-
-std::optional<WebCore::DataDetectorElementInfo> ArgumentCoder<WebCore::DataDetectorElementInfo>::decode(Decoder& decoder)
-{
-    auto result = decoder.decodeWithAllowedClasses<DDScannerResult>();
-    if (!result)
-        return std::nullopt;
-
-    std::optional<WebCore::IntRect> elementBounds;
-    decoder >> elementBounds;
-    if (!elementBounds)
-        return std::nullopt;
-
-    return std::make_optional<WebCore::DataDetectorElementInfo>({ WTFMove(*result), WTFMove(*elementBounds) });
-}
-
-#endif // ENABLE(DATA_DETECTION)
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)

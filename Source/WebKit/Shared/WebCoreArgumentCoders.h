@@ -193,15 +193,6 @@ template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
 };
 
-#if ENABLE(DATA_DETECTION)
-
-template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {
-    static void encode(Encoder&, const WebCore::DataDetectorElementInfo&);
-    static std::optional<WebCore::DataDetectorElementInfo> decode(Decoder&);
-};
-
-#endif
-
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 template<> struct ArgumentCoder<RetainPtr<VKCImageAnalysis>> {
