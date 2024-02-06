@@ -65,7 +65,7 @@ static inline HashMap<Ref<Text>, String> collectText(ContainerNode& container)
         }
 
         if (auto text = textForLastTextNode.toString().trim(isASCIIWhitespace<UChar>); !text.isEmpty())
-            nodeToTextMap.add(*lastTextNode, textForLastTextNode.toString());
+            nodeToTextMap.add(*lastTextNode, WTFMove(text));
 
         textForLastTextNode.clear();
         textForLastTextNode.append(iterator.text());
@@ -73,7 +73,7 @@ static inline HashMap<Ref<Text>, String> collectText(ContainerNode& container)
     }
 
     if (auto text = textForLastTextNode.toString().trim(isASCIIWhitespace<UChar>); lastTextNode && !text.isEmpty())
-        nodeToTextMap.add(*lastTextNode, textForLastTextNode.toString());
+        nodeToTextMap.add(*lastTextNode, WTFMove(text));
 
     return nodeToTextMap;
 }
@@ -143,22 +143,46 @@ static inline std::optional<ItemData> extractItemData(Node& node, const HashMap<
             return { { ScrollableItemData { layer->scrollableArea()->totalContentsSize() } } };
     }
 
+    if (element->hasTagName(HTMLNames::olTag) || element->hasTagName(HTMLNames::ulTag))
+        return { { ContainerType::List } };
+
+    if (element->hasTagName(HTMLNames::liTag))
+        return { { ContainerType::ListItem } };
+
+    if (element->hasTagName(HTMLNames::blockquoteTag))
+        return { { ContainerType::BlockQuote } };
+
+    if (element->hasTagName(HTMLNames::articleTag))
+        return { { ContainerType::Article } };
+
+    if (element->hasTagName(HTMLNames::sectionTag))
+        return { { ContainerType::Section } };
+
+    if (element->hasTagName(HTMLNames::navTag))
+        return { { ContainerType::Nav } };
+
+    if (element->isLink())
+        return { { ContainerType::Link } };
+
     if (renderer->style().hasViewportConstrainedPosition())
         return { { ContainerType::ViewportConstrained } };
 
     return std::nullopt;
 }
 
-static inline void extractRecursive(Node& node, Item& parentItem, const HashMap<Ref<Text>, String>& extractedText)
+static inline void extractRecursive(Node& node, Item& parentItem, const HashMap<Ref<Text>, String>& extractedText, const std::optional<WebCore::FloatRect>& rectInRootView)
 {
     std::optional<Item> item;
-    if (auto itemData = extractItemData(node, extractedText))
-        item = { { WTFMove(*itemData), rootViewBounds(node), { } } };
+    if (auto itemData = extractItemData(node, extractedText)) {
+        auto nodeBoundsInRootView = rootViewBounds(node);
+        if (!rectInRootView || rectInRootView->intersects(nodeBoundsInRootView))
+            item = { { WTFMove(*itemData), WTFMove(nodeBoundsInRootView), { } } };
+    }
 
     if (!item || shouldIncludeChildren(item->data)) {
         if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
             for (auto& child : composedTreeChildren(*container))
-                extractRecursive(child, item ? *item : parentItem, extractedText);
+                extractRecursive(child, item ? *item : parentItem, extractedText, rectInRootView);
         }
     }
 
@@ -166,7 +190,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, const HashMap<
         parentItem.children.append(WTFMove(*item));
 }
 
-Item extractItem(Page& page)
+Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page& page)
 {
     Item root { ContainerType::Root, { }, { } };
     RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
@@ -184,7 +208,8 @@ Item extractItem(Page& page)
         return root;
 
     mainDocument->updateLayoutIgnorePendingStylesheets();
-    extractRecursive(*bodyElement, root, collectText(*bodyElement));
+    root.rectInRootView = rootViewBounds(*bodyElement);
+    extractRecursive(*bodyElement, root, collectText(*bodyElement), collectionRectInRootView);
     return root;
 }
 

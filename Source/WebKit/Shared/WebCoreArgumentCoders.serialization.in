@@ -6158,7 +6158,14 @@ header: <WebCore/TextExtractionTypes.h>
 header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] enum class WebCore::TextExtraction::ContainerType : uint8_t {
     Root,
-    ViewportConstrained
+    ViewportConstrained,
+    Link,
+    List,
+    ListItem,
+    BlockQuote,
+    Article,
+    Section,
+    Nav
 };
 
 header: <WebCore/TextExtractionTypes.h>

@@ -56,6 +56,13 @@ struct InteractiveItemData {
 enum class ContainerType : uint8_t {
     Root,
     ViewportConstrained,
+    Link,
+    List,
+    ListItem,
+    BlockQuote,
+    Article,
+    Section,
+    Nav,
 };
 
 using ItemData = std::variant<ContainerType, TextItemData, ScrollableItemData, EditableItemData, ImageItemData, InteractiveItemData>;

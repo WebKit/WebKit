@@ -33,7 +33,7 @@ class Page;
 
 namespace TextExtraction {
 
-WEBCORE_EXPORT Item extractItem(Page&);
+WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
 } // namespace TextExtraction
 } // namespace WebCore
