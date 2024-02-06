@@ -130,7 +130,6 @@ public:
 
     WEBCORE_EXPORT virtual GraphicsContext& context() const;
 
-    virtual bool prefersPreparationForDisplay() { return false; }
     WEBCORE_EXPORT virtual void flushDrawingContext();
     WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
 

@@ -371,8 +371,6 @@ private:
     bool shouldDrawShadows() const;
 
     bool is2dBase() const final { return true; }
-    bool needsPreparationForDisplay() const final;
-    void prepareForDisplay() final;
 
     void clearAccumulatedDirtyRect() final;
     bool isEntireBackingStoreDirty() const;
