@@ -67,7 +67,7 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
 FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() const
 {
     if (auto* useElement = associatedUseElement(graphicsElement())) {
-        SVGLengthContext lengthContext(useElement);
+        SVGLengthContext lengthContext(&graphicsElement());
         return { useElement->x().value(lengthContext), useElement->y().value(lengthContext) };
     }
 

@@ -468,9 +468,6 @@ svg/custom/viewBox-empty.html [ ImageOnlyFailure ]
 # SVG <image> (buffered-rendering) issues
 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
-# New test which was only fixed within the legacy engine. Needs tweaks in RenderSVGTransformableContainer.
-webkit.org/b/256702 svg/custom/use-nested-symbol-viewport.html [ ImageOnlyFailure ]
-
 # SVG text repainting issue (spurious repaint rect in wrong coordinate system in addition to correct one).
 svg/repaint/text-repainting-after-modifying-container-transform-repaint-rects.html [ Failure ]
 svg/repaint/text-repainting-after-modifying-transform-repaint-rects.html           [ Failure ]
