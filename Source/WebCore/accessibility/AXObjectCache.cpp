@@ -4793,15 +4793,6 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         // If the IDs are still in the m_objects map, the objects should be still alive.
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
             addRelation(target, origin, symmetric, AddSymmetricRelation::No);
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
-            if (origin && origin->accessibilityIsIgnored())
-                tree->addUnconnectedNode(*origin);
-            if (target && target->accessibilityIsIgnored())
-                tree->addUnconnectedNode(*target);
-        }
-#endif
     }
 
     return true;
