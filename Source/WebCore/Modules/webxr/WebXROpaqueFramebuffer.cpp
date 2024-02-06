@@ -186,6 +186,22 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     if (!m_multisampleColorBuffer)
         gl->framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_colorTexture, 0);
 #endif
+
+    // WebXR must always clear for the rAF of the session. Currently we assume content does not do redundant initial clear,
+    // as the spec says the buffer always starts cleared.
+    ScopedDisableRasterizerDiscard disableRasterizerDiscard { m_context };
+    ScopedEnableBackbuffer enableBackBuffer { m_context };
+    ScopedDisableScissorTest disableScissorTest { m_context };
+    ScopedClearColorAndMask zeroClear { m_context, 0.f, 0.f, 0.f, 0.f, true, true, true, true, };
+    ScopedClearDepthAndMask zeroDepth { m_context, 1.0f, true, m_attributes.depth };
+    ScopedClearStencilAndMask zeroStencil { m_context, 0, GL::FRONT, 0xFFFFFFFF, m_attributes.stencil };
+    GCGLenum clearMask = GL::COLOR_BUFFER_BIT;
+    if (m_attributes.depth)
+        clearMask |= GL::DEPTH_BUFFER_BIT;
+    if (m_attributes.stencil)
+        clearMask |= GL::STENCIL_BUFFER_BIT;
+    gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
+    gl->clear(clearMask);
 }
 
 void WebXROpaqueFramebuffer::endFrame()
@@ -239,16 +255,11 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     if (!gl)
         return false;
 
-    ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
-    ScopedWebGLRestoreRenderbuffer restoreRenderbuffer { m_context };
-
     // Set up color, depth and stencil formats
     const bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
 
     // Set up recommended samples for WebXR.
     auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
-
-    gl->bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
 
     if (m_attributes.antialias) {
         m_resolvedFBO.ensure(*gl);

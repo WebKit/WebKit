@@ -508,6 +508,9 @@ protected:
     friend class WebGLVertexArrayObjectOES;
 
     // Implementation helpers.
+    friend class ScopedClearColorAndMask;
+    friend class ScopedClearDepthAndMask;
+    friend class ScopedClearStencilAndMask;
     friend class ScopedDisableRasterizerDiscard;
     friend class ScopedDisableScissorTest;
     friend class ScopedEnableBackbuffer;
