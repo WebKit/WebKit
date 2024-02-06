@@ -1102,9 +1102,9 @@ void SpeculativeJIT::emitCall(Node* node)
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);
 
-            Label mainPath = label();
             emitStoreCallSiteIndex(callSite);
 
+            Label mainPath = label();
             auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.prepareForTailCall();
@@ -1124,8 +1124,9 @@ void SpeculativeJIT::emitCall(Node* node)
             return;
         }
         
-        Label mainPath = label();
         emitStoreCallSiteIndex(callSite);
+
+        Label mainPath = label();
         auto slowCases = callLinkInfo->emitDirectFastPath(*this);
         Label slowPath = label();
         if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
