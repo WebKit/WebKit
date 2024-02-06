@@ -116,12 +116,11 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     }
 
     RefPtr focusedElement = document->focusedElement();
-    if (focusedElement && (is<HTMLTextAreaElement>(*focusedElement) || (is<HTMLInputElement>(*focusedElement)
-        && (downcast<HTMLInputElement>(*focusedElement).isTextField()
-            || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(focusedElement); (input && (input->isTextField() || input->isSearchField()))
+        || is<HTMLTextAreaElement>(focusedElement)) {
         if (direction == WritingDirection::Natural)
             return;
-        downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
+        focusedElement->setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
         document->updateStyleIfNeeded();
         return;
     }
@@ -157,19 +156,19 @@ void Editor::removeUnchangeableStyles()
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
 {
-    auto* renderer = imageElement.renderer();
-    if (!is<RenderImage>(renderer))
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
+    if (!renderImage)
         return;
 
-    CachedImage* tentativeCachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    CachedResourceHandle tentativeCachedImage = renderImage->cachedImage();
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
         return;
 
-    image = tentativeCachedImage->imageForRenderer(renderer);
+    image = tentativeCachedImage->imageForRenderer(renderImage.get());
     if (!image)
         return;
-    
-    cachedImage = tentativeCachedImage;
+
+    cachedImage = tentativeCachedImage.get();
 }
 
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
@@ -283,25 +282,23 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
     if (!weakElement)
         return;
 
-    if (!element.firstChild()->isTextNode()) {
-        // Shouldn't happen.
-        ASSERT(element.firstChild()->isTextNode());
+    RefPtr textNode = dynamicDowncast<Text>(*element.firstChild());
+    ASSERT(textNode);
+    if (!textNode)
         return;
-    }
 
-    auto& textNode = downcast<Text>(*element.firstChild());
     unsigned previousDictationPhraseStart = 0;
     for (auto& interpretations : dictationPhrases) {
         auto dictationPhraseLength = interpretations[0].length();
         if (interpretations.size() > 1) {
             auto alternatives = interpretations;
             alternatives.remove(0);
-            addMarker(textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::Type::DictationPhraseWithAlternatives, WTFMove(alternatives));
+            addMarker(*textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::Type::DictationPhraseWithAlternatives, WTFMove(alternatives));
         }
         previousDictationPhraseStart += dictationPhraseLength;
     }
 
-    addMarker(textNode, 0, textNode.length(), DocumentMarker::Type::DictationResult, retainPtr(metadata));
+    addMarker(*textNode, 0, textNode->length(), DocumentMarker::Type::DictationResult, retainPtr(metadata));
 
     client()->respondToChangedContents();
 }

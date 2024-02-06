@@ -33,19 +33,16 @@ namespace WebCore {
 
 static inline bool isAutofillableElement(Element& node)
 {
-    if (!is<HTMLInputElement>(node))
-        return false;
-
-    auto inputElement = &downcast<HTMLInputElement>(node);
-    return inputElement->isTextField() || inputElement->isEmailField();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(node);
+    return inputElement && (inputElement->isTextField() || inputElement->isEmailField());
 }
 
 static inline RefPtr<HTMLInputElement> nextAutofillableElement(Node* startNode, FocusController& focusController)
 {
-    if (!is<Element>(startNode))
+    RefPtr nextElement = dynamicDowncast<Element>(startNode);
+    if (!nextElement)
         return nullptr;
 
-    RefPtr<Element> nextElement = downcast<Element>(startNode);
     do {
         nextElement = focusController.nextFocusableElement(*nextElement.get());
     } while (nextElement && !isAutofillableElement(*nextElement.get()));
@@ -58,10 +55,10 @@ static inline RefPtr<HTMLInputElement> nextAutofillableElement(Node* startNode, 
 
 static inline RefPtr<HTMLInputElement> previousAutofillableElement(Node* startNode, FocusController& focusController)
 {
-    if (!is<Element>(startNode))
+    RefPtr previousElement = dynamicDowncast<Element>(startNode);
+    if (!previousElement)
         return nullptr;
 
-    RefPtr<Element> previousElement = downcast<Element>(startNode);
     do {
         previousElement = focusController.previousFocusableElement(*previousElement.get());
     } while (previousElement && !isAutofillableElement(*previousElement.get()));

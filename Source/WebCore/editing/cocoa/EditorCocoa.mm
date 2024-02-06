@@ -333,17 +333,19 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
 {
     // This is only supported for single-Node fragments.
-    RefPtr firstChild = fragment.firstChild();
-    if (!firstChild || firstChild != fragment.lastChild())
+    if (!fragment.hasOneChild())
         return;
 
     // And only supported for HTML elements.
-    if (!node.isHTMLElement() || !firstChild->isHTMLElement())
+    RefPtr oldElement = dynamicDowncast<HTMLElement>(node);
+    if (!oldElement)
+        return;
+
+    RefPtr newElement = dynamicDowncast<HTMLElement>(*fragment.firstChild());
+    if (!newElement)
         return;
 
     // And only if the source Element and destination Element have the same HTML tag name.
-    Ref oldElement = downcast<HTMLElement>(node);
-    Ref newElement = downcast<HTMLElement>(*firstChild);
     if (oldElement->localName() != newElement->localName())
         return;
 

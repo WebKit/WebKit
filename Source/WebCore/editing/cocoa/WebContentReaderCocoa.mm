@@ -360,11 +360,10 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
-            if (is<HTMLImageElement>(originalElement) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
-                auto& image = downcast<HTMLImageElement>(originalElement.get());
+            if (RefPtr image = dynamicDowncast<HTMLImageElement>(originalElement); image && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 RefPtr document = frame.document();
-                image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), info.data->copyData(), info.contentType)) });
-                image.setAttachmentElement(attachment.copyRef());
+                image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), info.data->copyData(), info.contentType)) });
+                image->setAttachmentElement(attachment.copyRef());
             } else {
                 attachment->updateAttributes(info.data->size(), AtomString { info.contentType }, AtomString { info.fileName });
                 parent->replaceChild(attachment, WTFMove(originalElement));

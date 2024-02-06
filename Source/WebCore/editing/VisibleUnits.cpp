@@ -572,7 +572,8 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
         return it.atEnd() ? makeDeprecatedLegacyPosition(searchRange->start) : position;
 
     auto& node = (it.atEnd() ? *searchRange : it.range()).start.container.get();
-    if (!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) {
+    auto* textNode = dynamicDowncast<Text>(node);
+    if (textNode && !suffixLength && next <= textNode->length()) {
         // The next variable contains a usable index into a text node.
         return makeDeprecatedLegacyPosition(&node, next);
     }
@@ -771,7 +772,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             startBox.traverseNextOnLine();
     }
 
-    return is<Text>(*startNode) ? Position(downcast<Text>(startNode.releaseNonNull()), downcast<InlineIterator::TextBox>(*startBox).start())
+    RefPtr startTextNode = dynamicDowncast<Text>(*startNode);
+    return startTextNode ? Position(startTextNode.releaseNonNull(), downcast<InlineIterator::TextBox>(*startBox).start())
         : positionBeforeNode(startNode.get());
 }
 
@@ -846,12 +848,12 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     Position pos;
     if (is<HTMLBRElement>(*endNode))
         pos = positionBeforeNode(endNode.get());
-    else if (is<InlineIterator::TextBox>(*endBox) && is<Text>(*endNode)) {
+    else if (RefPtr endTextNode = dynamicDowncast<Text>(*endNode); endTextNode && is<InlineIterator::TextBox>(*endBox)) {
         auto& endTextBox = downcast<InlineIterator::TextBox>(*endBox);
         int endOffset = endTextBox.start();
         if (!endTextBox.isLineBreak())
             endOffset += endTextBox.length();
-        pos = Position(downcast<Text>(endNode.releaseNonNull()), endOffset);
+        pos = Position(endTextNode.releaseNonNull(), endOffset);
     } else
         pos = positionAfterNode(endNode.get());
     
@@ -1145,11 +1147,11 @@ RefPtr<Node> findStartOfParagraph(Node* startNode, Node* highestRoot, Node* star
         if (r->isBR() || isBlock(*n))
             break;
 
-        if (is<RenderText>(*r) && downcast<RenderText>(*r).hasRenderedText()) {
+        if (CheckedPtr renderText = dynamicDowncast<RenderText>(*r); renderText && renderText->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                StringImpl& text = downcast<RenderText>(*r).text();
+                auto& text = renderText->text();
                 int i = text.length();
                 int o = offset;
                 if (n == startNode && o < i)
@@ -1206,11 +1208,11 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
             break;
 
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
-        if (is<RenderText>(*r) && downcast<RenderText>(*r).hasRenderedText()) {
+        if (CheckedPtr renderText = dynamicDowncast<RenderText>(*r); renderText && renderText->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(is<Text>(*n));
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                StringImpl& text = downcast<RenderText>(*r).text();
+                auto& text = renderText->text();
                 int o = n == startNode ? offset : 0;
                 int length = text.length();
                 for (int i = o; i < length; ++i) {
@@ -1235,31 +1237,31 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
 
 VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
 {
-    Position p = c.deepEquivalent();
+    auto p = c.deepEquivalent();
     auto startNode = p.protectedDeprecatedNode();
-    
+
     if (!startNode)
         return VisiblePosition();
-    
+
     if (isRenderedAsNonInlineTableImageOrHR(startNode.get()))
         return positionBeforeNode(startNode.get());
-    
+
     RefPtr startBlock = enclosingBlock(startNode.get());
-    
+
     auto highestRoot = highestEditableRoot(p);
     int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
-    
+    auto type = p.anchorType();
+
     RefPtr node = findStartOfParagraph(startNode.get(), highestRoot.get(), startBlock.get(), offset, type, boundaryCrossingRule);
-    
-    if (is<Text>(node))
-        return Position(downcast<Text>(WTFMove(node)), offset);
-    
+
+    if (RefPtr textNode = dynamicDowncast<Text>(node))
+        return Position(WTFMove(textNode), offset);
+
     if (type == Position::PositionIsOffsetInAnchor) {
         ASSERT(type == Position::PositionIsOffsetInAnchor || !offset);
         return Position(WTFMove(node), offset, type);
     }
-    
+
     return Position(WTFMove(node), type);
 }
 
@@ -1267,24 +1269,24 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
 {    
     if (c.isNull())
         return VisiblePosition();
-    
-    Position p = c.deepEquivalent();
+
+    auto p = c.deepEquivalent();
     auto startNode = p.protectedDeprecatedNode();
-    
+
     if (isRenderedAsNonInlineTableImageOrHR(startNode.get()))
         return positionAfterNode(startNode.get());
-    
+
     RefPtr stayInsideBlock = enclosingBlock(startNode.get());
-    
+
     RefPtr highestRoot = highestEditableRoot(p);
     int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
-    
+    auto type = p.anchorType();
+
     RefPtr node = findEndOfParagraph(startNode.get(), highestRoot.get(), stayInsideBlock.get(), offset, type, boundaryCrossingRule);
-    
-    if (is<Text>(node))
-        return Position(downcast<Text>(WTFMove(node)), offset);
-    
+
+    if (RefPtr textNode = dynamicDowncast<Text>(node))
+        return Position(WTFMove(textNode), offset);
+
     if (type == Position::PositionIsOffsetInAnchor)
         return Position(WTFMove(node), offset, type);
 

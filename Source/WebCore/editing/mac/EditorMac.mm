@@ -199,19 +199,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
 {
-    auto* renderer = imageElement.renderer();
-    if (!is<RenderImage>(renderer))
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
+    if (!renderImage)
         return;
 
-    CachedImage* tentativeCachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    CachedResourceHandle tentativeCachedImage = renderImage->cachedImage();
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
         return;
 
-    image = tentativeCachedImage->imageForRenderer(renderer);
+    image = tentativeCachedImage->imageForRenderer(renderImage.get());
     if (!image)
         return;
 
-    cachedImage = tentativeCachedImage;
+    cachedImage = tentativeCachedImage.get();
 }
 
 void Editor::selectionWillChange()
