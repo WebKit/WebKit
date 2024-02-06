@@ -128,7 +128,7 @@ void PlaybackSessionInterfaceLMK::volumeChanged(double)
 
 }
 
-void PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
+PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
 {
     ASSERT(isUIThread());
     invalidate();
