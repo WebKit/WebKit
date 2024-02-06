@@ -188,15 +188,6 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
 };
 #endif
 
-#if ENABLE(VIDEO)
-template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
-    static void encode(Encoder&, const WebCore::SerializedPlatformDataCueValue&);
-    static std::optional<WebCore::SerializedPlatformDataCueValue> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::SerializedPlatformDataCueValue&);
-    static std::optional<WebCore::SerializedPlatformDataCueValue> decodePlatformData(Decoder&, WebCore::SerializedPlatformDataCueValue::PlatformType);
-};
-#endif
-
 template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
     static void encode(Encoder&, const WebCore::FragmentedSharedBuffer&);
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);

@@ -48,29 +48,6 @@
 
 namespace IPC {
 
-#if ENABLE(VIDEO)
-void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const WebCore::SerializedPlatformDataCueValue& value)
-{
-    ASSERT(value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
-    if (value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
-        encodeObjectWithWrapper(encoder, value.nativeValue().get());
-}
-
-std::optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
-{
-    ASSERT(platformType == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
-
-    if (platformType != WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
-        return std::nullopt;
-
-    auto object = decodeObjectFromWrapper(decoder, WebCore::SerializedPlatformDataCueMac::allowedClassesForNativeValues());
-    if (!object)
-        return std::nullopt;
-
-    return WebCore::SerializedPlatformDataCueValue { platformType, object.value().get() };
-}
-#endif
-
 #if USE(APPKIT)
 
 template<typename Encoder>

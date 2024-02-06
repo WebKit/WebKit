@@ -376,35 +376,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
 }
 #endif
 
-#if ENABLE(VIDEO)
-void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& encoder, const SerializedPlatformDataCueValue& value)
-{
-    bool hasPlatformData = value.encodingRequiresPlatformData();
-    encoder << hasPlatformData;
-
-    encoder << value.platformType();
-    if (hasPlatformData)
-        encodePlatformData(encoder, value);
-}
-
-std::optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decode(IPC::Decoder& decoder)
-{
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return std::nullopt;
-
-    WebCore::SerializedPlatformDataCueValue::PlatformType type;
-    if (!decoder.decode(type))
-        return std::nullopt;
-
-    if (hasPlatformData)
-        return decodePlatformData(decoder, type);
-
-    return { SerializedPlatformDataCueValue() };
-
-}
-#endif
-
 constexpr bool useUnixDomainSockets()
 {
 #if USE(UNIX_DOMAIN_SOCKETS)

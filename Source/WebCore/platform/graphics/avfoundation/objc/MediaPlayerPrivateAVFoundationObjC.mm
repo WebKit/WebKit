@@ -3707,7 +3707,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
         if (item.keySpace)
             type = metadataType(item.keySpace);
 
-        m_metadataTrack->addDataCue(start, end, SerializedPlatformDataCue::create({ WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC, item }), type);
+        m_metadataTrack->addDataCue(start, end, SerializedPlatformDataCue::create(SerializedPlatformDataCueValue { item }), type);
     }
 #endif
 }

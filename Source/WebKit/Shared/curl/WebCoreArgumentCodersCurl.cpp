@@ -70,17 +70,4 @@ std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decode
     return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
 
-#if ENABLE(VIDEO)
-void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const SerializedPlatformDataCueValue& value)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-#endif
-
 }
