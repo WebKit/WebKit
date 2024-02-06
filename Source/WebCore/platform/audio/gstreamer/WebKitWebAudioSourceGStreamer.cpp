@@ -179,21 +179,30 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
     objectClass->set_property = webKitWebAudioSrcSetProperty;
     objectClass->get_property = webKitWebAudioSrcGetProperty;
 
-    GParamFlags flags = static_cast<GParamFlags>(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
     g_object_class_install_property(objectClass,
-                                    PROP_RATE,
-                                    g_param_spec_float("rate",
-                                                       nullptr, nullptr,
-                                                       G_MINDOUBLE, G_MAXDOUBLE,
-                                                       44100.0, flags));
-
-    g_object_class_install_property(objectClass, PROP_DESTINATION, g_param_spec_pointer("destination", "destination", "Destination", G_PARAM_READWRITE));
+        PROP_RATE,
+        g_param_spec_float(
+            "rate",
+            nullptr, nullptr,
+            G_MINDOUBLE, G_MAXDOUBLE,
+            44100.0,
+            static_cast<GParamFlags>(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE)));
 
     g_object_class_install_property(objectClass,
-                                    PROP_FRAMES,
-                                    g_param_spec_uint("frames",
-                                                      nullptr, nullptr,
-                                                      0, G_MAXUINT8, AudioUtilities::renderQuantumSize, flags));
+        PROP_DESTINATION,
+        g_param_spec_pointer(
+            "destination",
+            nullptr, nullptr,
+            static_cast<GParamFlags>(G_PARAM_CONSTRUCT | G_PARAM_READWRITE)));
+
+    g_object_class_install_property(objectClass,
+        PROP_FRAMES,
+        g_param_spec_uint(
+            "frames",
+            nullptr, nullptr,
+            0, G_MAXUINT8,
+            AudioUtilities::renderQuantumSize,
+            static_cast<GParamFlags>(G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE)));
 }
 
 static void webKitWebAudioSrcConstructed(GObject* object)
