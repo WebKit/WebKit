@@ -44,7 +44,7 @@ public:
     static Ref<RemoteAcceleratedEffectStack> create(Seconds);
 
 #if PLATFORM(MAC)
-    void initEffectsFromScrollingThread(PlatformLayer*, MonotonicTime now);
+    void initEffectsFromMainThread(PlatformLayer*, MonotonicTime now);
     void applyEffectsFromScrollingThread(MonotonicTime now) const;
 #endif
 

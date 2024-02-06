@@ -46,7 +46,7 @@ RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(Seconds acceleratedTi
 }
 
 #if PLATFORM(MAC)
-void RemoteAcceleratedEffectStack::initEffectsFromScrollingThread(PlatformLayer *layer, MonotonicTime now)
+void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now)
 {
     ASSERT(!m_opacityPresentationModifier);
 

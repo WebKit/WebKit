@@ -271,7 +271,7 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
 #if PLATFORM(IOS_FAMILY)
     m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime());
 #else
-    m_effectStack->initEffectsFromScrollingThread(layer(), host.animationCurrentTime());
+    m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime());
 #endif
 
     host.animationsWereAddedToNode(*this);
