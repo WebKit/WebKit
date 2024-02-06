@@ -1859,6 +1859,14 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/a
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
 
+# Requires additional test development to enable
+webkit.org/b/268774 http/wpt/webauthn/idl.https.html [ Failure Pass ]
+webkit.org/b/268774 http/wpt/webauthn/public-key-credential-create-success-ccid.https.html [ Failure Pass ]
+webkit.org/b/268774 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Failure Pass ]
+webkit.org/b/268774 http/wpt/webauthn/public-key-credential-create-success-u2f.https.html [ Failure Pass ]
+webkit.org/b/268774 http/wpt/webauthn/public-key-credential-get-success-ccid.https.html [ Failure Pass ]
+webkit.org/b/268774 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Failure Pass ]
+
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html [ Skip ]

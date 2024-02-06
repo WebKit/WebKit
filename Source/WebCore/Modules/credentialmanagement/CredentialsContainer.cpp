@@ -68,7 +68,7 @@ ScopeAndCrossOriginParent CredentialsContainer::scopeAndCrossOriginParent() cons
     if (!crossOriginParent)
         return std::pair { WebAuthn::Scope::SameOrigin, std::nullopt };
     if (isSameSite)
-        return std::pair { WebAuthn::Scope::SameSite, std::nullopt };
+        return std::pair { WebAuthn::Scope::SameSite, crossOriginParent };
     return std::pair { WebAuthn::Scope::CrossOrigin, crossOriginParent };
 }
 
