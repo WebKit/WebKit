@@ -29,6 +29,7 @@
 #include "InlineLineBuilder.h"
 #include "RenderStyleInlines.h"
 #include <limits>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace Layout {
@@ -292,7 +293,8 @@ std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithLineReq
             // Compute the cost of this line based on the line index
             for (size_t lineIndex = 1; lineIndex <= numberOfLines; lineIndex++) {
                 auto accumulatedCost = candidateLineCost + state[startIndex][lineIndex - 1].accumulatedCost;
-                if (accumulatedCost < state[breakIndex][lineIndex].accumulatedCost) {
+                auto currentAccumulatedCost = state[breakIndex][lineIndex].accumulatedCost;
+                if (accumulatedCost < currentAccumulatedCost || WTF::areEssentiallyEqual(accumulatedCost, currentAccumulatedCost)) {
                     state[breakIndex][lineIndex].accumulatedCost = accumulatedCost;
                     state[breakIndex][lineIndex].previousBreakIndex = startIndex;
                 }
