@@ -1868,6 +1868,18 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'benchmark-test'
         ],
+        'WPE-Linux-64-bit-Release-Skia-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit'
+        ],
     }
 
     def setUp(self):

@@ -142,7 +142,8 @@
                   { "name": "wpe-linux-bot-31", "platform": "wpe" },
                   { "name": "wpe-linux-bot-32", "platform": "wpe" },
                   { "name": "wpe-linux-bot-33", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-34", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-34", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-35", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -685,7 +686,12 @@
                     "name": "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Tests", "factory": "CrossTargetDownloadAndPerfTestFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
-                   }
+                  },
+                  {
+                    "name": "WPE-Linux-64-bit-Release-Skia-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                    "workernames": ["wpe-linux-bot-35"]
+                  }
                 ],
 
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
@@ -706,6 +712,7 @@
                                      "WinCairo-64-bit-Release-Build", "WinCairo-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
+                                     "WPE-Linux-64-bit-Release-Skia-Build",
                                      "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-64-bit-Release-Non-Unified-Build"]
