@@ -694,7 +694,7 @@ int CBS_is_unsigned_asn1_integer(const CBS *cbs) {
 
 static int add_decimal(CBB *out, uint64_t v) {
   char buf[DECIMAL_SIZE(uint64_t) + 1];
-  snprintf(buf, sizeof(buf), "%" PRIu64, v);
+  BIO_snprintf(buf, sizeof(buf), "%" PRIu64, v);
   return CBB_add_bytes(out, (const uint8_t *)buf, strlen(buf));
 }
 

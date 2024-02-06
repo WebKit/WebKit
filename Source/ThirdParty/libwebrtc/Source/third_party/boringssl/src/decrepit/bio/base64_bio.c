@@ -89,10 +89,14 @@ typedef struct b64_struct {
 } BIO_B64_CTX;
 
 static int b64_new(BIO *bio) {
-  BIO_B64_CTX *ctx = OPENSSL_zalloc(sizeof(*ctx));
+  BIO_B64_CTX *ctx;
+
+  ctx = OPENSSL_malloc(sizeof(*ctx));
   if (ctx == NULL) {
     return 0;
   }
+
+  OPENSSL_memset(ctx, 0, sizeof(*ctx));
 
   ctx->cont = 1;
   ctx->start = 1;

@@ -104,7 +104,6 @@ my $code = <<____;
 gcm_gmult_ssse3:
 .cfi_startproc
 .seh_startproc
-	_CET_ENDBR
 ____
 $code .= <<____ if ($win64);
 	subq	\$40, %rsp
@@ -247,7 +246,6 @@ $code .= <<____;
 gcm_ghash_ssse3:
 .cfi_startproc
 .seh_startproc
-	_CET_ENDBR
 ____
 $code .= <<____ if ($win64);
 	subq	\$56, %rsp

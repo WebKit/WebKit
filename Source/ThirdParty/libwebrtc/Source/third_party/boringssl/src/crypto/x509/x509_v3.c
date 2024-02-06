@@ -69,7 +69,7 @@ int X509v3_get_ext_count(const STACK_OF(X509_EXTENSION) *x) {
   if (x == NULL) {
     return 0;
   }
-  return (int)sk_X509_EXTENSION_num(x);
+  return (sk_X509_EXTENSION_num(x));
 }
 
 int X509v3_get_ext_by_NID(const STACK_OF(X509_EXTENSION) *x, int nid,
@@ -83,6 +83,9 @@ int X509v3_get_ext_by_NID(const STACK_OF(X509_EXTENSION) *x, int nid,
 
 int X509v3_get_ext_by_OBJ(const STACK_OF(X509_EXTENSION) *sk,
                           const ASN1_OBJECT *obj, int lastpos) {
+  int n;
+  X509_EXTENSION *ex;
+
   if (sk == NULL) {
     return -1;
   }
@@ -90,9 +93,9 @@ int X509v3_get_ext_by_OBJ(const STACK_OF(X509_EXTENSION) *sk,
   if (lastpos < 0) {
     lastpos = 0;
   }
-  int n = (int)sk_X509_EXTENSION_num(sk);
+  n = sk_X509_EXTENSION_num(sk);
   for (; lastpos < n; lastpos++) {
-    const X509_EXTENSION *ex = sk_X509_EXTENSION_value(sk, lastpos);
+    ex = sk_X509_EXTENSION_value(sk, lastpos);
     if (OBJ_cmp(ex->object, obj) == 0) {
       return lastpos;
     }
@@ -112,7 +115,7 @@ int X509v3_get_ext_by_critical(const STACK_OF(X509_EXTENSION) *sk, int crit,
   }
 
   crit = !!crit;
-  int n = (int)sk_X509_EXTENSION_num(sk);
+  int n = sk_X509_EXTENSION_num(sk);
   for (; lastpos < n; lastpos++) {
     const X509_EXTENSION *ex = sk_X509_EXTENSION_value(sk, lastpos);
     if (X509_EXTENSION_get_critical(ex) == crit) {
@@ -143,12 +146,13 @@ X509_EXTENSION *X509v3_delete_ext(STACK_OF(X509_EXTENSION) *x, int loc) {
 STACK_OF(X509_EXTENSION) *X509v3_add_ext(STACK_OF(X509_EXTENSION) **x,
                                          const X509_EXTENSION *ex, int loc) {
   X509_EXTENSION *new_ex = NULL;
+  int n;
   STACK_OF(X509_EXTENSION) *sk = NULL;
   int free_sk = 0;
 
   if (x == NULL) {
     OPENSSL_PUT_ERROR(X509, ERR_R_PASSED_NULL_PARAMETER);
-    goto err;
+    goto err2;
   }
 
   if (*x == NULL) {
@@ -160,7 +164,7 @@ STACK_OF(X509_EXTENSION) *X509v3_add_ext(STACK_OF(X509_EXTENSION) **x,
     sk = *x;
   }
 
-  int n = (int)sk_X509_EXTENSION_num(sk);
+  n = sk_X509_EXTENSION_num(sk);
   if (loc > n) {
     loc = n;
   } else if (loc < 0) {
@@ -168,7 +172,7 @@ STACK_OF(X509_EXTENSION) *X509v3_add_ext(STACK_OF(X509_EXTENSION) **x,
   }
 
   if ((new_ex = X509_EXTENSION_dup(ex)) == NULL) {
-    goto err;
+    goto err2;
   }
   if (!sk_X509_EXTENSION_insert(sk, new_ex, loc)) {
     goto err;
@@ -177,8 +181,8 @@ STACK_OF(X509_EXTENSION) *X509v3_add_ext(STACK_OF(X509_EXTENSION) **x,
     *x = sk;
   }
   return sk;
-
 err:
+err2:
   X509_EXTENSION_free(new_ex);
   if (free_sk) {
     sk_X509_EXTENSION_free(sk);

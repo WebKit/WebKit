@@ -90,10 +90,8 @@ addition to the operations above.
 
 On Linux ARM platforms, BoringSSL depends on OS APIs to query CPU capabilities.
 32-bit and 64-bit ARM both depend on the `getauxval` function. 32-bit ARM, to
-work around bugs in older Android devices, may additionally read
-`/proc/cpuinfo`.
-
-On 64-bit Apple ARM platforms, BoringSSL needs to query `hw.optional.*` sysctls.
+work around bugs in older Android devices, may additionally read `/proc/cpuinfo`
+and `/proc/self/auxv`.
 
 If querying CPU capabilities fails, BoringSSL will still function, but may not
 perform as well.
