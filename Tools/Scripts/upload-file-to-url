@@ -34,7 +34,7 @@ import os
 import requests
 
 
-def upload(filename, url, max_attempts=2):
+def upload(filename, url, max_attempts=2, content_type=None):
     if not os.path.isfile(filename):
         sys.stderr.write(f'ERROR: File not found: {filename}\n')
         return -1
@@ -44,7 +44,10 @@ def upload(filename, url, max_attempts=2):
         return -1
 
     filesize = os.stat(filename).st_size / 1024 / 1024;
-    sys.stderr.write(f'Uploading {filename}, size: {filesize:.2f} MB\n')
+    sys.stderr.write(f'Uploading {filename}, size: {filesize:.2f} MB')
+    if content_type:
+        sys.stderr.write(f', content-type {content_type}')
+    sys.stderr.write('\n')
 
     with open(filename, 'rb') as f:
         try:
@@ -55,7 +58,10 @@ def upload(filename, url, max_attempts=2):
 
         for attempt in range(1, max_attempts + 1):
             try:
-                response = requests.put(url, data=data, timeout=15*60)
+                headers = None
+                if content_type:
+                    headers={'Content-Type': content_type}
+                response = requests.put(url, data=data, headers=headers, timeout=15*60)
                 sys.stderr.write(f'Response: {response}, status_code: {response.status_code}, {response.reason}\n')
                 if response and response.status_code // 100 == 2:
                     return 0
@@ -72,9 +78,10 @@ def main():
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--filename', action="store", required=True, help='Path to the file. [path/to/123456.zip]')
     parser.add_argument('--url', action="store", required=False, help='url to upload to')
+    parser.add_argument('--content-type', action='store', required=False, default=None, help='Content type of uploaded file')
     args = parser.parse_args()
     url = args.url or os.getenv('UPLOAD_URL')
-    rc = upload(args.filename, url)
+    rc = upload(args.filename, url, content_type=args.content_type)
     return rc
 
 
