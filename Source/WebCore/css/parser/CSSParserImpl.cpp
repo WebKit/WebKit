@@ -1180,7 +1180,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
 
     auto originalPreludeRange = prelude;
 
-    auto query = ContainerQueryParser::consumeContainerQuery(prelude, m_context);
+    auto query = CQ::ContainerQueryParser::consumeContainerQuery(prelude, m_context);
     if (!query)
         return nullptr;
 

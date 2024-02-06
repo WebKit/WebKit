@@ -847,7 +847,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSValueList.h
     css/CSSVariableData.h
     css/CSSVariableReferenceValue.h
-    css/ContainerQuery.h
     css/Counter.h
     css/DeprecatedCSSOMCounter.h
     css/DeprecatedCSSOMPrimitiveValue.h
@@ -885,6 +884,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSSelectorParserContext.h
     css/parser/MutableCSSSelector.h
 
+    css/query/ContainerQuery.h
     css/query/GenericMediaQueryTypes.h
     css/query/MediaQuery.h
 

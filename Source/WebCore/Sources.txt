@@ -908,8 +908,6 @@ css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/ComputedStyleExtractor.cpp
-css/ContainerQuery.cpp
-css/ContainerQueryParser.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
 css/DOMCSSRegisterCustomProperty.cpp
@@ -979,7 +977,9 @@ css/parser/MediaQueryBlockWatcher.cpp
 css/parser/MutableCSSSelector.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
+css/query/ContainerQuery.cpp
 css/query/ContainerQueryFeatures.cpp
+css/query/ContainerQueryParser.cpp
 css/query/GenericMediaQueryEvaluator.cpp
 css/query/GenericMediaQueryParser.cpp
 css/query/GenericMediaQuerySerialization.cpp

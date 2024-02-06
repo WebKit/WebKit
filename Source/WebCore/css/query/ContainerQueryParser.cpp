@@ -30,28 +30,9 @@
 #include "ContainerQueryFeatures.h"
 
 namespace WebCore {
+namespace CQ {
 
-using namespace MQ;
-
-Vector<const FeatureSchema*> ContainerQueryParser::featureSchemas()
-{
-    return {
-        &CQ::Features::width(),
-        &CQ::Features::height(),
-        &CQ::Features::inlineSize(),
-        &CQ::Features::blockSize(),
-        &CQ::Features::aspectRatio(),
-        &CQ::Features::orientation(),
-    };
-}
-
-std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const MediaQueryParserContext& context)
-{
-    ContainerQueryParser parser({ context });
-    return parser.consumeContainerQuery(range);
-}
-
-std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
+std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
@@ -64,20 +45,33 @@ std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CS
 
     auto name = consumeName();
 
-    auto condition = consumeCondition(range);
+    auto condition = consumeCondition(range, context);
     if (!condition)
         return { };
 
-    auto requiredAxes = OptionSet<CQ::Axis> { };
-    auto containsUnknownFeature = CQ::ContainsUnknownFeature::No;
+    OptionSet<Axis> requiredAxes;
+    auto containsUnknownFeature = ContainsUnknownFeature::No;
 
     traverseFeatures(*condition, [&](auto& feature) {
-        requiredAxes.add(CQ::requiredAxesForFeature(feature));
+        requiredAxes.add(requiredAxesForFeature(feature));
         if (!feature.schema)
-            containsUnknownFeature = CQ::ContainsUnknownFeature::Yes;
+            containsUnknownFeature = ContainsUnknownFeature::Yes;
     });
 
-    return CQ::ContainerQuery { name, *condition, requiredAxes, containsUnknownFeature };
+    return ContainerQuery { name, *condition, requiredAxes, containsUnknownFeature };
 }
 
+Vector<const MQ::FeatureSchema*> ContainerQueryParser::featureSchemas()
+{
+    return {
+        &Features::width(),
+        &Features::height(),
+        &Features::inlineSize(),
+        &Features::blockSize(),
+        &Features::aspectRatio(),
+        &Features::orientation(),
+    };
+}
+
+}
 }

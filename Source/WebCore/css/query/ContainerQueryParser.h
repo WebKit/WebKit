@@ -30,20 +30,13 @@
 #include "GenericMediaQueryParser.h"
 
 namespace WebCore {
+namespace CQ {
 
-class ContainerQueryParser;
-
-class ContainerQueryParser : public MQ::GenericMediaQueryParser<ContainerQueryParser>  {
-public:
+struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
     static Vector<const MQ::FeatureSchema*> featureSchemas();
-
-    std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
-
-private:
-    ContainerQueryParser(const MediaQueryParserContext& context)
-        : GenericMediaQueryParser(context) { }
 };
 
+}
 }
