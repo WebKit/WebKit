@@ -1820,7 +1820,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)_isWindowResizingEnabled
 {
+#if PLATFORM(VISION)
+    // This is technically incorrect, but matches longstanding behavior, and avoids layout regressions on visionOS.
+    return NO;
+#else
     return self.window.windowScene._enhancedWindowingEnabled;
+#endif
 }
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
