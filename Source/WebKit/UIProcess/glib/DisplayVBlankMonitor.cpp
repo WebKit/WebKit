@@ -40,8 +40,8 @@ namespace WebKit {
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDisplayID displayID)
 {
-    const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
-    if (forceTimer && strcmp(forceTimer, "0"))
+    static const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
+    if (!displayID || (forceTimer && strcmp(forceTimer, "0")))
         return DisplayVBlankMonitorTimer::create();
 
 #if USE(LIBDRM)

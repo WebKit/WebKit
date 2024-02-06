@@ -53,6 +53,7 @@ public:
 
     PlatformDisplayID displayID(PlatformMonitor*) const;
     PlatformMonitor* monitor(PlatformDisplayID) const;
+    PlatformDisplayID primaryDisplayID() const { return m_primaryDisplayID; }
 
     WebCore::ScreenProperties collectScreenProperties() const;
 
@@ -63,10 +64,12 @@ private:
 
     void addMonitor(PlatformMonitor*);
     void removeMonitor(PlatformMonitor*);
+    void updatePrimaryDisplayID();
     void propertiesDidChange() const;
 
     Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
     HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    PlatformDisplayID m_primaryDisplayID { 0 };
 };
 
 } // namespace WebKit

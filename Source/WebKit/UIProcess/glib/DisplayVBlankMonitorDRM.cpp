@@ -42,7 +42,6 @@
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 #include "ScreenManager.h"
-#include <WebCore/PlatformScreen.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -198,7 +197,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     PlatformMonitor* monitor = nullptr;
     if (usingWPEPlatformAPI) {
-        monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
+        monitor = ScreenManager::singleton().monitor(displayID);
         if (!monitor) {
             RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
             return nullptr;
@@ -207,7 +206,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
 #endif
 
 #if PLATFORM(GTK)
-    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
+    auto* monitor = ScreenManager::singleton().monitor(displayID);
     if (!monitor) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
         return nullptr;

@@ -2432,6 +2432,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
     };
     g_signal_connect_object(settings, "notify::gtk-theme-name", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
+
+    priv->displayID = ScreenManager::singleton().primaryDisplayID();
 }
 
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)

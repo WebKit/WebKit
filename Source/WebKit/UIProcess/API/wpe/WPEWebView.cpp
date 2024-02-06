@@ -50,6 +50,7 @@
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(WPE_PLATFORM)
+#include "ScreenManager.h"
 #include <wpe/wpe-platform.h>
 #endif
 
@@ -108,7 +109,13 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         m_wpeView = adoptGRef(wpe_view_new(display));
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
-        updateDisplayID();
+
+        if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
+            m_displayID = wpe_monitor_get_id(monitor);
+        else
+            m_displayID = ScreenManager::singleton().primaryDisplayID();
+        m_pageProxy->windowScreenDidChange(m_displayID);
+
         g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));

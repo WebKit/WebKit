@@ -57,6 +57,7 @@ ScreenManager::ScreenManager()
             auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, index + i)));
             manager->addMonitor(monitor.get());
         }
+        manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
 #else
@@ -67,20 +68,44 @@ ScreenManager::ScreenManager()
     }
     g_signal_connect(display, "monitor-added", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
         manager->addMonitor(monitor);
+        manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
     g_signal_connect(display, "monitor-removed", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
         manager->removeMonitor(monitor);
+        manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
+#endif
+    updatePrimaryDisplayID();
+}
+
+void ScreenManager::updatePrimaryDisplayID()
+{
+    auto* display = gdk_display_get_default();
+#if USE(GTK4)
+    // GTK4 doesn't have the concept of primary monitor, so we always use the first one.
+    auto* monitors = gdk_display_get_monitors(display);
+    if (!g_list_model_get_n_items(monitors)) {
+        m_primaryDisplayID = 0;
+        return;
+    }
+
+    auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, 0)));
+    m_primaryDisplayID = displayID(monitor.get());
+#else
+    auto* primaryMonitor = gdk_display_get_primary_monitor(display);
+    if (!primaryMonitor) {
+        if (gdk_display_get_n_monitors(display))
+            primaryMonitor = gdk_display_get_monitor(display, 0);
+    }
+    m_primaryDisplayID = primaryMonitor ? displayID(primaryMonitor) : 0;
 #endif
 }
 
 ScreenProperties ScreenManager::collectScreenProperties() const
 {
-#if USE(GTK4)
-    GdkMonitor* primaryMonitor = nullptr;
-#else
+#if !USE(GTK4)
     auto systemVisual = [](GdkDisplay* display) -> GdkVisual* {
         if (auto* screen = gdk_display_get_default_screen(display))
             return gdk_screen_get_system_visual(screen);
@@ -89,15 +114,13 @@ ScreenProperties ScreenManager::collectScreenProperties() const
     };
 
     auto* display = gdk_display_get_default();
-    auto* primaryMonitor = gdk_display_get_primary_monitor(display);
 #endif
 
     ScreenProperties properties;
+    properties.primaryDisplayID = m_primaryDisplayID;
+
     for (const auto& iter : m_monitorToDisplayIDMap) {
         GdkMonitor* monitor = iter.key;
-        if (!properties.primaryDisplayID && (!primaryMonitor || primaryMonitor == monitor))
-            properties.primaryDisplayID = iter.value;
-
         ScreenData data;
         GdkRectangle workArea;
         monitorWorkArea(monitor, &workArea);

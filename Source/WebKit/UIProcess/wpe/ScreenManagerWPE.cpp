@@ -51,23 +51,33 @@ ScreenManager::ScreenManager()
 
     g_signal_connect(display, "monitor-added", G_CALLBACK(+[](WPEDisplay*, WPEMonitor* monitor, ScreenManager* manager) {
         manager->addMonitor(monitor);
+        manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
     g_signal_connect(display, "monitor-removed", G_CALLBACK(+[](WPEDisplay*, WPEMonitor* monitor, ScreenManager* manager) {
         manager->removeMonitor(monitor);
+        manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
 }
 
+void ScreenManager::updatePrimaryDisplayID()
+{
+    // Assume the first monitor is the primary one.
+    // FIXME: default might not be the right display.
+    auto* display = wpe_display_get_default();
+    auto monitorsCount = wpe_display_get_n_monitors(display);
+    auto* monitor = monitorsCount ? wpe_display_get_monitor(display, 0) : nullptr;
+    m_primaryDisplayID = monitor ? displayID(monitor) : 0;
+}
+
 ScreenProperties ScreenManager::collectScreenProperties() const
 {
-    WPEMonitor* primaryMonitor = nullptr;
     ScreenProperties properties;
+    properties.primaryDisplayID = m_primaryDisplayID;
+
     for (const auto& iter : m_monitorToDisplayIDMap) {
         WPEMonitor* monitor = iter.key;
-        if (!properties.primaryDisplayID && (!primaryMonitor || primaryMonitor == monitor))
-            properties.primaryDisplayID = iter.value;
-
         auto width = wpe_monitor_get_width(monitor);
         auto height = wpe_monitor_get_height(monitor);
 
