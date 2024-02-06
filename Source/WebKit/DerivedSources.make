@@ -793,7 +793,6 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	MediaPlaybackTargetContext.serialization.in \
 	MediaProducer.serialization.in \
 	MDNSRegisterError.serialization.in \
-	PlatformCALayer.serialization.in \
 	PlatformEvent.serialization.in \
 	PlatformMediaSession.serialization.in \
 	PlatformScreen.serialization.in \
