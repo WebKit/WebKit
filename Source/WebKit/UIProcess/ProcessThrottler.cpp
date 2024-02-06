@@ -46,13 +46,16 @@ namespace WebKit {
     
 static constexpr Seconds processSuspensionTimeout { 20_s };
 static constexpr Seconds removeAllAssertionsTimeout { 8_min };
-static constexpr Seconds processAssertionCacheLifetime { 3_s };
+static constexpr Seconds processAssertionCacheLifetime { 1_s };
 
 class ProcessThrottler::ProcessAssertionCache : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void add(Ref<ProcessAssertion>&& assertion)
     {
+        if (!m_isEnabled)
+            return;
+
         auto type = assertion->type();
         assertion->setInvalidationHandler(nullptr);
         ASSERT(!m_entries.contains(type));
@@ -67,6 +70,16 @@ public:
     }
 
     void remove(ProcessAssertionType type) { m_entries.remove(type); }
+
+    void setEnabled(bool isEnabled)
+    {
+        if (m_isEnabled == isEnabled)
+            return;
+
+        m_isEnabled = isEnabled;
+        if (!m_isEnabled)
+            m_entries.clear();
+    }
 
 private:
     class CachedAssertion {
@@ -96,6 +109,7 @@ private:
     };
 
     HashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
+    bool m_isEnabled { true };
 };
 
 static uint64_t generatePrepareToSuspendRequestID()
@@ -415,6 +429,7 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
     PROCESSTHROTTLER_RELEASE_LOG("setAllowsActivities %d", allow);
 
+    m_assertionCache->setEnabled(allow);
     if (!allow) {
         // Invalidate the activities before setting m_allowsActivities to false, so that the activities
         // are able to remove themselves from the map.
