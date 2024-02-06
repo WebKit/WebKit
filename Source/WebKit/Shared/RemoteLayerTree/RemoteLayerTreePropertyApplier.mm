@@ -427,8 +427,13 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
 #if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
-    if (properties.changedProperties.containsAny({ LayerChange::ContentsHiddenChanged, LayerChange::UserInteractionEnabledChanged }))
-        view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
+    if (properties.changedProperties.containsAny({ LayerChange::ContentsHiddenChanged, LayerChange::UserInteractionEnabledChanged })) {
+        bool userInteractive = !properties.contentsHidden && properties.userInteractionEnabled;
+        if (auto scrollView = dynamic_objc_cast<WKChildScrollView>(view))
+            scrollView._wk_userInteractive = userInteractive;
+        else
+            view.userInteractionEnabled = userInteractive;
+    }
 }
 #endif
 

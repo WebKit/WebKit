@@ -62,6 +62,10 @@
 #import "WKWebViewIOS.h"
 #endif
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 @interface WKMediaSessionCoordinatorHelper : NSObject <_WKMediaSessionCoordinatorDelegate>
 - (id)initWithCoordinator:(WebCore::MediaSessionCoordinatorClient*)coordinator;
@@ -115,6 +119,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             ts.dumpProperty("frame", rectToString(layer.mask.frame));
         }
     }
+
+    if (!layer.allowsHitTesting)
+        ts.dumpProperty("hit testing", "disabled");
 #endif
 
     ts.dumpProperty("layer bounds", rectToString(layer.bounds));
