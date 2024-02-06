@@ -3123,15 +3123,17 @@ class BuildLogLineObserver(ParseByLineLogObserver):
             self.error_context_buffer = []
 
 
-class CompileWebKit(shell.Compile, AddToLogMixin):
+class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
     name = 'compile-webkit'
     description = ['compiling']
     descriptionDone = ['Compiled WebKit']
     env = {'MFLAGS': ''}
     warningPattern = '.*arning: .*'
     haltOnFailure = False
-    command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
+    build_command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
+    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'WebKitBuild/build-log.txt']
     VALID_ADDITIONAL_ARGUMENTS_LIST = []  # If additionalArguments is added to config.json for CompileWebKit step, it should be added here as well.
+    APPLE_PLATFORMS = ('mac', 'ios', 'tvos', 'watchos')
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
@@ -3151,33 +3153,40 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
 
+        build_command = [part.getRenderingFor(self.build) if isinstance(part, WithProperties) else part for part in self.build_command]
+
         additionalArguments = self.getProperty('additionalArguments')
         for additionalArgument in (additionalArguments or []):
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
-                self.command += [additionalArgument]
-        if platform in ('mac', 'ios', 'tvos', 'watchos'):
+                build_command += [additionalArgument]
+        if platform in self.APPLE_PLATFORMS:
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
             # be removed here. We can't have build-webkit pass this by default
             # without invalidating local builds made by Xcode, and we set it
             # via xcconfigs until all building of Xcode-based webkit is done in
             # workspaces (rdar://88135402).
             if architecture:
-                self.setCommand(self.command + ['--architecture', architecture])
+                build_command += ['--architecture', f'"{architecture}"']
             if CompileJSC.name not in self.name:
-                self.setCommand(self.command + ['-hideShellScriptEnvironment'])
-            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
+                build_command += ['-hideShellScriptEnvironment']
+            build_command += ['WK_VALIDATE_DEPENDENCIES=YES']
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
                 # so we need to package debug info as dSYMs. Only generating line tables makes
                 # this much faster than full debug info, and crash logs still have line numbers.
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
-                self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
-                self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)'])
+                build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
         if platform == 'gtk':
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
-            self.setCommand(self.command + [f'--prefix={prefix}'])
+            build_command += [f'--prefix={prefix}']
 
-        self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
+        build_command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+
+        # filter-build-webkit is specifically designed for Xcode and doesn't work generally
+        if platform in self.APPLE_PLATFORMS:
+            self.setCommand(self.shell_command(f"{' '.join(build_command)} | {' '.join(self.filter_command)}"))
+        else:
+            self.setCommand(build_command)
 
         return shell.Compile.start(self)
 
@@ -3191,9 +3200,26 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
         self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
+    def follow_up_steps(self):
+        if self.getProperty('platform') in self.APPLE_PLATFORMS and CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
+            return [
+                GenerateS3URL(
+                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                    extension='txt',
+                    content_type='text/plain',
+                ), UploadFileToS3(
+                    'WebKitBuild/build-log.txt',
+                    links={self.name: 'Full build log'},
+                    content_type='text/plain',
+                )
+            ]
+        return []
+
     def evaluateCommand(self, cmd):
+        steps_to_add = self.follow_up_steps()
+
         if cmd.didFail():
-            steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+            steps_to_add += [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
             platform = self.getProperty('platform')
             if platform == 'wpe':
                 steps_to_add.append(InstallWpeDependencies())
@@ -3204,12 +3230,10 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             else:
                 steps_to_add.append(CompileWebKitWithoutChange())
             steps_to_add.append(AnalyzeCompileWebKitResults())
-            # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
-            self.build.addStepsAfterCurrentStep(steps_to_add)
         else:
             triggers = self.getProperty('triggers', None)
             if triggers or not self.skipUpload:
-                steps_to_add = [ArchiveBuiltProduct()]
+                steps_to_add += [ArchiveBuiltProduct()]
                 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
                     steps_to_add.extend([
                         GenerateS3URL(f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}"),
@@ -3224,7 +3248,9 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
                         patch=bool(self.getProperty('patch_id')),
                         pull_request=bool(self.getProperty('github.number')),
                     ))
-                self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
+        self.build.addStepsAfterCurrentStep(steps_to_add)
 
         return super().evaluateCommand(cmd)
 
@@ -3250,6 +3276,9 @@ class CompileWebKitWithoutChange(CompileWebKit):
 
     def evaluateCommand(self, cmd):
         rc = shell.Compile.evaluateCommand(self, cmd)
+
+        self.build.addStepsAfterCurrentStep(self.follow_up_steps())
+
         if rc == FAILURE and self.retry_build_on_failure:
             message = 'Unable to build WebKit without change, retrying build'
             self.descriptionDone = message
@@ -3469,7 +3498,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 class CompileJSC(CompileWebKit):
     name = 'compile-jsc'
     descriptionDone = ['Compiled JSC']
-    command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
+    build_command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
 
     def start(self):
         self.setProperty('group', 'jsc')

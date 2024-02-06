@@ -1232,13 +1232,14 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'ios')
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + 0,
         )
@@ -1255,7 +1256,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--architecture', 'x86_64 arm64', '-hideShellScriptEnvironment', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + 0,
         )
@@ -1296,13 +1297,14 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
         self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1329,13 +1331,14 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_success(self):
         self.setupStep(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'ios')
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + 0,
         )
@@ -1344,13 +1347,14 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_failure(self):
         self.setupStep(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'mac')
         self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1468,13 +1472,14 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CompileJSC())
-        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + 0,
         )
@@ -1483,13 +1488,14 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileJSC())
-        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug WK_VALIDATE_DEPENDENCIES=YES | perl Tools/Scripts/filter-build-webkit -logfile WebKitBuild/build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -4815,7 +4821,6 @@ exit 1''')
         self.expectOutcome(result=SKIPPED, state_string='Skipped upload to S3')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
-
 
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
