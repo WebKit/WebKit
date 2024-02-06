@@ -205,6 +205,8 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     // Add the alignment so we can ensure enough mapped memory to get an aligned start.
     size_t mappedSize = bytes + alignment;
     char* mapped = reinterpret_cast<char*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
+    if (!mapped)
+        return nullptr;
     char* mappedEnd = mapped + mappedSize;
 
     char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(mapped)));
