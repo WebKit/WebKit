@@ -232,7 +232,7 @@ enum class RenderingUpdateStep : uint32_t {
 #endif
     FlushAutofocusCandidates        = 1 << 16,
     VideoFrameCallbacks             = 1 << 17,
-    PrepareCanvasesForDisplay       = 1 << 18,
+    PrepareCanvasesForDisplayOrFlush = 1 << 18,
     CaretAnimation                  = 1 << 19,
     FocusFixup                      = 1 << 20,
     UpdateValidationMessagePositions= 1 << 21,
@@ -266,7 +266,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     RenderingUpdateStep::AccessibilityRegionUpdate,
 #endif
-    RenderingUpdateStep::PrepareCanvasesForDisplay,
+    RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush,
     RenderingUpdateStep::CaretAnimation,
     RenderingUpdateStep::UpdateContentRelevancy,
     RenderingUpdateStep::PerformPendingViewTransitions,

@@ -2007,10 +2007,10 @@ void Page::doAfterUpdateRendering()
 
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
-    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplay);
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush);
 
     forEachDocument([] (Document& document) {
-        document.prepareCanvasesForDisplayIfNeeded();
+        document.prepareCanvasesForDisplayOrFlushIfNeeded();
     });
 
     if (localMainFrame) {
@@ -4297,7 +4297,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::ScrollingTreeUpdate: ts << "ScrollingTreeUpdate"; break;
 #endif
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
-    case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
+    case RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush: ts << "PrepareCanvasesForDisplayOrFlush"; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
     case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"; break;

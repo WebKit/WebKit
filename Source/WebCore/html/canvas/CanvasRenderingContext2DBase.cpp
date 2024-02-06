@@ -260,6 +260,24 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 #endif
 }
 
+bool CanvasRenderingContext2DBase::hasDeferredOperations() const
+{
+    // At the time of writing, any draw might linger in IPC buffer or queue of the underlying graphics system, like with Accelerated
+    // codepaths of GraphicsContextCG. Currently we don't use GraphicsContext IsDeferred status since that has some subtleties.
+    // Lingering draws are problematic, as they might retain references to the source surface that is coming from modifiable source
+    // such as a 2D context. Holding them forever is not a good idea, so participate in the canvas preparation phase after any modification.
+    return m_hasDeferredOperations;
+}
+
+void CanvasRenderingContext2DBase::flushDeferredOperations()
+{
+    m_hasDeferredOperations = false;
+    auto* buffer = canvasBase().buffer();
+    if (!buffer)
+        return;
+    buffer->flushDrawingContextAsync();
+}
+
 void CanvasRenderingContext2DBase::reset()
 {
     unwindStateStack();
@@ -270,7 +288,7 @@ void CanvasRenderingContext2DBase::reset()
     m_path.clear();
     m_unrealizedSaveCount = 0;
     m_cachedContents.emplace<CachedContentsTransparent>();
-
+    m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
     if (auto* c = canvasBase().existingDrawingContext()) {
         canvasBase().resetGraphicsContextState();
@@ -2200,6 +2218,8 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!drawingContext())
         return;
 
+    m_hasDeferredOperations = true;
+
     auto shouldApplyPostProcessing = options.contains(DidDrawOption::ApplyPostProcessing) ? ShouldApplyPostProcessingToDirtyRect::Yes : ShouldApplyPostProcessingToDirtyRect::No;
 
     if (!rect) {
@@ -2291,10 +2311,6 @@ void CanvasRenderingContext2DBase::prepareForDisplay()
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-    RefPtr buffer = canvasBase().buffer();
-    if (buffer && buffer->prefersPreparationForDisplay())
-        return true;
-
     return false;
 }
 

@@ -27,7 +27,6 @@
 
 #pragma once
 
-#include "CanvasObserver.h"
 #include "Color.h"
 #include "ContainerNode.h"
 #include "ContextDestructionObserverInlines.h"
@@ -100,6 +99,7 @@ class CachedCSSStyleSheet;
 class CachedFrameBase;
 class CachedResourceLoader;
 class CachedScript;
+class CanvasRenderingContext;
 class CanvasRenderingContext2D;
 class CharacterData;
 class Comment;
@@ -405,7 +405,6 @@ class Document
     , public FrameDestructionObserver
     , public Supplementable<Document>
     , public Logger::Observer
-    , public CanvasObserver
     , public ReportingClient {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Document, WEBCORE_EXPORT);
 public:
@@ -1860,11 +1859,9 @@ public:
     void setFragmentDirective(const String& fragmentDirective) { m_fragmentDirective = fragmentDirective; }
     const String& fragmentDirective() const { return m_fragmentDirective; }
 
-    void prepareCanvasesForDisplayIfNeeded();
-    void clearCanvasPreparation(HTMLCanvasElement&);
-    void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
-    void canvasResized(CanvasBase&) final { };
-    void canvasDestroyed(CanvasBase&) final;
+    void prepareCanvasesForDisplayOrFlushIfNeeded();
+    void addCanvasNeedingPreparationForDisplayOrFlush(CanvasBase&);
+    void removeCanvasNeedingPreparationForDisplayOrFlush(CanvasBase&);
 
     bool contains(const Node& node) const { return this == &node.treeScope() && node.isConnected(); }
     bool contains(const Node* node) const { return node && contains(*node); }
@@ -2182,10 +2179,10 @@ private:
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
 
-    // Collection of canvas objects that need to do work after they've
-    // rendered but before compositing, for the next frame. The set is
-    // cleared after they've been called.
-    WeakHashSet<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvasesNeedingDisplayPreparation;
+    // Collection of canvas contexts that need periodic work in "PrepareCanvasesForDisplayOrFlush" phase of
+    // render update. Hold canvases via rendering context, since there is no common base class that
+    // would be managed.
+    WeakHashSet<CanvasRenderingContext> m_canvasContextsToPrepare;
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
