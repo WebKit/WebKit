@@ -183,7 +183,6 @@ void AXIsolatedTree::reportCreationProgress(AXObjectCache& cache, unsigned perce
 
     String percent = String::number(percentComplete) + "%"_s;
     String title = AXProcessingPage() + " "_s + percent;
-    cache.announce(percent);
     if (RefPtr axRoot = cache.get(cache.document().view())) {
         m_replacingTree->overrideNodeProperties(axRoot->objectID(), {
             { AXPropertyName::TitleAttributeValue, title },
