@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -420,9 +420,7 @@
 #if PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR) \
     && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400 \
     && __IPHONE_OS_VERSION_MAX_ALLOWED < 180000
-#if CPU(ARM64E)
 #define USE_INLINE_JIT_PERMISSIONS_API 1
-#endif
 #endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
