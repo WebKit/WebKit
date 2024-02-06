@@ -1784,36 +1784,33 @@ void testExtractSignedBitfield64()
 
 void testExtractRegister32()
 {
-    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     uint32_t datasize = CHAR_BIT * sizeof(uint32_t);
 
     for (auto n : int32Operands()) {
         for (auto m : int32Operands()) {
-            for (auto lsb : imms) {
-                if (lsb < datasize) {
-                    auto extractRegister32 = compile([=] (CCallHelpers& jit) {
-                        emitFunctionPrologue(jit);
+            for (uint32_t lsb = 0; lsb < datasize; ++lsb) {
+                auto extractRegister32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
 
-                        jit.extractRegister32(GPRInfo::argumentGPR0, 
-                            GPRInfo::argumentGPR1, 
-                            CCallHelpers::TrustedImm32(lsb), 
-                            GPRInfo::returnValueGPR);
+                    jit.extractRegister32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(lsb),
+                        GPRInfo::returnValueGPR);
 
-                        emitFunctionEpilogue(jit);
-                        jit.ret();
-                    });
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
 
-                    // ((n & mask) << highWidth) | (m >> lowWidth)
-                    // Where: highWidth = datasize - lowWidth
-                    //        mask = (1 << lowWidth) - 1
-                    uint32_t highWidth = datasize - lsb;
-                    uint32_t mask = (1U << lsb) - 1U;
-                    uint32_t left = highWidth == datasize ? 0U : (n & mask) << highWidth;
-                    uint32_t right = (static_cast<uint32_t>(m) >> lsb);
-                    uint32_t rhs = left | right;
-                    uint32_t lhs = invoke<uint32_t>(extractRegister32, n, m);
-                    CHECK_EQ(lhs, rhs);
-                }
+                // Test pattern: d = ((n & mask) << highWidth) | (m >>> lowWidth)
+                // Where: highWidth = datasize - lowWidth
+                //        mask = (1 << lowWidth) - 1
+                uint32_t highWidth = datasize - lsb;
+                uint32_t mask = (1U << (lsb % 32)) - 1U;
+                uint32_t left = (n & mask) << (highWidth % 32);
+                uint32_t right = (static_cast<uint32_t>(m) >> (lsb % 32));
+                uint32_t rhs = left | right;
+                uint32_t lhs = invoke<uint32_t>(extractRegister32, n, m);
+                CHECK_EQ(lhs, rhs);
             }
         }
     }
@@ -1821,33 +1818,33 @@ void testExtractRegister32()
 
 void testExtractRegister64()
 {
-    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     uint64_t datasize = CHAR_BIT * sizeof(uint64_t);
 
     for (auto n : int64Operands()) {
         for (auto m : int64Operands()) {
-            for (auto lsb : imms) {
-                if (lsb < datasize) {
-                    auto extractRegister64 = compile([=] (CCallHelpers& jit) {
-                        emitFunctionPrologue(jit);
+            for (uint32_t lsb = 0; lsb < datasize; ++lsb) {
+                auto extractRegister64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
 
-                        jit.extractRegister64(GPRInfo::argumentGPR0, 
-                            GPRInfo::argumentGPR1, 
-                            CCallHelpers::TrustedImm32(lsb), 
-                            GPRInfo::returnValueGPR);
+                    jit.extractRegister64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(lsb),
+                        GPRInfo::returnValueGPR);
 
-                        emitFunctionEpilogue(jit);
-                        jit.ret();
-                    });
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
 
-                    uint64_t highWidth = datasize - lsb;
-                    uint64_t mask = (1ULL << lsb) - 1ULL;
-                    uint64_t left = highWidth == datasize ? 0ULL : (n & mask) << highWidth;
-                    uint64_t right = (static_cast<uint64_t>(m) >> lsb);
-                    uint64_t rhs = left | right;
-                    uint64_t lhs = invoke<uint64_t>(extractRegister64, n, m);
-                    CHECK_EQ(lhs, rhs);
-                }
+                // Test pattern: d = ((n & mask) << highWidth) | (m >>> lowWidth)
+                // Where: highWidth = datasize - lowWidth
+                //        mask = (1 << lowWidth) - 1
+                uint64_t highWidth = datasize - lsb;
+                uint64_t mask = (1ULL << (lsb % 64)) - 1ULL;
+                uint64_t left = (n & mask) << (highWidth % 64);
+                uint64_t right = (static_cast<uint64_t>(m) >> (lsb % 64));
+                uint64_t rhs = left | right;
+                uint64_t lhs = invoke<uint64_t>(extractRegister64, n, m);
+                CHECK_EQ(lhs, rhs);
             }
         }
     }

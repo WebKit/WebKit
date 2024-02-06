@@ -3350,9 +3350,18 @@ private:
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
 
-            // EXTR Pattern: d = ((n & mask) << highWidth) | (m >> lowWidth)
-            // Where: highWidth = datasize - lowWidth
-            //        mask = (1 << lowWidth) - 1
+            // Turn this: d = ((n & mask) << highWidth) | (m >>> lowWidth)
+            // Into this: EXTR Rd Rn Rm lsb
+            //
+            //                 Rn               Rm
+            //         |<---datasize--->|<---datasize--->|
+            //                  |<---datasize--->|<-lsb->|
+            //                          Rd
+            //
+            // Conditions:
+            //     lowWidth = lsb (0 <= lsb < datasize)
+            //     highWidth = datasize - lowWidth
+            //     mask = (1 << lowWidth) - 1
             auto tryAppendEXTR = [&] (Value* left, Value* right) -> bool {
                 Air::Opcode opcode = opcodeForType(ExtractRegister32, ExtractRegister64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp))
@@ -3379,9 +3388,12 @@ private:
                 uint64_t highWidth = highWidthValue->asInt();
                 uint64_t lowWidth = lowWidthValue->asInt();
                 uint64_t datasize = opcode == ExtractRegister32 ? 32 : 64;
+                // Note that when `lowWidth == datasize` we cannot turn it to `MOV Rd Rn` since
+                // `m >>> lowWidth` means `m >>> (lowWidth % datasize)` in JavaScript.
                 if (lowWidth + highWidth != datasize || maskBitCount != lowWidth || lowWidth == datasize)
                     return false;
 
+                ASSERT(0 <= lowWidth && lowWidth < datasize);
                 append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));
                 return true;
             };
