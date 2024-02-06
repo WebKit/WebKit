@@ -1374,7 +1374,17 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
         return;
     }
 
-    m_requests[renewingIndex] = *m_currentRequest;
+    auto replaceRequest = [](Vector<RetainPtr<AVContentKeyRequest>>& requests, AVContentKeyRequest* replacementRequest) {
+        for (auto& request : requests) {
+            if (![[request contentKeySpecifier].identifier isEqual:replacementRequest.contentKeySpecifier.identifier])
+                continue;
+
+            request = replacementRequest;
+            return;
+        }
+    };
+
+    replaceRequest(m_requests[renewingIndex].requests, request);
     m_renewingRequest = std::nullopt;
 
     RetainPtr<NSData> appIdentifier;
