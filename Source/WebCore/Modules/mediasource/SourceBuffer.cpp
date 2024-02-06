@@ -816,7 +816,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             // referenced by the audioTracks attribute on the HTMLMediaElement.
             m_source->mediaElement()->addAudioTrack(newAudioTrack.copyRef());
 
-            m_audioCodecs.append(audioTrackInfo.description->codec());
+            m_audioCodecs.append(audioTrackInfo.description->codec().toAtomString());
 
             // 5.2.8 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(audioTrackInfo.track->id(), WTFMove(audioTrackInfo.description));
@@ -852,7 +852,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             // referenced by the videoTracks attribute on the HTMLMediaElement.
             m_source->mediaElement()->addVideoTrack(newVideoTrack.copyRef());
 
-            m_videoCodecs.append(videoTrackInfo.description->codec());
+            m_videoCodecs.append(videoTrackInfo.description->codec().toAtomString());
 
             // 5.3.8 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(videoTrackInfo.track->id(), WTFMove(videoTrackInfo.description));
@@ -885,7 +885,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             // referenced by the textTracks attribute on the HTMLMediaElement.
             m_source->mediaElement()->addTextTrack(newTextTrack.copyRef());
 
-            m_textCodecs.append(textTrackInfo.description->codec());
+            m_textCodecs.append(textTrackInfo.description->codec().toAtomString());
 
             // 5.4.7 Create a new track buffer to store coded frames for this track.
             m_private->addTrackBuffer(textTrackPrivate.id(), WTFMove(textTrackInfo.description));
@@ -935,33 +935,36 @@ bool SourceBuffer::validateInitializationSegment(const InitializationSegment& se
     // is not enabled, only perform this check if the "pending initialization segment for changeType flag"
     // is not set.)
     for (auto& audioTrackInfo : segment.audioTracks) {
-        if (m_audioCodecs.contains(audioTrackInfo.description->codec()))
+        auto audioCodec = audioTrackInfo.description->codec().toAtomString();
+        if (m_audioCodecs.contains(audioCodec))
             continue;
 
         if (!m_pendingInitializationSegmentForChangeType)
             return false;
 
-        m_audioCodecs.append(audioTrackInfo.description->codec());
+        m_audioCodecs.append(WTFMove(audioCodec));
     }
 
     for (auto& videoTrackInfo : segment.videoTracks) {
-        if (m_videoCodecs.contains(videoTrackInfo.description->codec()))
+        auto videoCodec = videoTrackInfo.description->codec().toAtomString();
+        if (m_videoCodecs.contains(videoCodec))
             continue;
 
         if (!m_pendingInitializationSegmentForChangeType)
             return false;
 
-        m_videoCodecs.append(videoTrackInfo.description->codec());
+        m_videoCodecs.append(WTFMove(videoCodec));
     }
 
     for (auto& textTrackInfo : segment.textTracks) {
-        if (m_textCodecs.contains(textTrackInfo.description->codec()))
+        auto textCodec = textTrackInfo.description->codec().toAtomString();
+        if (m_textCodecs.contains(textCodec))
             continue;
 
         if (!m_pendingInitializationSegmentForChangeType)
             return false;
 
-        m_textCodecs.append(textTrackInfo.description->codec());
+        m_textCodecs.append(WTFMove(textCodec));
     }
 
     return true;
