@@ -81,7 +81,7 @@ PluginView* FindController::mainFramePlugIn()
 
 #endif
 
-void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
+void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     if (maxMatchCount == std::numeric_limits<unsigned>::max())
         --maxMatchCount;
@@ -99,8 +99,8 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
 
     if (matchCount > maxMatchCount)
         matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
-    
-    m_webPage->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount));
+
+    completionHandler(matchCount);
 }
 
 uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly)

@@ -5378,7 +5378,9 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount));
+    sendWithAsyncReply(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](uint32_t matchCount) {
+        m_findClient->didCountStringMatches(this, string, matchCount);
+    });
 }
 
 void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&& callback)
@@ -8289,11 +8291,6 @@ void WebPageProxy::executeUndoRedo(UndoOrRedo action, CompletionHandler<void()>&
 void WebPageProxy::clearAllEditCommands()
 {
     pageClient().clearAllEditCommands();
-}
-
-void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCount)
-{
-    m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
 void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
