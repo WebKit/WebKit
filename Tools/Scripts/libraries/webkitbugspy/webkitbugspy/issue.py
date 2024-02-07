@@ -249,18 +249,24 @@ class Issue(object):
                     reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
                 )
 
-        match_strings = [match_string]
+        match_strings = {self.link: match_string}
         if self.original:
-            match_strings.append(self.original._redaction_match)
+            match_strings[self.original.link] = self.original._redaction_match
         for dupe in self.duplicates or []:
-            match_strings.append(dupe._redaction_match)
+            match_strings[dupe.link] = dupe._redaction_match
 
-        for m_string in match_strings:
+        for m_link, m_string in match_strings.items():
             for key, value in self.tracker._redact.items():
                 if key.search(m_string):
+                    if key.pattern == '.*':
+                        reason = "is a {}".format(self.tracker.NAME)
+                    elif m_link != self.link:
+                        reason = "is related to {} which matches '{}'".format(m_link, key.pattern)
+                    else:
+                        reason = "matches '{}'".format(key.pattern)
                     return self.tracker.Redaction(
                         redacted=value,
-                        reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
+                        reason=reason,
                     )
         return self.tracker.Redaction(redacted=False)
 
