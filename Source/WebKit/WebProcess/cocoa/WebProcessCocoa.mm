@@ -691,13 +691,14 @@ static NSString *webProcessLoaderAccessibilityBundlePath()
     return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
 }
 
-#if !PLATFORM(MACCATALYST)
 static NSString *webProcessAccessibilityBundlePath()
 {
     NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+#if PLATFORM(MACCATALYST)
+    path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
+#endif
     return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcess.axbundle"];
 }
-#endif // !PLATFORM(MACCATALYST)
 #endif
 
 static void registerWithAccessibility()
@@ -712,7 +713,6 @@ static void registerWithAccessibility()
     if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
 
-#if !PLATFORM(MACCATALYST)
     // This code will eagerly start the in-process AX server.
     // This enables us to revoke the Mach bootstrap sandbox extension.
     NSString *webProcessAXBundlePath = webProcessAccessibilityBundlePath();
@@ -722,7 +722,6 @@ static void registerWithAccessibility()
         [[bundle principalClass] safeValueForKey:@"accessibilityInitializeBundle"];
     else
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath, error);
-#endif // !PLATFORM(MACCATALYST)
 #endif
 }
 
