@@ -30,6 +30,7 @@
 
 #include "PDFContextMenu.h"
 #include "PDFKitSPI.h"
+#include "PDFPluginAnnotation.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
@@ -55,6 +56,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
+#include <WebCore/ScreenProperties.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
