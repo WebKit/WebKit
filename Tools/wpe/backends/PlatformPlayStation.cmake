@@ -1,5 +1,6 @@
 list(APPEND WPEToolingBackends_SOURCES
     playstation/HeadlessViewBackendPlayStation.cpp
+    playstation/ViewBackendPlayStation.cpp
 )
 
 list(APPEND WPEToolingBackends_LIBRARIES WPE::PlayStation)

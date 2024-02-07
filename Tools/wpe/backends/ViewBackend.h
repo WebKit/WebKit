@@ -28,7 +28,9 @@
 #include <memory>
 #include <wpe/wpe.h>
 
+#if defined(USE_ATK) && USE_ATK
 typedef struct _AtkObject AtkObject;
+#endif
 
 namespace WPEToolingBackends {
 
@@ -48,7 +50,9 @@ public:
         virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
+#if defined(USE_ATK) && USE_ATK
     void setAccessibleChild(AtkObject*);
+#endif
 
     void addActivityState(uint32_t);
     void removeActivityState(uint32_t);
