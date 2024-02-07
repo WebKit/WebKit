@@ -1029,6 +1029,16 @@ const Editor& Document::editor() const
     return *m_editor;
 }
 
+CheckedRef<Editor> Document::checkedEditor()
+{
+    return editor();
+}
+
+CheckedRef<const Editor> Document::checkedEditor() const
+{
+    return editor();
+}
+
 Editor& Document::ensureEditor()
 {
     ASSERT(m_constructionDidFinish);
