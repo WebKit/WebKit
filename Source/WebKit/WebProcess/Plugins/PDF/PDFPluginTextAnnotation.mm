@@ -31,6 +31,7 @@
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
+#import "UnifiedPDFPlugin.h"
 #import <Quartz/Quartz.h>
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/CSSPrimitiveValue.h>
@@ -112,7 +113,12 @@ void PDFPluginTextAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * plugin()->scaleFactor(), CSSUnitType::CSS_PX);
+    auto scaleFactor = plugin()->scaleFactor();
+#if ENABLE(UNIFIED_PDF)
+    if (plugin()->isUnifiedPDFPlugin())
+        scaleFactor *= downcast<UnifiedPDFPlugin>(plugin())->documentFittingScale();
+#endif
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * scaleFactor, CSSUnitType::CSS_PX);
 }
 
 void PDFPluginTextAnnotation::commit()

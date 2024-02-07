@@ -80,6 +80,8 @@ public:
 
     void attemptToUnlockPDF(const String& password) final;
 
+    float documentFittingScale() const { return m_documentLayout.scale(); }
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
