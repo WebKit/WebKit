@@ -36,6 +36,12 @@ enum class BoolEnumType : bool;
 #if ENABLE(UINT16_ENUM)
 enum class EnumType : uint16_t;
 #endif
+#if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
+enum class InnerEnumType : uint8_t;
+#endif
+#if (ENABLE(OUTER_CONDITION)) && (!(ENABLE(INNER_CONDITION)))
+enum class InnerBoolType : bool;
+#endif
 }
 
 namespace JSC {
@@ -51,6 +57,12 @@ class ConditionalCommonClass;
 #endif
 class CommonClass;
 class AnotherCommonClass;
+#if ENABLE(OUTER_CONDITION)
+class OuterClass;
+#endif
+#if !(ENABLE(OUTER_CONDITION))
+class OtherOuterClass;
+#endif
 }
 
 namespace Namespace::Subnamespace {
@@ -343,6 +355,20 @@ template<> struct ArgumentCoder<WebKit::RemoteVideoFrameWriteReference> {
     static std::optional<WebKit::RemoteVideoFrameWriteReference> decode(Decoder&);
 };
 
+#if ENABLE(OUTER_CONDITION)
+template<> struct ArgumentCoder<Namespace::OuterClass> {
+    static void encode(Encoder&, const Namespace::OuterClass&);
+    static std::optional<Namespace::OuterClass> decode(Decoder&);
+};
+#endif
+
+#if !(ENABLE(OUTER_CONDITION))
+template<> struct ArgumentCoder<Namespace::OtherOuterClass> {
+    static void encode(Encoder&, const Namespace::OtherOuterClass&);
+    static std::optional<Namespace::OtherOuterClass> decode(Decoder&);
+};
+#endif
+
 } // namespace IPC
 
 
@@ -355,5 +381,8 @@ template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 template<> bool isValidOptionSet<OptionSetEnumFirstCondition>(OptionSet<OptionSetEnumFirstCondition>);
 template<> bool isValidOptionSet<OptionSetEnumLastCondition>(OptionSet<OptionSetEnumLastCondition>);
 template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetEnumAllCondition>);
+#if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
+template<> bool isValidEnum<EnumNamespace::InnerEnumType, void>(uint8_t);
+#endif
 
 } // namespace WTF

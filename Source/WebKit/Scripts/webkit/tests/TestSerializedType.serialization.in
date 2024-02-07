@@ -275,7 +275,6 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
     SandboxExtensionHandle callFunction()
 }
 
-
 additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierReference; }
 additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
 additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
@@ -291,3 +290,27 @@ header: "RemoteVideoFrameIdentifier.h"
     IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier> reference();
     uint64_t pendingReads();
 };
+
+#if ENABLE(OUTER_CONDITION)
+class Namespace::OuterClass {
+    int outerValue;
+};
+
+#if ENABLE(INNER_CONDITION)
+enum class EnumNamespace::InnerEnumType : uint8_t {
+    InnerValue,
+#if ENABLE(INNER_INNER_CONDITION)
+    InnerInnerValue,
+#else
+    OtherInnerInnerValue,
+#endif
+}
+#else
+enum class EnumNamespace::InnerBoolType : bool
+#endif
+
+#else
+class Namespace::OtherOuterClass {
+    int outerValue;
+};
+#endif

@@ -49,6 +49,12 @@
 #include "TemplateTest.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
+#if !(ENABLE(OUTER_CONDITION))
+#include <Namespace/OtherOuterClass.h>
+#endif
+#if ENABLE(OUTER_CONDITION)
+#include <Namespace/OuterClass.h>
+#endif
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
@@ -626,6 +632,7 @@ enum class WebCore_TimingFunction_Subclass : IPC::EncodedVariantIndex {
     , SpringTimingFunction
 };
 
+IGNORE_WARNINGS_BEGIN("missing-noreturn")
 void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& instance)
 {
     if (auto* subclass = dynamicDowncast<WebCore::LinearTimingFunction>(instance)) {
@@ -652,6 +659,7 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
     }
     ASSERT_NOT_REACHED();
 }
+IGNORE_WARNINGS_END
 
 std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
 {
@@ -778,6 +786,7 @@ enum class WebCore_MoveOnlyBaseClass_Subclass : IPC::EncodedVariantIndex {
     MoveOnlyDerivedClass
 };
 
+IGNORE_WARNINGS_BEGIN("missing-noreturn")
 void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore::MoveOnlyBaseClass&& instance)
 {
     if (auto* subclass = dynamicDowncast<WebCore::MoveOnlyDerivedClass>(instance)) {
@@ -787,6 +796,7 @@ void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore
     }
     ASSERT_NOT_REACHED();
 }
+IGNORE_WARNINGS_END
 
 std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
 {
@@ -1319,6 +1329,64 @@ std::optional<WebKit::RemoteVideoFrameWriteReference> ArgumentCoder<WebKit::Remo
     };
 }
 
+#if ENABLE(OUTER_CONDITION)
+void ArgumentCoder<Namespace::OuterClass>::encode(Encoder& encoder, const Namespace::OuterClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.outerValue)>, int>);
+    struct ShouldBeSameSizeAsOuterClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::OuterClass>, false> {
+        int outerValue;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsOuterClass) == sizeof(Namespace::OuterClass));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(Namespace::OuterClass, outerValue)
+    >::value);
+
+    encoder << instance.outerValue;
+}
+
+std::optional<Namespace::OuterClass> ArgumentCoder<Namespace::OuterClass>::decode(Decoder& decoder)
+{
+    auto outerValue = decoder.decode<int>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        Namespace::OuterClass {
+            WTFMove(*outerValue)
+        }
+    };
+}
+
+#endif
+
+#if !(ENABLE(OUTER_CONDITION))
+void ArgumentCoder<Namespace::OtherOuterClass>::encode(Encoder& encoder, const Namespace::OtherOuterClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.outerValue)>, int>);
+    struct ShouldBeSameSizeAsOtherOuterClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::OtherOuterClass>, false> {
+        int outerValue;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsOtherOuterClass) == sizeof(Namespace::OtherOuterClass));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(Namespace::OtherOuterClass, outerValue)
+    >::value);
+
+    encoder << instance.outerValue;
+}
+
+std::optional<Namespace::OtherOuterClass> ArgumentCoder<Namespace::OtherOuterClass>::decode(Decoder& decoder)
+{
+    auto outerValue = decoder.decode<int>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        Namespace::OtherOuterClass {
+            WTFMove(*outerValue)
+        }
+    };
+}
+
+#endif
+
 } // namespace IPC
 
 namespace WTF {
@@ -1384,7 +1452,7 @@ template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<En
 #if ENABLE(OPTION_SET_SECOND_VALUE)
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
 #endif
-#if !ENABLE(OPTION_SET_SECOND_VALUE)
+#if !(ENABLE(OPTION_SET_SECOND_VALUE))
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse)
 #endif
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue)
@@ -1431,6 +1499,24 @@ template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetE
         | 0;
     return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
 }
+
+#if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
+template<> bool isValidEnum<EnumNamespace::InnerEnumType, void>(uint8_t value)
+{
+    switch (static_cast<EnumNamespace::InnerEnumType>(value)) {
+    case EnumNamespace::InnerEnumType::InnerValue:
+#if ENABLE(INNER_INNER_CONDITION)
+    case EnumNamespace::InnerEnumType::InnerInnerValue:
+#endif
+#if !(ENABLE(INNER_INNER_CONDITION))
+    case EnumNamespace::InnerEnumType::OtherInnerInnerValue:
+#endif
+        return true;
+    default:
+        return false;
+    }
+}
+#endif
 
 } // namespace WTF
 
