@@ -4695,3 +4695,5 @@ webkit.org/b/266669 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSync
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/263317 media/media-controller-play-then-pause.html [ Failure ]
+
+webkit.org/b/268947 imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Failure ]
