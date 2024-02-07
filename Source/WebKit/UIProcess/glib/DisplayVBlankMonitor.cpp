@@ -97,7 +97,7 @@ bool DisplayVBlankMonitor::startThreadIfNeeded()
             if (active)
                 m_handler();
         }
-    }, ThreadType::Graphics, Thread::QOS::UserInteractive);
+    }, ThreadType::Graphics, Thread::QOS::Default);
     return true;
 }
 
