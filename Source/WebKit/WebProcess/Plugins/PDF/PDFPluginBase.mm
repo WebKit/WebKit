@@ -46,6 +46,7 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/Document.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GraphicsContext.h>
