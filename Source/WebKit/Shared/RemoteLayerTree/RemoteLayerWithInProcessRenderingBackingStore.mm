@@ -286,8 +286,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
         return;
     }
 
-    ASSERT(needsDisplay());
-
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
 
     if (performDelegatedLayerDisplay())
