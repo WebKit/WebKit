@@ -256,6 +256,11 @@ void TestRunner::notifyDone()
     if (!injectedBundle.isTestRunning())
         return;
 
+    bool mainFrameIsRemote = WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef()));
+    if (mainFrameIsRemote) {
+        setWaitUntilDone(false);
+        return postPageMessage("NotifyDone");
+    }
     if (shouldWaitUntilDone() && !injectedBundle.topLoadingFrame())
         injectedBundle.page()->dump(m_forceRepaint);
 

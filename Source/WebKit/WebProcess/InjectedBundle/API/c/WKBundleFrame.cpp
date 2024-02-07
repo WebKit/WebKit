@@ -57,6 +57,11 @@ bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
     return WebKit::toImpl(frameRef)->isMainFrame();
 }
 
+bool WKBundleFrameIsRemote(WKBundleFrameRef frameRef)
+{
+    return WebKit::toImpl(frameRef)->coreFrame()->frameType() == WebCore::Frame::FrameType::Remote;
+}
+
 WKBundleFrameRef WKBundleFrameGetParentFrame(WKBundleFrameRef frameRef)
 {
     return toAPI(WebKit::toImpl(frameRef)->parentFrame().get());

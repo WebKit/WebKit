@@ -351,6 +351,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone"))
+        return postPageMessage("NotifyDone");
+
     if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
         m_textOutput.append(toWTFString(stringValue(messageBody)));
         return;
