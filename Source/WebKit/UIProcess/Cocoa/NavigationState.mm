@@ -70,6 +70,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
+#import <JavaScriptCore/ConsoleTypes.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/ContentRuleListResults.h>
 #import <WebCore/Credential.h>
@@ -103,7 +104,7 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKMarketplaceKit)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKMarketplaceKit)
 
 @interface WKMarketplaceKit : NSObject
-+ (void)requestAppInstallationWithTopOrigin:(NSURL *)topOrigin url:(NSURL *)url;
++ (void)requestAppInstallationWithTopOrigin:(NSURL *)topOrigin url:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler;
 @end
 #endif
 
@@ -420,8 +421,25 @@ static bool isMarketplaceKitURL(const URL& url)
 
 static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& action, WebPageProxy& page)
 {
+    std::optional<FrameIdentifier> sourceFrameID;
+    if (auto sourceFrame = action->sourceFrame())
+        sourceFrameID = sourceFrame->handle()->frameID();
+
+    auto addConsoleError = [sourceFrameID, url = action->request().url(), weakPage = WeakPtr { page }](const String& error) {
+        if (!sourceFrameID || !weakPage)
+            return;
+
+        weakPage->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link ", url.string().utf8().data(), " due to error: "_s, error));
+    };
+
     if (!action->shouldOpenExternalSchemes() || !action->isProcessingUserGesture() || action->isRedirect() || action->data().requesterTopOrigin.isNull()) {
         RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with shouldOpenExternalSchemes: %d, isProcessingUserGesture: %d, isRedirect: %d, requesterTopOriginIsNull: %d", action->shouldOpenExternalSchemes(), action->isProcessingUserGesture(), action->isRedirect(), action->data().requesterTopOrigin.isNull());
+
+        if (!action->isProcessingUserGesture())
+            addConsoleError("must be activated via a user gesture"_s);
+        else if (action->isRedirect())
+            addConsoleError("must be a direct link without a redirect"_s);
+
         return;
     }
 
@@ -433,7 +451,13 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         return;
     }
 
-    [getWKMarketplaceKitClass() requestAppInstallationWithTopOrigin:requesterTopOriginURL.get() url:url.get()];
+    if (![getWKMarketplaceKitClass() respondsToSelector:@selector(requestAppInstallationWithTopOrigin:url:completionHandler:)])
+        return;
+
+    [getWKMarketplaceKitClass() requestAppInstallationWithTopOrigin:requesterTopOriginURL.get() url:url.get() completionHandler:makeBlockPtr([addConsoleError = WTFMove(addConsoleError)](NSError *error) mutable {
+        if (error)
+            addConsoleError(error.description);
+    }).get()];
 }
 
 #endif // HAVE(MARKETPLACE_KIT)
