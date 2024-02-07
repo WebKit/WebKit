@@ -108,6 +108,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation;
 #endif // ENABLE(GPU_PROCESS)
+#if USE(EXTENSIONKIT)
+- (UIView *)_createVisibilityPropagationView;
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
