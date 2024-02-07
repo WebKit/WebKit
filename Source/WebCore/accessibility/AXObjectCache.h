@@ -474,7 +474,7 @@ public:
     void deferRecomputeTableCellSlots(AccessibilityTable&);
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChangedIfNeeded(Element&);
-    void performDeferredCacheUpdate();
+    void performDeferredCacheUpdate(ForceLayout);
     void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& previousValue);
 
     std::optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
@@ -584,7 +584,7 @@ private:
 
     void focusCurrentModal();
     
-    void performCacheUpdateTimerFired();
+    void performCacheUpdateTimerFired() { performDeferredCacheUpdate(ForceLayout::No); }
 
     void postTextStateChangeNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
 
@@ -728,6 +728,8 @@ private:
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
     double m_loadingProgress { 0 };
+
+    unsigned m_cacheUpdateDeferredCount { 0 };
 
     // Relationships between objects.
     HashMap<AXID, AXRelations> m_relations;

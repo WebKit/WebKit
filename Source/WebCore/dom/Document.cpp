@@ -5321,7 +5321,7 @@ void Document::flushDeferredAXObjectCacheUpdate()
     m_scheduledDeferredAXObjectCacheUpdate = false;
 
     if (CheckedPtr cache = existingAXObjectCache())
-        cache->performDeferredCacheUpdate();
+        cache->performDeferredCacheUpdate(ForceLayout::No);
 }
 
 void Document::updateAccessibilityObjectRegions()

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<main id="main">
+    <button>Button one</button>
+    <p>Paragraph one</p>
+    <p>Paragraph two</p>
+    <p>Paragraph three</p>
+</main>
+
+<script>
+var output = "This test ensures we don't make incorrect updates to the accessibility tree due to dirty layout.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Touch the tree to ensure the AXObjectCache is created.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    var scale = 0.1;
+    // Repeatedly dirty layout by changing the page scalor factor.
+    setInterval(async function () {
+        internals.setPageScaleFactor(scale, 0, 0);
+
+        scale += 0.01;
+        if (scale >= 4)
+            scale = 0.1;
+    }, 0);
+
+    var traversalOutput;
+    setTimeout(async function() {
+        internals.setPageScaleFactor(2, 0, 0);
+
+        const newParagraph = document.createElement("p");
+        newParagraph.innerText = "Paragraph four";
+        document.getElementById("main").appendChild(newParagraph);
+        internals.setPageScaleFactor(2.5, 0, 0);
+
+        await waitFor(() => {
+            // Depending on the scale factor at the time we traverse, there may be scrollbars present. They aren't important
+            // for this test, and make it flakey, so exclude them from the output.
+            traversalOutput = dumpAXSearchTraversal(accessibilityController.rootElement, { excludeRoles: ["scrollbar"] });
+            return traversalOutput.includes("Paragraph four");
+        });
+        output += traversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

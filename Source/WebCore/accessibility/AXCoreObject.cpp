@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "AXCoreObject.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 
@@ -537,5 +538,17 @@ String AXCoreObject::helpTextAttributeValue() const
     return { };
 }
 #endif // PLATFORM(COCOA)
+
+namespace Accessibility {
+
+bool inRenderTreeOrStyleUpdate(const Document& document)
+{
+    if (document.inStyleRecalc() || document.inRenderTreeUpdate())
+        return true;
+    auto* view = document.view();
+    return view && view->layoutContext().isInRenderTreeLayout();
+}
+
+} // namespace Accessibility
 
 } // namespace WebCore
