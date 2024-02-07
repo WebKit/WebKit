@@ -68,10 +68,10 @@ void BreakBlockquoteCommand::doApply()
     // pos is a position equivalent to the caret.  We use downstream() so that pos will 
     // be in the first node that we need to move (there are a few exceptions to this, see below).
     Position pos = endingSelection().start().downstream();
-    
+
     // Find the top-most blockquote from the start.
-    RefPtr topBlockquote = highestEnclosingNodeOfType(pos, isMailBlockquote);
-    if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
+    RefPtr topBlockquote = dynamicDowncast<Element>(highestEnclosingNodeOfType(pos, isMailBlockquote));
+    if (!topBlockquote || !topBlockquote->parentNode())
         return;
 
     auto breakNode = [&]() -> Ref<HTMLElement> {
@@ -152,7 +152,7 @@ void BreakBlockquoteCommand::doApply()
         ancestors.append(node.copyRef());
     
     // Insert a clone of the top blockquote after the break.
-    auto clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren(document());
+    auto clonedBlockquote = topBlockquote->cloneElementWithoutChildren(document());
     insertNodeAfter(clonedBlockquote.copyRef(), breakNode);
     
     // Clone startNode's ancestors into the cloned blockquote.

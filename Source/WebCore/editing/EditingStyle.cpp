@@ -1366,7 +1366,7 @@ static String loneFontFamilyName(const CSSValue& value)
     auto* list = dynamicDowncast<CSSValueList>(value);
     if (!list || list->length() != 1)
         return { };
-    auto* item = dynamicDowncast<CSSPrimitiveValue>(*downcast<CSSValueList>(value).item(0));
+    auto* item = dynamicDowncast<CSSPrimitiveValue>(list->item(0));
     return item ? item->stringValue() : String();
 }
 
