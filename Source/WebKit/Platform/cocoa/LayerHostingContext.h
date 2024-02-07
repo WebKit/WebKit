@@ -34,9 +34,9 @@ OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
 
 #if USE(EXTENSIONKIT)
-OBJC_CLASS _SEHostable;
-OBJC_CLASS _SEHostingHandle;
-OBJC_CLASS _SEHostingUpdateCoordinator;
+OBJC_CLASS BELayerHierarchy;
+OBJC_CLASS BELayerHierarchyHandle;
+OBJC_CLASS BELayerHierarchyHostingTransactionCoordinator;
 #endif
 
 namespace WTF {
@@ -114,10 +114,10 @@ public:
 
 #if USE(EXTENSIONKIT)
     OSObjectPtr<xpc_object_t> xpcRepresentation() const;
-    RetainPtr<_SEHostable> hostable() const { return m_hostable; }
+    RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }
 
-    static RetainPtr<_SEHostingHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
-    static RetainPtr<_SEHostingUpdateCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
+    static RetainPtr<BELayerHierarchyHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
+    static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
 #endif
 
 private:
@@ -128,7 +128,7 @@ private:
     LayerHostingContextID m_cachedContextID;
     RetainPtr<CAContext> m_context;
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEHostable> m_hostable;
+    RetainPtr<BELayerHierarchy> m_hostable;
 #endif
 };
 

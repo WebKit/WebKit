@@ -38,7 +38,9 @@
 #import <wtf/MachSendRight.h>
 
 #if USE(EXTENSIONKIT)
-#import "ExtensionKitSoftLink.h"
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHandle.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
 #endif
 
 namespace WebKit {
@@ -108,13 +110,13 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
 
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEHostingUpdateCoordinator> hostingUpdateCoordinator;
+    RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;
 #endif
 
     if (m_inlineLayerHostingContext) {
 #if USE(EXTENSIONKIT)
         hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(machSendRight.sendRight());
-        [hostingUpdateCoordinator addHostable:m_inlineLayerHostingContext->hostable().get()];
+        [hostingUpdateCoordinator addLayerHierarchy:m_inlineLayerHostingContext->hostable().get()];
 #else
         m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
 #endif
