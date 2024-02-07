@@ -1634,3 +1634,6 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
 
 webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout ]
+
+webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Pass Crash ]
+webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https.html [ Pass Crash ]
