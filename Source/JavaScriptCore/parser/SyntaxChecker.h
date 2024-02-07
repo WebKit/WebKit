@@ -384,6 +384,9 @@ public:
     void setContainsComputedProperty(ObjectPattern, bool)
     {
     }
+    void finishObjectPattern(ObjectPattern, const JSTextPosition&, const JSTextPosition&, const JSTextPosition&)
+    {
+    }
 
     DestructuringPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, AssignmentContext)
     {
