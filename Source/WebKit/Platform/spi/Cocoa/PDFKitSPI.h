@@ -30,13 +30,21 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#if HAVE(PDFKIT)
+
+#if PLATFORM(IOS_FAMILY)
 #import <PDFKit/PDFHostViewController.h>
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
+
+#import <PDFKit/PDFSelectionPriv.h>
+
+#endif // HAVE(PDFKIT)
 
 #else
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#if HAVE(PDFKIT)
+
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 
 @interface _UIRemoteViewController : UIViewController
@@ -72,7 +80,13 @@
 - (void) snapshotViewRect: (CGRect) rect snapshotWidth: (NSNumber*) width afterScreenUpdates: (BOOL) afterScreenUpdates withResult: (void (^)(UIImage* image)) completion;
 
 @end
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
+
+@interface PDFSelection (SPI)
+- (void)drawForPage:(PDFPage *)page withBox:(CGPDFBox)box active:(BOOL)active inContext:(CGContextRef)context;
+@end
+
+#endif // HAVE(PDFKIT)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

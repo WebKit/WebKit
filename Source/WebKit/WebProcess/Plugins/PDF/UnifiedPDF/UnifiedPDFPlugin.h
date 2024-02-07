@@ -79,6 +79,7 @@ public:
     void focusPreviousAnnotation() final;
 
     void attemptToUnlockPDF(const String& password) final;
+    void windowActivityDidChange() final;
 
     float documentFittingScale() const { return m_documentLayout.scale(); }
 
@@ -179,13 +180,11 @@ private:
         Word,
         Line,
     };
-    enum class SelectionCommitReason : bool { SelectionIsNoLongerActive, ReceivedMouseUp };
 
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
     void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity, OptionSet<WebEventModifier>);
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
-    void commitCurrentSelection(SelectionCommitReason);
 
     String getSelectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
@@ -285,7 +284,6 @@ private:
     struct SelectionTrackingData {
         bool shouldExtendCurrentSelection { false };
         bool shouldMakeMarqueeSelection { false };
-        bool isActive { false };
         SelectionGranularity granularity { SelectionGranularity::Character };
         PDFDocumentLayout::PageIndex startPageIndex;
         WebCore::IntPoint startPagePoint;

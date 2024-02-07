@@ -303,6 +303,12 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
     m_contentsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
 }
 
+void UnifiedPDFPlugin::windowActivityDidChange()
+{
+    // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
+    m_contentsLayer->setNeedsDisplay();
+}
+
 void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::IntRect&)
 {
     // Only called for snapshotting.
@@ -389,6 +395,11 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
         context.scale({ 1, -1 });
 
         [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
+
+        bool isVisibleAndActive = true;
+        if (RefPtr page = this->page())
+            isVisibleAndActive = page->isVisibleAndActive();
+        [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
     }
 }
 
@@ -1071,7 +1082,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             return false;
         }
     case WebEventType::MouseUp:
-        commitCurrentSelection(SelectionCommitReason::ReceivedMouseUp);
+        m_selectionTrackingData.selectionToExtendWith = nullptr;
 
         switch (auto mouseEventButton = event.button()) {
         case WebMouseEventButton::Left:
@@ -1272,7 +1283,6 @@ auto UnifiedPDFPlugin::selectionGranularityForMouseEvent(const WebMouseEvent& ev
 
 void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity selectionGranularity, OptionSet<WebEventModifier> mouseEventModifiers)
 {
-    m_selectionTrackingData.isActive = true;
     m_selectionTrackingData.granularity = selectionGranularity;
     m_selectionTrackingData.startPageIndex = pageIndex;
     m_selectionTrackingData.startPagePoint = pagePoint;
@@ -1296,8 +1306,6 @@ static IntRect computeMarqueeSelectionRect(const WebCore::IntPoint& point1, cons
 
 void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint)
 {
-    m_selectionTrackingData.isActive = true;
-
     if (m_selectionTrackingData.shouldMakeMarqueeSelection) {
         if (m_selectionTrackingData.startPageIndex != pageIndex)
             return;
@@ -1327,16 +1335,9 @@ void UnifiedPDFPlugin::continueTrackingSelection(PDFDocumentLayout::PageIndex pa
 void UnifiedPDFPlugin::setCurrentSelection(RetainPtr<PDFSelection>&& selection)
 {
     m_currentSelection = WTFMove(selection);
-    if (!m_selectionTrackingData.isActive)
-        commitCurrentSelection(SelectionCommitReason::SelectionIsNoLongerActive);
-}
-
-void UnifiedPDFPlugin::commitCurrentSelection(SelectionCommitReason reason)
-{
-    if (reason == SelectionCommitReason::ReceivedMouseUp && !std::exchange(m_selectionTrackingData.isActive, false))
-        return;
+    // FIXME: <https://webkit.org/b/268927> Selection painting requests should be optimized by specifying dirty rects.
+    m_contentsLayer->setNeedsDisplay();
     notifySelectionChanged();
-    m_selectionTrackingData.selectionToExtendWith = nullptr;
 }
 
 String UnifiedPDFPlugin::getSelectionString() const

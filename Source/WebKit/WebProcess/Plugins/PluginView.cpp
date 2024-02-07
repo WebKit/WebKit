@@ -959,6 +959,11 @@ void PluginView::didChangeSettings()
     m_plugin->didChangeSettings();
 }
 
+void PluginView::windowActivityDidChange()
+{
+    m_plugin->windowActivityDidChange();
+}
+
 } // namespace WebKit
 
 #endif

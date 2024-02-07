@@ -109,6 +109,8 @@ public:
 
     void didChangeSettings();
 
+    void windowActivityDidChange();
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();

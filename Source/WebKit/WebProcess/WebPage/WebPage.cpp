@@ -3942,6 +3942,14 @@ void WebPage::visibilityDidChange()
     }
 }
 
+void WebPage::windowActivityDidChange()
+{
+#if ENABLE(PDF_PLUGIN)
+    for (auto& pluginView : m_pluginViews)
+        pluginView.windowActivityDidChange();
+#endif
+}
+
 void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
@@ -3966,6 +3974,9 @@ void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityS
 
     if (changed & ActivityState::IsVisible)
         visibilityDidChange();
+
+    if (changed & ActivityState::WindowIsActive)
+        windowActivityDidChange();
 }
 
 void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)

@@ -654,7 +654,7 @@ public:
     OptionSet<ActivityState> activityState() const { return m_activityState; }
 
     bool isWindowActive() const;
-    bool isVisibleAndActive() const;
+    WEBCORE_EXPORT bool isVisibleAndActive() const;
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();
     bool isVisible() const { return m_activityState.contains(ActivityState::IsVisible); }
