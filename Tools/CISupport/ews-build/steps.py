@@ -2103,8 +2103,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
 class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'determine-label-owner'
-    flunkOnFailure = False
-    haltOnFailure = False
+    flunkOnFailure = True
+    haltOnFailure = True
 
     @defer.inlineCallbacks
     def run(self):
