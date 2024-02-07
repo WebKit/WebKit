@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FlexFormattingState.h"
+#pragma once
 
-#include <wtf/IsoMallocInlines.h>
+#include "FormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingState);
+class FlexFormattingContext;
 
-FlexFormattingState::FlexFormattingState(LayoutState& layoutState)
-    : FormattingState(Type::Flex, layoutState)
-{
+// Helper class for flex layout.
+class FlexFormattingUtils {
+public:
+    FlexFormattingUtils(const FlexFormattingContext&);
+
+    static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
+    static bool isReversedToContentDirection(const ElementBox& flexBox);
+
+private:
+    const FlexFormattingContext& m_flexFormattingContext;
+};
+
+}
 }
 
-FlexFormattingState::~FlexFormattingState()
-{
-}
-
-}
-}

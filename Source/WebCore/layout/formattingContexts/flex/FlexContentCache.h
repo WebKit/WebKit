@@ -25,28 +25,20 @@
 
 #pragma once
 
-#include "FormattingState.h"
-#include "InlineRect.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-class FlexFormattingState : public FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(FlexFormattingState);
+// FlexContentCache is used to cache content for subsequent layouts.
+class FlexContentCache {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(FlexContentCache);
 public:
-    FlexFormattingState(LayoutState&);
-    ~FlexFormattingState();
-
-    const auto& lines() const { return m_lines; }
-    void addLine(const InlineRect& line) { m_lines.append(line); }
 
 private:
-    Vector<InlineRect> m_lines;
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(FlexFormattingState, isFlexFormattingState())
 

@@ -26,8 +26,7 @@
 #include "config.h"
 #include "FlexFormattingContext.h"
 
-#include "FlexFormattingGeometry.h"
-#include "FlexFormattingState.h"
+#include "FlexFormattingUtils.h"
 #include "FlexRect.h"
 #include "InlineRect.h"
 #include "LayoutBoxGeometry.h"
@@ -43,11 +42,10 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
-FlexFormattingContext::FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState& flexFormattingState)
-    : FormattingContext(formattingContextRoot, flexFormattingState.layoutState())
-    , m_flexFormattingState(flexFormattingState)
-    , m_flexFormattingGeometry(*this)
-    , m_flexFormattingQuirks(*this)
+FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& layoutState)
+    : m_flexBox(flexBox)
+    , m_layoutState(layoutState)
+    , m_flexFormattingUtils(*this)
 {
 }
 
@@ -85,14 +83,14 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
     Vector<FlexItem> flexItemList;
     auto flexItemsNeedReordering = false;
-    auto& formattingState = this->formattingState();
+    auto& layoutState = this->layoutState();
 
     auto convertVisualToLogical = [&] {
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
 
         for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
-            auto& flexItemGeometry = formattingState.boxGeometry(*flexItem);
+            auto& flexItemGeometry = layoutState.geometryForBox(*flexItem);
             auto& style = flexItem->style();
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
             auto crossAxis = LogicalFlexItem::CrossAxisGeometry { };
@@ -175,11 +173,10 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
 void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexItems& logicalFlexItemList, const FlexLayout::LogicalFlexItemRects& logicalRects, const ConstraintsForFlexContent& constraints)
 {
-    auto& formattingState = this->formattingState();
     auto logicalWidth = logicalRects.last().right() - logicalRects.first().left();
     auto& flexBoxStyle = root().style();
     auto flexDirection = flexBoxStyle.flexDirection();
-    auto isMainAxisParallelWithInlineAxis = FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(root());
+    auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
     auto flexBoxLogicalHeightForWarpReserve = [&]() -> std::optional<LayoutUnit> {
         if (flexBoxStyle.flexWrap() != FlexWrap::Reverse)
             return { };
@@ -194,7 +191,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
         auto& logicalFlexItem = logicalFlexItemList[index];
-        auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.layoutBox());
+        auto& flexItemGeometry = geometryForFlexItem(logicalFlexItem.layoutBox());
         auto borderBoxTopLeft = LayoutPoint { };
         auto logicalRect = logicalRects[index];
         auto adjustedLogicalTop = !flexBoxLogicalHeightForWarpReserve ? logicalRect.top() : *flexBoxLogicalHeightForWarpReserve - logicalRect.bottom();
@@ -233,6 +230,19 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         flexItemGeometry.setContentBoxHeight(contentBoxHeight);
     }
 }
+
+const BoxGeometry& FlexFormattingContext::geometryForFlexItem(const Box& flexItem) const
+{
+    ASSERT(flexItem.isFlexItem());
+    return m_layoutState.geometryForBox(flexItem);
+}
+
+BoxGeometry& FlexFormattingContext::geometryForFlexItem(const Box& flexItem)
+{
+    ASSERT(flexItem.isFlexItem());
+    return m_layoutState.ensureGeometryForBox(flexItem);
+}
+
 
 }
 }

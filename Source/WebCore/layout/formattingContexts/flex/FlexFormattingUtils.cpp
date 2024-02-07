@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FlexFormattingUtils.h"
 
-#include "FormattingGeometry.h"
+#include "FlexFormattingContext.h"
+#include "LayoutContext.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
 
-class FlexFormattingContext;
+FlexFormattingUtils::FlexFormattingUtils(const FlexFormattingContext& flexFormattingContext)
+    : m_flexFormattingContext(flexFormattingContext)
+{
+}
 
-class FlexFormattingContext;
+bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::Row || flexBox.style().flexDirection() == FlexDirection::RowReverse;
+}
 
-// This class implements positioning and sizing for flex items.
-class FlexFormattingGeometry : public FormattingGeometry {
-public:
-    FlexFormattingGeometry(const FlexFormattingContext&);
-
-    IntrinsicWidthConstraints intrinsicWidthConstraints(const ElementBox&) const;
-
-    static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
-    static bool isReversedToContentDirection(const ElementBox& flexBox);
-
-private:
-    const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }
-};
+bool FlexFormattingUtils::isReversedToContentDirection(const ElementBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
+}
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(FlexFormattingGeometry, isFlexFormattingGeometry())
 

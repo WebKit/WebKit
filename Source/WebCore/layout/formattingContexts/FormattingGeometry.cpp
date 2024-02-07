@@ -27,7 +27,6 @@
 #include "FormattingGeometry.h"
 
 #include "BlockFormattingContext.h"
-#include "FlexFormattingState.h"
 #include "FloatingContext.h"
 #include "FormattingQuirks.h"
 #include "LayoutContainingBlockChainIterator.h"
