@@ -89,7 +89,7 @@ DynamicContentScalingImageBufferBackend::DynamicContentScalingImageBufferBackend
 {
 }
 
-std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(WebCore::SharedMemory::Protection) const
 {
     if (!m_context)
         return std::nullopt;
