@@ -127,9 +127,9 @@ private:
 
 inline void MarkupAccumulator::endAppendingNode(const Node& node)
 {
-    if (is<Element>(node))
-        appendEndTag(m_markup, downcast<Element>(node));
-    else if (auto element = replacementElement(node))
+    if (RefPtr element = dynamicDowncast<Element>(node))
+        appendEndTag(m_markup, *element);
+    else if (RefPtr element = replacementElement(node))
         appendEndTag(m_markup, *element);
 }
 

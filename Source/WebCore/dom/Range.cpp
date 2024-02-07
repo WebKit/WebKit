@@ -486,11 +486,12 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
     switch (container->nodeType()) {
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
-    case Node::COMMENT_NODE:
-        endOffset = std::min(endOffset, downcast<CharacterData>(*container).length());
+    case Node::COMMENT_NODE: {
+        auto& dataNode = uncheckedDowncast<CharacterData>(*container);
+        endOffset = std::min(endOffset, dataNode.length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Range::Extract || action == Range::Clone) {
-            Ref characters = downcast<CharacterData>(container->cloneNode(true));
+            Ref characters = uncheckedDowncast<CharacterData>(dataNode.cloneNode(true));
             auto deleteResult = deleteCharacterData(characters, startOffset, endOffset);
             if (deleteResult.hasException())
                 return deleteResult.releaseException();
@@ -503,17 +504,18 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
                 result = WTFMove(characters);
         }
         if (action == Range::Extract || action == Range::Delete) {
-            auto deleteResult = downcast<CharacterData>(*container).deleteData(startOffset, endOffset - startOffset);
+            auto deleteResult = dataNode.deleteData(startOffset, endOffset - startOffset);
             if (deleteResult.hasException())
                 return deleteResult.releaseException();
         }
         break;
+    }
     case Node::PROCESSING_INSTRUCTION_NODE: {
         auto& instruction = uncheckedDowncast<ProcessingInstruction>(*container);
         endOffset = std::min(endOffset, instruction.data().length());
         startOffset = std::min(startOffset, endOffset);
         if (action == Range::Extract || action == Range::Clone) {
-            Ref processingInstruction = downcast<ProcessingInstruction>(container->cloneNode(true));
+            Ref processingInstruction = uncheckedDowncast<ProcessingInstruction>(instruction.cloneNode(true));
             processingInstruction->setData(processingInstruction->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
@@ -768,7 +770,7 @@ ExceptionOr<RefPtr<Node>> Range::checkNodeOffsetPair(Node& node, unsigned offset
     case Node::COMMENT_NODE:
     case Node::TEXT_NODE:
     case Node::PROCESSING_INSTRUCTION_NODE:
-        if (offset > downcast<CharacterData>(node).length())
+        if (offset > uncheckedDowncast<CharacterData>(node).length())
             return Exception { ExceptionCode::IndexSizeError };
         return nullptr;
     case Node::ATTRIBUTE_NODE:

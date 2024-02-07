@@ -361,7 +361,7 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
 {
     if (RefPtr element = dynamicDowncast<Element>(node))
         appendStartTag(m_markup, *element, namespaces);
-    else if (auto element = replacementElement(node))
+    else if (RefPtr element = replacementElement(node))
         appendStartTag(m_markup, *element, namespaces);
     else
         appendNonElementNode(m_markup, node, namespaces);
@@ -710,34 +710,36 @@ void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& 
 
     switch (node.nodeType()) {
     case Node::TEXT_NODE:
-        appendText(result, downcast<Text>(node));
+        appendText(result, uncheckedDowncast<Text>(node));
         break;
     case Node::COMMENT_NODE:
         // FIXME: Comment content is not escaped, but that may be OK because XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
-        result.append("<!--", downcast<Comment>(node).data(), "-->");
+        result.append("<!--", uncheckedDowncast<Comment>(node).data(), "-->");
         break;
     case Node::DOCUMENT_NODE:
-        appendXMLDeclaration(result, downcast<Document>(node));
+        appendXMLDeclaration(result, uncheckedDowncast<Document>(node));
         break;
     case Node::DOCUMENT_FRAGMENT_NODE:
         break;
     case Node::DOCUMENT_TYPE_NODE:
-        appendDocumentType(result, downcast<DocumentType>(node));
+        appendDocumentType(result, uncheckedDowncast<DocumentType>(node));
         break;
-    case Node::PROCESSING_INSTRUCTION_NODE:
+    case Node::PROCESSING_INSTRUCTION_NODE: {
+        auto& instruction = uncheckedDowncast<ProcessingInstruction>(node);
         // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
-        result.append("<?", downcast<ProcessingInstruction>(node).target(), ' ', downcast<ProcessingInstruction>(node).data(), "?>");
+        result.append("<?", instruction.target(), ' ', instruction.data(), "?>");
         break;
+    }
     case Node::ELEMENT_NODE:
         ASSERT_NOT_REACHED();
         break;
     case Node::CDATA_SECTION_NODE:
         // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
-        result.append("<![CDATA[", downcast<CDATASection>(node).data(), "]]>");
+        result.append("<![CDATA[", uncheckedDowncast<CDATASection>(node).data(), "]]>");
         break;
     case Node::ATTRIBUTE_NODE:
         // Only XMLSerializer can pass an Attr. So, |documentIsHTML| flag is false.
-        appendAttributeValue(result, downcast<Attr>(node).value(), false);
+        appendAttributeValue(result, uncheckedDowncast<Attr>(node).value(), false);
         break;
     }
 }
