@@ -273,6 +273,8 @@ struct Type : public std::variant<
     Packing packing() const;
     bool isConstructible() const;
     bool isStorable() const;
+    bool isHostShareable() const;
+    bool hasFixedFootprint() const;
     bool containsRuntimeArray() const;
 };
 

@@ -502,15 +502,37 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         variable.m_addressSpace = addressSpace;
         variable.m_accessMode = accessMode;
 
-        if (addressSpace == AddressSpace::Function && variableKind == VariableKind::Global)
-            return error("module-scope 'var' must not use address space 'function'");
-        if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
-            return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
-        if (addressSpace == AddressSpace::Storage && accessMode == AccessMode::Write)
-            return error("access mode 'write' is not valid for the <storage> address space");
-        if (addressSpace == AddressSpace::Handle) {
+        // https://www.w3.org/TR/WGSL/#var-and-value
+        switch (addressSpace) {
+        case AddressSpace::Storage:
+            if (accessMode == AccessMode::Write)
+                return error("access mode 'write' is not valid for the <storage> address space");
+            if (!result->isHostShareable())
+                return error("type '", *result, "' cannot be used in address space <storage> because it's not host-shareable");
+            if (accessMode == AccessMode::Read && std::holds_alternative<Types::Atomic>(*result))
+                return error("atomic variables in <storage> address space must have read_write access mode");
+            break;
+        case AddressSpace::Uniform:
+            if (!result->isHostShareable())
+                return error("type '", *result, "' cannot be used in address space <uniform> because it's not host-shareable");
+            if (!result->isConstructible())
+                return error("type '", *result, "' cannot be used in address space <uniform> because it's not constructible");
+            break;
+        case AddressSpace::Workgroup:
+            if (!result->hasFixedFootprint())
+                return error("type '", *result, "' cannot be used in address space <workgroup> because it doesn't have fixed footprint");
+            break;
+        case AddressSpace::Function:
+            if (!result->isConstructible())
+                return error("type '", *result, "' cannot be used in address space <function> because it's not constructible");
+            break;
+        case AddressSpace::Private:
+            if (!result->isConstructible())
+                return error("type '", *result, "' cannot be used in address space <private> because it's not constructible");
+            break;
+        case AddressSpace::Handle: {
             auto* primitive = std::get_if<Types::Primitive>(result);
-            bool isTypeAllowed = std::holds_alternative<Types::Texture>(*result)
+            bool isTextureOrSampler = std::holds_alternative<Types::Texture>(*result)
                 || std::holds_alternative<Types::TextureStorage>(*result)
                 || std::holds_alternative<Types::TextureDepth>(*result)
                 || (primitive && (
@@ -518,10 +540,18 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
                     || primitive->kind == Types::Primitive::Sampler
                     || primitive->kind == Types::Primitive::SamplerComparison
                 ));
-            if (!isTypeAllowed)
+            if (!isTextureOrSampler)
                 return error("module-scope 'var' declarations that are not of texture or sampler types must provide an address space");
+            break;
         }
-        break;
+        }
+
+        if (addressSpace == AddressSpace::Function && variableKind == VariableKind::Global)
+            return error("module-scope 'var' must not use address space 'function'");
+        if (addressSpace != AddressSpace::Function && variableKind == VariableKind::Local)
+            return error("function-scope 'var' declaration must use 'function' address space");
+        if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
+            return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
     }
 
     if (value && !isBottom(result))
