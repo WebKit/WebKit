@@ -1,0 +1,46 @@
+:root {
+    color-scheme: light dark;
+    font-family: system-ui;
+}
+
+body {
+    max-width: 800px;
+    margin: auto;
+    padding: 10px 30px;
+}
+
+style, code, pre {
+    font-family: Menlo, monospace;
+    font-size-adjust: 0.5;
+}
+
+#warning {
+    background-color: rgb(255,69,58,0.2);
+    border: 1px solid rgb(255,69,58);
+    border-radius: 4px;
+    padding: 10px;
+    margin: 1em 0;
+}
+
+#warning > p:first-child {
+    margin-top: 0;
+}
+
+#warning > p:last-child {
+    margin-bottom: 0;
+}
+
+@supports selector(::thumb) {
+    #warning {
+        display: none;
+    }
+}
+
+.example details {
+    margin-top: 1em;
+}
+
+.example style {
+    display: block;
+    white-space: pre-wrap;
+}
