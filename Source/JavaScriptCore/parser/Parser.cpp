@@ -1260,6 +1260,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
         break;
     }
     case OPENBRACE: {
+        JSTextPosition divotStart = tokenStartPosition();
         auto objectPattern = context.createObjectPattern(m_token.m_location);
         next();
 
@@ -1372,6 +1373,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
         if (kind == DestructuringKind::DestructureToExpressions && !match(CLOSEBRACE))
             return 0;
         consumeOrFail(CLOSEBRACE, restElementWasFound ? "Expected a closing '}' following a rest element destructuring pattern" : "Expected either a closing '}' or an ',' after a property destructuring pattern");
+        context.finishObjectPattern(objectPattern, divotStart, divotStart, lastTokenEndPosition());
         pattern = objectPattern;
         break;
     }
@@ -1427,8 +1429,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     int nonLHSCount = m_parserState.nonLHSCount;
     int declarations = 0;
     JSTokenLocation declLocation(tokenLocation());
-    JSTextPosition declsStart;
-    JSTextPosition declsEnd;
+    JSTextPosition declsStart = tokenStartPosition();
     TreeExpression decls = 0;
     TreeDestructuringPattern pattern = 0;
     bool isVarDeclaration = match(VAR);
@@ -1537,18 +1538,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     if (!match(SEMICOLON)) {
         if (match(OPENBRACE) || match(OPENBRACKET)) {
             SavePoint savePoint = createSavePoint(context);
-            declsStart = tokenStartPosition();
             pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
-            declsEnd = lastTokenEndPosition();
             if (pattern && (match(INTOKEN) || matchContextualKeyword(m_vm.propertyNames->of)))
                 goto enumerationLoop;
             pattern = TreeDestructuringPattern(0);
             restoreSavePoint(context, savePoint);
         }
         m_allowsIn = false;
-        declsStart = tokenStartPosition();
         decls = parseExpression(context);
-        declsEnd = lastTokenEndPosition();
         m_allowsIn = true;
         failIfFalse(decls, "Cannot parse for loop declarations");
         recordPauseLocation(context.breakpointLocation(decls));
@@ -1592,6 +1589,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
 enumerationLoop:
     failIfFalse(nonLHSCount == m_parserState.nonLHSCount, "Expected a reference on the left hand side of an enumeration statement");
     bool isOfEnumeration = false;
+    JSTextPosition inLocation = tokenStartPosition();
     if (!match(INTOKEN)) {
         failIfFalse(matchContextualKeyword(m_vm.propertyNames->of), "Expected either 'in' or 'of' in enumeration syntax");
         isOfEnumeration = true;
@@ -1623,18 +1621,18 @@ enumerationLoop:
         ASSERT(!decls);
         VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
         if (isOfEnumeration)
-            return context.createForOfLoop(isAwaitFor, location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+            return context.createForOfLoop(isAwaitFor, location, pattern, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
         ASSERT(!isAwaitFor);
-        return context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+        return context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
     }
 
     semanticFailIfFalse(isSimpleAssignmentTarget(context, decls), "Left side of assignment is not a reference");
 
     VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
     if (isOfEnumeration)
-        return context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+        return context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
     ASSERT(!isAwaitFor);
-    return context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+    return context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
 }
 
 template <typename LexerType>
