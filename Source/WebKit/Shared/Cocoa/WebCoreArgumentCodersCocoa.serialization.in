@@ -239,3 +239,30 @@ enum class WebCore::PlatformCAAnimationValueFunctionType : uint8_t {
     TranslateZ,
     Translate
 };
+
+enum class WebCore::PlatformCALayerFilterType : uint8_t {
+    Linear,
+    Nearest,
+    Trilinear
+};
+
+enum class WebCore::PlatformCALayerLayerType : uint8_t {
+        LayerTypeLayer,
+        LayerTypeWebLayer,
+        LayerTypeSimpleLayer,
+        LayerTypeTransformLayer,
+        LayerTypeTiledBackingLayer,
+        LayerTypePageTiledBackingLayer,
+        LayerTypeTiledBackingTileLayer,
+        LayerTypeRootLayer,
+        LayerTypeAVPlayerLayer,
+        LayerTypeContentsProvidedLayer,
+        LayerTypeBackdropLayer,
+        LayerTypeShapeLayer,
+        LayerTypeScrollContainerLayer,
+#if ENABLE(MODEL_ELEMENT)
+        LayerTypeModelLayer,
+#endif
+        LayerTypeCustom,
+        LayerTypeHost,
+};
