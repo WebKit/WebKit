@@ -63,11 +63,6 @@ WebAVPlayerController *PlaybackSessionInterfaceLMK::playerController() const
     return nullptr;
 }
 
-PlaybackSessionInterfaceLMK::~PlaybackSessionInterfaceLMK()
-{
-
-}
-
 void PlaybackSessionInterfaceLMK::durationChanged(double)
 {
 
