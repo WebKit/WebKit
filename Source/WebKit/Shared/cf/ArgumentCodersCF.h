@@ -59,4 +59,13 @@ template<> struct ArgumentCoder<RetainPtr<CFCharacterSetRef>> : CFRetainPtrArgum
     static std::optional<RetainPtr<CFCharacterSetRef>> decode(Decoder&);
 };
 
+#if HAVE(SEC_ACCESS_CONTROL)
+template<> struct ArgumentCoder<SecAccessControlRef> {
+    template<typename Encoder> static void encode(Encoder&, SecAccessControlRef);
+};
+template<> struct ArgumentCoder<RetainPtr<SecAccessControlRef>> : CFRetainPtrArgumentCoder<SecAccessControlRef> {
+    static std::optional<RetainPtr<SecAccessControlRef>> decode(Decoder&);
+};
+#endif
+
 } // namespace IPC

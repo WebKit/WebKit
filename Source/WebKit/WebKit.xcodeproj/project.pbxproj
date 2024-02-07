@@ -1330,7 +1330,6 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */; };
 		561A54532B61E49E00073A72 /* CoreIPCSecCertificate.h in Headers */ = {isa = PBXBuildFile; fileRef = 561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */; };
-		561A54542B61E49E00073A72 /* CoreIPCSecAccessControl.serialization.in in Sources */ = {isa = PBXBuildFile; fileRef = 561A54522B61E49E00073A72 /* CoreIPCSecAccessControl.serialization.in */; };
 		561A54612B6438C000073A72 /* CoreIPCSecKeychainItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 561A54602B6438C000073A72 /* CoreIPCSecKeychainItem.h */; };
 		562674F52B69B4C8008BB425 /* CoreIPCSecTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 562674F32B69B4C7008BB425 /* CoreIPCSecTrust.h */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
@@ -5664,10 +5663,8 @@
 		550640A324071A6100AAE045 /* RemoteRenderingBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackend.h; sourceTree = "<group>"; };
 		550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteRenderingBackend.messages.in; sourceTree = "<group>"; };
 		55AD09422408A02E00DE4D2F /* RemoteImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBuffer.h; sourceTree = "<group>"; };
-		560F03DB2B6C47F900F53EE7 /* CoreIPCSecAccessControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCSecAccessControl.h; sourceTree = "<group>"; };
-		560F03DC2B6C480C00F53EE7 /* CoreIPCSecCertificate.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCSecCertificate.serialization.in; sourceTree = "<group>"; };
 		561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCSecCertificate.h; sourceTree = "<group>"; };
-		561A54522B61E49E00073A72 /* CoreIPCSecAccessControl.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCSecAccessControl.serialization.in; sourceTree = "<group>"; };
+		561A54522B61E49E00073A72 /* CoreIPCSecCertificate.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCSecCertificate.serialization.in; sourceTree = "<group>"; };
 		561A545F2B6438BF00073A72 /* CoreIPCSecKeychainItem.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCSecKeychainItem.serialization.in; sourceTree = "<group>"; };
 		561A54602B6438C000073A72 /* CoreIPCSecKeychainItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCSecKeychainItem.h; sourceTree = "<group>"; };
 		562674F32B69B4C7008BB425 /* CoreIPCSecTrust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCSecTrust.h; sourceTree = "<group>"; };
@@ -9044,10 +9041,8 @@
 				52FB15432B64680B000933CC /* CoreIPCCGColorSpace.serialization.in */,
 				F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */,
 				F4EFF36A2AF0267200479AB8 /* CoreIPCNumber.serialization.in */,
-				560F03DB2B6C47F900F53EE7 /* CoreIPCSecAccessControl.h */,
-				561A54522B61E49E00073A72 /* CoreIPCSecAccessControl.serialization.in */,
 				561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */,
-				560F03DC2B6C480C00F53EE7 /* CoreIPCSecCertificate.serialization.in */,
+				561A54522B61E49E00073A72 /* CoreIPCSecCertificate.serialization.in */,
 				561A54602B6438C000073A72 /* CoreIPCSecKeychainItem.h */,
 				561A545F2B6438BF00073A72 /* CoreIPCSecKeychainItem.serialization.in */,
 				562674F32B69B4C7008BB425 /* CoreIPCSecTrust.h */,
@@ -18616,7 +18611,6 @@
 				E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */,
 				413E5C9229B0CF7C002F4987 /* BackgroundFetchStateCocoa.mm in Sources */,
 				1C62747E288B4C3E00CED3A2 /* CocoaHelpers.mm in Sources */,
-				561A54542B61E49E00073A72 /* CoreIPCSecAccessControl.serialization.in in Sources */,
 				49DC1DE127E5129100C1CB36 /* CSPExtensionUtilities.mm in Sources */,
 				522F792C28D531970069B45B /* CtapAuthenticator.cpp in Sources */,
 				526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */,

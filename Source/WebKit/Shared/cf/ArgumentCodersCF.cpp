@@ -336,6 +336,33 @@ std::optional<RetainPtr<CFCharacterSetRef>> ArgumentCoder<RetainPtr<CFCharacterS
     return WTFMove(characterSet);
 }
 
+#if HAVE(SEC_ACCESS_CONTROL)
+template<typename Encoder>
+void ArgumentCoder<SecAccessControlRef>::encode(Encoder& encoder, SecAccessControlRef accessControl)
+{
+    auto data = adoptCF(SecAccessControlCopyData(accessControl));
+    if (data)
+        encoder << data;
+}
+
+template void ArgumentCoder<SecAccessControlRef>::encode<Encoder>(Encoder&, SecAccessControlRef);
+template void ArgumentCoder<SecAccessControlRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecAccessControlRef);
+
+std::optional<RetainPtr<SecAccessControlRef>> ArgumentCoder<RetainPtr<SecAccessControlRef>>::decode(Decoder& decoder)
+{
+    std::optional<RetainPtr<CFDataRef>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
+
+    auto result = adoptCF(SecAccessControlCreateFromData(kCFAllocatorDefault, data->get(), nullptr));
+    if (!result)
+        return std::nullopt;
+
+    return WTFMove(result);
+}
+#endif
+
 } // namespace IPC
 
 namespace WTF {

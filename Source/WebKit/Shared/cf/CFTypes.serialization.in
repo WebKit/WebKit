@@ -46,31 +46,15 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
 }
 
-#if HAVE(SEC_ACCESS_CONTROL)
-
-additional_forward_declaration: typedef struct __SecAccessControl *SecAccessControlRef
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecAccessControl()] SecAccessControlRef wrapped by WebKit::CoreIPCSecAccessControl {
-}
-
-#endif
-
 additional_forward_declaration: typedef struct __SecCertificate *SecCertificateRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecCertificate()] SecCertificateRef wrapped by WebKit::CoreIPCSecCertificate {
 }
-
-#if HAVE(SEC_KEYCHAIN)
-
-additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainItemRef
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecKeychainItem()] SecKeychainItemRef wrapped by WebKit::CoreIPCSecKeychainItem {
-}
-
-#endif
 
 additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
 }
 
-#endif // USE(CF)
+#endif
 
 #if USE(CG)
 
@@ -84,3 +68,10 @@ additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) CGColorSpace 
 
 #endif
 
+#if HAVE(SEC_KEYCHAIN)
+
+additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainItemRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecKeychainItem()] SecKeychainItemRef wrapped by WebKit::CoreIPCSecKeychainItem {
+}
+
+#endif
