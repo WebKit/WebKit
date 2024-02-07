@@ -2717,6 +2717,10 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
     }
 
     textureDescriptor.pixelFormat = Texture::pixelFormat(descriptor.format);
+    if (textureDescriptor.pixelFormat == MTLPixelFormatInvalid) {
+        generateAValidationError("GPUDevice.createTexture: invalid texture format"_s);
+        return Texture::createInvalid(*this);
+    }
 
     textureDescriptor.mipmapLevelCount = descriptor.mipLevelCount;
 
@@ -3006,7 +3010,10 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     }
 
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
-    ASSERT(pixelFormat != MTLPixelFormatInvalid);
+    if (pixelFormat == MTLPixelFormatInvalid) {
+        m_device->generateAValidationError("GPUTexture.createView: invalid texture format"_s);
+        return TextureView::createInvalid(*this, m_device);
+    }
 
     MTLTextureType textureType;
     switch (descriptor->dimension) {
