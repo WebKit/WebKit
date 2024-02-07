@@ -40,6 +40,7 @@
 #include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/WebAuthenticationUtils.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -60,14 +61,14 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, std::nullopt, std::nullopt }, WTFMove(handler));
+    handleRequest({ { }, WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, std::nullopt, std::nullopt }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
+    handleRequest({ { }, WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -80,7 +81,9 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
     if (shouldRequestConditionalRegistration)
         username = std::get<PublicKeyCredentialCreationOptions>(data.options).user.name;
 
-    CompletionHandler<void(bool)> afterConsent = [this, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
+    CompletionHandler<void(bool)> afterConsent = [this, weakThis = WeakPtr { *this }, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
+        if (!weakThis)
+            return;
         auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();
         if (result) {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
@@ -103,10 +106,23 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             }
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
 
-            authenticatorManager.handleRequest(WTFMove(data), [handler = WTFMove(handler)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+            RefPtr<ArrayBuffer> clientDataJSON;
+            // AS API makes no difference between SameSite vs CrossOrigin
+            WebAuthn::Scope scope = data.parentOrigin ? WebAuthn::Scope::CrossOrigin : WebAuthn::Scope::SameOrigin;
+            auto topOrigin = data.parentOrigin ? data.parentOrigin->toString() : nullString();
+            WTF::switchOn(data.options, [&](const PublicKeyCredentialCreationOptions& options) {
+                clientDataJSON = buildClientDataJson(ClientDataType::Create, options.challenge, data.frameInfo.securityOrigin.securityOrigin(), scope, topOrigin);
+            }, [&](const PublicKeyCredentialRequestOptions& options) {
+                clientDataJSON = buildClientDataJson(ClientDataType::Get, options.challenge, data.frameInfo.securityOrigin.securityOrigin(), scope, topOrigin);
+            });
+            data.hash = buildClientDataJsonHash(*clientDataJSON);
+
+            authenticatorManager.handleRequest(WTFMove(data), [handler = WTFMove(handler), clientDataJSON = WTFMove(clientDataJSON)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
                 ASSERT(RunLoop::isMain());
                 WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
-                    handler(response->data(), response->attachment(), { });
+                    auto responseData = response->data();
+                    responseData.clientDataJSON = WTFMove(clientDataJSON);
+                    handler(responseData, response->attachment(), { });
                 }, [&](const ExceptionData& exception) {
                     handler({ }, (AuthenticatorAttachment)0, exception);
                 });
