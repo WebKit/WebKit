@@ -55,7 +55,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout);
 
-    auto library = ShaderModule::createLibrary(device, prepareResult.msl, label);
+    auto library = ShaderModule::createLibrary(device, prepareResult.msl, label, pipelineLayout && !pipelineLayout->isAutoLayout());
 
     auto iterator = prepareResult.entryPoints.find(entryPoint);
     if (iterator == prepareResult.entryPoints.end())

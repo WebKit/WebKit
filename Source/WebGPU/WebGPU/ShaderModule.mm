@@ -71,7 +71,7 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, bool generatedMetalMightBeInvalid)
 {
     auto options = [MTLCompileOptions new];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -83,7 +83,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
         WTFLogAlways("MSL compilation error: %@", error);
-        WGPU_FUZZER_ASSERT_NOT_REACHED("Failed metal compilation");
+        if (!generatedMetalMightBeInvalid)
+            WGPU_FUZZER_ASSERT_NOT_REACHED("Failed metal compilation");
     }
     library.label = label;
     return library;
@@ -107,7 +108,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     }
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
+    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label), true);
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, nil, { }, device);
