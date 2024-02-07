@@ -46,6 +46,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKVisibilityPropagationView.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewIOS.h"
 #import "WebFrameProxy.h"
@@ -171,10 +172,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 #if USE(EXTENSIONKIT)
-    RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForWebProcess;
-    RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForGPUProcess;
     RetainPtr<UIView> _visibilityPropagationViewForWebProcess;
     RetainPtr<UIView> _visibilityPropagationViewForGPUProcess;
+    RetainPtr<NSHashTable<WKVisibilityPropagationView *>> _visibilityPropagationViews;
 #else
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<_UINonHostingVisibilityPropagationView> _visibilityPropagationViewForWebProcess;
@@ -255,10 +255,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    [self _setupVisibilityPropagationViewForWebProcess];
-#if ENABLE(GPU_PROCESS)
-    [self _setupVisibilityPropagationViewForGPUProcess];
-#endif
+    [self _installVisibilityPropagationViews];
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
@@ -274,21 +271,34 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-- (void)_setupVisibilityPropagationViewForWebProcess
+- (void)_installVisibilityPropagationViews
 {
 #if USE(EXTENSIONKIT)
-    if (!_visibilityPropagationInteractionForWebProcess && !_visibilityPropagationViewForWebProcess) {
-        SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
-        if ([_page->process().extensionProcess().get() respondsToSelector:selector])
-            _visibilityPropagationInteractionForWebProcess = [_page->process().extensionProcess() performSelector:selector];
-        if (_visibilityPropagationInteractionForWebProcess) {
-            _visibilityPropagationViewForWebProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
-            [_visibilityPropagationViewForWebProcess addInteraction:_visibilityPropagationInteractionForWebProcess.get()];
-            [self addSubview:_visibilityPropagationViewForWebProcess.get()];
-            return;
-        }
+    if (UIView *visibilityPropagationView = [self _createVisibilityPropagationView]) {
+        [self addSubview:visibilityPropagationView];
+        return;
     }
 #endif
+
+    [self _setupVisibilityPropagationForWebProcess];
+#if ENABLE(GPU_PROCESS)
+    [self _setupVisibilityPropagationForGPUProcess];
+#endif
+}
+
+- (void)_setupVisibilityPropagationForWebProcess
+{
+    if (!_page->hasRunningProcess())
+        return;
+
+#if USE(EXTENSIONKIT)
+    if (WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
+        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+            [visibilityPropagationView propagateVisibilityToProcess:_page->process()];
+        return;
+    }
+#endif
+
     auto processID = _page->process().processID();
     auto contextID = _page->contextIDForVisibilityPropagationInWebProcess();
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
@@ -311,22 +321,17 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 }
 
 #if ENABLE(GPU_PROCESS)
-- (void)_setupVisibilityPropagationViewForGPUProcess
+- (void)_setupVisibilityPropagationForGPUProcess
 {
     auto* gpuProcess = _page->process().processPool().gpuProcess();
     if (!gpuProcess)
         return;
+
 #if USE(EXTENSIONKIT)
-    if (!_visibilityPropagationInteractionForGPUProcess && !_visibilityPropagationInteractionForGPUProcess) {
-        SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
-        if ([gpuProcess->extensionProcess().get() respondsToSelector:selector])
-            _visibilityPropagationInteractionForGPUProcess = [gpuProcess->extensionProcess() performSelector:selector];
-        if (_visibilityPropagationInteractionForGPUProcess) {
-            _visibilityPropagationViewForGPUProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
-            [_visibilityPropagationViewForGPUProcess addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
-            [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
-            return;
-        }
+    if (WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions()) {
+        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+            [visibilityPropagationView propagateVisibilityToProcess:*gpuProcess];
+        return;
     }
 #endif
 
@@ -348,9 +353,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (void)_removeVisibilityPropagationViewForWebProcess
 {
 #if USE(EXTENSIONKIT)
-    if (_visibilityPropagationInteractionForWebProcess) {
-        [_visibilityPropagationViewForWebProcess removeInteraction:_visibilityPropagationInteractionForWebProcess.get()];
-        _visibilityPropagationInteractionForWebProcess = nullptr;
+    if (auto page = _page.get()) {
+        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+            [visibilityPropagationView stopPropagatingVisibilityToProcess:page->process()];
     }
 #endif
 
@@ -365,9 +370,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (void)_removeVisibilityPropagationViewForGPUProcess
 {
 #if USE(EXTENSIONKIT)
-    if (_visibilityPropagationInteractionForGPUProcess) {
-        [_visibilityPropagationViewForGPUProcess removeInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
-        _visibilityPropagationInteractionForGPUProcess = nullptr;
+    auto page = _page.get();
+    if (auto gpuProcess = page ? page->process().processPool().gpuProcess() : nullptr) {
+        for (WKVisibilityPropagationView *visibilityPropagationView in _visibilityPropagationViews.get())
+            [visibilityPropagationView stopPropagatingVisibilityToProcess:*gpuProcess];
     }
 #endif
 
@@ -815,9 +821,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _accessibilityRegisterUIProcessTokens];
     [self setUpInteraction];
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    [self _setupVisibilityPropagationViewForWebProcess];
+    [self _setupVisibilityPropagationForWebProcess];
 #if ENABLE(GPU_PROCESS)
-    [self _setupVisibilityPropagationViewForGPUProcess];
+    [self _setupVisibilityPropagationForGPUProcess];
 #endif
 #endif
 }
@@ -825,14 +831,35 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 - (void)_webProcessDidCreateContextForVisibilityPropagation
 {
-    [self _setupVisibilityPropagationViewForWebProcess];
+    [self _setupVisibilityPropagationForWebProcess];
 }
 
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation
 {
-    [self _setupVisibilityPropagationViewForGPUProcess];
+    [self _setupVisibilityPropagationForGPUProcess];
+}
+
+#if USE(EXTENSIONKIT)
+- (WKVisibilityPropagationView *)_createVisibilityPropagationView
+{
+    if (!WebKit::AuxiliaryProcessProxy::manageProcessesAsExtensions())
+        return nil;
+
+    if (!_visibilityPropagationViews)
+        _visibilityPropagationViews = [NSHashTable weakObjectsHashTable];
+
+    RetainPtr visibilityPropagationView = adoptNS([[WKVisibilityPropagationView alloc] init]);
+    [_visibilityPropagationViews addObject:visibilityPropagationView.get()];
+
+    [self _setupVisibilityPropagationForWebProcess];
+#if ENABLE(GPU_PROCESS)
+    [self _setupVisibilityPropagationForGPUProcess];
+#endif
+
+    return visibilityPropagationView.autorelease();
 }
 #endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
