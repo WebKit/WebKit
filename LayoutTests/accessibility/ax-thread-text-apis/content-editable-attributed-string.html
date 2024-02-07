@@ -10,18 +10,19 @@
 <div contenteditable id="editable">First line.<br>Some text <a href="#">click me</a> <span>more</span> text.<br><i>Another line.</i></div>
 
 <script>
+// FIXME: Every stringForTextMarkerRange call should be attributedStringForTextMarkerRange, but we haven't implemented that yet with AccessibilityThreadTextApisEnabled.
 if (accessibilityController) {
     let output = "Tests that AttributedStrings are retrieved properly from line ranges within a contenteditable with children.\n\n";
 
     let text = accessibilityController.accessibleElementById("editable");
     let range = text.textMarkerRangeForElement(text);
-    let string = text.attributedStringForTextMarkerRange(range);
+    let string = text.stringForTextMarkerRange(range);
     output += `All text in the contenteditable: "${string}"\n`;
 
     // Get the range for the first line.
     let start = text.startTextMarkerForTextMarkerRange(range);
     range = text.lineTextMarkerRangeForTextMarker(start);
-    string = text.attributedStringForTextMarkerRange(range);
+    string = text.stringForTextMarkerRange(range);
     output += `First line: "${string}"\n`;
 
     // Get the range for the second line:
@@ -29,7 +30,7 @@ if (accessibilityController) {
     end = text.nextTextMarker(end);
     end = text.nextTextMarker(end);
     range = text.lineTextMarkerRangeForTextMarker(end);
-    string = text.attributedStringForTextMarkerRange(range);
+    string = text.stringForTextMarkerRange(range);
     output += `Second line: "${string}"\n`;
 
     // Get the range for the third line:

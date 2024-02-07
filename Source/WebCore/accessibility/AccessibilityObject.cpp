@@ -4679,6 +4679,11 @@ void findMatchingObjects(const AccessibilitySearchCriteria& criteria, AXCoreObje
             auto searchObject = searchStack.last();
             searchStack.removeLast();
 
+            if (criteria.stopAtID.isValid() && searchObject->objectID() == criteria.stopAtID) {
+                AXLOG(results);
+                return;
+            }
+
             if (objectMatchesSearchCriteriaWithResultLimit(searchObject, criteria, results))
                 break;
 

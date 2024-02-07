@@ -163,8 +163,12 @@ public:
     void setNodeIfNeeded() const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    // Find the next or previous marker.
-    AXTextMarker findMarker(AXDirection) const;
+    AXTextMarker toTextLeafMarker() const;
+    // True if this marker points to a leaf node (no children) with non-empty text runs.
+    bool isInTextLeaf() const;
+
+    // Find the next or previous marker, optionally stopping at the given ID and returning an invalid marker.
+    AXTextMarker findMarker(AXDirection, std::optional<AXID> = std::nullopt) const;
     // Starting from this text marker, creates a new position for the given direction and text unit type.
     AXTextMarker findMarker(AXDirection, AXTextUnit, AXTextUnitBoundary) const;
     // Creates a range for the line this marker points to.
@@ -173,17 +177,18 @@ public:
     AXTextMarker nextMarkerFromOffset(unsigned) const;
     // Returns the number of intermediate text markers between this and the root.
     unsigned offsetFromRoot() const;
-    // Starting from this marker, navigate to the last marker in the entire page.
-    AXTextMarker findLast() const;
+    // Starting from this marker, navigate to the last marker before the given AXID. Assumes `this`
+    // is before the AXID in the AX tree (anything else is a bug). std::nullopt means we will find
+    // the last marker on the entire webpage.
+    AXTextMarker findLastBefore(std::optional<AXID>) const;
+    AXTextMarker findLast() const { return findLastBefore(std::nullopt); }
+    // Determines partial order by traversing forward and backwards to try the other marker.
+    std::partial_ordering partialOrderByTraversal(const AXTextMarker&) const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     const AXTextRuns* runs() const;
-
-    // True if this marker points to a leaf node (no children) with non-empty text runs.
-    bool isInTextLeaf() const;
-    AXTextMarker toTextLeafMarker() const;
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     TextMarkerData m_data;

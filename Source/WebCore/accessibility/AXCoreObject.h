@@ -619,6 +619,7 @@ using AXEditingStyleValueVariant = std::variant<String, bool, int>;
 struct AccessibilitySearchCriteria {
     AXCoreObject* anchorObject { nullptr };
     AXCoreObject* startObject;
+    AXID stopAtID;
     AccessibilitySearchDirection searchDirection;
     Vector<AccessibilitySearchKey> searchKeys;
     String searchText;

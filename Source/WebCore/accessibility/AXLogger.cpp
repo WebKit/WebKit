@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AXLogger.h"
 
+#include "AXTextRun.h"
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedObject.h"
 #endif
@@ -865,6 +866,20 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
     return stream;
 }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+static void streamTextRuns(TextStream& stream, const AXTextRuns& runs)
+{
+    StringBuilder result;
+    for (size_t i = 0; i < runs.size(); i++) {
+        result.append(makeString(runs[i].lineIndex, ":|", runs[i].text, "|(len: ", runs[i].text.length(), ")"));
+        if (i != runs.size() - 1)
+            result.append(", ");
+    }
+
+    stream.dumpProperty("textRuns", result);
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
 void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const OptionSet<AXStreamOptions>& options)
 {
     if (options & AXStreamOptions::ObjectID)
@@ -894,6 +909,18 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
         if (objectWithInterestingHTML)
             stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML().left(150));
     }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (options & AXStreamOptions::TextRuns) {
+        if (auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(&object)) {
+            if (auto* runs = isolatedObject->textRuns(); runs && runs->size())
+                streamTextRuns(stream, *runs);
+        } else if (auto* liveObject = dynamicDowncast<AccessibilityObject>(&object)) {
+            if (auto runs = const_cast<AccessibilityObject*>(liveObject)->textRuns(); runs.size())
+                streamTextRuns(stream, runs);
+        }
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     if (options & AXStreamOptions::DisplayContents) {
         if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())

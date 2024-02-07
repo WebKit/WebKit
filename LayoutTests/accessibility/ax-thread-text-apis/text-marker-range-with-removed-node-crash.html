@@ -1,0 +1,39 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy of text-markers/text-marker-range-with-removed-node-crash.html. Remove after accessibilityThreadTextApisEnabled is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<div id="toBeRemoved">text to be removed</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when we create a text marker range from a marker with removed text node, it won't crash.");
+
+    if (window.accessibilityController) {
+
+          var textElement = accessibilityController.accessibleElementById("toBeRemoved");
+          var textMarkerRange = textElement.textMarkerRangeForElement(textElement);
+          debug(textElement.stringForTextMarkerRange(textMarkerRange));
+          
+          var startMarker = textElement.startTextMarkerForTextMarkerRange(textMarkerRange);
+          var endMarker = textElement.endTextMarkerForTextMarkerRange(textMarkerRange);
+          
+          // Remove the text node and recreate a text marker range, make sure it won't crash.
+          var text = document.getElementById("toBeRemoved");
+          text.removeChild(text.firstChild);
+          textMarkerRange = textElement.textMarkerRangeForMarkers(startMarker, endMarker);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

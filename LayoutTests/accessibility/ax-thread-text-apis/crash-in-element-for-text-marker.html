@@ -1,0 +1,47 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy of existing test. Remove after accessibilityThreadTextApisEnabled is enabled by default. -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+asdf
+
+<div id="content" tabindex="0">test</div>
+
+asdf
+
+<script>
+var output = "This protects against a crash when AXUIElementForTextMarker is queried with an empty text marker.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const content = accessibilityController.accessibleElementById("content");
+    // Get a marker that is invalid (the next one after the end of the body).
+    const textMarkerRange = content.textMarkerRangeForElement(content);
+    const endMarker = content.endTextMarkerForTextMarkerRange(textMarkerRange);
+
+    const body = accessibilityController.accessibleElementById("body");
+    const initialBodyChildrenCount = body.childrenCount;
+    // Remove "content" so that the text marker becomes invalid.
+    document.getElementById("body").removeChild(document.getElementById("content"));
+
+    setTimeout(async function() {
+        // Wait for the element to be removed from the AX tree.
+        await waitFor(() => initialBodyChildrenCount > body.childrenCount);
+
+        // Ask for the UI element for the marker of the deleted object (should not crash).
+        body.accessibilityElementForTextMarker(endMarker);
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

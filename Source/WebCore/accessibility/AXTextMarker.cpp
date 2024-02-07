@@ -230,8 +230,7 @@ String AXTextMarker::debugDescription() const
         , separator, "objectID ", objectID().loggingString()
         , separator, "role ", object ? accessibilityRoleToString(object->roleValue()) : String("no object"_s)
         , isIgnored() ? makeString(separator, "ignored") : ""_s
-        , separator, isMainThread() && node() ? node()->debugDescription()
-            : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
+        , isMainThread() && node() ? makeString(separator, node()->debugDescription()) : ""_s
         , separator, "anchor ", m_data.anchorType
         , separator, "affinity ", m_data.affinity
         , separator, "offset ", m_data.offset
@@ -360,6 +359,11 @@ std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMark
         return std::partial_ordering::equivalent;
     }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis())
+        return marker1.partialOrderByTraversal(marker2);
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
     auto result = std::partial_ordering::unordered;
     Accessibility::performFunctionOnMainThreadAndWait([&] () {
         auto startBoundaryPoint = marker1.boundaryPoint();
@@ -381,15 +385,9 @@ bool AXTextMarkerRange::isConfinedTo(AXID objectID) const
 }
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-enum class CheckStart : bool { No, Yes };
-// Finds the next object with text runs in the given direction.
-static RefPtr<AXIsolatedObject> findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, CheckStart checkStart = CheckStart::No)
+// Finds the next object with text runs in the given direction, optionally stopping at the given ID and returning std::nullopt.
+static RefPtr<AXIsolatedObject> findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID = std::nullopt)
 {
-    if (checkStart == CheckStart::Yes) {
-        if (auto* runs = start.textRuns(); runs && runs->size())
-            return &start;
-    }
-
     // FIXME: aria-owns breaks this function, as aria-owns causes the AX tree to be changed, affecting
     // our search below, but it doesn't actually change text position on the page. So we need to ignore
     // aria-owns tree changes here in order to behave correctly. We also probably need to do something
@@ -402,6 +400,8 @@ static RefPtr<AXIsolatedObject> findObjectWithRuns(AXIsolatedObject& start, AXDi
         return nullptr;
     criteria.anchorObject = root.get();
     criteria.searchKeys = { AccessibilitySearchKey::HasTextRuns };
+    if (stopAtID)
+        criteria.stopAtID = *stopAtID;
 
     AXCoreObject::AccessibilityChildrenVector results;
     Accessibility::findMatchingObjects(criteria, results);
@@ -451,7 +451,7 @@ AXTextMarker AXTextMarker::nextMarkerFromOffset(unsigned offset) const
     return marker;
 }
 
-AXTextMarker AXTextMarker::findLast() const
+AXTextMarker AXTextMarker::findLastBefore(std::optional<AXID> stopAtID) const
 {
     RELEASE_ASSERT(!isMainThread());
 
@@ -464,14 +464,15 @@ AXTextMarker AXTextMarker::findLast() const
         // call ourselves the last marker.
         if (!textLeafMarker.isValid())
             return *this;
-        return textLeafMarker.findLast();
+        return textLeafMarker.findLastBefore(stopAtID);
     }
 
     AXTextMarker marker;
     auto newMarker = *this;
-    while (newMarker.isValid()) {
+    // FIXME: Do we need to compare both tree ID and object ID here?
+    while (newMarker.isValid() && (!stopAtID || !stopAtID->isValid() || *stopAtID != newMarker.objectID())) {
         marker = WTFMove(newMarker);
-        newMarker = marker.findMarker(AXDirection::Next);
+        newMarker = marker.findMarker(AXDirection::Next, stopAtID);
     }
     return marker;
 }
@@ -515,7 +516,7 @@ const AXTextRuns* AXTextMarker::runs() const
     return object ? object->textRuns() : nullptr;
 }
 
-AXTextMarker AXTextMarker::findMarker(AXDirection direction) const
+AXTextMarker AXTextMarker::findMarker(AXDirection direction, std::optional<AXID> stopAtID) const
 {
     if (!isValid())
         return { };
@@ -538,9 +539,9 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction) const
         return { treeID(), objectID(), direction == AXDirection::Next ? offset() + 1 : offset() - 1 };
     }
     // offset() pointed to the last character in the given object's runs, so let's traverse to find the next object with runs.
-    if (RefPtr object = findObjectWithRuns(*this->isolatedObject(), direction)) {
+    if (RefPtr object = findObjectWithRuns(*this->isolatedObject(), direction, stopAtID)) {
         RELEASE_ASSERT(direction == AXDirection::Next ? object->textRuns()->runLength(0) : object->textRuns()->lastRunLength());
-        return { object->treeID(), object->objectID(), direction == AXDirection::Next ? 1 : object->textRuns()->lastRunLength() };
+        return { object->treeID(), object->objectID(), direction == AXDirection::Next ? 0 : object->textRuns()->lastRunLength() };
     }
 
     return { };
@@ -604,7 +605,8 @@ AXTextMarker AXTextMarker::toTextLeafMarker() const
     // AXTextMarker { ID 3: StaticText, Offset 3 }
     // Because we had to walk over ID 2 which had length 3 text.
     size_t precedingOffset = 0;
-    RefPtr current = findObjectWithRuns(*isolatedObject(), AXDirection::Next, CheckStart::Yes);
+    RefPtr start = isolatedObject();
+    RefPtr current = start->hasTextRuns() ? WTFMove(start) : findObjectWithRuns(*start, AXDirection::Next);
     while (current) {
         unsigned totalLength = current->textRuns()->totalLength();
         if (precedingOffset + totalLength >= offset())
@@ -636,6 +638,35 @@ AXTextMarkerRange AXTextMarker::lineRange(LineRangeType type) const
         return { findMarker(AXDirection::Previous, AXTextUnit::Line, AXTextUnitBoundary::Start), findMarker(AXDirection::Next, AXTextUnit::Line, AXTextUnitBoundary::End) };
     // FIXME: The other types aren't implemented yet.
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::partial_ordering AXTextMarker::partialOrderByTraversal(const AXTextMarker& other) const
+{
+    RELEASE_ASSERT(!isMainThread());
+
+    if (hasSameObjectAndOffset(other))
+        return std::partial_ordering::equivalent;
+    if (!isValid() || !other.isValid())
+        return std::partial_ordering::unordered;
+
+    auto foundOtherInDirection = [&] (AXDirection direction) {
+        auto current = *this;
+        while (current.isValid()) {
+            current = current.findMarker(direction);
+            if (current.hasSameObjectAndOffset(other))
+                return true;
+        }
+        return false;
+    };
+
+    // `other` comes after us in tree order since we found it by traversing AXDirection::Next.
+    if (foundOtherInDirection(AXDirection::Next))
+        return std::partial_ordering::less;
+    if (foundOtherInDirection(AXDirection::Previous))
+        return std::partial_ordering::greater;
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return std::partial_ordering::unordered;
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
