@@ -32,12 +32,12 @@
 #include "AbortSignal.h"
 #include "CredentialCreationOptions.h"
 #include "CredentialRequestOptions.h"
-#include "DigitalCredential.h"
 #include "DigitalCredentialRequestOptions.h"
+#include "DigitalIdentity.h"
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSDigitalCredential.h"
+#include "JSDigitalIdentity.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "WebAuthenticationConstants.h"
@@ -144,7 +144,7 @@ void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promis
     promise.resolve();
 }
 
-void CredentialsContainer::requestIdentity(DigitalCredentialRequestOptions&& options, DigitalCredentialPromise&& promise)
+void CredentialsContainer::requestIdentity(DigitalCredentialRequestOptions&& options, DigitalIdentityPromise&& promise)
 {
     if (options.signal && options.signal->aborted()) {
         promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
@@ -152,7 +152,7 @@ void CredentialsContainer::requestIdentity(DigitalCredentialRequestOptions&& opt
     }
     std::span<uint8_t> emptySpan;
     Ref<ArrayBuffer> emptyArrayBuffer = ArrayBuffer::create(emptySpan);
-    promise.resolve(DigitalCredential::create(WTFMove(emptyArrayBuffer)));
+    promise.resolve(DigitalIdentity::create(WTFMove(emptyArrayBuffer)));
 }
 
 } // namespace WebCore

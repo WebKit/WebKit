@@ -307,7 +307,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/credentialmanagement/CredentialMediationRequirement.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialsContainer.idl \
-    $(WebCore)/Modules/credentialmanagement/DigitalCredential.idl \
+    $(WebCore)/Modules/credentialmanagement/DigitalIdentity.idl \
     $(WebCore)/Modules/credentialmanagement/DigitalCredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/IdentityRequestProvider.idl \
     $(WebCore)/Modules/credentialmanagement/IdentityCredentialProtocol.idl \

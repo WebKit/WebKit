@@ -23,11 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Exposed=Window,
-    SecureContext,
-    EnabledBySetting=DigitalCredentialsEnabled,
-    Conditional=WEB_AUTHN,
-] interface DigitalCredential : BasicCredential {
-    [SameObject] readonly attribute ArrayBuffer data;
-};
+#include "config.h"
+#include "DigitalIdentity.h"
+
+#if ENABLE(WEB_AUTHN)
+
+namespace WebCore {
+
+Ref<DigitalIdentity> DigitalIdentity::create(Ref<ArrayBuffer>&& data)
+{
+    return adoptRef(*new DigitalIdentity(WTFMove(data)));
+}
+
+DigitalIdentity::~DigitalIdentity() = default;
+
+DigitalIdentity::DigitalIdentity(Ref<ArrayBuffer>&& data)
+    : BasicCredential(base64URLEncodeToString(data->data(), data->byteLength()), Type::DigitalIdentity, Discovery::CredentialStore)
+    , m_data(WTFMove(data))
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

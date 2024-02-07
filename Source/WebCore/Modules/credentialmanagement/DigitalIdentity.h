@@ -35,16 +35,16 @@
 
 namespace WebCore {
 
-class DigitalCredential;
+class DigitalIdentity;
 template<typename IDLType> class DOMPromiseDeferred;
 
-using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredential>>;
+using DigitalIdentityPromise = DOMPromiseDeferred<IDLInterface<DigitalIdentity>>;
 
-class DigitalCredential final : public BasicCredential {
+class DigitalIdentity final : public BasicCredential {
 public:
-    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data);
+    static Ref<DigitalIdentity> create(Ref<ArrayBuffer>&& data);
 
-    virtual ~DigitalCredential();
+    virtual ~DigitalIdentity();
 
     ArrayBuffer* data() const
     {
@@ -52,15 +52,15 @@ public:
     };
 
 private:
-    DigitalCredential(Ref<ArrayBuffer>&& data);
+    DigitalIdentity(Ref<ArrayBuffer>&& data);
 
-    Type credentialType() const final { return Type::DigitalCredential; }
+    Type credentialType() const final { return Type::DigitalIdentity; }
 
     RefPtr<ArrayBuffer> m_data;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(DigitalCredential, BasicCredential::Type::DigitalCredential)
+SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(DigitalIdentity, BasicCredential::Type::DigitalIdentity)
 
 #endif // ENABLE(WEB_AUTHN)

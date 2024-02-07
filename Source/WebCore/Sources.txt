@@ -112,7 +112,7 @@ Modules/cookie-store/CookieStore.cpp
 Modules/cookie-store/CookieStoreManager.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
-Modules/credentialmanagement/DigitalCredential.cpp
+Modules/credentialmanagement/DigitalIdentity.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
 Modules/entriesapi/DOMFileSystem.cpp
 Modules/entriesapi/ErrorCallback.cpp
@@ -3468,7 +3468,7 @@ JSDetectedText.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
-JSDigitalCredential.cpp
+JSDigitalIdentity.cpp
 JSDigitalCredentialRequestOptions.cpp
 JSDistanceModelType.cpp
 JSDocument.cpp
