@@ -92,7 +92,7 @@ public:
     void setEnabled(std::optional<bool>);
 
     bool presentsPopup() const { return !popupPath().isEmpty(); }
-    bool canProgrammaticallyPresentPopup() const { return m_respondsToPresentPopup; }
+    bool canProgrammaticallyPresentPopup() const;
 
     String popupPath() const;
     void setPopupPath(String);
@@ -128,7 +128,6 @@ private:
     std::optional<bool> m_customEnabled;
     std::optional<bool> m_hasUnreadBadgeText;
     bool m_popupPresented : 1 { false };
-    bool m_respondsToPresentPopup : 1 { false };
 };
 
 } // namespace WebKit

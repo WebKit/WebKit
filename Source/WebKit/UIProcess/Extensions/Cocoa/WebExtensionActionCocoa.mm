@@ -150,11 +150,6 @@ namespace WebKit {
 WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext)
     : m_extensionContext(extensionContext)
 {
-    auto delegate = extensionContext.extensionController()->delegate();
-    m_respondsToPresentPopup = [delegate respondsToSelector:@selector(webExtensionController:presentPopupForAction:forExtensionContext:completionHandler:)];
-
-    if (!m_respondsToPresentPopup)
-        RELEASE_LOG_ERROR(Extensions, "%{public}@ does not implement the webExtensionController:presentPopupForAction:forExtensionContext:completionHandler: method", delegate.debugDescription);
 }
 
 WebExtensionAction::WebExtensionAction(WebExtensionContext& extensionContext, WebExtensionTab& tab)
@@ -210,6 +205,9 @@ void WebExtensionAction::propertiesDidChange()
 
 WebExtensionAction* WebExtensionAction::fallbackAction() const
 {
+    if (!extensionContext())
+        return nullptr;
+
     // Tab actions fallback to the window action.
     if (m_tab)
         return extensionContext()->getAction(m_tab->window().get()).ptr();
@@ -315,10 +313,27 @@ WKWebView *WebExtensionAction::popupWebView(LoadOnFirstAccess loadOnFirstAccess)
     return m_popupWebView.get();
 }
 
+bool WebExtensionAction::canProgrammaticallyPresentPopup() const
+{
+    if (!extensionContext())
+        return false;
+
+    RefPtr extensionController = extensionContext()->extensionController();
+    if (!extensionController)
+        return false;
+
+    return [extensionController->delegate() respondsToSelector:@selector(webExtensionController:presentPopupForAction:forExtensionContext:completionHandler:)];
+}
+
 void WebExtensionAction::presentPopupWhenReady()
 {
-    if (!extensionContext() || !m_respondsToPresentPopup)
+    if (!extensionContext())
         return;
+
+    if (!canProgrammaticallyPresentPopup()) {
+        RELEASE_LOG_ERROR(Extensions, "Delegate does not implement the webExtensionController:presentPopupForAction:forExtensionContext:completionHandler: method");
+        return;
+    }
 
     m_popupPresented = false;
 
@@ -337,7 +352,9 @@ void WebExtensionAction::presentPopupWhenReady()
 
 void WebExtensionAction::readyToPresentPopup()
 {
-    if (m_popupPresented || !m_respondsToPresentPopup)
+    ASSERT(canProgrammaticallyPresentPopup());
+
+    if (m_popupPresented)
         return;
 
     setHasUnreadBadgeText(false);
@@ -345,8 +362,16 @@ void WebExtensionAction::readyToPresentPopup()
     m_popupPresented = true;
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        auto* extensionController = extensionContext()->extensionController();
-        auto delegate = extensionController->delegate();
+        if (!extensionContext())
+            return;
+
+        RefPtr extensionController = extensionContext()->extensionController();
+        auto delegate = extensionController ? extensionController->delegate() : nil;
+
+        if (!delegate || ![delegate respondsToSelector:@selector(webExtensionController:presentPopupForAction:forExtensionContext:completionHandler:)]) {
+            closePopupWebView();
+            return;
+        }
 
         [delegate webExtensionController:extensionController->wrapper() presentPopupForAction:wrapper() forExtensionContext:extensionContext()->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSError *error) {
             if (error)
