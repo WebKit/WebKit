@@ -29,7 +29,6 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
@@ -48,12 +47,12 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCArray, void>;
 
-    CoreIPCArray(Vector<UniqueRef<CoreIPCNSCFObject>>&& array)
+    CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
         : m_array(WTFMove(array))
     {
     }
 
-    Vector<UniqueRef<CoreIPCNSCFObject>> m_array;
+    Vector<CoreIPCNSCFObject> m_array;
 };
 
 } // namespace WebKit

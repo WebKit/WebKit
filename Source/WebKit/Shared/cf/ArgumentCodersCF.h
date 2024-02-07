@@ -59,13 +59,6 @@ template<> struct ArgumentCoder<RetainPtr<CFCharacterSetRef>> : CFRetainPtrArgum
     static std::optional<RetainPtr<CFCharacterSetRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CFDictionaryRef> {
-    template<typename Encoder> static void encode(Encoder&, CFDictionaryRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFDictionaryRef>> : CFRetainPtrArgumentCoder<CFDictionaryRef> {
-    static std::optional<RetainPtr<CFDictionaryRef>> decode(Decoder&);
-};
-
 #if HAVE(SEC_ACCESS_CONTROL)
 template<> struct ArgumentCoder<SecAccessControlRef> {
     template<typename Encoder> static void encode(Encoder&, SecAccessControlRef);

@@ -217,7 +217,6 @@ $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCAVOutputContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCAuditToken.serialization.in
-$(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
@@ -441,6 +440,7 @@ $(PROJECT_DIR)/Shared/XR/XRSystem.serialization.in
 $(PROJECT_DIR)/Shared/cf/CFTypes.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCBoolean.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCCFArray.serialization.in
+$(PROJECT_DIR)/Shared/cf/CoreIPCCFDictionary.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCCGColorSpace.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCNumber.serialization.in
 $(PROJECT_DIR)/Shared/cf/CoreIPCSecCertificate.serialization.in

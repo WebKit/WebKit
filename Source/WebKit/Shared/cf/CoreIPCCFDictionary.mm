@@ -23,27 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "CoreIPCCFDictionary.h"
 
 #if USE(CF)
 
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#import "CoreIPCCFType.h"
+#import "CoreIPCTypes.h"
 
 namespace WebKit {
 
-class CoreIPCCFType;
+CoreIPCCFDictionary::CoreIPCCFDictionary(std::unique_ptr<KeyValueVector>&& vector)
+    : m_vector(WTFMove(vector)) { }
 
-class CoreIPCCFArray {
-public:
-    CoreIPCCFArray(CFArrayRef);
-    CoreIPCCFArray(Vector<CoreIPCCFType>&&);
-    ~CoreIPCCFArray();
-    RetainPtr<CFArrayRef> createCFArray() const;
-    const Vector<CoreIPCCFType>& array() const { return m_array; }
-private:
-    Vector<CoreIPCCFType> m_array;
-};
+CoreIPCCFDictionary::CoreIPCCFDictionary(CoreIPCCFDictionary&&) = default;
+
+CoreIPCCFDictionary::~CoreIPCCFDictionary() = default;
+
+CoreIPCCFDictionary::CoreIPCCFDictionary(CFDictionaryRef dictionary)
+{
+    if (!dictionary)
+        return;
+    m_vector = makeUnique<KeyValueVector>();
+    m_vector->reserveInitialCapacity(CFDictionaryGetCount(dictionary));
+    [(__bridge NSDictionary *)dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*) {
+        if (IPC::typeFromCFTypeRef(key) == IPC::CFType::Unknown)
+            return;
+        if (IPC::typeFromCFTypeRef(value) == IPC::CFType::Unknown)
+            return;
+        m_vector->append({ CoreIPCCFType(key), CoreIPCCFType(value) });
+    }];
+}
+
+RetainPtr<CFDictionaryRef> CoreIPCCFDictionary::createCFDictionary() const
+{
+    if (!m_vector)
+        return nil;
+
+    auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_vector->size()]);
+    for (auto& pair : *m_vector) {
+        auto key = pair.key.toID();
+        auto value = pair.value.toID();
+        if (key && value)
+            [result setObject:value.get() forKey:key.get()];
+    }
+    return (__bridge CFDictionaryRef)result.get();
+}
 
 } // namespace WebKit
 

@@ -56,7 +56,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
 
-    using ValueType = Vector<KeyValuePair<UniqueRef<CoreIPCNSCFObject>, UniqueRef<CoreIPCNSCFObject>>>;
+    using ValueType = Vector<KeyValuePair<CoreIPCNSCFObject, CoreIPCNSCFObject>>;
 
     CoreIPCDictionary(ValueType&& keyValuePairs)
         : m_keyValuePairs(WTFMove(keyValuePairs))

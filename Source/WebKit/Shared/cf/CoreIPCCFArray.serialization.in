@@ -25,7 +25,7 @@
 webkit_platform_headers: "CoreIPCCFArray.h"
 
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFArray {
-    Vector<UniqueRef<WebKit::CoreIPCCFType>> array();
+    Vector<WebKit::CoreIPCCFType> array();
 }
 
 #endif

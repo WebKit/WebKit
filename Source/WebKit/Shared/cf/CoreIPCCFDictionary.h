@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,29 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if USE(CF)
 
-#include "CoreIPCRetainPtr.h"
-#include <wtf/ArgumentCoder.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
-class CoreIPCCFType {
+class CoreIPCCFType;
+
+class CoreIPCCFDictionary {
 public:
-    CoreIPCCFType(CFTypeRef cfType)
-        : m_cfType(cfType)
-    {
-    }
+    using KeyValueVector = Vector<KeyValuePair<CoreIPCCFType, CoreIPCCFType>>;
 
-    CoreIPCCFType(RetainPtr<CFTypeRef>&& cfType)
-        : m_cfType(WTFMove(cfType))
-    {
-    }
-
-    RetainPtr<id> toID() const { return (__bridge id)(m_cfType.get()); }
-
+    CoreIPCCFDictionary(CFDictionaryRef);
+    CoreIPCCFDictionary(CoreIPCCFDictionary&&);
+    CoreIPCCFDictionary(std::unique_ptr<KeyValueVector>&&);
+    ~CoreIPCCFDictionary();
+    RetainPtr<CFDictionaryRef> createCFDictionary() const;
+    const std::unique_ptr<KeyValueVector>& vector() const { return m_vector; }
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCCFType, void>;
-
-    IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
+    std::unique_ptr<KeyValueVector> m_vector;
 };
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
+#endif // USE(CF)

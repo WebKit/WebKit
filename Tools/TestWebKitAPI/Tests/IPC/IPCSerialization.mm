@@ -255,6 +255,7 @@ CFHolderForTesting cfHolder(CFTypeRef type)
 }
 
 bool arraysEqual(CFArrayRef, CFArrayRef);
+bool dictionariesEqual(CFDictionaryRef, CFDictionaryRef);
 
 inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 {
@@ -280,6 +281,9 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
     if (aTypeID == CFArrayGetTypeID() && bTypeID == CFArrayGetTypeID())
         return arraysEqual((CFArrayRef)aObject, (CFArrayRef)bObject);
 
+    if (aTypeID == CFDictionaryGetTypeID() && bTypeID == CFDictionaryGetTypeID())
+        return dictionariesEqual((CFDictionaryRef)aObject, (CFDictionaryRef)bObject);
+
     return false;
 }
 
@@ -299,6 +303,33 @@ bool arraysEqual(CFArrayRef a, CFArrayRef b)
             return false;
     }
     return true;
+}
+
+bool dictionariesEqual(CFDictionaryRef a, CFDictionaryRef b)
+{
+    auto aCount = CFDictionaryGetCount(a);
+    auto bCount = CFDictionaryGetCount(b);
+    if (aCount != bCount)
+        return false;
+
+    struct Context {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Context(bool& result, CFDictionaryRef b)
+            : result(result)
+            , b(b) { }
+        bool& result;
+        CFDictionaryRef b;
+        CFIndex keyCount { 0 };
+    };
+    bool result { true };
+    auto context = makeUnique<Context>(result, b);
+    CFDictionaryApplyFunction(a, [](CFTypeRef key, CFTypeRef value, void* voidContext) {
+        auto& context = *static_cast<Context*>(voidContext);
+        if (cfHolder(CFDictionaryGetValue(context.b, key)) != cfHolder(value))
+            context.result = false;
+        context.keyCount++;
+    }, context.get());
+    return context->keyCount == aCount;
 }
 
 struct ObjCHolderForTesting {
@@ -649,9 +680,9 @@ TEST(IPCSerialization, Basic)
     runTestCF({ CFSTR("Hello world") });
 
     // NSURL/CFURL
-    runTestNS({ [NSURL URLWithString:@"https://webkit.org/"] });
-    auto cfURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR("https://webkit.org/"), NULL));
-    runTestCF({ cfURL.get() });
+    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
+    runTestNS({ url });
+    runTestCF({ (__bridge CFURLRef)url });
 
     // NSData/CFData
     runTestNS({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
@@ -709,7 +740,7 @@ TEST(IPCSerialization, Basic)
     runNumberTest([NSNumber numberWithUnsignedInteger: NSUIntegerMax]);
 
     // NSArray
-    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
+    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], url, [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
 
     // NSDictionary
     runTestNS({ @{ @"Dictionary": @[ @"array value", @12 ] } });
@@ -743,7 +774,7 @@ TEST(IPCSerialization, Basic)
         NSLocalizedFailureReasonErrorKey: @"Localized Failure Reason Error",
         NSUnderlyingErrorKey: error1,
         @"Key1" : @"String value",
-        @"Key2" : [NSURL URLWithString:@"https://webkit.org/"],
+        @"Key2" : url,
         @"Key3" : [NSNumber numberWithFloat: 3.14159],
         @"Key4" : @[ @"String in Array"],
         @"Key5" : @{ @"InnerKey1" : [NSNumber numberWithBool: true] },
@@ -908,6 +939,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         (id)trust.get(),
         @{ }
     ] });
+
+    runTestCFWithExpectedResult({ (__bridge CFDictionaryRef) @{
+        @"key" : nestedArray,
+        @"key2" : nestedArray,
+        NSNull.null : NSData.data,
+        url : (id)trust.get(),
+        @"should be removed before encoding" : NSUUID.UUID,
+        NSUUID.UUID : @"should also be removed before encoding",
+    } }, { (__bridge CFDictionaryRef) @{
+        @"key" : nestedArray,
+        @"key2" : nestedArray,
+        NSNull.null : NSData.data,
+        url : (id)trust.get()
+    } });
 }
 
 #if PLATFORM(MAC)

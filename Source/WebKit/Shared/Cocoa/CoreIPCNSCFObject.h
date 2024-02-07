@@ -91,19 +91,16 @@ using ObjectValue = std::variant<
 >;
 
 class CoreIPCNSCFObject {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCNSCFObject(id);
+    CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
 
     RetainPtr<id> toID() const;
 
     static bool valueIsAllowed(IPC::Decoder&, ObjectValue&);
 
+    const UniqueRef<ObjectValue>& value() const { return m_value; }
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;
-
-    CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
-
     UniqueRef<ObjectValue> m_value;
 };
 

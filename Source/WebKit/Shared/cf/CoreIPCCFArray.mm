@@ -34,6 +34,11 @@
 
 namespace WebKit {
 
+CoreIPCCFArray::CoreIPCCFArray(Vector<CoreIPCCFType>&& array)
+    : m_array(WTFMove(array)) { }
+
+CoreIPCCFArray::~CoreIPCCFArray() = default;
+
 CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
 {
     CFIndex count = array ? CFArrayGetCount(array) : 0;
@@ -41,7 +46,7 @@ CoreIPCCFArray::CoreIPCCFArray(CFArrayRef array)
         CFTypeRef element = CFArrayGetValueAtIndex(array, i);
         if (IPC::typeFromCFTypeRef(element) == IPC::CFType::Unknown)
             continue;
-        m_array.append(makeUniqueRef<CoreIPCCFType>(element));
+        m_array.append(CoreIPCCFType(element));
     }
 }
 
