@@ -95,9 +95,10 @@ static LocalFrame* targetFrame(LocalFrame& frame, Event* event)
 {
     if (!event)
         return &frame;
-    if (!is<Node>(event->target()))
+    auto* node = dynamicDowncast<Node>(event->target());
+    if (!node)
         return &frame;
-    return downcast<Node>(*event->target()).document().frame();
+    return node->document().frame();
 }
 
 static bool applyCommandToFrame(LocalFrame& frame, EditorCommandSource source, EditAction action, Ref<EditingStyle>&& style)
@@ -220,13 +221,13 @@ static unsigned verticalScrollDistance(LocalFrame& frame)
     RefPtr focusedElement = frame.document()->focusedElement();
     if (!focusedElement)
         return 0;
-    CheckedPtr renderer = focusedElement->renderer();
-    if (!is<RenderBox>(renderer.get()))
+    CheckedPtr renderBox = dynamicDowncast<RenderBox>(focusedElement->renderer());
+    if (!renderBox)
         return 0;
-    const RenderStyle& style = renderer->style();
+    const RenderStyle& style = renderBox->style();
     if (!(style.overflowY() == Overflow::Scroll || style.overflowY() == Overflow::Auto || focusedElement->hasEditableStyle()))
         return 0;
-    int height = std::min<int>(downcast<RenderBox>(*renderer).clientHeight(), frame.view()->visibleHeight());
+    int height = std::min<int>(renderBox->clientHeight(), frame.view()->visibleHeight());
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 

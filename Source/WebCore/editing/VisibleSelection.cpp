@@ -683,8 +683,8 @@ Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const
 
 bool VisibleSelection::isInPasswordField() const
 {
-    RefPtr textControl = enclosingTextFormControl(start());
-    return is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
+    RefPtr textControl = dynamicDowncast<HTMLInputElement>(enclosingTextFormControl(start()));
+    return textControl && textControl->isPasswordField();
 }
 
 bool VisibleSelection::isInAutoFilledAndViewableField() const

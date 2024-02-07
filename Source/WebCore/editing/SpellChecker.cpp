@@ -152,8 +152,8 @@ bool SpellChecker::isCheckable(const SimpleRange& range) const
     }
     if (!foundRenderer)
         return false;
-    Ref node = range.start.container.get();
-    return !is<Element>(node) || downcast<Element>(node.get()).isSpellCheckingEnabled();
+    RefPtr element = dynamicDowncast<Element>(range.start.container.get());
+    return !element || element->isSpellCheckingEnabled();
 }
 
 void SpellChecker::requestCheckingFor(Ref<SpellCheckRequest>&& request)

@@ -43,9 +43,10 @@ using namespace HTMLNames;
 static RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 
-static inline bool isElementForFormatBlock(Node* node)
+static inline bool isElementForFormatBlock(Node& node)
 {
-    return is<Element>(*node) && isElementForFormatBlock(downcast<Element>(*node).tagQName());
+    auto* element = dynamicDowncast<Element>(node);
+    return element && isElementForFormatBlock(element->tagQName());
 }
 
 FormatBlockCommand::FormatBlockCommand(Ref<Document>&& document, const QualifiedName& tagName)
@@ -110,16 +111,17 @@ RefPtr<Element> FormatBlockCommand::elementForFormatBlockCommand(const std::opti
         return nullptr;
 
     RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(*range);
-    while (commonAncestor && !isElementForFormatBlock(commonAncestor.get()))
+    while (commonAncestor && !isElementForFormatBlock(*commonAncestor))
         commonAncestor = commonAncestor->parentNode();
-    if (!is<Element>(commonAncestor))
+    RefPtr commonAncestorElement = dynamicDowncast<Element>(commonAncestor);
+    if (!commonAncestorElement)
         return nullptr;
 
     auto rootEditableElement = range->start.container->rootEditableElement();
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
         return nullptr;
 
-    return downcast<Element>(commonAncestor.releaseNonNull());
+    return commonAncestorElement;
 }
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
@@ -162,7 +164,7 @@ RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode)
     for (RefPtr n = startNode; n; n = n->parentNode()) {
         if (!n->hasEditableStyle())
             return lastBlock;
-        if (isTableCell(*n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(n.get()))
+        if (isTableCell(*n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->hasEditableStyle() || isElementForFormatBlock(*n))
             return n;
         if (isBlock(*n))
             lastBlock = n;

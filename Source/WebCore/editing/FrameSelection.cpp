@@ -546,10 +546,8 @@ static bool removingNodeRemovesPosition(Node& node, const Position& position)
     if (position.anchorNode() == &node)
         return true;
 
-    if (!is<Element>(node))
-        return false;
-
-    return downcast<Element>(node).containsIncludingShadowDOM(position.anchorNode());
+    RefPtr element = dynamicDowncast<Element>(node);
+    return element && element->containsIncludingShadowDOM(position.anchorNode());
 }
 
 void DragCaretController::nodeWillBeRemoved(Node& node)
@@ -1941,7 +1939,9 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         return;
 
     Color caretColor = Color::black;
-    RefPtr element = is<Element>(node) ? downcast<Element>(&node) : node.parentElement();
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
+        element = node.parentElement();
     if (element && element->renderer())
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
@@ -2084,10 +2084,9 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
 void FrameSelection::selectAll()
 {
     RefPtr focusedElement = m_document->focusedElement();
-    if (is<HTMLSelectElement>(focusedElement)) {
-        HTMLSelectElement& selectElement = downcast<HTMLSelectElement>(*focusedElement);
-        if (selectElement.canSelectAll()) {
-            selectElement.selectAll();
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(focusedElement)) {
+        if (selectElement->canSelectAll()) {
+            selectElement->selectAll();
             return;
         }
     }
@@ -2479,12 +2478,12 @@ static RefPtr<HTMLFormElement> scanForForm(Element* start)
     if (!start)
         return nullptr;
     for (Ref element : descendantsOfType<HTMLElement>(start->document())) {
-        if (is<HTMLFormElement>(element))
-            return downcast<HTMLFormElement>(WTFMove(element));
+        if (RefPtr form = dynamicDowncast<HTMLFormElement>(element))
+            return form;
         if (element->isFormListedElement())
             return element->asFormListedElement()->form();
-        if (is<HTMLFrameElementBase>(element)) {
-            if (RefPtr contentDocument = downcast<HTMLFrameElementBase>(element.get()).contentDocument()) {
+        if (RefPtr frameElement = dynamicDowncast<HTMLFrameElementBase>(element)) {
+            if (RefPtr contentDocument = frameElement->contentDocument()) {
                 if (RefPtr frameResult = scanForForm(contentDocument->documentElement()))
                     return frameResult;
             }
