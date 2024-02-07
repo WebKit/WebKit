@@ -647,27 +647,30 @@ public:
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<DoubleConstraint>&&);
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<BooleanConstraint>&&);
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<StringConstraint>&&);
+    void set(MediaConstraintType, const MediaConstraint&);
 
-    std::optional<IntConstraint> width() const { return m_width; }
-    std::optional<IntConstraint> height() const { return m_height; }
-    std::optional<IntConstraint> sampleRate() const { return m_sampleRate; }
-    std::optional<IntConstraint> sampleSize() const { return m_sampleSize; }
+    void merge(const MediaConstraint&);
 
-    std::optional<DoubleConstraint> aspectRatio() const { return m_aspectRatio; }
-    std::optional<DoubleConstraint> frameRate() const { return m_frameRate; }
-    std::optional<DoubleConstraint> volume() const { return m_volume; }
+    const std::optional<IntConstraint>& width() const { return m_width; }
+    const std::optional<IntConstraint>& height() const { return m_height; }
+    const std::optional<IntConstraint>& sampleRate() const { return m_sampleRate; }
+    const std::optional<IntConstraint>& sampleSize() const { return m_sampleSize; }
 
-    std::optional<BooleanConstraint> echoCancellation() const { return m_echoCancellation; }
-    std::optional<BooleanConstraint> displaySurface() const { return m_displaySurface; }
-    std::optional<BooleanConstraint> logicalSurface() const { return m_logicalSurface; }
+    const std::optional<DoubleConstraint>& aspectRatio() const { return m_aspectRatio; }
+    const std::optional<DoubleConstraint>& frameRate() const { return m_frameRate; }
+    const std::optional<DoubleConstraint>& volume() const { return m_volume; }
 
-    std::optional<StringConstraint> facingMode() const { return m_facingMode; }
-    std::optional<StringConstraint> deviceId() const { return m_deviceId; }
-    std::optional<StringConstraint> groupId() const { return m_groupId; }
+    const std::optional<BooleanConstraint>& echoCancellation() const { return m_echoCancellation; }
+    const std::optional<BooleanConstraint>& displaySurface() const { return m_displaySurface; }
+    const std::optional<BooleanConstraint>& logicalSurface() const { return m_logicalSurface; }
 
-    std::optional<StringConstraint> whiteBalanceMode() const { return m_whiteBalanceMode; }
-    std::optional<DoubleConstraint> zoom() const { return m_zoom; }
-    std::optional<BooleanConstraint> torch() const { return m_torch; }
+    const std::optional<StringConstraint>& facingMode() const { return m_facingMode; }
+    const std::optional<StringConstraint>& deviceId() const { return m_deviceId; }
+    const std::optional<StringConstraint>& groupId() const { return m_groupId; }
+
+    const std::optional<StringConstraint>& whiteBalanceMode() const { return m_whiteBalanceMode; }
+    const std::optional<DoubleConstraint>& zoom() const { return m_zoom; }
+    const std::optional<BooleanConstraint>& torch() const { return m_torch; }
 
     MediaTrackConstraintSetMap isolatedCopy() const;
 
@@ -693,146 +696,6 @@ private:
     std::optional<StringConstraint> m_whiteBalanceMode;
     std::optional<DoubleConstraint> m_zoom;
     std::optional<BooleanConstraint> m_torch;
-};
-
-class FlattenedConstraint {
-public:
-
-    void set(const MediaConstraint&);
-    void merge(const MediaConstraint&);
-    void append(const MediaConstraint&);
-    const MediaConstraint* find(MediaConstraintType) const;
-    bool isEmpty() const { return m_variants.isEmpty(); }
-
-    class iterator {
-    public:
-        iterator(const FlattenedConstraint* constraint, size_t index)
-            : m_constraint(constraint)
-            , m_index(index)
-#if ASSERT_ENABLED
-            , m_generation(constraint->m_generation)
-#endif
-        {
-        }
-
-        MediaConstraint& operator*() const
-        {
-            return m_constraint->m_variants.at(m_index).constraint();
-        }
-
-        iterator& operator++()
-        {
-#if ASSERT_ENABLED
-            ASSERT(m_generation == m_constraint->m_generation);
-#endif
-            m_index++;
-            return *this;
-        }
-
-        bool operator==(const iterator& other) const { return m_index == other.m_index; }
-
-    private:
-        const FlattenedConstraint* m_constraint { nullptr };
-        size_t m_index { 0 };
-#if ASSERT_ENABLED
-        int m_generation { 0 };
-#endif
-    };
-
-    const iterator begin() const { return iterator(this, 0); }
-    const iterator end() const { return iterator(this, m_variants.size()); }
-
-private:
-    class ConstraintHolder {
-    public:
-        static ConstraintHolder create(const MediaConstraint& value) { return ConstraintHolder(value); }
-
-        ~ConstraintHolder()
-        {
-            if (m_value.asRaw) {
-                switch (dataType()) {
-                case MediaConstraint::DataType::Integer:
-                    delete m_value.asInteger;
-                    break;
-                case MediaConstraint::DataType::Double:
-                    delete m_value.asDouble;
-                    break;
-                case MediaConstraint::DataType::Boolean:
-                    delete m_value.asBoolean;
-                    break;
-                case MediaConstraint::DataType::String:
-                    delete m_value.asString;
-                    break;
-                case MediaConstraint::DataType::None:
-                    ASSERT_NOT_REACHED();
-                    break;
-                }
-            }
-#ifndef NDEBUG
-            m_value.asRaw = reinterpret_cast<MediaConstraint*>(0xbbadbeef);
-#endif
-        }
-
-        ConstraintHolder(ConstraintHolder&& other)
-        {
-            switch (other.dataType()) {
-            case MediaConstraint::DataType::Integer:
-                m_value.asInteger = std::exchange(other.m_value.asInteger, nullptr);
-                break;
-            case MediaConstraint::DataType::Double:
-                m_value.asDouble = std::exchange(other.m_value.asDouble, nullptr);
-                break;
-            case MediaConstraint::DataType::Boolean:
-                m_value.asBoolean = std::exchange(other.m_value.asBoolean, nullptr);
-                break;
-            case MediaConstraint::DataType::String:
-                m_value.asString = std::exchange(other.m_value.asString, nullptr);
-                break;
-            case MediaConstraint::DataType::None:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-
-        MediaConstraint& constraint() const { return *m_value.asRaw; }
-        MediaConstraint::DataType dataType() const { return constraint().dataType(); }
-        MediaConstraintType constraintType() const { return constraint().constraintType(); }
-
-    private:
-        explicit ConstraintHolder(const MediaConstraint& value)
-        {
-            switch (value.dataType()) {
-            case MediaConstraint::DataType::Integer:
-                m_value.asInteger = new IntConstraint(downcast<const IntConstraint>(value));
-                break;
-            case MediaConstraint::DataType::Double:
-                m_value.asDouble = new DoubleConstraint(downcast<DoubleConstraint>(value));
-                break;
-            case MediaConstraint::DataType::Boolean:
-                m_value.asBoolean = new BooleanConstraint(downcast<BooleanConstraint>(value));
-                break;
-            case MediaConstraint::DataType::String:
-                m_value.asString = new StringConstraint(downcast<StringConstraint>(value));
-                break;
-            case MediaConstraint::DataType::None:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-        
-        union {
-            MediaConstraint* asRaw;
-            IntConstraint* asInteger;
-            DoubleConstraint* asDouble;
-            BooleanConstraint* asBoolean;
-            StringConstraint* asString;
-        } m_value;
-    };
-
-    Vector<ConstraintHolder> m_variants;
-#if ASSERT_ENABLED
-    int m_generation { 0 };
-#endif
 };
 
 struct MediaConstraints {

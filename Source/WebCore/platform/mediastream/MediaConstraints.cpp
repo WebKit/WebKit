@@ -122,65 +122,6 @@ void StringConstraint::merge(const MediaConstraint& other)
     }
 }
 
-void FlattenedConstraint::set(const MediaConstraint& constraint)
-{
-    if (find(constraint.constraintType()))
-        return;
-
-    append(constraint);
-}
-
-void FlattenedConstraint::merge(const MediaConstraint& constraint)
-{
-    for (auto& variant : *this) {
-        if (variant.constraintType() != constraint.constraintType())
-            continue;
-
-        switch (variant.dataType()) {
-        case MediaConstraint::DataType::Integer:
-            ASSERT(constraint.isInt());
-            downcast<const IntConstraint>(variant).merge(downcast<const IntConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::Double:
-            ASSERT(constraint.isDouble());
-            downcast<const DoubleConstraint>(variant).merge(downcast<const DoubleConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::Boolean:
-            ASSERT(constraint.isBoolean());
-            downcast<const BooleanConstraint>(variant).merge(downcast<const BooleanConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::String:
-            ASSERT(constraint.isString());
-            downcast<const StringConstraint>(variant).merge(downcast<const StringConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::None:
-            ASSERT_NOT_REACHED();
-            return;
-        }
-    }
-
-    append(constraint);
-}
-
-void FlattenedConstraint::append(const MediaConstraint& constraint)
-{
-#if ASSERT_ENABLED
-    ++m_generation;
-#endif
-
-    m_variants.append(ConstraintHolder::create(constraint));
-}
-
-const MediaConstraint* FlattenedConstraint::find(MediaConstraintType type) const
-{
-    for (auto& variant : m_variants) {
-        if (variant.constraintType() == type)
-            return &variant.constraint();
-    }
-
-    return nullptr;
-}
-
 void MediaTrackConstraintSetMap::forEach(Function<void(const MediaConstraint&)>&& callback) const
 {
     filter([callback = WTFMove(callback)] (const MediaConstraint& constraint) mutable {
@@ -362,6 +303,149 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, const MediaConstraint& constraint)
+{
+    switch (constraint.dataType()) {
+    case MediaConstraint::DataType::Integer:
+        set(constraintType, std::make_optional(downcast<const IntConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::Double:
+        set(constraintType, std::make_optional(downcast<const DoubleConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::Boolean:
+        set(constraintType, std::make_optional(downcast<const BooleanConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::String:
+        set(constraintType, std::make_optional(downcast<const StringConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::None:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(const MediaConstraint& constraint)
+{
+    switch (constraint.constraintType()) {
+    case MediaConstraintType::FacingMode:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::String);
+        if (!m_facingMode)
+            m_facingMode = downcast<const StringConstraint>(constraint);
+        else
+            m_facingMode->merge(downcast<const StringConstraint>(constraint));
+        break;
+    case MediaConstraintType::DeviceId:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::String);
+        if (!m_deviceId)
+            m_deviceId = downcast<const StringConstraint>(constraint);
+        else
+            m_deviceId->merge(downcast<const StringConstraint>(constraint));
+        break;
+    case MediaConstraintType::GroupId:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::String);
+        if (!m_groupId)
+            m_groupId = downcast<const StringConstraint>(constraint);
+        else
+            m_groupId->merge(downcast<const StringConstraint>(constraint));
+        break;
+    case MediaConstraintType::WhiteBalanceMode:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::String);
+        if (!m_whiteBalanceMode)
+            m_whiteBalanceMode = downcast<const StringConstraint>(constraint);
+        else
+            m_whiteBalanceMode->merge(downcast<const StringConstraint>(constraint));
+        break;
+    case MediaConstraintType::Width:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Integer);
+        if (!m_width)
+            m_width = downcast<const IntConstraint>(constraint);
+        else
+            m_width->merge(downcast<const IntConstraint>(constraint));
+        break;
+    case MediaConstraintType::Height:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Integer);
+        if (!m_height)
+            m_height = downcast<const IntConstraint>(constraint);
+        else
+            m_height->merge(downcast<const IntConstraint>(constraint));
+        break;
+    case MediaConstraintType::SampleRate:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Integer);
+        if (!m_sampleRate)
+            m_sampleRate = downcast<const IntConstraint>(constraint);
+        else
+            m_sampleRate->merge(downcast<const IntConstraint>(constraint));
+        break;
+    case MediaConstraintType::SampleSize:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Integer);
+        if (!m_sampleSize)
+            m_sampleSize = downcast<const IntConstraint>(constraint);
+        else
+            m_sampleSize->merge(downcast<const IntConstraint>(constraint));
+        break;
+    case MediaConstraintType::AspectRatio:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Double);
+        if (!m_aspectRatio)
+            m_aspectRatio = downcast<const DoubleConstraint>(constraint);
+        else
+            m_aspectRatio->merge(downcast<const DoubleConstraint>(constraint));
+        break;
+    case MediaConstraintType::FrameRate:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Double);
+        if (!m_frameRate)
+            m_frameRate = downcast<const DoubleConstraint>(constraint);
+        else
+            m_frameRate->merge(downcast<const DoubleConstraint>(constraint));
+        break;
+    case MediaConstraintType::Volume:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Double);
+        if (!m_volume)
+            m_volume = downcast<const DoubleConstraint>(constraint);
+        else
+            m_volume->merge(downcast<const DoubleConstraint>(constraint));
+        break;
+    case MediaConstraintType::Zoom:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Double);
+        if (!m_zoom)
+            m_zoom = downcast<const DoubleConstraint>(constraint);
+        else
+            m_zoom->merge(downcast<const DoubleConstraint>(constraint));
+        break;
+    case MediaConstraintType::EchoCancellation:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Boolean);
+        if (!m_echoCancellation)
+            m_echoCancellation = downcast<const BooleanConstraint>(constraint);
+        else
+            m_echoCancellation->merge(downcast<const BooleanConstraint>(constraint));
+        break;
+    case MediaConstraintType::DisplaySurface:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Boolean);
+        if (!m_displaySurface)
+            m_displaySurface = downcast<const BooleanConstraint>(constraint);
+        else
+            m_displaySurface->merge(downcast<const BooleanConstraint>(constraint));
+        break;
+    case MediaConstraintType::LogicalSurface:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Boolean);
+        if (!m_logicalSurface)
+            m_logicalSurface = downcast<const BooleanConstraint>(constraint);
+        else
+            m_logicalSurface->merge(downcast<const BooleanConstraint>(constraint));
+        break;
+    case MediaConstraintType::Torch:
+        ASSERT(constraint.dataType() == MediaConstraint::DataType::Boolean);
+        if (!m_torch)
+            m_torch = downcast<const BooleanConstraint>(constraint);
+        else
+            m_torch->merge(downcast<const BooleanConstraint>(constraint));
+        break;
+    case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;

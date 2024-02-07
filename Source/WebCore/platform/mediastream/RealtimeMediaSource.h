@@ -288,11 +288,11 @@ protected:
     virtual void startApplyingConstraints() { }
     virtual void endApplyingConstraints() { }
 
-    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
+    bool selectSettings(const MediaConstraints&, MediaTrackConstraintSetMap&, String&);
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
-    void applyConstraints(const FlattenedConstraint&);
-    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const FlattenedConstraint&);
+    void applyConstraints(const MediaTrackConstraintSetMap&);
+    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap&);
     bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
 
     virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
