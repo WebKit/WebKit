@@ -15,3 +15,5 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=x86_64] = $(ARM_FILES) $(X
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] =  $(X86_FILES) *_mmx.c *_neon_dotprod.c
 
 OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);
+
+CONFIGURATION_BUILD_DIR = $(BUILT_PRODUCTS_DIR)/libwebrtc
