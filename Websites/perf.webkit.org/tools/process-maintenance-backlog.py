@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import argparse
 import json
 import os
 import sys
-import urllib2
+from urllib.request import Request, urlopen
 
 from util import load_server_config
 
@@ -14,35 +14,36 @@ def main():
     parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard.')
     args = parser.parse_args()
 
-    maintenace_dir = determine_maintenance_dir()
+    maintenance_dir = determine_maintenance_dir()
 
     server_config = load_server_config(args.server_config_json)
 
-    print 'Submitting results in "%s" to "%s"' % (maintenace_dir, server_config['server']['url'])
+    print(f'Submitting results in "{maintenance_dir}" to "{server_config["server"]["url"]}"')
 
-    for filename in os.listdir(maintenace_dir):
-        path = os.path.join(maintenace_dir, filename)
-        if os.path.isfile(path) and filename.endswith('.json'):
+    for filename in os.listdir(maintenance_dir):
+        path = os.path.join(maintenance_dir, filename)
+        if not os.path.isfile(path) or not filename.endswith('.json'):
+            continue
 
-            with open(os.path.join(maintenace_dir, path)) as submitted_json_file:
-                submitted_content = submitted_json_file.read()
+        with open(os.path.join(maintenance_dir, path)) as submitted_json_file:
+            submitted_content = submitted_json_file.read()
 
-            print '%s...' % filename,
-            sys.stdout.flush()
+        print(f'{filename}...')
+        sys.stdout.flush()
 
-            suffix = '.done'
-            while True:
-                if submit_report(server_config, submitted_content):
-                    break
-                if ask_yes_no_question('Suffix the file with .error and continue?'):
-                    suffix = '.error'
-                    break
-                else:
-                    sys.exit(0)
+        suffix = '.done'
+        while True:
+            if submit_report(server_config, submitted_content):
+                break
+            if ask_yes_no_question('Suffix the file with .error and continue?'):
+                suffix = '.error'
+                break
+            else:
+                sys.exit(0)
 
-            os.rename(path, path + suffix)
+        os.rename(path, path + suffix)
 
-            print 'Done'
+        print('Done')
 
 
 def determine_maintenance_dir():
@@ -61,25 +62,25 @@ def determine_maintenance_dir():
 
 def ask_yes_no_question(question):
     while True:
-        action = raw_input(question + ' (y/n): ')
+        action = input(question + ' (y/n): ')
         if action == 'y' or action == 'yes':
             return True
         elif action == 'n' or action == 'no':
             return False
         else:
-            print 'Please answer by yes or no'
+            print('Please answer by yes or no')
 
 
 def submit_report(server_config, payload):
     try:
-        request = urllib2.Request(server_config['server']['url'] + '/api/report')
+        request = Request(server_config['server']['url'] + '/api/report')
         request.add_header('Content-Type', 'application/json')
         request.add_header('Content-Length', len(payload))
 
-        output = urllib2.urlopen(request, payload).read()
+        output = urlopen(request, payload).read()
         try:
             result = json.loads(output)
-        except Exception, error:
+        except Exception as error:
             raise Exception(error, output)
 
         if result.get('status') != 'OK':
@@ -87,7 +88,7 @@ def submit_report(server_config, payload):
 
         return True
     except Exception as error:
-        print >> sys.stderr, 'Failed to submit commits: %s' % str(error)
+        print(f'Failed to submit commits: {error}', file=sys.stderr)
         return False
 
 
