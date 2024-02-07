@@ -5279,12 +5279,15 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/blur-clip-stacking-context-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/blur-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/clip-under-filter-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-contrast.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-invert.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-cb-abspos-inline-001.html [ ImageOnlyFailure ]
@@ -5357,6 +5360,8 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-external-filter-resource.
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-filter-used-by-mask.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip.html [ ImageOnlyFailure ]
 
+[ Release ] imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002.html [ ImageOnlyFailure ]
+webkit.org/b/149460 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002.html [ Crash ]
 
 imported/w3c/web-platform-tests/content-security-policy/script-src/ [ DumpJSConsoleLogInStdErr ]
 
