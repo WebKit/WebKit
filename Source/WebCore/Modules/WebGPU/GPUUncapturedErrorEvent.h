@@ -38,36 +38,21 @@ namespace WebCore {
 class GPUUncapturedErrorEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(GPUUncapturedErrorEvent);
 public:
-    static Ref<GPUUncapturedErrorEvent> create(String&& type, const GPUUncapturedErrorEventInit& gpuUncapturedErrorEventInitDict)
-    {
-        return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(type), gpuUncapturedErrorEventInitDict));
-    }
+    virtual ~GPUUncapturedErrorEvent() = default;
 
-    static Ref<GPUUncapturedErrorEvent> create(Ref<WebGPU::UncapturedErrorEvent>&& backing)
+    static Ref<GPUUncapturedErrorEvent> create(const AtomString& type, GPUUncapturedErrorEventInit&& gpuUncapturedErrorEventInitDict)
     {
-        return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(backing)));
+        return adoptRef(*new GPUUncapturedErrorEvent(type, WTFMove(gpuUncapturedErrorEventInitDict)));
     }
 
     GPUError error() const;
-
-    WebGPU::UncapturedErrorEvent* backing() { return m_backing.get(); }
-    const WebGPU::UncapturedErrorEvent* backing() const { return m_backing.get(); }
+    EventInterface eventInterface() const override;
 
 private:
-    GPUUncapturedErrorEvent(String&& type, const GPUUncapturedErrorEventInit& uncapturedErrorEventInit)
-        : m_type(WTFMove(type))
-        , m_uncapturedErrorEventInit(uncapturedErrorEventInit)
-    {
-    }
-
-    GPUUncapturedErrorEvent(Ref<WebGPU::UncapturedErrorEvent>&& backing)
-        : m_backing(WTFMove(backing))
-    {
-    }
+    GPUUncapturedErrorEvent(const AtomString&, GPUUncapturedErrorEventInit&&);
 
     String m_type;
     GPUUncapturedErrorEventInit m_uncapturedErrorEventInit;
-    RefPtr<WebGPU::UncapturedErrorEvent> m_backing;
 };
 
 }

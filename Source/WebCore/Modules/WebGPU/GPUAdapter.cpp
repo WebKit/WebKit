@@ -61,15 +61,18 @@ static WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDeviceDe
     return options->convertToBacking();
 }
 
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
+void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
 {
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise)](RefPtr<WebGPU::Device>&& device) mutable {
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device.get())
             promise.reject(Exception(ExceptionCode::OperationError));
         else if (deviceDescriptor && deviceDescriptor->requiredFeatures.size() > device->features().features().size())
             promise.reject(Exception(ExceptionCode::TypeError));
-        else
-            promise.resolve(GPUDevice::create(nullptr, device.releaseNonNull()));
+        else {
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull());
+            gpuDevice->suspendIfNeeded();
+            promise.resolve(WTFMove(gpuDevice));
+        }
     });
 }
 

@@ -375,6 +375,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUImageDataLayout.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUInternalError.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUMultisampleState.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin2D.serialization.in

@@ -32,19 +32,20 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUUncapturedErrorEvent);
 
+GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, GPUUncapturedErrorEventInit&& uncapturedErrorEventInit)
+    : Event(type, uncapturedErrorEventInit, IsTrusted::Yes)
+    , m_uncapturedErrorEventInit(WTFMove(uncapturedErrorEventInit))
+{
+}
+
 GPUError GPUUncapturedErrorEvent::error() const
 {
-    if (!m_backing)
-        return m_uncapturedErrorEventInit.error;
+    return m_uncapturedErrorEventInit.error;
+}
 
-    return WTF::switchOn(WebGPU::Error(m_backing->error()), [](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) -> GPUError {
-        return RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
-    }, [](Ref<WebGPU::ValidationError>&& validationError) -> GPUError {
-        return RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
-    }, [](Ref<WebGPU::InternalError>&& internalError) -> GPUError {
-        return RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
-    });
-
+EventInterface GPUUncapturedErrorEvent::eventInterface() const
+{
+    return GPUUncapturedErrorEventInterfaceType;
 }
 
 }

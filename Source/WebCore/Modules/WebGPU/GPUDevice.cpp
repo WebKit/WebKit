@@ -27,6 +27,7 @@
 #include "GPUDevice.h"
 
 #include "DOMPromiseProxy.h"
+#include "EventNames.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupDescriptor.h"
 #include "GPUBindGroupLayout.h"
@@ -57,6 +58,7 @@
 #include "GPUSupportedLimits.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "GPUUncapturedErrorEvent.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
 #include "JSGPUDeviceLostInfo.h"
@@ -64,6 +66,7 @@
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUPipelineError.h"
 #include "JSGPURenderPipeline.h"
+#include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -277,24 +280,48 @@ void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)
     m_backing->pushErrorScope(convertToBacking(errorFilter));
 }
 
+static GPUError createGPUErrorFromWebGPUError(auto& webGPUError)
+{
+    return WTF::switchOn(WTFMove(*webGPUError), [](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) {
+        GPUError error = RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
+        return error;
+    }, [](Ref<WebGPU::ValidationError>&& validationError) {
+        GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
+        return error;
+    }, [](Ref<WebGPU::InternalError>&& internalError) {
+        GPUError error = RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
+        return error;
+    });
+}
+
 void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
 {
-    m_backing->popErrorScope([promise = WTFMove(errorScopePromise)](std::optional<WebGPU::Error>&& error) mutable {
+    m_backing->popErrorScope([promise = WTFMove(errorScopePromise)](bool success, std::optional<WebGPU::Error>&& error) mutable {
         if (!error) {
-            promise.resolve(std::nullopt);
+            if (success)
+                promise.resolve(std::nullopt);
+            else
+                promise.reject(Exception { ExceptionCode::OperationError, "popErrorScope failed"_s });
             return;
         }
-        WTF::switchOn(WTFMove(*error), [&promise](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) {
-            GPUError error = RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
-            promise.resolve(error);
-        }, [&promise](Ref<WebGPU::ValidationError>&& validationError) {
-            GPUError error = RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
-            promise.resolve(error);
-        }, [&promise](Ref<WebGPU::InternalError>&& internalError) {
-            GPUError error = RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
-            promise.resolve(error);
-        });
+        promise.resolve(createGPUErrorFromWebGPUError(error));
     });
+}
+
+bool GPUDevice::addEventListener(const AtomString& eventType, Ref<EventListener>&& eventListener, const AddEventListenerOptions& options)
+{
+    auto result = EventTarget::addEventListener(eventType, WTFMove(eventListener), options);
+#if PLATFORM(COCOA)
+    if (eventType == WebCore::eventNames().uncapturederrorEvent) {
+        m_backing->resolveUncapturedErrorEvent([eventType, weakThis = WeakPtr { *this }](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
+            if (!weakThis || !hasUncapturedError)
+                return;
+
+            queueTaskToDispatchEvent(*weakThis.get(), TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(error) }));
+        });
+    }
+#endif
+    return result;
 }
 
 }

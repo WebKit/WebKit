@@ -118,7 +118,8 @@ public:
     virtual Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
 
     virtual void pushErrorScope(ErrorFilter) = 0;
-    virtual void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) = 0;
+    virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     virtual void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) = 0;
     class DeviceLostClient {
         virtual ~DeviceLostClient() = default;

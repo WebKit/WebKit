@@ -50,6 +50,7 @@ enum class TaskSource : uint8_t {
     Timer,
     UserInteraction,
     WebGL,
+    WebGPU,
     WebXR,
     WebSocket,
 

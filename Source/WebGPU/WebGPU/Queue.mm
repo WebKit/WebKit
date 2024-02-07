@@ -424,7 +424,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         }
     }
 
-    RELEASE_ASSERT(data);
+    if (!data)
+        return;
+
     if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture) || !isValidToUseWith(texture, *this)) {
         device->generateAValidationError("Validation failure."_s);
         return;

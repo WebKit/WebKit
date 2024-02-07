@@ -42,6 +42,7 @@
 #include "WebGPUExtent3D.h"
 #include "WebGPUExternalTextureDescriptor.h"
 #include "WebGPUExternalTextureImpl.h"
+#include "WebGPUInternalError.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUPipelineLayoutImpl.h"
@@ -80,7 +81,10 @@ DeviceImpl::DeviceImpl(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& 
 {
 }
 
-DeviceImpl::~DeviceImpl() = default;
+DeviceImpl::~DeviceImpl()
+{
+    wgpuDeviceSetUncapturedErrorCallback(m_backing.get(), nullptr, nullptr);
+}
 
 Ref<Queue> DeviceImpl::queue()
 {
@@ -661,15 +665,27 @@ static void popErrorScopeCallback(WGPUErrorType type, const char* message, void*
     Block_release(block); // Block_release is matched with Block_copy below in DeviceImpl::popErrorScope().
 }
 
-void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&& callback)
+static void setUncapturedScopeCallback(WGPUErrorType type, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUErrorType, const char*)>(userdata);
+    block(type, message);
+    Block_release(block);
+}
+
+void DeviceImpl::popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&& callback)
 {
     auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUErrorType errorType, const char* message) mutable {
         std::optional<Error> error;
+        bool succeeded = false;
         switch (errorType) {
         case WGPUErrorType_NoError:
+            succeeded = true;
+            break;
         case WGPUErrorType_Force32:
             break;
         case WGPUErrorType_Internal:
+            error = { { InternalError::create(String::fromLatin1(message)) } };
+            break;
         case WGPUErrorType_Validation:
             error = { { ValidationError::create(String::fromLatin1(message)) } };
             break;
@@ -677,16 +693,45 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
             error = { { OutOfMemoryError::create() } };
             break;
         case WGPUErrorType_Unknown:
-            error = { { OutOfMemoryError::create() } };
             break;
         case WGPUErrorType_DeviceLost:
-            error = { { OutOfMemoryError::create() } };
             break;
         }
 
-        callback(WTFMove(error));
+        callback(succeeded, WTFMove(error));
     });
     wgpuDevicePopErrorScope(m_backing.get(), &popErrorScopeCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in popErrorScopeCallback().
+}
+
+void DeviceImpl::resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&& callback)
+{
+    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUErrorType errorType, const char* message) mutable {
+        std::optional<Error> error;
+        bool hasUncapturedError = true;
+        switch (errorType) {
+        case WGPUErrorType_NoError:
+            hasUncapturedError = false;
+            break;
+        case WGPUErrorType_Force32:
+            break;
+        case WGPUErrorType_Internal:
+            error = { { InternalError::create(String::fromLatin1(message)) } };
+            break;
+        case WGPUErrorType_Validation:
+            error = { { ValidationError::create(String::fromLatin1(message)) } };
+            break;
+        case WGPUErrorType_OutOfMemory:
+            error = { { OutOfMemoryError::create() } };
+            break;
+        case WGPUErrorType_Unknown:
+            break;
+        case WGPUErrorType_DeviceLost:
+            break;
+        }
+
+        callback(hasUncapturedError, WTFMove(error));
+    });
+    wgpuDeviceSetUncapturedErrorCallback(m_backing.get(), &setUncapturedScopeCallback, Block_copy(blockPtr.get()));
 }
 
 void DeviceImpl::resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&& callback)

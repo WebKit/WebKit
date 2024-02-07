@@ -326,6 +326,7 @@ ontransitioncancel
 ontransitionend
 ontransitionrun
 ontransitionstart
+onuncapturederror
 onunhandledrejection
 onunload
 onvolumechange

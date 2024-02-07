@@ -47,6 +47,7 @@ public:
     }
 
     virtual ~DeviceImpl();
+    void setLastUncapturedError(WGPUErrorType, char const*);
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -85,7 +86,8 @@ private:
     Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) final;
 
     void pushErrorScope(ErrorFilter) final;
-    void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) final;
+    void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) final;
+    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebCore::WebGPU::Error>&&)>&&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     void setLabelInternal(const String&) final;

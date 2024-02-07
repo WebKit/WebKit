@@ -2733,8 +2733,10 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     id<MTLTexture> texture = [m_device newTextureWithDescriptor:textureDescriptor];
 
-    if (!texture)
+    if (!texture) {
+        generateAnOutOfMemoryError("out of memory"_s);
         return Texture::createInvalid(*this);
+    }
 
     texture.label = fromAPI(descriptor.label);
 

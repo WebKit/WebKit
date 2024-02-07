@@ -54,9 +54,9 @@ class ObjectHeap;
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBuffer> create(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteBuffer> create(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, bool mappedAtCreation, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTFMove(streamConnection), mappedAtCreation, identifier));
     }
 
     virtual ~RemoteBuffer();
@@ -66,7 +66,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBuffer(WebCore::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteBuffer(WebCore::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, bool mappedAtCreation, WebGPUIdentifier);
 
     RemoteBuffer(const RemoteBuffer&) = delete;
     RemoteBuffer(RemoteBuffer&&) = delete;

@@ -106,7 +106,8 @@ private:
     Ref<WebCore::WebGPU::QuerySet> createQuerySet(const WebCore::WebGPU::QuerySetDescriptor&) final;
 
     void pushErrorScope(WebCore::WebGPU::ErrorFilter) final;
-    void popErrorScope(CompletionHandler<void(std::optional<WebCore::WebGPU::Error>&&)>&&) final;
+    void popErrorScope(CompletionHandler<void(bool, std::optional<WebCore::WebGPU::Error>&&)>&&) final;
+    void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebCore::WebGPU::Error>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
