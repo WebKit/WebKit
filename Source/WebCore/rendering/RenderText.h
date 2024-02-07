@@ -68,7 +68,7 @@ public:
     void attachTextBox(LegacyInlineTextBox& box) { m_lineBoxes.attach(box); }
     void removeTextBox(LegacyInlineTextBox& box) { m_lineBoxes.remove(box); }
 
-    StringImpl& text() const { return *m_text.impl(); } // Since m_text can never be null, returning this type means callers won't null check.
+    const String& text() const { return m_text; }
     String textWithoutConvertingBackslashToYenSymbol() const;
 
     LegacyInlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
