@@ -31,7 +31,6 @@
 #include "FrameInfoData.h"
 #include "PDFPluginIdentifier.h"
 #include "PDFScriptEvaluator.h"
-#include "WebMouseEvent.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
@@ -197,8 +196,6 @@ public:
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 
-    void navigateToURL(const URL&);
-
     virtual void attemptToUnlockPDF(const String& password) = 0;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -263,7 +260,7 @@ protected:
     WebCore::ScrollPosition minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;
     WebCore::IntSize visibleSize() const final { return m_size; }
-    WebCore::IntPoint lastKnownMousePositionInView() const override;
+    WebCore::IntPoint lastKnownMousePositionInView() const override { return m_lastMousePositionInPluginCoordinates; }
 
     float deviceScaleFactor() const override;
     bool shouldSuspendScrollAnimations() const final { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
@@ -319,7 +316,7 @@ protected:
     WebCore::AffineTransform m_rootViewToPluginTransform;
 
     WebCore::IntSize m_scrollOffset;
-    std::optional<WebMouseEvent> m_lastMouseEvent;
+    WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
     RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
     RefPtr<WebCore::Scrollbar> m_verticalScrollbar;

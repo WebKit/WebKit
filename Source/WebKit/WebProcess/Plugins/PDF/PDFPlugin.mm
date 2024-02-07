@@ -453,8 +453,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController clickedLinkWithURL:(NSURL *)url
 {
-    URL coreURL = url;
-    _pdfPlugin->navigateToURL(coreURL);
+    _pdfPlugin->clickedLink(url);
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation
@@ -936,7 +935,9 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
     
 NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
 {
-    IntPoint positionInPDFViewCoordinates(convertFromPluginToPDFView(lastKnownMousePositionInView()));
+    m_lastMousePositionInPluginCoordinates = convertFromRootViewToPlugin(event.position());
+
+    IntPoint positionInPDFViewCoordinates(convertFromPluginToPDFView(m_lastMousePositionInPluginCoordinates));
 
     NSEventType eventType;
 
@@ -950,10 +951,10 @@ NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
 
 bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
-    m_lastMouseEvent = event;
-
     PlatformMouseEvent platformEvent = platform(event);
     IntPoint mousePosition = convertFromRootViewToPlugin(event.position());
+
+    m_lastMouseEvent = event;
 
     RefPtr<Scrollbar> targetScrollbar;
     RefPtr<Scrollbar> targetScrollbarForLastMousePosition;
@@ -962,7 +963,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         IntRect verticalScrollbarFrame(m_verticalScrollbarLayer.get().frame);
         if (verticalScrollbarFrame.contains(mousePosition))
             targetScrollbar = verticalScrollbar();
-        if (verticalScrollbarFrame.contains(lastKnownMousePositionInView()))
+        if (verticalScrollbarFrame.contains(m_lastMousePositionInPluginCoordinates))
             targetScrollbarForLastMousePosition = verticalScrollbar();
     }
 
@@ -970,7 +971,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         IntRect horizontalScrollbarFrame(m_horizontalScrollbarLayer.get().frame);
         if (horizontalScrollbarFrame.contains(mousePosition))
             targetScrollbar = horizontalScrollbar();
-        if (horizontalScrollbarFrame.contains(lastKnownMousePositionInView()))
+        if (horizontalScrollbarFrame.contains(m_lastMousePositionInPluginCoordinates))
             targetScrollbarForLastMousePosition = horizontalScrollbar();
     }
 
@@ -1189,6 +1190,23 @@ void PDFPlugin::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rec
 void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 {
     [m_scrollCornerLayer setNeedsDisplay];
+}
+
+void PDFPlugin::clickedLink(NSURL *url)
+{
+    URL coreURL = url;
+    if (coreURL.protocolIsJavaScript())
+        return;
+
+    auto* frame = m_frame ? m_frame->coreLocalFrame() : nullptr;
+    if (!frame)
+        return;
+
+    RefPtr<Event> coreEvent;
+    if (m_lastMouseEvent)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
+
+    frame->loader().changeLocation(coreURL, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
 void PDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)

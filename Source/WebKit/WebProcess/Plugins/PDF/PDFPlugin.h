@@ -28,6 +28,7 @@
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include "PDFPluginBase.h"
+#include "WebMouseEvent.h"
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
@@ -201,6 +202,8 @@ private:
     RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
     
     RefPtr<PDFPluginPasswordField> m_passwordField;
+
+    std::optional<WebMouseEvent> m_lastMouseEvent;
 
     String m_temporaryPDFUUID;
     String m_lastFoundString;
