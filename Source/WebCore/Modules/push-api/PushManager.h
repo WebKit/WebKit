@@ -38,7 +38,7 @@ namespace WebCore {
 class PushSubscriptionOwner;
 class ScriptExecutionContext;
 
-class PushManager {
+class PushManager final {
     WTF_MAKE_ISO_ALLOCATED(PushManager);
 public:
     explicit PushManager(PushSubscriptionOwner&);

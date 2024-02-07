@@ -37,7 +37,7 @@ class MediaStreamTrack;
 class ScriptExecutionContext;
 class WritableStream;
 
-class VideoTrackGenerator : public RefCounted<VideoTrackGenerator> {
+class VideoTrackGenerator final : public RefCounted<VideoTrackGenerator> {
     WTF_MAKE_ISO_ALLOCATED(VideoTrackGenerator);
 public:
     static ExceptionOr<Ref<VideoTrackGenerator>> create(ScriptExecutionContext&);

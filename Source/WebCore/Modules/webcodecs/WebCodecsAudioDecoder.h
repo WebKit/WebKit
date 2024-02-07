@@ -45,7 +45,7 @@ class WebCodecsEncodedAudioChunk;
 class WebCodecsErrorCallback;
 class WebCodecsAudioDataOutputCallback;
 
-class WebCodecsAudioDecoder
+class WebCodecsAudioDecoder final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioDecoder>
     , public ActiveDOMObject
     , public EventTarget {

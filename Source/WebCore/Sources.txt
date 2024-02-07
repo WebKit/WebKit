@@ -1065,9 +1065,11 @@ dom/CustomEvent.cpp
 dom/CustomStateSet.cpp
 dom/DOMException.cpp
 dom/DOMImplementation.cpp
+dom/DOMPoint.cpp
 dom/DOMPointReadOnly.cpp
 dom/DOMQuad.cpp
 dom/DOMRectList.cpp
+dom/DOMRect.cpp
 dom/DOMRectReadOnly.cpp
 dom/DOMStringList.cpp
 dom/DataTransfer.cpp

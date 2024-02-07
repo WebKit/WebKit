@@ -43,7 +43,7 @@ class WebCodecsEncodedVideoChunk;
 class WebCodecsErrorCallback;
 class WebCodecsVideoFrameOutputCallback;
 
-class WebCodecsVideoDecoder
+class WebCodecsVideoDecoder final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoDecoder>
     , public ActiveDOMObject
     , public EventTarget {

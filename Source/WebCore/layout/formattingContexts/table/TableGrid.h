@@ -39,7 +39,7 @@ namespace Layout {
 class Box;
 class ElementBox;
 
-class TableGrid {
+class TableGrid final {
     WTF_MAKE_ISO_ALLOCATED(TableGrid);
 public:
     TableGrid();
@@ -143,7 +143,7 @@ public:
     };
 
     // Cell represents a <td> or <th>. It can span multiple slots in the grid.
-    class Cell : public CanMakeWeakPtr<Cell> {
+    class Cell final : public CanMakeWeakPtr<Cell> {
         WTF_MAKE_ISO_ALLOCATED_INLINE(Cell);
     public:
         Cell(const ElementBox&, SlotPosition, CellSpan);

@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class DynamicContentScalingImageBufferBackend : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
+class DynamicContentScalingImageBufferBackend final : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(DynamicContentScalingImageBufferBackend);
     WTF_MAKE_NONCOPYABLE(DynamicContentScalingImageBufferBackend);
 public:

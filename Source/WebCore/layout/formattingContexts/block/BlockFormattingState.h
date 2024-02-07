@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Layout {
 
 // BlockFormattingState holds the state for a particular block formatting context tree.
-class BlockFormattingState : public FormattingState {
+class BlockFormattingState final : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingState);
 public:
     BlockFormattingState(LayoutState&, const ElementBox& blockFormattingContextRoot);

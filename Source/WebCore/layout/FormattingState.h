@@ -37,7 +37,7 @@ enum class StyleDiff;
 
 class FormattingState {
     WTF_MAKE_NONCOPYABLE(FormattingState);
-    WTF_MAKE_ISO_ALLOCATED(FormattingState);
+    WTF_MAKE_ISO_ALLOCATED_VIRTUAL_BASE(FormattingState);
 public:
     void setIntrinsicWidthConstraintsForBox(const Box&, IntrinsicWidthConstraints);
     std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraintsForBox(const Box&) const;
@@ -55,10 +55,11 @@ public:
     // FIXME: We need to find a way to limit access to mutable geometry.
     BoxGeometry& boxGeometry(const Box& layoutBox);
 
+    ~FormattingState();
+
 protected:
     enum class Type { Block, Table, Flex };
     FormattingState(Type, LayoutState&);
-    ~FormattingState();
 
 private:
     LayoutState& m_layoutState;

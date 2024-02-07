@@ -42,7 +42,7 @@ namespace WebCore {
 class Element;
 class WeakPtrImplWithEventTargetData;
 
-class ResizeObservation : public RefCounted<ResizeObservation> {
+class ResizeObservation final : public RefCounted<ResizeObservation> {
     WTF_MAKE_ISO_ALLOCATED(ResizeObservation);
 public:
     static Ref<ResizeObservation> create(Element& target, ResizeObserverBoxOptions);

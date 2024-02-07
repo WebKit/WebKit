@@ -36,7 +36,7 @@ namespace WebCore {
 class GraphicsContext;
 class SVGFilterElement;
 
-struct FilterData {
+struct FilterData final {
     WTF_MAKE_ISO_ALLOCATED(FilterData);
     WTF_MAKE_NONCOPYABLE(FilterData);
 public:

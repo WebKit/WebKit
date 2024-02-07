@@ -41,7 +41,7 @@ class Rect;
 // PlacedFloats holds the floating boxes for BFC/IFC using the BFC's writing mode.
 // PlacedFloats may be inherited by IFCs with mismataching writing mode. In such cases floats
 // are added to PlacledFloats as if they had matching inline direction (i.e. all boxes within PlacedFloats share the same writing mode)
-class PlacedFloats {
+class PlacedFloats final {
     WTF_MAKE_ISO_ALLOCATED(PlacedFloats);
 public:
     PlacedFloats(const ElementBox& blockFormattingContextRoot);

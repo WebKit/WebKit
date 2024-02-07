@@ -75,7 +75,7 @@ private:
     MonotonicTime m_pendingSharedTimerFireTime;
 };
 
-struct ThreadTimerHeapItem : ThreadSafeRefCounted<ThreadTimerHeapItem> {
+struct ThreadTimerHeapItem final : ThreadSafeRefCounted<ThreadTimerHeapItem> {
     WTF_MAKE_ISO_ALLOCATED(ThreadTimerHeapItem);
     WTF_ALLOW_STRUCT_COMPACT_POINTERS;
 

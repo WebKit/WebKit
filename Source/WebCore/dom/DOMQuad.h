@@ -37,7 +37,7 @@ class DOMRect;
 struct DOMPointInit;
 struct DOMRectInit;
 
-class DOMQuad : public ScriptWrappable, public RefCounted<DOMQuad> {
+class DOMQuad final : public ScriptWrappable, public RefCounted<DOMQuad> {
     WTF_MAKE_ISO_ALLOCATED(DOMQuad);
 public:
     static Ref<DOMQuad> create(const DOMPointInit& p1, const DOMPointInit& p2, const DOMPointInit& p3, const DOMPointInit& p4) { return adoptRef(*new DOMQuad(p1, p2, p3, p4)); }

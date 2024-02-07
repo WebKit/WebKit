@@ -56,6 +56,8 @@ public:
 
     ExceptionOr<Ref<DOMPoint>> matrixTransform(DOMMatrixInit&&) const;
 
+    virtual ~DOMPointReadOnly() = default;
+
 protected:
     DOMPointReadOnly(double x, double y, double z, double w)
         : m_x(x)

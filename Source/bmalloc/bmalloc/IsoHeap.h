@@ -169,6 +169,23 @@ struct CompactIsoHeap : public IsoHeapBase<Type> {
 };
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
+#define MAKE_BISO_MALLOCED_VIRTUAL_BASE(isoType, heapType, exportMacro) \
+public: \
+    void* operator new(size_t, void* p) = delete; \
+    void* operator new[](size_t, void* p) = delete; \
+    \
+    void* operator new(size_t size) = delete; \
+    void operator delete(void* p) = delete; \
+    \
+    void* operator new[](size_t size) = delete; \
+    void operator delete[](void* p) = delete; \
+    \
+    void* operator new(size_t, NotNullTag, void* location) = delete;\
+    \
+    using webkitFastMalloced = int; \
+private: \
+    using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
+
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
 #define MAKE_BISO_MALLOCED(isoType, heapType, exportMacro) \
 public: \
@@ -186,6 +203,7 @@ public: \
     void* operator new(size_t, NotNullTag, void* location) \
     { \
         ASSERT(location); \
+        static_assert(std::is_final_v<isoType> || std::has_virtual_destructor_v<isoType>); \
         return location; \
     } \
     \
@@ -212,6 +230,7 @@ public: \
     void* operator new(size_t, NotNullTag, void* location) \
     { \
         ASSERT(location); \
+        static_assert(std::is_final_v<isoType> || std::has_virtual_destructor_v<isoType>); \
         return location; \
     } \
     \

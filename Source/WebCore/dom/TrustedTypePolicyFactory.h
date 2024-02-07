@@ -39,7 +39,7 @@ class TrustedScript;
 struct TrustedTypePolicyOptions;
 class ScriptExecutionContext;
 
-class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory> {
+class TrustedTypePolicyFactory final : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory> {
     WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicyFactory);
 public:
     static Ref<TrustedTypePolicyFactory> create();

@@ -73,7 +73,7 @@ private:
 // https://immersive-web.github.io/webxr/#xrsession-viewer-reference-space
 // This is a helper class to implement the viewer space owned by a WebXRSession.
 // It avoids a circular reference between the session and the reference space.
-class WebXRViewerSpace : public RefCounted<WebXRViewerSpace>, public WebXRSpace {
+class WebXRViewerSpace final : public RefCounted<WebXRViewerSpace>, public WebXRSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRViewerSpace);
 public:
     static Ref< WebXRViewerSpace> create(Document& document, WebXRSession& session)

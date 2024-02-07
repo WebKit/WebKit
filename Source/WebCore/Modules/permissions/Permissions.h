@@ -48,7 +48,7 @@ enum class PermissionQuerySource : uint8_t;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-class Permissions : public RefCounted<Permissions> {
+class Permissions final : public RefCounted<Permissions> {
     WTF_MAKE_ISO_ALLOCATED(Permissions);
 public:
     static Ref<Permissions> create(NavigatorBase&);

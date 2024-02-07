@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class PushSubscriptionOptions : public RefCounted<PushSubscriptionOptions> {
+class PushSubscriptionOptions final : public RefCounted<PushSubscriptionOptions> {
     WTF_MAKE_ISO_ALLOCATED(PushSubscriptionOptions);
 public:
     template<typename... Args> static Ref<PushSubscriptionOptions> create(Args&&... args) { return adoptRef(*new PushSubscriptionOptions(std::forward<Args>(args)...)); }

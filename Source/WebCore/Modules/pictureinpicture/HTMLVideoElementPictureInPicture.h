@@ -39,7 +39,7 @@ class DeferredPromise;
 class HTMLVideoElement;
 class PictureInPictureWindow;
 
-class HTMLVideoElementPictureInPicture
+class HTMLVideoElementPictureInPicture final
     : public Supplement<HTMLVideoElement>
     , public PictureInPictureObserver
 #if !RELEASE_LOG_DISABLED

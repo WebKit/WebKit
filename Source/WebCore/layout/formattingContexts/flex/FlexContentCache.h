@@ -32,7 +32,7 @@ namespace WebCore {
 namespace Layout {
 
 // FlexContentCache is used to cache content for subsequent layouts.
-class FlexContentCache {
+class FlexContentCache final {
     WTF_MAKE_ISO_ALLOCATED_INLINE(FlexContentCache);
 public:
 

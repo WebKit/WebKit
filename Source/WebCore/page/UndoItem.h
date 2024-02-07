@@ -37,7 +37,7 @@ namespace WebCore {
 class Document;
 class UndoManager;
 
-class UndoItem : public RefCounted<UndoItem>, public CanMakeWeakPtr<UndoItem> {
+class UndoItem final : public RefCounted<UndoItem>, public CanMakeWeakPtr<UndoItem> {
     WTF_MAKE_ISO_ALLOCATED(UndoItem);
 public:
     struct Init {

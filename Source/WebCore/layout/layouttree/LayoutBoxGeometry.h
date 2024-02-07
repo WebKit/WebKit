@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Layout {
 
-class BoxGeometry {
+class BoxGeometry final {
     WTF_MAKE_ISO_ALLOCATED(BoxGeometry);
 public:
     BoxGeometry(const BoxGeometry&);

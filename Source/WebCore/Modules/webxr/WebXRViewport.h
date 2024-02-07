@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class WebXRViewport : public RefCounted<WebXRViewport> {
+class WebXRViewport final : public RefCounted<WebXRViewport> {
     WTF_MAKE_ISO_ALLOCATED(WebXRViewport);
 public:
     static Ref<WebXRViewport> create(const IntRect&);

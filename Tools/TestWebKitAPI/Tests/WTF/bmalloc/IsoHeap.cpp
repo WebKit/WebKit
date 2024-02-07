@@ -236,7 +236,7 @@ TEST(bmalloc, IsoMallocAndFreeFast)
     EXPECT_FALSE(IsoPageBase::pageFor(ptr)->isShared());
 }
 
-class BisoMalloced {
+class BisoMalloced final {
     MAKE_BISO_MALLOCED(BisoMalloced, IsoHeap, BNOEXPORT);
 public:
     BisoMalloced(int x, float y)

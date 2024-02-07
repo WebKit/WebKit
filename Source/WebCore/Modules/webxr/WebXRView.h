@@ -42,7 +42,7 @@ class WebXRFrame;
 class WebXRRigidTransform;
 class WebXRSession;
 
-class WebXRView : public RefCounted<WebXRView> {
+class WebXRView final : public RefCounted<WebXRView> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);

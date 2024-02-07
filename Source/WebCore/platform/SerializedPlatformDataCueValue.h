@@ -41,7 +41,7 @@ OBJC_CLASS NSString;
 
 namespace WebCore {
 
-class SerializedPlatformDataCueValue {
+class SerializedPlatformDataCueValue final {
     WTF_MAKE_ISO_ALLOCATED(SerializedPlatformDataCueValue);
 public:
     struct Data {

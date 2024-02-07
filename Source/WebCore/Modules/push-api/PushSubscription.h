@@ -48,7 +48,7 @@ class PushSubscriptionOwner;
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
 
-class PushSubscription : public RefCounted<PushSubscription> {
+class PushSubscription final : public RefCounted<PushSubscription> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(PushSubscription, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<PushSubscription> create(Args&&... args) { return adoptRef(*new PushSubscription(std::forward<Args>(args)...)); }

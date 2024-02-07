@@ -53,7 +53,7 @@ class WebXRView;
 class WebXRViewport;
 struct XRWebGLLayerInit;
 
-class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
+class WebXRWebGLLayer final : public WebXRLayer, private CanvasObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
 

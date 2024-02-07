@@ -42,11 +42,11 @@ class Document;
 class PlatformSpeechSynthesizerClient;
 class SpeechSynthesisVoice;
 
-class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(SpeechSynthesis);
+class SpeechSynthesis final : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis>, public ActiveDOMObject, public EventTarget {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(SpeechSynthesis, WEBCORE_EXPORT);
 public:
     static Ref<SpeechSynthesis> create(ScriptExecutionContext&);
-    virtual ~SpeechSynthesis();
+    WEBCORE_EXPORT virtual ~SpeechSynthesis();
 
     using RefCounted::ref;
     using RefCounted::deref;

@@ -53,7 +53,7 @@ class XRInputSourceEvent;
 class WebXRHand;
 class WebXRInputSpace;
 
-class WebXRInputSource : public RefCounted<WebXRInputSource>, public CanMakeWeakPtr<WebXRInputSource> {
+class WebXRInputSource final : public RefCounted<WebXRInputSource>, public CanMakeWeakPtr<WebXRInputSource> {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSource);
 public:
     using InputSource = PlatformXR::FrameData::InputSource;

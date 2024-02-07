@@ -47,7 +47,7 @@ class WebXRSession;
 class WebXRSpace;
 class WebXRViewerPose;
 
-class WebXRFrame : public RefCounted<WebXRFrame> {
+class WebXRFrame final : public RefCounted<WebXRFrame> {
     WTF_MAKE_ISO_ALLOCATED(WebXRFrame);
 public:
     enum class IsAnimationFrame : bool { No, Yes };

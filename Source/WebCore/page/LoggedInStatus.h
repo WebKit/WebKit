@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class LoggedInStatus {
+class LoggedInStatus final {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(LoggedInStatus, WEBCORE_EXPORT);
 public:
     static constexpr uint32_t UsernameMaxLength = 64;

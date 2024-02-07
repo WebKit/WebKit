@@ -65,7 +65,7 @@ struct IntersectionObserverData {
     Vector<IntersectionObserverRegistration> registrations;
 };
 
-class IntersectionObserver : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
+class IntersectionObserver final : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
     WTF_MAKE_ISO_ALLOCATED(IntersectionObserver);
 public:
     struct Init {

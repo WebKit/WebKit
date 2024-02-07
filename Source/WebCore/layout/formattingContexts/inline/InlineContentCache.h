@@ -36,7 +36,7 @@ namespace WebCore {
 namespace Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
-class InlineContentCache {
+class InlineContentCache final {
     WTF_MAKE_ISO_ALLOCATED_INLINE(InlineContentCache);
 public:
     struct InlineItems {

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class DOMPoint final : public DOMPointReadOnly {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMPoint, WEBCORE_EXPORT);
 public:
     static Ref<DOMPoint> create(double x, double y, double z = 0, double w = 1) { return adoptRef(*new DOMPoint(x, y, z, w)); }
     static Ref<DOMPoint> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }

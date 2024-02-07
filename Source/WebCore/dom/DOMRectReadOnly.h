@@ -57,6 +57,8 @@ public:
 
     FloatRect toFloatRect() const { return FloatRect { narrowPrecisionToFloat(m_x), narrowPrecisionToFloat(m_y), narrowPrecisionToFloat(m_width), narrowPrecisionToFloat(m_height) }; }
 
+    virtual ~DOMRectReadOnly() = default;
+
 protected:
     DOMRectReadOnly(double x, double y, double width, double height)
         : m_x(x)

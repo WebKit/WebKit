@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class TrustedHTML : public ScriptWrappable, public RefCounted<TrustedHTML> {
+class TrustedHTML final : public ScriptWrappable, public RefCounted<TrustedHTML> {
     WTF_MAKE_ISO_ALLOCATED(TrustedHTML);
 public:
     static Ref<TrustedHTML> create(const String& data);

@@ -33,6 +33,4 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ScriptWrappable);
-
 } // namespace WebCore

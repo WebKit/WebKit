@@ -55,7 +55,7 @@ class MessagePort;
 class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 
-class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioWorkletProcessor> {
+class AudioWorkletProcessor final : public ScriptWrappable, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioWorkletProcessor> {
     WTF_MAKE_ISO_ALLOCATED(AudioWorkletProcessor);
 public:
     static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);

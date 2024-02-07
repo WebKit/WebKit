@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct XRRenderStateInit;
 
-class WebXRRenderState : public RefCounted<WebXRRenderState> {
+class WebXRRenderState final : public RefCounted<WebXRRenderState> {
     WTF_MAKE_ISO_ALLOCATED(WebXRRenderState);
 public:
     static Ref<WebXRRenderState> create(XRSessionMode);
