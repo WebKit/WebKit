@@ -125,8 +125,7 @@ Node::InsertedIntoAncestorResult HTMLMaybeFormAssociatedCustomElement::insertedI
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (isFormAssociatedCustomElement())
         formAssociatedCustomElementUnsafe().insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    if (!insertionType.connectedToDocument)
-        return InsertedIntoAncestorResult::Done;
+
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 

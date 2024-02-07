@@ -880,8 +880,6 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
     if (insertionType.connectedToDocument)
         setInActiveDocument(true);
 
-    if (!insertionType.connectedToDocument)
-        return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
