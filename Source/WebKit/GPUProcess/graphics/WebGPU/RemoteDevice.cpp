@@ -320,7 +320,7 @@ void RemoteDevice::createCommandEncoder(const std::optional<WebGPU::CommandEncod
         if (!convertedDescriptor)
             return;
     }
-    auto commandEncoder = m_backing->createCommandEncoder(*convertedDescriptor);
+    auto commandEncoder = m_backing->createCommandEncoder(convertedDescriptor);
     auto remoteCommandEncoder = RemoteCommandEncoder::create(commandEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteCommandEncoder);
 }
