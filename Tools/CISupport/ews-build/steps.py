@@ -3184,7 +3184,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
 
         # filter-build-webkit is specifically designed for Xcode and doesn't work generally
         if platform in self.APPLE_PLATFORMS:
-            self.setCommand(self.shell_command(f"{' '.join(build_command)} | {' '.join(self.filter_command)}"))
+            self.setCommand(self.shell_command(f"{' '.join(build_command)} 2>&1 | {' '.join(self.filter_command)}"))
         else:
             self.setCommand(build_command)
 

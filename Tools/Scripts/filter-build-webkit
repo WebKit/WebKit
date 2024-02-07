@@ -480,6 +480,9 @@ sub shouldIgnoreLine($$)
     }
     return 1 if $line =~ /^Showing first/;
 
+    # FIXME: rdar://106775772
+    return 1 if $line =~ /DVTAssertions/;
+
     return 0;
 }
 
