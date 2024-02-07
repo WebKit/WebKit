@@ -77,6 +77,10 @@ GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 
+ModelProcess/EntryPoint/Cocoa/XPCService/ModelServiceEntryPoint.mm
+ModelProcess/cocoa/ModelProcessCocoa.mm
+ModelProcess/ios/ModelProcessIOS.mm
+
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
@@ -674,6 +678,7 @@ WebProcess/Inspector/mac/WebInspectorUIMac.mm
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
 WebProcess/Model/ARKitInlinePreviewModelPlayer.mm
+WebProcess/Model/ModelProcessModelPlayer.mm
 WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 

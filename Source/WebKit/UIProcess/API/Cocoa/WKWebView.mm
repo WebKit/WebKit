@@ -2924,6 +2924,15 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     return _page->gpuProcessID();
 }
 
+- (pid_t)_modelProcessIdentifier
+{
+    if (![self _isValid])
+        return 0;
+
+    return _page->modelProcessID();
+}
+
+
 - (BOOL)_webProcessIsResponsive
 {
     return _page->process().isResponsive();

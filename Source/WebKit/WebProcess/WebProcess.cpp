@@ -185,6 +185,12 @@
 #include "GPUProcessConnection.h"
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+#include "ModelConnectionToWebProcessMessages.h"
+#include "ModelProcessConnection.h"
+#include "ModelProcessConnectionParameters.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -1375,6 +1381,36 @@ AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTr
 #endif
 
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS)
+
+ModelProcessConnection& WebProcess::ensureModelProcessConnection()
+{
+    RELEASE_ASSERT(RunLoop::isMain());
+
+    // If we've lost our connection to the model process (e.g. it crashed) try to re-establish it.
+    if (!m_modelProcessConnection) {
+        m_modelProcessConnection = ModelProcessConnection::create(Ref { *parentProcessConnection() });
+
+        for (auto& page : m_pageMap.values()) {
+            // If page is null, then it is currently being constructed.
+            if (page)
+                page->modelProcessConnectionDidBecomeAvailable(Ref { *m_modelProcessConnection });
+        }
+    }
+
+    return *m_modelProcessConnection;
+}
+
+void WebProcess::modelProcessConnectionClosed(ModelProcessConnection& connection)
+{
+    ASSERT(m_modelProcessConnection);
+    ASSERT_UNUSED(connection, m_modelProcessConnection == &connection);
+
+    m_modelProcessConnection = nullptr;
+}
+
+#endif // ENABLE(MODEL_PROCESS)
 
 void WebProcess::setEnhancedAccessibility(bool flag)
 {

@@ -231,6 +231,13 @@ void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerH
 }
 #endif // ENABLE(GPU_PROCESS)
 
+#if ENABLE(MODEL_PROCESS)
+void PageClientImpl::didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID)
+{
+    [m_contentView _modelProcessDidCreateContextForVisibilityPropagation];
+}
+#endif // ENABLE(MODEL_PROCESS)
+
 #if USE(EXTENSIONKIT)
 UIView *PageClientImpl::createVisibilityPropagationView()
 {
@@ -244,6 +251,14 @@ void PageClientImpl::gpuProcessDidExit()
 {
     [contentView() _gpuProcessDidExit];
     PageClientImplCocoa::gpuProcessDidExit();
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+void PageClientImpl::modelProcessDidExit()
+{
+    [m_contentView _modelProcessDidExit];
+    PageClientImplCocoa::modelProcessDidExit();
 }
 #endif
 

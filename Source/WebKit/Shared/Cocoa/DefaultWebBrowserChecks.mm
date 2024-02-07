@@ -72,6 +72,9 @@ static bool isInWebKitChildProcess()
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
+#if ENABLE(MODEL_PROCESS)
+        isInSubProcess = isInSubProcess || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Model"];
+#endif
     });
 
     return isInSubProcess;

@@ -378,6 +378,18 @@ public:
     Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching(ProcessID);
+    void modelProcessExited(ProcessID, ProcessTerminationReason);
+
+    void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::ModelProcessConnectionParameters&&);
+
+    ModelProcessProxy& ensureModelProcess();
+    Ref<ModelProcessProxy> ensureProtectedModelProcess();
+    ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
+#endif
+
     // Network Process Management
     void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 
@@ -664,6 +676,9 @@ private:
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessProxy> m_gpuProcess;
 #endif
+#if ENABLE(MODEL_PROCESS)
+    RefPtr<ModelProcessProxy> m_modelProcess;
+#endif
 
     Ref<WebPageGroup> m_defaultPageGroup;
 
@@ -749,6 +764,11 @@ private:
 #if ENABLE(GPU_PROCESS)
     RunLoop::Timer m_resetGPUProcessCrashCountTimer;
     unsigned m_recentGPUProcessCrashCount { 0 };
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    RunLoop::Timer m_resetModelProcessCrashCountTimer;
+    unsigned m_recentModelProcessCrashCount { 0 };
 #endif
 
 #if PLATFORM(COCOA)

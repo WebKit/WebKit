@@ -60,6 +60,11 @@ public:
     void gpuProcessDidExit() override;
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching() override;
+    void modelProcessDidExit() override;
+#endif
+
     void themeColorWillChange() final;
     void themeColorDidChange() final;
     void underPageBackgroundColorWillChange() final;

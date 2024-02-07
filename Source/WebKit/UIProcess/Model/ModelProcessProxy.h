@@ -31,7 +31,6 @@
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <memory>
@@ -53,13 +52,14 @@ class ModelProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_NONCOPYABLE(ModelProcessProxy);
     friend LazyNeverDestroyed<ModelProcessProxy>;
 public:
-    static Ref<ModelProcessProxy> create(WebProcessProxy&);
+    static Ref<ModelProcessProxy> getOrCreate();
+    static ModelProcessProxy* singletonIfCreated();
     ~ModelProcessProxy();
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&& connectionIdentifier, ModelProcessConnectionParameters&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
-    void updateProcessAssertion(ProcessAssertionType);
+    void updateProcessAssertion();
 
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
@@ -67,7 +67,7 @@ public:
     void removeSession(PAL::SessionID);
 
 private:
-    explicit ModelProcessProxy(WebProcessProxy&);
+    explicit ModelProcessProxy();
 
     void addSession(const WebsiteDataStore&);
 
@@ -104,10 +104,8 @@ private:
 
     ModelProcessCreationParameters processCreationParameters();
 
-    WeakPtr<WebProcessProxy> m_webProcessProxy;
-
     ProcessThrottler m_throttler;
-    ProcessThrottler::ActivityVariant m_activityFromWebProcess;
+    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
 };

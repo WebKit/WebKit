@@ -372,6 +372,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
 #endif
+#if ENABLE(MODEL_PROCESS)
+    virtual void didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID) { }
+#endif
 #if USE(EXTENSIONKIT)
     virtual UIView *createVisibilityPropagationView() { return nullptr; }
 #endif
@@ -380,6 +383,11 @@ public:
 #if ENABLE(GPU_PROCESS)
     virtual void gpuProcessDidFinishLaunching() { }
     virtual void gpuProcessDidExit() { }
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    virtual void modelProcessDidFinishLaunching() { }
+    virtual void modelProcessDidExit() { }
 #endif
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;

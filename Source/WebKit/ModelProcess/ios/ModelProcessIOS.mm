@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "ModelProcess.h"
 
-#include <wtf/spi/darwin/XPCSPI.h>
+#if ENABLE(MODEL_PROCESS)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "ModelProcessCreationParameters.h"
+#import "ModelProcessProxyMessages.h"
+#import "SandboxInitializationParameters.h"
+#import <WebCore/NotImplemented.h>
+#import <WebCore/WebCoreThreadSystemInterface.h>
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void NetworkServiceInitializer();
-void WebContentServiceInitializer();
-void GPUServiceInitializer();
-void ModelServiceInitializer();
+namespace WebKit {
+using namespace WebCore;
 
-void ExtensionEventHandler(xpc_connection_t);
-
-#if USE(EXTENSIONKIT)
-// Declared in WKProcessExtension.h for use in extension targets. Must be declared in project
-//  headers because the extension targets cannot import the entire WebKit module (rdar://119162443).
-@interface WKGrant : NSObject
-@end
-
-@interface WKProcessExtension : NSObject
-@end
-#endif
-
-#ifdef __cplusplus
+void ModelProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
+{
+    InitWebCoreThreadSystemInterface();
 }
-#endif
+
+void ModelProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
+{
+    notImplemented();
+}
+
+void ModelProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
+{
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(MODEL_PROCESS)

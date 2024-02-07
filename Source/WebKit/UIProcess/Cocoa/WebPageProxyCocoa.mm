@@ -522,6 +522,14 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
     pageClient().didCreateContextInGPUProcessForVisibilityPropagation(contextID);
 }
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS)
+void WebPageProxy::didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    m_contextIDForVisibilityPropagationInModelProcess = contextID;
+    pageClient().didCreateContextInModelProcessForVisibilityPropagation(contextID);
+}
+#endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(MEDIA_USAGE)

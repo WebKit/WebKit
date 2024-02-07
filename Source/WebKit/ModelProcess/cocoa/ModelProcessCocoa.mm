@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,28 @@
 
 #pragma once
 
-#include <wtf/spi/darwin/XPCSPI.h>
+#import "config.h"
+#import "ModelProcess.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#if ENABLE(MODEL_PROCESS)
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void NetworkServiceInitializer();
-void WebContentServiceInitializer();
-void GPUServiceInitializer();
-void ModelServiceInitializer();
+#import "ModelConnectionToWebProcess.h"
+#import <wtf/RetainPtr.h>
 
-void ExtensionEventHandler(xpc_connection_t);
+namespace WebKit {
+using namespace WebCore;
 
-#if USE(EXTENSIONKIT)
-// Declared in WKProcessExtension.h for use in extension targets. Must be declared in project
-//  headers because the extension targets cannot import the entire WebKit module (rdar://119162443).
-@interface WKGrant : NSObject
-@end
-
-@interface WKProcessExtension : NSObject
-@end
-#endif
-
-#ifdef __cplusplus
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void ModelProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    preferenceDidUpdate(domain, key, encodedValue);
 }
-#endif
+
+void ModelProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
+{
+}
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
+
+} // namespace WebKit
+
+#endif // ENABLE(MODEL_PROCESS)

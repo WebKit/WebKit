@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#include <wtf/spi/darwin/XPCSPI.h>
+#import "EnvironmentUtilities.h"
+#import "ModelProcess.h"
+#import "WKBase.h"
+#import "XPCServiceEntryPoint.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#if ENABLE(MODEL_PROCESS)
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void NetworkServiceInitializer();
-void WebContentServiceInitializer();
-void GPUServiceInitializer();
-void ModelServiceInitializer();
+namespace WebKit {
 
-void ExtensionEventHandler(xpc_connection_t);
+class ModelServiceInitializerDelegate : public XPCServiceInitializerDelegate {
+public:
+    ModelServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+        : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)
+    {
+    }
+};
 
-#if USE(EXTENSIONKIT)
-// Declared in WKProcessExtension.h for use in extension targets. Must be declared in project
-//  headers because the extension targets cannot import the entire WebKit module (rdar://119162443).
-@interface WKGrant : NSObject
-@end
-
-@interface WKProcessExtension : NSObject
-@end
-#endif
-
-#ifdef __cplusplus
+template<>
+void initializeAuxiliaryProcess<ModelProcess>(AuxiliaryProcessInitializationParameters&& parameters)
+{
+    static NeverDestroyed<ModelProcess> modelProcess(WTFMove(parameters));
 }
-#endif
+
+} // namespace WebKit
+
+#endif // ENABLE(MODEL_PROCESS)
+
+extern "C" WK_EXPORT void MODEL_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage);
+
+void MODEL_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
+{
+    WTF::initializeMainThread();
+
+#if ENABLE(MODEL_PROCESS)
+    WebKit::XPCServiceInitializer<WebKit::ModelProcess, WebKit::ModelServiceInitializerDelegate>(connection, initializerMessage);
+#endif // ENABLE(MODEL_PROCESS)
+}

@@ -40,6 +40,9 @@ enum class AuxiliaryProcessType : uint8_t {
 #if ENABLE(GPU_PROCESS)
     GPU,
 #endif
+#if ENABLE(MODEL_PROCESS)
+    Model,
+#endif
 };
 
 WEBCORE_EXPORT void setAuxiliaryProcessType(AuxiliaryProcessType);

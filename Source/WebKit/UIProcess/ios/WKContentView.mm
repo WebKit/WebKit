@@ -34,6 +34,7 @@
 #import "FullscreenClient.h"
 #import "GPUProcessProxy.h"
 #import "Logging.h"
+#import "ModelProcessProxy.h"
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
@@ -184,6 +185,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(GPU_PROCESS)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
 #endif // ENABLE(GPU_PROCESS)
+#if ENABLE(MODEL_PROCESS)
+    RetainPtr<_UILayerHostView> _visibilityPropagationViewForModelProcess;
+#endif // ENABLE(MODEL_PROCESS)
 #endif // !USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
@@ -350,6 +354,27 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 }
 #endif // ENABLE(GPU_PROCESS)
 
+#if ENABLE(MODEL_PROCESS)
+- (void)_setupVisibilityPropagationForModelProcess
+{
+    auto* modelProcess = _page->process().processPool().modelProcess();
+    if (!modelProcess)
+        return;
+    auto processIdentifier = modelProcess->processID();
+    auto contextID = _page->contextIDForVisibilityPropagationInModelProcess();
+    if (!processIdentifier || !contextID)
+        return;
+
+    if (_visibilityPropagationViewForModelProcess)
+        return;
+
+    // Propagate the view's visibility state to the model process so that it is marked as "Foreground Running" when necessary.
+    _visibilityPropagationViewForModelProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for model process with PID=%d", _visibilityPropagationViewForModelProcess.get(), contextID, processIdentifier);
+    [self addSubview:_visibilityPropagationViewForModelProcess.get()];
+}
+#endif // ENABLE(MODEL_PROCESS)
+
 - (void)_removeVisibilityPropagationViewForWebProcess
 {
 #if USE(EXTENSIONKIT)
@@ -384,6 +409,18 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [_visibilityPropagationViewForGPUProcess removeFromSuperview];
     _visibilityPropagationViewForGPUProcess = nullptr;
 }
+
+#if ENABLE(MODEL_PROCESS)
+- (void)_removeVisibilityPropagationViewForModelProcess
+{
+    if (!_visibilityPropagationViewForModelProcess)
+        return;
+
+    RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationViewForModelProcess.get());
+    [_visibilityPropagationViewForModelProcess removeFromSuperview];
+    _visibilityPropagationViewForModelProcess = nullptr;
+}
+#endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(NakedRef<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
@@ -810,6 +847,15 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+- (void)_modelProcessDidExit
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    [self _removeVisibilityPropagationViewForModelProcess];
+#endif
+}
+#endif
+
 - (void)_processWillSwap
 {
     // FIXME: Should we do something differently?
@@ -825,6 +871,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if ENABLE(GPU_PROCESS)
     [self _setupVisibilityPropagationForGPUProcess];
 #endif
+#if ENABLE(MODEL_PROCESS)
+    [self _setupVisibilityPropagationForModelProcess];
+#endif
 #endif
 }
 
@@ -838,6 +887,13 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     [self _setupVisibilityPropagationForGPUProcess];
 }
+
+#if ENABLE(MODEL_PROCESS)
+- (void)_modelProcessDidCreateContextForVisibilityPropagation
+{
+    [self _setupVisibilityPropagationForModelProcess];
+}
+#endif
 
 #if USE(EXTENSIONKIT)
 - (WKVisibilityPropagationView *)_createVisibilityPropagationView
@@ -855,10 +911,13 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if ENABLE(GPU_PROCESS)
     [self _setupVisibilityPropagationForGPUProcess];
 #endif
+#if ENABLE(MODEL_PROCESS)
+    [self _setupVisibilityPropagationViewForModelProcess];
+#endif
 
     return visibilityPropagationView.autorelease();
 }
-#endif
+#endif // USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction

@@ -41,6 +41,10 @@
 #include <WebCore/SceneKitModelPlayer.h>
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+#include "ModelProcessModelPlayer.h"
+#endif
+
 namespace WebKit {
 
 WebModelPlayerProvider::WebModelPlayerProvider(WebPage& page)
@@ -55,6 +59,10 @@ WebModelPlayerProvider::~WebModelPlayerProvider() = default;
 
 RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::ModelPlayerClient& client)
 {
+#if ENABLE(MODEL_PROCESS)
+    if (m_page.corePage()->settings().modelProcessEnabled())
+        return ModelProcessModelPlayer::create(m_page, client);
+#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     if (m_page.useARKitForModel())
         return ARKitInlinePreviewModelPlayerMac::create(m_page, client);

@@ -167,6 +167,11 @@ constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+constexpr Seconds resetModelProcessCrashCountDelay { 30_s };
+constexpr unsigned maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
+#endif
+
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -225,6 +230,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
 #if ENABLE(GPU_PROCESS)
     , m_resetGPUProcessCrashCountTimer(RunLoop::main(), [this] { m_recentGPUProcessCrashCount = 0; })
+#endif
+#if ENABLE(MODEL_PROCESS)
+    , m_resetModelProcessCrashCountTimer(RunLoop::main(), [this] { m_recentModelProcessCrashCount = 0; })
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
@@ -554,7 +562,65 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 
     ensureProtectedGPUProcess()->createGPUProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
+#endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS)
+ModelProcessProxy& WebProcessPool::ensureModelProcess()
+{
+    if (!m_modelProcess) {
+        Ref modelProcess = ModelProcessProxy::getOrCreate();
+        m_modelProcess = modelProcess.copyRef();
+    }
+    return *m_modelProcess;
+}
+
+Ref<ModelProcessProxy> WebProcessPool::ensureProtectedModelProcess()
+{
+    return ensureModelProcess();
+}
+
+void WebProcessPool::modelProcessDidFinishLaunching(ProcessID)
+{
+    auto processes = m_processes;
+    for (Ref process : processes)
+        process->modelProcessDidFinishLaunching();
+}
+
+void WebProcessPool::modelProcessExited(ProcessID identifier, ProcessTerminationReason reason)
+{
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "modelProcessDidExit: PID=%d, reason=%" PUBLIC_LOG_STRING, identifier, processTerminationReasonToString(reason));
+    m_modelProcess = nullptr;
+
+    // TODO: notify m_client.modelProcessDidCrash for C API if needed here
+
+    Vector<Ref<WebProcessProxy>> processes = m_processes;
+    for (Ref process : processes)
+        process->modelProcessExited(reason);
+
+    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive) {
+        if (++m_recentModelProcessCrashCount > maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "modelProcessDidExit: Model Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses, resetModelProcessCrashCountDelay.seconds());
+            m_resetModelProcessCrashCountTimer.stop();
+            m_recentModelProcessCrashCount = 0;
+            terminateAllWebContentProcesses();
+        } else if (!m_resetModelProcessCrashCountTimer.isActive())
+            m_resetModelProcessCrashCountTimer.startOneShot(resetModelProcessCrashCountDelay);
+    }
+}
+
+void WebProcessPool::createModelProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, WebKit::ModelProcessConnectionParameters&& parameters)
+{
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
+
+#if HAVE(AUDIT_TOKEN)
+    parameters.presentingApplicationAuditToken = configuration().presentingApplicationProcessToken();
+#endif
+
+    ensureProtectedModelProcess()->createModelProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
+}
+#endif // ENABLE(MODEL_PROCESS)
 
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
@@ -1845,6 +1911,11 @@ void WebProcessPool::updateProcessAssertions()
 #if ENABLE(GPU_PROCESS)
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->updateProcessAssertion();
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
+        modelProcess->updateProcessAssertion();
 #endif
 
     // Check on next run loop since the web process proxy tokens are probably being updated.

@@ -1473,11 +1473,20 @@ public:
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID);
     LayerHostingContextID contextIDForVisibilityPropagationInGPUProcess() const { return m_contextIDForVisibilityPropagationInGPUProcess; }
 #endif
+#if ENABLE(MODEL_PROCESS)
+    void didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID);
+    LayerHostingContextID contextIDForVisibilityPropagationInModelProcess() const { return m_contextIDForVisibilityPropagationInModelProcess; }
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching();
+    void modelProcessExited(ProcessTerminationReason);
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
@@ -1503,6 +1512,7 @@ public:
     ProcessID processID() const;
 
     ProcessID gpuProcessID() const;
+    ProcessID modelProcessID() const;
 
     WebBackForwardCache& backForwardCache() const;
 
@@ -3372,6 +3382,9 @@ private:
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW) && ENABLE(GPU_PROCESS)
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
+#endif
+#if ENABLE(MODEL_PROCESS)
+    LayerHostingContextID m_contextIDForVisibilityPropagationInModelProcess { 0 };
 #endif
 
     WeakHashSet<WebViewDidMoveToWindowObserver> m_webViewDidMoveToWindowObservers;

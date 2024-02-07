@@ -87,6 +87,7 @@
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
 #include "MessageSenderInlines.h"
 #include "ModelElementController.h"
+#include "ModelProcessProxy.h"
 #include "NativeWebGestureEvent.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -905,6 +906,19 @@ ProcessID WebPageProxy::gpuProcessID() const
 Ref<WebProcessProxy> WebPageProxy::protectedProcess() const
 {
     return m_process;
+}
+
+ProcessID WebPageProxy::modelProcessID() const
+{
+    if (m_isClosed)
+        return 0;
+
+#if ENABLE(MODEL_PROCESS)
+    if (auto* modelProcess = process().processPool().modelProcess())
+        return modelProcess->processID();
+#endif
+
+    return 0;
 }
 
 ProcessID WebPageProxy::processID() const
@@ -12814,6 +12828,22 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
 #endif
     }
 #endif
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+void WebPageProxy::modelProcessDidFinishLaunching()
+{
+    pageClient().modelProcessDidFinishLaunching();
+}
+
+void WebPageProxy::modelProcessExited(ProcessTerminationReason)
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextIDForVisibilityPropagationInModelProcess = 0;
+#endif
+
+    pageClient().modelProcessDidExit();
 }
 #endif
 

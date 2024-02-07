@@ -82,6 +82,9 @@ private:
 #if ENABLE(GPU_PROCESS)
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) override;
 #endif // ENABLE(GPU_PROCESS)
+#if ENABLE(MODEL_PROCESS)
+    void didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID) override;
+#endif // ENABLE(MODEL_PROCESS)
 #if USE(EXTENSIONKIT)
     UIView *createVisibilityPropagationView() override;
 #endif
@@ -89,6 +92,9 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidExit() override;
+#endif
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidExit() override;
 #endif
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;

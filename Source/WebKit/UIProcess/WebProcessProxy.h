@@ -95,6 +95,7 @@ class TextStream;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class ModelProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;
@@ -424,6 +425,11 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching();
+    void modelProcessExited(ProcessTerminationReason);
 #endif
 
 #if PLATFORM(COCOA)

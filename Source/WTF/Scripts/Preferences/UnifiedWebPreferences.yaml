@@ -4708,6 +4708,20 @@ ModelElementEnabled:
     WebCore:
       default: false
 
+ModelProcessEnabled:
+  type: bool
+  status: unstable
+  condition: ENABLE(MODEL_PROCESS)
+  humanReadableName: "Enable Model Process"
+  humanReadableDescription: "Load <model> content in a separate process"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MomentumScrollingAnimatorEnabled:
   type: bool
   status: internal

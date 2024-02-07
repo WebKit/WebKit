@@ -4363,11 +4363,14 @@
 		2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource61-mm.mm"; sourceTree = "<group>"; };
 		2D56C1A328A367760081BD25 /* ModelProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessCreationParameters.h; sourceTree = "<group>"; };
 		2D56C1A428A367760081BD25 /* ModelProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcess.messages.in; sourceTree = "<group>"; };
+		2D56C1A728A367760081BD25 /* ModelProcessIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessIOS.mm; sourceTree = "<group>"; };
 		2D56C1A828A367760081BD25 /* ModelConnectionToWebProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelConnectionToWebProcess.h; sourceTree = "<group>"; };
 		2D56C1A928A367760081BD25 /* ModelProcessCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessCreationParameters.serialization.in; sourceTree = "<group>"; };
 		2D56C1AD28A367760081BD25 /* ModelProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcess.h; sourceTree = "<group>"; };
 		2D56C1AE28A367760081BD25 /* ModelConnectionToWebProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelConnectionToWebProcess.messages.in; sourceTree = "<group>"; };
+		2D56C1B028A367760081BD25 /* ModelProcessCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessCocoa.mm; sourceTree = "<group>"; };
 		2D56C1B128A367760081BD25 /* ModelProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcess.cpp; sourceTree = "<group>"; };
+		2D56C1B828A367760081BD25 /* ModelServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelServiceEntryPoint.mm; sourceTree = "<group>"; };
 		2D56C1B928A367760081BD25 /* ModelConnectionToWebProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelConnectionToWebProcess.cpp; sourceTree = "<group>"; };
 		2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageOverlay.cpp; sourceTree = "<group>"; };
 		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
@@ -4628,6 +4631,8 @@
 		2DA8153528A4939700CF811C /* ModelProcessProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessProxy.h; sourceTree = "<group>"; };
 		2DA8153628A4939700CF811C /* ModelProcessProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelProcessProxy.cpp; sourceTree = "<group>"; };
 		2DA8153728A4939700CF811C /* ModelProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessProxy.messages.in; sourceTree = "<group>"; };
+		2DA8153B28A6430D00CF811C /* ModelProcessModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayer.h; sourceTree = "<group>"; };
+		2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessModelPlayer.mm; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
 		2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIOSEventFactory.h; path = ios/WebIOSEventFactory.h; sourceTree = "<group>"; };
@@ -10151,6 +10156,9 @@
 		2D56C1A128A367760081BD25 /* ModelProcess */ = {
 			isa = PBXGroup;
 			children = (
+				2D56C1AF28A367760081BD25 /* cocoa */,
+				2D56C1B228A367760081BD25 /* EntryPoint */,
+				2D56C1A628A367760081BD25 /* ios */,
 				2D56C1B928A367760081BD25 /* ModelConnectionToWebProcess.cpp */,
 				2D56C1A828A367760081BD25 /* ModelConnectionToWebProcess.h */,
 				2D56C1AE28A367760081BD25 /* ModelConnectionToWebProcess.messages.in */,
@@ -10161,6 +10169,46 @@
 				2D56C1A928A367760081BD25 /* ModelProcessCreationParameters.serialization.in */,
 			);
 			path = ModelProcess;
+			sourceTree = "<group>";
+		};
+		2D56C1A628A367760081BD25 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1A728A367760081BD25 /* ModelProcessIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		2D56C1AF28A367760081BD25 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1B028A367760081BD25 /* ModelProcessCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
+		2D56C1B228A367760081BD25 /* EntryPoint */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1B328A367760081BD25 /* Cocoa */,
+			);
+			path = EntryPoint;
+			sourceTree = "<group>";
+		};
+		2D56C1B328A367760081BD25 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1B428A367760081BD25 /* XPCService */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		2D56C1B428A367760081BD25 /* XPCService */ = {
+			isa = PBXGroup;
+			children = (
+				2D56C1B828A367760081BD25 /* ModelServiceEntryPoint.mm */,
+			);
+			path = XPCService;
 			sourceTree = "<group>";
 		};
 		2D6482482644B1AB00030335 /* cocoa */ = {
@@ -14037,6 +14085,8 @@
 				BC2B410B2732EF7500A2D191 /* mac */,
 				7177AD5C2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.h */,
 				7177AD5B2743D7A9002F103B /* ARKitInlinePreviewModelPlayer.mm */,
+				2DA8153B28A6430D00CF811C /* ModelProcessModelPlayer.h */,
+				2DA8153C28A6430D00CF811C /* ModelProcessModelPlayer.mm */,
 				BC2B411B2732F66E00A2D191 /* WebModelPlayerProvider.cpp */,
 				BC2B411A2732F66E00A2D191 /* WebModelPlayerProvider.h */,
 			);

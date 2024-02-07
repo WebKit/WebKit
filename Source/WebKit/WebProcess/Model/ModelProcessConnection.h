@@ -29,7 +29,6 @@
 
 #include "Connection.h"
 #include "MessageReceiverMap.h"
-#include "SharedMemory.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>

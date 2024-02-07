@@ -123,6 +123,7 @@ class GPUProcessConnection;
 class InjectedBundle;
 class LibWebRTCCodecs;
 class LibWebRTCNetwork;
+class ModelProcessConnection;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class RemoteCDMFactory;
@@ -271,6 +272,12 @@ public:
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
+
+#if ENABLE(MODEL_PROCESS)
+    ModelProcessConnection& ensureModelProcessConnection();
+    void modelProcessConnectionClosed(ModelProcessConnection&);
+    ModelProcessConnection* existingModelProcessConnection() { return m_modelProcessConnection.get(); }
+#endif // ENABLE(MODEL_PROCESS)
 
     LibWebRTCNetwork& libWebRTCNetwork();
 
@@ -713,6 +720,11 @@ private:
     std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
 #endif
+
+#if ENABLE(MODEL_PROCESS)
+    RefPtr<ModelProcessConnection> m_modelProcessConnection;
+#endif
+
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBadgeClient> m_badgeClient;
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
