@@ -74,6 +74,11 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     return Font::create(WTFMove(platformData), origin);
 }
 
+Ref<Font> Font::create(FontInternalAttributes&& attributes, FontPlatformData&& platformData)
+{
+    return Font::create(platformData, attributes.origin, attributes.isInterstitial, attributes.visibility, attributes.isTextOrientationFallback, attributes.renderingResourceIdentifier);
+}
+
 Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : m_platformData(platformData)
     , m_attributes({ renderingResourceIdentifier, origin, interstitial, visibility, orientationFallback })

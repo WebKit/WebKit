@@ -132,14 +132,13 @@ struct Record;
 
 namespace IPC {
 
+#if !USE(CORE_TEXT)
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
     static void encodePlatformData(Encoder&, const WebCore::Font&);
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
 };
-
-#if !USE(CORE_TEXT)
 
 template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
     static void encode(Encoder&, const WebCore::FontPlatformData::Attributes&);
@@ -148,12 +147,11 @@ template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::FontPlatformData::Attributes&);
 };
 
-#endif
-
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
 };
+#endif
 
 #if USE(APPKIT)
 

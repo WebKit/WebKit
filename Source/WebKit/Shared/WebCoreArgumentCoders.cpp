@@ -196,6 +196,7 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
+#if !USE(CORE_TEXT)
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
 {
     encoder << font.attributes();
@@ -273,8 +274,6 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     return fontCustomPlatformData.releaseNonNull();
 }
 
-#if !USE(CORE_TEXT)
-
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
 {
     encoder << data.m_orientation;
@@ -326,7 +325,6 @@ std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attr
 
     return result;
 }
-
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

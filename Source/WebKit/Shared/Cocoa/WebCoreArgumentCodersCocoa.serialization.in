@@ -22,6 +22,44 @@
 
 headers: "ArgumentCodersCocoa.h"
 
+#if USE(CORE_TEXT)
+[CreateUsing=tryMakeFontPlatformData] class WebCore::FontPlatformData {
+    float size();
+    WebCore::FontOrientation orientation();
+    WebCore::FontWidthVariant widthVariant();
+    WebCore::TextRenderingMode textRenderingMode();
+    bool syntheticBold();
+    bool syntheticOblique();
+    std::variant<WebCore::FontPlatformSerializedData,WebCore::FontPlatformSerializedCreationData> platformSerializationData();
+}
+
+header: <WebCore/FontPlatformData.h>
+[CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
+    Vector<uint8_t> fontFaceData;
+    RetainPtr<CFDictionaryRef> attributes;
+    String itemInCollection;
+};
+
+header: <WebCore/FontPlatformData.h>
+[CustomHeader] struct WebCore::FontPlatformSerializedData {
+    CTFontDescriptorOptions options;
+    RetainPtr<CFStringRef> referenceURL;
+    RetainPtr<CFStringRef> postScriptName;
+    RetainPtr<CFDictionaryRef> attributes;
+};
+
+header: <WebCore/FontCustomPlatformData.h>
+[CustomHeader] struct WebCore::FontCustomPlatformSerializedData {
+    Vector<uint8_t> fontFaceData;
+    String itemInCollection;
+    WebCore::RenderingResourceIdentifier renderingResourceIdentifier;
+};
+
+[CreateUsing=tryMakeFromSerializationData, RefCounted] struct WebCore::FontCustomPlatformData {
+    WebCore::FontCustomPlatformSerializedData serializedData()
+};
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 class WebCore::ContentFilterUnblockHandler {
     String unblockURLHost()

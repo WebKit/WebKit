@@ -133,6 +133,21 @@ struct FontPlatformDataAttributes {
 #endif
 };
 
+#if USE(CORE_TEXT)
+struct FontPlatformSerializedCreationData {
+    Vector<uint8_t> fontFaceData;
+    RetainPtr<CFDictionaryRef> attributes;
+    String itemInCollection;
+};
+
+struct FontPlatformSerializedData {
+    CTFontDescriptorOptions options { 0 }; // <rdar://121670125>
+    RetainPtr<CFStringRef> referenceURL;
+    RetainPtr<CFStringRef> postScriptName;
+    RetainPtr<CFDictionaryRef> attributes;
+};
+#endif
+
 // This class is conceptually immutable. Once created, no instances should ever change (in an observable way).
 class FontPlatformData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -199,6 +214,12 @@ public:
 #endif
 
 #if USE(CORE_TEXT)
+    using PlatformDataVariant = std::variant<FontPlatformSerializedData, FontPlatformSerializedCreationData>;
+    WEBCORE_EXPORT static std::optional<FontPlatformData> tryMakeFontPlatformData(float size, WebCore::FontOrientation&&, WebCore::FontWidthVariant&&, WebCore::TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, FontPlatformData::PlatformDataVariant&& platformSerializationData);
+    WEBCORE_EXPORT FontPlatformData(float size, WebCore::FontOrientation&&, WebCore::FontWidthVariant&&, WebCore::TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&&, RefPtr<FontCustomPlatformData>&&);
+
+    WEBCORE_EXPORT PlatformDataVariant platformSerializationData() const;
+
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;

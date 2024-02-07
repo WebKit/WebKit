@@ -100,6 +100,21 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
 }
 
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data)
+{
+    auto buffer = SharedBuffer::create(WTFMove(data.fontFaceData));
+    auto fontCustomPlatformData = createFontCustomPlatformData(buffer, data.itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
+{
+    return FontCustomPlatformSerializedData { { creationData.fontFaceData->dataAsSpanForContiguousData() }, creationData.itemInCollection, m_renderingResourceIdentifier };
+}
+
 bool FontCustomPlatformData::supportsFormat(const String& format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
