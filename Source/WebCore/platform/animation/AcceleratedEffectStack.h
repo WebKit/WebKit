@@ -47,6 +47,8 @@ public:
     const AcceleratedEffectValues& baseValues() { return m_baseValues; }
     void setBaseValues(AcceleratedEffectValues&&);
 
+    virtual ~AcceleratedEffectStack() = default;
+
 protected:
     WEBCORE_EXPORT explicit AcceleratedEffectStack();
 
