@@ -101,6 +101,9 @@ struct CFHolderForTesting {
         RetainPtr<CGColorRef>,
         RetainPtr<CGColorSpaceRef>,
         RetainPtr<SecCertificateRef>,
+#if USE(SEC_ACCESS_CONTROL)
+        RetainPtr<SecAccessControlRef>,
+#endif
 #if HAVE(SEC_KEYCHAIN)
         RetainPtr<SecKeychainItemRef>,
 #endif
@@ -889,12 +892,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     SecTrustRef trustRef = NULL;
     auto policy = adoptCF(SecPolicyCreateBasicX509());
     EXPECT_TRUE(SecTrustCreateWithCertificates(cert.get(), policy.get(), &trustRef) == errSecSuccess);
-    EXPECT_TRUE(trustRef);
+    EXPECT_NOT_NULL(trustRef);
     auto trust = adoptCF(trustRef);
     runTestCF({ trust.get() });
 
     EXPECT_TRUE(SecTrustEvaluateWithError(trust.get(), NULL) == errSecSuccess);
     runTestCF({ trust.get() });
+
+#if HAVE(SEC_ACCESS_CONTROL)
+    NSDictionary *protection = @{
+        (id)kSecUseDataProtectionKeychain : @(YES),
+        (id)kSecAttrSynchronizable : @(NO),
+        (id)kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly : @(YES),
+        (id)kSecAttrAccessibleWhenUnlocked: @(YES) };
+    SecAccessControlCreateFlags flags = (kSecAccessControlDevicePasscode | kSecAccessControlBiometryAny | kSecAccessControlWatch | kSecAccessControlOr);
+    SecAccessControlRef accessControlRef = SecAccessControlCreateWithFlags(kCFAllocatorDefault, (CFTypeRef)protection, flags, NULL);
+    EXPECT_NOT_NULL(accessControlRef);
+    runTestCF({ accessControlRef });
+    CFRelease(accessControlRef);
+#endif // HAVE(SEC_ACCESS_CONTROL)
 
     // SecKeychainItem
 #if HAVE(SEC_KEYCHAIN)
