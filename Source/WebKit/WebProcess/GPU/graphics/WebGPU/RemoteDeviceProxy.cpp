@@ -139,15 +139,16 @@ Ref<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(c
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     if (!convertedDescriptor->mediaIdentifier) {
         auto videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&descriptor.videoBacking);
-        RELEASE_ASSERT(videoFrame);
-        convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [&](auto& semaphore) {
-            auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
-            UNUSED_VARIABLE(sendResult);
-        }, [&](WebCore::SharedMemory::Handle&& handle) {
-            auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
-            UNUSED_VARIABLE(sendResult);
-        });
-        ASSERT(convertedDescriptor->sharedFrame);
+        if (videoFrame && videoFrame->get()) {
+            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [&](auto& semaphore) {
+                auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
+                UNUSED_VARIABLE(sendResult);
+            }, [&](WebCore::SharedMemory::Handle&& handle) {
+                auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
+                UNUSED_VARIABLE(sendResult);
+            });
+            ASSERT(convertedDescriptor->sharedFrame);
+        }
     }
 
     auto sendResult = send(Messages::RemoteDevice::ImportExternalTextureFromVideoFrame(WTFMove(*convertedDescriptor), identifier));

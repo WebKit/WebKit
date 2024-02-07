@@ -180,7 +180,7 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     if (sharedVideoFrame) {
         if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(*sharedVideoFrame)))
             pixelBuffer = videoFrame->pixelBuffer();
-    } else {
+    } else if (descriptor.mediaIdentifier) {
         m_gpuConnectionToWebProcess.performWithMediaPlayerOnMainThread(*descriptor.mediaIdentifier, [&] (auto& player) mutable {
             auto videoFrame = player.videoFrameForCurrentTime();
             pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
