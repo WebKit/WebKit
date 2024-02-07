@@ -36,7 +36,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -57,6 +57,7 @@ public:
     void removeResource(MediaResource&);
 
     Document* document();
+    RefPtr<Document> protectedDocument();
     const String& crossOriginMode() const;
 
     WEBCORE_EXPORT static void recordResponsesForTesting();
@@ -69,14 +70,14 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document WTF_GUARDED_BY_CAPABILITY(mainThread);
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element WTF_GUARDED_BY_CAPABILITY(mainThread);
     String m_crossOriginMode WTF_GUARDED_BY_CAPABILITY(mainThread);
-    HashSet<MediaResource*> m_resources WTF_GUARDED_BY_CAPABILITY(mainThread);
+    SingleThreadWeakHashSet<MediaResource> m_resources WTF_GUARDED_BY_CAPABILITY(mainThread);
     Vector<ResourceResponse> m_responsesForTesting WTF_GUARDED_BY_CAPABILITY(mainThread);
     FetchOptions::Destination m_destination WTF_GUARDED_BY_CAPABILITY(mainThread);
 };
 
-class MediaResource : public PlatformMediaResource, CachedRawResourceClient {
+class MediaResource : public PlatformMediaResource, public CachedRawResourceClient {
 public:
-    static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);
+    static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     virtual ~MediaResource();
 
     // PlatformMediaResource
@@ -92,7 +93,10 @@ public:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
 private:
-    MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);
+    Ref<MediaResourceLoader> protectedLoader() const;
+    CachedResourceHandle<CachedRawResource> protectedResource() const;
+
+    MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     void ensureShutdown();
     const Ref<MediaResourceLoader> m_loader;
     Atomic<bool> m_didPassAccessControlCheck { false };

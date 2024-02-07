@@ -92,6 +92,7 @@ public:
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
+    RefPtr<Event> protectedEvent() const;
     const String& referrer() const { return m_referrer; }
     const String& origin() const { return m_origin; }
 

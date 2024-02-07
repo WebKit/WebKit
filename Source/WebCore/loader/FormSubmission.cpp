@@ -251,6 +251,11 @@ URL FormSubmission::requestURL() const
     return requestURL;
 }
 
+RefPtr<Event> FormSubmission::protectedEvent() const
+{
+    return m_event;
+}
+
 void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
 {
     ASSERT(m_method == Method::Post || m_method == Method::Get);

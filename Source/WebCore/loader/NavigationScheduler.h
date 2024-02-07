@@ -36,6 +36,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -78,10 +79,11 @@ private:
 
     void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
+    Ref<Frame> protectedFrame() const;
 
     static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);
 
-    Frame& m_frame;
+    WeakRef<Frame> m_frame;
     Timer m_timer;
     std::unique_ptr<ScheduledNavigation> m_redirect;
 };
