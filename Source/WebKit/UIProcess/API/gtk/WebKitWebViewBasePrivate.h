@@ -134,3 +134,7 @@ void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, const GdkEvent*, 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);
 void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase*);
 void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase*, bool);
+
+#if USE(GTK4)
+void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, const String&);
+#endif
