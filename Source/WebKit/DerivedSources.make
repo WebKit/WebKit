@@ -561,7 +561,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCSecureCoding.serialization.in \
 	Shared/Cocoa/CoreIPCString.serialization.in \
 	Shared/Cocoa/CoreIPCURL.serialization.in \
-	Shared/Cocoa/CoreIPCCFCharacterSet.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \

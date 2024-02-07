@@ -300,6 +300,43 @@ std::optional<RetainPtr<CFTypeRef>> ArgumentCoder<RetainPtr<CFTypeRef>>::decode(
 }
 
 template<typename Encoder>
+void ArgumentCoder<CFCharacterSetRef>::encode(Encoder& encoder, CFCharacterSetRef characterSet)
+{
+    auto data = adoptCF(CFCharacterSetCreateBitmapRepresentation(nullptr, characterSet));
+    if (!data) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true << data;
+}
+
+template void ArgumentCoder<CFCharacterSetRef>::encode<Encoder>(Encoder&, CFCharacterSetRef);
+template void ArgumentCoder<CFCharacterSetRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFCharacterSetRef);
+
+std::optional<RetainPtr<CFCharacterSetRef>> ArgumentCoder<RetainPtr<CFCharacterSetRef>>::decode(Decoder& decoder)
+{
+    std::optional<bool> hasData;
+    decoder >> hasData;
+    if (!hasData)
+        return std::nullopt;
+
+    if (!*hasData)
+        return { nullptr };
+
+    std::optional<RetainPtr<CFDataRef>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
+
+    auto characterSet = adoptCF(CFCharacterSetCreateWithBitmapRepresentation(nullptr, data->get()));
+    if (!characterSet)
+        return std::nullopt;
+
+    return WTFMove(characterSet);
+}
+
+template<typename Encoder>
 void ArgumentCoder<CFDictionaryRef>::encode(Encoder& encoder, CFDictionaryRef dictionary)
 {
     if (!dictionary) {
