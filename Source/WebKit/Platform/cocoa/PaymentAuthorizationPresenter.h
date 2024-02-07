@@ -87,9 +87,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void present(UIViewController *, CompletionHandler<void(bool)>&&) = 0;
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    virtual void presentInScene(const String& sceneIdentifier, const String& bundleIdentifier, CompletionHandler<void(bool)>&&) = 0;
+    virtual void presentInScene(const String&, CompletionHandler<void(bool)>&&) = 0;
     const String& sceneIdentifier() const { return m_sceneIdentifier; }
-    const String& bundleIdentifier() const { return m_bundleIdentifier; }
 #endif
 #endif
 
@@ -103,7 +102,6 @@ protected:
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     String m_sceneIdentifier;
-    String m_bundleIdentifier;
 #endif
 
 private:

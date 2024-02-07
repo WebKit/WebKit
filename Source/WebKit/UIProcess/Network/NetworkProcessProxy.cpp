@@ -1296,6 +1296,18 @@ void NetworkProcessProxy::setManagedDomainsForResourceLoadStatistics(PAL::Sessio
 }
 #endif
 
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+void NetworkProcessProxy::getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
+    if (!page) {
+        completionHandler(nullString());
+        return;
+    }
+    completionHandler(page->pageClient().sceneID());
+}
+#endif
+
 void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

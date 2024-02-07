@@ -342,7 +342,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
+    void getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(MAC)
     NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;

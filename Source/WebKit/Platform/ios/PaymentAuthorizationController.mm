@@ -121,9 +121,7 @@
 
 - (NSString *)presentationSceneBundleIdentifierForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
-    if (!_presenter)
-        return WebCore::applicationBundleIdentifier();
-    return nsStringNilIfEmpty(_presenter->bundleIdentifier());
+    return nsStringNilIfEmpty(WebCore::applicationBundleIdentifier());
 }
 #endif
 
@@ -169,10 +167,9 @@ void PaymentAuthorizationController::present(UIViewController *, CompletionHandl
 }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-void PaymentAuthorizationController::presentInScene(const String& sceneIdentifier, const String& bundleIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void PaymentAuthorizationController::presentInScene(const String& sceneIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     m_sceneIdentifier = sceneIdentifier;
-    m_bundleIdentifier = bundleIdentifier;
     present(nil, WTFMove(completionHandler));
 }
 #endif
