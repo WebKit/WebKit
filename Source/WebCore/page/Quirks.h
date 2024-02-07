@@ -99,7 +99,6 @@ public:
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
-    WEBCORE_EXPORT bool shouldAvoidUsingIOS17UserAgentForFacebook() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
@@ -251,7 +250,6 @@ private:
     mutable std::optional<bool> m_shouldStarBeFeaturePolicyDefaultValueQuirk;
     mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
-    mutable std::optional<bool> m_shouldAvoidUsingIOS17UserAgentForFacebook;
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;

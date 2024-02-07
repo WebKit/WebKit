@@ -378,20 +378,6 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #endif
 }
 
-bool Quirks::shouldAvoidUsingIOS17UserAgentForFacebook() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldAvoidUsingIOS17UserAgentForFacebook)
-        m_shouldAvoidUsingIOS17UserAgentForFacebook = isDomain("facebook.com"_s);
-    return m_shouldAvoidUsingIOS17UserAgentForFacebook.value();
-#else
-    return false;
-#endif
-}
-
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
 {
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();
