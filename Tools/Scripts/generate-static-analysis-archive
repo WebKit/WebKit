@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+# Copyright (C) 2014-2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import sys
+import os
+import subprocess
+
+from webkitpy.static_analysis.results import get_project_issue_count_as_string
+
+INDEX_HTML = 'index.html'
+INDEX_TEMPLATE = """
+<html>
+<head>
+    <title>{title}</title>
+</head>
+<body>
+    <div><h1>{heading}</h1></div>
+    <div><b>Projects with issues:</b></div>
+    <div><ul>{project_list}</ul></div>
+</body>
+</html>
+"""
+PROJECT_TEMPLATE = '<li><a href="{project_file_url}">{project_name}</a> ({project_issue_count})</li>'
+
+
+def parse_command_line(args):
+    parser = argparse.ArgumentParser(description='Take a directory of static analyzer results and output an archive')
+    parser.add_argument('--output-root', dest='output_root', help='Root of static analysis output', default='./')
+    parser.add_argument('--destination', dest='destination', help='Where to output zip archive')
+    parser.add_argument('--id-string', dest='id_string', help='Identifier for what was built')
+    parser.add_argument('--count', '-c', dest='count', action='store_true', default=False,
+                        help='Print total issue count.')
+    return parser.parse_args(args)
+
+
+def get_project_name(output_root, analysis_dir):
+    static_analyzer_dir = os.path.join(output_root, analysis_dir, 'StaticAnalyzer')
+    if os.path.exists(static_analyzer_dir):
+        subdirs = filter(lambda x: x[0] != '.' and x != 'PAL', os.listdir(static_analyzer_dir))
+        return os.path.basename(subdirs[0])
+
+
+def generate_results_page(project_dict, id_string, output_root):
+    project_list = ''
+    for project_name in sorted(project_dict.keys()):
+        if project_name:
+            project_path = project_dict[project_name]
+            static_analyzer_index_path = os.path.join(output_root, project_path, INDEX_HTML)
+            project_list = project_list + PROJECT_TEMPLATE.format(
+                    project_file_url=project_path + '/' + INDEX_HTML,
+                    project_issue_count=get_project_issue_count_as_string(static_analyzer_index_path),
+                    project_name=project_name)
+
+    return INDEX_TEMPLATE.format(
+        heading='Results for {}'.format(id_string),
+        project_list=project_list,
+        title='Static Analysis Results'
+    )
+
+
+def get_total_issue_count(project_dict, output_root):
+    total_issue_count = 0
+    for project_name in sorted(project_dict.keys()):
+        if project_name:
+            project_path = project_dict[project_name]
+            static_analyzer_index_path = os.path.join(output_root, project_path, INDEX_HTML)
+            try:
+                issue_count = int(get_project_issue_count_as_string(static_analyzer_index_path))
+                total_issue_count = total_issue_count + issue_count
+            except ValueError:
+                pass
+    return total_issue_count
+
+
+def main(options):
+    output_root = options.output_root
+    project_dict = {}
+    subdirs = []
+
+    if os.path.isdir(os.path.join(output_root, 'StaticAnalyzer')):
+        # Current: scan-build was not used to build & analyze.
+        subdirs = ['.']
+        project_dict = {'Everything': '.'}
+    else:
+        # Legacy: scan-build was used to build & analyze.
+        subdirs = filter(lambda x: x[0] != '.', os.listdir(output_root))
+        project_dict = dict(map(lambda x: (get_project_name(output_root, x), x), subdirs))
+
+    if options.id_string:
+        results_page = generate_results_page(project_dict, options.id_string, output_root)
+        f = open(output_root + '/results.html', 'w')
+        f.write(results_page)
+        f.close()
+
+    if options.destination:
+        if os.path.isfile(options.destination):
+            subprocess.check_call(['/bin/rm', options.destination])
+        subprocess.check_call(['/usr/bin/zip', '-r', options.destination, output_root])
+
+    if options.count:
+        total_issue_count = get_total_issue_count(project_dict, output_root)
+        print('Total issue count: {}'.format(total_issue_count))
+
+    return 0
+
+
+if __name__ == '__main__':
+    options = parse_command_line(sys.argv[1:])
+    try:
+        result = main(options)
+        exit(result)
+    except KeyboardInterrupt:
+        exit('Interrupted.')
