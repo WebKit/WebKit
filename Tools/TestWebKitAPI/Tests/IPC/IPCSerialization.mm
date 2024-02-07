@@ -678,6 +678,11 @@ TEST(IPCSerialization, Basic)
     auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
     runTestCF({ cgColor.get() });
 
+    // CGColorSpace
+    runTestCF({ sRGBColorSpace.get() });
+    auto grayColorSpace = adoptCF(CGColorSpaceCreateDeviceGray());
+    runTestCF({ grayColorSpace.get() });
+
     auto runNumberTest = [&](NSNumber *number) {
         ObjCHolderForTesting::ValueType numberVariant;
         numberVariant.emplace<RetainPtr<NSNumber>>(number);

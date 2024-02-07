@@ -59,6 +59,10 @@ additional_forward_declaration: typedef struct CGColor *CGColorRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebCore::Color::createAndPreserveColorSpace, ToCFMethod=WebCore::cachedCGColor(*result)] CGColorRef wrapped by WebCore::Color {
 }
 
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] CGColorSpaceRef wrapped by WebKit::CoreIPCCGColorSpace {
+}
+
 #endif
 
 #if HAVE(SEC_KEYCHAIN)

@@ -408,55 +408,6 @@ std::optional<RetainPtr<CFDictionaryRef>> ArgumentCoder<RetainPtr<CFDictionaryRe
     return WTFMove(dictionary);
 }
 
-namespace {
-using CGColorSpaceSerialization = std::variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
-}
-
-template<typename Encoder>
-void ArgumentCoder<CGColorSpaceRef>::encode(Encoder& encoder, CGColorSpaceRef cgColorSpace)
-{
-    if (auto colorSpace = colorSpaceForCGColorSpace(cgColorSpace)) {
-        encoder << CGColorSpaceSerialization { *colorSpace };
-        return;
-    }
-    if (RetainPtr<CFStringRef> name = CGColorSpaceGetName(cgColorSpace)) {
-        // This is a bit slow, hence we use the above if possible.
-        encoder << CGColorSpaceSerialization { WTFMove(name) };
-        return;
-    }
-    if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(cgColorSpace))) {
-        encoder << CGColorSpaceSerialization { WTFMove(propertyList) };
-        return;
-    }
-    // FIXME: This should be removed once we can prove only non-null cgColorSpaces.
-    encoder << CGColorSpaceSerialization { WebCore::ColorSpace::SRGB };
-    ASSERT_NOT_REACHED(); // NOLINT
-}
-
-template void ArgumentCoder<CGColorSpaceRef>::encode<Encoder>(Encoder&, CGColorSpaceRef);
-template void ArgumentCoder<CGColorSpaceRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CGColorSpaceRef);
-
-std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRef>>::decode(Decoder& decoder)
-{
-    auto colorSpaceFormat = decoder.decode<CGColorSpaceSerialization>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    auto colorSpace = WTF::switchOn(*colorSpaceFormat,
-        [](WebCore::ColorSpace colorSpace) -> RetainPtr<CGColorSpaceRef> {
-            return RetainPtr { cachedNullableCGColorSpace(colorSpace) };
-        },
-        [](RetainPtr<CFStringRef> name) -> RetainPtr<CGColorSpaceRef> {
-            return adoptCF(CGColorSpaceCreateWithName(name.get()));
-        },
-        [](RetainPtr<CFTypeRef> propertyList) -> RetainPtr<CGColorSpaceRef> {
-            return adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
-        }
-    );
-    if (UNLIKELY(!colorSpace))
-        return std::nullopt;
-    return colorSpace;
-}
-
 #if HAVE(SEC_ACCESS_CONTROL)
 template<typename Encoder>
 void ArgumentCoder<SecAccessControlRef>::encode(Encoder& encoder, SecAccessControlRef accessControl)

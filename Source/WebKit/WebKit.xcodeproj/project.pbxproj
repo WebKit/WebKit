@@ -5635,6 +5635,8 @@
 		52F4B46727E1197700FFD129 /* VirtualAuthenticatorUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorUtils.h; sourceTree = "<group>"; };
 		52F4B46827E1197700FFD129 /* VirtualAuthenticatorUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualAuthenticatorUtils.mm; sourceTree = "<group>"; };
 		52F4B46B27E125A800FFD129 /* VirtualCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualCredential.h; sourceTree = "<group>"; };
+		52FB15422B646156000933CC /* CoreIPCCGColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCGColorSpace.h; sourceTree = "<group>"; };
+		52FB15432B64680B000933CC /* CoreIPCCGColorSpace.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCGColorSpace.serialization.in; sourceTree = "<group>"; };
 		5315876B2076B713004BF9F3 /* NetworkActivityTrackerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkActivityTrackerCocoa.mm; sourceTree = "<group>"; };
 		5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTaskCocoa.h; sourceTree = "<group>"; };
 		532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSessionCocoa.h; sourceTree = "<group>"; };
@@ -9025,6 +9027,8 @@
 				5C57868D2B6EF92F005D51D5 /* CoreIPCCFArray.h */,
 				5C57868F2B6EF92F005D51D5 /* CoreIPCCFArray.mm */,
 				5C57868E2B6EF92F005D51D5 /* CoreIPCCFArray.serialization.in */,
+				52FB15422B646156000933CC /* CoreIPCCGColorSpace.h */,
+				52FB15432B64680B000933CC /* CoreIPCCGColorSpace.serialization.in */,
 				F4EFF36B2AF0267200479AB8 /* CoreIPCNumber.h */,
 				F4EFF36A2AF0267200479AB8 /* CoreIPCNumber.serialization.in */,
 				561A54512B61E49E00073A72 /* CoreIPCSecCertificate.h */,
