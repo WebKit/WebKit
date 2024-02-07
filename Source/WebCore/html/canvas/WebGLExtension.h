@@ -96,6 +96,8 @@ class WebGLExtensionBase : public RefCounted<WebGLExtensionBase> {
 public:
     WebGLExtensionName name() const { return m_name; }
 
+    virtual ~WebGLExtensionBase() = default;
+
 protected:
     WebGLExtensionBase(WebGLExtensionName name)
         : m_name(name)
