@@ -235,7 +235,8 @@ static void getImageBytesFromImageBuffer(ImageBuffer* imageBuffer, const auto& d
         return callback(nullptr, 0, 0);
 
     auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, toPixelFormat(destination.texture->format()), DestinationColorSpace::SRGB() }, { { }, size });
-    ASSERT(pixelBuffer);
+    if (!pixelBuffer)
+        return callback(nullptr, 0, 0);
 
     callback(pixelBuffer->bytes(), pixelBuffer->sizeInBytes(), size.height());
 }
@@ -247,6 +248,9 @@ static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, Im
         return callback(nullptr, 0, 0);
 
     auto pixelBuffer = videoFrame->pixelBuffer();
+    if (!pixelBuffer)
+        return callback(nullptr, 0, 0);
+
     auto rows = CVPixelBufferGetHeight(pixelBuffer);
     auto sizeInBytes = rows * CVPixelBufferGetBytesPerRow(pixelBuffer);
 
