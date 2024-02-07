@@ -5842,8 +5842,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 // position:static elements that are not flex-items get their z-index coerced to auto.
 bool RenderBox::requiresLayer() const
 {
-    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasNonVisibleOverflow()
-        || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || style().specifiesColumns()
+    return RenderBoxModelObject::requiresLayer() || hasNonVisibleOverflow() || style().specifiesColumns()
         || style().containsLayout() || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
 }
 
