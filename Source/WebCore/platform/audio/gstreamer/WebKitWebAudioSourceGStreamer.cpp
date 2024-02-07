@@ -191,8 +191,7 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
                                                        G_MINDOUBLE, G_MAXDOUBLE,
                                                        44100.0, flags));
 
-    g_object_class_install_property(objectClass, PROP_DESTINATION, g_param_spec_pointer("destination", "destination",
-        "Destination", flags));
+    g_object_class_install_property(objectClass, PROP_DESTINATION, g_param_spec_pointer("destination", "destination", "Destination", G_PARAM_READWRITE));
 
     g_object_class_install_property(objectClass,
                                     PROP_FRAMES,
@@ -208,7 +207,6 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     WebKitWebAudioSrc* src = WEBKIT_WEB_AUDIO_SRC(object);
     WebKitWebAudioSrcPrivate* priv = src->priv;
 
-    ASSERT(priv->destination);
     ASSERT(priv->sampleRate);
 
     GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(src), GST_ELEMENT_FLAG_SOURCE);
@@ -320,6 +318,9 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
         priv->dispatchDone = true;
         priv->dispatchCondition.notifyOne();
     });
+
+    if (!priv->destination)
+        return;
 
     GST_TRACE_OBJECT(element.get(), "Playing: %d", priv->destination->isPlaying());
     if (priv->hasRenderedAudibleFrame && !priv->destination->isPlaying())
