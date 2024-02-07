@@ -25,6 +25,7 @@
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -100,6 +101,18 @@ public:
     };
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    struct UnifiedTextReplacementData {
+        enum class ApplyIndicator: bool {
+            No, Yes
+        };
+
+        String originalText;
+        WTF::UUID uuid;
+        ApplyIndicator applyIndicator { ApplyIndicator::No };
+    };
+#endif
+
     using Data = std::variant<
         String
         , DictationData // DictationAlternatives
@@ -111,6 +124,9 @@ public:
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         , PlatformTextCheckingData // PlatformTextChecking
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        , UnifiedTextReplacementData // UnifiedTextReplacement
+#endif
     >;
 
     DocumentMarker(Type, OffsetRange, Data&& = { });
@@ -119,7 +135,7 @@ public:
     unsigned startOffset() const { return m_range.start; }
     unsigned endOffset() const { return m_range.end; }
 
-    const String& description() const;
+    String description() const;
 
     const Data& data() const { return m_data; }
     void clearData() { m_data = String { }; }
@@ -180,9 +196,17 @@ inline void DocumentMarker::shiftOffsets(int delta)
     m_range.end += delta;
 }
 
-inline const String& DocumentMarker::description() const
+inline String DocumentMarker::description() const
 {
-    return std::holds_alternative<String>(m_data) ? std::get<String>(m_data) : emptyString();
+    if (auto* description = std::get_if<String>(&m_data))
+        return *description;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (auto* description = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
+        return makeString("('", description->originalText, "', indicator: ", description->applyIndicator == DocumentMarker::UnifiedTextReplacementData::ApplyIndicator::Yes, ")");
+#endif
+
+    return emptyString();
 }
 
 } // namespace WebCore

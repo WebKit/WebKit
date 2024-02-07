@@ -239,20 +239,29 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
 
 static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
 {
+    switch (marker.type()) {
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-    if (marker.type() == DocumentMarker::Type::PlatformTextChecking)
+    case DocumentMarker::Type::PlatformTextChecking:
         return true;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (marker.type() == DocumentMarker::Type::DictationPhraseWithAlternatives || marker.type() == DocumentMarker::Type::DictationResult)
+    case DocumentMarker::Type::DictationPhraseWithAlternatives:
+    case DocumentMarker::Type::DictationResult:
         return true;
 #endif
 
-    if (marker.type() == DocumentMarker::Type::DraggedContent)
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    case DocumentMarker::Type::UnifiedTextReplacement:
+        return true;
+#endif
+
+    case DocumentMarker::Type::DraggedContent:
         return is<RenderReplaced>(std::get<RefPtr<Node>>(marker.data())->renderer());
 
-    return false;
+    default:
+        return false;
+    }
 }
 
 // Markers are stored in order sorted by their start offset.

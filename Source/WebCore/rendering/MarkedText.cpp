@@ -213,6 +213,10 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             return MarkedText::Type::GrammarError;
         case DocumentMarker::Type::CorrectionIndicator:
             return MarkedText::Type::Correction;
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+            return MarkedText::Type::Correction;
+#endif
         case DocumentMarker::Type::TextMatch:
             return MarkedText::Type::TextMatch;
         case DocumentMarker::Type::DictationAlternatives:
@@ -240,6 +244,9 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
                 break;
             FALLTHROUGH;
         case DocumentMarker::Type::CorrectionIndicator:
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+#endif
         case DocumentMarker::Type::Replacement:
         case DocumentMarker::Type::DictationAlternatives:
 #if PLATFORM(IOS_FAMILY)
@@ -282,6 +289,9 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         switch (marker->type()) {
         case DocumentMarker::Type::Spelling:
         case DocumentMarker::Type::CorrectionIndicator:
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+#endif
         case DocumentMarker::Type::DictationAlternatives:
         case DocumentMarker::Type::Grammar:
 #if PLATFORM(IOS_FAMILY)
@@ -290,7 +300,14 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 #endif
         case DocumentMarker::Type::TextMatch: {
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
-            markedTexts.append({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
+
+            auto markedTextType = markedTextTypeForMarkerType(marker->type());
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+            if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).applyIndicator == DocumentMarker::UnifiedTextReplacementData::ApplyIndicator::No)
+                markedTextType = MarkedText::Type::Unmarked;
+#endif
+
+            markedTexts.append({ clampedStart, clampedEnd, markedTextType, marker.get() });
             break;
         }
         case DocumentMarker::Type::Replacement:
