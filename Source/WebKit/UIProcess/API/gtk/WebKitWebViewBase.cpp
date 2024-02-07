@@ -97,6 +97,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if USE(GTK4) && defined(GTK_ACCESSIBILITY_ATSPI)
+#include <gtk/a11y/gtkatspi.h>
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -300,7 +304,11 @@ struct _WebKitWebViewBasePrivate {
     CString tooltipText;
     IntRect tooltipArea;
     WebHitTestResultData::IsScrollbar mouseIsOverScrollbar;
-#if !USE(GTK4)
+#if USE(GTK4)
+#ifdef GTK_ACCESSIBILITY_ATSPI
+    GRefPtr<GtkAccessible> socketAccessible;
+#endif
+#else
     GRefPtr<AtkObject> accessible;
 #endif
     GtkWidget* dialog { nullptr };
@@ -376,7 +384,10 @@ struct _WebKitWebViewBasePrivate {
  */
 
 #if USE(GTK4)
-WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
+static void webkitWebViewBaseAccessibleInterfaceInit(GtkAccessibleInterface*);
+
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET,
+    G_IMPLEMENT_INTERFACE(GTK_TYPE_ACCESSIBLE, webkitWebViewBaseAccessibleInterfaceInit))
 #else
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 #endif
@@ -385,6 +396,29 @@ WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 static void webkitWebViewBaseDidEnterFullScreen(WebKitWebViewBase*);
 static void webkitWebViewBaseDidExitFullScreen(WebKitWebViewBase*);
 static void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase*);
+#endif
+
+#if USE(GTK4)
+static GtkAccessible* webkitWebViewBaseAccessibleGetFirstAccessibleChild(GtkAccessible* accessible)
+{
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(accessible);
+
+#ifdef GTK_ACCESSIBILITY_ATSPI
+    if (webView->priv->socketAccessible)
+        return GTK_ACCESSIBLE(g_object_ref(webView->priv->socketAccessible.get()));
+#endif
+
+    if (auto* widget = gtk_widget_get_first_child(GTK_WIDGET(webView)))
+        return GTK_ACCESSIBLE(g_object_ref(widget));
+
+    return nullptr;
+}
+
+static void
+webkitWebViewBaseAccessibleInterfaceInit(GtkAccessibleInterface* iface)
+{
+    iface->get_first_accessible_child = webkitWebViewBaseAccessibleGetFirstAccessibleChild;
+}
 #endif
 
 static void webkitWebViewBaseUpdateDisplayID(WebKitWebViewBase* webViewBase, GdkMonitor* monitor)
@@ -3440,3 +3474,34 @@ void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase* webView
 {
     webkitWebViewBaseNextPresentationUpdateMonitorStart(webViewBase, WTFMove(callback));
 }
+
+#if USE(GTK4)
+void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& plugID)
+{
+#ifdef GTK_ACCESSIBILITY_ATSPI
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    if (priv->socketAccessible) {
+        gtk_accessible_set_accessible_parent(priv->socketAccessible.get(), nullptr, nullptr);
+        priv->socketAccessible = nullptr;
+    }
+
+    Vector<String> tokens = plugID.split(':');
+    RELEASE_ASSERT(tokens.size() == 2);
+
+    GUniqueOutPtr<GError> error;
+    GUniquePtr<char> busName(g_strdup_printf(":%s", tokens[0].utf8().data()));
+
+    priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.get(), tokens[1].utf8().data(), &error.outPtr()));
+
+    if (priv->socketAccessible) {
+        auto* widget = gtk_widget_get_first_child(GTK_WIDGET(webViewBase));
+        gtk_accessible_set_accessible_parent(priv->socketAccessible.get(), GTK_ACCESSIBLE(webViewBase), GTK_ACCESSIBLE(widget));
+    } else
+        g_warning("Error creating WebKitWebView a11y socket: %s", error->message);
+#else
+    UNUSED_PARAM(webViewBase);
+    UNUSED_PARAM(plugID);
+#endif // GTK_ACCESSIBILITY_ATSPI
+}
+#endif

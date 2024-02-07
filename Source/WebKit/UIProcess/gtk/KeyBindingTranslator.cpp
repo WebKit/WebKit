@@ -173,6 +173,9 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
 KeyBindingTranslator::KeyBindingTranslator()
     : m_nativeWidget(gtk_text_view_new())
 {
+#if USE(GTK4)
+    gtk_accessible_update_state(GTK_ACCESSIBLE(m_nativeWidget.get()), GTK_ACCESSIBLE_STATE_HIDDEN, TRUE, -1);
+#endif
     g_signal_connect(m_nativeWidget.get(), "backspace", G_CALLBACK(backspaceCallback), this);
     g_signal_connect(m_nativeWidget.get(), "cut-clipboard", G_CALLBACK(cutClipboardCallback), this);
     g_signal_connect(m_nativeWidget.get(), "copy-clipboard", G_CALLBACK(copyClipboardCallback), this);
