@@ -1,0 +1,14 @@
+Test text insertion after <picture>.
+
+Initial state:
+| <#selection-anchor>
+| <picture>
+|   <img>
+|     src="../resources/abe.png"
+| <#selection-focus>
+
+After insertion:
+| <picture>
+|   <img>
+|     src="../resources/abe.png"
+| "abe<#selection-caret>"

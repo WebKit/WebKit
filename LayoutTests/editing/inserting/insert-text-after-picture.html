@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable><picture><img src="../resources/abe.png"></picture></div>
+<script>
+
+Markup.description('Test text insertion after <picture>.');
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('SelectAll', false, null);
+Markup.dump(editor, 'Initial state');
+
+document.getSelection().collapseToEnd();
+document.execCommand('InsertText', false, 'abe');
+
+Markup.dump(editor, 'After insertion');
+
+</script>
+</body>
+</html>

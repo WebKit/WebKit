@@ -42,6 +42,8 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewImage();
 #endif
 
+    bool canContainRangeEndPoint() const override { return false; }
+
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
 };
