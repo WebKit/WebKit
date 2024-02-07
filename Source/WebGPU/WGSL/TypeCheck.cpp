@@ -506,6 +506,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             return error("module-scope 'var' must not use address space 'function'");
         if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
             return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
+        if (addressSpace == AddressSpace::Storage && accessMode == AccessMode::Write)
+            return error("access mode 'write' is not valid for the <storage> address space");
         if (addressSpace == AddressSpace::Handle) {
             auto* primitive = std::get_if<Types::Primitive>(result);
             bool isTypeAllowed = std::holds_alternative<Types::Texture>(*result)
