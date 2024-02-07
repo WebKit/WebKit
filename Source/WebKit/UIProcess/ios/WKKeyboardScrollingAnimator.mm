@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AccessibilitySupportSPI.h"
+#import "CAFrameRateRangeUtilities.h"
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKVelocityTrackingScrollView.h"
@@ -42,6 +43,10 @@
 #import <algorithm>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#endif
 
 @protocol WKKeyboardScrollableInternal <NSObject>
 @required
@@ -434,6 +439,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
         return;
 
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+    // Opt into a higher frame-rate for displays that support higher refresh rates.
+    [_displayLink setPreferredFrameRateRange:WebKit::highFrameRateRange()];
+    [_displayLink setHighFrameRateReason:WebKit::keyboardScrollingAnimationHighFrameRateReason];
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+
     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 

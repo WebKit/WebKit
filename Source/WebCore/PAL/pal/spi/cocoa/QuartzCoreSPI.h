@@ -229,6 +229,10 @@ typedef uint32_t CAHighFrameRateReason;
 @interface CAAnimation ()
 @property CAHighFrameRateReason highFrameRateReason;
 @end
+
+@interface CADisplayLink ()
+@property CAHighFrameRateReason highFrameRateReason;
+@end
 #endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
 
 #endif // __OBJC__
