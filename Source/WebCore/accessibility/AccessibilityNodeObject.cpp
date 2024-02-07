@@ -2513,7 +2513,8 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    auto* axObject = node->document().axObjectCache()->getOrCreate(node);
+    auto* cache = node->document().axObjectCache();
+    RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
