@@ -48,7 +48,7 @@ class AnnotationTrackingState {
 public:
     void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, const WebEventType&, const WebMouseEventButton&);
     void finishAnnotationTracking(const WebEventType&, const WebMouseEventButton&);
-    const PDFAnnotation* trackedAnnotation() const { return m_trackedAnnotation.get(); }
+    const PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
 private:
     void handleMouseDraggedOffTrackedAnnotation();
     RetainPtr<PDFAnnotation> m_trackedAnnotation;
@@ -247,6 +247,8 @@ private:
     void zoomIn() final;
     void zoomOut() final;
 #endif
+
+    void didClickLinkAnnotation(const PDFAnnotation *);
 
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 

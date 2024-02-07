@@ -52,6 +52,7 @@
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MouseEvent.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
@@ -838,6 +839,30 @@ bool PDFPluginBase::supportsForms()
 {
     // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
     return isFullFramePlugin();
+}
+
+WebCore::IntPoint PDFPluginBase::lastKnownMousePositionInView() const
+{
+    if (m_lastMouseEvent)
+        return convertFromRootViewToPlugin(m_lastMouseEvent->position());
+    return { };
+}
+
+
+void PDFPluginBase::navigateToURL(const URL& url)
+{
+    if (url.protocolIsJavaScript())
+        return;
+
+    RefPtr frame = m_frame ? m_frame->coreLocalFrame() : nullptr;
+    if (!frame)
+        return;
+
+    RefPtr<Event> coreEvent;
+    if (m_lastMouseEvent)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, &frame->windowProxy(), platform(*m_lastMouseEvent), 0, 0);
+
+    frame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
 #if !LOG_DISABLED
