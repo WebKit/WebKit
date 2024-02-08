@@ -200,9 +200,9 @@ class RendererVk : angle::NonCopyable
     const vk::Allocator &getAllocator() const { return mAllocator; }
     vk::ImageMemorySuballocator &getImageMemorySuballocator() { return mImageMemorySuballocator; }
 
-    angle::Result selectPresentQueueForSurface(DisplayVk *displayVk,
-                                               VkSurfaceKHR surface,
-                                               uint32_t *presentQueueOut);
+    angle::Result checkQueueForSurfacePresent(DisplayVk *displayVk,
+                                              VkSurfaceKHR surface,
+                                              bool *supportedOut);
 
     const gl::Caps &getNativeCaps() const;
     const gl::TextureCapsMap &getNativeTextureCaps() const;

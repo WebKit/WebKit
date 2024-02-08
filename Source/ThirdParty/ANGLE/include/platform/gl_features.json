@@ -769,6 +769,14 @@
                 "Resync depth range to apply clip control updates."
             ],
             "issue": "https://anglebug.com/8381"
+        },
+        {
+            "name": "corrupt_program_binary_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Corrupt the program binary retrieved from the driver for testing purposes."
+            ],
+            "issue": "https://anglebug.com/8471"
         }
     ]
 }

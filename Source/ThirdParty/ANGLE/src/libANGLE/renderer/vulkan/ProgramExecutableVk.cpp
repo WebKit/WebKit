@@ -566,7 +566,7 @@ angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *c
 angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
                                         bool isSeparable,
                                         gl::BinaryInputStream *stream,
-                                        bool *successOut)
+                                        egl::CacheGetResult *resultOut)
 {
     mVariableInfoMap.load(stream);
     mOriginalShaderInfo.load(stream);
@@ -607,7 +607,7 @@ angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
     ANGLE_TRY(initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
                                         &contextVk->getMetaDescriptorPools()));
 
-    *successOut = true;
+    *resultOut = egl::CacheGetResult::GetSuccess;
     return angle::Result::Continue;
 }
 
@@ -858,14 +858,13 @@ void ProgramExecutableVk::addInputAttachmentDescriptorSetDesc(vk::DescriptorSetL
         return;
     }
 
-    const std::vector<gl::LinkedUniform> &uniforms = mExecutable->getUniforms();
-    const uint32_t baseUniformIndex                = mExecutable->getFragmentInoutRange().low();
-    const gl::LinkedUniform &baseInputAttachment   = uniforms.at(baseUniformIndex);
+    const uint32_t firstInputAttachment =
+        static_cast<uint32_t>(mExecutable->getFragmentInoutIndices().first());
 
     const ShaderInterfaceVariableInfo &baseInfo = mVariableInfoMap.getVariableById(
-        gl::ShaderType::Fragment, baseInputAttachment.getId(gl::ShaderType::Fragment));
+        gl::ShaderType::Fragment, sh::vk::spirv::kIdInputAttachment0 + firstInputAttachment);
 
-    uint32_t baseBinding = baseInfo.binding - baseInputAttachment.getLocation();
+    uint32_t baseBinding = baseInfo.binding - firstInputAttachment;
 
     for (uint32_t colorIndex = 0; colorIndex < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS; ++colorIndex)
     {

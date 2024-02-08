@@ -2176,6 +2176,20 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLFramebufferFetchBarrierEXT, std::move(params));
     }
+    if (strcmp(nameToken, "glFramebufferFoveationConfigQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLFRAMEBUFFERFOVEATIONCONFIGQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferFoveationConfigQCOM, std::move(params));
+    }
+    if (strcmp(nameToken, "glFramebufferFoveationParametersQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLFRAMEBUFFERFOVEATIONPARAMETERSQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferFoveationParametersQCOM, std::move(params));
+    }
     if (strcmp(nameToken, "glFramebufferMemorylessPixelLocalStorageANGLE") == 0)
     {
         ParamBuffer params = ParseParameters<
@@ -5685,6 +5699,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLTEXSUBIMAGE3DROBUSTANGLEPROC>::type>(
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLTexSubImage3DRobustANGLE, std::move(params));
+    }
+    if (strcmp(nameToken, "glTextureFoveationParametersQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLTextureFoveationParametersQCOM, std::move(params));
     }
     if (strcmp(nameToken, "glTransformFeedbackVaryings") == 0)
     {

@@ -125,6 +125,7 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/OVR_multiview2_test.cpp",
   "compiler_tests/OVR_multiview_test.cpp",
   "compiler_tests/Pack_Unpack_test.cpp",
+  "compiler_tests/Parse_test.cpp",
   "compiler_tests/PruneEmptyCases_test.cpp",
   "compiler_tests/PruneEmptyDeclarations_test.cpp",
   "compiler_tests/PrunePureLiteralStatements_test.cpp",

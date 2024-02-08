@@ -3266,7 +3266,6 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
         (params.srcRotation == SurfaceRotation::Rotated270Degrees))
     {
         // The surface is rotated 90/270 degrees.  This changes the aspect ratio of the surface.
-        std::swap(renderArea.x, renderArea.y);
         std::swap(renderArea.width, renderArea.height);
     }
 

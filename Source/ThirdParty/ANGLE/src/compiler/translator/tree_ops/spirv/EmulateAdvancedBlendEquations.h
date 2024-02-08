@@ -12,15 +12,14 @@
 
 #include "common/angleutils.h"
 #include "compiler/translator/Compiler.h"
+#include "compiler/translator/tree_ops/spirv/EmulateFramebufferFetch.h"
 
 namespace sh
 {
 
-class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 class DriverUniform;
-struct ShaderVariable;
 class AdvancedBlendEquations;
 
 // Declares the necessary input attachment (if not already for framebuffer fetch), loads from it and
@@ -30,9 +29,9 @@ class AdvancedBlendEquations;
     TCompiler *compiler,
     TIntermBlock *root,
     TSymbolTable *symbolTable,
+    const AdvancedBlendEquations &advancedBlendEquations,
     const DriverUniform *driverUniforms,
-    std::vector<ShaderVariable> *uniforms,
-    const AdvancedBlendEquations &advancedBlendEquations);
+    InputAttachmentMap *inputAttachmentMapOut);
 
 }  // namespace sh
 

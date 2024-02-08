@@ -131,6 +131,8 @@ TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
     }
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(ShaderAlgorithmTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND(
+    ShaderAlgorithmTest,
+    ES2_VULKAN().enable(Feature::AvoidOpSelectWithMismatchingRelaxedPrecision));
 
 }  // namespace

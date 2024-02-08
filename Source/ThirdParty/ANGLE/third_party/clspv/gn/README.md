@@ -18,7 +18,6 @@ Add the following to `args.gn` file
 
 ```
 angle_enable_cl = true
-# llvm_have_mallinfo2 = false # For system that doesn't have mallinfo2
 ```
 
 Note: Only the `linux/x86{,_64}` and `android/arm{64}` combination of `os/cpu`

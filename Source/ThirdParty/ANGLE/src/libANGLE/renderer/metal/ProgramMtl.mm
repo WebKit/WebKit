@@ -177,7 +177,7 @@ void ProgramMtl::destroy(const gl::Context *context)
 angle::Result ProgramMtl::load(const gl::Context *context,
                                gl::BinaryInputStream *stream,
                                std::shared_ptr<LinkTask> *loadTaskOut,
-                               bool *successOut)
+                               egl::CacheGetResult *resultOut)
 {
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
@@ -191,7 +191,7 @@ angle::Result ProgramMtl::load(const gl::Context *context,
     ANGLE_TRY(compileMslShaderLibs(context, &subTasks));
 
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskMtl(std::move(subTasks)));
-    *successOut  = true;
+    *resultOut   = egl::CacheGetResult::GetSuccess;
 
     return angle::Result::Continue;
 }

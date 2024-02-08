@@ -291,9 +291,6 @@ TEST_P(OcclusionQueriesTestES3, UnresolveNotCounted)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // http://anglebug.com/5086
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsVulkan());
-
     constexpr GLuint kSize = 64;
 
     GLFramebuffer fboMS;

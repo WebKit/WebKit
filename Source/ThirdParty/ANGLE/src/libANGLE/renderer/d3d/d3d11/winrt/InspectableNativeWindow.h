@@ -19,8 +19,14 @@
 
 #include <windows.applicationmodel.core.h>
 #undef GetCurrentTime
-#include <windows.ui.xaml.h>
-#include <windows.ui.xaml.media.dxinterop.h>
+#if defined(ANGLE_ENABLE_WINDOWS_APP_SDK)
+#    include <microsoft.ui.dispatching.h>
+#    include <microsoft.ui.xaml.h>
+#    include <microsoft.ui.xaml.media.dxinterop.h>
+#else
+#    include <windows.ui.xaml.h>
+#    include <windows.ui.xaml.media.dxinterop.h>
+#endif
 #include <wrl.h>
 #include <wrl/wrappers/corewrappers.h>
 
@@ -28,6 +34,12 @@ using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::Foundation::Collections;
+
+#if defined(ANGLE_ENABLE_WINDOWS_APP_SDK)
+using ISwapChainPanel = ABI::Microsoft::UI::Xaml::Controls::ISwapChainPanel;
+#else
+using ISwapChainPanel = ABI::Windows::UI::Xaml::Controls::ISwapChainPanel;
+#endif
 
 namespace rx
 {
@@ -120,9 +132,8 @@ class InspectableNativeWindow
 
 bool IsCoreWindow(EGLNativeWindowType window,
                   ComPtr<ABI::Windows::UI::Core::ICoreWindow> *coreWindow = nullptr);
-bool IsSwapChainPanel(
-    EGLNativeWindowType window,
-    ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> *swapChainPanel = nullptr);
+bool IsSwapChainPanel(EGLNativeWindowType window,
+                      ComPtr<ISwapChainPanel> *swapChainPanel = nullptr);
 bool IsEGLConfiguredPropertySet(
     EGLNativeWindowType window,
     ABI::Windows::Foundation::Collections::IPropertySet **propertySet = nullptr,

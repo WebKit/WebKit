@@ -1211,10 +1211,17 @@ EXPORTS
 
     ; GL_OVR_multiview2
 
+    ; GL_QCOM_framebuffer_foveated
+    glFramebufferFoveationConfigQCOM
+    glFramebufferFoveationParametersQCOM
+
     ; GL_QCOM_render_shared_exponent
 
     ; GL_QCOM_shading_rate
     glShadingRateQCOM
+
+    ; GL_QCOM_texture_foveated
+    glTextureFoveationParametersQCOM
 
     ; GL 1.0
     glAccum

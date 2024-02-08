@@ -402,6 +402,9 @@ b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.negative_coverage.* = SKI
 b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
 b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
 
+// Failing on SwiftShader after a VK-GL-CTS update
+8507 SWIFTSHADER : dEQP-GLES31.functional.texture.border_clamp.range_clamp.linear_float_color = SKIP
+
 // NVIDIA on LINUX bot is missing VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColors
 // and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
 b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP

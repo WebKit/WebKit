@@ -1740,12 +1740,26 @@ angle::Result TextureVk::setStorageExternalMemory(const gl::Context *context,
 {
     ContextVk *contextVk           = vk::GetImpl(context);
     MemoryObjectVk *memoryObjectVk = vk::GetImpl(memoryObject);
+    RendererVk *renderer           = contextVk->getRenderer();
+
+    const vk::Format &vkFormat     = renderer->getFormat(internalFormat);
+    angle::FormatID actualFormatID = vkFormat.getActualRenderableImageFormatID();
 
     releaseAndDeleteImageAndViews(contextVk);
 
     setImageHelper(contextVk, new vk::ImageHelper(), gl::TextureType::InvalidEnum, 0, 0, true, {});
 
     mImage->setTilingMode(gl_vk::GetTilingMode(mState.getTilingMode()));
+
+    // EXT_external_objects issue 13 says that all supported usage flags must be specified.
+    // However, ANGLE_external_objects_flags allows these flags to be masked.  Note that the GL enum
+    // values constituting the bits of |usageFlags| are identical to their corresponding Vulkan
+    // value.
+    usageFlags &= vk::GetMaximalImageUsageFlags(renderer, actualFormatID);
+
+    // Similarly, createFlags is restricted to what is valid.
+    createFlags &= vk::GetMinimalImageCreateFlags(renderer, type, usageFlags) |
+                   VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 
     ANGLE_TRY(memoryObjectVk->createImage(contextVk, type, levels, internalFormat, size, offset,
                                           mImage, createFlags, usageFlags, imageCreateInfoPNext));
@@ -3677,7 +3691,9 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         contextVk, mState.getType(), vkExtent, intendedImageFormatID, actualImageFormatID, samples,
         mImageUsageFlags, mImageCreateFlags, vk::ImageLayout::Undefined, nullptr,
         gl::LevelIndex(firstLevel), levelCount, layerCount,
-        contextVk->isRobustResourceInitEnabled(), mState.hasProtectedContent()));
+        contextVk->isRobustResourceInitEnabled(), mState.hasProtectedContent(),
+        vk::ImageHelper::deriveConversionDesc(contextVk, actualImageFormatID,
+                                              intendedImageFormatID)));
 
     ANGLE_TRY(updateTextureLabel(contextVk));
 

@@ -416,13 +416,6 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://anglebug.com/6574"
     };
 
-    FeatureInfo forceDelayedDeviceCreationForTesting = {
-        "forceDelayedDeviceCreationForTesting",
-        FeatureCategory::VulkanWorkarounds,
-        "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios",
-        &members, "https://anglebug.com/8300"
-    };
-
     FeatureInfo supportsShaderFloat16 = {
         "supportsShaderFloat16",
         FeatureCategory::VulkanFeatures,
@@ -1326,6 +1319,14 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanAppWorkarounds,
         "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for images with external format",
         &members, "https://issuetracker.google.com/155487768"
+    };
+
+    FeatureInfo avoidOpSelectWithMismatchingRelaxedPrecision = {
+        "avoidOpSelectWithMismatchingRelaxedPrecision",
+        FeatureCategory::VulkanWorkarounds,
+        "On some drivers, the OpSelect SPIR-V instruction with arguments with mismatching "
+        "RelaxedPrecision decoration causes a crash",
+        &members, "http://anglebug.com/8503"
     };
 
 };

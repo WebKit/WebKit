@@ -676,6 +676,201 @@ TEST_P(MultithreadingTest, CreateMultiSharedContextAndDraw)
     EXPECT_EGL_SUCCESS();
 }
 
+// Producer/Consumer test using EGLImages and EGLSyncs
+TEST_P(MultithreadingTest, EGLImageProduceConsume)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay dpy     = window->getDisplay();
+    EGLContext rootCtx = window->getContext();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_image"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_gl_texture_2D_image"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_fence_sync"));
+
+    struct sharedImage
+    {
+        EGLImage image;
+        EGLSync sync;
+        GLuint rootTexture;
+    };
+
+    std::mutex mutex;
+    std::vector<sharedImage> waitingForProduce;
+    std::vector<sharedImage> waitingForConsume;
+
+    constexpr size_t kNumImages = 10;
+    for (size_t i = 0; i < kNumImages; i++)
+    {
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        sharedImage img;
+        img.image       = eglCreateImageKHR(dpy, rootCtx, EGL_GL_TEXTURE_2D_KHR,
+                                            reinterpret_cast<EGLClientBuffer>(texture), nullptr);
+        img.sync        = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+        img.rootTexture = texture;
+
+        waitingForProduce.push_back(std::move(img));
+    }
+
+    constexpr size_t kIterations = 10000;
+
+    std::thread producerThread([&]() {
+        EGLContext ctx = createMultithreadedContext(window, EGL_NO_CONTEXT);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, ctx));
+
+        {
+            ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(),
+                             essl1_shaders::fs::UniformColor());
+            glUseProgram(drawColor);
+            GLint colorUniformLocation =
+                glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+            ASSERT_NE(colorUniformLocation, -1);
+
+            size_t iteration = 0;
+            while (iteration < kIterations)
+            {
+                sharedImage img;
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+                    if (waitingForProduce.empty())
+                    {
+                        continue;
+                    }
+                    img = std::move(waitingForProduce.back());
+                    waitingForProduce.pop_back();
+                }
+
+                eglWaitSync(dpy, img.sync, 0);
+                EXPECT_EGL_SUCCESS();
+
+                eglDestroySync(dpy, img.sync);
+
+                GLTexture texture;
+                glBindTexture(GL_TEXTURE_2D, texture);
+                glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, img.image);
+                EXPECT_GL_NO_ERROR();
+
+                GLFramebuffer fbo;
+                glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                                       0);
+
+                glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                glUniform4f(colorUniformLocation, float(iteration) / kIterations, 0.0f, 0.0f, 1.0f);
+                drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0);
+
+                glBindTexture(GL_TEXTURE_2D, 0);
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                img.sync = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+                EXPECT_EGL_SUCCESS();
+                glFlush();
+
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+                    waitingForConsume.insert(waitingForConsume.begin(), std::move(img));
+                }
+
+                iteration++;
+            }
+        }
+
+        eglDestroyContext(dpy, ctx);
+    });
+
+    std::thread consumerThread([&]() {
+        EGLContext ctx = createMultithreadedContext(window, EGL_NO_CONTEXT);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, ctx));
+
+        {
+            ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(),
+                             essl1_shaders::fs::Texture2D());
+            glUseProgram(drawTexture);
+            GLint textureUniformLocation =
+                glGetUniformLocation(drawTexture, angle::essl1_shaders::Texture2DUniform());
+            ASSERT_NE(textureUniformLocation, -1);
+            glUniform1i(textureUniformLocation, 0);
+            glActiveTexture(GL_TEXTURE0);
+
+            GLTexture backbufferTexture;
+            glBindTexture(GL_TEXTURE_2D, backbufferTexture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         nullptr);
+
+            GLFramebuffer fbo;
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                   backbufferTexture, 0);
+
+            size_t iteration = 0;
+            while (iteration < kIterations)
+            {
+                sharedImage img;
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+                    if (waitingForConsume.empty())
+                    {
+                        continue;
+                    }
+                    img = std::move(waitingForConsume.back());
+                    waitingForConsume.pop_back();
+                }
+
+                eglWaitSync(dpy, img.sync, 0);
+                EXPECT_EGL_SUCCESS();
+                eglDestroySync(dpy, img.sync);
+
+                GLTexture texture;
+                glBindTexture(GL_TEXTURE_2D, texture);
+                glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, img.image);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+                drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0);
+                EXPECT_GL_NO_ERROR();
+
+                glBindTexture(GL_TEXTURE_2D, 0);
+
+                img.sync = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+                EXPECT_EGL_SUCCESS();
+                glFlush();
+
+                {
+                    std::lock_guard<decltype(mutex)> lock(mutex);
+                    waitingForProduce.insert(waitingForProduce.begin(), std::move(img));
+                }
+
+                iteration++;
+            }
+        }
+        eglDestroyContext(dpy, ctx);
+    });
+
+    producerThread.join();
+    consumerThread.join();
+
+    // Clean up
+    {
+        for (auto &img : waitingForProduce)
+        {
+            eglDestroyImageKHR(dpy, img.image);
+            eglDestroySync(dpy, img.sync);
+            glDeleteTextures(1, &img.rootTexture);
+        }
+        for (auto &img : waitingForConsume)
+        {
+            eglDestroyImageKHR(dpy, img.image);
+            eglDestroySync(dpy, img.sync);
+            glDeleteTextures(1, &img.rootTexture);
+        }
+    }
+}
+
 void MultithreadingTestES3::textureThreadFunction(bool useDraw)
 {
     EGLWindow *window  = getEGLWindow();
@@ -3267,6 +3462,160 @@ void main()
 
     RunLockStepThreadsWithSize(getEGLWindow(), kSurfaceWidth, kSurfaceHeight, threadFuncs.size(),
                                threadFuncs.data());
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
+// Test that calling glUniformBlockBinding on one context affects all contexts.
+TEST_P(MultithreadingTestES3, UniformBlockBinding)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+    constexpr char kFS[] = R"(#version 300 es
+out mediump vec4 colorOut;
+
+layout(std140) uniform buffer { mediump vec4 color; };
+
+void main()
+{
+    colorOut = color;
+})";
+
+    GLProgram program;
+    GLint uniformBufferIndex;
+
+    // Sync primitives
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread1Ready,
+        Thread0BindingChanged,
+        Thread1FinishedDrawing,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    // Threads to create programs and draw with different uniform blocks.
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Create buffers bound to bindings 1 and 2
+        constexpr std::array<float, 4> kRed              = {1, 0, 0, 1};
+        constexpr std::array<float, 4> kTransparentGreen = {0, 1, 0, 0};
+        GLBuffer red, transparentGreen;
+        glBindBuffer(GL_UNIFORM_BUFFER, red);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(kRed), kRed.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, transparentGreen);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(kTransparentGreen), kTransparentGreen.data(),
+                     GL_STATIC_DRAW);
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, transparentGreen);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 2, red);
+
+        // Wait for the other thread to set everything up
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Ready));
+
+        // Issue a draw call.  The buffer should be transparent green now
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Change the binding
+        glUniformBlockBinding(program, uniformBufferIndex, 1);
+        ASSERT_GL_NO_ERROR();
+
+        // Let the other thread work before any deferred operations for the binding change above are
+        // processed in this context.
+        threadSynchronization.nextStep(Step::Thread0BindingChanged);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1FinishedDrawing));
+
+        // Draw again, it should accumulate blue and the buffer should become magenta.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Finish);
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Create buffers bound to bindings 1 and 2
+        constexpr std::array<float, 4> kBlue           = {0, 0, 1, 1};
+        constexpr std::array<float, 4> kTransparentRed = {1, 0, 0, 0};
+        GLBuffer blue, transparentRed;
+        glBindBuffer(GL_UNIFORM_BUFFER, blue);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(kBlue), kBlue.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, transparentRed);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(kTransparentRed), kTransparentRed.data(),
+                     GL_STATIC_DRAW);
+
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, blue);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 2, transparentRed);
+
+        // Create the program
+        program.makeRaster(kVS, kFS);
+        glUseProgram(program);
+        uniformBufferIndex = glGetUniformBlockIndex(program, "buffer");
+
+        // Configure the buffer binding to binding 2
+        glUniformBlockBinding(program, uniformBufferIndex, 2);
+        ASSERT_GL_NO_ERROR();
+
+        // Issue a draw call.  The buffer should be transparent red now
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Now that everything is set up, let the other thread continue
+        threadSynchronization.nextStep(Step::Thread1Ready);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0BindingChanged));
+
+        // The other thread has changed the binding.  Draw again, it should accumulate blue and the
+        // buffer should become magenta.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Verify results
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+        ASSERT_GL_NO_ERROR();
+
+        // Tell the other thread to finish up.
+        threadSynchronization.nextStep(Step::Thread1FinishedDrawing);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {
+        std::move(thread0),
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
 
     ASSERT_NE(currentStep, Step::Abort);
 }

@@ -534,6 +534,14 @@ bool ValidatePlatformType(const ValidationContext *val,
             }
             break;
 
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+            if (!clientExtensions.platformANGLEWebgpu)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE, "WebGPU platform is unsupported.");
+                return false;
+            }
+            break;
+
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
             if (!clientExtensions.platformANGLEVulkan)
             {

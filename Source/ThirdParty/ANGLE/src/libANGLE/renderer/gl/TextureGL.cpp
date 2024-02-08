@@ -1359,7 +1359,7 @@ angle::Result TextureGL::setStorageExternalMemory(const gl::Context *context,
                                                   const void *imageCreateInfoPNext)
 {
     // GL_ANGLE_external_objects_flags not supported.
-    ASSERT(createFlags == 0);
+    ASSERT(createFlags == std::numeric_limits<uint32_t>::max());
     ASSERT(usageFlags == std::numeric_limits<uint32_t>::max());
     ASSERT(imageCreateInfoPNext == nullptr);
 

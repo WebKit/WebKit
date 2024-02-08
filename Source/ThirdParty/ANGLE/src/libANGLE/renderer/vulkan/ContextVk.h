@@ -803,6 +803,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                mShareGroupVk->getContexts().size() == 1;
     }
 
+    bool isPipelineCacheGraphDumpEnabled() const { return mDumpPipelineCacheGraph; }
+    const char *getPipelineCacheGraphDumpPath() const
+    {
+        return mPipelineCacheGraphDumpPath.c_str();
+    }
+
     vk::RenderPassUsageFlags getDepthStencilAttachmentFlags() const
     {
         return mDepthStencilAttachmentFlags;
@@ -1679,6 +1685,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // A graph built from pipeline descs and their transitions.
     std::ostringstream mPipelineCacheGraph;
+    bool mDumpPipelineCacheGraph;
+    std::string mPipelineCacheGraphDumpPath;
 
     RangedSerialFactory mOutsideRenderPassSerialFactory;
 };

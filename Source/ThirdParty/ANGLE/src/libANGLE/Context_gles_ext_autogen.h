@@ -339,8 +339,19 @@
     void framebufferTextureMultiview(GLenum target, GLenum attachment, TextureID texturePacked,    \
                                      GLint level, GLint baseViewIndex, GLsizei numViews);          \
     /* GL_OVR_multiview2 */                                                                        \
+    /* GL_QCOM_framebuffer_foveated */                                                             \
+    void framebufferFoveationConfig(FramebufferID framebufferPacked, GLuint numLayers,             \
+                                    GLuint focalPointsPerLayer, GLuint requestedFeatures,          \
+                                    GLuint *providedFeatures);                                     \
+    void framebufferFoveationParameters(FramebufferID framebufferPacked, GLuint layer,             \
+                                        GLuint focalPoint, GLfloat focalX, GLfloat focalY,         \
+                                        GLfloat gainX, GLfloat gainY, GLfloat foveaArea);          \
     /* GL_QCOM_render_shared_exponent */                                                           \
     /* GL_QCOM_shading_rate */                                                                     \
+    /* GL_QCOM_texture_foveated */                                                                 \
+    void textureFoveationParameters(TextureID texturePacked, GLuint layer, GLuint focalPoint,      \
+                                    GLfloat focalX, GLfloat focalY, GLfloat gainX, GLfloat gainY,  \
+                                    GLfloat foveaArea);                                            \
     /* GL_WEBGL_video_texture */                                                                   \
                                                                                                    \
     /* ANGLE Extensions */                                                                         \

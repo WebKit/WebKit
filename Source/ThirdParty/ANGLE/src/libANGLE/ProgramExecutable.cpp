@@ -196,7 +196,7 @@ template <typename BlockT>
 void AppendActiveBlocks(ShaderType shaderType,
                         const std::vector<BlockT> &blocksIn,
                         std::vector<BlockT> &blocksOut,
-                        ProgramPipelineUniformBlockIndexMap *ppoBlockMap)
+                        ProgramUniformBlockArray<GLuint> *ppoBlockMap)
 {
     for (size_t index = 0; index < blocksIn.size(); ++index)
     {
@@ -317,13 +317,13 @@ void LoadBufferVariable(BinaryInputStream *stream, BufferVariable *var)
     stream->readStruct(&var->pod);
 }
 
-void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableBuffer &var)
+void WriteAtomicCounterBuffer(BinaryOutputStream *stream, const AtomicCounterBuffer &var)
 {
     stream->writeVector(var.memberIndexes);
     stream->writeStruct(var.pod);
 }
 
-void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *var)
+void LoadAtomicCounterBuffer(BinaryInputStream *stream, AtomicCounterBuffer *var)
 {
     stream->readVector(&var->memberIndexes);
     stream->readStruct(&var->pod);
@@ -726,17 +726,10 @@ ProgramOutput::ProgramOutput(const sh::ShaderVariable &var)
 ProgramExecutable::ProgramExecutable(rx::GLImplFactory *factory, InfoLog *infoLog)
     : mImplementation(factory->createProgramExecutable(this)),
       mInfoLog(infoLog),
-      mActiveSamplerRefCounts{},
       mCachedBaseVertex(0),
       mCachedBaseInstance(0)
 {
     memset(&mPod, 0, sizeof(mPod));
-    mPod.geometryShaderInputPrimitiveType  = PrimitiveMode::Triangles;
-    mPod.geometryShaderOutputPrimitiveType = PrimitiveMode::TriangleStrip;
-    mPod.geometryShaderInvocations         = 1;
-    mPod.transformFeedbackBufferMode       = GL_INTERLEAVED_ATTRIBS;
-    mPod.computeShaderLocalSize.fill(1);
-
     reset();
 }
 
@@ -766,7 +759,8 @@ void ProgramExecutable::reset()
     mPod.samplerUniformRange       = RangeUI(0, 0);
     mPod.imageUniformRange         = RangeUI(0, 0);
     mPod.atomicCounterUniformRange = RangeUI(0, 0);
-    mPod.fragmentInoutRange        = RangeUI(0, 0);
+
+    mPod.fragmentInoutIndices.reset();
 
     mPod.hasClipDistance         = false;
     mPod.hasDiscard              = false;
@@ -779,6 +773,8 @@ void ProgramExecutable::reset()
     mPod.geometryShaderOutputPrimitiveType = PrimitiveMode::TriangleStrip;
     mPod.geometryShaderInvocations         = 1;
     mPod.geometryShaderMaxVertices         = 0;
+
+    mPod.transformFeedbackBufferMode = GL_INTERLEAVED_ATTRIBS;
 
     mPod.numViews = -1;
 
@@ -804,6 +800,8 @@ void ProgramExecutable::reset()
     mActiveSamplerFormats.fill(SamplerFormat::InvalidEnum);
 
     mActiveImagesMask.reset();
+
+    mUniformBlockIndexToBufferBinding = {};
 
     mProgramInputs.clear();
     mLinkedTransformFeedbackVaryings.clear();
@@ -845,8 +843,6 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
     {
         InterfaceBlock &uniformBlock = mUniformBlocks[uniformBlockIndex];
         LoadInterfaceBlock(stream, &uniformBlock);
-        ASSERT(mPod.activeUniformBlockBindings.test(uniformBlockIndex) ==
-               (uniformBlock.pod.binding != 0));
     }
 
     size_t shaderStorageBlockCount = stream->readInt<size_t>();
@@ -865,7 +861,7 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
     for (size_t bufferIndex = 0; bufferIndex < atomicCounterBufferCount; ++bufferIndex)
     {
         AtomicCounterBuffer &atomicCounterBuffer = mAtomicCounterBuffers[bufferIndex];
-        LoadShaderVariableBuffer(stream, &atomicCounterBuffer);
+        LoadAtomicCounterBuffer(stream, &atomicCounterBuffer);
     }
 
     size_t bufferVariableCount = stream->readInt<size_t>();
@@ -980,7 +976,7 @@ void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
     stream->writeInt(mAtomicCounterBuffers.size());
     for (const AtomicCounterBuffer &atomicCounterBuffer : getAtomicCounterBuffers())
     {
-        WriteShaderVariableBuffer(stream, atomicCounterBuffer);
+        WriteAtomicCounterBuffer(stream, atomicCounterBuffer);
     }
 
     stream->writeInt(getBufferVariables().size());
@@ -1829,17 +1825,7 @@ void ProgramExecutable::linkSamplerAndImageBindings(GLuint *combinedImageUniform
 
     // Note that uniform block uniforms are not yet appended to this list.
     ASSERT(mUniforms.empty() || highIter->isAtomicCounter() || highIter->isImage() ||
-           highIter->isSampler() || highIter->isInDefaultBlock() || highIter->isFragmentInOut());
-
-    for (; lowIter != mUniforms.rend() && lowIter->isFragmentInOut(); ++lowIter)
-    {
-        --low;
-    }
-
-    mPod.fragmentInoutRange = RangeUI(low, high);
-
-    highIter = lowIter;
-    high     = low;
+           highIter->isSampler() || highIter->isInDefaultBlock());
 
     for (; lowIter != mUniforms.rend() && lowIter->isAtomicCounter(); ++lowIter)
     {
@@ -1930,7 +1916,7 @@ bool ProgramExecutable::linkAtomicCounterBuffers(const Caps &caps)
         for (size_t bufferIndex = 0; bufferIndex < mAtomicCounterBuffers.size(); ++bufferIndex)
         {
             AtomicCounterBuffer &buffer = mAtomicCounterBuffers[bufferIndex];
-            if (buffer.pod.binding == uniform.getBinding())
+            if (buffer.pod.inShaderBinding == uniform.getBinding())
             {
                 buffer.memberIndexes.push_back(index);
                 SetBitField(uniform.pod.bufferIndex, bufferIndex);
@@ -1942,7 +1928,7 @@ bool ProgramExecutable::linkAtomicCounterBuffers(const Caps &caps)
         if (!found)
         {
             AtomicCounterBuffer atomicCounterBuffer;
-            atomicCounterBuffer.pod.binding = uniform.getBinding();
+            atomicCounterBuffer.pod.inShaderBinding = uniform.getBinding();
             atomicCounterBuffer.memberIndexes.push_back(index);
             atomicCounterBuffer.unionReferencesWith(uniform);
             mAtomicCounterBuffers.push_back(atomicCounterBuffer);
@@ -1989,10 +1975,24 @@ void ProgramExecutable::copyInputsFromProgram(const ProgramExecutable &executabl
 void ProgramExecutable::copyUniformBuffersFromProgram(
     const ProgramExecutable &executable,
     ShaderType shaderType,
-    ProgramPipelineUniformBlockIndexMap *ppoUniformBlockMap)
+    ProgramUniformBlockArray<GLuint> *ppoUniformBlockMap)
 {
     AppendActiveBlocks(shaderType, executable.getUniformBlocks(), mUniformBlocks,
                        ppoUniformBlockMap);
+
+    const std::vector<InterfaceBlock> &blocks = executable.getUniformBlocks();
+    for (size_t blockIndex = 0; blockIndex < blocks.size(); ++blockIndex)
+    {
+        if (!blocks[blockIndex].isActive(shaderType))
+        {
+            continue;
+        }
+        const uint32_t blockIndexInPPO = (*ppoUniformBlockMap)[static_cast<uint32_t>(blockIndex)];
+        ASSERT(blockIndexInPPO < mUniformBlocks.size());
+
+        // Set the block buffer binding in the PPO to the same binding as the program's.
+        remapUniformBlockBinding({blockIndexInPPO}, executable.getUniformBlockBinding(blockIndex));
+    }
 }
 
 void ProgramExecutable::copyStorageBuffersFromProgram(const ProgramExecutable &executable,
@@ -2071,13 +2071,6 @@ void ProgramExecutable::copyUniformsFromProgramMap(
     mPod.atomicCounterUniformRange =
         AddUniforms(executables, mPod.linkedShaderStages, &mUniforms, &mUniformNames,
                     &mUniformMappedNames, getAtomicRange);
-
-    // Merge fragment in/out uniforms.
-    auto getInoutRange = [](const ProgramExecutable &state) {
-        return state.getFragmentInoutRange();
-    };
-    mPod.fragmentInoutRange = AddUniforms(executables, mPod.linkedShaderStages, &mUniforms,
-                                          &mUniformNames, &mUniformMappedNames, getInoutRange);
 
     // Note: uniforms are set through the program, and the program pipeline never needs it.
     ASSERT(mUniformLocations.empty());
@@ -2874,6 +2867,36 @@ void ProgramExecutable::getUniformuiv(const Context *context,
     }
 }
 
+void ProgramExecutable::initInterfaceBlockBindings()
+{
+    // Set initial bindings from shader.
+    for (size_t blockIndex = 0; blockIndex < mUniformBlocks.size(); blockIndex++)
+    {
+        InterfaceBlock &uniformBlock = mUniformBlocks[blockIndex];
+        // All interface blocks either have |binding| defined, or default to binding 0.
+        ASSERT(uniformBlock.pod.inShaderBinding >= 0);
+        remapUniformBlockBinding({static_cast<uint32_t>(blockIndex)},
+                                 uniformBlock.pod.inShaderBinding);
+
+        // This is called on program link/binary, which means the executable has changed.  There is
+        // no need to send any additional notifications to the contexts (where the program may be
+        // current) or program pipeline objects (that have this program attached), because they
+        // already assume all blocks are dirty.
+    }
+}
+
+void ProgramExecutable::remapUniformBlockBinding(UniformBlockIndex uniformBlockIndex,
+                                                 GLuint uniformBlockBinding)
+{
+    // Remove previous binding
+    const GLuint previousBinding = mUniformBlockIndexToBufferBinding[uniformBlockIndex.value];
+    mUniformBufferBindingToUniformBlocks[previousBinding].reset(uniformBlockIndex.value);
+
+    // Set new binding
+    mUniformBlockIndexToBufferBinding[uniformBlockIndex.value] = uniformBlockBinding;
+    mUniformBufferBindingToUniformBlocks[uniformBlockBinding].set(uniformBlockIndex.value);
+}
+
 void ProgramExecutable::setUniformValuesFromBindingQualifiers()
 {
     for (unsigned int samplerIndex : mPod.samplerUniformRange)
@@ -3127,13 +3150,6 @@ void ProgramExecutable::setBaseInstanceUniform(GLuint baseInstance)
     mCachedBaseInstance   = baseInstance;
     GLint baseInstanceInt = baseInstance;
     mImplementation->setUniform1iv(mPod.baseInstanceLocation, 1, &baseInstanceInt);
-}
-
-gl::ProgramExecutable::DirtyBits ProgramExecutable::getAndResetDirtyBits() const
-{
-    DirtyBits dirtyBits = mDirtyBits;
-    mDirtyBits.reset();
-    return dirtyBits;
 }
 
 void InstallExecutable(const Context *context,

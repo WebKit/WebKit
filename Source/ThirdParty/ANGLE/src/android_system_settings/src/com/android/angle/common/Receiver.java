@@ -35,6 +35,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import com.android.angle.R;
 
 public class Receiver extends BroadcastReceiver
 {
@@ -58,10 +63,45 @@ public class Receiver extends BroadcastReceiver
         }
         else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED))
         {
-            // TODO(b/314409902): Set settings global variables
             AngleRuleHelper angleRuleHelper = new AngleRuleHelper(context);
+            updateGlobalSettings(context, angleRuleHelper);
             updateDeveloperOptionsWatcher(context);
         }
+    }
+
+    /**
+     * Consume the results of rule parsing to populate global settings
+    */
+    private static void updateGlobalSettings(Context context, AngleRuleHelper angleRuleHelper)
+    {
+        int count = 0;
+        String packages = "";
+        String choices = "";
+
+        // Bring in the packages and choices and convert them to global settings format
+        final List<String> anglePackages = angleRuleHelper.getPackageNamesForAngle();
+        final List<String> nativePackages = angleRuleHelper.getPackageNamesForNative();
+
+        // packages = anglePackage1,anglePackage2,nativePackage1,nativePackage2
+        packages = String.join(",", Stream.concat(
+                                    anglePackages.stream(),
+                                    nativePackages.stream())
+                                  .toList());
+
+        // choices = angle,angle,native,native
+        choices = String.join(",", Stream.concat(
+                                    Collections.nCopies(
+                                        anglePackages.size(), "angle")
+                                    .stream(),
+                                    Collections.nCopies(
+                                        nativePackages.size(), "native")
+                                    .stream())
+                                 .toList());
+
+        Log.v(TAG, "Updating ANGLE global settings with:" +
+                " packages = " + packages +
+                " choices = " + choices);
+        GlobalSettings.writeGlobalSettings(context, packages, choices);
     }
 
     /**

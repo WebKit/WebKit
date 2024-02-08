@@ -58,6 +58,10 @@
 	path = third_party/cpu_features/src
 	url = https://chromium.googlesource.com/external/github.com/google/cpu_features
 	gclient-condition = checkout_android and not build_with_chromium
+[submodule "third_party/dawn"]
+	path = third_party/dawn
+	url = https://dawn.googlesource.com/dawn
+	gclient-condition = not build_with_chromium
 [submodule "third_party/depot_tools"]
 	path = third_party/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools
@@ -149,6 +153,10 @@
 	path = third_party/OpenGL-Registry/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry
 	gclient-condition = not build_with_chromium
+[submodule "third_party/perfetto"]
+	path = third_party/perfetto
+	url = https://android.googlesource.com/platform/external/perfetto
+	gclient-condition = not build_with_chromium and checkout_angle_restricted_traces
 [submodule "third_party/protobuf"]
 	path = third_party/protobuf
 	url = https://chromium.googlesource.com/chromium/src/third_party/protobuf

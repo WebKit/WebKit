@@ -143,6 +143,7 @@ class FramebufferAttachment final
     // unknown.
     bool isExternalImageWithoutIndividualSync() const;
     bool hasFrontBufferUsage() const;
+    bool hasFoveatedRendering() const;
 
     Renderbuffer *getRenderbuffer() const;
     Texture *getTexture() const;
@@ -230,6 +231,7 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
     virtual bool isExternalImageWithoutIndividualSync() const                              = 0;
     virtual bool hasFrontBufferUsage() const                                               = 0;
     virtual bool hasProtectedContent() const                                               = 0;
+    virtual bool hasFoveatedRendering() const                                              = 0;
 
     virtual void onAttach(const Context *context, rx::UniqueSerial framebufferSerial) = 0;
     virtual void onDetach(const Context *context, rx::UniqueSerial framebufferSerial) = 0;
@@ -316,6 +318,12 @@ inline bool FramebufferAttachment::hasFrontBufferUsage() const
 {
     ASSERT(mResource);
     return mResource->hasFrontBufferUsage();
+}
+
+inline bool FramebufferAttachment::hasFoveatedRendering() const
+{
+    ASSERT(mResource);
+    return mResource->hasFoveatedRendering();
 }
 
 }  // namespace gl

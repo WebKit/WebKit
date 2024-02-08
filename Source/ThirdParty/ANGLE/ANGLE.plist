@@ -6,13 +6,13 @@
 		<key>OpenSourceProject</key>
 		<string>ANGLE</string>
 		<key>OpenSourceVersion</key>
-		<string>eb77635a5d3f45228513faf2752c1ab422114312</string>
+		<string>f431641a948660f5e1709aa7cd89b16ccf93f1de</string>
 		<key>OpenSourceWebsiteURL</key>
 		<string>http://code.google.com/p/angleproject/</string>
 		<key>OpenSourceSCM</key>
-		<string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout eb77635a5d3f45228513faf2752c1ab422114312</string>
+		<string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout f431641a948660f5e1709aa7cd89b16ccf93f1de</string>
 		<key>OpenSourceImportDate</key>
-		<string>2024-01-12</string>
+		<string>2024-02-07</string>
 		<key>OpenSourceLicense</key>
 		<string>BSD</string>
 		<key>OpenSourceLicenseFile</key>

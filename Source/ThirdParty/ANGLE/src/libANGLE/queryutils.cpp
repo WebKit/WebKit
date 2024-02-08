@@ -375,6 +375,19 @@ void QueryTexParameterBase(const Context *context,
         case GL_TEXTURE_TILING_EXT:
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getTilingMode());
             break;
+        case GL_TEXTURE_FOVEATED_FEATURE_BITS_QCOM:
+            *params = CastFromGLintStateValue<ParamType>(pname, texture->getFoveatedFeatureBits());
+            break;
+        case GL_TEXTURE_FOVEATED_FEATURE_QUERY_QCOM:
+            *params =
+                CastFromGLintStateValue<ParamType>(pname, texture->getSupportedFoveationFeatures());
+            break;
+        case GL_TEXTURE_FOVEATED_MIN_PIXEL_DENSITY_QCOM:
+            *params = CastFromGLintStateValue<ParamType>(pname, texture->getMinPixelDensity());
+            break;
+        case GL_TEXTURE_FOVEATED_NUM_FOCAL_POINTS_QUERY_QCOM:
+            *params = CastFromGLintStateValue<ParamType>(pname, texture->getNumFocalPoints());
+            break;
         default:
             UNREACHABLE();
             break;
@@ -493,6 +506,12 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
             break;
         case GL_TEXTURE_TILING_EXT:
             texture->setTilingMode(context, ConvertToGLenum(pname, params[0]));
+            break;
+        case GL_TEXTURE_FOVEATED_FEATURE_BITS_QCOM:
+            texture->setFoveatedFeatureBits(ConvertToGLenum(pname, params[0]));
+            break;
+        case GL_TEXTURE_FOVEATED_MIN_PIXEL_DENSITY_QCOM:
+            texture->setMinPixelDensity(ConvertToGLfloat(params[0]));
             break;
         default:
             UNREACHABLE();
@@ -1024,9 +1043,6 @@ void GetShaderVariableBufferResourceProperty(const ShaderVariableT &buffer,
 {
     switch (pname)
     {
-        case GL_BUFFER_BINDING:
-            params[(*outputPosition)++] = buffer.pod.binding;
-            break;
         case GL_BUFFER_DATA_SIZE:
             params[(*outputPosition)++] = clampCast<GLint>(buffer.pod.dataSize);
             break;
@@ -1090,6 +1106,13 @@ void GetUniformBlockResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
+
+    if (pname == GL_BUFFER_BINDING)
+    {
+        params[(*outputPosition)++] = program->getExecutable().getUniformBlockBinding(blockIndex);
+        return;
+    }
+
     const auto &block = program->getExecutable().getUniformBlockByIndex(blockIndex);
     GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
 }
@@ -1103,6 +1126,14 @@ void GetShaderStorageBlockResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
+
+    if (pname == GL_BUFFER_BINDING)
+    {
+        params[(*outputPosition)++] =
+            program->getExecutable().getShaderStorageBlockBinding(blockIndex);
+        return;
+    }
+
     const auto &block = program->getExecutable().getShaderStorageBlockByIndex(blockIndex);
     GetInterfaceBlockResourceProperty(block, pname, params, bufSize, outputPosition);
 }
@@ -1116,6 +1147,13 @@ void GetAtomicCounterBufferResourceProperty(const Program *program,
 
 {
     ASSERT(*outputPosition < bufSize);
+
+    if (pname == GL_BUFFER_BINDING)
+    {
+        params[(*outputPosition)++] = program->getExecutable().getAtomicCounterBufferBinding(index);
+        return;
+    }
+
     const auto &buffer = program->getExecutable().getAtomicCounterBuffers()[index];
     GetShaderVariableBufferResourceProperty(buffer, pname, params, bufSize, outputPosition);
 }

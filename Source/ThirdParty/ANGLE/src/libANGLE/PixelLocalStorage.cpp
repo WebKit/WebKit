@@ -639,20 +639,37 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
             // textures on AMD when the render pass doesn't have a color attachment on slot 0. To
             // work around this we attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if there
             // isn't one already.
-            mHadColorAttachment0 = framebuffer->getColorAttachment(0) != nullptr;
+            // It's important to keep the attachment enabled so that it's set in the corresponding
+            // MTLRenderPassAttachmentDescriptor. As the fragment shader does not have any output
+            // bound to this attachment, set the color write mask to all-disabled.
+            // Note that the PLS extension disallows simultaneously binding a single texture image
+            // to a PLS plane and attaching it to the draw framebuffer. Enabling this workaround on
+            // any other platform would yield incorrect results.
+            // This flag is set to true iff the framebuffer has an attachment 0 and it is enabled.
+            mHadColorAttachment0 = framebuffer->getDrawBufferMask().test(0);
             if (!mHadColorAttachment0)
             {
+                // Indexed color masks are always available on Metal.
+                ASSERT(context->getExtensions().drawBuffersIndexedAny());
+                // Remember the current draw buffer 0 color mask and set it to all-disabled.
+                state.getBlendStateExt().getColorMaskIndexed(
+                    0, &mSavedColorMask[0], &mSavedColorMask[1], &mSavedColorMask[2],
+                    &mSavedColorMask[3]);
+                ContextPrivateColorMaski(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), 0, false, false,
+                                         false, false);
+
                 // Remember the current draw buffer state so we can restore it during onEnd().
                 const DrawBuffersVector<GLenum> &appDrawBuffers =
                     framebuffer->getDrawBufferStates();
                 mSavedDrawBuffers.resize(appDrawBuffers.size());
                 std::copy(appDrawBuffers.begin(), appDrawBuffers.end(), mSavedDrawBuffers.begin());
 
-                // Turn off draw buffer 0.
-                if (mSavedDrawBuffers[0] != GL_NONE)
+                // Turn on draw buffer 0.
+                if (mSavedDrawBuffers[0] != GL_COLOR_ATTACHMENT0)
                 {
                     GLenum drawBuffer0   = mSavedDrawBuffers[0];
-                    mSavedDrawBuffers[0] = GL_NONE;
+                    mSavedDrawBuffers[0] = GL_COLOR_ATTACHMENT0;
                     context->drawBuffers(static_cast<GLsizei>(mSavedDrawBuffers.size()),
                                          mSavedDrawBuffers.data());
                     mSavedDrawBuffers[0] = drawBuffer0;
@@ -773,12 +790,17 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
                                               TextureTarget::_2D, TextureID(), 0);
 
                 // Restore the draw buffer state from before PLS was enabled.
-                if (mSavedDrawBuffers[0] != GL_NONE)
+                if (mSavedDrawBuffers[0] != GL_COLOR_ATTACHMENT0)
                 {
                     context->drawBuffers(static_cast<GLsizei>(mSavedDrawBuffers.size()),
                                          mSavedDrawBuffers.data());
                 }
                 mSavedDrawBuffers.clear();
+
+                // Restore the draw buffer 0 color mask.
+                ContextPrivateColorMaski(
+                    context->getMutablePrivateState(), context->getMutablePrivateStateCache(), 0,
+                    mSavedColorMask[0], mSavedColorMask[1], mSavedColorMask[2], mSavedColorMask[3]);
             }
         }
         else
@@ -808,6 +830,7 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
     std::vector<ImageUnit> mSavedImageBindings;
     // If mPLSOptions.plsRenderPassNeedsColorAttachmentWorkaround.
     bool mHadColorAttachment0;
+    std::array<bool, 4> mSavedColorMask;
     DrawBuffersVector<GLenum> mSavedDrawBuffers;
     // If !mPLSOptions.plsRenderPassNeedsColorAttachmentWorkaround.
     GLint mSavedFramebufferDefaultWidth;

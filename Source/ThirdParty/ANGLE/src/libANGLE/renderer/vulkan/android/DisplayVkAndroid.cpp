@@ -103,7 +103,17 @@ void DisplayVkAndroid::enableRecordableIfSupported(egl::Config *config)
     // TODO(b/181163023): Determine how to properly query for support. This is a hack to unblock
     // launching SwANGLE on Cuttlefish.
     // anglebug.com/6612: This is also required for app compatiblity.
-    config->recordable = true;
+
+    const bool isRGBA8888Config = (config->redSize == 8 && config->greenSize == 8 &&
+                                   config->blueSize == 8 && config->alphaSize == 8);
+    const bool isRGB10A2Config  = (config->redSize == 10 && config->greenSize == 10 &&
+                                  config->blueSize == 10 && config->alphaSize == 2);
+
+    // enabled recordable only for RGBA8888 and RGB10_A2 configs
+    const EGLBoolean enableRecordableBit =
+        (isRGBA8888Config || isRGB10A2Config) ? EGL_TRUE : EGL_FALSE;
+
+    config->recordable = enableRecordableBit;
 }
 
 void DisplayVkAndroid::checkConfigSupport(egl::Config *config)

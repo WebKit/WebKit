@@ -181,13 +181,6 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
     const vk::Format &vkFormat     = renderer->getFormat(internalFormat);
     angle::FormatID actualFormatID = vkFormat.getActualRenderableImageFormatID();
 
-    // EXT_external_objects issue 13 says that all supported usage flags must be specified.
-    // However, ANGLE_external_objects_flags allows these flags to be masked.  Note that the GL enum
-    // values constituting the bits of |usageFlags| are identical to their corresponding Vulkan
-    // value.
-    const VkImageUsageFlags imageUsageFlags =
-        vk::GetMaximalImageUsageFlags(renderer, actualFormatID) & usageFlags;
-
     VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};
     externalMemoryImageCreateInfo.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
     externalMemoryImageCreateInfo.pNext       = imageCreateInfoPNext;
@@ -204,10 +197,10 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
     // VkExternalMemoryImageCreateInfo.
     bool hasProtectedContent = mProtectedMemory;
     ANGLE_TRY(image->initExternal(
-        contextVk, type, vkExtents, vkFormat.getIntendedFormatID(), actualFormatID, 1,
-        imageUsageFlags, createFlags, vk::ImageLayout::ExternalPreInitialized,
-        &externalMemoryImageCreateInfo, gl::LevelIndex(0), static_cast<uint32_t>(levels),
-        layerCount, contextVk->isRobustResourceInitEnabled(), hasProtectedContent));
+        contextVk, type, vkExtents, vkFormat.getIntendedFormatID(), actualFormatID, 1, usageFlags,
+        createFlags, vk::ImageLayout::ExternalPreInitialized, &externalMemoryImageCreateInfo,
+        gl::LevelIndex(0), static_cast<uint32_t>(levels), layerCount,
+        contextVk->isRobustResourceInitEnabled(), hasProtectedContent, vk::YcbcrConversionDesc{}));
 
     VkMemoryRequirements externalMemoryRequirements;
     image->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);

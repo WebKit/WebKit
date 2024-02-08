@@ -31,6 +31,13 @@ namespace gl
 class Buffer;
 class Context;
 
+enum class WebGLBufferType
+{
+    Undefined,
+    ElementArray,
+    OtherData,
+};
+
 class BufferState final : angle::NonCopyable
 {
   public:
@@ -47,6 +54,7 @@ class BufferState final : angle::NonCopyable
     GLint64 getSize() const { return mSize; }
     bool isBoundForTransformFeedback() const { return mTransformFeedbackIndexedBindingCount != 0; }
     std::string getLabel() const { return mLabel; }
+    WebGLBufferType getWebGLType() const { return mWebGLType; }
 
   private:
     friend class Buffer;
@@ -67,6 +75,7 @@ class BufferState final : angle::NonCopyable
     GLboolean mImmutable;
     GLbitfield mStorageExtUsageFlags;
     GLboolean mExternal;
+    WebGLBufferType mWebGLType;
 };
 
 // Vertex Array and Texture track buffer data updates.
@@ -93,6 +102,8 @@ class Buffer final : public RefCountObject<BufferID>,
     Buffer(rx::GLImplFactory *factory, BufferID id);
     ~Buffer() override;
     void onDestroy(const Context *context) override;
+
+    void onBind(const Context *context, BufferBinding target);
 
     angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;

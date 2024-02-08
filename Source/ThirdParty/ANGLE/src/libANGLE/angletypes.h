@@ -514,7 +514,11 @@ using VertexArrayBufferBindingMask = angle::BitSet<MAX_VERTEX_ATTRIB_BINDINGS>;
 using AttributesMask = angle::BitSet<MAX_VERTEX_ATTRIBS>;
 
 // Used in Program
-using UniformBlockBindingMask = angle::BitSet<IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+using ProgramUniformBlockMask = angle::BitSet<IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+template <typename T>
+using ProgramUniformBlockArray = std::array<T, IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+template <typename T>
+using UniformBufferBindingArray = std::array<T, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;
 
 // Used in Framebuffer / Program
 using DrawBufferMask = angle::BitSet8<IMPLEMENTATION_MAX_DRAW_BUFFERS>;
@@ -1013,16 +1017,6 @@ using ActiveTextureArray = std::array<T, IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 
 using ActiveTextureTypeArray = ActiveTextureArray<TextureType>;
 
-template <typename T>
-using UniformBuffersArray = std::array<T, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;
-template <typename T>
-using StorageBuffersArray = std::array<T, IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS>;
-template <typename T>
-using AtomicCounterBuffersArray = std::array<T, IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>;
-using AtomicCounterBufferMask   = angle::BitSet<IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>;
-template <typename T>
-using ImagesArray = std::array<T, IMPLEMENTATION_MAX_IMAGE_UNITS>;
-
 using ImageUnitMask = angle::BitSet<IMPLEMENTATION_MAX_IMAGE_UNITS>;
 
 using SupportedSampleSet = std::set<GLuint>;
@@ -1312,6 +1306,92 @@ using UniqueObjectPointer = std::unique_ptr<ObjT, DestroyThenDelete<ObjT, Contex
 namespace gl
 {
 class State;
+
+// Focal Point information for foveated rendering
+struct FocalPoint
+{
+    float focalX;
+    float focalY;
+    float gainX;
+    float gainY;
+    float foveaArea;
+
+    constexpr FocalPoint() : focalX(0), focalY(0), gainX(0), gainY(0), foveaArea(0) {}
+
+    FocalPoint(float fX, float fY, float gX, float gY, float fArea)
+        : focalX(fX), focalY(fY), gainX(gX), gainY(gY), foveaArea(fArea)
+    {}
+    FocalPoint(const FocalPoint &other)            = default;
+    FocalPoint &operator=(const FocalPoint &other) = default;
+
+    bool operator==(const FocalPoint &other) const
+    {
+        return focalX == other.focalX && focalY == other.focalY && gainX == other.gainX &&
+               gainY == other.gainY && foveaArea == other.foveaArea;
+    }
+    bool operator!=(const FocalPoint &other) const { return !(*this == other); }
+};
+
+constexpr FocalPoint kInvalidFocalPoint = FocalPoint();
+
+class FoveationState
+{
+  public:
+    FoveationState()
+    {
+        mConfigured          = false;
+        mFoveatedFeatureBits = 0;
+        mMinPixelDensity     = 0.0f;
+        mFocalPoints.fill(kInvalidFocalPoint);
+    }
+    FoveationState &operator=(const FoveationState &other) = default;
+
+    void configure() { mConfigured = true; }
+    bool isConfigured() const { return mConfigured; }
+    bool isFoveated() const
+    {
+        // Consider foveated if ANY focal point is valid
+        return std::any_of(
+            mFocalPoints.begin(), mFocalPoints.end(),
+            [](const FocalPoint &focalPoint) { return (focalPoint != kInvalidFocalPoint); });
+    }
+    bool operator==(const FoveationState &other) const
+    {
+        return mConfigured == other.mConfigured &&
+               mFoveatedFeatureBits == other.mFoveatedFeatureBits &&
+               mMinPixelDensity == other.mMinPixelDensity && mFocalPoints == other.mFocalPoints;
+    }
+    void setFoveatedFeatureBits(const GLuint features) { mFoveatedFeatureBits = features; }
+    GLuint getFoveatedFeatureBits() const { return mFoveatedFeatureBits; }
+    void setMinPixelDensity(const GLfloat density) { mMinPixelDensity = density; }
+    GLfloat getMinPixelDensity() const { return mMinPixelDensity; }
+    GLuint getMaxNumFocalPoints() const { return gl::IMPLEMENTATION_MAX_FOCAL_POINTS; }
+    void setFocalPoint(uint32_t layer, uint32_t focalPointIndex, const FocalPoint &focalPoint)
+    {
+        mFocalPoints[getIndex(layer, focalPointIndex)] = focalPoint;
+    }
+    const FocalPoint &getFocalPoint(uint32_t layer, uint32_t focalPointIndex) const
+    {
+        return mFocalPoints[getIndex(layer, focalPointIndex)];
+    }
+    GLuint getSupportedFoveationFeatures() const { return GL_FOVEATION_ENABLE_BIT_QCOM; }
+
+  private:
+    size_t getIndex(uint32_t layer, uint32_t focalPointIndex) const
+    {
+        ASSERT(layer < IMPLEMENTATION_MAX_NUM_LAYERS &&
+               focalPointIndex < IMPLEMENTATION_MAX_FOCAL_POINTS);
+        return (layer * IMPLEMENTATION_MAX_FOCAL_POINTS) + focalPointIndex;
+    }
+    bool mConfigured;
+    GLuint mFoveatedFeatureBits;
+    GLfloat mMinPixelDensity;
+
+    static constexpr size_t kMaxFocalPoints =
+        IMPLEMENTATION_MAX_NUM_LAYERS * IMPLEMENTATION_MAX_FOCAL_POINTS;
+    std::array<FocalPoint, kMaxFocalPoints> mFocalPoints;
+};
+
 }  // namespace gl
 
 #endif  // LIBANGLE_ANGLETYPES_H_

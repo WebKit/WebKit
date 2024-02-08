@@ -93,6 +93,11 @@
 #define EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE 0x33AE
 #endif /* EGL_ANGLE_platform_angle_null */
 
+#ifndef EGL_ANGLE_platform_angle_webgpu
+#define EGL_ANGLE_platform_angle_webgpu 1
+#define EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE 0x34DD
+#endif /* EGL_ANGLE_platform_angle_webgpu */
+
 #ifndef EGL_ANGLE_platform_angle_vulkan
 #define EGL_ANGLE_platform_angle_vulkan 1
 #define EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE 0x3450

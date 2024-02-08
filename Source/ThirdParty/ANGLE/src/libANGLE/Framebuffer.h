@@ -141,6 +141,10 @@ class FramebufferState final : angle::NonCopyable
 
     bool isBoundAsDrawFramebuffer(const Context *context) const;
 
+    bool isFoveationEnabled() const { return mFoveationState.isFoveated(); }
+
+    const FoveationState &getFoveationState() const { return mFoveationState; }
+
   private:
     const FramebufferAttachment *getWebGLDepthStencilAttachment() const;
     const FramebufferAttachment *getWebGLDepthAttachment() const;
@@ -190,6 +194,9 @@ class FramebufferState final : angle::NonCopyable
     SrgbWriteControlMode mSrgbWriteControlMode;
 
     Offset mSurfaceTextureOffset;
+
+    // GL_QCOM_framebuffer_foveated
+    FoveationState mFoveationState;
 };
 
 class Framebuffer final : public angle::ObserverInterface,
@@ -306,6 +313,23 @@ class Framebuffer final : public angle::ObserverInterface,
     void setDefaultLayers(GLint defaultLayers);
     void setFlipY(bool flipY);
 
+    bool isFoveationEnabled() const;
+    void setFoveatedFeatureBits(const GLuint features);
+    GLuint getFoveatedFeatureBits() const;
+    bool isFoveationConfigured() const;
+    void configureFoveation();
+    void setFocalPoint(uint32_t layer,
+                       uint32_t focalPointIndex,
+                       float focalX,
+                       float focalY,
+                       float gainX,
+                       float gainY,
+                       float foveaArea);
+    const FocalPoint &getFocalPoint(uint32_t layer, uint32_t focalPoint) const;
+    bool canSupportFoveatedRendering() const;
+    GLuint getSupportedFoveationFeatures() const;
+    bool hasAnyAttachmentChanged() const { return mAttachmentChangedAfterEnablingFoveation; }
+
     void invalidateCompletenessCache();
     ANGLE_INLINE bool cachedStatusValid() { return mCachedStatus.valid(); }
 
@@ -400,6 +424,7 @@ class Framebuffer final : public angle::ObserverInterface,
         DIRTY_BIT_DEFAULT_LAYERS,
         DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,
         DIRTY_BIT_FLIP_Y,
+        DIRTY_BIT_FOVEATION,
         DIRTY_BIT_UNKNOWN,
         DIRTY_BIT_MAX = DIRTY_BIT_UNKNOWN
     };
@@ -543,6 +568,9 @@ class Framebuffer final : public angle::ObserverInterface,
 
     // ANGLE_shader_pixel_local_storage
     std::unique_ptr<PixelLocalStorage> mPixelLocalStorage;
+
+    // QCOM_framebuffer_foveated
+    bool mAttachmentChangedAfterEnablingFoveation;
 };
 
 using UniqueFramebufferPointer = angle::UniqueObjectPointer<Framebuffer, Context>;

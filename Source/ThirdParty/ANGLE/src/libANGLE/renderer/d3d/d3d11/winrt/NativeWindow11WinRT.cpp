@@ -42,7 +42,7 @@ bool NativeWindow11WinRT::initialize()
     }
 
     ComPtr<ABI::Windows::UI::Core::ICoreWindow> coreWindow;
-    ComPtr<ABI::Windows::UI::Xaml::Controls::ISwapChainPanel> swapChainPanel;
+    ComPtr<ISwapChainPanel> swapChainPanel;
     if (IsCoreWindow(window, &coreWindow))
     {
         mImpl = std::make_shared<CoreWindowNativeWindow>();

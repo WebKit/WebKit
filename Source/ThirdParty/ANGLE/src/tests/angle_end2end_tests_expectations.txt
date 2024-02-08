@@ -56,6 +56,9 @@
 7198 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation270 = SKIP
 235877059 VULKAN : MultisampleTestES3.ResolveToFBO/ES3_Vulkan_EmulatedPrerotation180 = SKIP
 235877059 VULKAN : MultisampleTestES3.ResolveToFBO/ES3_Vulkan_EmulatedPrerotation270 = SKIP
+// ANGLE is broken if a context is made current before a surface is created in the presence of multiple queue families
+8478 VULKAN : EGLContextSharingTestNoFixture.*/*ForceDelayedDeviceCreationForTesting* = SKIP
+8478 VULKAN : EGLSurfacelessContextTest.*/*ForceDelayedDeviceCreationForTesting* = SKIP
 
 // Windows
 3786 WIN NVIDIA D3D11 : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = SKIP
@@ -116,8 +119,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 // Linux
 6065 LINUX INTEL VULKAN : SimpleStateChangeTestES31.DrawThenUpdateUBOThenDrawThenDrawIndexed/* = SKIP
-// Fails in older mesa
-6109 LINUX INTEL : GLSLTestLoops.*While*/* = SKIP
 // Crashes when compiling the shader
 6173 LINUX INTEL OPENGL : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
 1230024 LINUX AMD GLES : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
@@ -249,6 +250,8 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7530 MAC NVIDIA OPENGL : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
 8448 MAC INTEL OPENGL : WebGL2CompatibilityTest.DrawWithInstancedAndNonInstancedAttributes/* = SKIP
 8465 MAC NVIDIA OPENGL : UniformBufferTest.BufferBlockBindingChange/* = SKIP
+8494 MAC NVIDIA OPENGL : StateChangeTestES3.UniformBlockBinding/* = SKIP
+8517 MAC INTEL OPENGL : CopyTexImagePreRotationTest.NonZeroNonSquare/* = SKIP
 
 // BlitFramebufferTest.ScissoredMultisampleStencil failures
 3496 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
@@ -338,21 +341,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 8091 MAC METAL AMD : ClearTestES3.RepeatedStencilClear/* = SKIP
 8091 MAC METAL AMD : DepthWriteTest.Test/* = SKIP
 8091 MAC METAL AMD : MaskedScissoredClearTest.Test/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.Coherency/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.ForgetBarrier/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.FragmentReject_viewport/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.FunctionArguments/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.Interrupt/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.LoadAfterStore/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.LoadOnly/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.LoadOps/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.MaxCombinedDrawBuffersAndPLSPlanes/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.MemorylessStorage/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.MipMapLevels/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.PLSWithSamplers/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.ProgramCache/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.R32/* = SKIP
-8091 MAC METAL AMD : PixelLocalStorageTest.RGBA8/* = SKIP
 8091 MAC METAL AMD : StateChangeTestES3.StencilReferenceAndCompareMask/* = SKIP
 
 
@@ -582,6 +570,8 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 6179 PIXEL4ORXL GLES : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
 
 7295 PIXEL4ORXL VULKAN : StateChangeTestES3.StencilReferenceAndCompareMask/* = SKIP
+
+3647 PIXEL4ORXL VULKAN : EGLPrintEGLinfoTest.PrintGLESCapabilities/* = SKIP
 
 // Pixel 6 expectations.
 6931 PIXEL6 VULKAN : BlitFramebufferTest.OOBWrite/* = SKIP
@@ -830,6 +820,10 @@ b/308668391 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleNoD
 
 6358 D3D11 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = SKIP
 6358 SWIFTSHADER : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = SKIP
+
+// Fails on swangle builders
+5792 SWIFTSHADER : FramebufferFetchES31.UniformUsageCombinations/* = SKIP
+8495 SWIFTSHADER : WebGL2GLSLTest.TexelFetchLodOutOfBounds/* = SKIP
 
 // HLSL compiler bug
 2445 D3D11 : GLSLTest_ES3.ComplexCrossExpression/* = SKIP

@@ -480,10 +480,7 @@ void dEQPCaseList::initialize()
         mCaseInfoList.push_back(CaseInfo(testName, expectation));
     }
 
-    if (testSuite->logAnyUnusedTestExpectations())
-    {
-        Die();
-    }
+    testSuite->logAnyUnusedTestExpectations();
 }
 
 bool IsPassingResult(dEQPTestResult result)

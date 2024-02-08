@@ -75,10 +75,10 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
-index a0477df35489badd9d484292f088dfd92e68cb2e..4a71fb4677978b6b2d9dbd386876ff69980bdd15 100644
+index eddc5e724e8e949aff0624c6caf9aadec7c14647..f937a034d050a76602fcedc3ad6badbe007e0fa1 100644
 --- a/src/compiler/translator/Compiler.cpp
 +++ b/src/compiler/translator/Compiler.cpp
-@@ -1229,7 +1229,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
+@@ -1247,7 +1247,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
  
  bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
  {
@@ -114,7 +114,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index b3373e1fa3b6c754842a0bcd96c0f96ac470fff3..07c6a9cec741f8c986dcd76e87fcfbe55f932466 100644
+index 6b0adeba62891567ab4ea4258749c32e632b9f9b..a7a7bf03015fd2fad754255ef6b0ff660807e58a 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -144,10 +144,10 @@ index 7eb6230f44174bfa567920d0f2b3674edcfb0eab..5a04150f51007cbe32960877a377a510
      {
          return Error(EGL_BAD_SURFACE);
 diff --git a/src/libANGLE/Texture.cpp b/src/libANGLE/Texture.cpp
-index 0075cda0fc2dfbbded59698fcd08b3c099d17402..7318e4ddf38bd154fff22d554283848e7b0df23e 100644
+index 26fc812fd0b0983b7b4ada75aa28a2be9e23dcc8..7bdd84055673623a6a6052b0e05d617301333be4 100644
 --- a/src/libANGLE/Texture.cpp
 +++ b/src/libANGLE/Texture.cpp
-@@ -1833,12 +1833,7 @@ angle::Result Texture::generateMipmap(Context *context)
+@@ -1888,12 +1888,7 @@ angle::Result Texture::generateMipmap(Context *context)
  angle::Result Texture::bindTexImageFromSurface(Context *context, egl::Surface *surface)
  {
      ASSERT(surface);
@@ -248,7 +248,7 @@ index 92f6dd08372b0a606455ea6cc6113a53e6091dc8..8cc18a48bd0519922db0d17915be44b5
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index f1737c960489e0d76f969c1472e223753922226a..2bcc0fe5c94031244fa60e3bea9452a7fa341a3c 100644
+index d5d1e693c0bc8a789f1c92b8f6fd0f2541a72d27..79ca8622c401e74b9a6f49537709789c9839f25c 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -274,7 +274,7 @@ index f1737c960489e0d76f969c1472e223753922226a..2bcc0fe5c94031244fa60e3bea9452a7
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1439,8 +1449,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1444,8 +1454,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -304,7 +304,7 @@ index 5f3f10a86f707290bcad9f823dec0a9126425fde..860f798cf68bb4fad87bee1ea9cd507d
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 1fdfeca55096fdc2bf64c2abd5e3427e626589fa..db97dd3032d6b2877b56dcff199f33e3757fedcf 100644
+index 6720310023e4ced1ee11024795b8520ff0630988..f39af499839e84efe1906b1725901b0dfd835f22 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 @@ -897,7 +897,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
@@ -520,7 +520,7 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 829539a2e821e01d6aa80729e9eb72cb5ea0e083..4e856a7f4039986fefb06b426eced442c4b711a9 100644
+index 1a16ccf79c85d0c88e6251ec52207ae06a7084f0..a52ca7218803a9265f69977a782dea26b03a9cbd 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)

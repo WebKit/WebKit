@@ -76,6 +76,10 @@
 #    include "libANGLE/renderer/null/DisplayNULL.h"
 #endif  // defined(ANGLE_ENABLE_NULL)
 
+#if defined(ANGLE_ENABLE_WGPU)
+#    include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#endif
+
 #if defined(ANGLE_ENABLE_VULKAN)
 #    include "libANGLE/renderer/vulkan/DisplayVk_api.h"
 #endif  // defined(ANGLE_ENABLE_VULKAN)
@@ -281,6 +285,13 @@ EGLAttrib GetDisplayTypeFromEnvironment()
         (angleDefaultEnv == "swiftshader"))
     {
         return EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
+    }
+#endif
+
+#if defined(ANGLE_ENABLE_WGPU)
+    if (angleDefaultEnv == "webgpu")
+    {
+        return EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE;
     }
 #endif
 
@@ -596,6 +607,13 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             }
 #endif
             // Metal isn't available.
+            break;
+
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+#if defined(ANGLE_ENABLE_WGPU)
+            impl = new rx::DisplayWgpu(state);
+#endif  // defined(ANGLE_ENABLE_WGPU)
+        // WebGPU isn't available.
             break;
 
         case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
@@ -2104,6 +2122,10 @@ static ClientExtensions GenerateClientExtensions()
 
 #if defined(ANGLE_ENABLE_NULL)
     extensions.platformANGLENULL = true;
+#endif
+
+#if defined(ANGLE_ENABLE_WGPU)
+    extensions.platformANGLEWebgpu = true;
 #endif
 
 #if defined(ANGLE_ENABLE_D3D11)

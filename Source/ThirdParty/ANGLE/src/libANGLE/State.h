@@ -179,6 +179,7 @@ enum ExtendedDirtyBitType
     EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
     EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
     EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
+    EXTENDED_DIRTY_BIT_FOVEATED_RENDERING,  // QCOM_framebuffer_foveated/QCOM_texture_foveated
 
     EXTENDED_DIRTY_BIT_INVALID,
     EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
@@ -1402,6 +1403,12 @@ class State : angle::NonCopyable
     {
         return mPrivateState.getEnableFeatureIndexed(feature, index);
     }
+    ProgramUniformBlockMask getAndResetDirtyUniformBlocks() const
+    {
+        ProgramUniformBlockMask dirtyBits = mDirtyUniformBlocks;
+        mDirtyUniformBlocks.reset();
+        return dirtyBits;
+    }
     const PrivateState &privateState() const { return mPrivateState; }
     const GLES1State &gles1() const { return mPrivateState.gles1(); }
 
@@ -1582,6 +1589,10 @@ class State : angle::NonCopyable
     ActiveTextureMask mDirtyTextures;
     ActiveTextureMask mDirtySamplers;
     ImageUnitMask mDirtyImages;
+    // Tracks uniform blocks that need reprocessing, for example because their mapped bindings have
+    // changed, or buffers in their mapped bindings have changed.  This is in State because every
+    // context needs to react to such changes.
+    mutable ProgramUniformBlockMask mDirtyUniformBlocks;
 
     PrivateState mPrivateState;
 };

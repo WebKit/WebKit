@@ -1044,8 +1044,12 @@ angle::Result Buffer::reset(ContextMtl *context,
                             const uint8_t *data)
 {
     auto options = resourceOptionsForStorageMode(storageMode);
-    set([&] {
+    set([&]() -> AutoObjCPtr<id<MTLBuffer>> {
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
+        if (size > [metalDevice maxBufferLength])
+        {
+            return nullptr;
+        }
         if (data)
         {
             return metalDevice.newBufferWithBytes(data, size, options);

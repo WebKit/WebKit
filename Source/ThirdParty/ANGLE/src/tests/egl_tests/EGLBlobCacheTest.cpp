@@ -64,6 +64,29 @@ void SetBlob(const void *key, EGLsizeiANDROID keySize, const void *value, EGLsiz
     gLastCacheOpResult = CacheOpResult::SetSuccess;
 }
 
+void SetCorruptedBlob(const void *key,
+                      EGLsizeiANDROID keySize,
+                      const void *value,
+                      EGLsizeiANDROID valueSize)
+{
+    std::vector<uint8_t> keyVec(keySize);
+    memcpy(keyVec.data(), key, keySize);
+
+    std::vector<uint8_t> valueVec(valueSize);
+    memcpy(valueVec.data(), value, valueSize);
+
+    // Corrupt the data
+    ++valueVec[valueVec.size() / 2];
+    ++valueVec[valueVec.size() / 3];
+    ++valueVec[valueVec.size() / 4];
+    ++valueVec[2 * valueVec.size() / 3];
+    ++valueVec[3 * valueVec.size() / 4];
+
+    gApplicationCache[keyVec] = valueVec;
+
+    gLastCacheOpResult = CacheOpResult::SetSuccess;
+}
+
 EGLsizeiANDROID GetBlob(const void *key,
                         EGLsizeiANDROID keySize,
                         void *value,
@@ -419,6 +442,131 @@ TEST_P(EGLBlobCacheTest, ThreadSafety)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// Makes sure ANGLE recovers from corrupted cache.
+TEST_P(EGLBlobCacheTest, CacheCorruption)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EXPECT_TRUE(mHasBlobCache);
+    eglSetBlobCacheFuncsANDROID(display, SetCorruptedBlob, GetBlob);
+    ASSERT_EGL_SUCCESS();
+
+    ANGLE_SKIP_TEST_IF(!programBinaryAvailable());
+
+    // Compile the program once and draw with it
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    const GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    glUniform4f(colorUniformLocation, 1, 0, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+    gLastCacheOpResult = CacheOpResult::ValueNotSet;
+
+    // Compile/link the same program again, so it would try to retrieve it from the cache.  GetBlob
+    // should return success, but because the cache is corrupt, ANGLE should redo the compile/link
+    // and set the blob again.
+    program.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    ASSERT_TRUE(program.valid());
+    glUseProgram(program);
+
+    glUniform4f(colorUniformLocation, 0, 1, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+}
+
+class EGLBlobCacheInternalRejectionTest : public EGLBlobCacheTest
+{};
+
+// Makes sure ANGLE recovers from internal (backend) rejection of the program blob, while everything
+// seems fine to ANGLE.
+TEST_P(EGLBlobCacheInternalRejectionTest, Functional)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EXPECT_TRUE(mHasBlobCache);
+    eglSetBlobCacheFuncsANDROID(display, SetBlob, GetBlob);
+    ASSERT_EGL_SUCCESS();
+
+    ANGLE_SKIP_TEST_IF(!programBinaryAvailable());
+
+    // Compile the program once and draw with it
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    const GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    glUniform4f(colorUniformLocation, 1, 0, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+    gLastCacheOpResult = CacheOpResult::ValueNotSet;
+
+    // Compile/link the same program again, so it would try to retrieve it from the cache.  GetBlob
+    // should return success, and ANGLE would think the program is fine.  After ANGLE internal
+    // updates, the backend should reject the program binary, at which point ANGLE should redo the
+    // compile/link and set the blob again.
+    program.makeRaster(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    ASSERT_TRUE(program.valid());
+    glUseProgram(program);
+
+    glUniform4f(colorUniformLocation, 0, 1, 0, 1);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+}
+
+// Makes sure ANGLE recovers from internal (backend) rejection of the shader blob, while everything
+// seems fine to ANGLE.
+TEST_P(EGLBlobCacheInternalRejectionTest, ShaderCacheFunctional)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EXPECT_TRUE(mHasBlobCache);
+    eglSetBlobCacheFuncsANDROID(display, SetBlob, GetBlob);
+    ASSERT_EGL_SUCCESS();
+
+    // Compile a shader so it puts something in the cache
+    GLuint shaderID = CompileShader(GL_VERTEX_SHADER, essl1_shaders::vs::Simple());
+    ASSERT_TRUE(shaderID != 0);
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+    gLastCacheOpResult = CacheOpResult::ValueNotSet;
+    glDeleteShader(shaderID);
+
+    // Compile another shader, which should create a new entry
+    shaderID = CompileShader(GL_FRAGMENT_SHADER, essl1_shaders::fs::UniformColor());
+    ASSERT_TRUE(shaderID != 0);
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+    gLastCacheOpResult = CacheOpResult::ValueNotSet;
+    glDeleteShader(shaderID);
+
+    // Compile the first shader again, which should still reside in the cache, but is corrupted.
+    // The cached entry should be discarded and compilation performed again (which sets another
+    // entry in the cache).
+    shaderID = CompileShader(GL_VERTEX_SHADER, essl1_shaders::vs::Simple());
+    ASSERT_TRUE(shaderID != 0);
+    EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+    gLastCacheOpResult = CacheOpResult::ValueNotSet;
+    glDeleteShader(shaderID);
+}
+
 ANGLE_INSTANTIATE_TEST(EGLBlobCacheTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
@@ -459,3 +607,8 @@ ANGLE_INSTANTIATE_TEST(EGLBlobCacheTest,
                            .enable(Feature::AsyncCommandQueue)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLBlobCacheInternalRejectionTest);
+ANGLE_INSTANTIATE_TEST(EGLBlobCacheInternalRejectionTest,
+                       ES2_OPENGL().enable(Feature::CorruptProgramBinaryForTesting),
+                       ES2_OPENGLES().enable(Feature::CorruptProgramBinaryForTesting));

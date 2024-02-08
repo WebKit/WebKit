@@ -293,9 +293,6 @@ static void LogGles31Capabilities(std::ostream &stream)
 
 static void LogGles32Capabilities(std::ostream &stream)
 {
-    // Most of these capabilities are not implemented yet.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_TESS_CONTROL_UNIFORM_COMPONENTS, stream);
     QUERY_AND_LOG_CAPABILITY(GL_MAX_COMBINED_TESS_EVALUATION_UNIFORM_COMPONENTS, stream);
@@ -467,8 +464,7 @@ TEST_P(EGLPrintEGLinfoTest, PrintConfigInfo)
         std::cout << std::endl;
 
         // Ancilary buffers
-        std::cout << "\tAncilary "
-                  << "Depth:" << GetAttrib(mDisplay, config, EGL_DEPTH_SIZE)
+        std::cout << "\tAncilary " << "Depth:" << GetAttrib(mDisplay, config, EGL_DEPTH_SIZE)
                   << " Stencil:" << GetAttrib(mDisplay, config, EGL_STENCIL_SIZE)
                   << " SampleBuffs:" << GetAttrib(mDisplay, config, EGL_SAMPLE_BUFFERS)
                   << " Samples:" << GetAttrib(mDisplay, config, EGL_SAMPLES) << std::endl;

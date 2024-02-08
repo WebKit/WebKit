@@ -984,6 +984,19 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
         case angle::EntryPoint::GLFramebufferFetchBarrierEXT:
             glFramebufferFetchBarrierEXT();
             break;
+        case angle::EntryPoint::GLFramebufferFoveationConfigQCOM:
+            glFramebufferFoveationConfigQCOM(
+                gFramebufferMap[captures[0].value.GLuintVal], captures[1].value.GLuintVal,
+                captures[2].value.GLuintVal, captures[3].value.GLuintVal,
+                captures[4].value.GLuintPointerVal);
+            break;
+        case angle::EntryPoint::GLFramebufferFoveationParametersQCOM:
+            glFramebufferFoveationParametersQCOM(
+                gFramebufferMap[captures[0].value.GLuintVal], captures[1].value.GLuintVal,
+                captures[2].value.GLuintVal, captures[3].value.GLfloatVal,
+                captures[4].value.GLfloatVal, captures[5].value.GLfloatVal,
+                captures[6].value.GLfloatVal, captures[7].value.GLfloatVal);
+            break;
         case angle::EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE:
             glFramebufferMemorylessPixelLocalStorageANGLE(captures[0].value.GLintVal,
                                                           captures[1].value.GLenumVal);
@@ -3519,6 +3532,13 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                        captures[8].value.GLenumVal, captures[9].value.GLenumVal,
                                        captures[10].value.GLsizeiVal,
                                        captures[11].value.voidConstPointerVal);
+            break;
+        case angle::EntryPoint::GLTextureFoveationParametersQCOM:
+            glTextureFoveationParametersQCOM(
+                gTextureMap[captures[0].value.GLuintVal], captures[1].value.GLuintVal,
+                captures[2].value.GLuintVal, captures[3].value.GLfloatVal,
+                captures[4].value.GLfloatVal, captures[5].value.GLfloatVal,
+                captures[6].value.GLfloatVal, captures[7].value.GLfloatVal);
             break;
         case angle::EntryPoint::GLTransformFeedbackVaryings:
             glTransformFeedbackVaryings(

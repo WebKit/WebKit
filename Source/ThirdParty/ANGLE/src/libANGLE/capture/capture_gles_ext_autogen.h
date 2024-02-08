@@ -2748,10 +2748,41 @@ angle::CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
 
 // GL_OVR_multiview2
 
+// GL_QCOM_framebuffer_foveated
+angle::CallCapture CaptureFramebufferFoveationConfigQCOM(const State &glState,
+                                                         bool isCallValid,
+                                                         FramebufferID framebufferPacked,
+                                                         GLuint numLayers,
+                                                         GLuint focalPointsPerLayer,
+                                                         GLuint requestedFeatures,
+                                                         GLuint *providedFeatures);
+angle::CallCapture CaptureFramebufferFoveationParametersQCOM(const State &glState,
+                                                             bool isCallValid,
+                                                             FramebufferID framebufferPacked,
+                                                             GLuint layer,
+                                                             GLuint focalPoint,
+                                                             GLfloat focalX,
+                                                             GLfloat focalY,
+                                                             GLfloat gainX,
+                                                             GLfloat gainY,
+                                                             GLfloat foveaArea);
+
 // GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 angle::CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate);
+
+// GL_QCOM_texture_foveated
+angle::CallCapture CaptureTextureFoveationParametersQCOM(const State &glState,
+                                                         bool isCallValid,
+                                                         TextureID texturePacked,
+                                                         GLuint layer,
+                                                         GLuint focalPoint,
+                                                         GLfloat focalX,
+                                                         GLfloat focalY,
+                                                         GLfloat gainX,
+                                                         GLfloat gainY,
+                                                         GLfloat foveaArea);
 
 // Parameter Captures
 
@@ -5374,6 +5405,14 @@ void CaptureGenVertexArraysOES_arraysPacked(const State &glState,
                                             GLsizei n,
                                             VertexArrayID *arraysPacked,
                                             angle::ParamCapture *paramCapture);
+void CaptureFramebufferFoveationConfigQCOM_providedFeatures(const State &glState,
+                                                            bool isCallValid,
+                                                            FramebufferID framebufferPacked,
+                                                            GLuint numLayers,
+                                                            GLuint focalPointsPerLayer,
+                                                            GLuint requestedFeatures,
+                                                            GLuint *providedFeatures,
+                                                            angle::ParamCapture *paramCapture);
 }  // namespace gl
 
 #endif  // LIBANGLE_CAPTURE_GLES_EXT_AUTOGEN_H_

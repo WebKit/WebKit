@@ -584,9 +584,9 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     mEarlyFragmentTestsSpecified = parseContext.isEarlyFragmentTestsSpecified();
 
-    mHasDiscard = parseContext.hasDiscard();
-
-    mEnablesPerSampleShading = parseContext.isSampleQualifierSpecified();
+    mMetadataFlags[MetadataFlags::HasDiscard] = parseContext.hasDiscard();
+    mMetadataFlags[MetadataFlags::EnablesPerSampleShading] =
+        parseContext.isSampleQualifierSpecified();
 
     mComputeShaderLocalSizeDeclared = parseContext.isComputeShaderLocalSizeDeclared();
     mComputeShaderLocalSize         = parseContext.getComputeShaderLocalSize();
@@ -608,6 +608,13 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
         mGeometryShaderOutputPrimitiveType = parseContext.getGeometryShaderOutputPrimitiveType();
         mGeometryShaderMaxVertices         = parseContext.getGeometryShaderMaxVertices();
         mGeometryShaderInvocations         = parseContext.getGeometryShaderInvocations();
+
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderInputPrimitiveType] =
+            mGeometryShaderInputPrimitiveType != EptUndefined;
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderOutputPrimitiveType] =
+            mGeometryShaderOutputPrimitiveType != EptUndefined;
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderMaxVertices] =
+            mGeometryShaderMaxVertices >= 0;
     }
     if (mShaderType == GL_TESS_CONTROL_SHADER_EXT)
     {
@@ -622,6 +629,15 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
         mTessEvaluationShaderInputOrderingType =
             parseContext.getTessEvaluationShaderInputOrderingType();
         mTessEvaluationShaderInputPointType = parseContext.getTessEvaluationShaderInputPointType();
+
+        mMetadataFlags[MetadataFlags::HasValidTessGenMode] =
+            mTessEvaluationShaderInputPrimitiveType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenSpacing] =
+            mTessEvaluationShaderInputVertexSpacingType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenVertexOrder] =
+            mTessEvaluationShaderInputOrderingType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenPointMode] =
+            mTessEvaluationShaderInputPointType != EtetUndefined;
     }
 }
 
@@ -894,13 +910,15 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
         parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance))
     {
+        bool isClipDistanceUsed = false;
         if (!ValidateClipCullDistance(
                 root, &mDiagnostics, mResources.MaxCullDistances,
                 mResources.MaxCombinedClipAndCullDistances, &mClipDistanceSize, &mCullDistanceSize,
-                &mClipDistanceRedeclared, &mCullDistanceRedeclared, &mClipDistanceUsed))
+                &mClipDistanceRedeclared, &mCullDistanceRedeclared, &isClipDistanceUsed))
         {
             return false;
         }
+        mMetadataFlags[MetadataFlags::HasClipDistance] = isClipDistanceUsed;
 
         if (!resizeClipAndCullDistanceBuiltins(root))
         {
@@ -1525,6 +1543,9 @@ void TCompiler::clearResults()
     mInfoSink.debug.erase();
     mDiagnostics.resetErrorCount();
 
+    mMetadataFlags.reset();
+    mSpecConstUsageBits.reset();
+
     mAttributes.clear();
     mOutputVariables.clear();
     mUniforms.clear();
@@ -1543,7 +1564,6 @@ void TCompiler::clearResults()
     mCullDistanceSize       = 0;
     mClipDistanceRedeclared = false;
     mCullDistanceRedeclared = false;
-    mClipDistanceUsed       = false;
 
     mGeometryShaderInputPrimitiveType  = EptUndefined;
     mGeometryShaderOutputPrimitiveType = EptUndefined;

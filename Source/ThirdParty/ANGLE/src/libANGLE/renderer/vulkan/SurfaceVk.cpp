@@ -195,7 +195,8 @@ angle::Result InitImageHelper(DisplayVk *displayVk,
     ANGLE_TRY(imageHelper->initExternal(
         displayVk, gl::TextureType::_2D, extents, vkFormat.getIntendedFormatID(),
         renderableFormatId, samples, usage, imageCreateFlags, vk::ImageLayout::Undefined, nullptr,
-        gl::LevelIndex(0), 1, 1, isRobustResourceInitEnabled, hasProtectedContent));
+        gl::LevelIndex(0), 1, 1, isRobustResourceInitEnabled, hasProtectedContent,
+        vk::YcbcrConversionDesc{}));
 
     return angle::Result::Continue;
 }
@@ -1181,9 +1182,13 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMat
     gl::Extents windowSize;
     ANGLE_TRY(createSurfaceVk(displayVk, &windowSize));
 
-    uint32_t presentQueue = 0;
-    ANGLE_TRY(renderer->selectPresentQueueForSurface(displayVk, mSurface, &presentQueue));
-    ANGLE_UNUSED_VARIABLE(presentQueue);
+    // Check if the selected queue created supports present to this surface.
+    bool presentSupported = false;
+    ANGLE_TRY(renderer->checkQueueForSurfacePresent(displayVk, mSurface, &presentSupported));
+    if (!presentSupported)
+    {
+        return angle::Result::Continue;
+    }
 
     const VkPhysicalDevice &physicalDevice = renderer->getPhysicalDevice();
 

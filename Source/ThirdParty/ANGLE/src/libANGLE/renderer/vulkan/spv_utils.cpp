@@ -682,27 +682,25 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
                                    ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
     if (!programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment) ||
-        programExecutable.getFragmentInoutRange().empty())
+        !programExecutable.usesFramebufferFetch())
     {
         return;
     }
 
-    const std::vector<gl::LinkedUniform> &uniforms = programExecutable.getUniforms();
     const uint32_t baseInputAttachmentBindingIndex =
         programInterfaceInfo->currentShaderResourceBindingIndex;
     const gl::ShaderBitSet activeShaders{gl::ShaderType::Fragment};
 
-    for (unsigned int uniformIndex : programExecutable.getFragmentInoutRange())
-    {
-        const gl::LinkedUniform &inputAttachmentUniform = uniforms[uniformIndex];
-        ASSERT(inputAttachmentUniform.isActive(gl::ShaderType::Fragment));
+    static_assert(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS <= 8,
+                  "sh::vk::spirv::ReservedIds supports max 8 draw buffers");
 
+    for (size_t index : programExecutable.getFragmentInoutIndices())
+    {
         const uint32_t inputAttachmentBindingIndex =
-            baseInputAttachmentBindingIndex + inputAttachmentUniform.getLocation();
+            baseInputAttachmentBindingIndex + static_cast<uint32_t>(index);
 
         AddResourceInfo(variableInfoMapOut, activeShaders, gl::ShaderType::Fragment,
-
-                        inputAttachmentUniform.getIds()[gl::ShaderType::Fragment],
+                        sh::vk::spirv::kIdInputAttachment0 + static_cast<uint32_t>(index),
                         ToUnderlying(DescriptorSetIndex::ShaderResource),
                         inputAttachmentBindingIndex);
     }

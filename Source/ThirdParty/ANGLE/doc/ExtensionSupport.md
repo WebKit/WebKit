@@ -84,6 +84,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/ANGLE/ANGLE_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_framebuffer_blit](https://khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_blit.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_MESA_framebuffer_flip_y](https://khronos.org/registry/OpenGL/extensions/MESA/MESA_framebuffer_flip_y.txt) |  |  |  |  |  |  |  |
+| [GL_QCOM_framebuffer_foveated](https://khronos.org/registry/OpenGL/extensions/QCOM/QCOM_framebuffer_foveated.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_geometry_shader](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  | &#x2714; |
 | [GL_OES_geometry_shader](https://khronos.org/registry/OpenGL/extensions/OES/OES_geometry_shader.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |  | &#x2714; |
 | [GL_OES_get_program_binary](https://khronos.org/registry/OpenGL/extensions/OES/OES_get_program_binary.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -173,6 +174,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_texture_float_linear](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_float_linear.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  | &#x2714; |
 | [GL_EXT_texture_format_BGRA8888](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_format_BGRA8888.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_format_sRGB_override](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_format_sRGB_override.txt) |  | &#x2714; |  |  |  |  |  |
+| [GL_QCOM_texture_foveated](https://khronos.org/registry/OpenGL/extensions/QCOM/QCOM_texture_foveated.txt) |  |  |  |  |  |  |  |
 | [GL_OES_texture_half_float](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_half_float.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_texture_half_float_linear](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_half_float_linear.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_mirror_clamp_to_edge](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_mirror_clamp_to_edge.txt) |  |  |  |  |  |  |  |

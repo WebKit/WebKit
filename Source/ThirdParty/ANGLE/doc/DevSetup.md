@@ -84,12 +84,17 @@ is_clang = false (NOT RECOMMENDED)   (to use system default compiler instead of 
 For a release build run `gn args out/Release` and set `is_debug = false`.
 Optionally set `angle_assert_always_on = true` for Release testing.
 
-On Windows, you can build for the Universal Windows Platform (UWP) by setting
-`target_os = "winuwp"` in the args. Setting `is_component_build = false` is
-highly recommended to support moving libEGL.dll and libGLESv2.dll to an
-application's directory and being self-contained, instead of depending on
-other DLLs (d3dcompiler_47.dll is still needed for the Direct3D backend). We
-also recommend using `is_clang = false` with UWP.
+On Windows, you can build for the Universal Windows Platform (UWP) or WinUI 3.
+For UWP, set `target_os = "winuwp"` in the args. For WinUI 3, instead set
+`angle_is_winappsdk=true` along with the path to the Windows App SDK
+headers: `winappsdk_dir="/path/to/headers"`. The headers need to be generated
+from the winmd files, which is done by running the `scripts/winappsdk_setup.py`
+script and passing in the path to store the headers.  
+For both UWP and WinUI 3, setting `is_component_build = false` is highly
+recommended to support moving libEGL.dll and libGLESv2.dll to an application's
+directory and being self-contained, instead of depending on other DLLs
+(d3dcompiler_47.dll is still needed for the Direct3D backend).  
+We also recommend using `is_clang = false`.
 
 For more information on GN run `gn help`.
 

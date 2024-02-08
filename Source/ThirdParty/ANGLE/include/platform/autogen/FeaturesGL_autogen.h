@@ -710,6 +710,13 @@ struct FeaturesGL : FeatureSetBase
         &members, "https://anglebug.com/8381"
     };
 
+    FeatureInfo corruptProgramBinaryForTesting = {
+        "corruptProgramBinaryForTesting",
+        FeatureCategory::OpenGLWorkarounds,
+        "Corrupt the program binary retrieved from the driver for testing purposes.",
+        &members, "https://anglebug.com/8471"
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 345
+#define ANGLE_SH_VERSION 349
 
 enum ShShaderSpec
 {
@@ -81,13 +81,17 @@ struct ShCompileOptionsMetal
     // Direct-to-metal backend constants:
 
     // Binding index for driver uniforms:
-    int driverUniformsBindingIndex;
+    int driverUniformsBindingIndex = 0;
     // Binding index for default uniforms:
-    int defaultUniformsBindingIndex;
+    int defaultUniformsBindingIndex = 0;
     // Binding index for UBO's argument buffer
-    int UBOArgumentBufferBindingIndex;
+    int UBOArgumentBufferBindingIndex = 0;
 
-    bool generateShareableShaders;
+    bool generateShareableShaders = false;
+
+    // Insert asm("") instructions into loop bodies, telling the compiler that all loops have side
+    // effects and cannot be optimized out.
+    bool injectAsmStatementIntoLoopBodies = false;
 };
 
 // For ANGLE_shader_pixel_local_storage.
@@ -437,6 +441,9 @@ struct ShCompileOptions
 
     // Pre-transform explicit cubemap derivatives for Apple GPUs.
     uint64_t preTransformTextureCubeGradDerivatives : 1;
+
+    // Workaround for a driver bug with the use of the OpSelect SPIR-V instruction.
+    uint64_t avoidOpSelectWithMismatchingRelaxedPrecision : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;
@@ -834,9 +841,6 @@ sh::WorkGroupSize GetComputeShaderLocalGroupSize(const ShHandle handle);
 // Returns the number of views specified through the num_views layout qualifier. If num_views is
 // not set, the function returns -1.
 int GetVertexShaderNumViews(const ShHandle handle);
-// Returns true if the shader has specified the |sample| qualifier, implying that per-sample shading
-// should be enabled
-bool EnablesPerSampleShading(const ShHandle handle);
 
 // Returns specialization constant usage bits
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle);
@@ -895,15 +899,6 @@ const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle);
 
 uint8_t GetClipDistanceArraySize(const ShHandle handle);
 uint8_t GetCullDistanceArraySize(const ShHandle handle);
-bool HasClipDistanceInVertexShader(const ShHandle handle);
-bool HasDiscardInFragmentShader(const ShHandle handle);
-bool HasValidGeometryShaderInputPrimitiveType(const ShHandle handle);
-bool HasValidGeometryShaderOutputPrimitiveType(const ShHandle handle);
-bool HasValidGeometryShaderMaxVertices(const ShHandle handle);
-bool HasValidTessGenMode(const ShHandle handle);
-bool HasValidTessGenSpacing(const ShHandle handle);
-bool HasValidTessGenVertexOrder(const ShHandle handle);
-bool HasValidTessGenPointMode(const ShHandle handle);
 GLenum GetGeometryShaderInputPrimitiveType(const ShHandle handle);
 GLenum GetGeometryShaderOutputPrimitiveType(const ShHandle handle);
 int GetGeometryShaderInvocations(const ShHandle handle);
@@ -914,6 +909,9 @@ GLenum GetTessGenMode(const ShHandle handle);
 GLenum GetTessGenSpacing(const ShHandle handle);
 GLenum GetTessGenVertexOrder(const ShHandle handle);
 GLenum GetTessGenPointMode(const ShHandle handle);
+
+// Returns a bitset of sh::MetadataFlags.  This bundles various bits purely for convenience.
+uint32_t GetMetadataFlags(const ShHandle handle);
 
 // Returns the blend equation list supported in the fragment shader.  This is a bitset of
 // gl::BlendEquationType, and can only include bits from KHR_blend_equation_advanced.
@@ -939,6 +937,31 @@ inline bool IsDesktopGLSpec(ShShaderSpec spec)
 // in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
 // use by the underlying implementation). u is short for user-defined.
 extern const char kUserDefinedNamePrefix[];
+
+enum class MetadataFlags
+{
+    // Applicable to vertex shaders (technically all pre-rasterization shaders could use this flag,
+    // but the current and only user is GL, which does not support geometry/tessellation).
+    HasClipDistance,
+    // Applicable to fragment shaders
+    HasDiscard,
+    EnablesPerSampleShading,
+    HasInputAttachment0,
+    // Flag for attachment i is HasInputAttachment0 + i
+    HasInputAttachment7 = HasInputAttachment0 + 7,
+    // Applicable to geometry shaders
+    HasValidGeometryShaderInputPrimitiveType,
+    HasValidGeometryShaderOutputPrimitiveType,
+    HasValidGeometryShaderMaxVertices,
+    // Applicable to tessellation shaders
+    HasValidTessGenMode,
+    HasValidTessGenSpacing,
+    HasValidTessGenVertexOrder,
+    HasValidTessGenPointMode,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum,
+};
 
 namespace vk
 {
@@ -1077,6 +1100,9 @@ enum ReservedIds
     kIdXfbEmulationBufferBlockThree,
     // Additional varying added to hold untransformed gl_Position for transform feedback capture
     kIdXfbExtensionPosition,
+    // Input attachments used for framebuffer fetch and advanced blend emulation
+    kIdInputAttachment0,
+    kIdInputAttachment7 = kIdInputAttachment0 + 7,
 
     kIdFirstUnreserved,
 };

@@ -11,6 +11,8 @@
 
 #include "common/platform.h"
 
+#include <string>
+
 // These are macros for substitution of Apple specific directive @available:
 
 // TARGET_OS_MACCATALYST only available in MacSDK 10.15
@@ -99,6 +101,12 @@
 namespace angle
 {
 bool IsMetalRendererAvailable();
-}
+
+bool GetMacosMachineModel(std::string *outMachineModel);
+bool ParseMacMachineModel(const std::string &identifier,
+                          std::string *type,
+                          int32_t *major,
+                          int32_t *minor);
+}  // namespace angle
 
 #endif

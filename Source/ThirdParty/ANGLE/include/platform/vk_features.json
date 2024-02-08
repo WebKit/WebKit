@@ -439,14 +439,6 @@
             "issue": "https://anglebug.com/6574"
         },
         {
-            "name": "force_delayed_device_creation_for_testing",
-            "category": "Workarounds",
-            "description": [
-                "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios"
-            ],
-            "issue": "https://anglebug.com/8300"
-        },
-        {
             "name": "supports_shader_float16",
             "category": "Features",
             "description": [
@@ -1438,6 +1430,15 @@
                 "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for images with external format"
             ],
             "issue": "https://issuetracker.google.com/155487768"
+        },
+        {
+            "name": "avoid_OpSelect_with_mismatching_RelaxedPrecision",
+            "category": "Workarounds",
+            "description": [
+                "On some drivers, the OpSelect SPIR-V instruction with arguments with mismatching ",
+                "RelaxedPrecision decoration causes a crash"
+            ],
+            "issue": "http://anglebug.com/8503"
         }
     ]
 }

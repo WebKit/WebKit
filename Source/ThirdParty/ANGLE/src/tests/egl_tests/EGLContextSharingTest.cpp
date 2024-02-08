@@ -1571,6 +1571,27 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
     }
 }
 
+// Tests that creating a context and immediately destroying it works when no surface has been
+// created.
+TEST_P(EGLContextSharingTestNoFixture, ImmediateContextDestroyAfterCreation)
+{
+    EGLAttrib dispattrs[3] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
+    mDisplay               = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
+                                                   reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+    EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
+    EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    // Create a context and immediately destroy it.  Note that no window surface should be created
+    // for this test.  Regression test for platforms that expose multiple queue families in Vulkan,
+    // and ANGLE defers creation of the device until a surface is created.  In this case, the
+    // context is being destroyed before a queue is ever created.
+    EXPECT_TRUE(createContext(config, &mContexts[0]));
+    EXPECT_TRUE(SafeDestroyContext(mDisplay, mContexts[0]));
+    ASSERT_EGL_SUCCESS();
+}
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextSharingTest);

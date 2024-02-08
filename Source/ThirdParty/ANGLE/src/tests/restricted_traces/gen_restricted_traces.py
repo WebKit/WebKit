@@ -29,8 +29,14 @@ DEPS_TEMPLATE = """\
         }},
       ],
       'dep_type': 'cipd',
-      'condition': 'checkout_angle_restricted_traces',
+      'condition': 'checkout_angle_restricted_trace_{trace}',
   }},
+"""
+
+DEPS_VAR_START = '# === ANGLE Restricted Trace Generated Var Start ==='
+DEPS_VAR_END = '# === ANGLE Restricted Trace Generated Var End ==='
+DEPS_VAR_TEMPLATE = """\
+  'checkout_angle_restricted_trace_{trace}': 'checkout_angle_restricted_traces',
 """
 
 
@@ -67,26 +73,23 @@ def update_deps(trace_pairs):
         replacement += DEPS_TEMPLATE.format(**sub)
 
     # Update DEPS to download CIPD dependencies
-    new_deps = ""
     with open(DEPS_PATH) as f:
-        in_deps = False
-        for line in f:
-            if in_deps:
-                if DEPS_END in line:
-                    new_deps += replacement
-                    new_deps += line
-                    in_deps = False
-            else:
-                if DEPS_START in line:
-                    new_deps += line
-                    in_deps = True
-                else:
-                    new_deps += line
-        f.close()
+        lines = f.readlines()
+
+    def slice_to_replace(lines, start_tag, end_tag):
+        start, end = [i for i, s in enumerate(lines) if start_tag in s or end_tag in s]
+        return slice(start + 1, end)
+
+    # Replace lines between DEPS_START and DEPS_END with new code
+    lines[slice_to_replace(lines, DEPS_START, DEPS_END)] = [replacement]
+
+    # Replace lines between DEPS_VAR_START and DEPS_VAR_END with new code
+    lines[slice_to_replace(lines, DEPS_VAR_START, DEPS_VAR_END)] = [
+        DEPS_VAR_TEMPLATE.format(trace=trace) for (trace, _) in trace_pairs
+    ]
 
     with open(DEPS_PATH, 'w') as f:
-        f.write(new_deps)
-        f.close()
+        f.write(''.join(lines))
 
     return True
 

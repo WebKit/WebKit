@@ -112,6 +112,7 @@ def write_blueprint(output, target_type, values):
 // See: http://go/android-license-faq"""
         output.append(comment)
 
+    output.append('')
     output.append('%s {' % target_type)
     for (key, value) in values.items():
         write_blueprint_key_value(output, key, value)
@@ -253,8 +254,8 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
             generated_headers += child_generated_headers
         elif dep == '//third_party/zlib/google:compression_utils_portable':
             # Replace zlib by Android's zlib, compression_utils_portable is the root dependency
-            static_libs.extend(
-                ['zlib_google_compression_utils_portable', 'libz_static', 'cpufeatures'])
+            shared_libs.append('libz')
+            static_libs.extend(['zlib_google_compression_utils_portable', 'cpufeatures'])
 
     return static_libs, shared_libs, defaults, generated_headers, header_libs
 
@@ -605,6 +606,7 @@ def main():
             help=gn_abi(abi) +
             ' gn desc file in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.',
             required=True)
+    parser.add_argument('--output', help='output file (e.g. Android.bp)')
     args = vars(parser.parse_args())
 
     infos = {}
@@ -628,7 +630,7 @@ def main():
             'name':
                 'angle_common_library_cflags',
             'cpp_std':
-                'gnu++17',
+                'gnu++17',  # TODO(b/175635923): std::popcount missing from external/libcxx
             'cflags': [
                 # Chrome and Android use different versions of Clang which support differnt warning options.
                 # Ignore errors about unrecognized warning flags.
@@ -639,8 +641,24 @@ def main():
             ],
         }))
 
+    generated_targets = []
     for target in reversed(targets_to_write.keys()):
-        blueprint_targets.append(gn_target_to_blueprint(target, build_info))
+        generated_targets.append(gn_target_to_blueprint(target, build_info))
+
+    # Move cflags that are repeated in each target to cc_defaults
+    all_cflags = [set(bp['cflags']) for _, bp in generated_targets if 'cflags' in bp]
+    all_target_cflags = set.intersection(*all_cflags)
+
+    for _, bp in generated_targets:
+        if 'cflags' in bp:
+            bp['cflags'] = list(set(bp['cflags']) - all_target_cflags)
+            bp['defaults'].append('angle_common_auto_cflags')
+
+    blueprint_targets.append(('cc_defaults', {
+        'name': 'angle_common_auto_cflags',
+        'cflags': list(all_target_cflags),
+    }))
+    blueprint_targets.extend(generated_targets)
 
     # Add license build rules
     blueprint_targets.append(('package', {
@@ -808,13 +826,13 @@ def main():
 // Copyright 2020 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-//
-""" % sys.argv[0]
+//""" % sys.argv[0]
     ]
     for (blueprint_type, blueprint_data) in blueprint_targets:
         write_blueprint(output, blueprint_type, blueprint_data)
 
-    print('\n'.join(output))
+    with open(args['output'], 'w') as f:
+        f.write('\n'.join(output) + '\n')
 
 
 if __name__ == '__main__':

@@ -181,7 +181,7 @@ TBasicType GetBasicTypeForSubpassInput(TBasicType inputType)
 void DeclareInputAttachmentVariable(TSymbolTable *symbolTable,
                                     const TType &outputType,
                                     size_t index,
-                                    TVector<const TVariable *> *inputAttachmentVarsOut,
+                                    InputAttachmentMap *inputAttachmentMapOut,
                                     TIntermSequence *declarationsOut)
 {
     const TBasicType subpassInputType = GetBasicTypeForSubpassInput(outputType.getBasicType());
@@ -192,11 +192,12 @@ void DeclareInputAttachmentVariable(TSymbolTable *symbolTable,
     inputAttachmentQualifier.inputAttachmentIndex = static_cast<int>(index);
     inputAttachmentType->setLayoutQualifier(inputAttachmentQualifier);
 
-    (*inputAttachmentVarsOut)[index] = new TVariable(
+    const TVariable *inputAttachmentVar = new TVariable(
         symbolTable, GetInputAttachmentName(index), inputAttachmentType, SymbolType::AngleInternal);
+    (*inputAttachmentMapOut)[static_cast<uint32_t>(index)] = inputAttachmentVar;
 
     TIntermDeclaration *decl = new TIntermDeclaration;
-    decl->appendDeclarator(new TIntermSymbol((*inputAttachmentVarsOut)[index]));
+    decl->appendDeclarator(new TIntermSymbol(inputAttachmentVar));
     declarationsOut->push_back(decl);
 }
 
@@ -249,20 +250,19 @@ const TVariable *DeclareLastFragDataGlobalVariable(TCompiler *compiler,
                                     InputAttachmentIndexUsage indexUsage,
                                     bool usesLastFragData,
                                     const TVector<const TType *> &attachmentTypes,
-                                    TVector<const TVariable *> *inputAttachmentVarsOut,
+                                    InputAttachmentMap *inputAttachmentMapOut,
                                     const TVariable **lastFragDataOut)
 {
     TSymbolTable *symbolTable = &compiler->getSymbolTable();
 
     TIntermSequence declarations;
-    inputAttachmentVarsOut->resize(indexUsage.last() + 1, nullptr);
 
     // For every detected index, declare an input attachment variable.
     for (size_t index : indexUsage)
     {
         ASSERT(attachmentTypes[index] != nullptr);
         DeclareInputAttachmentVariable(symbolTable, *attachmentTypes[index], index,
-                                       inputAttachmentVarsOut, &declarations);
+                                       inputAttachmentMapOut, &declarations);
     }
 
     // If gl_LastFragData or gl_LastFragColorARM is used, declare a global variable to retain that.
@@ -316,17 +316,13 @@ void GatherInoutVariables(TIntermBlock *root, TVector<const TVariable *> *inoutV
     }
 }
 
-void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
-                                            TIntermBlock *block,
-                                            const TVariable *inputVariable,
-                                            const TVariable *assignVariable,
-                                            uint32_t assignVariableArrayIndex)
+void InitializeFromInputAttachment(TSymbolTable *symbolTable,
+                                   TIntermBlock *block,
+                                   const TVariable *inputVariable,
+                                   const TVariable *assignVariable,
+                                   uint32_t assignVariableArrayIndex)
 {
-    if (inputVariable == nullptr)
-    {
-        // No input variable usage for this index
-        return;
-    }
+    ASSERT(inputVariable != nullptr);
 
     TIntermTyped *var = new TIntermSymbol(assignVariable);
     if (var->getType().isArray())
@@ -349,12 +345,11 @@ void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
     block->appendStatement(assignment);
 }
 
-[[nodiscard]] bool InitializeFromInputAttachments(
-    TCompiler *compiler,
-    TIntermBlock *root,
-    const TVector<const TVariable *> &inputAttachmentVars,
-    const TVector<const TVariable *> &inoutVariables,
-    const TVariable *lastFragData)
+[[nodiscard]] bool InitializeFromInputAttachments(TCompiler *compiler,
+                                                  TIntermBlock *root,
+                                                  const InputAttachmentMap &inputAttachmentMap,
+                                                  const TVector<const TVariable *> &inoutVariables,
+                                                  const TVariable *lastFragData)
 {
     TSymbolTable *symbolTable = &compiler->getSymbolTable();
     TIntermBlock *init        = new TIntermBlock;
@@ -369,19 +364,25 @@ void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
         uint32_t arraySize = type.isArray() ? type.getOutermostArraySize() : 1;
         for (unsigned int index = 0; index < arraySize; index++)
         {
-            InitializeFromInputAttachmentIfPresent(
-                symbolTable, init, inputAttachmentVars[baseInputAttachmentIndex + index], inoutVar,
-                index);
+            ASSERT(inputAttachmentMap.find(baseInputAttachmentIndex + index) !=
+                   inputAttachmentMap.end());
+
+            InitializeFromInputAttachment(symbolTable, init,
+                                          inputAttachmentMap.at(baseInputAttachmentIndex + index),
+                                          inoutVar, index);
         }
     }
 
     // Initialize lastFragData, if present
     if (lastFragData != nullptr)
     {
-        for (uint32_t index = 0; index < inputAttachmentVars.size(); ++index)
+        for (auto &iter : inputAttachmentMap)
         {
-            InitializeFromInputAttachmentIfPresent(symbolTable, init, inputAttachmentVars[index],
-                                                   lastFragData, index);
+            const uint32_t index                = iter.first;
+            const TVariable *inputAttachmentVar = iter.second;
+
+            InitializeFromInputAttachment(symbolTable, init, inputAttachmentVar, lastFragData,
+                                          index);
         }
     }
 
@@ -390,7 +391,7 @@ void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
 
 [[nodiscard]] bool ReplaceVariables(TCompiler *compiler,
                                     TIntermBlock *root,
-                                    const TVector<const TVariable *> &inputAttachmentVars,
+                                    const InputAttachmentMap &inputAttachmentMap,
                                     const TVariable *lastFragData)
 {
     TSymbolTable *symbolTable = &compiler->getSymbolTable();
@@ -400,7 +401,7 @@ void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
 
     // Generate code that initializes the global variable and the inout variables with corresponding
     // input attachments.
-    if (!InitializeFromInputAttachments(compiler, root, inputAttachmentVars, inoutVariables,
+    if (!InitializeFromInputAttachments(compiler, root, inputAttachmentMap, inoutVariables,
                                         lastFragData))
     {
         return false;
@@ -478,33 +479,11 @@ void InitializeFromInputAttachmentIfPresent(TSymbolTable *symbolTable,
     // Replace the variables accordingly.
     return ReplaceVariables(compiler, root, replacementMap);
 }
-
-void AddInputAttachmentsToUniforms(const TVector<const TVariable *> &inputAttachmentVars,
-                                   std::vector<ShaderVariable> *uniforms)
-{
-    for (const TVariable *inputVar : inputAttachmentVars)
-    {
-        if (inputVar == nullptr)
-        {
-            continue;
-        }
-
-        ShaderVariable uniform;
-        uniform.active    = true;
-        uniform.staticUse = true;
-        uniform.name.assign(inputVar->name().data(), inputVar->name().length());
-        uniform.mappedName.assign(uniform.name);
-        uniform.isFragmentInOut = true;
-        uniform.location        = inputVar->getType().getLayoutQualifier().inputAttachmentIndex;
-
-        uniforms->push_back(uniform);
-    }
-}
 }  // anonymous namespace
 
 [[nodiscard]] bool EmulateFramebufferFetch(TCompiler *compiler,
                                            TIntermBlock *root,
-                                           std::vector<ShaderVariable> *uniforms)
+                                           InputAttachmentMap *inputAttachmentMapOut)
 {
     // First, check if input attachments are necessary at all.
     TVector<const TType *> attachmentTypes;
@@ -523,10 +502,9 @@ void AddInputAttachmentsToUniforms(const TVector<const TVariable *> &inputAttach
 
     // Declare the necessary variables for emulation; input attachments to read from and global
     // variables to hold last frag data.
-    TVector<const TVariable *> inputAttachmentVars;
     const TVariable *lastFragData = nullptr;
     if (!DeclareVariables(compiler, root, indexUsage, usesLastFragData, attachmentTypes,
-                          &inputAttachmentVars, &lastFragData))
+                          inputAttachmentMapOut, &lastFragData))
     {
         return false;
     }
@@ -534,13 +512,11 @@ void AddInputAttachmentsToUniforms(const TVector<const TVariable *> &inputAttach
     // Then replace references to gl_LastFragData with the global, gl_LastFragColorARM with
     // global[0], replace inout variables with out equivalents and make sure input attachments
     // initialize the appropriate variables at the beginning of the shader.
-    if (!ReplaceVariables(compiler, root, inputAttachmentVars, lastFragData))
+    if (!ReplaceVariables(compiler, root, *inputAttachmentMapOut, lastFragData))
     {
         return false;
     }
 
-    // Add the newly declared variables to the list of uniforms.
-    AddInputAttachmentsToUniforms(inputAttachmentVars, uniforms);
     return true;
 }
 

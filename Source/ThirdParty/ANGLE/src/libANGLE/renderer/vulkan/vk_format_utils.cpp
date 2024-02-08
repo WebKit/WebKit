@@ -411,6 +411,50 @@ VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, angle::FormatI
     imageUsageFlags |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     return imageUsageFlags;
 }
+
+VkImageCreateFlags GetMinimalImageCreateFlags(RendererVk *renderer,
+                                              gl::TextureType textureType,
+                                              VkImageUsageFlags usage)
+{
+    switch (textureType)
+    {
+        case gl::TextureType::CubeMap:
+        case gl::TextureType::CubeMapArray:
+            return VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+
+        case gl::TextureType::_3D:
+        {
+            // Slices of this image may be used as:
+            //
+            // - Render target: The VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT flag is needed for that.
+            // - Sampled or storage image: The VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT flag is
+            //   needed for this.  If VK_EXT_image_2d_view_of_3d is not supported, we tolerate the
+            //   VVL error as drivers seem to support this behavior anyway.
+            VkImageCreateFlags flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
+
+            if ((usage & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+            {
+                if (renderer->getFeatures().supportsImage2dViewOf3d.enabled)
+                {
+                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
+                }
+            }
+            else if ((usage & VK_IMAGE_USAGE_SAMPLED_BIT) != 0)
+            {
+                if (renderer->getFeatures().supportsSampler2dViewOf3d.enabled)
+                {
+                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
+                }
+            }
+
+            return flags;
+        }
+
+        default:
+            return 0;
+    }
+}
+
 }  // namespace vk
 
 bool HasFullTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)

@@ -1959,7 +1959,7 @@ bool TestSuite::logAnyUnusedTestExpectations()
     }
     if (anyUnused)
     {
-        std::cerr << "Failed to validate test expectations." << unusedMsgStream.str() << std::endl;
+        std::cerr << "Found unused test expectations:" << unusedMsgStream.str() << std::endl;
         return true;
     }
     return false;

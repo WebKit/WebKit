@@ -1055,6 +1055,12 @@ static_assert(sizeof(PipelineLayoutDesc) == sizeof(DescriptorSetArray<Descriptor
                                                 sizeof(PackedPushConstantRange) + sizeof(uint32_t),
               "Unexpected Size");
 
+enum class YcbcrLinearFilterSupport
+{
+    Unsupported,
+    Supported,
+};
+
 class YcbcrConversionDesc final
 {
   public:
@@ -1076,7 +1082,8 @@ class YcbcrConversionDesc final
                 VkChromaLocation yChromaOffset,
                 VkFilter chromaFilter,
                 VkComponentMapping components,
-                angle::FormatID intendedFormatID);
+                angle::FormatID intendedFormatID,
+                YcbcrLinearFilterSupport linearFilterSupported);
     VkFilter getChromaFilter() const { return static_cast<VkFilter>(mChromaFilter); }
     bool updateChromaFilter(RendererVk *rendererVk, VkFilter filter);
     void updateConversionModel(VkSamplerYcbcrModelConversion conversionModel);
@@ -1111,7 +1118,9 @@ class YcbcrConversionDesc final
     uint32_t mBSwizzle : 3;
     // 3 bit to identify A component swizzle
     uint32_t mASwizzle : 3;
-    uint32_t mPadding : 12;
+    // 1 bit for whether linear filtering is supported (independent of whether currently enabled)
+    uint32_t mLinearFilterSupported : 1;
+    uint32_t mPadding : 11;
     uint32_t mReserved;
 };
 
@@ -1751,8 +1760,8 @@ class DescriptorSetDescBuilder final
                                CommandBufferT *commandBufferHelper,
                                const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                const gl::BufferVector &buffers,
-                               const std::vector<gl::InterfaceBlock> &blocks,
-                               uint32_t blockIndex,
+                               const gl::InterfaceBlock &block,
+                               uint32_t bufferIndex,
                                VkDescriptorType descriptorType,
                                VkDeviceSize maxBoundBufferRange,
                                const BufferHelper &emptyBuffer,
@@ -1760,6 +1769,7 @@ class DescriptorSetDescBuilder final
     template <typename CommandBufferT>
     void updateShaderBuffers(ContextVk *contextVk,
                              CommandBufferT *commandBufferHelper,
+                             const gl::ProgramExecutable &executable,
                              const ShaderInterfaceVariableInfoMap &variableInfoMap,
                              const gl::BufferVector &buffers,
                              const std::vector<gl::InterfaceBlock> &blocks,
@@ -1770,6 +1780,7 @@ class DescriptorSetDescBuilder final
     template <typename CommandBufferT>
     void updateAtomicCounters(ContextVk *contextVk,
                               CommandBufferT *commandBufferHelper,
+                              const gl::ProgramExecutable &executable,
                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
                               const gl::BufferVector &buffers,
                               const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,

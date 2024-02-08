@@ -2576,7 +2576,7 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
             fbAttachmentImageInfo.flags = renderTargetImage->getCreateFlags();
             fbAttachmentImageInfo.usage = renderTargetImage->getUsage();
             fbAttachmentImageInfo.viewFormatCount =
-                static_cast<uint32_t>(renderTargetImage->getViewFormats().max_size());
+                static_cast<uint32_t>(renderTargetImage->getViewFormats().size());
             fbAttachmentImageInfo.pViewFormats = renderTargetImage->getViewFormats().data();
 
             fbAttachmentImageInfoArray.push_back(fbAttachmentImageInfo);

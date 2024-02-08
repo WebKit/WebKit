@@ -10719,6 +10719,69 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests state changes with uniform block binding.
+TEST_P(StateChangeTestES3, UniformBlockBinding)
+{
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+    constexpr char kFS[] = R"(#version 300 es
+out mediump vec4 colorOut;
+
+layout(std140) uniform buffer { mediump vec4 color; };
+
+void main()
+{
+    colorOut = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint uniformBufferIndex = glGetUniformBlockIndex(program, "buffer");
+
+    // Create buffers bound to bindings 1 and 2
+    constexpr std::array<float, 4> kRed              = {1, 0, 0, 1};
+    constexpr std::array<float, 4> kTransparentGreen = {0, 1, 0, 0};
+    GLBuffer red, transparentGreen;
+    glBindBuffer(GL_UNIFORM_BUFFER, red);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(kRed), kRed.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, transparentGreen);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(kTransparentGreen), kTransparentGreen.data(),
+                 GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, transparentGreen);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 2, red);
+    glUniformBlockBinding(program, uniformBufferIndex, 2);
+
+    // Issue a draw call.  The buffer should be transparent green now
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glUseProgram(program);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Change the binding
+    glUniformBlockBinding(program, uniformBufferIndex, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw again, it should accumulate blue and the buffer should become magenta.
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Verify results
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);

@@ -1165,7 +1165,7 @@ void DisplayMtl::initializeExtensions() const
                 !mFeatures.disableRWTextureTier2Support.enabled &&
                 readWriteTextureTier == MTLReadWriteTextureTier2;
 
-            if (isAMD())
+            if (rasterOrderGroupsSupported && isAMD())
             {
                 // anglebug.com/7792 -- [[raster_order_group()]] does not work for read_write
                 // textures on AMD when the render pass doesn't have a color attachment on slot 0.
@@ -1381,6 +1381,11 @@ void DisplayMtl::initializeFeatures()
     // anyway, so this feature would have no benefit besides adding additional resolve step and
     // memory overhead of the hidden single-sampled textures.
     ANGLE_FEATURE_CONDITION((&mFeatures), alwaysResolveMultisampleRenderBuffers, isARM);
+
+    // Metal compiler optimizations may remove infinite loops causing crashes later in shader
+    // execution. http://crbug.com/1513738
+    // Temporarily disabled to confirm failures on Mac11. http://crbug.com/1522730
+    ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies, false);
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()

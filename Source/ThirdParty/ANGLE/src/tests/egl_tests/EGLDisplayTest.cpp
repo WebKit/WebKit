@@ -71,6 +71,32 @@ TEST_P(EGLDisplayTest, InitializeMultipleTimes)
     }
 }
 
+// Test that call eglInitialize() in parallel in multiple threads works
+// > Initializing an already-initialized display is allowed, but the only effect
+// of such a call is to return EGL_TRUE and update the EGL version numbers
+TEST_P(EGLDisplayTest, InitializeMultipleTimesInDifferentThreads)
+{
+    std::array<std::thread, 10> threads;
+    for (std::thread &thread : threads)
+    {
+        thread = std::thread([&]() {
+            EGLDisplay display                 = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+            const int INVALID_GL_MAJOR_VERSION = -1;
+            const int INVALID_GL_MINOR_VERSION = -1;
+            EGLint threadMajor                 = INVALID_GL_MAJOR_VERSION;
+            EGLint threadMinor                 = INVALID_GL_MINOR_VERSION;
+            EXPECT_EGL_TRUE(eglInitialize(display, &threadMajor, &threadMinor) != EGL_FALSE);
+            EXPECT_NE(threadMajor, INVALID_GL_MAJOR_VERSION);
+            EXPECT_NE(threadMinor, INVALID_GL_MINOR_VERSION);
+        });
+    }
+
+    for (std::thread &thread : threads)
+    {
+        thread.join();
+    }
+}
+
 // Tests that an EGLDisplay can be re-initialized.
 TEST_P(EGLDisplayTest, InitializeTerminateInitialize)
 {

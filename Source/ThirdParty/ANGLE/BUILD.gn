@@ -65,9 +65,8 @@ declare_args() {
   angle_glesv2_extension = ""
 
   # Enable share context lock. If it is false, the client need to use gl calls in a threadsafe way.
-  # Chrome DrDC needs thread safe ANGLE on Android
   angle_enable_share_context_lock =
-      is_android || !build_with_chromium || build_angle_deqp_tests
+      !build_with_chromium || build_angle_deqp_tests
 
   if (is_android) {
     # Use Android TLS slot to store current context.
@@ -107,7 +106,10 @@ if (angle_build_all) {
       "$angle_root/src/tests:angle_tests",
     ]
     if (angle_enable_cl) {
-      deps += [ "$angle_root/src/libOpenCL:angle_cl" ]
+      deps += [
+        "$angle_clspv_dir:clspv",
+        "$angle_root/src/libOpenCL:angle_cl",
+      ]
     }
     if (angle_build_mesa) {
       deps += [ "$angle_root/third_party/mesa" ]
@@ -156,6 +158,9 @@ config("internal_config") {
     if (angle_is_winuwp) {
       defines += [ "ANGLE_IS_WINUWP" ]
     }
+    if (angle_is_winappsdk) {
+      defines += [ "ANGLE_IS_WINAPPSDK" ]
+    }
   } else if (is_linux || is_chromeos) {
     defines += [ "ANGLE_IS_LINUX" ]
   }
@@ -203,6 +208,12 @@ config("internal_config") {
   # When used with angle_enable_trace, enables logging every GLES/EGL API command to the terminal
   if (angle_enable_trace_events) {
     defines += [ "ANGLE_ENABLE_TRACE_EVENTS=1" ]
+  }
+
+  # Enables pipeline cache graph dump functionality.
+  # The dump path must have appropriate permissions for this to work.
+  if (angle_dump_pipeline_cache_graph) {
+    defines += [ "ANGLE_DUMP_PIPELINE_CACHE_GRAPH=1" ]
   }
 
   # Checks that unwind backtrace support for Android is enabled only for debug mode.
@@ -366,7 +377,7 @@ config("includes_config") {
 }
 
 config("angle_uwp_env") {
-  if (angle_is_winuwp) {
+  if (angle_is_winuwp && !angle_is_winappsdk) {
     defines = [ "WINAPI_FAMILY=WINAPI_FAMILY_PC_APP" ]
   }
 }
@@ -934,6 +945,10 @@ config("angle_backend_config") {
     configs += [ "src/libANGLE/renderer/null:angle_null_backend_config" ]
   }
 
+  if (angle_enable_wgpu) {
+    configs += [ "src/libANGLE/renderer/wgpu:angle_wgpu_backend_config" ]
+  }
+
   if (angle_enable_metal) {
     configs += [ "src/libANGLE/renderer/metal:angle_metal_backend_config" ]
   }
@@ -1082,6 +1097,10 @@ angle_source_set("libANGLE_no_vulkan") {
 
   if (angle_enable_null) {
     public_deps += [ "src/libANGLE/renderer/null:angle_null_backend" ]
+  }
+
+  if (angle_enable_wgpu) {
+    public_deps += [ "src/libANGLE/renderer/wgpu:angle_wgpu_backend" ]
   }
 
   if (angle_is_winuwp) {
@@ -1322,7 +1341,7 @@ config("shared_library_public_config") {
     }
   }
 
-  if (angle_is_winuwp) {
+  if (angle_is_winuwp && !angle_is_winappsdk) {
     ldflags = [
       "/APPCONTAINER",
 

@@ -1,7 +1,7 @@
 # The BUILD.gn to build the LLVM and Clang libs that clspv depends on.
 
 import("//build_overrides/clspv.gni")
-import("../write_vcsrevision.gni")
+import("$clspv_gn_dir/llvm/write_vcsrevision.gni")
 
 config("clspv_llvm_private_config") {
   cflags = [
@@ -47,7 +47,7 @@ template("clspv_llvm_static_lib") {
   static_library(target_name) {
     configs += [
       ":clspv_llvm_private_config",
-      "../../build:llvm_code",
+      "$clspv_gn_dir/build:llvm_code",
     ]
 
     configs += clspv_configs_to_append
@@ -55,9 +55,9 @@ template("clspv_llvm_static_lib") {
 
     # add the config header deps here as most need them
     deps = [
-      "../config:abi-breaking",
-      "../config:config",
-      "../config:llvm-config",
+      "$clspv_gn_dir/llvm/config:abi-breaking",
+      "$clspv_gn_dir/llvm/config:config",
+      "$clspv_gn_dir/llvm/config:llvm-config",
     ]
 
     forward_variables_from(invoker,
@@ -79,8 +79,8 @@ template("clspv_clang_static_lib") {
   static_library(target_name) {
     configs += [
       ":clspv_llvm_private_config",
-      "../../build:clang_code",
-      "../../build:llvm_code",
+      "$clspv_gn_dir/build:clang_code",
+      "$clspv_gn_dir/build:llvm_code",
     ]
 
     configs += clspv_configs_to_append
@@ -141,7 +141,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_bitstream_reader") {
 clspv_llvm_static_lib("clspv_llvm_lib_codegen_types") {
   deps = [
     ":clspv_llvm_lib_support",
-    "../tablegen:GenVT",
+    "$clspv_gn_dir/llvm/tablegen:GenVT",
   ]
   sources = [ "//$clspv_llvm_dir/llvm/lib/CodeGen/LowLevelType.cpp" ]
 }
@@ -184,7 +184,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_frontend_openmp") {
     ":clspv_llvm_lib_targetparser",
     ":clspv_llvm_lib_transforms_scalar",
     ":clspv_llvm_lib_transforms_utils",
-    "../tablegen:public_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Frontend/OpenMP/OMP.cpp",
@@ -228,7 +228,8 @@ clspv_llvm_static_lib("clspv_llvm_lib_lto") {
     ":clspv_llvm_lib_transforms_objcarc",
     ":clspv_llvm_lib_transforms_scalar",
     ":clspv_llvm_lib_transforms_utils",
-    "../config:config",
+    ":write_vcsrevision",
+    "$clspv_gn_dir/llvm/config:config",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/LTO/LTO.cpp",
@@ -247,7 +248,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_vectorize") {
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_transforms_utils",
-    "../tablegen:public_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/Vectorize/LoadStoreVectorizer.cpp",
@@ -272,6 +273,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_utils") {
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsWebAssembly",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/Utils/AMDGPUEmitPrintf.cpp",
@@ -484,6 +486,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_instrumentation") {
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
     ":clspv_llvm_lib_transforms_utils",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsX86",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/Instrumentation/AddressSanitizer.cpp",
@@ -517,6 +520,10 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_instcombine") {
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_transforms_utils",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsAArch64",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsAMDGPU",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsARM",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsHexagon",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/InstCombine/InstCombineAddSub.cpp",
@@ -556,6 +563,8 @@ clspv_llvm_static_lib("clspv_llvm_lib_transforms_ipo") {
     ":clspv_llvm_lib_transforms_scalar",
     ":clspv_llvm_lib_transforms_utils",
     ":clspv_llvm_lib_transforms_vectorize",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsAMDGPU",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsNVPTX",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Transforms/IPO/AlwaysInliner.cpp",
@@ -656,9 +665,9 @@ clspv_llvm_static_lib("clspv_llvm_lib_analysis") {
     ":clspv_llvm_lib_profiledata",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../config:abi-breaking",
-    "../config:llvm-config",
-    "../tablegen:public_tablegen",
+    "$clspv_gn_dir/llvm/config:abi-breaking",
+    "$clspv_gn_dir/llvm/config:llvm-config",
+    "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   sources = [
     # llvm/lib/Analysis
@@ -797,7 +806,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_asmparser") {
 
 clspv_llvm_static_lib("clspv_llvm_lib_targetparser") {
   deps = [ ":clspv_llvm_lib_support" ]
-  public_deps = [ "../tablegen:RISCVTargetParserDef" ]
+  public_deps = [ "$clspv_gn_dir/llvm/tablegen:RISCVTargetParserDef" ]
   include_dirs = [
     "Unix",
     "Windows",
@@ -823,6 +832,8 @@ clspv_llvm_static_lib("clspv_llvm_lib_bitcode_reader") {
     ":clspv_llvm_lib_ir",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsAArch64",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsARM",
   ]
 
   sources = [
@@ -841,7 +852,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_bitcode_writer") {
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
     ":clspv_llvm_lib_transforms_utils",
-    "../config:llvm-config",
+    "$clspv_gn_dir/llvm/config:llvm-config",
   ]
 
   sources = [
@@ -865,7 +876,9 @@ clspv_llvm_static_lib("clspv_llvm_lib_codegen") {
     ":clspv_llvm_lib_transforms_objcarc",
     ":clspv_llvm_lib_transforms_scalar",
     ":clspv_llvm_lib_transforms_utils",
-    "../tablegen:GenVT",
+    "$clspv_gn_dir/llvm/tablegen:GenVT",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsAArch64",
+    "$clspv_gn_dir/llvm/tablegen:IntrinsicsWebAssembly",
   ]
   sources = [
     # llvm/lib/CodeGen
@@ -1382,7 +1395,10 @@ clspv_llvm_static_lib("clspv_llvm_lib_demangle") {
 
 clspv_llvm_static_lib("clspv_llvm_lib_extensions") {
   sources = [ "//$clspv_llvm_dir/llvm/lib/Extensions/Extensions.cpp" ]
-  deps = [ ":clspv_llvm_lib_support" ]
+  deps = [
+    ":clspv_llvm_lib_support",
+    "$clspv_gn_dir/llvm/config:write_extension_def",
+  ]
 }
 
 clspv_llvm_static_lib("clspv_llvm_lib_ir") {
@@ -1391,7 +1407,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_ir") {
     ":clspv_llvm_lib_remarks",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../tablegen:public_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   sources = [
     # llvm/lib/IR
@@ -1496,7 +1512,7 @@ clspv_llvm_static_lib("clspv_llvm_lib_target") {
     ":clspv_llvm_lib_mc",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../config:write_target_def_files",
+    "$clspv_gn_dir/llvm/config:write_target_def_files",
   ]
   sources = [
     # llvm/lib/Target
@@ -1794,8 +1810,8 @@ clspv_llvm_static_lib("clspv_llvm_lib_support") {
   deps = [
     ":clspv_llvm_lib_demangle",
     ":clspv_llvm_lib_support_blake3",
-    "../config:write_extension_def",
-    "../config:write_target_def_files",
+    "$clspv_gn_dir/llvm/config:write_extension_def",
+    "$clspv_gn_dir/llvm/config:write_target_def_files",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/lib/Support/ABIBreak.cpp",
@@ -2014,9 +2030,9 @@ clspv_llvm_source_set("clspv_llvm_tool_min_tblgen_sources") {
 
 clspv_llvm_source_set("clspv_llvm_tool_tblgen_sources") {
   deps = [
-    "../config:abi-breaking",
-    "../config:llvm-config",
-    "../tablegen:GenVT",
+    "$clspv_gn_dir/llvm/config:abi-breaking",
+    "$clspv_gn_dir/llvm/config:llvm-config",
+    "$clspv_gn_dir/llvm/tablegen:GenVT",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/utils/TableGen/AsmMatcherEmitter.cpp",
@@ -2079,7 +2095,7 @@ clspv_llvm_static_lib("clspv_llvm_utils_lib_tablegen_globalisel") {
   deps = [
     ":clspv_llvm_lib_codegen_types",
     ":clspv_llvm_lib_support",
-    "../tablegen:GenVT",
+    "$clspv_gn_dir/llvm/tablegen:GenVT",
   ]
   sources = [
     "//$clspv_llvm_dir/llvm/utils/TableGen/GlobalISel/CXXPredicates.cpp",
@@ -2116,7 +2132,7 @@ clspv_clang_static_lib("clspv_clang_lib_analysis") {
     ":clspv_clang_lib_basic",
     ":clspv_clang_lib_lex",
     ":clspv_llvm_lib_support",
-    "../tablegen:StmtDataCollectors",
+    "$clspv_gn_dir/llvm/tablegen:StmtDataCollectors",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/Analysis/AnalysisDeclContext.cpp",
@@ -2177,32 +2193,32 @@ clspv_clang_static_lib("clspv_clang_lib_ast") {
     ":clspv_llvm_lib_frontend_openmp",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../tablegen:AttrDocTable",
-    "../tablegen:AttrImpl",
-    "../tablegen:AttrNodeTraverse",
-    "../tablegen:AttrTextNodeDump",
-    "../tablegen:CommentCommandInfo",
-    "../tablegen:CommentHTMLNamedCharacterReferences",
-    "../tablegen:CommentHTMLTags",
-    "../tablegen:CommentHTMLTagsProperties",
-    "../tablegen:DeclNodes",
-    "../tablegen:Opcodes",
+    "$clspv_gn_dir/llvm/tablegen:AttrDocTable",
+    "$clspv_gn_dir/llvm/tablegen:AttrImpl",
+    "$clspv_gn_dir/llvm/tablegen:AttrNodeTraverse",
+    "$clspv_gn_dir/llvm/tablegen:AttrTextNodeDump",
+    "$clspv_gn_dir/llvm/tablegen:CommentCommandInfo",
+    "$clspv_gn_dir/llvm/tablegen:CommentHTMLNamedCharacterReferences",
+    "$clspv_gn_dir/llvm/tablegen:CommentHTMLTags",
+    "$clspv_gn_dir/llvm/tablegen:CommentHTMLTagsProperties",
+    "$clspv_gn_dir/llvm/tablegen:DeclNodes",
+    "$clspv_gn_dir/llvm/tablegen:Opcodes",
   ]
 
   # Generated files used in public headers should be in public_deps, the rest
   # in regular deps.
   public_deps = [
-    "../tablegen:AbstractBasicReader",
-    "../tablegen:AbstractBasicWriter",
-    "../tablegen:AbstractTypeReader",
-    "../tablegen:AbstractTypeWriter",
-    "../tablegen:AttrVisitor",
-    "../tablegen:Attrs",
-    "../tablegen:CommentCommandList",
-    "../tablegen:CommentNodes",
-    "../tablegen:StmtNodes",
-    "../tablegen:TypeNodes",
-    "../tablegen:diags_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:AbstractBasicReader",
+    "$clspv_gn_dir/llvm/tablegen:AbstractBasicWriter",
+    "$clspv_gn_dir/llvm/tablegen:AbstractTypeReader",
+    "$clspv_gn_dir/llvm/tablegen:AbstractTypeWriter",
+    "$clspv_gn_dir/llvm/tablegen:AttrVisitor",
+    "$clspv_gn_dir/llvm/tablegen:Attrs",
+    "$clspv_gn_dir/llvm/tablegen:CommentCommandList",
+    "$clspv_gn_dir/llvm/tablegen:CommentNodes",
+    "$clspv_gn_dir/llvm/tablegen:StmtNodes",
+    "$clspv_gn_dir/llvm/tablegen:TypeNodes",
+    "$clspv_gn_dir/llvm/tablegen:diags_tablegen",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/AST/APValue.cpp",
@@ -2327,41 +2343,41 @@ clspv_clang_static_lib("clspv_clang_lib_astmatchers") {
 clspv_clang_static_lib("clspv_clang_lib_basic") {
   public_deps = [
     # public_dep because public header Version.h includes generated Version.inc.
-    "../config/clang:version",
-    "../tablegen:AttrLeftSideCanPrintList",
-    "../tablegen:AttrLeftSideMustPrintList",
-    "../tablegen:AttrList",
-    "../tablegen:AttrSubMatchRulesList",
-    "../tablegen:AttrTokenKinds",
-    "../tablegen:DiagnosticGroups",
-    "../tablegen:arm_cde_builtins",
-    "../tablegen:arm_mve_builtins",
-    "../tablegen:arm_sme_builtins",
-    "../tablegen:arm_sve_builtins",
-    "../tablegen:arm_sve_typeflags",
-    "../tablegen:diags_tablegen",
-    "../tablegen:riscv_sifive_vector_builtins",
-    "../tablegen:riscv_vector_builtins",
+    "$clspv_gn_dir/llvm/config/clang:version",
+    "$clspv_gn_dir/llvm/tablegen:AttrLeftSideCanPrintList",
+    "$clspv_gn_dir/llvm/tablegen:AttrLeftSideMustPrintList",
+    "$clspv_gn_dir/llvm/tablegen:AttrList",
+    "$clspv_gn_dir/llvm/tablegen:AttrSubMatchRulesList",
+    "$clspv_gn_dir/llvm/tablegen:AttrTokenKinds",
+    "$clspv_gn_dir/llvm/tablegen:DiagnosticGroups",
+    "$clspv_gn_dir/llvm/tablegen:arm_cde_builtins",
+    "$clspv_gn_dir/llvm/tablegen:arm_mve_builtins",
+    "$clspv_gn_dir/llvm/tablegen:arm_sme_builtins",
+    "$clspv_gn_dir/llvm/tablegen:arm_sve_builtins",
+    "$clspv_gn_dir/llvm/tablegen:arm_sve_typeflags",
+    "$clspv_gn_dir/llvm/tablegen:diags_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:riscv_sifive_vector_builtins",
+    "$clspv_gn_dir/llvm/tablegen:riscv_vector_builtins",
 
     # public_dep because public header AttributeCommonInfo.h includes generated
     # AttrParsedAttrList.inc.
-    "../tablegen:AttrParsedAttrList",
+    "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrList",
 
     # public_dep because public header OpenMPKinds.h includes generated
     # OMP.h.inc.
-    "../tablegen:public_tablegen",
+    "$clspv_gn_dir/llvm/tablegen:public_tablegen",
   ]
   deps = [
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../config:llvm-config",
-    "../config/clang:Config",
-    "../config/clang:write_vcsversion",
-    "../tablegen:AttrHasAttributeImpl",
-    "../tablegen:AttrParsedAttrKinds",
-    "../tablegen:AttrSpellingListIndex",
-    "../tablegen:arm_fp16",
-    "../tablegen:arm_neon",
+    "$clspv_gn_dir/llvm/config:llvm-config",
+    "$clspv_gn_dir/llvm/config/clang:Config",
+    "$clspv_gn_dir/llvm/config/clang:write_vcsversion",
+    "$clspv_gn_dir/llvm/tablegen:AttrHasAttributeImpl",
+    "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrKinds",
+    "$clspv_gn_dir/llvm/tablegen:AttrSpellingListIndex",
+    "$clspv_gn_dir/llvm/tablegen:arm_fp16",
+    "$clspv_gn_dir/llvm/tablegen:arm_neon",
   ]
   include_dirs = [ "//$clspv_llvm_dir/clang/lib/Basic" ]
   sources = [
@@ -2473,12 +2489,13 @@ if (true) {
       ":clspv_llvm_lib_transforms_objcarc",
       ":clspv_llvm_lib_transforms_scalar",
       ":clspv_llvm_lib_transforms_utils",
-      "../tablegen:arm_cde_builtin_cg",
-      "../tablegen:arm_mve_builtin_cg",
-      "../tablegen:arm_sme_builtin_cg",
-      "../tablegen:arm_sve_builtin_cg",
-      "../tablegen:riscv_sifive_vector_builtin_cg",
-      "../tablegen:riscv_vector_builtin_cg",
+      "$clspv_gn_dir/llvm/config:write_extension_def",
+      "$clspv_gn_dir/llvm/tablegen:arm_cde_builtin_cg",
+      "$clspv_gn_dir/llvm/tablegen:arm_mve_builtin_cg",
+      "$clspv_gn_dir/llvm/tablegen:arm_sme_builtin_cg",
+      "$clspv_gn_dir/llvm/tablegen:arm_sve_builtin_cg",
+      "$clspv_gn_dir/llvm/tablegen:riscv_sifive_vector_builtin_cg",
+      "$clspv_gn_dir/llvm/tablegen:riscv_vector_builtin_cg",
     ]
     include_dirs = [ "//$clspv_llvm_dir/clang/lib/CodeGen" ]
     sources = [
@@ -2586,13 +2603,13 @@ clspv_clang_static_lib("clspv_clang_lib_driver") {
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
     ":clspv_llvm_lib_windowsdriver",
-    "../config:llvm-config",
-    "../config/clang:Config",
-    "../tablegen:Checkers",
+    "$clspv_gn_dir/llvm/config:llvm-config",
+    "$clspv_gn_dir/llvm/config/clang:Config",
+    "$clspv_gn_dir/llvm/tablegen:Checkers",
   ]
   public_deps = [
     # public_dep because public header Options.h includes generated Options.inc.
-    "../tablegen:Options",
+    "$clspv_gn_dir/llvm/tablegen:Options",
   ]
   if (false) {  # FIXME
     if (host_os == "win") {
@@ -2707,8 +2724,8 @@ clspv_clang_static_lib("clspv_clang_lib_frontend") {
     ":clspv_llvm_lib_profiledata",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../config:llvm-config",
-    "../config/clang:Config",
+    "$clspv_gn_dir/llvm/config:llvm-config",
+    "$clspv_gn_dir/llvm/config/clang:Config",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/Frontend/ASTConsumers.cpp",
@@ -2751,6 +2768,7 @@ clspv_clang_static_lib("clspv_clang_lib_lex") {
     ":clspv_clang_lib_basic",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
+    "$clspv_gn_dir/llvm/config/clang:Config",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/Lex/DependencyDirectivesScanner.cpp",
@@ -2790,8 +2808,8 @@ clspv_clang_static_lib("clspv_clang_lib_parse") {
     ":clspv_llvm_lib_mc_mcparser",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../tablegen:AttrParserStringSwitches",
-    "../tablegen:AttrSubMatchRulesParserStringSwitches",
+    "$clspv_gn_dir/llvm/tablegen:AttrParserStringSwitches",
+    "$clspv_gn_dir/llvm/tablegen:AttrSubMatchRulesParserStringSwitches",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/Parse/ParseAST.cpp",
@@ -2827,20 +2845,20 @@ clspv_clang_static_lib("clspv_clang_lib_sema") {
     ":clspv_llvm_lib_mc",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../tablegen:AttrParsedAttrImpl",
-    "../tablegen:AttrParsedAttrKinds",
-    "../tablegen:AttrParsedAttrList",
-    "../tablegen:AttrSpellingListIndex",
-    "../tablegen:AttrTemplateInstantiate",
-    "../tablegen:OpenCLBuiltins",
-    "../tablegen:arm_cde_builtin_aliases",
-    "../tablegen:arm_cde_builtin_sema",
-    "../tablegen:arm_mve_builtin_aliases",
-    "../tablegen:arm_mve_builtin_sema",
-    "../tablegen:arm_sme_sema_rangechecks",
-    "../tablegen:arm_sve_sema_rangechecks",
-    "../tablegen:riscv_sifive_vector_builtin_sema",
-    "../tablegen:riscv_vector_builtin_sema",
+    "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrImpl",
+    "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrKinds",
+    "$clspv_gn_dir/llvm/tablegen:AttrParsedAttrList",
+    "$clspv_gn_dir/llvm/tablegen:AttrSpellingListIndex",
+    "$clspv_gn_dir/llvm/tablegen:AttrTemplateInstantiate",
+    "$clspv_gn_dir/llvm/tablegen:OpenCLBuiltins",
+    "$clspv_gn_dir/llvm/tablegen:arm_cde_builtin_aliases",
+    "$clspv_gn_dir/llvm/tablegen:arm_cde_builtin_sema",
+    "$clspv_gn_dir/llvm/tablegen:arm_mve_builtin_aliases",
+    "$clspv_gn_dir/llvm/tablegen:arm_mve_builtin_sema",
+    "$clspv_gn_dir/llvm/tablegen:arm_sme_sema_rangechecks",
+    "$clspv_gn_dir/llvm/tablegen:arm_sve_sema_rangechecks",
+    "$clspv_gn_dir/llvm/tablegen:riscv_sifive_vector_builtin_sema",
+    "$clspv_gn_dir/llvm/tablegen:riscv_vector_builtin_sema",
   ]
   include_dirs = [ "$root_gen_dir/$clspv_llvm_dir/clang/lib/Sema" ]
   sources = [
@@ -2910,8 +2928,8 @@ clspv_clang_static_lib("clspv_clang_lib_serialization") {
     ":clspv_llvm_lib_bitcode_reader",
     ":clspv_llvm_lib_support",
     ":clspv_llvm_lib_targetparser",
-    "../tablegen:AttrPCHRead",
-    "../tablegen:AttrPCHWrite",
+    "$clspv_gn_dir/llvm/tablegen:AttrPCHRead",
+    "$clspv_gn_dir/llvm/tablegen:AttrPCHWrite",
   ]
   sources = [
     "//$clspv_llvm_dir/clang/lib/Serialization/ASTCommon.cpp",

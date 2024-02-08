@@ -1594,6 +1594,16 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_SAMPLER_EXTERNAL_2D_Y2Y_EXT";
                 case 0x8BFA:
                     return "GL_TEXTURE_PROTECTED_EXT";
+                case 0x8BFB:
+                    return "GL_TEXTURE_FOVEATED_FEATURE_BITS_QCOM";
+                case 0x8BFC:
+                    return "GL_TEXTURE_FOVEATED_MIN_PIXEL_DENSITY_QCOM";
+                case 0x8BFD:
+                    return "GL_TEXTURE_FOVEATED_FEATURE_QUERY_QCOM";
+                case 0x8BFE:
+                    return "GL_TEXTURE_FOVEATED_NUM_FOCAL_POINTS_QUERY_QCOM";
+                case 0x8BFF:
+                    return "GL_FRAMEBUFFER_INCOMPLETE_FOVEATION_QCOM";
                 case 0x8C00:
                     return "GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG";
                 case 0x8C01:
@@ -4062,6 +4072,19 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
             {
                 case 0x1406:
                     return "GL_FLOAT";
+                default:
+                    return UnknownEnumToString(value);
+            }
+        }
+
+        case GLESEnum::FoveationConfigBitQCOM:
+        {
+            switch (value)
+            {
+                case 0x1:
+                    return "GL_FOVEATION_ENABLE_BIT_QCOM";
+                case 0x2:
+                    return "GL_FOVEATION_SCALED_BIN_METHOD_BIT_QCOM";
                 default:
                     return UnknownEnumToString(value);
             }

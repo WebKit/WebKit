@@ -12,6 +12,7 @@
 #import <IOKit/IOKitLib.h>
 #import <Metal/Metal.h>
 
+#include "common/apple_platform_utils.h"
 #include "common/gl/cgl/FunctionsCGL.h"
 
 #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
@@ -28,40 +29,6 @@ namespace
 
 constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
 constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
-
-std::string GetMachineModel()
-{
-#if HAVE_MAIN_PORT_DEFAULT
-    const mach_port_t mainPort = kIOMainPortDefault;
-#else
-#    pragma clang diagnostic push
-#    pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#    pragma clang diagnostic pop
-#endif
-    io_service_t platformExpert =
-        IOServiceGetMatchingService(mainPort, IOServiceMatching("IOPlatformExpertDevice"));
-
-    if (platformExpert == IO_OBJECT_NULL)
-    {
-        return {};
-    }
-
-    CFDataRef modelData = static_cast<CFDataRef>(
-        IORegistryEntryCreateCFProperty(platformExpert, CFSTR("model"), kCFAllocatorDefault, 0));
-    if (modelData == nullptr)
-    {
-        IOObjectRelease(platformExpert);
-        return {};
-    }
-
-    std::string result(reinterpret_cast<const char *>(CFDataGetBytePtr(modelData)));
-
-    IOObjectRelease(platformExpert);
-    CFRelease(modelData);
-
-    return result;
-}
 
 // Extracts one integer property from a registry entry.
 bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *value)
@@ -369,10 +336,14 @@ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 bool GetSystemInfo_mac(SystemInfo *info)
 {
     {
-        int32_t major = 0;
-        int32_t minor = 0;
-        ParseMacMachineModel(GetMachineModel(), &info->machineModelName, &major, &minor);
-        info->machineModelVersion = std::to_string(major) + "." + std::to_string(minor);
+        std::string fullMachineModel;
+        if (GetMacosMachineModel(&fullMachineModel))
+        {
+            int32_t major = 0;
+            int32_t minor = 0;
+            ParseMacMachineModel(fullMachineModel, &info->machineModelName, &major, &minor);
+            info->machineModelVersion = std::to_string(major) + "." + std::to_string(minor);
+        }
     }
 
     GetIORegistryDevices(&info->gpus);

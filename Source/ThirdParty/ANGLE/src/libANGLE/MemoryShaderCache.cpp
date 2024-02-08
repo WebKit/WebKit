@@ -37,44 +37,46 @@ MemoryShaderCache::MemoryShaderCache(egl::BlobCache &blobCache) : mBlobCache(blo
 
 MemoryShaderCache::~MemoryShaderCache() {}
 
-bool MemoryShaderCache::getShader(const Context *context,
-                                  Shader *shader,
-                                  const egl::BlobCache::Key &shaderHash)
+egl::CacheGetResult MemoryShaderCache::getShader(const Context *context,
+                                                 Shader *shader,
+                                                 const egl::BlobCache::Key &shaderHash)
 {
     // If caching is effectively disabled, don't bother calculating the hash.
     if (!mBlobCache.isCachingEnabled())
     {
-        return false;
+        return egl::CacheGetResult::NotFound;
     }
 
     angle::MemoryBuffer uncompressedData;
-    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), shaderHash,
-                                        kMaxUncompressedShaderSize, &uncompressedData))
+    const egl::BlobCache::GetAndDecompressResult result = mBlobCache.getAndDecompress(
+        context->getScratchBuffer(), shaderHash, kMaxUncompressedShaderSize, &uncompressedData);
+    switch (result)
     {
         case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Error decompressing shader binary data from cache.");
-            return false;
+            mBlobCache.remove(shaderHash);
+            return egl::CacheGetResult::NotFound;
 
         case egl::BlobCache::GetAndDecompressResult::NotFound:
-            return false;
+            return egl::CacheGetResult::NotFound;
 
         case egl::BlobCache::GetAndDecompressResult::GetSuccess:
             if (shader->loadBinary(context, uncompressedData.data(),
                                    static_cast<int>(uncompressedData.size())))
             {
-                return true;
+                return egl::CacheGetResult::GetSuccess;
             }
 
             // Cache load failed, evict.
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Failed to load shader binary from cache.");
             mBlobCache.remove(shaderHash);
-            return false;
+            return egl::CacheGetResult::Rejected;
     }
 
     UNREACHABLE();
-    return false;
+    return egl::CacheGetResult::NotFound;
 }
 
 angle::Result MemoryShaderCache::putShader(const Context *context,

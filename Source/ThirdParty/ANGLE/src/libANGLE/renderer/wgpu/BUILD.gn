@@ -1,0 +1,20 @@
+# Copyright 2024 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE Wgpu back-end.
+
+import("../../../../gni/angle.gni")
+import("wgpu_sources.gni")
+
+assert(angle_enable_wgpu)
+
+config("angle_wgpu_backend_config") {
+  defines = [ "ANGLE_ENABLE_WGPU" ]
+}
+
+angle_source_set("angle_wgpu_backend") {
+  sources = wgpu_backend_sources
+
+  public_deps = [ "$angle_root:libANGLE_headers" ]
+}

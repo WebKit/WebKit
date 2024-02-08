@@ -24,7 +24,9 @@
 namespace sh
 {
 struct BlockMemberInfo;
-}
+
+using CompilerMetadataFlags = angle::PackedEnumBitSet<sh::MetadataFlags, uint32_t>;
+}  // namespace sh
 
 namespace gl
 {
@@ -52,6 +54,19 @@ struct CompiledShaderState
     void serialize(gl::BinaryOutputStream &stream) const;
     void deserialize(gl::BinaryInputStream &stream);
 
+    bool hasValidGeometryShaderInputPrimitiveType() const
+    {
+        return metadataFlags[sh::MetadataFlags::HasValidGeometryShaderInputPrimitiveType];
+    }
+    bool hasValidGeometryShaderOutputPrimitiveType() const
+    {
+        return metadataFlags[sh::MetadataFlags::HasValidGeometryShaderOutputPrimitiveType];
+    }
+    bool hasValidGeometryShaderMaxVertices() const
+    {
+        return metadataFlags[sh::MetadataFlags::HasValidGeometryShaderMaxVertices];
+    }
+
     const gl::ShaderType shaderType;
 
     int shaderVersion;
@@ -68,9 +83,7 @@ struct CompiledShaderState
     std::vector<sh::ShaderVariable> activeAttributes;
     std::vector<sh::ShaderVariable> activeOutputVariables;
 
-    bool hasClipDistance;
-    bool hasDiscard;
-    bool enablesPerSampleShading;
+    sh::CompilerMetadataFlags metadataFlags;
     gl::BlendEquationBitSet advancedBlendEquations;
     SpecConstUsageBits specConstUsageBits;
 
@@ -78,9 +91,9 @@ struct CompiledShaderState
     int numViews;
 
     // Geometry Shader
-    Optional<gl::PrimitiveMode> geometryShaderInputPrimitiveType;
-    Optional<gl::PrimitiveMode> geometryShaderOutputPrimitiveType;
-    Optional<GLint> geometryShaderMaxVertices;
+    gl::PrimitiveMode geometryShaderInputPrimitiveType;
+    gl::PrimitiveMode geometryShaderOutputPrimitiveType;
+    GLint geometryShaderMaxVertices;
     int geometryShaderInvocations;
 
     // Tessellation Shader

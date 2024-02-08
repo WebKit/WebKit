@@ -170,6 +170,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     bool isYUV() const override;
     bool isExternalImageWithoutIndividualSync() const override;
     bool hasFrontBufferUsage() const override;
+    bool hasFoveatedRendering() const override { return false; }
 
     void onAttach(const gl::Context *context, rx::UniqueSerial framebufferSerial) override {}
     void onDetach(const gl::Context *context, rx::UniqueSerial framebufferSerial) override {}

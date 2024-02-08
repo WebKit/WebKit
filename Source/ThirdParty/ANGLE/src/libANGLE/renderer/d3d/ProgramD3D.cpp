@@ -587,7 +587,7 @@ void ProgramD3D::destroy(const gl::Context *context)
 angle::Result ProgramD3D::load(const gl::Context *context,
                                gl::BinaryInputStream *stream,
                                std::shared_ptr<LinkTask> *loadTaskOut,
-                               bool *successOut)
+                               egl::CacheGetResult *resultOut)
 {
     if (!getExecutable()->load(context, mRenderer, stream))
     {
@@ -610,7 +610,7 @@ angle::Result ProgramD3D::load(const gl::Context *context,
 
     // Note: pretty much all the above can also be moved to the task
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskD3D(this, std::move(streamData)));
-    *successOut  = true;
+    *resultOut   = egl::CacheGetResult::GetSuccess;
 
     return angle::Result::Continue;
 }

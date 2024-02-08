@@ -1628,7 +1628,7 @@ void StateManager11::invalidateBoundViews()
 void StateManager11::invalidateVertexBuffer()
 {
     unsigned int limit      = std::min<unsigned int>(mRenderer->getNativeCaps().maxVertexAttributes,
-                                                gl::MAX_VERTEX_ATTRIBS);
+                                                     gl::MAX_VERTEX_ATTRIBS);
     mDirtyVertexBufferRange = gl::RangeUI(0, limit);
     invalidateInputLayout();
     invalidateShaders();
@@ -3881,10 +3881,12 @@ angle::Result StateManager11::getUAVsForAtomicCounterBuffers(const gl::Context *
 {
     const gl::State &glState                = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
-    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
+    const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers =
+        executable->getAtomicCounterBuffers();
+    for (size_t index = 0; index < atomicCounterBuffers.size(); ++index)
     {
-        GLuint binding     = atomicCounterBuffer.pod.binding;
-        const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
+        const GLuint binding = executable->getAtomicCounterBufferBinding(index);
+        const auto &buffer   = glState.getIndexedAtomicCounterBuffer(binding);
         const unsigned int registerIndex =
             mExecutableD3D->getAtomicCounterBufferRegisterIndex(binding, shaderType);
         ASSERT(registerIndex != GL_INVALID_INDEX);

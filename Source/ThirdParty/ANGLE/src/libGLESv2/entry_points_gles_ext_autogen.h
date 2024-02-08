@@ -1836,10 +1836,35 @@ ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTextureMultiviewOVR(GLenum target,
 
 // GL_OVR_multiview2
 
+// GL_QCOM_framebuffer_foveated
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferFoveationConfigQCOM(GLuint framebuffer,
+                                                                GLuint numLayers,
+                                                                GLuint focalPointsPerLayer,
+                                                                GLuint requestedFeatures,
+                                                                GLuint *providedFeatures);
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferFoveationParametersQCOM(GLuint framebuffer,
+                                                                    GLuint layer,
+                                                                    GLuint focalPoint,
+                                                                    GLfloat focalX,
+                                                                    GLfloat focalY,
+                                                                    GLfloat gainX,
+                                                                    GLfloat gainY,
+                                                                    GLfloat foveaArea);
+
 // GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 ANGLE_EXPORT void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate);
+
+// GL_QCOM_texture_foveated
+ANGLE_EXPORT void GL_APIENTRY GL_TextureFoveationParametersQCOM(GLuint texture,
+                                                                GLuint layer,
+                                                                GLuint focalPoint,
+                                                                GLfloat focalX,
+                                                                GLfloat focalY,
+                                                                GLfloat gainX,
+                                                                GLfloat gainY,
+                                                                GLfloat foveaArea);
 }  // extern "C"
 
 #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_

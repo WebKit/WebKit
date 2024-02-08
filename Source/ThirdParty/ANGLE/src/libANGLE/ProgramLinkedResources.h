@@ -45,12 +45,11 @@ class ProgramPipelineState;
 class ProgramBindings;
 class ProgramAliasedBindings;
 class Shader;
-struct ShaderVariableBuffer;
+struct AtomicCounterBuffer;
 struct VariableLocation;
 struct Version;
 
-using AtomicCounterBuffer = ShaderVariableBuffer;
-using ShaderUniform       = std::pair<ShaderType, const sh::ShaderVariable *>;
+using ShaderUniform = std::pair<ShaderType, const sh::ShaderVariable *>;
 
 // The link operation is responsible for finishing the link of uniform and interface blocks.
 // This way it can filter out unreferenced resources and still have access to the info.

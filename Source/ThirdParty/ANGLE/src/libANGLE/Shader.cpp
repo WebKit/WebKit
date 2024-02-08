@@ -666,9 +666,22 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
                  compiler->getBuiltInResources());
     ASSERT(!mShaderHash.empty());
     MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
-    if (shaderCache && shaderCache->getShader(context, this, mShaderHash))
+    if (shaderCache != nullptr)
     {
-        return;
+        egl::CacheGetResult result = shaderCache->getShader(context, this, mShaderHash);
+        switch (result)
+        {
+            case egl::CacheGetResult::GetSuccess:
+                return;
+            case egl::CacheGetResult::Rejected:
+                // Reset the state
+                mState.mCompiledState =
+                    std::make_shared<CompiledShaderState>(mState.getShaderType());
+                break;
+            case egl::CacheGetResult::NotFound:
+            default:
+                break;
+        }
     }
 
     mBoundCompiler.set(context, compiler);

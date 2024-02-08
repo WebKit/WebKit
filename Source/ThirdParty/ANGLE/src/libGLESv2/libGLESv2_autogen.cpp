@@ -5917,12 +5917,50 @@ void GL_APIENTRY glFramebufferTextureMultiviewOVR(GLenum target,
 
 // GL_OVR_multiview2
 
+// GL_QCOM_framebuffer_foveated
+void GL_APIENTRY glFramebufferFoveationConfigQCOM(GLuint framebuffer,
+                                                  GLuint numLayers,
+                                                  GLuint focalPointsPerLayer,
+                                                  GLuint requestedFeatures,
+                                                  GLuint *providedFeatures)
+{
+    return GL_FramebufferFoveationConfigQCOM(framebuffer, numLayers, focalPointsPerLayer,
+                                             requestedFeatures, providedFeatures);
+}
+
+void GL_APIENTRY glFramebufferFoveationParametersQCOM(GLuint framebuffer,
+                                                      GLuint layer,
+                                                      GLuint focalPoint,
+                                                      GLfloat focalX,
+                                                      GLfloat focalY,
+                                                      GLfloat gainX,
+                                                      GLfloat gainY,
+                                                      GLfloat foveaArea)
+{
+    return GL_FramebufferFoveationParametersQCOM(framebuffer, layer, focalPoint, focalX, focalY,
+                                                 gainX, gainY, foveaArea);
+}
+
 // GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 void GL_APIENTRY glShadingRateQCOM(GLenum rate)
 {
     return GL_ShadingRateQCOM(rate);
+}
+
+// GL_QCOM_texture_foveated
+void GL_APIENTRY glTextureFoveationParametersQCOM(GLuint texture,
+                                                  GLuint layer,
+                                                  GLuint focalPoint,
+                                                  GLfloat focalX,
+                                                  GLfloat focalY,
+                                                  GLfloat gainX,
+                                                  GLfloat gainY,
+                                                  GLfloat foveaArea)
+{
+    return GL_TextureFoveationParametersQCOM(texture, layer, focalPoint, focalX, focalY, gainX,
+                                             gainY, foveaArea);
 }
 
 #if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)

@@ -540,7 +540,7 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
 
             if '--list-tests' in args:
                 # When listing tests, there may be no output file. We parse stdout anyways.
-                test_output = '{"interrupted": false}'
+                test_output = b'{"interrupted": false}'
             else:
                 try:
                     test_output = _ReadDeviceFile(device_test_output_path)

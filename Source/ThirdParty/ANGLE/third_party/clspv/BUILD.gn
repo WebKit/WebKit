@@ -24,16 +24,16 @@ declare_args() {
 action("clspv_c_strings") {
   script = "src/cmake/spirv_c_strings.py"
 
-  output = "$target_gen_dir/clspv/spirv_c_strings.hpp"
-  input = "${spirv_tools_spirv_headers_dir}/include/spirv/unified1/spirv.hpp"
+  inputs =
+      [ "${spirv_tools_spirv_headers_dir}/include/spirv/unified1/spirv.hpp" ]
+
+  outputs = [ "$target_gen_dir/clspv/spirv_c_strings.hpp" ]
 
   args = [
-    "--input-file=" + rebase_path(input, root_build_dir),
-    "--output-file=" + rebase_path(output, root_build_dir),
+    "--input-file=" + rebase_path(inputs[0], root_build_dir),
+    "--output-file=" + rebase_path(outputs[0], root_build_dir),
     "--namespace=" + spirv_namespace_strings,
   ]
-
-  outputs = [ output ]
 }
 
 action("clspv_glsl") {
@@ -219,6 +219,7 @@ source_set("clspv_passes") {
     ":clspv_reflection",
     "gn/llvm/config:llvm-config",
     "gn/llvm/sources:clspv_llvm_components",
+    "//third_party/vulkan-deps/spirv-headers/src:spv_headers",
   ]
 
   configs += [
@@ -315,6 +316,7 @@ executable("clspv-reflection") {
     ":clspv_core",
     ":clspv_reflection",
     "${spirv_tools_dir}:spvtools_link",
+    "//third_party/vulkan-deps/spirv-headers/src:spv_headers",
   ]
 
   include_dirs = [

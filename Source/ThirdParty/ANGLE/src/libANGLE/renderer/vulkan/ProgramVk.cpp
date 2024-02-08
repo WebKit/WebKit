@@ -420,14 +420,14 @@ void ProgramVk::destroy(const gl::Context *context)
 angle::Result ProgramVk::load(const gl::Context *context,
                               gl::BinaryInputStream *stream,
                               std::shared_ptr<LinkTask> *loadTaskOut,
-                              bool *successOut)
+                              egl::CacheGetResult *resultOut)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
     // TODO: parallelize program load.  http://anglebug.com/8297
     *loadTaskOut = {};
 
-    return getExecutable()->load(contextVk, mState.isSeparable(), stream, successOut);
+    return getExecutable()->load(contextVk, mState.isSeparable(), stream, resultOut);
 }
 
 void ProgramVk::save(const gl::Context *context, gl::BinaryOutputStream *stream)

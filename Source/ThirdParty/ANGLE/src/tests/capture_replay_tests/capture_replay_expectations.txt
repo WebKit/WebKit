@@ -199,3 +199,7 @@
 
 # Fails if run after DifferentStencilMasksTest.DrawWithSameEffectiveMask
 8079 : DiscardFramebufferEXTTest.ClearDepthThenDrawWithoutDepthTestThenDiscard/* = SKIP_FOR_CAPTURE
+
+# No support yet for Capture/Replay of QCOM foveated extensions
+8484 : Texture2DTestES3Foveation.FoveatedFBDraw/* = SKIP_FOR_CAPTURE
+8484 : Texture2DTestES3Foveation.FoveatedTextureDraw/* = SKIP_FOR_CAPTURE

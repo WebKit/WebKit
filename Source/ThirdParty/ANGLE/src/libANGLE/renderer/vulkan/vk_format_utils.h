@@ -268,6 +268,9 @@ bool IsYUVExternalFormat(angle::FormatID formatID);
 const VkFormatProperties &GetMandatoryFormatSupport(angle::FormatID formatID);
 
 VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, angle::FormatID formatID);
+VkImageCreateFlags GetMinimalImageCreateFlags(RendererVk *renderer,
+                                              gl::TextureType textureType,
+                                              VkImageUsageFlags usage);
 
 }  // namespace vk
 

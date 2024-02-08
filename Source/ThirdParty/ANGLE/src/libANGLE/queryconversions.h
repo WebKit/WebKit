@@ -106,6 +106,12 @@ GLint ConvertToGLint(ParamType param)
 }
 
 template <typename ParamType>
+GLfloat ConvertToGLfloat(ParamType param)
+{
+    return CastQueryValueTo<GLfloat>(GL_NONE, param);
+}
+
+template <typename ParamType>
 bool ConvertToBool(ParamType param)
 {
     return param != GL_FALSE;

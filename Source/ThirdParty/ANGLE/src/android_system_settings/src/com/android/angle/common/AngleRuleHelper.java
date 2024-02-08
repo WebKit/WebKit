@@ -91,6 +91,16 @@ public class AngleRuleHelper
         storeRules(context);
     }
 
+    List<String> getPackageNamesForNative()
+    {
+        return mPackageNamesForNative;
+    }
+
+    List<String> getPackageNamesForAngle()
+    {
+        return mPackageNamesForAngle;
+    }
+
     private void storeRules(Context context)
     {
         final SharedPreferences sharedPreferences =

@@ -425,12 +425,28 @@ void ANGLEPerfTest::SetUp()
             printf("Warmup: %d steps\n", warmupSteps);
         }
 
-        // Note: time limit only has an effect if more than warmupSteps rendered within that time
+        Timer warmupTimer;
+        warmupTimer.start();
+
         runTrial(gTrialTimeSeconds, warmupSteps, RunTrialPolicy::FinishEveryStep);
+
+        if (warmupSteps > 1)  // trace tests only: getStepAlignment() is 1 otherwise
+        {
+            // Short traces (e.g. 10 frames) have some spikes after the first loop b/308975999
+            const double kMinWarmupTime = 1.5;
+            double remainingTime        = kMinWarmupTime - warmupTimer.getElapsedWallClockTime();
+            if (remainingTime > 0)
+            {
+                printf("Warmup: Looping for remaining warmup time (%.2f seconds).\n",
+                       remainingTime);
+                runTrial(remainingTime, std::numeric_limits<int>::max(),
+                         RunTrialPolicy::RunContinuously);
+            }
+        }
 
         if (gVerboseLogging)
         {
-            printf("Warmup took %.2lf seconds.\n", mTrialTimer.getElapsedWallClockTime());
+            printf("Warmup took %.2lf seconds.\n", warmupTimer.getElapsedWallClockTime());
         }
     }
 }

@@ -866,14 +866,6 @@ VkClearValue GetRobustResourceClearValue(const angle::Format &intendedFormat,
     return clearValue;
 }
 
-#if !defined(ANGLE_PLATFORM_MACOS) && !defined(ANGLE_PLATFORM_ANDROID)
-bool IsExternalQueueFamily(uint32_t queueFamilyIndex)
-{
-    return queueFamilyIndex == VK_QUEUE_FAMILY_EXTERNAL ||
-           queueFamilyIndex == VK_QUEUE_FAMILY_FOREIGN_EXT;
-}
-#endif
-
 bool IsShaderReadOnlyLayout(const ImageMemoryBarrierData &imageLayout)
 {
     // We also use VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL for texture sample from depth
@@ -1048,49 +1040,6 @@ gl::TexLevelMask AggregateSkipLevels(const gl::CubeFaceArray<gl::TexLevelMask> &
 // This is an arbitrary max. We can change this later if necessary.
 uint32_t DynamicDescriptorPool::mMaxSetsPerPool           = 16;
 uint32_t DynamicDescriptorPool::mMaxSetsPerPoolMultiplier = 2;
-
-VkImageCreateFlags GetImageCreateFlags(RendererVk *renderer,
-                                       gl::TextureType textureType,
-                                       VkImageUsageFlags usage)
-{
-    switch (textureType)
-    {
-        case gl::TextureType::CubeMap:
-        case gl::TextureType::CubeMapArray:
-            return VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
-
-        case gl::TextureType::_3D:
-        {
-            // Slices of this image may be used as:
-            //
-            // - Render target: The VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT flag is needed for that.
-            // - Sampled or storage image: The VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT flag is
-            //   needed for this.  If VK_EXT_image_2d_view_of_3d is not supported, we tolerate the
-            //   VVL error as drivers seem to support this behavior anyway.
-            VkImageCreateFlags flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
-
-            if ((usage & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-            {
-                if (renderer->getFeatures().supportsImage2dViewOf3d.enabled)
-                {
-                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
-                }
-            }
-            else if ((usage & VK_IMAGE_USAGE_SAMPLED_BIT) != 0)
-            {
-                if (renderer->getFeatures().supportsSampler2dViewOf3d.enabled)
-                {
-                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
-                }
-            }
-
-            return flags;
-        }
-
-        default:
-            return 0;
-    }
-}
 
 ImageLayout GetImageLayoutFromGLImageLayout(Context *context, GLenum layout)
 {
@@ -3025,6 +2974,7 @@ DynamicBuffer::DynamicBuffer()
       mInitialSize(0),
       mNextAllocationOffset(0),
       mSize(0),
+      mSizeInRecentHistory(0),
       mAlignment(0),
       mMemoryPropertyFlags(0)
 {}
@@ -3036,6 +2986,7 @@ DynamicBuffer::DynamicBuffer(DynamicBuffer &&other)
       mBuffer(std::move(other.mBuffer)),
       mNextAllocationOffset(other.mNextAllocationOffset),
       mSize(other.mSize),
+      mSizeInRecentHistory(other.mSizeInRecentHistory),
       mAlignment(other.mAlignment),
       mMemoryPropertyFlags(other.mMemoryPropertyFlags),
       mInFlightBuffers(std::move(other.mInFlightBuffers)),
@@ -3061,8 +3012,9 @@ void DynamicBuffer::init(RendererVk *renderer,
     // Check that we haven't overridden the initial size of the buffer in setMinimumSizeForTesting.
     if (mInitialSize == 0)
     {
-        mInitialSize = initialSize;
-        mSize        = 0;
+        mInitialSize         = initialSize;
+        mSize                = 0;
+        mSizeInRecentHistory = initialSize;
     }
 
     // Workaround for the mock ICD not supporting allocations greater than 0x1000.
@@ -3155,10 +3107,19 @@ angle::Result DynamicBuffer::allocate(Context *context,
 
     RendererVk *renderer = context->getRenderer();
 
-    const size_t sizeIgnoringHistory = std::max(mInitialSize, sizeToAllocate);
-    if (sizeToAllocate > mSize || sizeIgnoringHistory < mSize / 4)
+    const size_t minRequiredBlockSize = std::max(mInitialSize, sizeToAllocate);
+
+    // The average required buffer size in recent history is used to determine whether the currently
+    // used buffer size needs to be reduced (when it goes below 1/8 of the current buffer size).
+    constexpr uint32_t kDecayCoeffPercent = 20;
+    static_assert(kDecayCoeffPercent >= 0 && kDecayCoeffPercent <= 100);
+    mSizeInRecentHistory = (mSizeInRecentHistory * kDecayCoeffPercent +
+                            minRequiredBlockSize * (100 - kDecayCoeffPercent) + 50) /
+                           100;
+
+    if (sizeToAllocate > mSize || mSizeInRecentHistory < mSize / 8)
     {
-        mSize = sizeIgnoringHistory;
+        mSize = minRequiredBlockSize;
         // Clear the free list since the free buffers are now either too small or too big.
         ReleaseBufferListToRenderer(renderer, &mBufferFreeList);
     }
@@ -3291,12 +3252,14 @@ void DynamicBuffer::setMinimumSizeForTesting(size_t minSize)
     mInitialSize = minSize;
 
     // Forces a new allocation on the next allocate.
-    mSize = 0;
+    mSize                = 0;
+    mSizeInRecentHistory = 0;
 }
 
 void DynamicBuffer::reset()
 {
     mSize                 = 0;
+    mSizeInRecentHistory  = 0;
     mNextAllocationOffset = 0;
 }
 
@@ -4786,7 +4749,8 @@ BufferHelper::BufferHelper()
       mCurrentWriteStages(0),
       mCurrentReadStages(0),
       mSerial(),
-      mClientBuffer(nullptr)
+      mClientBuffer(nullptr),
+      mIsReleasedToExternal(false)
 {}
 
 BufferHelper::~BufferHelper()
@@ -4808,6 +4772,7 @@ BufferHelper &BufferHelper::operator=(BufferHelper &&other)
     mBufferWithUserSize = std::move(other.mBufferWithUserSize);
 
     mCurrentQueueFamilyIndex = other.mCurrentQueueFamilyIndex;
+    mIsReleasedToExternal    = other.mIsReleasedToExternal;
     mCurrentWriteAccess      = other.mCurrentWriteAccess;
     mCurrentReadAccess       = other.mCurrentReadAccess;
     mCurrentWriteStages      = other.mCurrentWriteStages;
@@ -4962,6 +4927,7 @@ void BufferHelper::initializeBarrierTracker(Context *context)
 {
     RendererVk *renderer     = context->getRenderer();
     mCurrentQueueFamilyIndex = renderer->getQueueFamilyIndex();
+    mIsReleasedToExternal    = false;
     mSerial                  = renderer->getResourceSerialFactory().generateBufferSerial();
     mCurrentWriteAccess      = 0;
     mCurrentReadAccess       = 0;
@@ -5228,6 +5194,7 @@ void BufferHelper::acquireFromExternal(ContextVk *contextVk,
                                        OutsideRenderPassCommandBuffer *commandBuffer)
 {
     mCurrentQueueFamilyIndex = externalQueueFamilyIndex;
+    mIsReleasedToExternal    = false;
     changeQueue(rendererQueueFamilyIndex, commandBuffer);
 }
 
@@ -5237,17 +5204,13 @@ void BufferHelper::releaseToExternal(ContextVk *contextVk,
                                      OutsideRenderPassCommandBuffer *commandBuffer)
 {
     ASSERT(mCurrentQueueFamilyIndex == rendererQueueFamilyIndex);
+    mIsReleasedToExternal = true;
     changeQueue(externalQueueFamilyIndex, commandBuffer);
 }
 
 bool BufferHelper::isReleasedToExternal() const
 {
-#if !defined(ANGLE_PLATFORM_MACOS) && !defined(ANGLE_PLATFORM_ANDROID)
-    return IsExternalQueueFamily(mCurrentQueueFamilyIndex);
-#else
-    // TODO(anglebug.com/4635): Implement external memory barriers on Mac/Android.
-    return false;
-#endif
+    return mIsReleasedToExternal;
 }
 
 bool BufferHelper::recordReadBarrier(VkAccessFlags readAccessType,
@@ -5396,6 +5359,7 @@ void ImageHelper::resetCachedProperties()
     mImageSerial                 = kInvalidImageSerial;
     mCurrentLayout               = ImageLayout::Undefined;
     mCurrentQueueFamilyIndex     = std::numeric_limits<uint32_t>::max();
+    mIsReleasedToExternal        = false;
     mLastNonShaderReadOnlyLayout = ImageLayout::Undefined;
     mCurrentShaderReadStageMask  = 0;
     mFirstAllocatedLevel         = gl::LevelIndex(0);
@@ -5495,6 +5459,58 @@ const ImageHelper::LevelContentDefinedMask &ImageHelper::getLevelStencilContentD
     return mStencilContentDefined[level.get()];
 }
 
+YcbcrConversionDesc ImageHelper::deriveConversionDesc(Context *context,
+                                                      angle::FormatID actualFormatID,
+                                                      angle::FormatID intendedFormatID)
+{
+    YcbcrConversionDesc conversionDesc{};
+    const angle::Format &actualFormat = angle::Format::Get(actualFormatID);
+
+    if (actualFormat.isYUV)
+    {
+        // Build a suitable conversionDesc; the image is not external but may be YUV
+        // if app is using ANGLE's YUV internalformat extensions.
+        RendererVk *rendererVk = context->getRenderer();
+
+        // The Vulkan spec states: The potential format features of the sampler YCBCR conversion
+        // must support VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT or
+        // VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT
+        constexpr VkFormatFeatureFlags kChromaSubSampleFeatureBits =
+            VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT |
+            VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT |
+            VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT;
+
+        VkFormatFeatureFlags supportedFeatureBits =
+            rendererVk->getImageFormatFeatureBits(actualFormatID, kChromaSubSampleFeatureBits);
+
+        VkChromaLocation supportedLocation =
+            (supportedFeatureBits & VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT) != 0
+                ? VK_CHROMA_LOCATION_COSITED_EVEN
+                : VK_CHROMA_LOCATION_MIDPOINT;
+        vk::YcbcrLinearFilterSupport linearFilterSupported =
+            (supportedFeatureBits &
+             VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) != 0
+                ? vk::YcbcrLinearFilterSupport::Supported
+                : vk::YcbcrLinearFilterSupport::Unsupported;
+
+        VkSamplerYcbcrModelConversion conversionModel = VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601;
+        VkSamplerYcbcrRange colorRange                = VK_SAMPLER_YCBCR_RANGE_ITU_NARROW;
+        VkFilter chromaFilter                         = kDefaultYCbCrChromaFilter;
+        VkComponentMapping components                 = {
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+        };
+
+        conversionDesc.update(rendererVk, 0, conversionModel, colorRange, supportedLocation,
+                              supportedLocation, chromaFilter, components, intendedFormatID,
+                              linearFilterSupported);
+    }
+
+    return conversionDesc;
+}
+
 angle::Result ImageHelper::init(Context *context,
                                 gl::TextureType textureType,
                                 const VkExtent3D &extents,
@@ -5510,7 +5526,9 @@ angle::Result ImageHelper::init(Context *context,
     return initExternal(context, textureType, extents, format.getIntendedFormatID(),
                         format.getActualRenderableImageFormatID(), samples, usage,
                         kVkImageCreateFlagsNone, ImageLayout::Undefined, nullptr, firstLevel,
-                        mipLevels, layerCount, isRobustResourceInitEnabled, hasProtectedContent);
+                        mipLevels, layerCount, isRobustResourceInitEnabled, hasProtectedContent,
+                        deriveConversionDesc(context, format.getActualRenderableImageFormatID(),
+                                             format.getIntendedFormatID()));
 }
 
 angle::Result ImageHelper::initMSAASwapchain(Context *context,
@@ -5529,8 +5547,8 @@ angle::Result ImageHelper::initMSAASwapchain(Context *context,
     ANGLE_TRY(initExternal(context, textureType, extents, format.getIntendedFormatID(),
                            format.getActualRenderableImageFormatID(), samples, usage,
                            kVkImageCreateFlagsNone, ImageLayout::Undefined, nullptr, firstLevel,
-                           mipLevels, layerCount, isRobustResourceInitEnabled,
-                           hasProtectedContent));
+                           mipLevels, layerCount, isRobustResourceInitEnabled, hasProtectedContent,
+                           YcbcrConversionDesc{}));
     if (rotatedAspectRatio)
     {
         std::swap(mExtents.width, mExtents.height);
@@ -5553,7 +5571,8 @@ angle::Result ImageHelper::initExternal(Context *context,
                                         uint32_t mipLevels,
                                         uint32_t layerCount,
                                         bool isRobustResourceInitEnabled,
-                                        bool hasProtectedContent)
+                                        bool hasProtectedContent,
+                                        YcbcrConversionDesc conversionDesc)
 {
     ASSERT(!valid());
     ASSERT(!IsAnySubresourceContentDefined(mContentDefined));
@@ -5571,8 +5590,9 @@ angle::Result ImageHelper::initExternal(Context *context,
     mFirstAllocatedLevel = firstLevel;
     mLevelCount          = mipLevels;
     mLayerCount          = layerCount;
-    mCreateFlags = GetImageCreateFlags(rendererVk, textureType, usage) | additionalCreateFlags;
-    mUsage       = usage;
+    mCreateFlags =
+        vk::GetMinimalImageCreateFlags(rendererVk, textureType, usage) | additionalCreateFlags;
+    mUsage = usage;
 
     // Validate that mLayerCount is compatible with the texture type
     ASSERT(textureType != gl::TextureType::_3D || mLayerCount == 1);
@@ -5600,7 +5620,7 @@ angle::Result ImageHelper::initExternal(Context *context,
         deriveExternalImageTiling(externalImageCreateInfo);
     }
 
-    mYcbcrConversionDesc.reset();
+    mYcbcrConversionDesc = conversionDesc;
 
     const angle::Format &actualFormat   = angle::Format::Get(actualFormatID);
     const angle::Format &intendedFormat = angle::Format::Get(intendedFormatID);
@@ -5613,6 +5633,8 @@ angle::Result ImageHelper::initExternal(Context *context,
 
     if (actualFormat.isYUV)
     {
+        ASSERT(mYcbcrConversionDesc.valid());
+
         // The Vulkan spec states: If the pNext chain includes a VkExternalFormatANDROID structure
         // whose externalFormat member is not 0, flags must not include
         // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT
@@ -5623,34 +5645,6 @@ angle::Result ImageHelper::initExternal(Context *context,
             // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT
             mCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
         }
-        // The Vulkan spec states: The potential format features of the sampler YCBCR conversion
-        // must support VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT or
-        // VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT
-        constexpr VkFormatFeatureFlags kChromaSubSampleFeatureBits =
-            VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT |
-            VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT;
-
-        VkFormatFeatureFlags supportedChromaSubSampleFeatureBits =
-            rendererVk->getImageFormatFeatureBits(mActualFormatID, kChromaSubSampleFeatureBits);
-
-        VkChromaLocation supportedLocation            = ((supportedChromaSubSampleFeatureBits &
-                                               VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT) != 0)
-                                                            ? VK_CHROMA_LOCATION_COSITED_EVEN
-                                                            : VK_CHROMA_LOCATION_MIDPOINT;
-        VkSamplerYcbcrModelConversion conversionModel = VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601;
-        VkSamplerYcbcrRange colorRange                = VK_SAMPLER_YCBCR_RANGE_ITU_NARROW;
-        VkFilter chromaFilter                         = kDefaultYCbCrChromaFilter;
-        VkComponentMapping components                 = {
-            VK_COMPONENT_SWIZZLE_IDENTITY,
-            VK_COMPONENT_SWIZZLE_IDENTITY,
-            VK_COMPONENT_SWIZZLE_IDENTITY,
-            VK_COMPONENT_SWIZZLE_IDENTITY,
-        };
-
-        // Create the VkSamplerYcbcrConversion to associate with image views and samplers
-        // Update the SamplerYcbcrConversionCache key
-        updateYcbcrConversionDesc(rendererVk, 0, conversionModel, colorRange, supportedLocation,
-                                  supportedLocation, chromaFilter, components, intendedFormatID);
     }
 
     if (hasProtectedContent)
@@ -5678,6 +5672,7 @@ angle::Result ImageHelper::initExternal(Context *context,
 
     mCurrentLayout               = initialLayout;
     mCurrentQueueFamilyIndex     = std::numeric_limits<uint32_t>::max();
+    mIsReleasedToExternal        = false;
     mLastNonShaderReadOnlyLayout = ImageLayout::Undefined;
     mCurrentShaderReadStageMask  = 0;
 
@@ -5770,7 +5765,7 @@ bool ImageHelper::FormatSupportsUsage(RendererVk *renderer,
 void ImageHelper::setImageFormatsFromActualFormat(VkFormat actualFormat,
                                                   ImageFormats &imageFormatsOut)
 {
-    imageFormatsOut[0] = actualFormat;
+    imageFormatsOut.push_back(actualFormat);
 }
 
 void ImageHelper::deriveImageViewFormatFromCreateInfoPNext(VkImageCreateInfo &imageInfo,
@@ -5794,7 +5789,7 @@ void ImageHelper::deriveImageViewFormatFromCreateInfoPNext(VkImageCreateInfo &im
 
         for (uint32_t i = 0; i < imageFormatCreateInfo->viewFormatCount; i++)
         {
-            formatOut[i] = *(imageFormatCreateInfo->pViewFormats + i);
+            formatOut.push_back(*(imageFormatCreateInfo->pViewFormats + i));
         }
     }
     else
@@ -5835,6 +5830,7 @@ void ImageHelper::releaseImage(RendererVk *renderer)
     }
 
     renderer->collectGarbage(mUse, &mImage, &mDeviceMemory, &mVmaAllocation);
+    mViewFormats.clear();
     mUse.reset();
     mImageSerial          = kInvalidImageSerial;
     mMemoryAllocationType = MemoryAllocationType::InvalidEnum;
@@ -5937,8 +5933,8 @@ angle::Result ImageHelper::initializeNonZeroMemory(Context *context,
 
     // Queue a DMA copy.
     VkSemaphore acquireNextImageSemaphore;
-    barrierImpl(context, getAspectFlags(), ImageLayout::TransferDst, mCurrentQueueFamilyIndex,
-                &commandBuffer, &acquireNextImageSemaphore);
+    barrierImpl(context, getAspectFlags(), ImageLayout::TransferDst,
+                renderer->getQueueFamilyIndex(), &commandBuffer, &acquireNextImageSemaphore);
     // SwapChain image should not come here
     ASSERT(acquireNextImageSemaphore == VK_NULL_HANDLE);
 
@@ -6066,6 +6062,7 @@ VkResult ImageHelper::initMemory(Context *context,
     }
 
     mCurrentQueueFamilyIndex = renderer->getQueueFamilyIndex();
+    mIsReleasedToExternal    = false;
     *sizeOut                 = mAllocationSize;
 
     return VK_SUCCESS;
@@ -6141,6 +6138,7 @@ angle::Result ImageHelper::initExternalMemory(Context *context,
                                   &mImage, &mMemoryTypeIndex, &mDeviceMemory));
     }
     mCurrentQueueFamilyIndex = currentQueueFamilyIndex;
+    mIsReleasedToExternal    = false;
 
     return angle::Result::Continue;
 }
@@ -6339,6 +6337,7 @@ void ImageHelper::init2DWeakReference(Context *context,
     mSamples            = std::max(samples, 1);
     mImageSerial        = context->getRenderer()->getResourceSerialFactory().generateImageSerial();
     mCurrentQueueFamilyIndex = context->getRenderer()->getQueueFamilyIndex();
+    mIsReleasedToExternal    = false;
     mCurrentLayout           = ImageLayout::Undefined;
     mLayerCount              = 1;
     mLevelCount              = 1;
@@ -6481,7 +6480,8 @@ angle::Result ImageHelper::initImplicitMultisampledRenderToTexture(
                            samples, kMultisampledUsageFlags, kMultisampledCreateFlags,
                            ImageLayout::Undefined, nullptr, resolveImage.getFirstAllocatedLevel(),
                            resolveImage.getLevelCount(), resolveImage.getLayerCount(),
-                           isRobustResourceInitEnabled, hasProtectedContent));
+                           isRobustResourceInitEnabled, hasProtectedContent,
+                           YcbcrConversionDesc{}));
 
     // Remove the emulated format clear from the multisampled image if any.  There is one already
     // staged on the resolve image if needed.
@@ -6631,9 +6631,15 @@ void ImageHelper::acquireFromExternal(ContextVk *contextVk,
 
     mCurrentLayout           = currentLayout;
     mCurrentQueueFamilyIndex = externalQueueFamilyIndex;
+    mIsReleasedToExternal    = false;
 
-    changeLayoutAndQueue(contextVk, getAspectFlags(), mCurrentLayout, rendererQueueFamilyIndex,
-                         commandBuffer);
+    // Only change the layout and queue if the layout is anything by Undefined.  If it is undefined,
+    // leave it to transition out as the image is used later.
+    if (currentLayout != ImageLayout::Undefined)
+    {
+        changeLayoutAndQueue(contextVk, getAspectFlags(), mCurrentLayout, rendererQueueFamilyIndex,
+                             commandBuffer);
+    }
 
     // It is unknown how the external has modified the image, so assume every subresource has
     // defined content.  That is unless the layout is Undefined.
@@ -6653,19 +6659,22 @@ void ImageHelper::releaseToExternal(ContextVk *contextVk,
                                     ImageLayout desiredLayout,
                                     OutsideRenderPassCommandBuffer *commandBuffer)
 {
-    ASSERT(mCurrentQueueFamilyIndex == rendererQueueFamilyIndex);
-    changeLayoutAndQueue(contextVk, getAspectFlags(), desiredLayout, externalQueueFamilyIndex,
-                         commandBuffer);
+    ASSERT(!mIsReleasedToExternal);
+
+    // A layout change is unnecessary if the image that was previously acquired was never used by
+    // GL!
+    if (mCurrentQueueFamilyIndex != externalQueueFamilyIndex || mCurrentLayout != desiredLayout)
+    {
+        changeLayoutAndQueue(contextVk, getAspectFlags(), desiredLayout, externalQueueFamilyIndex,
+                             commandBuffer);
+    }
+
+    mIsReleasedToExternal = true;
 }
 
 bool ImageHelper::isReleasedToExternal() const
 {
-#if !defined(ANGLE_PLATFORM_MACOS) && !defined(ANGLE_PLATFORM_ANDROID)
-    return IsExternalQueueFamily(mCurrentQueueFamilyIndex);
-#else
-    // TODO(anglebug.com/4635): Implement external memory barriers on Mac/Android.
-    return false;
-#endif
+    return mIsReleasedToExternal;
 }
 
 LevelIndex ImageHelper::toVkLevel(gl::LevelIndex levelIndexGL) const
@@ -6696,18 +6705,6 @@ ANGLE_INLINE void ImageHelper::initImageMemoryBarrierStruct(
     imageMemoryBarrier->srcQueueFamilyIndex = mCurrentQueueFamilyIndex;
     imageMemoryBarrier->dstQueueFamilyIndex = newQueueFamilyIndex;
     imageMemoryBarrier->image               = mImage.getHandle();
-
-    // When an external texture is acquired, a queue family ownership transfer is done.  If the
-    // layout of the image is GL_NONE (i.e. VK_IMAGE_LAYOUT_UNDEFINED), it is possible for
-    // |imageMemoryBarrier->newLayout| to end up as UNDEFINED, which is invalid.  In that case, the
-    // GENERAL layout is used.
-    //
-    // mCurrentLayout will still be ImageLayout::Undefined and future transitions from the image
-    // will still use the UNDEFINED layout.
-    if (imageMemoryBarrier->newLayout == VK_IMAGE_LAYOUT_UNDEFINED)
-    {
-        imageMemoryBarrier->newLayout = VK_IMAGE_LAYOUT_GENERAL;
-    }
 
     // Transition the whole resource.
     imageMemoryBarrier->subresourceRange.aspectMask     = aspectMask;
@@ -6782,7 +6779,7 @@ void ImageHelper::recordWriteBarrier(Context *context,
                                      OutsideRenderPassCommandBufferHelper *commands)
 {
     VkSemaphore acquireNextImageSemaphore;
-    barrierImpl(context, aspectMask, newLayout, mCurrentQueueFamilyIndex,
+    barrierImpl(context, aspectMask, newLayout, context->getRenderer()->getQueueFamilyIndex(),
                 &commands->getCommandBuffer(), &acquireNextImageSemaphore);
 
     if (acquireNextImageSemaphore != VK_NULL_HANDLE)
@@ -6802,7 +6799,7 @@ void ImageHelper::recordReadBarrier(Context *context,
     }
 
     VkSemaphore acquireNextImageSemaphore;
-    barrierImpl(context, aspectMask, newLayout, mCurrentQueueFamilyIndex,
+    barrierImpl(context, aspectMask, newLayout, context->getRenderer()->getQueueFamilyIndex(),
                 &commands->getCommandBuffer(), &acquireNextImageSemaphore);
 
     if (acquireNextImageSemaphore != VK_NULL_HANDLE)
@@ -6874,7 +6871,8 @@ bool ImageHelper::updateLayoutAndBarrier(Context *context,
         else
         {
             VkImageMemoryBarrier imageMemoryBarrier = {};
-            initImageMemoryBarrierStruct(context, aspectMask, newLayout, mCurrentQueueFamilyIndex,
+            initImageMemoryBarrierStruct(context, aspectMask, newLayout,
+                                         context->getRenderer()->getQueueFamilyIndex(),
                                          &imageMemoryBarrier);
             // if we transition from shaderReadOnly, we must add in stashed shader stage masks since
             // there might be outstanding shader reads from stages other than current layout. We do
@@ -8645,6 +8643,7 @@ void ImageHelper::stageSelfAsSubresourceUpdates(
     // Reset information for current (invalid) image.
     mCurrentLayout               = ImageLayout::Undefined;
     mCurrentQueueFamilyIndex     = std::numeric_limits<uint32_t>::max();
+    mIsReleasedToExternal        = false;
     mLastNonShaderReadOnlyLayout = ImageLayout::Undefined;
     mCurrentShaderReadStageMask  = 0;
     mImageSerial                 = kInvalidImageSerial;
@@ -9472,8 +9471,9 @@ angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
                                                  &primaryCommandBuffer));
 
     VkSemaphore acquireNextImageSemaphore;
-    barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferSrc, mCurrentQueueFamilyIndex,
-                &primaryCommandBuffer, &acquireNextImageSemaphore);
+    barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferSrc,
+                rendererVk->getQueueFamilyIndex(), &primaryCommandBuffer,
+                &acquireNextImageSemaphore);
     primaryCommandBuffer.copyImageToBuffer(mImage, getCurrentLayout(displayVk),
                                            bufferHelper->getBuffer().getHandle(), 1, &region);
 
@@ -9519,8 +9519,8 @@ angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
         rendererVk->getCommandBufferOneOff(displayVk, ProtectionType::Unprotected, &commandBuffer));
 
     VkSemaphore acquireNextImageSemaphore;
-    barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferDst, mCurrentQueueFamilyIndex,
-                &commandBuffer, &acquireNextImageSemaphore);
+    barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferDst,
+                rendererVk->getQueueFamilyIndex(), &commandBuffer, &acquireNextImageSemaphore);
     commandBuffer.copyBufferToImage(bufferHelper->getBuffer().getHandle(), mImage,
                                     getCurrentLayout(displayVk), 1, &region);
 

@@ -5355,6 +5355,7 @@ TEST_P(PixelLocalStorageValidationTest, LoseContext)
     // context objects are properly disposed of.
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageValidationTest);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageValidationTest,
                        WithRobustness(ES31_NULL()).enable(Feature::EmulatePixelLocalStorage),
                        WithRobustness(ES31_NULL())
@@ -6224,6 +6225,7 @@ TEST_P(PixelLocalStorageCompilerTest, FunctionArguments)
     ASSERT_GL_NO_ERROR();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageCompilerTest);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageCompilerTest,
                        ES31_NULL().enable(Feature::EmulatePixelLocalStorage),
                        ES31_NULL()
@@ -6259,6 +6261,7 @@ TEST_P(PixelLocalStorageTestPreES3, UnsupportedClientVersion)
     ASSERT_GL_NO_ERROR();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTestPreES3);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageTestPreES3,
                        ES1_NULL().enable(Feature::EmulatePixelLocalStorage),
                        ES2_NULL().enable(Feature::EmulatePixelLocalStorage));

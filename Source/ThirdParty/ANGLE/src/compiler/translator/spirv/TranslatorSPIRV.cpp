@@ -1110,10 +1110,12 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 return false;
             }
 
+            InputAttachmentMap inputAttachmentMap;
+
             // Emulate framebuffer fetch if used.
             if (HasFramebufferFetch(getExtensionBehavior(), compileOptions))
             {
-                if (!EmulateFramebufferFetch(this, root, &mUniforms))
+                if (!EmulateFramebufferFetch(this, root, &inputAttachmentMap))
                 {
                     return false;
                 }
@@ -1125,11 +1127,16 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
             // attachment variable then create a new one.
             if (getAdvancedBlendEquations().any() &&
                 compileOptions.addAdvancedBlendEquationsEmulation &&
-                !EmulateAdvancedBlendEquations(this, root, &getSymbolTable(), driverUniforms,
-                                               &mUniforms, getAdvancedBlendEquations()))
+                !EmulateAdvancedBlendEquations(this, root, &getSymbolTable(),
+                                               getAdvancedBlendEquations(), driverUniforms,
+                                               &inputAttachmentMap))
             {
                 return false;
             }
+
+            // Input attachments are potentially added in framebuffer fetch and advanced blend
+            // emulation.  Declare their SPIR-V ids.
+            assignInputAttachmentIds(inputAttachmentMap);
 
             if (!RewriteDfdy(this, root, &getSymbolTable(), getShaderVersion(), specConst,
                              driverUniforms))
@@ -1306,6 +1313,22 @@ void TranslatorSPIRV::assignSpirvId(TSymbolUniqueId uniqueId, uint32_t spirvId)
 {
     ASSERT(mUniqueToSpirvIdMap.find(uniqueId.get()) == mUniqueToSpirvIdMap.end());
     mUniqueToSpirvIdMap[uniqueId.get()] = spirvId;
+}
+
+void TranslatorSPIRV::assignInputAttachmentIds(const InputAttachmentMap &inputAttachmentMap)
+{
+    for (auto &iter : inputAttachmentMap)
+    {
+        const uint32_t index = iter.first;
+        const TVariable *var = iter.second;
+        ASSERT(var != nullptr);
+
+        assignSpirvId(var->uniqueId(), vk::spirv::kIdInputAttachment0 + index);
+
+        const MetadataFlags flag = static_cast<MetadataFlags>(
+            static_cast<uint32_t>(MetadataFlags::HasInputAttachment0) + index);
+        mMetadataFlags.set(flag);
+    }
 }
 
 void TranslatorSPIRV::assignSpirvIds(TIntermBlock *root)

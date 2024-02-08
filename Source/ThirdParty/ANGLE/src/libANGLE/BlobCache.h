@@ -48,6 +48,18 @@ struct hash<egl::BlobCacheKey>
 namespace egl
 {
 
+// Used by MemoryProgramCache and MemoryShaderCache, this result indicates whether program/shader
+// cache load from blob was successful.
+enum class CacheGetResult
+{
+    // Binary blob was found and is valid
+    GetSuccess,
+    // Binary blob was not found
+    NotFound,
+    // Binary blob was found, but was rejected due to errors (corruption, version mismatch, etc)
+    Rejected,
+};
+
 bool CompressBlobCacheData(const size_t cacheSize,
                            const uint8_t *cacheData,
                            angle::MemoryBuffer *compressedData);

@@ -8,7 +8,7 @@
 #ifndef LIBANGLE_CL_UTILS_H_
 #define LIBANGLE_CL_UTILS_H_
 
-#include "libANGLE/renderer/CLtypes.h"
+#include "libANGLE/renderer/cl_types.h"
 
 #define ANGLE_CL_RETURN_ERROR(error) \
     do                               \

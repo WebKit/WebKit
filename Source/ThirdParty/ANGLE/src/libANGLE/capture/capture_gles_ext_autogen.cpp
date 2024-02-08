@@ -11870,6 +11870,67 @@ CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
     return CallCapture(angle::EntryPoint::GLFramebufferTextureMultiviewOVR, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferFoveationConfigQCOM(const State &glState,
+                                                  bool isCallValid,
+                                                  FramebufferID framebufferPacked,
+                                                  GLuint numLayers,
+                                                  GLuint focalPointsPerLayer,
+                                                  GLuint requestedFeatures,
+                                                  GLuint *providedFeatures)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("framebufferPacked", ParamType::TFramebufferID, framebufferPacked);
+    paramBuffer.addValueParam("numLayers", ParamType::TGLuint, numLayers);
+    paramBuffer.addValueParam("focalPointsPerLayer", ParamType::TGLuint, focalPointsPerLayer);
+    paramBuffer.addValueParam("requestedFeatures", ParamType::TGLuint, requestedFeatures);
+
+    if (isCallValid)
+    {
+        ParamCapture providedFeaturesParam("providedFeatures", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, providedFeatures, &providedFeaturesParam.value);
+        CaptureFramebufferFoveationConfigQCOM_providedFeatures(
+            glState, isCallValid, framebufferPacked, numLayers, focalPointsPerLayer,
+            requestedFeatures, providedFeatures, &providedFeaturesParam);
+        paramBuffer.addParam(std::move(providedFeaturesParam));
+    }
+    else
+    {
+        ParamCapture providedFeaturesParam("providedFeatures", ParamType::TGLuintPointer);
+        InitParamValue(ParamType::TGLuintPointer, static_cast<GLuint *>(nullptr),
+                       &providedFeaturesParam.value);
+        paramBuffer.addParam(std::move(providedFeaturesParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLFramebufferFoveationConfigQCOM, std::move(paramBuffer));
+}
+
+CallCapture CaptureFramebufferFoveationParametersQCOM(const State &glState,
+                                                      bool isCallValid,
+                                                      FramebufferID framebufferPacked,
+                                                      GLuint layer,
+                                                      GLuint focalPoint,
+                                                      GLfloat focalX,
+                                                      GLfloat focalY,
+                                                      GLfloat gainX,
+                                                      GLfloat gainY,
+                                                      GLfloat foveaArea)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("framebufferPacked", ParamType::TFramebufferID, framebufferPacked);
+    paramBuffer.addValueParam("layer", ParamType::TGLuint, layer);
+    paramBuffer.addValueParam("focalPoint", ParamType::TGLuint, focalPoint);
+    paramBuffer.addValueParam("focalX", ParamType::TGLfloat, focalX);
+    paramBuffer.addValueParam("focalY", ParamType::TGLfloat, focalY);
+    paramBuffer.addValueParam("gainX", ParamType::TGLfloat, gainX);
+    paramBuffer.addValueParam("gainY", ParamType::TGLfloat, gainY);
+    paramBuffer.addValueParam("foveaArea", ParamType::TGLfloat, foveaArea);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferFoveationParametersQCOM,
+                       std::move(paramBuffer));
+}
+
 CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate)
 {
     ParamBuffer paramBuffer;
@@ -11877,6 +11938,31 @@ CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenu
     paramBuffer.addEnumParam("rate", GLESEnum::ShadingRateQCOM, ParamType::TGLenum, rate);
 
     return CallCapture(angle::EntryPoint::GLShadingRateQCOM, std::move(paramBuffer));
+}
+
+CallCapture CaptureTextureFoveationParametersQCOM(const State &glState,
+                                                  bool isCallValid,
+                                                  TextureID texturePacked,
+                                                  GLuint layer,
+                                                  GLuint focalPoint,
+                                                  GLfloat focalX,
+                                                  GLfloat focalY,
+                                                  GLfloat gainX,
+                                                  GLfloat gainY,
+                                                  GLfloat foveaArea)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("texturePacked", ParamType::TTextureID, texturePacked);
+    paramBuffer.addValueParam("layer", ParamType::TGLuint, layer);
+    paramBuffer.addValueParam("focalPoint", ParamType::TGLuint, focalPoint);
+    paramBuffer.addValueParam("focalX", ParamType::TGLfloat, focalX);
+    paramBuffer.addValueParam("focalY", ParamType::TGLfloat, focalY);
+    paramBuffer.addValueParam("gainX", ParamType::TGLfloat, gainX);
+    paramBuffer.addValueParam("gainY", ParamType::TGLfloat, gainY);
+    paramBuffer.addValueParam("foveaArea", ParamType::TGLfloat, foveaArea);
+
+    return CallCapture(angle::EntryPoint::GLTextureFoveationParametersQCOM, std::move(paramBuffer));
 }
 
 }  // namespace gl
