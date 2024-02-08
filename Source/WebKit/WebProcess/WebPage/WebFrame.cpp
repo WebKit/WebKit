@@ -712,15 +712,15 @@ String WebFrame::innerText() const
 
 RefPtr<WebFrame> WebFrame::parentFrame() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame || !localFrame->ownerElement())
+    RefPtr frame = m_coreFrame.get();
+    if (!frame || !frame->ownerElement())
         return nullptr;
 
-    RefPtr frame = localFrame->ownerElement()->document().frame();
-    if (!frame)
+    RefPtr parentFrame = frame->tree().parent();
+    if (!parentFrame)
         return nullptr;
 
-    return WebFrame::fromCoreFrame(*frame);
+    return WebFrame::fromCoreFrame(*parentFrame);
 }
 
 Ref<API::Array> WebFrame::childFrames()
