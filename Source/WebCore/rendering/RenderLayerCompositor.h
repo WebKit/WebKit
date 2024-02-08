@@ -239,6 +239,8 @@ public:
 
     void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
 
+    void establishesTopLayerWillChangeForLayer(RenderLayer&);
+
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
@@ -422,6 +424,8 @@ private:
     void addDescendantsToOverlapMapRecursive(LayerOverlapMap&, const RenderLayer&, const RenderLayer* ancestorLayer = nullptr) const;
     void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
     bool layerOverlaps(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
+
+    void clearBackingProviderSequencesInStackingContextOfLayer(RenderLayer&);
 
     void updateCompositingLayersTimerFired();
 
