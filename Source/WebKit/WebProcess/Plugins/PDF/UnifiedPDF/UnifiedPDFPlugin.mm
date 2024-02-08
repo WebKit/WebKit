@@ -1325,6 +1325,21 @@ auto UnifiedPDFPlugin::selectionGranularityForMouseEvent(const WebMouseEvent& ev
     return SelectionGranularity::Character;
 }
 
+void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
+{
+    if (!m_currentSelection)
+        return;
+    PDFPage *firstPageOfCurrentSelection = [[m_currentSelection pages] firstObject];
+
+    auto oldStartPageIndex = std::exchange(m_selectionTrackingData.startPageIndex, [m_pdfDocument indexForPage:firstPageOfCurrentSelection]);
+    auto oldStartPagePoint = std::exchange(m_selectionTrackingData.startPagePoint, IntPoint { [m_currentSelection firstCharCenter] });
+    m_selectionTrackingData.selectionToExtendWith = WTFMove(m_currentSelection);
+
+    RetainPtr<PDFSelection> selection = [m_pdfDocument selectionFromPage:firstPageOfCurrentSelection atPoint:m_selectionTrackingData.startPagePoint toPage:m_documentLayout.pageAtIndex(oldStartPageIndex).get() atPoint:oldStartPagePoint];
+    [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
+    setCurrentSelection(WTFMove(selection));
+}
+
 void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity selectionGranularity, OptionSet<WebEventModifier> mouseEventModifiers)
 {
     m_selectionTrackingData.granularity = selectionGranularity;
@@ -1334,9 +1349,8 @@ void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageI
     m_selectionTrackingData.shouldMakeMarqueeSelection = mouseEventModifiers.contains(WebEventModifier::AltKey);
     m_selectionTrackingData.shouldExtendCurrentSelection = mouseEventModifiers.contains(WebEventModifier::ShiftKey);
 
-    // FIXME: <https://webkit.org/b/268617>  Selections should be extensible on shift-click.
     if (m_selectionTrackingData.shouldExtendCurrentSelection)
-        notImplemented();
+        extendCurrentSelectionIfNeeded();
 
     continueTrackingSelection(pageIndex, pagePoint);
 }

@@ -84,6 +84,7 @@
 
 @interface PDFSelection (SPI)
 - (void)drawForPage:(PDFPage *)page withBox:(CGPDFBox)box active:(BOOL)active inContext:(CGContextRef)context;
+- (PDFPoint)firstCharCenter;
 @end
 
 #endif // HAVE(PDFKIT)

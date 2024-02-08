@@ -177,14 +177,15 @@ private:
     static constexpr int invalidContextMenuItemTag { -1 };
 #endif
 
+    // Selections
     enum class SelectionGranularity : uint8_t {
         Character,
         Word,
         Line,
     };
-
     SelectionGranularity selectionGranularityForMouseEvent(const WebMouseEvent&) const;
     void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint, SelectionGranularity, OptionSet<WebEventModifier>);
+    void extendCurrentSelectionIfNeeded();
     void continueTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::IntPoint& pagePoint);
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
 
