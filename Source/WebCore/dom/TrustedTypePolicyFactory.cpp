@@ -31,6 +31,7 @@
 #include "JSTrustedHTML.h"
 #include "JSTrustedScript.h"
 #include "JSTrustedScriptURL.h"
+#include "ScriptExecutionContext.h"
 #include "TrustedHTML.h"
 #include "TrustedScript.h"
 #include "TrustedScriptURL.h"
