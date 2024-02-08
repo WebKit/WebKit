@@ -41,6 +41,7 @@
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/VideoFrameMetadata.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
@@ -197,6 +198,25 @@ public:
     LayerHostingContextID hostingContextID()const override;
     void setLayerHostingContextID(LayerHostingContextID  inID);
 private:
+    class TimeProgressEstimator final {
+    public:
+        explicit TimeProgressEstimator(const MediaPlayerPrivateRemote& parent);
+        MediaTime currentTime() const;
+        MediaTime cachedTime() const;
+        bool timeIsProgressing() const;
+        void pause();
+        void setTime(const MediaTime&, const MonotonicTime& wallTime, std::optional<bool> timeIsProgressing = std::nullopt);
+        void setRate(double);
+
+    private:
+        mutable Lock m_lock;
+        bool m_timeIsProgressing WTF_GUARDED_BY_LOCK(m_lock) { false };
+        MediaTime m_cachedMediaTime WTF_GUARDED_BY_LOCK(m_lock);
+        MonotonicTime m_cachedMediaTimeQueryTime WTF_GUARDED_BY_LOCK(m_lock);
+        double m_rate WTF_GUARDED_BY_LOCK(m_lock) { 1.0 };
+        const MediaPlayerPrivateRemote& m_parent;
+    };
+    TimeProgressEstimator m_currentTimeEstimator;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -467,9 +487,6 @@ private:
     WebCore::SecurityOriginData m_documentSecurityOrigin;
     mutable HashMap<WebCore::SecurityOriginData, std::optional<bool>> m_isCrossOriginCache;
 
-    MediaTime m_cachedMediaTime;
-    MonotonicTime m_cachedMediaTimeQueryTime;
-
     WebCore::MediaPlayer::VideoGravity m_videoFullscreenGravity { WebCore::MediaPlayer::VideoGravity::ResizeAspect };
     MonotonicTime m_lastPlaybackQualityMetricsQueryTime;
     Seconds m_videoPlaybackMetricsUpdateInterval;
@@ -480,7 +497,6 @@ private:
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_waitingForKey { false };
-    bool m_timeIsProgressing { false };
     std::optional<bool> m_shouldMaintainAspectRatio;
     std::optional<bool> m_pageIsVisible;
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;

@@ -58,6 +58,7 @@
 #include <WebCore/TextTrackRepresentation.h>
 #include <WebCore/VideoLayerManager.h>
 #include <wtf/HashMap.h>
+#include <wtf/Locker.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
@@ -110,14 +111,67 @@ using namespace WebCore;
 } while (0)
 #endif
 
+MediaPlayerPrivateRemote::TimeProgressEstimator::TimeProgressEstimator(const MediaPlayerPrivateRemote& parent)
+    : m_parent(parent)
+{
+}
+
+MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTime() const
+{
+    Locker locker { m_lock };
+
+    if (!m_timeIsProgressing)
+        return m_cachedMediaTime;
+
+    auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
+    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), m_parent.durationMediaTime());
+}
+
+MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTime() const
+{
+    Locker locker { m_lock };
+    return m_cachedMediaTime;
+}
+
+bool MediaPlayerPrivateRemote::TimeProgressEstimator::timeIsProgressing() const
+{
+    Locker locker { m_lock };
+    return m_timeIsProgressing;
+}
+
+void MediaPlayerPrivateRemote::TimeProgressEstimator::pause()
+{
+    Locker locker { m_lock };
+    if (!m_timeIsProgressing)
+        return;
+    auto now = MonotonicTime::now();
+    m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
+    m_cachedMediaTimeQueryTime = now;
+    m_timeIsProgressing = false;
+}
+
+void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTime& time, const MonotonicTime& wallTime, std::optional<bool> timeIsProgressing)
+{
+    Locker locker { m_lock };
+    m_cachedMediaTime =  time;
+    m_cachedMediaTimeQueryTime = wallTime;
+    if (timeIsProgressing)
+        m_timeIsProgressing = *timeIsProgressing;
+}
+
+void MediaPlayerPrivateRemote::TimeProgressEstimator::setRate(double value)
+{
+    Locker locker { m_lock };
+    m_rate = value;
+}
+
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
-    :
+    : m_currentTimeEstimator(*this)
 #if !RELEASE_LOG_DISABLED
-      m_logger(player->mediaPlayerLogger())
+    , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
-    ,
 #endif
-      m_player(*player)
+    , m_player(*player)
     , m_mediaResourceLoader(*player->createResourceLoader())
 #if PLATFORM(COCOA)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
@@ -235,11 +289,7 @@ void MediaPlayerPrivateRemote::play()
 void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
-    if (m_timeIsProgressing) {
-        auto now = MonotonicTime::now();
-        m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
-        m_cachedMediaTimeQueryTime = now;
-    }
+    m_currentTimeEstimator.pause();
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
 
@@ -280,23 +330,20 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
         return m_mediaSourcePrivate->duration();
 #endif
 
+    ASSERT(isMainRunLoop());
     return m_cachedState.duration;
 }
 
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
-    if (!m_timeIsProgressing)
-        return m_cachedMediaTime;
-
-    auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
-    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), durationMediaTime());
+    return m_currentTimeEstimator.currentTime();
 }
 
 void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
     m_seeking = true;
-    m_cachedMediaTime = target.time;
+    m_currentTimeEstimator.setTime(target.time, MonotonicTime::now(), false);
     connection().send(Messages::RemoteMediaPlayerProxy::SeekToTarget(target), m_id);
 }
 
@@ -372,8 +419,7 @@ void MediaPlayerPrivateRemote::seeked(const MediaTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER, time);
     m_seeking = false;
-    m_cachedMediaTime =  time;
-    m_cachedMediaTimeQueryTime = MonotonicTime::now();
+    m_currentTimeEstimator.setTime(time, MonotonicTime::now());
     if (auto player = m_player.get())
         player->seeked(time);
 }
@@ -401,6 +447,7 @@ bool MediaPlayerPrivateRemote::seeking() const
 void MediaPlayerPrivateRemote::rateChanged(double rate)
 {
     m_rate = rate;
+    m_currentTimeEstimator.setRate(rate);
     if (auto player = m_player.get())
         player->rateChanged();
 }
@@ -408,8 +455,7 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
 void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, MonotonicTime&& wallTime)
 {
     m_cachedState.paused = paused;
-    m_cachedMediaTime = mediaTime;
-    m_cachedMediaTimeQueryTime = wallTime;
+    m_currentTimeEstimator.setTime(mediaTime, wallTime);
     if (auto player = m_player.get())
         player->playbackStateChanged();
 }
@@ -437,16 +483,16 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime, bool timeIsProgressing)
 {
-    auto reverseJump = mediaTime < m_cachedMediaTime;
+    auto oldCachedTime = m_currentTimeEstimator.cachedTime();
+    auto oldTimeIsProgressing = m_currentTimeEstimator.timeIsProgressing();
+    auto reverseJump = mediaTime < oldCachedTime;
     if (reverseJump)
-        ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", m_cachedMediaTime, ", is now ", mediaTime);
+        ALWAYS_LOG(LOGIDENTIFIER, "time jumped backwards, was ", oldCachedTime, ", is now ", mediaTime);
 
-    std::swap(timeIsProgressing, m_timeIsProgressing);
-    auto oldCachedTime = std::exchange(m_cachedMediaTime, mediaTime);
-    m_cachedMediaTimeQueryTime = queryTime;
+    m_currentTimeEstimator.setTime(mediaTime, queryTime, timeIsProgressing);
 
     if (reverseJump
-        || (timeIsProgressing != m_timeIsProgressing && m_cachedMediaTime != oldCachedTime && !m_cachedState.paused)) {
+        || (timeIsProgressing != oldTimeIsProgressing && mediaTime != oldCachedTime && !m_cachedState.paused)) {
         if (auto player = m_player.get())
             player->timeChanged();
     }
@@ -1407,12 +1453,9 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(WebCore::DynamicRang
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, this, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
-        if (!weakThis || !currentTime || !queryTime)
-            return;
-
-        m_cachedMediaTime = *currentTime;
-        m_cachedMediaTimeQueryTime = *queryTime;
+    auto asyncReplyHandler = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && currentTime && queryTime)
+            protectedThis->m_currentTimeEstimator.setTime(*currentTime, *queryTime);
         completionHandler();
     };
 
