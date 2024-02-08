@@ -1530,7 +1530,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyF
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-015.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/fieldset-baseline-alignment.html [ ImageOnlyFailure ]
@@ -4591,9 +4590,6 @@ webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-017.html [ ImageOnlyFailure ]
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-018.html [ ImageOnlyFailure ]
 
-# Static position alignment in Flexbox.
-webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-safe-001.html [ ImageOnlyFailure ]
-
 # Tables as flex items.
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
 
@@ -4859,10 +4855,6 @@ webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fi
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
 
-webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-col-reverse-001.html [ ImageOnlyFailure ]
-webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-col-wrap-001.html [ ImageOnlyFailure ]
-webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-row-reverse-001.html [ ImageOnlyFailure ]
-webkit.org/b/263893 imported/w3c/web-platform-tests/css/css-overflow/overflow-alignment-flex-row-wrap-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-rtl-001.html [ ImageOnlyFailure ]
