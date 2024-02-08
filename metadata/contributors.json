@@ -6351,6 +6351,16 @@
    },
    {
       "emails" : [
+         "qianlangchen@apple.com"
+      ],
+      "github" : "the-chenergy",
+      "name" : "Qianlang Chen",
+      "nicks" : [
+         "qianlangchen"
+      ]
+   },
+   {
+      "emails" : [
          "webkit-bug-importer@group.apple.com"
       ],
       "name" : "Radar WebKit Bug Importer",
