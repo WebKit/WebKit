@@ -166,7 +166,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
                 auto error = privateStreamOrError.error();
                 scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
-                deny(error.denialReason, error.errorMessage);
+                deny(error.denialReason, error.errorMessage, error.invalidConstraint);
                 return;
             }
             auto privateStream = WTFMove(privateStreamOrError).value();
@@ -212,7 +212,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     });
 }
 
-void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)
+void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message, MediaConstraintType invalidConstraint)
 {
     if (!scriptExecutionContext())
         return;
@@ -236,8 +236,8 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         code = ExceptionCode::NotFoundError;
         break;
     case MediaAccessDenialReason::InvalidConstraint:
-        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", message.utf8().data());
-        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(message, "Invalid constraint"_s).get());
+        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %d", (int)invalidConstraint);
+        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, "Invalid constraint"_s).get());
         return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");

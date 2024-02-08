@@ -82,7 +82,6 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
     Vector<Ref<RealtimeMediaSource>> videoSources;
-    String invalidConstraint;
 
     RefPtr<RealtimeMediaSource> audioSource;
     if (audioDevice) {
@@ -237,39 +236,47 @@ void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
     });
 }
 
-void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest& request, MediaDeviceHashSalts&& hashSalts, Vector<DeviceInfo>& displayDeviceInfo, String& firstInvalidConstraint)
+void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest& request, MediaDeviceHashSalts&& hashSalts, Vector<DeviceInfo>& displayDeviceInfo, MediaConstraintType& firstInvalidConstraint)
 {
     if (!request.videoConstraints.isValid)
         return;
 
-    String invalidConstraint;
     for (auto& device : displayCaptureFactory().displayCaptureDeviceManager().captureDevices()) {
         if (!device.enabled())
-            return;
+            continue;
 
         auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, MediaDeviceHashSalts { hashSalts }, &request.videoConstraints, request.pageIdentifier);
-        if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
-            displayDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
+        if (!sourceOrError)
+            continue;
 
-        if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
-            firstInvalidConstraint = invalidConstraint;
+        if (auto invalidConstraint = sourceOrError.captureSource->hasAnyInvalidConstraint(request.videoConstraints)) {
+            if (firstInvalidConstraint == MediaConstraintType::Unknown)
+                firstInvalidConstraint = *invalidConstraint;
+            continue;
+        }
+
+        displayDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
     }
 }
 
-void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& request, MediaDeviceHashSalts&& hashSalts, Vector<DeviceInfo>& audioDeviceInfo, Vector<DeviceInfo>& videoDeviceInfo, String& firstInvalidConstraint)
+void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& request, MediaDeviceHashSalts&& hashSalts, Vector<DeviceInfo>& audioDeviceInfo, Vector<DeviceInfo>& videoDeviceInfo, MediaConstraintType& firstInvalidConstraint)
 {
-    String invalidConstraint;
     if (request.audioConstraints.isValid) {
         for (auto& device : audioCaptureFactory().audioCaptureDeviceManager().captureDevices()) {
             if (!device.enabled())
                 continue;
 
             auto sourceOrError = audioCaptureFactory().createAudioCaptureSource(device, MediaDeviceHashSalts { hashSalts }, { }, request.pageIdentifier);
-            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.audioConstraints, invalidConstraint))
-                audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
+            if (!sourceOrError)
+                continue;
 
-            if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
-                firstInvalidConstraint = invalidConstraint;
+            if (auto invalidConstraint = sourceOrError.captureSource->hasAnyInvalidConstraint(request.audioConstraints)) {
+                if (firstInvalidConstraint == MediaConstraintType::Unknown)
+                    firstInvalidConstraint = *invalidConstraint;
+                continue;
+            }
+
+            audioDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
         }
     }
 
@@ -279,11 +286,16 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
                 continue;
 
             auto sourceOrError = videoCaptureFactory().createVideoCaptureSource(device, MediaDeviceHashSalts { hashSalts }, { }, request.pageIdentifier);
-            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
-                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
+            if (!sourceOrError)
+                continue;
 
-            if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
-                firstInvalidConstraint = invalidConstraint;
+            if (auto invalidConstraint = sourceOrError.captureSource->hasAnyInvalidConstraint(request.videoConstraints)) {
+                if (firstInvalidConstraint == MediaConstraintType::Unknown)
+                    firstInvalidConstraint = *invalidConstraint;
+                continue;
+            }
+
+            videoDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
         }
     }
 }
@@ -324,7 +336,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration(Valid
 
     Vector<DeviceInfo> audioDeviceInfo;
     Vector<DeviceInfo> videoDeviceInfo;
-    String firstInvalidConstraint;
+    MediaConstraintType firstInvalidConstraint = MediaConstraintType::Unknown;
 
     auto& displayCaptureManager = displayCaptureFactory().displayCaptureDeviceManager();
     if (displayCaptureManager.requiresCaptureDevicesEnumeration() && (request.type == MediaStreamRequest::Type::DisplayMedia || request.type == MediaStreamRequest::Type::DisplayMediaWithAudio))

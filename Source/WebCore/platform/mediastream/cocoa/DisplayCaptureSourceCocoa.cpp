@@ -100,7 +100,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
     auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), device, WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
 
     return CaptureSourceOrError(WTFMove(source));

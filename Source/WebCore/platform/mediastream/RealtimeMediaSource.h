@@ -222,9 +222,9 @@ public:
     virtual Ref<PhotoSettingsNativePromise> getPhotoSettings();
 
     struct ApplyConstraintsError {
-        String badConstraint;
+        MediaConstraintType invalidConstraint;
         String message;
-        ApplyConstraintsError isolatedCopy() && { return { WTFMove(badConstraint).isolatedCopy(), WTFMove(message).isolatedCopy() }; }
+        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTFMove(message).isolatedCopy() }; }
     };
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<ApplyConstraintsError>&&)>;
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
@@ -237,7 +237,7 @@ public:
     };
     WEBCORE_EXPORT VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaConstraints&);
 
-    bool supportsConstraints(const MediaConstraints&, String&);
+    std::optional<MediaConstraintType> hasAnyInvalidConstraint(const MediaConstraints&);
     bool supportsConstraint(const MediaConstraint&);
 
     virtual bool isMockSource() const { return false; }
@@ -288,12 +288,12 @@ protected:
     virtual void startApplyingConstraints() { }
     virtual void endApplyingConstraints() { }
 
-    bool selectSettings(const MediaConstraints&, MediaTrackConstraintSetMap&, String&);
+    std::optional<MediaConstraintType> selectSettings(const MediaConstraints&, MediaTrackConstraintSetMap&);
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const MediaTrackConstraintSetMap&);
     VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap&);
-    bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    std::optional<MediaConstraintType> hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, double& fitnessDistance);
 
     virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
     virtual void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
@@ -388,15 +388,23 @@ private:
 
 struct CaptureSourceError {
     CaptureSourceError() = default;
-    CaptureSourceError(String&& message, MediaAccessDenialReason reason)
-        : errorMessage(WTFMove(message))
-        , denialReason(reason)
+    CaptureSourceError(String&& errorMessage, MediaAccessDenialReason denialReason, MediaConstraintType invalidConstraint = MediaConstraintType::Unknown)
+        : errorMessage(WTFMove(errorMessage))
+        , denialReason(denialReason)
+        , invalidConstraint(invalidConstraint)
+    {
+    }
+
+    explicit CaptureSourceError(MediaConstraintType invalidConstraint)
+        : denialReason(MediaAccessDenialReason::InvalidConstraint)
+        , invalidConstraint(invalidConstraint)
     { }
 
     operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
 
     String errorMessage;
-    MediaAccessDenialReason denialReason = MediaAccessDenialReason::NoReason;
+    MediaAccessDenialReason denialReason { MediaAccessDenialReason::NoReason };
+    MediaConstraintType invalidConstraint { MediaConstraintType::Unknown };
 };
 
 struct CaptureSourceOrError {

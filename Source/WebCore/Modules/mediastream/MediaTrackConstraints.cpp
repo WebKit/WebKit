@@ -33,9 +33,9 @@ namespace WebCore {
 
 enum class ConstraintSetType { Mandatory, Advanced };
 
-static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCIILiteral typeAsString, MediaConstraintType type, const ConstrainLong& value)
+static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainLong& value)
 {
-    IntConstraint constraint(typeAsString, type);
+    IntConstraint constraint(type);
     WTF::switchOn(value,
         [&] (int integer) {
             if (setType == ConstraintSetType::Mandatory)
@@ -57,9 +57,9 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCI
     map.set(type, WTFMove(constraint));
 }
 
-static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCIILiteral typeAsString, MediaConstraintType type, const ConstrainDouble& value)
+static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDouble& value)
 {
-    DoubleConstraint constraint(typeAsString, type);
+    DoubleConstraint constraint(type);
     WTF::switchOn(value,
         [&] (double number) {
             if (setType == ConstraintSetType::Mandatory)
@@ -81,9 +81,9 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCI
     map.set(type, WTFMove(constraint));
 }
 
-static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCIILiteral typeAsString, MediaConstraintType type, const ConstrainBoolean& value)
+static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainBoolean& value)
 {
-    BooleanConstraint constraint(typeAsString, type);
+    BooleanConstraint constraint(type);
     WTF::switchOn(value,
         [&] (bool boolean) {
             if (setType == ConstraintSetType::Mandatory)
@@ -101,9 +101,9 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCI
     map.set(type, WTFMove(constraint));
 }
 
-static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCIILiteral typeAsString, MediaConstraintType type, const ConstrainDOMString& value)
+static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const ConstrainDOMString& value)
 {
-    StringConstraint constraint(typeAsString, type);
+    StringConstraint constraint(type);
     WTF::switchOn(value,
         [&] (const String& string) {
             if (setType == ConstraintSetType::Mandatory)
@@ -148,35 +148,35 @@ static void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCI
     map.set(type, WTFMove(constraint));
 }
 
-template<typename T> static inline void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, ASCIILiteral typeAsString, MediaConstraintType type, const std::optional<T>& value)
+template<typename T> static inline void set(MediaTrackConstraintSetMap& map, ConstraintSetType setType, MediaConstraintType type, const std::optional<T>& value)
 {
     if (!value)
         return;
-    set(map, setType, typeAsString, type, value.value());
+    set(map, setType, type, value.value());
 }
 
 static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setType, const MediaTrackConstraintSet& constraintSet)
 {
     MediaTrackConstraintSetMap result;
-    set(result, setType, "width"_s, MediaConstraintType::Width, constraintSet.width);
-    set(result, setType, "height"_s, MediaConstraintType::Height, constraintSet.height);
-    set(result, setType, "aspectRatio"_s, MediaConstraintType::AspectRatio, constraintSet.aspectRatio);
-    set(result, setType, "frameRate"_s, MediaConstraintType::FrameRate, constraintSet.frameRate);
-    set(result, setType, "facingMode"_s, MediaConstraintType::FacingMode, constraintSet.facingMode);
-    set(result, setType, "volume"_s, MediaConstraintType::Volume, constraintSet.volume);
-    set(result, setType, "sampleRate"_s, MediaConstraintType::SampleRate, constraintSet.sampleRate);
-    set(result, setType, "sampleSize"_s, MediaConstraintType::SampleSize, constraintSet.sampleSize);
-    set(result, setType, "echoCancellation"_s, MediaConstraintType::EchoCancellation, constraintSet.echoCancellation);
+    set(result, setType, MediaConstraintType::Width, constraintSet.width);
+    set(result, setType, MediaConstraintType::Height, constraintSet.height);
+    set(result, setType, MediaConstraintType::AspectRatio, constraintSet.aspectRatio);
+    set(result, setType, MediaConstraintType::FrameRate, constraintSet.frameRate);
+    set(result, setType, MediaConstraintType::FacingMode, constraintSet.facingMode);
+    set(result, setType, MediaConstraintType::Volume, constraintSet.volume);
+    set(result, setType, MediaConstraintType::SampleRate, constraintSet.sampleRate);
+    set(result, setType, MediaConstraintType::SampleSize, constraintSet.sampleSize);
+    set(result, setType, MediaConstraintType::EchoCancellation, constraintSet.echoCancellation);
     // FIXME: add latency
     // FIXME: add channelCount
-    set(result, setType, "deviceId"_s, MediaConstraintType::DeviceId, constraintSet.deviceId);
-    set(result, setType, "groupId"_s, MediaConstraintType::GroupId, constraintSet.groupId);
-    set(result, setType, "displaySurface"_s, MediaConstraintType::DisplaySurface, constraintSet.displaySurface);
-    set(result, setType, "logicalSurface"_s, MediaConstraintType::LogicalSurface, constraintSet.logicalSurface);
+    set(result, setType, MediaConstraintType::DeviceId, constraintSet.deviceId);
+    set(result, setType, MediaConstraintType::GroupId, constraintSet.groupId);
+    set(result, setType, MediaConstraintType::DisplaySurface, constraintSet.displaySurface);
+    set(result, setType, MediaConstraintType::LogicalSurface, constraintSet.logicalSurface);
 
-    set(result, setType, "whiteBalanceMode"_s, MediaConstraintType::WhiteBalanceMode, constraintSet.whiteBalanceMode);
-    set(result, setType, "zoom"_s, MediaConstraintType::Zoom, constraintSet.zoom);
-    set(result, setType, "torch"_s, MediaConstraintType::Torch, constraintSet.torch);
+    set(result, setType, MediaConstraintType::WhiteBalanceMode, constraintSet.whiteBalanceMode);
+    set(result, setType, MediaConstraintType::Zoom, constraintSet.zoom);
+    set(result, setType, MediaConstraintType::Torch, constraintSet.torch);
 
     return result;
 }

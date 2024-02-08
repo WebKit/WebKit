@@ -75,7 +75,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, Medi
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
     return CaptureSourceOrError(WTFMove(source));
 }

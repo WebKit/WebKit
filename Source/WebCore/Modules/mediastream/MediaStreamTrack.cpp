@@ -400,7 +400,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
     m_private->applyConstraints(createMediaConstraints(constraints), [this, protectedThis = Ref { *this }, constraints, promise = WTFMove(promise)](auto&& error) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [protectedThis = WTFMove(protectedThis), error = WTFMove(error), constraints, promise = WTFMove(promise)]() mutable {
             if (error) {
-                promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
+                promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(error->invalidConstraint, WTFMove(error->message)));
                 return;
             }
 

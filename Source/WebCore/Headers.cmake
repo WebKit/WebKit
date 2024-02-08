@@ -2170,6 +2170,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/DisplayCapturePromptType.h
     platform/mediastream/FillLightMode.h
     platform/mediastream/MDNSRegisterError.h
+    platform/mediastream/MediaConstraintType.h
     platform/mediastream/MediaConstraints.h
     platform/mediastream/MediaSettingsRange.h
     platform/mediastream/MediaStreamPrivate.h

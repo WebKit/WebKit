@@ -118,7 +118,7 @@ public:
     {
         auto callbacks = std::exchange(m_applyConstraintsCallbacks, { });
         for (auto& callback : callbacks.values())
-            callback(RealtimeMediaSource::ApplyConstraintsError { "applyConstraint cancelled"_s, ""_s }, { }, { });
+            callback(RealtimeMediaSource::ApplyConstraintsError { MediaConstraintType::Unknown, "applyConstraint cancelled"_s }, { }, { });
     }
 
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<RealtimeMediaSource::ApplyConstraintsError>&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&)>;

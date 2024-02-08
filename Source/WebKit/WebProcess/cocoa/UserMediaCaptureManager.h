@@ -129,7 +129,7 @@ private:
     void sourceConfigurationChanged(WebCore::RealtimeMediaSourceIdentifier, String&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
+    void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, WebCore::MediaConstraintType, String&&);
 
     using Source = std::variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>>;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;

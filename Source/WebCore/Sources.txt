@@ -2460,6 +2460,7 @@ platform/mediastream/AudioMediaStreamTrackRenderer.cpp
 platform/mediastream/AudioTrackPrivateMediaStream.cpp
 platform/mediastream/CaptureDeviceManager.cpp
 platform/mediastream/MediaConstraints.cpp
+platform/mediastream/MediaConstraintType.cpp
 platform/mediastream/MediaEndpointConfiguration.cpp
 platform/mediastream/MediaStreamPrivate.cpp
 platform/mediastream/MediaStreamTrackDataHolder.cpp

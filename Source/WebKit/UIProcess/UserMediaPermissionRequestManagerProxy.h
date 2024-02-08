@@ -39,6 +39,7 @@ namespace WebCore {
 class CaptureDevice;
 class SecurityOrigin;
 
+enum class MediaConstraintType : uint8_t;
 enum class PermissionName : uint8_t;
 
 struct CaptureDeviceWithCapabilities;
@@ -82,7 +83,8 @@ public:
     void viewIsBecomingVisible();
 
     void grantRequest(UserMediaPermissionRequestProxy&);
-    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint = { });
+    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& message = { });
+    void denyRequest(UserMediaPermissionRequestProxy&, WebCore::MediaConstraintType);
 
     void enumerateMediaDevicesForFrame(WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
 
@@ -134,6 +136,8 @@ private:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& message, WebCore::MediaConstraintType);
+
     Ref<UserMediaPermissionRequestProxy> createPermissionRequest(WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
 #if ENABLE(MEDIA_STREAM)
     void finishGrantingRequest(UserMediaPermissionRequestProxy&);
@@ -153,7 +157,7 @@ private:
     void platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
 
     void processUserMediaPermissionRequest();
-    void processUserMediaPermissionInvalidRequest(const String& invalidConstraint);
+    void processUserMediaPermissionInvalidRequest(WebCore::MediaConstraintType invalidConstraint);
     void processUserMediaPermissionValidRequest(Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaDeviceHashSalts&&);
     void startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&&);
 

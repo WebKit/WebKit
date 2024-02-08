@@ -32,30 +32,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/text/WTFString.h>
+#include "MediaConstraintType.h"
 
 namespace WebCore {
-
-enum class MediaConstraintType : uint8_t {
-    Unknown,
-    Width,
-    Height,
-    AspectRatio,
-    FrameRate,
-    FacingMode,
-    Volume,
-    SampleRate,
-    SampleSize,
-    EchoCancellation,
-    DeviceId,
-    GroupId,
-    DisplaySurface,
-    LogicalSurface,
-    FocusDistance,
-    WhiteBalanceMode,
-    Zoom,
-    Torch,
-};
 
 class RealtimeMediaSourceSupportedConstraints {
 public:

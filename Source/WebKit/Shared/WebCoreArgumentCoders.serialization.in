@@ -5060,7 +5060,6 @@ enum class WebCore::MediaConstraintType : uint8_t {
 
 header: <WebCore/MediaConstraints.h>
 [CustomHeader] class WebCore::MediaConstraint {
-    String name();
     WebCore::MediaConstraintType constraintType();
     WebCore::MediaConstraint::DataType dataType();
 };
@@ -6298,6 +6297,7 @@ header: <WebCore/RealtimeMediaSource.h>
 [CustomHeader] struct WebCore::CaptureSourceError {
     String errorMessage;
     WebCore::MediaAccessDenialReason denialReason;
+    WebCore::MediaConstraintType invalidConstraint;
 };
 
 header: <WebCore/FillLightMode.h>

@@ -53,13 +53,11 @@ public:
 
     DataType dataType() const { return m_dataType; }
     MediaConstraintType constraintType() const { return m_constraintType; }
-    const String& name() const { return m_name; }
 
     void log() const;
 
-    MediaConstraint(const String& name, MediaConstraintType constraintType, DataType dataType)
-        : m_name(name)
-        , m_constraintType(constraintType)
+    MediaConstraint(MediaConstraintType constraintType, DataType dataType)
+        : m_constraintType(constraintType)
         , m_dataType(dataType)
     {
     }
@@ -68,7 +66,6 @@ protected:
     MediaConstraint() = default;
 
 private:
-    String m_name;
     MediaConstraintType m_constraintType { MediaConstraintType::Unknown };
     DataType m_dataType { DataType::None };
 };
@@ -328,8 +325,8 @@ public:
     bool isMandatory() const { return m_min || m_max || m_exact; }
 
 protected:
-    NumericConstraint(const String& name, MediaConstraintType type, DataType dataType)
-        : MediaConstraint(name, type, dataType)
+    NumericConstraint(MediaConstraintType type, DataType dataType)
+        : MediaConstraint(type, dataType)
     {
     }
     
@@ -378,8 +375,8 @@ protected:
 
 class IntConstraint final : public NumericConstraint<int> {
 public:
-    IntConstraint(const String& name, MediaConstraintType type)
-        : NumericConstraint<int>(name, type, DataType::Integer)
+    explicit IntConstraint(MediaConstraintType type)
+        : NumericConstraint<int>(type, DataType::Integer)
     {
     }
 
@@ -404,8 +401,8 @@ private:
 
 class DoubleConstraint final : public NumericConstraint<double> {
 public:
-    DoubleConstraint(const String& name, MediaConstraintType type)
-        : NumericConstraint<double>(name, type, DataType::Double)
+    explicit DoubleConstraint(MediaConstraintType type)
+        : NumericConstraint<double>(type, DataType::Double)
     {
     }
 
@@ -430,8 +427,8 @@ private:
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    BooleanConstraint(const String& name, MediaConstraintType type)
-        : MediaConstraint(name, type, DataType::Boolean)
+    explicit BooleanConstraint(MediaConstraintType type)
+        : MediaConstraint(type, DataType::Boolean)
     {
     }
 
@@ -520,8 +517,8 @@ private:
 
 class StringConstraint : public MediaConstraint {
 public:
-    StringConstraint(const String& name, MediaConstraintType type)
-        : MediaConstraint(name, type, DataType::String)
+    explicit StringConstraint(MediaConstraintType type)
+        : MediaConstraint(type, DataType::String)
     {
     }
 
@@ -604,8 +601,8 @@ private:
 
 class UnknownConstraint final : public MediaConstraint {
 public:
-    UnknownConstraint(const String& name, MediaConstraintType type)
-        : MediaConstraint(name, type, DataType::None)
+    UnknownConstraint(MediaConstraintType type)
+        : MediaConstraint(type, DataType::None)
     {
     }
 

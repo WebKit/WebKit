@@ -34,7 +34,7 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
 
     if (constraints) {
         if (auto error = mockSource->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
     }
 
     Ref<RealtimeMediaSource> source = adoptRef(*new MockDisplayCaptureSourceGStreamer(device, WTFMove(mockSource), WTFMove(hashSalts), pageIdentifier));

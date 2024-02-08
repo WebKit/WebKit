@@ -459,10 +459,10 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<int>, std::
     return true;
 }
 
-bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstraint> widthConstraint, std::optional<IntConstraint> heightConstraint, std::optional<DoubleConstraint> frameRateConstraint, std::optional<DoubleConstraint> zoomConstraint, String& badConstraint, double& distance)
+std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> widthConstraint, std::optional<IntConstraint> heightConstraint, std::optional<DoubleConstraint> frameRateConstraint, std::optional<DoubleConstraint> zoomConstraint, double& distance)
 {
     if (!widthConstraint && !heightConstraint && !frameRateConstraint && !zoomConstraint)
-        return true;
+        return { };
 
     auto& capabilities = this->capabilities();
 
@@ -476,8 +476,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
             auto range = capabilities.width();
             ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [", range.longRange().min, ", ", range.longRange().max, "]");
 #endif
-            badConstraint = widthConstraint->name();
-            return false;
+            return MediaConstraintType::Width;
         }
 
         distance = std::min(distance, constraintDistance);
@@ -495,8 +494,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
             auto range = capabilities.height();
             ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed height constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
 #endif
-            badConstraint = heightConstraint->name();
-            return false;
+            return MediaConstraintType::Height;
         }
 
         distance = std::min(distance, constraintDistance);
@@ -514,8 +512,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
             auto range = capabilities.frameRate();
             ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
 #endif
-            badConstraint = frameRateConstraint->name();
-            return false;
+            return MediaConstraintType::FrameRate;
         }
 
         distance = std::min(distance, constraintDistance);
@@ -533,8 +530,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
             auto range = capabilities.zoom();
             ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
 #endif
-            badConstraint = zoomConstraint->name();
-            return false;
+            return MediaConstraintType::Zoom;
         }
 
         distance = std::min(distance, constraintDistance);
@@ -548,18 +544,17 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
     if (!supportsSizeFrameRateAndZoom(width, height, WTFMove(frameRate), WTFMove(zoom))) {
         // Let's try without frame rate and zoom constraints if not mandatory.
         if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom(WTFMove(width), WTFMove(height), { }, { }))
-            return true;
+            return { };
 
         if (widthConstraint)
-            badConstraint = widthConstraint->name();
+            return MediaConstraintType::Width;
         else if (heightConstraint)
-            badConstraint = heightConstraint->name();
+            return MediaConstraintType::Height;
         else
-            badConstraint = frameRateConstraint->name();
-        return false;
+            return MediaConstraintType::FrameRate;
     }
 
-    return true;
+    return { };
 }
 
 double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
@@ -759,7 +754,7 @@ void RealtimeMediaSource::setSizeFrameRateAndZoom(std::optional<int> width, std:
 
 void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
 {
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, constraint.name());
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, constraint.constraintType());
 
     auto& capabilities = this->capabilities();
     switch (constraint.constraintType()) {
@@ -909,7 +904,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     }
 }
 
-bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, MediaTrackConstraintSetMap& candidates, String& failedConstraint)
+std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, MediaTrackConstraintSetMap& candidates)
 {
     double minimumDistance = std::numeric_limits<double>::infinity();
 
@@ -932,13 +927,12 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Me
     //    properties as ideal values. Let candidates be the set of settings dictionaries for which the fitness
     //    distance is finite.
 
-    failedConstraint = emptyString();
-
     // Check width, height, frame rate and zoom jointly, because while they may be supported individually the combination may not be supported.
-    double distance = std::numeric_limits<double>::infinity();
-    if (!supportsSizeFrameRateAndZoom(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), constraints.mandatoryConstraints.zoom(), failedConstraint, minimumDistance))
-        return false;
+    if (auto invalidConstraint = hasInvalidSizeFrameRateAndZoomConstraints(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), constraints.mandatoryConstraints.zoom(), minimumDistance))
+        return invalidConstraint;
 
+    double distance = std::numeric_limits<double>::infinity();
+    std::optional<MediaConstraintType> invalidConstraint;
     constraints.mandatoryConstraints.filter([&](auto& constraint) {
         if (!supportsConstraint(constraint))
             return false;
@@ -951,7 +945,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Me
         double constraintDistance = fitnessDistance(constraint);
         if (std::isinf(constraintDistance)) {
             ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraint.constraintType()));
-            failedConstraint = constraint.name();
+            invalidConstraint = constraint.constraintType();
             return true;
         }
 
@@ -960,8 +954,8 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Me
         return false;
     });
 
-    if (!failedConstraint.isEmpty())
-        return false;
+    if (invalidConstraint)
+        return invalidConstraint;
 
     minimumDistance = distance;
 
@@ -980,8 +974,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Me
         bool supported = false;
 
         if (advancedConstraint.width() || advancedConstraint.height() || advancedConstraint.frameRate() || advancedConstraint.zoom()) {
-            String dummy;
-            if (!supportsSizeFrameRateAndZoom(advancedConstraint.width(), advancedConstraint.height(), advancedConstraint.frameRate(), advancedConstraint.zoom(), dummy, constraintDistance))
+            if (auto invalidConstraint = hasInvalidSizeFrameRateAndZoomConstraints(advancedConstraint.width(), advancedConstraint.height(), advancedConstraint.frameRate(), advancedConstraint.zoom(), constraintDistance))
                 continue;
 
             supported = true;
@@ -1024,7 +1017,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Me
         }
     }
 
-    return true;
+    return { };
 }
 
 bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
@@ -1120,15 +1113,15 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
     return false;
 }
 
-bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraints, String& invalidConstraint)
+std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(const MediaConstraints& constraints)
 {
     ASSERT(constraints.isValid);
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
     MediaTrackConstraintSetMap candidates;
-    if (!selectSettings(constraints, candidates, invalidConstraint))
-        return false;
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
+        return invalidConstraint;
 
     m_fitnessScore = 0;
     candidates.forEach([&] (auto& variant) {
@@ -1164,14 +1157,13 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, "fitness distance : ", m_fitnessScore);
 
-    return true;
+    return { };
 }
 
 RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaConstraints& constraints)
 {
     MediaTrackConstraintSetMap candidates;
-    String invalidConstraint;
-    if (!selectSettings(constraints, candidates, invalidConstraint))
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
         return { };
     return extractVideoFrameSizeConstraints(candidates);
 }
@@ -1257,9 +1249,8 @@ std::optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::a
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
     MediaTrackConstraintSetMap candidates;
-    String failedConstraint;
-    if (!selectSettings(constraints, candidates, failedConstraint))
-        return ApplyConstraintsError { failedConstraint, "Invalid constraint"_s };
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
+        return ApplyConstraintsError { *invalidConstraint, "Invalid constraint"_s };
 
     applyConstraints(candidates);
     return { };

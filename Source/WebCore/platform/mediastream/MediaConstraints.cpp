@@ -470,17 +470,17 @@ bool MediaTrackConstraintSetMap::isEmpty() const
 static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addWidthConstraint, bool addHeightConstraint)
 {
     if (addFrameRateConstraint) {
-        DoubleConstraint frameRateConstraint({ }, MediaConstraintType::FrameRate);
+        DoubleConstraint frameRateConstraint(MediaConstraintType::FrameRate);
         frameRateConstraint.setIdeal(30);
         videoConstraints.set(MediaConstraintType::FrameRate, WTFMove(frameRateConstraint));
     }
     if (addWidthConstraint) {
-        IntConstraint widthConstraint({ }, MediaConstraintType::Width);
+        IntConstraint widthConstraint(MediaConstraintType::Width);
         widthConstraint.setIdeal(640);
         videoConstraints.set(MediaConstraintType::Width, WTFMove(widthConstraint));
     }
     if (addHeightConstraint) {
-        IntConstraint heightConstraint({ }, MediaConstraintType::Height);
+        IntConstraint heightConstraint(MediaConstraintType::Height);
         heightConstraint.setIdeal(480);
         videoConstraints.set(MediaConstraintType::Height, WTFMove(heightConstraint));
     }
@@ -505,7 +505,7 @@ void MediaConstraints::setDefaultAudioConstraints()
     });
 
     if (needsEchoCancellationConstraint) {
-        BooleanConstraint echoCancellationConstraint({ }, MediaConstraintType::EchoCancellation);
+        BooleanConstraint echoCancellationConstraint(MediaConstraintType::EchoCancellation);
         echoCancellationConstraint.setIdeal(true);
         mandatoryConstraints.set(MediaConstraintType::EchoCancellation, WTFMove(echoCancellationConstraint));
     }
@@ -564,7 +564,7 @@ void IntConstraint::logAsInt() const
 
 StringConstraint StringConstraint::isolatedCopy() const
 {
-    return StringConstraint({ name().isolatedCopy(), constraintType(), dataType() }, crossThreadCopy(m_exact), crossThreadCopy(m_ideal));
+    return StringConstraint({ constraintType(), dataType() }, crossThreadCopy(m_exact), crossThreadCopy(m_ideal));
 }
 
 MediaTrackConstraintSetMap MediaTrackConstraintSetMap::isolatedCopy() const

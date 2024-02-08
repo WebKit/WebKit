@@ -29,7 +29,7 @@ messages -> UserMediaCaptureManager NotRefCounted {
     SourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
     SourceConfigurationChanged(WebCore::RealtimeMediaSourceIdentifier id, String persistentID, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities)
     ApplyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
-    ApplyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier id, String failedConstraint, String message)
+    ApplyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier id, enum:uint8_t WebCore::MediaConstraintType invalidConstraint, String message)
 }
 
 #endif

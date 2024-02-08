@@ -48,7 +48,7 @@ public:
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
-    void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(errorMessage)); }
+    void applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(invalidConstraint, WTFMove(errorMessage)); }
 
     void captureStopped(bool didFail);
     void sourceMutedChanged(bool value, bool interrupted);
