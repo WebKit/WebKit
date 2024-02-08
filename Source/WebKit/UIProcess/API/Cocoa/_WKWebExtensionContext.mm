@@ -603,7 +603,7 @@ static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& wi
 
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:windows.size()];
 
-    for (auto& window : windows) {
+    for (Ref window : windows) {
         if (auto delegate = window->delegate())
             [result addObject:delegate];
     }
@@ -621,14 +621,14 @@ static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& wi
     return toAPI(_webExtensionContext->focusedWindow(WebKit::WebExtensionContext::IgnoreExtensionAccess::Yes));
 }
 
-static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabMapValueIterator& tabs)
+static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabVector& tabs)
 {
     if (tabs.isEmpty())
         return [NSSet set];
 
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:tabs.size()];
 
-    for (auto& tab : tabs) {
+    for (Ref tab : tabs) {
         if (auto delegate = tab->delegate())
             [result addObject:delegate];
     }

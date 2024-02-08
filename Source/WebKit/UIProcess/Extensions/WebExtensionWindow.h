@@ -111,6 +111,10 @@ public:
     State state() const;
     void setState(State, CompletionHandler<void(Error)>&&);
 
+    bool isOpen() const;
+    void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
+    void didClose() { ASSERT(m_isOpen); m_isOpen = false; }
+
     bool isFocused() const;
     bool isFrontmost() const;
     void focus(CompletionHandler<void(Error)>&&);
@@ -138,6 +142,7 @@ private:
     WebExtensionWindowIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+    bool m_isOpen : 1 { false };
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToTabs : 1 { false };
