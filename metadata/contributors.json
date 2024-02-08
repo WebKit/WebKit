@@ -3832,6 +3832,14 @@
    },
    {
       "emails" : [
+         "j_stfleur@apple.com"
+      ],
+      "github" : "Jean-saintfleur",
+      "name" : "Jay Stfleur",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "jean-yves.avenard@apple.com",
          "jya@apple.com",
          "jyavenard@gmail.com"
