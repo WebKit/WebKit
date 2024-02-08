@@ -103,6 +103,7 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
     }
 
     GraphicsContext& context = m_frontBuffer.imageBuffer->context();
+    GraphicsContextStateSaver outerSaver(context);
 
     // We never need to copy forward when using display list drawing, since we don't do partial repaint.
     // FIXME: Copy forward logic is duplicated in RemoteImageBufferSet, find a good place to share.
