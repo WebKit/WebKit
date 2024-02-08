@@ -48,7 +48,7 @@ class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionW
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
     void createTab(WebPage&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 

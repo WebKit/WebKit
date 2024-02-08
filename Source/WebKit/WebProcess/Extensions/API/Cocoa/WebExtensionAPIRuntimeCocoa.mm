@@ -149,7 +149,7 @@ bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::opt
     return true;
 }
 
-bool WebExtensionAPIRuntime::isPropertyAllowed(ASCIILiteral name, WebPage*)
+bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
     if (name == "connectNative"_s || name == "sendNativeMessage"_s) {
         // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.

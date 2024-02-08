@@ -833,6 +833,13 @@ EXTENSION_INTERFACES = \
     WebExtensionAPICommands \
     WebExtensionAPICookies \
     WebExtensionAPIDeclarativeNetRequest \
+    WebExtensionAPIDevTools \
+    WebExtensionAPIDevToolsElementsPanel \
+    WebExtensionAPIDevToolsExtensionPanel \
+    WebExtensionAPIDevToolsExtensionSidebarPane \
+    WebExtensionAPIDevToolsInspectedWindow \
+    WebExtensionAPIDevToolsNetwork \
+    WebExtensionAPIDevToolsPanels \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPILocalization \

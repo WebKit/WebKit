@@ -40,7 +40,7 @@ class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExt
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
     void get(WebPage&, id items, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getBytesInUse(WebPage&, id keys, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

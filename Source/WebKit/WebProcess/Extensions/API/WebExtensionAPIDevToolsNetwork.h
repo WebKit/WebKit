@@ -25,43 +25,30 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
+#include "JSWebExtensionAPIDevToolsNetwork.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
 
 namespace WebKit {
 
-class WebExtensionAPIStorageArea;
-
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+class WebExtensionAPIDevToolsNetwork : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIDevToolsNetwork, devToolsNetwork);
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    void getHAR(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
-
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& onNavigated();
+    WebExtensionAPIEvent& onRequestFinished();
+#endif
 
 private:
-    friend class WebExtensionContextProxy;
-
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionStorageType);
-
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
-
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
+    RefPtr<WebExtensionAPIEvent> m_onNavigated;
+    RefPtr<WebExtensionAPIEvent> m_onRequestFinished;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

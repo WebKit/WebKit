@@ -23,45 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import "config.h"
+#import "WebExtensionAPIDevToolsElementsPanel.h"
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
+#import "CocoaHelpers.h"
+#import "JSWebExtensionWrapper.h"
+#import "MessageSenderInlines.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
 namespace WebKit {
 
-class WebExtensionAPIStorageArea;
+void WebExtensionAPIDevToolsElementsPanel::createSidebarPane(NSString *title, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ElementsPanel/createSidebarPane
 
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+    // FIXME: <https://webkit.org/b/246485> Implement.
 
-public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    callback->call();
+}
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+WebExtensionAPIEvent& WebExtensionAPIDevToolsElementsPanel::onSelectionChanged()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ElementsPanel/onSelectionChanged
 
-    WebExtensionAPIEvent& onChanged();
+    if (!m_onSelectionChanged)
+        m_onSelectionChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::DevToolsElementsPanelOnSelectionChanged);
 
-private:
-    friend class WebExtensionContextProxy;
-
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionStorageType);
-
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
-
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
-};
+    return *m_onSelectionChanged;
+}
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

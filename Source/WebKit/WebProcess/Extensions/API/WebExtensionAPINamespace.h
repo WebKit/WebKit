@@ -33,6 +33,7 @@
 #include "WebExtensionAPICommands.h"
 #include "WebExtensionAPICookies.h"
 #include "WebExtensionAPIDeclarativeNetRequest.h"
+#include "WebExtensionAPIDevTools.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPILocalization.h"
 #include "WebExtensionAPIMenus.h"
@@ -58,7 +59,7 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
     WebExtensionAPIAction& action();
     WebExtensionAPIAlarms& alarms();
@@ -67,6 +68,9 @@ public:
     WebExtensionAPICookies& cookies();
     WebExtensionAPIMenus& contextMenus() { return menus(); }
     WebExtensionAPIDeclarativeNetRequest& declarativeNetRequest();
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    WebExtensionAPIDevTools& devtools();
+#endif
     WebExtensionAPIExtension& extension();
     WebExtensionAPILocalization& i18n();
     WebExtensionAPIMenus& menus();
@@ -89,6 +93,9 @@ private:
     RefPtr<WebExtensionAPICommands> m_commands;
     RefPtr<WebExtensionAPICookies> m_cookies;
     RefPtr<WebExtensionAPIDeclarativeNetRequest> m_declarativeNetRequest;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    RefPtr<WebExtensionAPIDevTools> m_devtools;
+#endif
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPILocalization> m_i18n;
     RefPtr<WebExtensionAPIMenus> m_menus;

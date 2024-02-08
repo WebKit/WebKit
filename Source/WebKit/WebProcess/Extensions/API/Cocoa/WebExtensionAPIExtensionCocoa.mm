@@ -86,7 +86,7 @@ bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optio
     return true;
 }
 
-bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
+bool WebExtensionAPIExtension::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
     // This method was removed in manifest version 3.
     if (name == "getURL"_s)

@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
+bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
     if (name == "action"_s)
         return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action");
@@ -46,6 +46,11 @@ bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 
     if (name == "browserAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (name == "devtools"_s)
+        return objectForKey<NSDictionary>(extensionContext().manifest(), @"devtools_page");
+#endif
 
     if (name == "notifications"_s) {
         // FIXME: <rdar://problem/57202210> Add support for browser.notifications.
@@ -108,11 +113,25 @@ WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
 
 WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest
+
     if (!m_declarativeNetRequest)
         m_declarativeNetRequest = WebExtensionAPIDeclarativeNetRequest::create(forMainWorld(), runtime(), extensionContext());
 
     return *m_declarativeNetRequest;
 }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+WebExtensionAPIDevTools& WebExtensionAPINamespace::devtools()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools
+
+    if (!m_devtools)
+        m_devtools = WebExtensionAPIDevTools::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_devtools;
+}
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {

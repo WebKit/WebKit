@@ -544,7 +544,7 @@ bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **out
     return true;
 }
 
-bool WebExtensionAPITabs::isPropertyAllowed(ASCIILiteral name, WebPage*)
+bool WebExtensionAPITabs::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
     static NeverDestroyed<HashSet<AtomString>> removedInManifestVersion3 { HashSet { AtomString("executeScript"_s), AtomString("getSelected"_s), AtomString("insertCSS"_s), AtomString("removeCSS"_s) } };
     if (removedInManifestVersion3.get().contains(name))

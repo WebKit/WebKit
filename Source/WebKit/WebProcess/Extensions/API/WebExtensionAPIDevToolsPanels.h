@@ -25,43 +25,33 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
 
-#include "JSWebExtensionAPIStorage.h"
-#include "JSWebExtensionWrappable.h"
+#include "JSWebExtensionAPIDevToolsPanels.h"
+#include "WebExtensionAPIDevToolsElementsPanel.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIStorageArea.h"
 
 namespace WebKit {
 
-class WebExtensionAPIStorageArea;
-
-class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorage, storage);
+class WebExtensionAPIDevToolsPanels : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIDevToolsPanels, devToolsPanels);
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
+    void createTab(NSString *title, NSString *iconPath, NSString *pagePath, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+    WebExtensionAPIDevToolsElementsPanel& elements();
+    NSString *themeName();
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& onThemeChanged();
+#endif
 
 private:
-    friend class WebExtensionContextProxy;
-
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionStorageType);
-
-    RefPtr<WebExtensionAPIStorageArea> m_local;
-    RefPtr<WebExtensionAPIStorageArea> m_session;
-    RefPtr<WebExtensionAPIStorageArea> m_sync;
-
-    RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
+    RefPtr<WebExtensionAPIDevToolsElementsPanel> m_elements;
+    RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

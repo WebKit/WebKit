@@ -47,7 +47,7 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
     bool isInIncognitoContext(WebPage&);
     void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);

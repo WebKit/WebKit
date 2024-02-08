@@ -1031,6 +1031,10 @@ sub _callString
     # those are represented with empty strings, and it excludes
     # the call path in the output.
     my %specialCases = (
+        devTools => "devtools",
+        devToolsElementsPanel => "devtools.panels.elements",
+        devToolsExtensionPanel => "",
+        devToolsExtensionSidebarPane => "",
         event => "",
         localization => "i18n",
         namespace => "browser",
@@ -1040,6 +1044,9 @@ sub _callString
     );
 
     $className = $specialCases{$className} if defined $specialCases{$className};
+
+    # Transform all other devTools classes from devToolFoo to devtools.foo
+    $className =~ s/^(devTools)(\w)/\L$1.\L$2/g;
 
     my $call = "${className}.${name}";
     $call = $name unless $className;
@@ -1646,6 +1653,12 @@ void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject
     if (UNLIKELY(!impl))
         return;
 
+    RefPtr page = toWebPage(context);
+    if (UNLIKELY(!page)) {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+        return;
+    }
+
 EOF
     my $generateCondition = sub {
         my ($interface, $middleCondition) = @_;
@@ -1653,7 +1666,7 @@ EOF
         my @conditions = ();
         push(@conditions, "isForMainWorld") if $interface->extendedAttributes->{"MainWorldOnly"};
         push(@conditions, $middleCondition) if $middleCondition;
-        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, toWebPage(context).get())") if $interface->extendedAttributes->{"Dynamic"};
+        push(@conditions, "impl->isPropertyAllowed(\"${name}\"_s, *page)") if $interface->extendedAttributes->{"Dynamic"};
         return join(" && ", @conditions);
     };
 
@@ -1695,6 +1708,12 @@ bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSS
     if (UNLIKELY(!impl))
         return false;
 
+    RefPtr page = toWebPage(context);
+    if (UNLIKELY(!page)) {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+        return false;
+    }
+
 EOF
 
     push(@contents, "    bool isForMainWorld = impl->isForMainWorld();\n\n") if $hasMainWorldOnlyProperties;
@@ -1728,6 +1747,12 @@ JSValueRef ${className}::getProperty(JSContextRef context, JSObjectRef thisObjec
     RefPtr impl = to${implementationClassName}(context, thisObject);
     if (UNLIKELY(!impl))
         return JSValueMakeUndefined(context);
+
+    RefPtr page = toWebPage(context);
+    if (UNLIKELY(!page)) {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+        return JSValueMakeUndefined(context);
+    }
 
 EOF
 

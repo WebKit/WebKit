@@ -50,7 +50,7 @@ static NSString * const accessLevelTrustedAndUntrustedContexts = @"TRUSTED_AND_U
 
 namespace WebKit {
 
-bool WebExtensionAPIStorageArea::isPropertyAllowed(ASCIILiteral propertyName, WebPage*)
+bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
 {
     static NeverDestroyed<HashSet<AtomString>> syncStorageProperties { HashSet { AtomString("QUOTA_BYTES_PER_ITEM"_s), AtomString("MAX_ITEMS"_s), AtomString("MAX_WRITE_OPERATIONS_PER_HOUR"_s), AtomString("MAX_WRITE_OPERATIONS_PER_MINUTE"_s) } };
 

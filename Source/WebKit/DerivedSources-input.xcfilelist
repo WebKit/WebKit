@@ -514,6 +514,13 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPICommands.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPICookies.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDeclarativeNetRequest.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevTools.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsElementsPanel.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsExtensionPanel.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsExtensionSidebarPane.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsInspectedWindow.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsNetwork.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsPanels.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPILocalization.idl

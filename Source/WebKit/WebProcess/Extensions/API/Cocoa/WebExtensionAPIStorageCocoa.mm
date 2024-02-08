@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIStorage::isPropertyAllowed(ASCIILiteral propertyName, WebPage*)
+bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
 {
     if (propertyName == "session"_s)
         return extensionContext().isSessionStorageAllowedInContentScripts() || isForMainWorld();
