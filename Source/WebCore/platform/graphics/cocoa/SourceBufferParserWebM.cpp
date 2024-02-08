@@ -449,15 +449,20 @@ public:
     }
 
     MediaDescriptionWebM(webm::TrackEntry&& track)
-        : m_track { WTFMove(track) }
+        : MediaDescription(extractCodec(track))
+        , m_track { WTFMove(track) }
     {
     }
 
-    AtomString codec() const final
-    {
-        if (m_codec)
-            return *m_codec;
+    bool isVideo() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kVideo; }
+    bool isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
+    bool isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
 
+    const webm::TrackEntry& track() { return m_track; }
+
+private:
+    String extractCodec(const webm::TrackEntry& track) const
+    {
         // From: https://www.matroska.org/technical/codec_specs.html
         // "Each Codec ID MUST include a Major Codec ID immediately following the Codec ID Prefix.
         // A Major Codec ID MAY be followed by an OPTIONAL Codec ID Suffix to communicate a refinement
@@ -466,31 +471,18 @@ public:
         // ID MUST be composed of only capital letters (A-Z) and numbers (0-9). The Codec ID Suffix MUST
         // be composed of only capital letters (A-Z), numbers (0-9), underscore (“_”), and forward slash (“/”)."
 
-        if (!m_track.codec_id.is_present()) {
-            m_codec = emptyAtom();
-            return *m_codec;
-        }
-
-        StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
-        if (!codecID.startsWith("V_"_s) && !codecID.startsWith("A_"_s) && !codecID.startsWith("S_"_s)) {
-            m_codec = emptyAtom();
-            return *m_codec;
-        }
+        if (!track.codec_id.is_present())
+            return emptyString();
+        StringView codecID { track.codec_id.value().data(), (unsigned)track.codec_id.value().length() };
+        if (!codecID.startsWith("V_"_s) && !codecID.startsWith("A_"_s) && !codecID.startsWith("S_"_s))
+            return emptyString();
 
         auto slashLocation = codecID.find('/');
         auto length = slashLocation == notFound ? codecID.length() - 2 : slashLocation - 2;
-        m_codec = codecID.substring(2, length).convertToASCIILowercaseAtom();
-        return *m_codec;
+        return codecID.substring(2, length).convertToASCIILowercase();
     }
-    bool isVideo() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kVideo; }
-    bool isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
-    bool isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
 
-    const webm::TrackEntry& track() { return m_track; }
-
-private:
-    mutable std::optional<AtomString> m_codec;
-    webm::TrackEntry m_track;
+    const webm::TrackEntry m_track;
 };
 
 std::span<const ASCIILiteral> SourceBufferParserWebM::supportedMIMETypes()

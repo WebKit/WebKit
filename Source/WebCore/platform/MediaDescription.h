@@ -27,18 +27,25 @@
 #define MediaDescription_h
 
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class MediaDescription : public RefCounted<MediaDescription> {
+class MediaDescription : public ThreadSafeRefCounted<MediaDescription> {
 public:
+    explicit MediaDescription(String&& codec)
+        : m_codec(WTFMove(codec))
+    {
+        ASSERT(m_codec.isSafeToSendToAnotherThread());
+    }
     virtual ~MediaDescription() = default;
 
-    virtual AtomString codec() const = 0;
+    StringView codec() const { return m_codec; }
     virtual bool isVideo() const = 0;
     virtual bool isAudio() const = 0;
     virtual bool isText() const = 0;
+protected:
+    const String m_codec;
 };
 
 }

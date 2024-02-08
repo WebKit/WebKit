@@ -26,7 +26,8 @@
 #include "MediaDescription.h"
 
 #include <gst/gst.h>
-#include <wtf/text/AtomString.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,22 +40,19 @@ public:
 
     virtual ~GStreamerMediaDescription() = default;
 
-    AtomString codec() const override;
-    bool isVideo() const override;
-    bool isAudio() const override;
-    bool isText() const override;
+    bool isVideo() const final;
+    bool isAudio() const final;
+    bool isText() const final;
 
 private:
     GStreamerMediaDescription(const GRefPtr<GstCaps>& caps)
-        : MediaDescription()
+        : MediaDescription(extractCodecName(caps))
         , m_caps(caps)
     {
-        m_codecName = extractCodecName();
     }
 
-    AtomString extractCodecName();
-    GRefPtr<GstCaps> m_caps;
-    AtomString m_codecName;
+    String extractCodecName(const GRefPtr<GstCaps>&) const;
+    const GRefPtr<GstCaps> m_caps;
 };
 
 } // namespace WebCore.

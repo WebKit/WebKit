@@ -40,21 +40,19 @@ public:
 
     virtual ~RemoteMediaDescription() = default;
 
-    AtomString codec() const final { return m_codec; }
     bool isVideo() const final { return m_isVideo; }
     bool isAudio() const final { return m_isAudio; }
     bool isText() const final { return m_isText;}
 
 private:
     RemoteMediaDescription(const MediaDescriptionInfo& descriptionInfo)
-        : m_codec(descriptionInfo.m_codec)
+        : MediaDescription(descriptionInfo.m_codec.isolatedCopy())
         , m_isVideo(descriptionInfo.m_isVideo)
         , m_isAudio(descriptionInfo.m_isAudio)
         , m_isText(descriptionInfo.m_isText)
     {
     }
 
-    AtomString m_codec;
     bool m_isVideo { false };
     bool m_isAudio { false };
     bool m_isText { false };
