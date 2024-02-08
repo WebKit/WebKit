@@ -63,6 +63,8 @@ set(TestWTF_SOURCES
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp
     Tests/WTF/LEBDecoder.cpp
+    Tests/WTF/LazyRef.cpp
+    Tests/WTF/LazyUniqueRef.cpp
     Tests/WTF/LifecycleLogger.cpp
     Tests/WTF/LineEnding.cpp
     Tests/WTF/ListHashSet.cpp
