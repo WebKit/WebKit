@@ -1984,3 +1984,11 @@ webkit.org/b/268494 [ Monterey+ Release ] media/track/media-element-enqueue-even
 webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
 
 webkit.org/b/268836 [ Monterey+ Debug ] loader/stateobjects/pushstate-size-iframe.html [ Skip ]
+
+# webkit.org/b/269003 Umbrella bug for flaky test failures impacting EWS 
+[ Monterey+ Release X86_64 ] compositing/clipping/border-radius-async-overflow-non-stacking.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Release ] media/audio-session-category-unmute-mute.html [ Pass Failure ]
+[ Monterey+ Release ] media/audio-session-category.html [ Pass Failure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Release ] fast/speechrecognition/start-recognition-after-denied-gum.html [ Pass Timeout ]
