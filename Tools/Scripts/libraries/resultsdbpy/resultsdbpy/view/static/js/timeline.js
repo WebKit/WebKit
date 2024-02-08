@@ -1224,14 +1224,14 @@ class TimelineFromEndpoint {
         return `<div ref="${containnerRef}" style="position: relative">
             <div ref="${searchBarRef}" class="next-regress-bar">
                 <button class="button" ref="${findRegressButtonRef}">
-                    Find Regress Point
+                    Find Regression Point
                 </button>
                 <div ref="${findRegressPannelRef}">
                     <button class="button" ref="${previousRegressButtonRef}">
-                        Previous Regress Point
+                        Previous Regression Point
                     </button>
                     <button class="button" ref="${nextRegressButtonRef}">
-                        Next Regress Point
+                        Next Regression Point
                     </button>
                     <button class="button" ref="${closeRegressButtonRef}">
                         Close
