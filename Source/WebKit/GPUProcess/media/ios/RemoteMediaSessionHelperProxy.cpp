@@ -116,9 +116,6 @@ void RemoteMediaSessionHelperProxy::activeAudioRouteDidChange(ShouldPause should
 void RemoteMediaSessionHelperProxy::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<WebCore::MediaPlaybackTarget>&& target)
 {
     auto context = target->targetContext();
-    if (!context.serializeOutputContext())
-        return;
-
     m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, context), { });
 }
 

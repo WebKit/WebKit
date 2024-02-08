@@ -42,6 +42,31 @@ MediaPlaybackTargetContext::MediaPlaybackTargetContext(RetainPtr<AVOutputContext
     m_type = MediaPlaybackTargetContext::Type::AVOutputContext;
 }
 
+auto MediaPlaybackTargetContext::ipcData() const -> IPCData
+{
+    if (encodingRequiresPlatformData()) {
+        if (type() == Type::AVOutputContext) {
+            if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+                return outputContext();
+        }
+    } else
+        return NonPlatformData { deviceName(), mockState() };
+
+    return std::nullopt;
+}
+
+std::optional<MediaPlaybackTargetContext> MediaPlaybackTargetContext::fromIPCData(IPCData&& ipcData)
+{
+    if (ipcData) {
+        return WTF::switchOn(WTFMove(*ipcData), [](RetainPtr<AVOutputContext>&& outputContext) {
+            return MediaPlaybackTargetContext { WTFMove(outputContext) };
+        }, [] (NonPlatformData&& d) {
+            return MediaPlaybackTargetContext { d.mockDeviceName, d.mockState };
+        });
+    }
+    return std::nullopt;
+}
+
 String MediaPlaybackTargetContext::deviceName() const
 {
     ASSERT(m_type == MediaPlaybackTargetContext::Type::Mock || m_type == MediaPlaybackTargetContext::Type::AVOutputContext);
@@ -68,10 +93,6 @@ bool MediaPlaybackTargetContext::hasActiveRoute() const
     ASSERT(m_type != MediaPlaybackTargetContext::Type::None);
     if (m_type == MediaPlaybackTargetContext::Type::Mock)
         return !m_mockDeviceName.isEmpty();
-
-    // FIXME: It may not be safe to use the cached `hasActiveRoute` of a serialized AVOutputContext
-    if (m_type == MediaPlaybackTargetContext::Type::SerializedAVOutputContext)
-        return m_cachedHasActiveRoute;
 
     ASSERT(m_type == MediaPlaybackTargetContext::Type::AVOutputContext);
     bool hasActiveRoute = false;
@@ -108,53 +129,6 @@ bool MediaPlaybackTargetContext::supportsRemoteVideoPlayback() const
     }
 
     return supportsRemoteVideoPlayback;
-}
-
-bool MediaPlaybackTargetContext::serializeOutputContext()
-{
-    ASSERT(m_type != MediaPlaybackTargetContext::Type::SerializedAVOutputContext);
-    if (m_type != MediaPlaybackTargetContext::Type::AVOutputContext)
-        return false;
-
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
-    [archiver encodeObject:m_outputContext.get() forKey:NSKeyedArchiveRootObjectKey];
-    [archiver finishEncoding];
-
-    m_serializedOutputContext = [archiver encodedData];
-    m_type = MediaPlaybackTargetContext::Type::SerializedAVOutputContext;
-    m_outputContext.clear();
-
-    return true;
-}
-
-bool MediaPlaybackTargetContext::deserializeOutputContext()
-{
-    ASSERT(m_type != MediaPlaybackTargetContext::Type::AVOutputContext);
-    if (m_type != MediaPlaybackTargetContext::Type::SerializedAVOutputContext)
-        return false;
-
-    bool success = false;
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:m_serializedOutputContext.get() error:nullptr]);
-    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-    auto allowedClassSet = adoptNS([[NSSet alloc] initWithArray:@[ PAL::getAVOutputContextClass() ]]);
-
-    @try {
-        id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
-        ASSERT(result);
-        if (result) {
-            m_outputContext = result;
-            m_type = MediaPlaybackTargetContext::Type::AVOutputContext;
-            m_serializedOutputContext.clear();
-            success = true;
-        }
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode object of class AVOutputContext : %@", exception);
-    } @finally {
-        [unarchiver finishDecoding];
-        unarchiver.get().delegate = nil;
-    }
-
-    return success;
 }
 
 }

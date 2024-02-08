@@ -78,54 +78,6 @@
 
 namespace IPC {
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)
-{
-    if (target.type() == WebCore::MediaPlaybackTargetContext::Type::AVOutputContext) {
-        if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
-            encoder << target.outputContext();
-    } else if (target.type() == WebCore::MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
-        encoder << target.serializedOutputContext();
-        encoder << target.hasActiveRoute();
-    } else
-        ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, WebCore::MediaPlaybackTargetContext::Type contextType, WebCore::MediaPlaybackTargetContext& target)
-{
-    ASSERT(contextType != WebCore::MediaPlaybackTargetContext::Type::Mock);
-
-    if (contextType == WebCore::MediaPlaybackTargetContext::Type::AVOutputContext) {
-        if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
-            return false;
-
-        auto outputContext = decoder.decodeWithAllowedClasses<AVOutputContext>();
-        if (!outputContext)
-            return false;
-
-        target = WebCore::MediaPlaybackTargetContext { WTFMove(*outputContext) };
-        return true;
-    }
-
-    if (contextType == WebCore::MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
-        std::optional<RetainPtr<NSData>> serializedOutputContext = decoder.decode<RetainPtr<NSData>>();
-        if (!serializedOutputContext)
-            return false;
-
-        bool hasActiveRoute;
-        if (!decoder.decode(hasActiveRoute))
-            return false;
-
-        target = WebCore::MediaPlaybackTargetContext { WTFMove(*serializedOutputContext), hasActiveRoute };
-        return true;
-    }
-
-    return false;
-}
-#endif
-
-
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 template<> Class getClass<VKCImageAnalysis>()

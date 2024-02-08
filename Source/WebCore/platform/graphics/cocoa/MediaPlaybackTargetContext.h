@@ -44,7 +44,6 @@ enum class MediaPlaybackTargetContextMockState : uint8_t {
 enum class MediaPlaybackTargetContextType : uint8_t {
     None,
     AVOutputContext,
-    SerializedAVOutputContext,
     Mock,
 };
 
@@ -57,20 +56,19 @@ public:
     MediaPlaybackTargetContext() = default;
     WEBCORE_EXPORT explicit MediaPlaybackTargetContext(RetainPtr<AVOutputContext>&&);
 
-    MediaPlaybackTargetContext(RetainPtr<NSData>&& serializedOutputContext, bool hasActiveRoute)
-        : m_type(Type::SerializedAVOutputContext)
-        , m_serializedOutputContext(WTFMove(serializedOutputContext))
-        , m_cachedHasActiveRoute(hasActiveRoute)
-    {
-        ASSERT(m_serializedOutputContext);
-    }
-
     MediaPlaybackTargetContext(const String& mockDeviceName, MockState state)
         : m_type(Type::Mock)
         , m_mockDeviceName(mockDeviceName)
         , m_mockState(state)
     {
     }
+
+    struct NonPlatformData {
+        String mockDeviceName;
+        MockState mockState;
+    };
+
+    using IPCData = std::optional<std::variant<RetainPtr<AVOutputContext>, NonPlatformData>>;
 
     Type type() const { return m_type; }
     WEBCORE_EXPORT String deviceName() const;
@@ -89,23 +87,15 @@ public:
         return m_outputContext;
     }
 
-    RetainPtr<NSData> serializedOutputContext() const
-    {
-        ASSERT(m_type == Type::SerializedAVOutputContext);
-        return m_serializedOutputContext;
-    }
+    bool encodingRequiresPlatformData() const { return m_type == Type::AVOutputContext; }
 
-    WEBCORE_EXPORT bool serializeOutputContext();
-    WEBCORE_EXPORT bool deserializeOutputContext();
-
-    bool encodingRequiresPlatformData() const { return m_type == Type::AVOutputContext || m_type == Type::SerializedAVOutputContext; }
+    WEBCORE_EXPORT IPCData ipcData() const;
+    WEBCORE_EXPORT static std::optional<MediaPlaybackTargetContext> fromIPCData(IPCData&&);
 
 private:
+
     Type m_type { Type::None };
     RetainPtr<AVOutputContext> m_outputContext;
-    RetainPtr<NSData> m_serializedOutputContext;
-    bool m_cachedHasActiveRoute { false };
-
     String m_mockDeviceName;
     MockState m_mockState { MockState::Unknown };
 };

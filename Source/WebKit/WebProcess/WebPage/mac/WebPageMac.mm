@@ -1035,7 +1035,6 @@ void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier conte
 {
     switch (targetContext.type()) {
     case MediaPlaybackTargetContext::Type::AVOutputContext:
-    case MediaPlaybackTargetContext::Type::SerializedAVOutputContext:
         m_page->setPlaybackTarget(contextId, MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
         break;
     case MediaPlaybackTargetContext::Type::Mock:

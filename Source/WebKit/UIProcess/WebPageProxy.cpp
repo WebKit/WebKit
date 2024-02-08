@@ -11688,10 +11688,6 @@ void WebPageProxy::Internals::setPlaybackTarget(PlaybackTargetClientContextIdent
         return;
 
     auto context = target->targetContext();
-    ASSERT(context.type() != MediaPlaybackTargetContext::Type::SerializedAVOutputContext);
-    if (page.preferences().useGPUProcessForMediaEnabled())
-        context.serializeOutputContext();
-
     page.send(Messages::WebPage::PlaybackTargetSelected(contextId, context));
 }
 
