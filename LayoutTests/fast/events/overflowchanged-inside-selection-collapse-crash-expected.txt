@@ -1,3 +1,0 @@
-This tests removing the iframe for which overflowchanged is dispatched. WebKit should not crash.
-
-PASS.
