@@ -1,0 +1,4 @@
+
+FAIL takeUntil(): notifier Observable detaches document before source Observable would be subscribed to promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil(): Source and notifier internal observers do not crash in a detached document promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+

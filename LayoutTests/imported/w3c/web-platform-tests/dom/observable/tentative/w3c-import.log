@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-constructor.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-event-target.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-event-target.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-takeUntil.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-takeUntil.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-toArray.any.js

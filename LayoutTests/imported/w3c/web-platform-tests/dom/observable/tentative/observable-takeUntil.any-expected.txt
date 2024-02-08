@@ -1,0 +1,13 @@
+
+FAIL takeUntil subscribes to source Observable and mirrors it uninterrupted promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil subscribes to notifier promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: notifier next() unsubscribes to notifier promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: notifier error() unsubscribes to notifier promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: notifier next() unsubscribes from notifier & source observable promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil()'s AbortSignal unsubscribes from notifier & source observable promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: source never subscribed to when notifier synchronously emits a value promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: source never subscribed to when notifier synchronously emits error promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: source is uninterrupted when notifier completes, even synchronously promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil() mirrors the source Observable until its first next() value promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+FAIL takeUntil: notifier calls `Subscriber#error()` twice; second goes to global error handler promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Observable"
+

@@ -1,10 +1,15 @@
 
 FAIL Observable constructor assert_implements: The Observable interface is not implemented undefined
-FAIL Subscriber interface is not constructible assert_implements: The Subscriber interface is not implemented undefined
 FAIL subscribe() can be called with no arguments Can't find variable: Observable
+FAIL Subscriber interface is not constructible assert_implements: The Subscriber interface is not implemented undefined
 FAIL Subscribe with just a function as the next handler Can't find variable: Observable
 FAIL Observable constructor calls initializer on subscribe Can't find variable: Observable
 FAIL Observable error path called synchronously Can't find variable: Observable
+FAIL Subscriber must have receiver Can't find variable: Observable
+FAIL Subscriber next & error must recieve argument Can't find variable: Observable
+FAIL Subscriber complete() will set active to false, and abort signal Can't find variable: Observable
+FAIL Subscriber active is readonly Can't find variable: Observable
+FAIL Subscriber signal is readonly Can't find variable: Observable
 FAIL Observable should error if initializer throws Can't find variable: Observable
 FAIL Subscription is inactive after complete() Can't find variable: Observable
 FAIL Subscription is inactive after error() Can't find variable: Observable
