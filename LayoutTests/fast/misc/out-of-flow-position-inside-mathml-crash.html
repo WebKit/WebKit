@@ -1,0 +1,16 @@
+<style>
+msqrt {
+  position: absolute;
+}
+</style>
+<div id=container></div>
+<math><mroot mathsize="0px"><mn></mn><msqrt><mtd><mn id="append_here">PASS if no crash or assert.</mn></math>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+let inlineBox = document.createElement("span");
+append_here.appendChild(inlineBox);
+inlineBox.offsetWidth;
+</script>

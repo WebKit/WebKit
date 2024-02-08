@@ -149,6 +149,13 @@ RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
     return nullptr;
 }
 
+bool LineLayout::contains(const RenderElement& renderer) const
+{
+    if (!m_boxTree.contains(renderer))
+        return false;
+    return layoutState().hasBoxGeometry(m_boxTree.layoutBoxForRenderer(renderer));
+}
+
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
     if (!isContentRenderer(renderer))

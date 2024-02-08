@@ -506,8 +506,11 @@ LayoutUnit RenderInline::innerPaddingBoxHeight() const
 
 IntRect RenderInline::linesBoundingBox() const
 {
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (!layout->contains(*this))
+            return { };
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+    }
 
     IntRect result;
     

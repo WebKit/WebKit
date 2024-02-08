@@ -99,6 +99,7 @@ public:
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
+    bool contains(const RenderElement& renderer) const;
 
     bool isPaginated() const;
     LayoutUnit contentBoxLogicalHeight() const;
