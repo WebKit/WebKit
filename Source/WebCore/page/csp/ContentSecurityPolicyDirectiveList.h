@@ -76,6 +76,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>&, const String&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&, bool didReceiveRedirectResponse, const String&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForWorker(const URL&, bool didReceiveRedirectResponse);
+    const ContentSecurityPolicyDirective* violatedDirectiveForTrustedTypesPolicy(const String&, bool isDuplicate, AllowTrustedTypePolicy&) const;
 
     const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 

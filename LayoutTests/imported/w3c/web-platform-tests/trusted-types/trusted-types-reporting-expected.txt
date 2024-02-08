@@ -1,12 +1,20 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types one"
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types two"
 CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'two' because it violates the following Content Security Policy directive: "trusted-types one"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'one' because it violates the following Content Security Policy directive: "trusted-types two"
+CONSOLE MESSAGE: Refused to load because it does not appear in the object-src directive of the Content Security Policy.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 
 
-Harness Error (TIMEOUT), message = null
 
-TIMEOUT Trusted Type violation report: creating a forbidden policy. Test timed out
-NOTRUN Trusted Type violation report: creating a report-only-forbidden policy.
-NOTRUN Trusted Type violation report: creating a forbidden-but-not-reported policy.
-NOTRUN Trusted Type violation report: assign string to script url
+Harness Error (FAIL), message = SyntaxError: Unexpected token '<'
+
+PASS Trusted Type violation report: creating a forbidden policy.
+PASS Trusted Type violation report: creating a report-only-forbidden policy.
+PASS Trusted Type violation report: creating a forbidden-but-not-reported policy.
+TIMEOUT Trusted Type violation report: assign string to script url Test timed out
 NOTRUN Trusted Type violation report: assign string to html
 NOTRUN Trusted Type violation report: assign trusted script to script; no report
 NOTRUN Trusted Type violation report: assign trusted HTML to html; no report

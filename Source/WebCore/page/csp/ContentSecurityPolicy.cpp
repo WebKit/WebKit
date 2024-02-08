@@ -754,6 +754,25 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForBaseURI, url);
 }
 
+AllowTrustedTypePolicy ContentSecurityPolicy::allowTrustedTypesPolicy(const String& value, bool isDuplicate) const
+{
+    String sourceURL;
+    TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+    AllowTrustedTypePolicy details = AllowTrustedTypePolicy::Allowed;
+    auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
+        String name = violatedDirective.nameForReporting();
+
+        String consoleMessage = makeString(violatedDirective.directiveList().isReportOnly() ? "[Report Only] " : "",
+            "Refused to create a TrustedTypePolicy named '", value, "' because it violates the following Content Security Policy directive: \"", violatedDirective.text(), "\"");
+        reportViolation(violatedDirective, "trusted-types-policy"_s, consoleMessage, sourceURL, StringView(value), sourcePosition);
+    };
+    auto isAllowed = allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForTrustedTypesPolicy, value, isDuplicate, details);
+
+    return isAllowed
+        ? AllowTrustedTypePolicy::Allowed
+        : details;
+}
+
 static bool shouldReportProtocolOnly(const URL& url)
 {
     // FIXME: https://w3c.github.io/webappsec-csp/#strip-url-for-use-in-reports suggests this should
@@ -816,7 +835,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
 
     String blockedURI;
-    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s)
+    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s || blockedURLString == "trusted-types-policy"_s)
         blockedURI = blockedURLString;
     else {
         // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'default' because it violates the following Content Security Policy directive: "trusted-types 'allow-duplicates' duplicatename default"
 
-FAIL policy - duplicate names assert_throws_js: function "_ => trustedTypes.createPolicy("default", {})" did not throw
+PASS policy - duplicate names
 

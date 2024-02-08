@@ -80,7 +80,7 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
-enum class AllowTrustedTypePolicyDetails : uint8_t {
+enum class AllowTrustedTypePolicy : uint8_t {
     Allowed,
     DisallowedName,
     DisallowedDuplicateName,
@@ -149,6 +149,8 @@ public:
 
     bool allowObjectFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false) const;
+
+    AllowTrustedTypePolicy allowTrustedTypesPolicy(const String&, bool isDuplicate) const;
 
     void setOverrideAllowInlineStyle(bool);
 

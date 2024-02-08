@@ -62,24 +62,24 @@ ContentSecurityPolicyTrustedTypesDirective::ContentSecurityPolicyTrustedTypesDir
     parse(value);
 }
 
-bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, bool isDuplicate, AllowTrustedTypePolicyDetails& details) const
+bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, bool isDuplicate, AllowTrustedTypePolicy& details) const
 {
     auto invalidPolicy = value.find([](UChar ch) {
         return !isPolicyNameCharacter(ch);
     });
 
     if (isDuplicate && !m_allowDuplicates)
-        details = AllowTrustedTypePolicyDetails::DisallowedDuplicateName;
+        details = AllowTrustedTypePolicy::DisallowedDuplicateName;
     else if (isDuplicate && value == "default"_s)
-        details = AllowTrustedTypePolicyDetails::DisallowedDuplicateName;
+        details = AllowTrustedTypePolicy::DisallowedDuplicateName;
     else if (invalidPolicy != notFound)
-        details = AllowTrustedTypePolicyDetails::DisallowedName;
+        details = AllowTrustedTypePolicy::DisallowedName;
     else if (!(m_allowAny || m_list.contains(value)))
-        details = AllowTrustedTypePolicyDetails::DisallowedName;
+        details = AllowTrustedTypePolicy::DisallowedName;
     else
-        details = AllowTrustedTypePolicyDetails::Allowed;
+        details = AllowTrustedTypePolicy::Allowed;
 
-    return details == AllowTrustedTypePolicyDetails::Allowed;
+    return details == AllowTrustedTypePolicy::Allowed;
 }
 
 void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)

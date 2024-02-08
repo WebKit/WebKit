@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeName' because it violates the following Content Security Policy directive: "trusted-types "
 
-FAIL No name list given - policy creation fails. assert_throws_js: createPolicy with an empty trusted-types CSP directive function "() => window.trustedTypes.createPolicy('SomeName', { createHTML: s => s } )" did not throw
+PASS No name list given - policy creation fails.
 

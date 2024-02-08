@@ -443,6 +443,14 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForTrustedTypesPolicy(const String& value, bool isDuplicate, AllowTrustedTypePolicy& details) const
+{
+    auto* directive = m_trustedTypes.get();
+    if (!directive || directive->allows(value, isDuplicate, details))
+        return nullptr;
+    return directive;
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -754,6 +762,8 @@ bool ContentSecurityPolicyDirectiveList::shouldReportSample(const String& violat
         directive = m_styleSrc.get();
     else if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::scriptSrc }))
         directive = m_scriptSrc.get();
+    else if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::trustedTypes }))
+        return true;
 
     return directive && directive->shouldReportSample();
 }

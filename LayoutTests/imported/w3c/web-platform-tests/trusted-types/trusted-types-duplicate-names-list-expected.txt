@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'a' because it violates the following Content Security Policy directive: "trusted-types a b c*"
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'd' because it violates the following Content Security Policy directive: "trusted-types a b c*"
 
-FAIL TrustedTypePolicyFactory and policy list in CSP. assert_throws_js: Duplicate name function "_ => trustedTypes.createPolicy("a", {})" did not throw
+PASS TrustedTypePolicyFactory and policy list in CSP.
 

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types one two"
 
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
+PASS Violation report status OK.
 

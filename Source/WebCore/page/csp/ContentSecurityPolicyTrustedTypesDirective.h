@@ -32,13 +32,13 @@
 namespace WebCore {
 
 class ContentSecurityPolicyDirectiveList;
-enum class AllowTrustedTypePolicyDetails : uint8_t;
+enum class AllowTrustedTypePolicy : uint8_t;
 
 class ContentSecurityPolicyTrustedTypesDirective : public ContentSecurityPolicyDirective {
 public:
     ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
-    bool allows(const String& value, bool isDuplicate, AllowTrustedTypePolicyDetails&) const;
+    bool allows(const String& value, bool isDuplicate, AllowTrustedTypePolicy&) const;
 
 private:
     void parse(const String&);
