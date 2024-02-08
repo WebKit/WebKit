@@ -55,6 +55,8 @@ struct Feature {
     std::optional<Comparison> leftComparison;
     std::optional<Comparison> rightComparison;
 
+    std::optional<CSSValueID> functionId { };
+
     const FeatureSchema* schema { nullptr };
 };
 
@@ -68,6 +70,8 @@ using QueryInParens = std::variant<Condition, Feature, GeneralEnclosed>;
 struct Condition {
     LogicalOperator logicalOperator { LogicalOperator::And };
     Vector<QueryInParens> queries;
+
+    std::optional<CSSValueID> functionId { };
 };
 
 enum class EvaluationResult : uint8_t { False, True, Unknown };
@@ -82,7 +86,7 @@ struct FeatureSchema {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     enum class Type : uint8_t { Discrete, Range };
-    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier };
+    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };
 
     AtomString name;
     Type type;

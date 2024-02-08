@@ -35,6 +35,8 @@ namespace CQ {
 struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
     static std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
+    static bool isValidFunctionId(CSSValueID);
+    static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
     static Vector<const MQ::FeatureSchema*> featureSchemas();
 };
 

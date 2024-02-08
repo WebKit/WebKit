@@ -107,7 +107,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
                 return false;
             return !axes.contains(principalBox->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width);
         case ContainerType::Normal:
-            return false;
+            return axes.isEmpty();
         }
         RELEASE_ASSERT_NOT_REACHED();
     };

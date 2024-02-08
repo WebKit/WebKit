@@ -26,6 +26,7 @@
 #include "GenericMediaQueryParser.h"
 
 #include "CSSAspectRatioValue.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
 #include "MediaQueryParserContext.h"
@@ -37,7 +38,10 @@ static AtomString consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
-    return range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
+    auto name = range.consumeIncludingWhitespace().value();
+    if (isCustomPropertyName(name))
+        return name.toAtomString();
+    return name.convertToASCIILowercaseAtom();
 }
 
 std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
@@ -85,10 +89,11 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
         return { };
 
     range.consumeIncludingWhitespace();
-    if (range.atEnd())
-        return { };
 
-    RefPtr value = consumeValue(range, context);
+    RefPtr value = isCustomPropertyName(featureName)
+        ? CSSCustomPropertyValue::createSyntaxAll(featureName, CSSVariableData::create(range.consumeAll()))
+        : consumeValue(range, context);
+
     if (!value)
         return { };
 
@@ -263,6 +268,9 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                 return true;
             }
             return is<CSSAspectRatioValue>(value.get());
+
+        case FeatureSchema::ValueType::CustomProperty:
+            return value && value->isCustomPropertyValue();
         }
         ASSERT_NOT_REACHED();
         return false;

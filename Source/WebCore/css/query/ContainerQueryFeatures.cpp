@@ -161,4 +161,22 @@ const FeatureSchema& orientation()
     return schema;
 }
 
+struct StyleFeatureSchema : public FeatureSchema {
+    StyleFeatureSchema()
+        : FeatureSchema("style"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::CustomProperty)
+    { }
+
+    EvaluationResult evaluate(const MQ::Feature&, const FeatureEvaluationContext&) const override
+    {
+        // FIXME: Implement.
+        return EvaluationResult::Unknown;
+    }
+};
+
+const FeatureSchema& style()
+{
+    static MainThreadNeverDestroyed<StyleFeatureSchema> schema;
+    return schema;
+}
+
 }

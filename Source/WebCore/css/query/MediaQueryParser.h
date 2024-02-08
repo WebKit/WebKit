@@ -39,7 +39,7 @@ struct MediaQueryParser : public GenericMediaQueryParser<MediaQueryParser>  {
     static MediaQueryList consumeMediaQueryList(CSSParserTokenRange&, const MediaQueryParserContext&);
     static std::optional<MediaQuery> consumeMediaQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
 
-    static const FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&);
+    static const FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
     static Vector<const FeatureSchema*> featureSchemas();
 };
 

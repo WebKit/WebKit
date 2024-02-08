@@ -175,9 +175,9 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     return MediaQuery { prefix, mediaType, condition };
 }
 
-const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context)
+const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context, State& state)
 {
-    auto* schema = GenericMediaQueryParser<MediaQueryParser>::schemaForFeatureName(name, context);
+    auto* schema = GenericMediaQueryParser<MediaQueryParser>::schemaForFeatureName(name, context, state);
 
     if (schema == &Features::prefersDarkInterface()) {
         if (!context.useSystemAppearance && !isUASheetBehavior(context.mode))

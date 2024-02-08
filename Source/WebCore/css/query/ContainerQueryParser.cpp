@@ -26,8 +26,10 @@
 #include "ContainerQueryParser.h"
 
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "ContainerQueryFeatures.h"
+#include "MediaQueryParserContext.h"
 
 namespace WebCore {
 namespace CQ {
@@ -59,6 +61,19 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
     });
 
     return ContainerQuery { name, *condition, requiredAxes, containsUnknownFeature };
+}
+
+bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
+{
+    return functionId == CSSValueStyle;
+}
+
+const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context, State& state)
+{
+    if (state.inFunctionId == CSSValueStyle && context.cssStyleQueriesEnabled)
+        return &Features::style();
+
+    return GenericMediaQueryParser<ContainerQueryParser>::schemaForFeatureName(name, context, state);
 }
 
 Vector<const MQ::FeatureSchema*> ContainerQueryParser::featureSchemas()
