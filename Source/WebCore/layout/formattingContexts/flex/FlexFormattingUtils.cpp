@@ -23,30 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FlexFormattingUtils.h"
 
-#include "FormattingState.h"
-#include "InlineRect.h"
-#include <wtf/IsoMalloc.h>
+#include "FlexFormattingContext.h"
+#include "LayoutContext.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
 
-class FlexFormattingState : public FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(FlexFormattingState);
-public:
-    FlexFormattingState(LayoutState&);
-    ~FlexFormattingState();
+FlexFormattingUtils::FlexFormattingUtils(const FlexFormattingContext& flexFormattingContext)
+    : m_flexFormattingContext(flexFormattingContext)
+{
+}
 
-    const auto& lines() const { return m_lines; }
-    void addLine(const InlineRect& line) { m_lines.append(line); }
+bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::Row || flexBox.style().flexDirection() == FlexDirection::RowReverse;
+}
 
-private:
-    Vector<InlineRect> m_lines;
-};
+bool FlexFormattingUtils::isReversedToContentDirection(const ElementBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
+}
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_STATE(FlexFormattingState, isFlexFormattingState())
 

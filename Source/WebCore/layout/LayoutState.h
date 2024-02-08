@@ -38,7 +38,6 @@ namespace Layout {
 
 class BlockFormattingState;
 class BoxGeometry;
-class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
 class InlineContentCache;
@@ -57,11 +56,9 @@ public:
 
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot);
-    FlexFormattingState& ensureFlexFormattingState(const ElementBox& formattingContextRoot);
 
     BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const;
     TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const;
-    FlexFormattingState& formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const;
 
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
 
@@ -93,12 +90,9 @@ private:
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
 
     HashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
+
     HashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
     HashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
-    HashMap<const ElementBox*, std::unique_ptr<FlexFormattingState>> m_flexFormattingStates;
-
-    std::unique_ptr<InlineContentCache> m_rootInlineContentCacheForIntegration;
-    std::unique_ptr<FlexFormattingState> m_rootFlexFormattingStateForIntegration;
 
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;

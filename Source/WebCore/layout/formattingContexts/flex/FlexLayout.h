@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FlexFormattingConstraints.h"
-#include "FlexFormattingState.h"
 #include "FlexRect.h"
 #include "LogicalFlexItem.h"
 #include <wtf/Range.h>

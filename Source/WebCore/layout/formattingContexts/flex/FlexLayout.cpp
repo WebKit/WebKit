@@ -27,7 +27,7 @@
 #include "FlexLayout.h"
 
 #include "FlexFormattingContext.h"
-#include "FlexFormattingGeometry.h"
+#include "FlexFormattingUtils.h"
 #include "FlexRect.h"
 #include "InlineFormattingContext.h"
 #include "RenderStyleSetters.h"
@@ -634,7 +634,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
                 auto positionalAlignment = [&] {
                     auto positionalAlignmentValue = justifyContentValue.position();
-                    if (!FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(flexContainer()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
+                    if (!FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
                         positionalAlignmentValue = ContentPosition::Start;
                     return positionalAlignmentValue;
                 };
@@ -651,12 +651,12 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 // non-logical alignments
                 case ContentPosition::Left:
                 case ContentPosition::Start:
-                    if (FlexFormattingGeometry::isReversedToContentDirection(flexContainer()))
+                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
                         return availableMainSpace - lineContentOuterMainSize;
                     return LayoutUnit { };
                 case ContentPosition::Right:
                 case ContentPosition::End:
-                    if (FlexFormattingGeometry::isReversedToContentDirection(flexContainer()))
+                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
                         return LayoutUnit { };
                     return availableMainSpace - lineContentOuterMainSize;
                 default:
