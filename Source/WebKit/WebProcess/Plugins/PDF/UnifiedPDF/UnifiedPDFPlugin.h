@@ -32,6 +32,8 @@
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/OptionSet.h>
 
+OBJC_CLASS WKPDFFormMutationObserver;
+
 namespace WebCore {
 enum class DelegatedScrollingMode : uint8_t;
 }
@@ -292,6 +294,8 @@ private:
     };
     SelectionTrackingData m_selectionTrackingData;
     RetainPtr<PDFSelection> m_currentSelection;
+
+    RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 };
 
 } // namespace WebKit
