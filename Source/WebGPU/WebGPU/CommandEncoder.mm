@@ -791,20 +791,22 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
     [m_blitCommandEncoder copyFromBuffer:source.buffer() sourceOffset:static_cast<NSUInteger>(sourceOffset) toBuffer:destination.buffer() destinationOffset:static_cast<NSUInteger>(destinationOffset) size:static_cast<NSUInteger>(size)];
 }
 
-static bool validateImageCopyBuffer(const WGPUImageCopyBuffer& imageCopyBuffer)
+NSString* CommandEncoder::errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer& imageCopyBuffer) const
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopybuffer
     const auto& buffer = fromAPI(imageCopyBuffer.buffer);
-    if (!buffer.isValid())
-        return false;
+    if (!isValidToUseWith(buffer, *this))
+        return @"buffer is not valid";
 
-    if (buffer.state() != Buffer::State::Unmapped || buffer.isDestroyed())
-        return false;
+    if (!buffer.isDestroyed()) {
+        if (buffer.state() != Buffer::State::Unmapped)
+            return @"buffer state != Unmapped";
+    }
 
     if (imageCopyBuffer.layout.bytesPerRow != WGPU_COPY_STRIDE_UNDEFINED && (imageCopyBuffer.layout.bytesPerRow % 256))
-        return false;
+        return @"imageCopyBuffer.layout.bytesPerRow is not a multiple of 256";
 
-    return true;
+    return nil;
 }
 
 static bool refersToAllAspects(WGPUTextureFormat format, WGPUTextureAspect aspect)
@@ -822,56 +824,60 @@ static bool refersToAllAspects(WGPUTextureFormat format, WGPUTextureAspect aspec
     }
 }
 
-static bool validateCopyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
+NSString* CommandEncoder::errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize) const
 {
+#define ERROR_STRING(x) [NSString stringWithFormat:@"GPUCommandEncoder.copyBufferToTexture: %@", x]
     const auto& destinationTexture = fromAPI(destination.texture);
     const auto& sourceBuffer = fromAPI(source.buffer);
 
-    if (!validateImageCopyBuffer(source))
-        return false;
+    if (NSString* error = errorValidatingImageCopyBuffer(source))
+        return ERROR_STRING(error);
 
     if (!(sourceBuffer.usage() & WGPUBufferUsage_CopySrc))
-        return false;
+        return ERROR_STRING(@"source usage does not contain CopySrc");
 
-    if (!Texture::validateImageCopyTexture(destination, copySize))
-        return false;
+    if (!isValidToUseWith(destinationTexture, *this))
+        return ERROR_STRING(@"destination texture is not valid to use with this GPUCommandEncoder");
+
+    if (NSString* error = Texture::errorValidatingImageCopyTexture(destination, copySize))
+        return ERROR_STRING(error);
 
     if (!(destinationTexture.usage() & WGPUTextureUsage_CopyDst))
-        return false;
+        return ERROR_STRING(@"destination usage does not contain CopyDst");
 
     if (destinationTexture.sampleCount() != 1)
-        return false;
+        return ERROR_STRING(@"destination sample count is not one");
 
     WGPUTextureFormat aspectSpecificFormat = destinationTexture.format();
 
     if (Texture::isDepthOrStencilFormat(destinationTexture.format())) {
         if (!Texture::refersToSingleAspect(destinationTexture.format(), destination.aspect))
-            return false;
+            return ERROR_STRING(@"destination aspect refers to more than one asepct");
 
         if (!Texture::isValidDepthStencilCopyDestination(destinationTexture.format(), destination.aspect))
-            return false;
+            return ERROR_STRING(@"destination is not valid depthStencilCopyDestination");
 
         aspectSpecificFormat = Texture::aspectSpecificFormat(destinationTexture.format(), destination.aspect);
     }
 
     if (!Texture::validateTextureCopyRange(destination, copySize))
-        return false;
+        return ERROR_STRING(@"validateTextureCopyRange failed");
 
     if (!Texture::isDepthOrStencilFormat(destinationTexture.format())) {
         auto texelBlockSize = Texture::texelBlockSize(destinationTexture.format());
         if (source.layout.offset % texelBlockSize)
-            return false;
+            return ERROR_STRING(@"source.layout.offset is not a multiple of texelBlockSize");
     }
 
     if (Texture::isDepthOrStencilFormat(destinationTexture.format())) {
         if (source.layout.offset % 4)
-            return false;
+            return ERROR_STRING(@"source.layout.offset is not a multiple of four for depth stencil format");
     }
 
     if (!Texture::validateLinearTextureData(source.layout, fromAPI(source.buffer).size(), aspectSpecificFormat, copySize))
-        return false;
-
-    return true;
+        return ERROR_STRING(@"source.layout.offset is not a multiple of four for depth stencil format");
+#undef ERROR_STRING
+    return nil;
 }
 
 void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
@@ -887,8 +893,8 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     }
 
     auto& destinationTexture = fromAPI(destination.texture);
-    if (!validateCopyBufferToTexture(source, destination, copySize)) {
-        makeInvalid(@"GPUCommandEncoder.copyBufferToTexture validation failed");
+    if (NSString* error = errorValidatingCopyBufferToTexture(source, destination, copySize)) {
+        makeInvalid(error);
         return;
     }
 
@@ -1043,55 +1049,59 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     }
 }
 
-static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
+NSString* CommandEncoder::errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize) const
 {
+#define ERROR_STRING(x) [NSString stringWithFormat:@"GPUCommandEncoder.copyTextureToBuffer: %@", x]
     const auto& sourceTexture = fromAPI(source.texture);
 
-    if (!Texture::validateImageCopyTexture(source, copySize))
-        return false;
+    if (!isValidToUseWith(sourceTexture, *this))
+        return ERROR_STRING(@"source texture is not valid to use with this GPUCommandEncoder");
+
+    if (NSString* error = Texture::errorValidatingImageCopyTexture(source, copySize))
+        return ERROR_STRING(error);
 
     if (!(sourceTexture.usage() & WGPUTextureUsage_CopySrc))
-        return false;
+        return ERROR_STRING(@"sourceTexture usage does not contain CopySrc");
 
     if (sourceTexture.sampleCount() != 1)
-        return false;
+        return ERROR_STRING(@"sourceTexture sample count != 1");
 
     WGPUTextureFormat aspectSpecificFormat = sourceTexture.format();
 
     if (Texture::isDepthOrStencilFormat(sourceTexture.format())) {
         if (!Texture::refersToSingleAspect(sourceTexture.format(), source.aspect))
-            return false;
+            return ERROR_STRING(@"copying to depth stencil texture with more than one aspect");
 
         if (!Texture::isValidDepthStencilCopySource(sourceTexture.format(), source.aspect))
-            return false;
+            return ERROR_STRING(@"copying to depth stencil texture, validDepthStencilCopySource fails");
 
         aspectSpecificFormat = Texture::aspectSpecificFormat(sourceTexture.format(), source.aspect);
     }
 
-    if (!validateImageCopyBuffer(destination))
-        return false;
+    if (NSString* error = errorValidatingImageCopyBuffer(destination))
+        return ERROR_STRING(error);
 
     if (!(fromAPI(destination.buffer).usage() & WGPUBufferUsage_CopyDst))
-        return false;
+        return ERROR_STRING(@"destination buffer usage does not contain CopyDst");
 
     if (!Texture::validateTextureCopyRange(source, copySize))
-        return false;
+        return ERROR_STRING(@"validateTextureCopyRange failed");
 
     if (!Texture::isDepthOrStencilFormat(sourceTexture.format())) {
         auto texelBlockSize = Texture::texelBlockSize(sourceTexture.format());
         if (destination.layout.offset % texelBlockSize)
-            return false;
+            return ERROR_STRING(@"destination.layout.offset is not a multiple of texelBlockSize");
     }
 
     if (Texture::isDepthOrStencilFormat(sourceTexture.format())) {
         if (destination.layout.offset % 4)
-            return false;
+            return ERROR_STRING(@"destination.layout.offset is not a multiple of 4");
     }
 
     if (!Texture::validateLinearTextureData(destination.layout, fromAPI(destination.buffer).size(), aspectSpecificFormat, copySize))
-        return false;
-
-    return true;
+        return ERROR_STRING(@"validateLinearTextureData fails");
+#undef ERROR_STRING
+    return nil;
 }
 
 void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
@@ -1198,10 +1208,16 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     }
 
     auto& sourceTexture = fromAPI(source.texture);
-    if (!validateCopyTextureToBuffer(source, destination, copySize)) {
-        m_device->generateAValidationError("Validation failure."_s);
+    if (NSString* error = errorValidatingCopyTextureToBuffer(source, destination, copySize)) {
+        makeInvalid(error);
         return;
     }
+
+    auto& apiDestinationBuffer = fromAPI(destination.buffer);
+    sourceTexture.setCommandEncoder(*this);
+    apiDestinationBuffer.setCommandEncoder(*this);
+    if (sourceTexture.isDestroyed() || apiDestinationBuffer.isDestroyed())
+        return;
 
     MTLBlitOption options = MTLBlitOptionNone;
     switch (source.aspect) {
@@ -1224,7 +1240,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
-    auto& apiDestinationBuffer = fromAPI(destination.buffer);
     auto destinationBuffer = apiDestinationBuffer.buffer();
     NSUInteger destinationBytesPerRow = destination.layout.bytesPerRow;
     if (destinationBytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
@@ -1249,9 +1264,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     if (rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED)
         rowsPerImage = heightForMetal ?: 1;
     NSUInteger destinationBytesPerImage = rowsPerImage * destinationBytesPerRow;
-
-    sourceTexture.setCommandEncoder(*this);
-    apiDestinationBuffer.setCommandEncoder(*this);
 
     ensureBlitCommandEncoder();
 
@@ -1342,33 +1354,34 @@ static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat forma
     return Texture::removeSRGBSuffix(format1) == Texture::removeSRGBSuffix(format2);
 }
 
-static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize, const CommandEncoder& commandEncoder)
+static NSString* errorValidatingCopyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize, const CommandEncoder& commandEncoder)
 {
+#define ERROR_STRING(x) [NSString stringWithFormat:@"GPUCommandEncoder.copyTextureToTexture: %@", x]
     const auto& sourceTexture = fromAPI(source.texture);
     if (!isValidToUseWith(sourceTexture, commandEncoder))
-        return false;
+        return ERROR_STRING(@"source texture is not valid to use with this GPUCommandEncoder");
 
     const auto& destinationTexture = fromAPI(destination.texture);
     if (!isValidToUseWith(destinationTexture, commandEncoder))
-        return false;
+        return ERROR_STRING(@"desintation texture is not valid to use with this GPUCommandEncoder");
 
-    if (!Texture::validateImageCopyTexture(source, copySize))
-        return false;
+    if (NSString* error = Texture::errorValidatingImageCopyTexture(source, copySize))
+        return ERROR_STRING(error);
 
     if (!(sourceTexture.usage() & WGPUTextureUsage_CopySrc))
-        return false;
+        return ERROR_STRING(@"source texture usage does not contain CopySrc");
 
-    if (!Texture::validateImageCopyTexture(destination, copySize))
-        return false;
+    if (NSString* error = Texture::errorValidatingImageCopyTexture(destination, copySize))
+        return ERROR_STRING(error);
 
     if (!(destinationTexture.usage() & WGPUTextureUsage_CopyDst))
-        return false;
+        return ERROR_STRING(@"destination texture usage does not contain CopyDst");
 
     if (sourceTexture.sampleCount() != destinationTexture.sampleCount())
-        return false;
+        return ERROR_STRING(@"destination texture sample count does not equal source texture sample count");
 
     if (!areCopyCompatible(sourceTexture.format(), destinationTexture.format()))
-        return false;
+        return ERROR_STRING(@"destination texture and source texture are not copy compatible");
 
     bool srcIsDepthOrStencil = Texture::isDepthOrStencilFormat(sourceTexture.format());
     bool dstIsDepthOrStencil = Texture::isDepthOrStencilFormat(destinationTexture.format());
@@ -1376,21 +1389,21 @@ static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, con
     if (srcIsDepthOrStencil) {
         if (!refersToAllAspects(sourceTexture.format(), source.aspect)
             || !refersToAllAspects(destinationTexture.format(), destination.aspect))
-            return false;
+            return ERROR_STRING(@"source or destination do not refer to a single copy aspect");
     } else {
         if (source.aspect != WGPUTextureAspect_All)
-            return false;
+            return ERROR_STRING(@"source aspect is not All");
         if (!dstIsDepthOrStencil) {
             if (destination.aspect != WGPUTextureAspect_All)
-                return false;
+                return ERROR_STRING(@"destination aspect is not All");
         }
     }
 
     if (!Texture::validateTextureCopyRange(source, copySize))
-        return false;
+        return ERROR_STRING(@"validateTextureCopyRange failed for source texture");
 
     if (!Texture::validateTextureCopyRange(destination, copySize))
-        return false;
+        return ERROR_STRING(@"validateTextureCopyRange failed for destination texture");
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-set-of-subresources-for-texture-copy
     if (source.texture == destination.texture) {
@@ -1398,24 +1411,25 @@ static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, con
         if (source.mipLevel == destination.mipLevel) {
             switch (fromAPI(source.texture).dimension()) {
             case WGPUTextureDimension_1D:
-                return false;
+                return ERROR_STRING(@"can't copy 1D texture to itself");
             case WGPUTextureDimension_2D: {
                 Range<uint32_t> sourceRange(source.origin.z, source.origin.z + copySize.depthOrArrayLayers);
                 Range<uint32_t> destinationRange(destination.origin.z, destination.origin.z + copySize.depthOrArrayLayers);
                 if (sourceRange.overlaps(destinationRange))
-                    return false;
+                    return ERROR_STRING(@"can't copy 2D texture to itself with overlapping array range");
                 break;
             }
             case WGPUTextureDimension_3D:
-                return false;
+                return ERROR_STRING(@"can't copy 3D texture to itself");
             case WGPUTextureDimension_Force32:
                 ASSERT_NOT_REACHED();
-                return false;
+                return ERROR_STRING(@"unknown texture format");
             }
         }
     }
 
-    return true;
+#undef ERROR_STRING
+    return nil;
 }
 
 void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
@@ -1430,8 +1444,8 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         return;
     }
 
-    if (!validateCopyTextureToTexture(source, destination, copySize, *this)) {
-        makeInvalid(@"GPUCommandEncoder.copyTextureToTexture validation failed");
+    if (NSString* error = errorValidatingCopyTextureToTexture(source, destination, copySize, *this)) {
+        makeInvalid(error);
         return;
     }
 

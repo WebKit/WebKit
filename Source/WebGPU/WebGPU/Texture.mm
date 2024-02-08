@@ -3126,19 +3126,19 @@ WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
     switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return {
-            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
-            1,
-            m_depthOrArrayLayers };
+            .width = std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
+            .height = 1,
+            .depthOrArrayLayers = m_depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
-            m_depthOrArrayLayers };
+            .width = std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
+            .height = std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
+            .depthOrArrayLayers = m_depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_depthOrArrayLayers >> mipLevel) };
+            .width = std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
+            .height = std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
+            .depthOrArrayLayers = std::max(static_cast<uint32_t>(1), m_depthOrArrayLayers >> mipLevel) };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
         return WGPUExtent3D { };
@@ -3158,19 +3158,19 @@ WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
     switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return {
-            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
-            1,
-            logicalExtent.depthOrArrayLayers };
+            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            .height = 1,
+            .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
-            roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
-            logicalExtent.depthOrArrayLayers };
+            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            .height = roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
+            .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
-            roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
-            logicalExtent.depthOrArrayLayers };
+            .width = roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width),
+            .height = roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height),
+            .depthOrArrayLayers = logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
         return WGPUExtent3D { };
@@ -3184,7 +3184,7 @@ static WGPUExtent3D imageCopyTextureSubresourceSize(const WGPUImageCopyTexture& 
     return fromAPI(imageCopyTexture.texture).physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
 }
 
-bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
+NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopytexture
 
@@ -3193,27 +3193,27 @@ bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyText
     uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
 
     if (!fromAPI(imageCopyTexture.texture).isValid())
-        return false;
+        return @"imageCopyTexture is not valid";
 
     if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).mipLevelCount())
-        return false;
+        return @"imageCopyTexture mip level is greater than or equal to the mipLevelCount in the texture";
 
     if (imageCopyTexture.origin.x % blockWidth)
-        return false;
+        return @"imageCopyTexture.origin.x is not a multiple of the texture blockWidth";
 
     if (imageCopyTexture.origin.y % blockHeight)
-        return false;
+        return @"imageCopyTexture.origin.y is not a multiple of the texture blockHeight";
 
     if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).format())
         || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
         auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
         if (subresourceSize.width != copySize.width
-            || subresourceSize.height != copySize.height
-            || subresourceSize.depthOrArrayLayers != copySize.depthOrArrayLayers)
-            return false;
+            || (copySize.height > 1 && subresourceSize.height != copySize.height)
+            || (copySize.depthOrArrayLayers > 1 && subresourceSize.depthOrArrayLayers != copySize.depthOrArrayLayers))
+            return [NSString stringWithFormat:@"subresourceSize.width(%u) != copySize.width(%u) || subresourceSize.height(%u) != copySize.height(%u) || subresourceSize.depthOrArrayLayers(%u) != copySize.depthOrArrayLayers(%u)", subresourceSize.width, copySize.width, subresourceSize.height, copySize.height, subresourceSize.depthOrArrayLayers, copySize.depthOrArrayLayers];
     }
 
-    return true;
+    return nil;
 }
 
 bool Texture::refersToSingleAspect(WGPUTextureFormat format, WGPUTextureAspect aspect)
@@ -3538,7 +3538,7 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
             return false;
     }
 
-    if (copyExtent.height > 1 && layout.rowsPerImage != WGPU_COPY_STRIDE_UNDEFINED) {
+    if (layout.rowsPerImage != WGPU_COPY_STRIDE_UNDEFINED) {
         if (layout.rowsPerImage < heightInBlocks)
             return false;
     }

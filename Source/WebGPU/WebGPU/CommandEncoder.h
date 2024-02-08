@@ -114,6 +114,9 @@ private:
 
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
     void setExistingEncoder(id<MTLCommandEncoder>);
+    NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
+    NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
+    NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };

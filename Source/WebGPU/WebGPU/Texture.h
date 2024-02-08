@@ -72,7 +72,7 @@ public:
     static bool containsStencilAspect(WGPUTextureFormat);
     static bool isDepthOrStencilFormat(WGPUTextureFormat);
     static WGPUTextureFormat aspectSpecificFormat(WGPUTextureFormat, WGPUTextureAspect);
-    static bool validateImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
+    static NSString* errorValidatingImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool validateTextureCopyRange(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
     static bool isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
