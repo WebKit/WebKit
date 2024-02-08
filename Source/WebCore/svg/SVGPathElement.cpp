@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -180,8 +180,14 @@ float SVGPathElement::getTotalLength() const
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
+    document().updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
+
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
+
+    // Spec: If current element is a non-rendered element, throw an InvalidStateError.
+    if (!renderer())
+        return Exception { ExceptionCode::InvalidStateError, "The current element is a non-rendered element."_s };
 
     // Spec: Return a newly created, detached SVGPoint object.
     return SVGPoint::create(getPointAtLengthOfSVGPathByteStream(pathByteStream(), distance));

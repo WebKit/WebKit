@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -73,10 +73,9 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
     distance = clampTo<float>(distance, 0, getTotalLength());
 
     auto* renderer = this->renderer();
-
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
-        return Exception { ExceptionCode::InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError, "The current element is a non-rendered element."_s };
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (auto* renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
