@@ -69,6 +69,6 @@ private:
     HashMap<AST::Function*, Vector<Callee>> m_calleeMap;
 };
 
-CallGraph buildCallGraph(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult&);
+CallGraph buildCallGraph(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>&);
 
 } // namespace WGSL

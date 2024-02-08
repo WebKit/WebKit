@@ -135,6 +135,8 @@
 		9776BE732992A236002D6D93 /* Overload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9776BE712992A236002D6D93 /* Overload.cpp */; };
 		9776BE742992A236002D6D93 /* Overload.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE722992A236002D6D93 /* Overload.h */; };
 		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
+		977F5AC02B73057700D05129 /* CompilationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 977F5ABE2B73057700D05129 /* CompilationScope.h */; };
+		977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977F5ABF2B73057700D05129 /* CompilationScope.cpp */; };
 		97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 97835C9229F7C9C600939EBA /* ASTBuilder.h */; };
 		97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97835C9429F7D85A00939EBA /* ASTBuilder.cpp */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
@@ -426,6 +428,8 @@
 		9776BE712992A236002D6D93 /* Overload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Overload.cpp; sourceTree = "<group>"; };
 		9776BE722992A236002D6D93 /* Overload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overload.h; sourceTree = "<group>"; };
 		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
+		977F5ABE2B73057700D05129 /* CompilationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilationScope.h; sourceTree = "<group>"; };
+		977F5ABF2B73057700D05129 /* CompilationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationScope.cpp; sourceTree = "<group>"; };
 		97835C9229F7C9C600939EBA /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
 		97835C9429F7D85A00939EBA /* ASTBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBuilder.cpp; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
@@ -624,6 +628,8 @@
 				9789C319297EA105009E9006 /* CallGraph.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
+				977F5ABF2B73057700D05129 /* CompilationScope.cpp */,
+				977F5ABE2B73057700D05129 /* CompilationScope.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
 				97E21C962A2512F7009CEB0E /* ConstantFunctions.h */,
 				97E21C942A2512F7009CEB0E /* ConstantValue.cpp */,
@@ -903,6 +909,7 @@
 				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				97A448A12AE3544800A4E147 /* AttributeValidator.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
+				977F5AC02B73057700D05129 /* CompilationScope.h in Headers */,
 				97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */,
 				97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */,
 				97C36CFE29F1730100CFB379 /* Constraints.h in Headers */,
@@ -1140,6 +1147,7 @@
 				97A448A22AE3544800A4E147 /* AttributeValidator.cpp in Sources */,
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
+				977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */,
 				97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */,
 				97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,

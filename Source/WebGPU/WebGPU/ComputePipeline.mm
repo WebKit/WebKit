@@ -83,19 +83,19 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label);
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
         return returnInvalidComputePipeline(*this, isAsync);
 
     auto library = libraryCreationResult->library;
+    const auto& wgslConstantValues = libraryCreationResult->wgslConstantValues;
     const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
 
     if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
         return returnInvalidComputePipeline(*this, isAsync);
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-    auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation, shaderModule);
-    auto function = createFunction(library, entryPointInformation, constantValues, label);
+    auto function = createFunction(library, entryPointInformation, label);
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);
 

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "CallGraph.h"
 #include "CompilationMessage.h"
+#include "CompilationScope.h"
 #include "ConstantValue.h"
 #include "WGSLEnums.h"
 #include <cinttypes>
@@ -46,6 +48,7 @@ namespace WGSL {
 //
 
 class ShaderModule;
+class CompilationScope;
 
 namespace AST {
 class Expression;
@@ -224,14 +227,17 @@ struct EntryPointInformation {
 } // namespace Reflection
 
 struct PrepareResult {
-    String msl;
+    CallGraph callGraph;
     HashMap<String, Reflection::EntryPointInformation> entryPoints;
+    CompilationScope compilationScope;
 };
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
 PrepareResult prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
 PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+
+String generate(const CallGraph&, HashMap<String, ConstantValue>&);
 
 ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 

@@ -1291,7 +1291,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
         const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule.defaultVertexEntryPoint();
-        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label);
+        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label, descriptor.vertex.constantCount, descriptor.vertex.constants);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex library failed creation"_s);
 
@@ -1300,9 +1300,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
                 return returnInvalidRenderPipeline(*this, isAsync, error);
         }
-        auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation, vertexModule);
-        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
+        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, label);
+        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
         vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
@@ -1335,7 +1334,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         usesFragDepth = fragmentShaderModule->usesFragDepth();
         usesSampleMask = fragmentShaderModule->usesSampleMask();
         const auto& fragmentEntryPoint = fragmentDescriptor.entryPoint ? fromAPI(fragmentDescriptor.entryPoint) : fragmentModule->defaultFragmentEntryPoint();
-        auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label);
+        auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label, fragmentDescriptor.constantCount, fragmentDescriptor.constants);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);
 
@@ -1345,9 +1344,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
                 return returnInvalidRenderPipeline(*this, isAsync, error);
         }
 
-        auto [constantValues, wgslConstantValues] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation, *fragmentModule);
-        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
+        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, label);
+        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 

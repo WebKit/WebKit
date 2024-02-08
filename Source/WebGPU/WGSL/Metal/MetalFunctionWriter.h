@@ -30,10 +30,11 @@
 namespace WGSL {
 
 class CallGraph;
+struct ConstantValue;
 
 namespace Metal {
 
-void emitMetalFunctions(StringBuilder&, CallGraph&);
+void emitMetalFunctions(StringBuilder&, const CallGraph&, const HashMap<String, ConstantValue>&);
 
 } // namespace Metal
 } // namespace WGSL

@@ -124,7 +124,6 @@ private:
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
     void packStructResource(AST::Variable&, const Types::Struct*);
-    bool containsRuntimeArray(const Type*);
     const Type* packType(const Type*);
     const Type* packStructType(const Types::Struct*);
     const Type* packArrayType(const Types::Array*);
@@ -570,7 +569,7 @@ void RewriteGlobalVariables::collectGlobals()
             result.iterator->value.append({ resource->binding, globalVar.name() });
             packResource(globalVar);
 
-            if (!m_generatedLayout || containsRuntimeArray(globalVar.maybeReferenceType()->inferredType()))
+            if (!m_generatedLayout || globalVar.maybeReferenceType()->inferredType()->containsRuntimeArray())
                 bufferLengths.append({ &globalVar, resource->group });
         }
     }
@@ -703,17 +702,6 @@ void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Express
         referenceType->accessMode
     );
     m_callGraph.ast().replace(reference, packedTypeReference);
-}
-
-bool RewriteGlobalVariables::containsRuntimeArray(const Type* type)
-{
-    if (auto* referenceType = std::get_if<Types::Reference>(type))
-        return containsRuntimeArray(referenceType->element);
-    if (auto* structType = std::get_if<Types::Struct>(type))
-        return containsRuntimeArray(structType->structure.members().last().type().inferredType());
-    if (auto* arrayType = std::get_if<Types::Array>(type))
-        return !arrayType->size.has_value();
-    return false;
 }
 
 const Type* RewriteGlobalVariables::packType(const Type* type)
@@ -1803,7 +1791,7 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
 
     auto* type = target.inferredType();
     if (auto* arrayType = std::get_if<Types::Array>(type)) {
-        RELEASE_ASSERT(arrayType->size.has_value());
+        RELEASE_ASSERT(!arrayType->isRuntimeSized());
         String indexVariableName = makeString("__i", String::number(arrayDepth));
 
         auto& indexVariable = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
@@ -1841,16 +1829,23 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
             forVariable
         );
 
-        auto& arrayLength = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
-            SourceSpan::empty(),
-            *arrayType->size
-        );
-        arrayLength.m_inferredType = m_callGraph.ast().types().u32Type();
+        auto* arrayLength = [&]() -> AST::Expression* {
+            if (auto* overrideExpression = std::get_if<AST::Expression*>(&arrayType->size))
+                return *overrideExpression;
+
+            auto& arrayLength = m_callGraph.ast().astBuilder().construct<AST::Unsigned32Literal>(
+                SourceSpan::empty(),
+                std::get<unsigned>(arrayType->size)
+            );
+            arrayLength.m_inferredType = m_callGraph.ast().types().u32Type();
+            return &arrayLength;
+        }();
+
 
         auto& forTest = m_callGraph.ast().astBuilder().construct<AST::BinaryExpression>(
             SourceSpan::empty(),
             indexVariable,
-            arrayLength,
+            *arrayLength,
             AST::BinaryOperation::LessThan
         );
         forTest.m_inferredType = m_callGraph.ast().types().boolType();
@@ -1951,7 +1946,13 @@ void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier,
         return;
 
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
-    m_reads.add(identifier.identifier());
+    auto addResult = m_reads.add(identifier.identifier());
+    if (addResult.isNewEntry) {
+        if (auto* type = global.declaration->maybeTypeName())
+            visit(*type);
+        if (auto* initializer = global.declaration->maybeInitializer())
+            visit(*initializer);
+    }
 }
 
 void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)

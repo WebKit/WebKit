@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ConstantValue.h"
-#import "ShaderModule.h"
+#include "config.h"
+#include "CompilationScope.h"
 
-namespace WebGPU {
+#include "WGSLShaderModule.h"
 
-class ShaderModule;
+namespace WGSL {
 
-struct LibraryCreationResult {
-    id<MTLLibrary> library;
-    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
-    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
-};
+CompilationScope::CompilationScope(ShaderModule& shaderModule)
+    : m_shaderModule(shaderModule)
+    , m_builderState(shaderModule.astBuilder().saveCurrentState())
+{
+}
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, const PipelineLayout*, const String& entryPointName, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants);
+CompilationScope::CompilationScope(CompilationScope&& other)
+    : m_shaderModule(other.m_shaderModule)
+    , m_builderState(other.m_builderState)
+{
+    other.m_invalidated = true;
+}
 
-id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, NSString *label);
+CompilationScope::~CompilationScope()
+{
+    if (m_invalidated)
+        return;
+    m_shaderModule.revertReplacements();
+    m_shaderModule.astBuilder().restore(WTFMove(m_builderState));
+}
 
-} // namespace WebGPU
+} // namespace WGSL

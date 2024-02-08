@@ -40,10 +40,10 @@ CallGraph::CallGraph(ShaderModule& shaderModule)
 
 class CallGraphBuilder : public AST::Visitor {
 public:
-    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
+    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPoints)
         : m_callGraph(shaderModule)
         , m_pipelineLayouts(pipelineLayouts)
-        , m_result(result)
+        , m_entryPoints(entryPoints)
     {
     }
 
@@ -57,7 +57,7 @@ private:
 
     CallGraph m_callGraph;
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
-    PrepareResult& m_result;
+    HashMap<String, Reflection::EntryPointInformation>& m_entryPoints;
     HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
     Vector<CallGraph::Callee>* m_callees { nullptr };
     Deque<AST::Function*> m_queue;
@@ -88,7 +88,7 @@ void CallGraphBuilder::initializeMappings()
         if (!function.stage())
             continue;
 
-        auto addResult = m_result.entryPoints.add(function.name(), Reflection::EntryPointInformation { });
+        auto addResult = m_entryPoints.add(function.name(), Reflection::EntryPointInformation { });
         ASSERT(addResult.isNewEntry);
         m_callGraph.m_entrypoints.append({ function, *function.stage(), addResult.iterator->value });
         m_queue.append(&function);
@@ -132,9 +132,9 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
         m_callees->at(result.iterator->value).callSites.append(&call);
 }
 
-CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
+CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPoints)
 {
-    return CallGraphBuilder(shaderModule, pipelineLayouts, result).build();
+    return CallGraphBuilder(shaderModule, pipelineLayouts, entryPoints).build();
 }
 
 } // namespace WGSL

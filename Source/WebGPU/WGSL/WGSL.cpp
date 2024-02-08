@@ -91,30 +91,38 @@ SuccessfulCheck::~SuccessfulCheck() = default;
 
 inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    ShaderModule::Compilation compilation(ast);
+    CompilationScope compilationScope(ast);
 
     PhaseTimes phaseTimes;
-    PrepareResult result;
-
-    {
+    auto result = [&]() -> PrepareResult {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, result);
-        RUN_PASS(mangleNames, callGraph, result);
+        HashMap<String, Reflection::EntryPointInformation> entryPoints;
+        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, entryPoints);
+        RUN_PASS(mangleNames, callGraph, entryPoints);
         RUN_PASS(rewritePointers, callGraph);
         RUN_PASS(rewriteEntryPoints, callGraph);
         RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 
         dumpASTAtEndIfNeeded(ast);
 
-        {
-            PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
-            result.msl = Metal::generateMetalCode(callGraph);
-        }
-    }
+        return { WTFMove(callGraph), WTFMove(entryPoints), WTFMove(compilationScope) };
+    }();
 
     logPhaseTimes(phaseTimes);
 
+    return result;
+}
+
+String generate(const CallGraph& callGraph, HashMap<String, ConstantValue>& constantValues)
+{
+    PhaseTimes phaseTimes;
+    String result;
+    {
+        PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
+        result = Metal::generateMetalCode(callGraph, constantValues);
+    }
+    logPhaseTimes(phaseTimes);
     return result;
 }
 
@@ -135,7 +143,9 @@ ConstantValue evaluate(const AST::Expression& expression, const HashMap<String, 
     if (auto constantValue = expression.constantValue())
         return *constantValue;
     ASSERT(is<const AST::IdentifierExpression>(expression));
-    return constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
+    auto constantValue = constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
+    const_cast<AST::Expression&>(expression).setConstantValue(constantValue);
+    return constantValue;
 }
 
 }

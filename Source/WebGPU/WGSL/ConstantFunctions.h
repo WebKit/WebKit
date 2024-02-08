@@ -101,10 +101,11 @@ static ConstantValue zeroValue(const Type* type)
             return result;
         },
         [&](const Types::Array& array) -> ConstantValue {
-            ASSERT(array.size.has_value());
-            ConstantArray result(*array.size);
+            ASSERT(std::holds_alternative<unsigned>(array.size));
+            auto size = std::get<unsigned>(array.size);
+            ConstantArray result(size);
             auto value = zeroValue(array.element);
-            for (unsigned i = 0; i < array.size; ++i)
+            for (unsigned i = 0; i < size; ++i)
                 result.elements[i] = value;
             return result;
         },

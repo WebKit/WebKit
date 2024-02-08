@@ -47,9 +47,10 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(CallGraph& callGraph, StringBuilder& stringBuilder)
+    FunctionDefinitionWriter(const CallGraph& callGraph, StringBuilder& stringBuilder, const HashMap<String, ConstantValue>& constantValues)
         : m_stringBuilder(stringBuilder)
         , m_callGraph(callGraph)
+        , m_constantValues(constantValues)
     {
     }
 
@@ -129,13 +130,15 @@ private:
     void visitStatements(AST::Statement::List&);
 
     StringBuilder& m_stringBuilder;
-    CallGraph& m_callGraph;
+    const CallGraph& m_callGraph;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
     unsigned m_functionConstantIndex { 0 };
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
+    const HashMap<String, ConstantValue>& m_constantValues;
+    HashMap<String, ConstantValue> m_overrides;
 };
 
 static const char* serializeAddressSpace(AddressSpace addressSpace)
@@ -641,9 +644,19 @@ void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
     if (variable.flavor() != AST::VariableFlavor::Override)
         return;
 
-    m_stringBuilder.append("constant ");
-    serializeVariable(variable);
-    m_stringBuilder.append(" [[function_constant(", m_functionConstantIndex++, ")]];\n");
+    String entryName = variable.originalName();
+    if (variable.id())
+        entryName = String::number(*variable.id());
+    auto it = m_constantValues.find(entryName);
+    if (it != m_constantValues.end()) {
+        m_overrides.add(variable.name(), it->value);
+        return;
+    }
+    auto* initializer = variable.maybeInitializer();
+    if (!initializer)
+        return;
+    if (auto& maybeConstant = initializer->constantValue())
+        m_overrides.add(variable.name(), *maybeConstant);
 }
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
@@ -910,7 +923,14 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Array& array) {
             m_stringBuilder.append("array<");
             visit(array.element);
-            m_stringBuilder.append(", ", array.size.value_or(1), ">");
+            m_stringBuilder.append(", ");
+            WTF::switchOn(array.size,
+                [&](unsigned size) { m_stringBuilder.append(size); },
+                [&](std::monostate) { m_stringBuilder.append(1); },
+                [&](AST::Expression* size) {
+                    visit(*size);
+                });
+            m_stringBuilder.append(">");
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
@@ -2039,6 +2059,13 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
+    auto it = m_overrides.find(identifier.identifier());
+    if (UNLIKELY(it != m_overrides.end())) {
+        m_stringBuilder.append("(");
+        serializeConstant(identifier.inferredType(), it->value);
+        m_stringBuilder.append(")");
+        return;
+    }
     m_stringBuilder.append(identifier.identifier());
 }
 
@@ -2465,9 +2492,9 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         });
 }
 
-void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)
+void emitMetalFunctions(StringBuilder& stringBuilder, const CallGraph& callGraph, const HashMap<String, ConstantValue>& constantValues)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(callGraph, stringBuilder);
+    FunctionDefinitionWriter functionDefinitionWriter(callGraph, stringBuilder, constantValues);
     functionDefinitionWriter.write();
 }
 

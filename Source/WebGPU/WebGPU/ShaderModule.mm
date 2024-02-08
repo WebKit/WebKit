@@ -107,7 +107,9 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     }
 
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
+    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
+    auto msl = WGSL::generate(prepareResult.callGraph, wgslConstantValues);
+    auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label));
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, nil, { }, device);

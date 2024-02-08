@@ -138,11 +138,14 @@ static int runWGSL(const CommandLine& options)
         return EXIT_FAILURE;
     }
 
+    HashMap<String, WGSL::ConstantValue> constantValues;
+    auto msl = WGSL::generate(prepareResult.callGraph, constantValues);
+
     if (options.dumpASTAtEnd())
         WGSL::AST::dumpAST(shaderModule);
 
     if (options.dumpGeneratedCode())
-        printf("%s", prepareResult.msl.utf8().data());
+        printf("%s", msl.utf8().data());
 
     return EXIT_SUCCESS;
 }

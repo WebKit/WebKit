@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Types.h"
 
+#include "ASTStringDumper.h"
 #include "ASTStructure.h"
 #include "TypeStore.h"
 #include <wtf/StdLibExtras.h>
@@ -57,8 +58,13 @@ void Type::dump(PrintStream& out) const
         },
         [&](const Array& array) {
             out.print("array<", *array.element);
-            if (array.size.has_value())
-                out.print(", ", *array.size);
+            WTF::switchOn(array.size,
+                [&](unsigned size) { out.print(", ", size); },
+                [&](std::monostate) { },
+                [&](AST::Expression* size) {
+                    out.print(", ");
+                    dumpNode(out, *size);
+                });
             out.print(">");
         },
         [&](const Struct& structure) {
@@ -316,7 +322,10 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            unsigned size = 1;
+            if (auto* constantSize = std::get_if<unsigned>(&array.size))
+                size = *constantSize;
+            return size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();
@@ -478,7 +487,7 @@ bool Type::isConstructible() const
             return true;
         },
         [&](const Array& array) -> bool {
-            return array.size.has_value() && array.element->isConstructible();
+            return array.isCreationFixed() && array.element->isConstructible();
         },
         [&](const Struct& structure) -> bool {
             for (auto& member : structure.structure.members()) {
@@ -515,7 +524,7 @@ bool Type::isConstructible() const
             return false;
         },
         [&](const Bottom&) -> bool {
-            return false;
+            return true;
         });
 }
 
@@ -588,7 +597,7 @@ bool Type::isStorable() const
             return false;
         },
         [&](const Bottom&) -> bool {
-            return false;
+            return true;
         });
 }
 
@@ -661,7 +670,7 @@ bool Type::isHostShareable() const
             return false;
         },
         [&](const Bottom&) -> bool {
-            return false;
+            return true;
         });
 }
 
@@ -696,7 +705,7 @@ bool Type::hasFixedFootprint() const
             return true;
         },
         [&](const Array& array) -> bool {
-            return array.size.has_value();
+            return !array.isRuntimeSized();
         },
         [&](const Struct& structure) -> bool {
             for (auto& member : structure.structure.members()) {
@@ -734,16 +743,102 @@ bool Type::hasFixedFootprint() const
             return false;
         },
         [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+// https://www.w3.org/TR/WGSL/#creation-fixed-footprint
+bool Type::hasCreationFixedFootprint() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+                return true;
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector&) -> bool {
+            return true;
+        },
+        [&](const Matrix&) -> bool {
+            return true;
+        },
+        [&](const Array& array) -> bool {
+            return array.isCreationFixed();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->hasCreationFixedFootprint())
+                    return false;
+            }
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const TextureStorage&) -> bool {
             return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
         });
 }
 
 bool Type::containsRuntimeArray() const
 {
     if (auto* array = std::get_if<Types::Array>(this))
-        return !array->size;
+        return array->isRuntimeSized();
     if (auto* structure = std::get_if<Types::Struct>(this))
         return structure->structure.members().last().type().inferredType()->containsRuntimeArray();
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsRuntimeArray();
+    return false;
+}
+
+bool Type::containsOverrideArray() const
+{
+    if (auto* array = std::get_if<Types::Array>(this))
+        return array->isOverrideSized();
+    if (auto* structure = std::get_if<Types::Struct>(this))
+        return structure->structure.members().last().type().inferredType()->containsOverrideArray();
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsOverrideArray();
     return false;
 }
 

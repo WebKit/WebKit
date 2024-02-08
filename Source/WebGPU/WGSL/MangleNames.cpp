@@ -70,9 +70,9 @@ class NameManglerVisitor : public AST::ScopedVisitor<MangledName> {
     using Base::visit;
 
 public:
-    NameManglerVisitor(const CallGraph& callGraph, PrepareResult& result)
+    NameManglerVisitor(const CallGraph& callGraph, HashMap<String, Reflection::EntryPointInformation>& entryPoints)
         : m_callGraph(callGraph)
-        , m_result(result)
+        , m_entryPoints(entryPoints)
     {
     }
 
@@ -97,7 +97,7 @@ private:
     void visitVariableDeclaration(AST::Variable&, MangledName::Kind);
 
     const CallGraph& m_callGraph;
-    PrepareResult& m_result;
+    HashMap<String, Reflection::EntryPointInformation>& m_entryPoints;
     HashMap<AST::Structure*, NameMap> m_structFieldMapping;
     uint32_t m_indexPerType[MangledName::numberOfKinds] { 0 };
 };
@@ -111,8 +111,8 @@ void NameManglerVisitor::visit(AST::Function& function)
 {
     String originalName = function.name();
     introduceVariable(function.name(), MangledName::Function);
-    auto it = m_result.entryPoints.find(originalName);
-    if (it != m_result.entryPoints.end()) {
+    auto it = m_entryPoints.find(originalName);
+    if (it != m_entryPoints.end()) {
         it->value.originalName = originalName;
         it->value.mangledName = function.name();
     }
@@ -203,9 +203,9 @@ void NameManglerVisitor::readVariable(AST::Identifier& name) const
         m_callGraph.ast().replace(&name, AST::Identifier::makeWithSpan(name.span(), mangledName->toString()));
 }
 
-void mangleNames(CallGraph& callGraph, PrepareResult& result)
+void mangleNames(CallGraph& callGraph, HashMap<String, Reflection::EntryPointInformation>& entryPoints)
 {
-    NameManglerVisitor(callGraph, result).run();
+    NameManglerVisitor(callGraph, entryPoints).run();
 }
 
 } // namespace WGSL

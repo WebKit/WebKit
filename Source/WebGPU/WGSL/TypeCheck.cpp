@@ -37,12 +37,19 @@
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 
 namespace WGSL {
 
 static constexpr bool shouldDumpInferredTypes = false;
 static constexpr bool shouldDumpConstantValues = false;
+
+enum class Evaluation : uint8_t {
+    Constant = 1,
+    Override = 2,
+    Runtime = 3,
+};
 
 struct Binding {
     enum Kind : uint8_t {
@@ -53,6 +60,7 @@ struct Binding {
 
     Kind kind;
     const struct Type* type;
+    Evaluation evaluation;
     std::optional<ConstantValue> constantValue;
 };
 
@@ -65,6 +73,18 @@ static ASCIILiteral bindingKindToString(Binding::Kind kind)
         return "type"_s;
     case Binding::Function:
         return "function"_s;
+    }
+}
+
+static ASCIILiteral evaluationToString(Evaluation evaluation)
+{
+    switch (evaluation) {
+    case Evaluation::Constant:
+        return "constant"_s;
+    case Evaluation::Override:
+        return "override"_s;
+    case Evaluation::Runtime:
+        return "runtime"_s;
     }
 }
 
@@ -150,14 +170,14 @@ private:
     template<typename... Arguments>
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
-    const Type* infer(AST::Expression&);
+    const Type* infer(AST::Expression&, Evaluation);
     const Type* resolve(AST::Expression&);
     const Type* lookupType(const AST::Identifier&);
     void inferred(const Type*);
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
     bool isBottom(const Type*) const;
     void introduceType(const AST::Identifier&, const Type*);
-    void introduceValue(const AST::Identifier&, const Type*, std::optional<ConstantValue> = std::nullopt);
+    void introduceValue(const AST::Identifier&, const Type*, Evaluation = Evaluation::Runtime, std::optional<ConstantValue> = std::nullopt);
     void introduceFunction(const AST::Identifier&, const Type*);
     bool convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
     bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
@@ -179,6 +199,7 @@ private:
     ShaderModule& m_shaderModule;
     const Type* m_inferredType { nullptr };
     const Type* m_returnType { nullptr };
+    Evaluation m_evaluation { Evaluation::Runtime };
 
     TypeStore& m_types;
     Vector<Error> m_errors;
@@ -379,10 +400,18 @@ void TypeChecker::visit(AST::Structure& structure)
         visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
 
-        if (UNLIKELY(memberType->containsRuntimeArray() && i != structure.members().size() - 1)) {
-            typeError(InferBottom::No, member.span(), "runtime arrays may only appear as the last member of a struct");
-            introduceType(structure.name(), m_types.bottomType());
-            return;
+        if (UNLIKELY(!memberType->hasCreationFixedFootprint())) {
+            if (!memberType->containsRuntimeArray()) {
+                typeError(InferBottom::No, member.span(), "type '", *memberType, "' cannot be used as a struct member because it does not have creation-fixed footprint");
+                introduceType(structure.name(), m_types.bottomType());
+                return;
+            }
+
+            if (i != structure.members().size() - 1) {
+                typeError(InferBottom::No, member.span(), "runtime arrays may only appear as the last member of a struct");
+                introduceType(structure.name(), m_types.bottomType());
+                return;
+            }
         }
 
         auto result = fields.add(member.name().id(), memberType);
@@ -406,7 +435,7 @@ void TypeChecker::visit(AST::TypeAlias& alias)
 
 void TypeChecker::visit(AST::ConstAssert& assertion)
 {
-    auto* testType = infer(assertion.test());
+    auto* testType = infer(assertion.test(), Evaluation::Constant);
     if (!unify(m_types.boolType(), testType)) {
         typeError(InferBottom::No, assertion.test().span(), "const assertion condition must be a bool, got '", *testType, "'");
         return;
@@ -439,13 +468,19 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 
     const auto& error = [&](auto... arguments) {
         typeError(InferBottom::No, variable.span(), arguments...);
-        introduceValue(variable.name(), m_types.bottomType(), std::nullopt);
+        introduceValue(variable.name(), m_types.bottomType());
     };
+
+    Evaluation evaluation { Evaluation::Runtime };
+    if (variable.flavor() == AST::VariableFlavor::Const)
+        evaluation = Evaluation::Constant;
+    else if (variable.flavor() == AST::VariableFlavor::Override)
+        evaluation = Evaluation::Override;
 
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
-        auto* initializerType = infer(*variable.maybeInitializer());
+        auto* initializerType = infer(*variable.maybeInitializer(), evaluation);
         auto& constantValue = variable.maybeInitializer()->m_constantValue;
         if (constantValue.has_value())
             value = &constantValue;
@@ -552,6 +587,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             return error("function-scope 'var' declaration must use 'function' address space");
         if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer())
             return error("variables in the address space '", toString(addressSpace), "' cannot have an initializer");
+        if (addressSpace != AddressSpace::Workgroup && result->containsOverrideArray())
+            return error("array with an 'override' element count can only be used as the store type of a 'var<workgroup>'");
     }
 
     if (value && !isBottom(result))
@@ -573,7 +610,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         variable.m_referenceType = &referenceType;
     }
 
-    introduceValue(variable.name(), result, value ? std::optional<ConstantValue>(*value) : std::nullopt);
+    introduceValue(variable.name(), result, evaluation, value ? std::optional<ConstantValue>(*value) : std::nullopt);
 }
 
 void TypeChecker::visit(AST::Function& function)
@@ -607,49 +644,49 @@ void TypeChecker::visit(AST::Function& function)
 // Attributes
 void TypeChecker::visit(AST::AlignAttribute& attribute)
 {
-    auto* type = infer(attribute.alignment());
+    auto* type = infer(attribute.alignment(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@align must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::BindingAttribute& attribute)
 {
-    auto* type = infer(attribute.binding());
+    auto* type = infer(attribute.binding(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@binding must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::GroupAttribute& attribute)
 {
-    auto* type = infer(attribute.group());
+    auto* type = infer(attribute.group(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@group must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::IdAttribute& attribute)
 {
-    auto* type = infer(attribute.value());
+    auto* type = infer(attribute.value(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@id must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::LocationAttribute& attribute)
 {
-    auto* type = infer(attribute.location());
+    auto* type = infer(attribute.location(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@location must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::SizeAttribute& attribute)
 {
-    auto* type = infer(attribute.size());
+    auto* type = infer(attribute.size(), Evaluation::Constant);
     if (!satisfies(type, Constraints::ConcreteInteger))
         typeError(InferBottom::No, attribute.span(), "@size must be an i32 or u32 value");
 }
 
 void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
 {
-    auto* xType = infer(attribute.x());
+    auto* xType = infer(attribute.x(), Evaluation::Override);
     if (!satisfies(xType, Constraints::ConcreteInteger)) {
         typeError(InferBottom::No, attribute.span(), "@workgroup_size x dimension must be an i32 or u32 value");
         return;
@@ -658,14 +695,14 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
     const Type* yType = nullptr;
     const Type* zType = nullptr;
     if (auto* y = attribute.maybeY()) {
-        yType = infer(*y);
+        yType = infer(*y, Evaluation::Override);
         if (!satisfies(yType, Constraints::ConcreteInteger)) {
             typeError(InferBottom::No, attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value");
             return;
         }
 
         if (auto* z = attribute.maybeZ()) {
-            zType = infer(*z);
+            zType = infer(*z, Evaluation::Override);
             if (!satisfies(zType, Constraints::ConcreteInteger)) {
                 typeError(InferBottom::No, attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value");
                 return;
@@ -687,8 +724,8 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
 // Statements
 void TypeChecker::visit(AST::AssignmentStatement& statement)
 {
-    auto* lhs = infer(statement.lhs());
-    auto* rhs = infer(statement.rhs());
+    auto* lhs = infer(statement.lhs(), Evaluation::Runtime);
+    auto* rhs = infer(statement.rhs(), Evaluation::Runtime);
 
     if (isBottom(lhs))
         return;
@@ -715,7 +752,7 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
 
 void TypeChecker::visit(AST::CallStatement& statement)
 {
-    auto* result = infer(statement.call());
+    auto* result = infer(statement.call(), Evaluation::Runtime);
     // FIXME: this should check if the function has a must_use attribute
     UNUSED_PARAM(result);
 }
@@ -724,8 +761,8 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 {
     // FIXME: Implement type checking - infer is called to avoid ASSERT in
     // TypeChecker::visit(AST::Expression&)
-    infer(statement.leftExpression());
-    infer(statement.rightExpression());
+    infer(statement.leftExpression(), Evaluation::Runtime);
+    infer(statement.rightExpression(), Evaluation::Runtime);
 
     const char* operationName = nullptr;
     if (statement.operation() == AST::BinaryOperation::Divide)
@@ -750,7 +787,7 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
 
 void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
 {
-    auto* expression = infer(statement.expression());
+    auto* expression = infer(statement.expression(), Evaluation::Runtime);
     if (isBottom(expression))
         return;
 
@@ -779,7 +816,7 @@ void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
 
 void TypeChecker::visit(AST::IfStatement& statement)
 {
-    auto* test = infer(statement.test());
+    auto* test = infer(statement.test(), Evaluation::Runtime);
 
     if (!unify(test, m_types.boolType()))
         typeError(statement.test().span(), "expected 'bool', found ", *test);
@@ -791,7 +828,7 @@ void TypeChecker::visit(AST::IfStatement& statement)
 
 void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
 {
-    infer(statement.rhs());
+    infer(statement.rhs(), Evaluation::Runtime);
     // There is nothing to unify with since result of the right-hand side is
     // discarded.
 }
@@ -801,7 +838,7 @@ void TypeChecker::visit(AST::ReturnStatement& statement)
     const Type* type;
     auto* expression = statement.maybeExpression();
     if (expression)
-        type = infer(*expression);
+        type = infer(*expression, Evaluation::Runtime);
     else
         type = m_types.voidType();
 
@@ -821,7 +858,7 @@ void TypeChecker::visit(AST::ForStatement& statement)
         Base::visit(*initializer);
 
     if (auto* test = statement.maybeTest()) {
-        auto* testType = infer(*test);
+        auto* testType = infer(*test, Evaluation::Runtime);
         if (!unify(m_types.boolType(), testType))
             typeError(InferBottom::No, test->span(), "for-loop condition must be bool, got ", *testType);
     }
@@ -846,7 +883,7 @@ void TypeChecker::visit(AST::LoopStatement& statement)
 
 void TypeChecker::visit(AST::WhileStatement& statement)
 {
-    auto* testType = infer(statement.test());
+    auto* testType = infer(statement.test(), Evaluation::Runtime);
     if (!unify(m_types.boolType(), testType))
         typeError(InferBottom::No, statement.test().span(), "while condition must be bool, got ", *testType);
 
@@ -855,7 +892,7 @@ void TypeChecker::visit(AST::WhileStatement& statement)
 
 void TypeChecker::visit(AST::SwitchStatement& statement)
 {
-    auto* valueType = infer(statement.value());
+    auto* valueType = infer(statement.value(), Evaluation::Runtime);
     if (!satisfies(valueType, Constraints::ConcreteInteger)) {
         typeError(InferBottom::No, statement.value().span(), "switch selector must be of type i32 or u32");
         valueType = m_types.bottomType();
@@ -863,7 +900,7 @@ void TypeChecker::visit(AST::SwitchStatement& statement)
 
     const auto& visitClause = [&](AST::SwitchClause& clause) {
         for (auto& selector : clause.selectors) {
-            auto* selectorType = infer(selector);
+            auto* selectorType = infer(selector, Evaluation::Runtime);
             if (unify(valueType, selectorType)) {
                 // If the selectorType can satisfy the value type, we're good to go.
                 // e.g. valueType is i32 or u32 and the selector is a literal of type AbstractInt
@@ -938,7 +975,7 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         return nullptr;
     };
 
-    auto* baseType = infer(access.base());
+    auto* baseType = infer(access.base(), m_evaluation);
     if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
         bool canBeReference = true;
         if (const Type* result = accessImpl(reference->element, &canBeReference)) {
@@ -999,8 +1036,8 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         return result;
     };
 
-    auto* base = infer(access.base());
-    auto* index = infer(access.index());
+    auto* base = infer(access.base(), m_evaluation);
+    auto* index = infer(access.index(), m_evaluation);
 
     if (!unify(m_types.i32Type(), index) && !unify(m_types.u32Type(), index) && !unify(m_types.abstractIntType(), index)) {
         typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
@@ -1058,6 +1095,11 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
         return;
     }
 
+    if (binding->evaluation > m_evaluation) {
+        typeError(identifier.span(), "cannot use ", evaluationToString(binding->evaluation), " value in ", evaluationToString(m_evaluation), " expression");
+        return;
+    }
+
     inferred(binding->type);
     if (binding->constantValue.has_value())
         setConstantValue(identifier, binding->type, *binding->constantValue);
@@ -1096,7 +1138,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                         auto& argument = call.arguments()[i];
                         auto& member = structType->structure.members()[i];
                         auto* fieldType = structType->fields.get(member.name());
-                        auto* argumentType = infer(argument);
+                        auto* argumentType = infer(argument, m_evaluation);
                         if (!unify(fieldType, argumentType)) {
                             typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
                             return;
@@ -1140,6 +1182,11 @@ void TypeChecker::visit(AST::CallExpression& call)
                 auto& functionType = std::get<Types::Function>(*targetBinding->type);
                 auto numberOfArguments = call.arguments().size();
                 auto numberOfParameters = functionType.parameters.size();
+                if (m_evaluation < Evaluation::Runtime) {
+                    typeError(call.span(), "cannot call function from ", evaluationToString(m_evaluation), " context");
+                    return;
+                }
+
                 if (numberOfArguments != numberOfParameters) {
                     const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
                     typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
@@ -1149,7 +1196,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
                     auto& argument = call.arguments()[i];
                     auto* parameterType = functionType.parameters[i];
-                    auto* argumentType = infer(argument);
+                    auto* argumentType = infer(argument, m_evaluation);
                     if (!unify(parameterType, argumentType)) {
                         typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
                         return;
@@ -1217,7 +1264,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             elementType = resolve(*array.maybeElementType());
-            auto* elementCountType = infer(*array.maybeElementCount());
+            auto* elementCountType = infer(*array.maybeElementCount(), m_evaluation);
 
             if (isBottom(elementType) || isBottom(elementCountType)) {
                 inferred(m_types.bottomType());
@@ -1248,7 +1295,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                 return;
             }
             for (auto& argument : call.arguments()) {
-                auto* argumentType = infer(argument);
+                auto* argumentType = infer(argument, m_evaluation);
                 if (!unify(elementType, argumentType)) {
                     typeError(argument.span(), "'", *argumentType, "' cannot be used to construct an array of '", *elementType, "'");
                     return;
@@ -1264,12 +1311,12 @@ void TypeChecker::visit(AST::CallExpression& call)
             }
             for (auto& argument : call.arguments()) {
                 if (!elementType) {
-                    elementType = infer(argument);
+                    elementType = infer(argument, m_evaluation);
                     if (auto* reference = std::get_if<Types::Reference>(elementType))
                         elementType = reference->element;
                     continue;
                 }
-                auto* argumentType = infer(argument);
+                auto* argumentType = infer(argument, m_evaluation);
                 if (unify(elementType, argumentType))
                     continue;
                 if (unify(argumentType, elementType)) {
@@ -1318,7 +1365,7 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
     }
 
     auto& argument = call.arguments()[0];
-    auto* sourceType = infer(argument);
+    auto* sourceType = infer(argument, m_evaluation);
     auto* destinationType = typeArguments[0];
 
     if (isBottom(sourceType) || isBottom(destinationType)) {
@@ -1438,21 +1485,19 @@ void TypeChecker::visit(AST::ArrayTypeExpression& array)
         return;
     }
 
-    std::optional<unsigned> size;
+    Types::Array::Size size;
     if (array.maybeElementCount()) {
-        auto elementCountType = infer(*array.maybeElementCount());
+        auto elementCountType = infer(*array.maybeElementCount(), Evaluation::Override);
         if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) {
             typeError(array.span(), "array count must be an i32 or u32 value, found '", *elementCountType, "'");
             return;
         }
 
         auto value = array.maybeElementCount()->constantValue();
-        if (!value.has_value()) {
-            typeError(array.span(), "array count must evaluate to a constant integer expression or override variable");
-            return;
-        }
-
-        size = value->integerValue();
+        if (value.has_value())
+            size = { static_cast<unsigned>(value->integerValue()) };
+        else
+            size = { array.maybeElementCount() };
     }
 
     inferred(m_types.arrayType(elementType, size));
@@ -1507,7 +1552,7 @@ void TypeChecker::visit(AST::Continuing& continuing)
         Base::visit(statement);
 
     if (auto* breakIf = continuing.breakIf) {
-        auto* type = infer(*breakIf);
+        auto* type = infer(*breakIf, Evaluation::Runtime);
         if (!unify(m_types.boolType(), type))
             typeError(InferBottom::No, breakIf->span(), "expected 'bool', found ", *type);
     }
@@ -1602,7 +1647,7 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
     Vector<const Type*> valueArguments;
     valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
-        auto* type = infer(callArguments[i]);
+        auto* type = infer(callArguments[i], m_evaluation);
         if (isBottom(type)) {
             inferred(m_types.bottomType());
             return m_types.bottomType();
@@ -1634,7 +1679,13 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
                 arguments[i] = *value;
         }
 
-        if (auto constantFunction = it->value.constantFunction; isConstant && constantFunction) {
+        auto constantFunction = it->value.constantFunction;
+        if (!constantFunction && m_evaluation < Evaluation::Runtime) {
+            typeError(InferBottom::No, expression.span(), "cannot call function from ", evaluationToString(m_evaluation), " context");
+            return m_types.bottomType();
+        }
+
+        if (isConstant && constantFunction) {
             auto result = constantFunction(overload->result, WTFMove(arguments));
             if (!result)
                 typeError(InferBottom::No, expression.span(), result.error());
@@ -1669,8 +1720,9 @@ const Type* TypeChecker::chooseOverload(const char* kind, AST::Expression& expre
     return m_types.bottomType();
 }
 
-const Type* TypeChecker::infer(AST::Expression& expression)
+const Type* TypeChecker::infer(AST::Expression& expression, Evaluation evaluation)
 {
+    auto evaluationScope = SetForScope(m_evaluation, evaluation);
     ASSERT(!m_inferredType);
     Base::visit(expression);
     ASSERT(m_inferredType);
@@ -1748,7 +1800,7 @@ bool TypeChecker::isBottom(const Type* type) const
 void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
     ASSERT(type);
-    if (!introduceVariable(name, { Binding::Type, type, std::nullopt }))
+    if (!introduceVariable(name, { Binding::Type, type, Evaluation::Runtime, std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
@@ -1939,19 +1991,19 @@ bool TypeChecker::convertValueImpl(const SourceSpan& span, const Type* type, Con
         });
 }
 
-void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, std::optional<ConstantValue> value)
+void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, Evaluation evaluation, std::optional<ConstantValue> value)
 {
     ASSERT(type);
     if (shouldDumpConstantValues && value.has_value())
         dataLogLn("> Assigning value: ", name, " => ", value);
-    if (!introduceVariable(name, { Binding::Value, type , value }))
+    if (!introduceVariable(name, { Binding::Value, type, evaluation, value }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
 void TypeChecker::introduceFunction(const AST::Identifier& name, const Type* type)
 {
     ASSERT(type);
-    if (!introduceVariable(name, { Binding::Function, type , std::nullopt }))
+    if (!introduceVariable(name, { Binding::Function, type, Evaluation::Runtime , std::nullopt }))
         typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
@@ -2017,7 +2069,7 @@ void TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::Te
 
 std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
 {
-    auto* formatType = infer(expression);
+    auto* formatType = infer(expression, Evaluation::Runtime);
     if (isBottom(formatType))
         return std::nullopt;
 
@@ -2036,7 +2088,7 @@ std::optional<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
 
 std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
 {
-    auto* accessType = infer(expression);
+    auto* accessType = infer(expression, Evaluation::Runtime);
     if (isBottom(accessType))
         return std::nullopt;
 
@@ -2055,7 +2107,7 @@ std::optional<AccessMode> TypeChecker::accessMode(AST::Expression& expression)
 
 std::optional<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
 {
-    auto* addressSpaceType = infer(expression);
+    auto* addressSpaceType = infer(expression, Evaluation::Runtime);
     if (isBottom(addressSpaceType))
         return std::nullopt;
 
