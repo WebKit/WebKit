@@ -216,6 +216,9 @@ class PageClient : public CanMakeWeakPtr<PageClient> {
 public:
     virtual ~PageClient() { }
 
+    void ref() { refView(); }
+    void deref() { derefView(); }
+
     // Create a new drawing area proxy for the given page.
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) = 0;
 

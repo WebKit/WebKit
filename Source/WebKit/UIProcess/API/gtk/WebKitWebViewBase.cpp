@@ -2362,7 +2362,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_widget_set_can_focus(viewWidget, TRUE);
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
-    priv->pageClient = makeUnique<PageClientImpl>(viewWidget);
+    priv->pageClient = makeUniqueWithoutRefCountedCheck<PageClientImpl>(viewWidget);
     gtk_widget_set_parent(priv->keyBindingTranslator.widget(), viewWidget);
 
 #if ENABLE(DRAG_SUPPORT)

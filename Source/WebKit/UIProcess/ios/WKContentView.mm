@@ -425,7 +425,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     WebKit::InitializeWebKit2();
 
-    _pageClient = makeUnique<WebKit::PageClientImpl>(self, webView);
+    _pageClient = makeUniqueWithoutRefCountedCheck<WebKit::PageClientImpl>(self, webView);
     _webView = webView;
 
     return [self _commonInitializationWithProcessPool:processPool configuration:WTFMove(configuration)];

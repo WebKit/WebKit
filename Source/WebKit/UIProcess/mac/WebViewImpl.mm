@@ -1151,7 +1151,7 @@ static bool isInRecoveryOS()
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
-    , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
+    , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(view, outerWebView))
     , m_page(processPool.createWebPage(*m_pageClient, WTFMove(configuration)))
     , m_needsViewFrameInWindowCoordinates(m_page->preferences().pluginsEnabled())
     , m_intrinsicContentSize(CGSizeMake(NSViewNoIntrinsicMetric, NSViewNoIntrinsicMetric))

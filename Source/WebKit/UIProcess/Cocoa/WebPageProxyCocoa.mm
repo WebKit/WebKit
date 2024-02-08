@@ -150,7 +150,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         }
     }
 
-    pageClient().didCommitLayerTree(layerTreeTransaction);
+    protectedPageClient()->didCommitLayerTree(layerTreeTransaction);
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
     if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
@@ -162,7 +162,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 
 void WebPageProxy::layerTreeCommitComplete()
 {
-    pageClient().layerTreeCommitComplete();
+    protectedPageClient()->layerTreeCommitComplete();
 }
 
 #if ENABLE(DATA_DETECTION)
@@ -174,7 +174,7 @@ void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetecti
 
 void WebPageProxy::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
 {
-    pageClient().handleClickForDataDetectionResult(info, clickLocation);
+    protectedPageClient()->handleClickForDataDetectionResult(info, clickLocation);
 }
 
 #endif
@@ -274,14 +274,14 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
 
 bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 {
-    return pageClient().scrollingUpdatesDisabledForTesting();
+    return protectedPageClient()->scrollingUpdatesDisabledForTesting();
 }
 
 #if ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle)
 {
-    pageClient().startDrag(dragItem, WTFMove(dragImageHandle));
+    protectedPageClient()->startDrag(dragItem, WTFMove(dragImageHandle));
 }
 
 #endif
@@ -293,7 +293,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (bufferCopy.isEmpty())
         return;
 
-    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
+    auto fileWrapper = adoptNS([protectedPageClient()->allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
     [fileWrapper setPreferredFilename:preferredFileName];
     attachment->setFileWrapper(fileWrapper.get());
 }
@@ -303,7 +303,7 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
     if (!filePath)
         return;
 
-    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
+    auto fileWrapper = adoptNS([protectedPageClient()->allocFileWrapperInstance() initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
     attachment->setFileWrapper(fileWrapper.get());
 }
 
@@ -374,7 +374,7 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
 
     Vector<DictationAlternative> dictationAlternatives;
     for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
-        if (auto context = pageClient().addDictationAlternatives(alternativeWithRange.alternatives.get()))
+        if (auto context = protectedPageClient()->addDictationAlternatives(alternativeWithRange.alternatives.get()))
             dictationAlternatives.append({ alternativeWithRange.range, context });
     }
 
@@ -392,7 +392,7 @@ void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternativ
         return;
 
     auto nsAlternatives = alternative.alternatives.get();
-    auto context = pageClient().addDictationAlternatives(nsAlternatives);
+    auto context = protectedPageClient()->addDictationAlternatives(nsAlternatives);
     sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.primaryString, context }, [context, weakThis = WeakPtr { *this }](bool success) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
             protectedThis->removeDictationAlternatives(context);
@@ -421,7 +421,7 @@ void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alterna
 
 PlatformTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    return pageClient().platformDictationAlternatives(dictationContext);
+    return protectedPageClient()->platformDictationAlternatives(dictationContext);
 }
 
 #endif
@@ -512,14 +512,14 @@ void WebPageProxy::Internals::voicesDidChange()
 void WebPageProxy::didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
     m_contextIDForVisibilityPropagationInWebProcess = contextID;
-    pageClient().didCreateContextInWebProcessForVisibilityPropagation(contextID);
+    protectedPageClient()->didCreateContextInWebProcessForVisibilityPropagation(contextID);
 }
 
 #if ENABLE(GPU_PROCESS)
 void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
     m_contextIDForVisibilityPropagationInGPUProcess = contextID;
-    pageClient().didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+    protectedPageClient()->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
 }
 #endif // ENABLE(GPU_PROCESS)
 
@@ -527,7 +527,7 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
 void WebPageProxy::didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
     m_contextIDForVisibilityPropagationInModelProcess = contextID;
-    pageClient().didCreateContextInModelProcessForVisibilityPropagation(contextID);
+    protectedPageClient()->didCreateContextInModelProcessForVisibilityPropagation(contextID);
 }
 #endif // ENABLE(MODEL_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -573,7 +573,7 @@ void WebPageProxy::didChangeCurrentTime(PlaybackSessionContextIdentifier identif
 
 void WebPageProxy::updateFullscreenVideoTextRecognition()
 {
-    if (!pageClient().isTextRecognitionInFullscreenVideoEnabled())
+    if (!protectedPageClient()->isTextRecognitionInFullscreenVideoEnabled())
         return;
 
     if (internals().currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*internals().currentFullscreenVideoSessionIdentifier)) {
@@ -588,7 +588,7 @@ void WebPageProxy::updateFullscreenVideoTextRecognition()
 
 #if PLATFORM(IOS_FAMILY)
     if (RetainPtr controller = m_videoPresentationManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
-        pageClient().cancelTextRecognitionForFullscreenVideo(controller.get());
+        protectedPageClient()->cancelTextRecognitionForFullscreenVideo(controller.get());
 #endif
 }
 
@@ -611,7 +611,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 
 #if PLATFORM(IOS_FAMILY)
         if (RetainPtr controller = presentationManager->playerViewController(identifier))
-            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(*imageHandle), controller.get());
+            protectedThis->protectedPageClient()->beginTextRecognitionForFullscreenVideo(WTFMove(*imageHandle), controller.get());
 #endif
     });
 }
@@ -828,12 +828,12 @@ void WebPageProxy::abortApplePayAMSUISession()
 
 bool WebPageProxy::canHandleContextMenuTranslation() const
 {
-    return pageClient().canHandleContextMenuTranslation();
+    return protectedPageClient()->canHandleContextMenuTranslation();
 }
 
 void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    return pageClient().handleContextMenuTranslation(info);
+    return protectedPageClient()->handleContextMenuTranslation(info);
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
@@ -992,7 +992,7 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     if (isViewVisible())
         return false;
 
-    bool canTakeForegroundAssertions = pageClient().canTakeForegroundAssertions();
+    bool canTakeForegroundAssertions = protectedPageClient()->canTakeForegroundAssertions();
     WEBPAGEPROXY_RELEASE_LOG(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
     return canTakeForegroundAssertions;
 }

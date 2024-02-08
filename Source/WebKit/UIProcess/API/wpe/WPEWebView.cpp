@@ -73,7 +73,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
 #endif
-    , m_pageClient(makeUnique<PageClientImpl>(*this))
+    , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
     , m_size { 800, 600 }
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)

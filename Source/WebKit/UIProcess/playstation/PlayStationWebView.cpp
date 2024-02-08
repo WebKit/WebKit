@@ -44,7 +44,7 @@ RefPtr<PlayStationWebView> PlayStationWebView::create(struct wpe_view_backend* b
 }
 
 PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const API::PageConfiguration& conf)
-    : m_pageClient(makeUnique<PageClientImpl>(*this))
+    : m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)
 {
@@ -64,7 +64,7 @@ RefPtr<PlayStationWebView> PlayStationWebView::create(const API::PageConfigurati
 }
 
 PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
-    : m_pageClient(makeUnique<PageClientImpl>(*this))
+    : m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
 {
     auto configuration = conf.copy();
