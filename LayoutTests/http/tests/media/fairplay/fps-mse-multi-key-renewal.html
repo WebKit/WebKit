@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-multi-key-renewal</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        consoleWrite('Initiate a multi-key key request and verify that a renewal does not revoke any usable keys.')
+
+        var access = await navigator.requestMediaKeySystemAccess("com.apple.fps", [{
+            initDataTypes: ['cenc'],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]);
+
+        consoleWrite('PROMISE: requestMediaKeySystemAccess resolved');
+        var keys = await access.createMediaKeys();
+
+        consoleWrite('PROMISE: createMediaKeys resolved');
+        var certificateResponse = await fetch('resources/cert.der');
+
+        consoleWrite('FETCH: server certificate recieved');
+        var arrayBuffer = await certificateResponse.arrayBuffer();
+
+        consoleWrite('PROMISE: arrayBuffer resolved');
+        await keys.setServerCertificate(arrayBuffer);
+
+        consoleWrite('PROMISE: setServerCertificate resolved');
+        window.session = keys.createSession();
+
+        let keyIDs = [];
+
+        let handleCencMessage = async event => {
+            let messageString = uInt8ArrayToString(new Uint8Array(event.message));
+            let messageObject = JSON.parse(messageString);
+            let responses = [];
+
+            for (let message of messageObject) {
+                consoleWrite('Requesting key.');
+                keyIDs.push(message.keyID);
+                let id = base64DecodeUint8Array(message.keyID)[15];
+
+                var licenseResponse = await fetch('resources/index.py', {
+                    method: 'POST',
+                    headers: new Headers({'Content-type': 'application/x-www-form-urlencoded'}),
+                    body: JSON.stringify({
+                        "fairplay-streaming-request" : {
+                            "version" : 1,
+                            "streaming-keys" : [{
+                                id: id,
+                                uri: 'skd://twelve',
+                                spc: message.payload,
+                            }],
+                        }
+                    }),
+                });
+                consoleWrite('PROMISE: licenseResponse resolved');
+                var license = await licenseResponse.text();
+
+                responseObject = JSON.parse(license.trim());
+                responses.push({ keyID: message.keyID, payload: responseObject["fairplay-streaming-response"]["streaming-keys"][0].ckc });
+            }
+
+            let response = stringToUInt8Array(JSON.stringify(responses));
+            await session.update(response.buffer);
+            consoleWrite('PROMISE: session.update() resolved');
+        }
+
+
+        let handleRenewalMessage = async event => {
+            consoleWrite('Requesting key.');
+            let keyID = keyIDs.at(-1);
+            let id = base64DecodeUint8Array(keyID)[15];
+
+            var licenseResponse = await fetch('resources/index.py', {
+                method: 'POST',
+                headers: new Headers({'Content-type': 'application/x-www-form-urlencoded'}),
+                body: JSON.stringify({
+                    "fairplay-streaming-request" : {
+                        "version" : 1,
+                        "streaming-keys" : [{
+                            id: id,
+                            uri: 'skd://twelve',
+                            spc: base64EncodeUint8Array(new Uint8Array(event.message)),
+                        }],
+                    }
+                }),
+            });
+            consoleWrite('PROMISE: licenseResponse resolved');
+            var license = await licenseResponse.text();
+
+            responseObject = JSON.parse(license.trim());
+            responses = [{ keyID: keyID, payload: responseObject["fairplay-streaming-response"]["streaming-keys"][0].ckc }];
+
+            let response = stringToUInt8Array(JSON.stringify(responses));
+            await session.update(response.buffer);
+            consoleWrite('PROMISE: session.update() resolved');
+        }
+
+        consoleWrite('');
+        consoleWrite('Issue a multi-key request');
+
+        var initData = base64DecodeUint8Array(`AAABuHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAZgAAAGYZnBzZAAAABBmcHNpAAAAAGNlbmMAAABgZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAYZmthaQAAAAAAAAAAAAAAAAAAAAEAAAAYZmtjeAAAAAAAAAAAAAAAAAAAAAEAAAAMZmt2bAEAAAAAAABgZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAYZmthaQAAAAAAAAAAAAAAAAAAAAIAAAAYZmtjeAAAAAAAAAAAAAAAAAAAAAIAAAAMZmt2bAEAAAAAAABgZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAYZmthaQAAAAAAAAAAAAAAAAAAAAMAAAAYZmtjeAAAAAAAAAAAAAAAAAAAAAMAAAAMZmt2bAEAAAAAAABgZnBzawAAABxma3JpAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAYZmthaQAAAAAAAAAAAAAAAAAAAAQAAAAYZmtjeAAAAAAAAAAAAAAAAAAAAAQAAAAMZmt2bAEAAAA=`);
+
+        session.generateRequest('cenc', initData);
+        let event = await waitFor(session, 'message');
+
+        await handleCencMessage(event);
+
+        testExpected('session.keyStatuses.size', 4);
+
+        consoleWrite('');
+        consoleWrite('Issue a single key renewal');
+        session.update(stringToUInt8Array('renew'));    
+        event = await waitFor(session, 'message');
+
+        await handleRenewalMessage(event);
+        
+        testExpected('session.keyStatuses.size', 4);
+    }
+    </script>
+</head>
+</html>
