@@ -58,6 +58,7 @@
 #include "GPUSupportedLimits.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "GPUTextureFormat.h"
 #include "GPUUncapturedErrorEvent.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
@@ -162,73 +163,72 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& b
 bool GPUDevice::isSupportedFormat(GPUTextureFormat format) const
 {
     const auto& featureContainer = m_backing->features().features();
-    using enum GPUTextureFormat;
     switch (format) {
-    case Depth32floatStencil8:
+    case GPUTextureFormat::Depth32floatStencil8:
         return featureContainer.contains("depth32float-stencil8"_s);
 
     // BC compressed formats usable if texture-compression-bc is both
     // supported by the device/user agent and enabled in requestDevice.
-    case Bc1RgbaUnorm:
-    case Bc1RgbaUnormSRGB:
-    case Bc2RgbaUnorm:
-    case Bc2RgbaUnormSRGB:
-    case Bc3RgbaUnorm:
-    case Bc3RgbaUnormSRGB:
-    case Bc4RUnorm:
-    case Bc4RSnorm:
-    case Bc5RgUnorm:
-    case Bc5RgSnorm:
-    case Bc6hRgbUfloat:
-    case Bc6hRgbFloat:
-    case Bc7RgbaUnorm:
-    case Bc7RgbaUnormSRGB:
+    case GPUTextureFormat::Bc1RgbaUnorm:
+    case GPUTextureFormat::Bc1RgbaUnormSRGB:
+    case GPUTextureFormat::Bc2RgbaUnorm:
+    case GPUTextureFormat::Bc2RgbaUnormSRGB:
+    case GPUTextureFormat::Bc3RgbaUnorm:
+    case GPUTextureFormat::Bc3RgbaUnormSRGB:
+    case GPUTextureFormat::Bc4RUnorm:
+    case GPUTextureFormat::Bc4RSnorm:
+    case GPUTextureFormat::Bc5RgUnorm:
+    case GPUTextureFormat::Bc5RgSnorm:
+    case GPUTextureFormat::Bc6hRgbUfloat:
+    case GPUTextureFormat::Bc6hRgbFloat:
+    case GPUTextureFormat::Bc7RgbaUnorm:
+    case GPUTextureFormat::Bc7RgbaUnormSRGB:
         return featureContainer.contains("texture-compression-bc"_s);
 
     // ETC2 compressed formats usable if texture-compression-etc2 is both
     // supported by the device/user agent and enabled in requestDevice.
-    case Etc2Rgb8unorm:
-    case Etc2Rgb8unormSRGB:
-    case Etc2Rgb8a1unorm:
-    case Etc2Rgb8a1unormSRGB:
-    case Etc2Rgba8unorm:
-    case Etc2Rgba8unormSRGB:
-    case EacR11unorm:
-    case EacR11snorm:
-    case EacRg11unorm:
-    case EacRg11snorm:
+    case GPUTextureFormat::Etc2Rgb8unorm:
+    case GPUTextureFormat::Etc2Rgb8unormSRGB:
+    case GPUTextureFormat::Etc2Rgb8a1unorm:
+    case GPUTextureFormat::Etc2Rgb8a1unormSRGB:
+    case GPUTextureFormat::Etc2Rgba8unorm:
+    case GPUTextureFormat::Etc2Rgba8unormSRGB:
+    case GPUTextureFormat::EacR11unorm:
+    case GPUTextureFormat::EacR11snorm:
+    case GPUTextureFormat::EacRg11unorm:
+    case GPUTextureFormat::EacRg11snorm:
         return featureContainer.contains("texture-compression-etc2"_s);
 
     // ASTC compressed formats usable if texture-compression-astc is both
     // supported by the device/user agent and enabled in requestDevice.
-    case Astc4x4Unorm:
-    case Astc4x4UnormSRGB:
-    case Astc5x4Unorm:
-    case Astc5x4UnormSRGB:
-    case Astc5x5Unorm:
-    case Astc5x5UnormSRGB:
-    case Astc6x5Unorm:
-    case Astc6x5UnormSRGB:
-    case Astc6x6Unorm:
-    case Astc6x6UnormSRGB:
-    case Astc8x5Unorm:
-    case Astc8x5UnormSRGB:
-    case Astc8x6Unorm:
-    case Astc8x6UnormSRGB:
-    case Astc8x8Unorm:
-    case Astc8x8UnormSRGB:
-    case Astc10x5Unorm:
-    case Astc10x5UnormSRGB:
-    case Astc10x6Unorm:
-    case Astc10x6UnormSRGB:
-    case Astc10x8Unorm:
-    case Astc10x8UnormSRGB:
-    case Astc10x10Unorm:
-    case Astc10x10UnormSRGB:
-    case Astc12x10Unorm:
-    case Astc12x10UnormSRGB:
-    case Astc12x12Unorm:
-    case Astc12x12UnormSRGB:
+    case GPUTextureFormat::Astc4x4Unorm:
+    case GPUTextureFormat::Astc4x4UnormSRGB:
+    case GPUTextureFormat::Astc5x4Unorm:
+    case GPUTextureFormat::Astc5x4UnormSRGB:
+    case GPUTextureFormat::Astc5x5Unorm:
+    case GPUTextureFormat::Astc5x5UnormSRGB:
+    case GPUTextureFormat::Astc6x5Unorm:
+    case GPUTextureFormat::Astc6x5UnormSRGB:
+    case GPUTextureFormat::Astc6x6Unorm:
+    case GPUTextureFormat::Astc6x6UnormSRGB:
+    case GPUTextureFormat::Astc8x5Unorm:
+    case GPUTextureFormat::Astc8x5UnormSRGB:
+    case GPUTextureFormat::Astc8x6Unorm:
+    case GPUTextureFormat::Astc8x6UnormSRGB:
+    case GPUTextureFormat::Astc8x8Unorm:
+    case GPUTextureFormat::Astc8x8UnormSRGB:
+    case GPUTextureFormat::Astc10x5Unorm:
+    case GPUTextureFormat::Astc10x5UnormSRGB:
+    case GPUTextureFormat::Astc10x6Unorm:
+    case GPUTextureFormat::Astc10x6UnormSRGB:
+    case GPUTextureFormat::Astc10x8Unorm:
+    case GPUTextureFormat::Astc10x8UnormSRGB:
+    case GPUTextureFormat::Astc10x10Unorm:
+    case GPUTextureFormat::Astc10x10UnormSRGB:
+    case GPUTextureFormat::Astc12x10Unorm:
+    case GPUTextureFormat::Astc12x10UnormSRGB:
+    case GPUTextureFormat::Astc12x12Unorm:
+    case GPUTextureFormat::Astc12x12UnormSRGB:
         return featureContainer.contains("texture-compression-astc"_s);
 
     default:
