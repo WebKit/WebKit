@@ -151,15 +151,15 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
     if (error.domain() != errorDomainWebKitInternal && error.domain() != errorDomainWebKitServiceWorker && !error.isAccessControl())
         return;
 
-    const char* messageStart;
+    ASCIILiteral messageStart;
     if (initiatorType == cachedResourceRequestInitiatorTypes().eventsource)
-        messageStart = "EventSource cannot load ";
+        messageStart = "EventSource cannot load "_s;
     else if (initiatorType == cachedResourceRequestInitiatorTypes().fetch)
-        messageStart = "Fetch API cannot load ";
+        messageStart = "Fetch API cannot load "_s;
     else if (initiatorType == cachedResourceRequestInitiatorTypes().xmlhttprequest)
-        messageStart = "XMLHttpRequest cannot load ";
+        messageStart = "XMLHttpRequest cannot load "_s;
     else
-        messageStart = "Cannot load ";
+        messageStart = "Cannot load "_s;
 
     String messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().string(), messageEnd));

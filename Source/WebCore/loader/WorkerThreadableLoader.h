@@ -101,6 +101,7 @@ private:
     private:
         // Executed on the worker context's thread.
         void clearClientWrapper();
+        RefPtr<ThreadableLoaderClientWrapper> protectedWorkerClientWrapper() const;
 
         // All executed on the main thread.
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
@@ -120,7 +121,7 @@ private:
         RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
 
         // May be used on either thread.
-        WorkerLoaderProxy* m_loaderProxy;
+        WorkerLoaderProxy* m_loaderProxy; // FIXME: Use a smart pointer.
 
         // For use on the main thread.
         String m_taskMode;
@@ -134,7 +135,7 @@ private:
     void computeIsDone() final;
 
     Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
-    MainThreadBridge& m_bridge;
+    MainThreadBridge& m_bridge; // FIXME: Use a smart pointer.
 };
 
 } // namespace WebCore

@@ -55,27 +55,25 @@ TextTrackLoader::TextTrackLoader(TextTrackLoaderClient& client, Document& docume
 
 TextTrackLoader::~TextTrackLoader()
 {
-    if (m_resource)
-        m_resource->removeClient(*this);
+    if (CachedResourceHandle resource = m_resource)
+        resource->removeClient(*this);
 }
 
 void TextTrackLoader::cueLoadTimerFired()
 {
     if (m_newCuesAvailable) {
         m_newCuesAvailable = false;
-        m_client.newCuesAvailable(*this);
+        m_client->newCuesAvailable(*this);
     }
 
     if (m_state >= Finished)
-        m_client.cueLoadingCompleted(*this, m_state == Failed);
+        m_client->cueLoadingCompleted(*this, m_state == Failed);
 }
 
 void TextTrackLoader::cancelLoad()
 {
-    if (m_resource) {
-        m_resource->removeClient(*this);
-        m_resource = nullptr;
-    }
+    if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
+        resource->removeClient(*this);
 }
 
 void TextTrackLoader::processNewCueData(CachedResource& resource)
@@ -85,12 +83,12 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
     if (m_state == Failed || !m_resource->resourceBuffer())
         return;
 
-    auto* buffer = m_resource->resourceBuffer();
+    Ref buffer = *m_resource->resourceBuffer();
     if (m_parseOffset == buffer->size())
         return;
 
     if (!m_cueParser)
-        m_cueParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), m_document);
+        m_cueParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), protectedDocument());
 
     while (m_parseOffset < buffer->size()) {
         auto data = buffer->getSomeData(m_parseOffset);
@@ -107,13 +105,13 @@ void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource& resourc
     if (!m_resource->resourceBuffer())
         return;
 
-    processNewCueData(*m_resource);
+    processNewCueData(*protectedResource());
 }
 
 void TextTrackLoader::corsPolicyPreventedLoad()
 {
     static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
-    m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+    protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
     m_state = Failed;
 }
 
@@ -128,11 +126,12 @@ void TextTrackLoader::notifyFinished(CachedResource& resource, const NetworkLoad
         m_state = Failed;
 
     if (m_state != Failed) {
-        processNewCueData(*m_resource);
+        CachedResourceHandle resource = m_resource;
+        processNewCueData(*resource);
         if (m_cueParser)
             m_cueParser->fileFinished();
         if (m_state != Failed)
-            m_state = m_resource->errorOccurred() ? Failed : Finished;
+            m_state = resource->errorOccurred() ? Failed : Finished;
     }
 
     if (m_state == Finished && m_cueParser)
@@ -151,18 +150,20 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = element.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
+    Ref document = m_document.get();
     // FIXME: Do we really need to call completeURL here?
-    ResourceRequest resourceRequest(m_document.completeURL(url.string()));
+    ResourceRequest resourceRequest(document->completeURL(url.string()));
 
-    if (auto mediaElement = element.mediaElement())
+    if (RefPtr mediaElement = element.mediaElement())
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*mediaElement));
 
-    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), m_document, element.mediaElementCrossOriginAttribute());
-    m_resource = m_document.cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
-    if (!m_resource)
-        return false;
-    m_resource->addClient(*this);
-    return true;
+    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, element.mediaElementCrossOriginAttribute());
+    m_resource = document->protectedCachedResourceLoader()->requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
+    if (CachedResourceHandle resource = m_resource) {
+        resource->addClient(*this);
+        return true;
+    }
+    return false;
 }
 
 void TextTrackLoader::newCuesParsed()
@@ -176,12 +177,12 @@ void TextTrackLoader::newCuesParsed()
 
 void TextTrackLoader::newRegionsParsed()
 {
-    m_client.newRegionsAvailable(*this);
+    m_client->newRegionsAvailable(*this);
 }
 
 void TextTrackLoader::newStyleSheetsParsed()
 {
-    m_client.newStyleSheetsAvailable(*this);
+    m_client->newStyleSheetsAvailable(*this);
 }
 
 void TextTrackLoader::fileFailedToParse()
@@ -203,7 +204,7 @@ Vector<Ref<VTTCue>> TextTrackLoader::getNewCues()
         return { };
 
     return m_cueParser->takeCues().map([this](auto& cueData) {
-        return VTTCue::create(m_document, cueData);
+        return VTTCue::create(protectedDocument(), cueData);
     });
 }
 
@@ -223,6 +224,16 @@ Vector<String> TextTrackLoader::getNewStyleSheets()
     return m_cueParser->takeStyleSheets();
 }
 
+Ref<Document> TextTrackLoader::protectedDocument() const
+{
+    return m_document.get();
 }
+
+CachedResourceHandle<CachedTextTrack> TextTrackLoader::protectedResource() const
+{
+    return m_resource.get();
+}
+
+} // namespace WebCore
 
 #endif

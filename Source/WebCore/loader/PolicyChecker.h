@@ -95,7 +95,9 @@ private:
     URLKeepingBlobAlive extendBlobURLLifetimeIfNecessary(const ResourceRequest&, const Document&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
     std::optional<HitTestResult> hitTestResult(const NavigationAction&);
 
-    LocalFrame& m_frame;
+    Ref<LocalFrame> protectedFrame() const;
+
+    WeakRef<LocalFrame> m_frame;
 
     uint64_t m_javaScriptURLPolicyCheckIdentifier { 0 };
     bool m_delegateIsDecidingNavigationPolicy;

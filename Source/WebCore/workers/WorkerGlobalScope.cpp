@@ -517,6 +517,11 @@ Performance& WorkerGlobalScope::performance() const
     return *m_performance;
 }
 
+Ref<Performance> WorkerGlobalScope::protectedPerformance() const
+{
+    return *m_performance;
+}
+
 WorkerCacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
 {
     if (!m_cacheStorageConnection)

@@ -141,6 +141,7 @@ public:
 
     Crypto& crypto();
     Performance& performance() const;
+    Ref<Performance> protectedPerformance() const;
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
 
     void prepareForDestruction() override;

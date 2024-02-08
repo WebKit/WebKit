@@ -34,6 +34,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ public:
 
     ProgressTrackerClient& client() { return m_client.get(); }
 
-    WEBCORE_EXPORT double estimatedProgress() const;
+    double estimatedProgress() const { return m_progressValue; }
 
     void progressStarted(LocalFrame&);
     void progressCompleted(LocalFrame&);
@@ -71,8 +72,9 @@ private:
     void progressEstimateChanged(LocalFrame&);
 
     void progressHeartbeatTimerFired();
+    Ref<Page> protectedPage() const;
 
-    Page& m_page;
+    SingleThreadWeakRef<Page> m_page;
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<LocalFrame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
