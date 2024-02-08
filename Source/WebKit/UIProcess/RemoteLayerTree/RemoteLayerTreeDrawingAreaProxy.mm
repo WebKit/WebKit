@@ -31,7 +31,6 @@
 #import "LayerProperties.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
-#import "ProcessThrottler.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemotePageDrawingAreaProxy.h"
 #import "RemotePageProxy.h"
@@ -573,9 +572,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    // FIXME(rdar://122365213): Rethink whether this needs to use an async reply handler or start a background activity.
-    auto activity = m_webProcessProxy->throttler().backgroundActivity("hideContentUntilPendingUpdate"_s);
-    m_replyForUnhidingContent = m_webProcessProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [timedActivity = makeUnique<ProcessThrottlerTimedActivity>(1_s, WTFMove(activity))] () mutable { }, messageSenderDestinationID(), { }, WebProcessProxy::ShouldStartProcessThrottlerActivity::No);
+    m_replyForUnhidingContent = sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] { });
     m_remoteLayerTreeHost->detachRootLayer();
 }
 
