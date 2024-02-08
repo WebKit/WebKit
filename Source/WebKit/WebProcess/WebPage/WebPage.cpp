@@ -3218,6 +3218,10 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 
 void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize newSize)
 {
+    if (!m_page)
+        return;
+
+    ASSERT(m_page->settings().siteIsolationEnabled());
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
         return;
@@ -3231,6 +3235,8 @@ void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize
         return;
 
     frameView->resize(newSize);
+    // FIXME: This should be removed after rdar://122429810 is fixed.
+    frameView->setExposedContentRect(frameView->frameRect());
 
     if (m_drawingArea) {
         m_drawingArea->setNeedsDisplay();
