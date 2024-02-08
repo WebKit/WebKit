@@ -218,6 +218,7 @@ struct EntryPointInformation {
     HashMap<std::pair<size_t, size_t>, size_t> bufferLengthLocations; // Metal buffer identity -> offset within helper buffer where its size needs to lie
     HashMap<String, SpecializationConstant> specializationConstants;
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
+    size_t sizeForWorkgroupVariables { 0 };
 };
 
 } // namespace Reflection

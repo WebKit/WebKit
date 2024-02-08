@@ -19,4 +19,5 @@ PASS :createComputePipeline,at_over:limitTest="overMaximum";testValueName="atLim
 PASS :createComputePipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=true
 PASS :createComputePipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=false
 PASS :createComputePipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=true
+PASS :validate,maxComputeInvocationsPerWorkgroup:
 

@@ -500,13 +500,58 @@ static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStage
     }
 }
 
-static void populateFragmentInputs(const WGSL::Type& type, ShaderModule::FragmentInputs& fragmentInputs)
+bool ShaderModule::usesFrontFacingInInput() const
+{
+    return m_usesFrontFacingInInput;
+}
+bool ShaderModule::usesSampleIndexInInput() const
+{
+    return m_usesSampleIndexInInput;
+}
+bool ShaderModule::usesSampleMaskInInput() const
+{
+    return m_usesSampleMaskInInput;
+}
+
+void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::FragmentInputs& fragmentInputs)
 {
     auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
     if (!inputStruct)
         return;
 
     for (auto& member : inputStruct->structure.members()) {
+        if (member.builtin()) {
+            using enum WGSL::Builtin;
+            switch (*member.builtin()) {
+            case FragDepth:
+                break;
+            case FrontFacing:
+                m_usesFrontFacingInInput = true;
+                break;
+            case GlobalInvocationId:
+                break;
+            case InstanceIndex:
+                break;
+            case LocalInvocationId:
+                break;
+            case LocalInvocationIndex:
+                break;
+            case NumWorkgroups:
+                break;
+            case Position:
+                break;
+            case SampleIndex:
+                m_usesSampleIndexInInput = true;
+                break;
+            case SampleMask:
+                m_usesSampleMaskInInput = true;
+                break;
+            case VertexIndex:
+                break;
+            case WorkgroupId:
+                break;
+            }
+        }
         if (!member.location())
             continue;
         auto location = *member.location();
@@ -532,7 +577,7 @@ static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& funct
     return result;
 }
 
-static ShaderModule::FragmentInputs parseFragmentInputs(const WGSL::AST::Function& function)
+ShaderModule::FragmentInputs ShaderModule::parseFragmentInputs(const WGSL::AST::Function& function)
 {
     ShaderModule::FragmentInputs result;
     for (auto& parameter : function.parameters()) {

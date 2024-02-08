@@ -68,8 +68,6 @@ interface GPUCommandEncoder {
         optional GPUSize64 offset,
         optional GPUSize64 size);
 
-    undefined writeTimestamp(GPUQuerySet querySet, GPUSize32 queryIndex);
-
     undefined resolveQuerySet(
         GPUQuerySet querySet,
         GPUSize32 firstQuery,

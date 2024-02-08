@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUTexture.h"
 
+#include "GPUDevice.h"
 #include "GPUTextureDescriptor.h"
 #include "GPUTextureView.h"
 #include "GPUTextureViewDescriptor.h"
@@ -54,7 +55,7 @@ static uint32_t getDimension(auto& extent3D)
     });
 }
 
-GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor)
+GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, const GPUDevice& device)
     : m_backing(WTFMove(backing))
     , m_format(descriptor.format)
     , m_width(getDimension<0>(descriptor.size))
@@ -64,8 +65,11 @@ GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescripto
     , m_sampleCount(descriptor.sampleCount)
     , m_dimension(descriptor.dimension)
     , m_usage(descriptor.usage)
+    , m_device(device)
 {
 }
+
+GPUTexture::~GPUTexture() = default;
 
 String GPUTexture::label() const
 {
@@ -94,8 +98,12 @@ static WebGPU::TextureViewDescriptor convertToBacking(const std::optional<GPUTex
     return textureViewDescriptor->convertToBacking();
 }
 
-Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor) const
+ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor) const
 {
+    if (textureViewDescriptor.has_value() && textureViewDescriptor->format.has_value()) {
+        if (!m_device->isSupportedFormat(*textureViewDescriptor->format))
+            return Exception { ExceptionCode::TypeError, "Unsupported texture format."_s };
+    }
     return GPUTextureView::create(m_backing->createView(convertToBacking(textureViewDescriptor)));
 }
 

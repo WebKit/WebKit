@@ -778,6 +778,12 @@ const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
     return m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
 }
 
+static size_t getRoundedSize(const AST::Variable& variable)
+{
+    auto* type = variable.storeType();
+    return roundUpToMultipleOf(16, type ? type->size() : 0);
+}
+
 void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryPoint)
 {
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting entrypoint: ", entryPoint.function.name());
@@ -812,6 +818,13 @@ void RewriteGlobalVariables::visitEntryPoint(const CallGraph::EntryPoint& entryP
     insertParameters(entryPoint.function, groups);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
+    for (auto* global : usedGlobals.privateGlobals) {
+        if (!global || !global->declaration)
+            continue;
+        auto* variable = global->declaration;
+        if (variable->addressSpace() == AddressSpace::Workgroup)
+            m_entryPointInformation->sizeForWorkgroupVariables += getRoundedSize(*variable);
+    }
 }
 
 void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& pipelineLayout)

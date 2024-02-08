@@ -529,9 +529,10 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     };
 
     WGPURenderPipelineDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.layout) : nullptr, {
+        .nextInChain = nullptr,
+        .label = label.data(),
+        .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.layout) : nullptr,
+        .vertex = {
             nullptr,
             convertToBackingContext.convertToBacking(descriptor.vertex.module),
             vertexEntryPoint ? vertexEntryPoint->data() : nullptr,
@@ -539,20 +540,22 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
             vertexConstantEntries.data(),
             static_cast<uint32_t>(backingBuffers.size()),
             backingBuffers.data(),
-        }, {
+        },
+        .primitive = {
             descriptor.primitive && descriptor.primitive->unclippedDepth ? &depthClipControl.chain : nullptr,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_TriangleList,
             descriptor.primitive && descriptor.primitive->stripIndexFormat ? convertToBackingContext.convertToBacking(*descriptor.primitive->stripIndexFormat) : WGPUIndexFormat_Undefined,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->frontFace) : WGPUFrontFace_CCW,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->cullMode) : WGPUCullMode_None,
         },
-        descriptor.depthStencil ? &depthStencilState : nullptr, {
+        .depthStencil = descriptor.depthStencil ? &depthStencilState : nullptr,
+        .multisample = {
             nullptr,
             descriptor.multisample ? descriptor.multisample->count : 1,
             descriptor.multisample ? descriptor.multisample->mask : 0xFFFFFFFFU,
             descriptor.multisample ? descriptor.multisample->alphaToCoverageEnabled : false,
         },
-        descriptor.fragment ? &fragmentState : nullptr,
+        .fragment = descriptor.fragment ? &fragmentState : nullptr,
     };
 
     return callback(backingDescriptor);

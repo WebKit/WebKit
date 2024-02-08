@@ -159,9 +159,89 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& b
     return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation, *this);
 }
 
-Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
+bool GPUDevice::isSupportedFormat(GPUTextureFormat format) const
 {
-    return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()), textureDescriptor);
+    const auto& featureContainer = m_backing->features().features();
+    using enum GPUTextureFormat;
+    switch (format) {
+    case Depth32floatStencil8:
+        return featureContainer.contains("depth32float-stencil8"_s);
+
+    // BC compressed formats usable if texture-compression-bc is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case Bc1RgbaUnorm:
+    case Bc1RgbaUnormSRGB:
+    case Bc2RgbaUnorm:
+    case Bc2RgbaUnormSRGB:
+    case Bc3RgbaUnorm:
+    case Bc3RgbaUnormSRGB:
+    case Bc4RUnorm:
+    case Bc4RSnorm:
+    case Bc5RgUnorm:
+    case Bc5RgSnorm:
+    case Bc6hRgbUfloat:
+    case Bc6hRgbFloat:
+    case Bc7RgbaUnorm:
+    case Bc7RgbaUnormSRGB:
+        return featureContainer.contains("texture-compression-bc"_s);
+
+    // ETC2 compressed formats usable if texture-compression-etc2 is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case Etc2Rgb8unorm:
+    case Etc2Rgb8unormSRGB:
+    case Etc2Rgb8a1unorm:
+    case Etc2Rgb8a1unormSRGB:
+    case Etc2Rgba8unorm:
+    case Etc2Rgba8unormSRGB:
+    case EacR11unorm:
+    case EacR11snorm:
+    case EacRg11unorm:
+    case EacRg11snorm:
+        return featureContainer.contains("texture-compression-etc2"_s);
+
+    // ASTC compressed formats usable if texture-compression-astc is both
+    // supported by the device/user agent and enabled in requestDevice.
+    case Astc4x4Unorm:
+    case Astc4x4UnormSRGB:
+    case Astc5x4Unorm:
+    case Astc5x4UnormSRGB:
+    case Astc5x5Unorm:
+    case Astc5x5UnormSRGB:
+    case Astc6x5Unorm:
+    case Astc6x5UnormSRGB:
+    case Astc6x6Unorm:
+    case Astc6x6UnormSRGB:
+    case Astc8x5Unorm:
+    case Astc8x5UnormSRGB:
+    case Astc8x6Unorm:
+    case Astc8x6UnormSRGB:
+    case Astc8x8Unorm:
+    case Astc8x8UnormSRGB:
+    case Astc10x5Unorm:
+    case Astc10x5UnormSRGB:
+    case Astc10x6Unorm:
+    case Astc10x6UnormSRGB:
+    case Astc10x8Unorm:
+    case Astc10x8UnormSRGB:
+    case Astc10x10Unorm:
+    case Astc10x10UnormSRGB:
+    case Astc12x10Unorm:
+    case Astc12x10UnormSRGB:
+    case Astc12x12Unorm:
+    case Astc12x12UnormSRGB:
+        return featureContainer.contains("texture-compression-astc"_s);
+
+    default:
+        return true;
+    }
+}
+
+ExceptionOr<Ref<GPUTexture>> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
+{
+    if (!isSupportedFormat(textureDescriptor.format))
+        return Exception { ExceptionCode::TypeError, "GPUDevice.createTexture: Unsupported texture format."_s };
+
+    return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()), textureDescriptor, *this);
 }
 
 static WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
@@ -273,8 +353,14 @@ Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextur
     return externalTexture;
 }
 
-Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
+ExceptionOr<Ref<GPUBindGroupLayout>> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
 {
+    for (auto& entry : bindGroupLayoutDescriptor.entries) {
+        if (entry.storageTexture) {
+            if (!isSupportedFormat(entry.storageTexture->format))
+                return Exception { ExceptionCode::TypeError, "GPUDevice.createBindGroupLayout: Unsupported texture format."_s };
+        }
+    }
     return GPUBindGroupLayout::create(m_backing->createBindGroupLayout(bindGroupLayoutDescriptor.convertToBacking()));
 }
 
@@ -306,8 +392,21 @@ Ref<GPUComputePipeline> GPUDevice::createComputePipeline(const GPUComputePipelin
     return GPUComputePipeline::create(m_backing->createComputePipeline(computePipelineDescriptor.convertToBacking(m_autoPipelineLayout)));
 }
 
-Ref<GPURenderPipeline> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor& renderPipelineDescriptor)
+ExceptionOr<Ref<GPURenderPipeline>> GPUDevice::createRenderPipeline(const GPURenderPipelineDescriptor& renderPipelineDescriptor)
 {
+    if (renderPipelineDescriptor.fragment) {
+        for (auto& colorState : renderPipelineDescriptor.fragment->targets) {
+            if (colorState) {
+                if (!isSupportedFormat(colorState->format))
+                    return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderPipeline: Unsupported texture format for color target."_s };
+            }
+        }
+    }
+    if (renderPipelineDescriptor.depthStencil) {
+        if (!isSupportedFormat(renderPipelineDescriptor.depthStencil->format))
+            return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderPipeline: Unsupported texture format for depth target."_s };
+    }
+
     return GPURenderPipeline::create(m_backing->createRenderPipeline(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout)));
 }
 
@@ -321,14 +420,28 @@ void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& c
     });
 }
 
-void GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
+ExceptionOr<void> GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDescriptor& renderPipelineDescriptor, CreateRenderPipelineAsyncPromise&& promise)
 {
+    if (renderPipelineDescriptor.fragment) {
+        for (auto& colorState : renderPipelineDescriptor.fragment->targets) {
+            if (colorState) {
+                if (!isSupportedFormat(colorState->format))
+                    return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderBundleEncoder: Unsupported texture format for color format."_s };
+            }
+        }
+    }
+    if (renderPipelineDescriptor.depthStencil) {
+        if (!isSupportedFormat(renderPipelineDescriptor.depthStencil->format))
+            return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderBundleEncoder: Unsupported texture format for color format."_s };
+    }
+
     m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::RenderPipeline>&& renderPipeline) mutable {
         if (renderPipeline.get())
             promise.resolve(GPURenderPipeline::create(renderPipeline.releaseNonNull()));
         else
             promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
     });
+    return { };
 }
 
 static WebGPU::CommandEncoderDescriptor convertToBacking(const std::optional<GPUCommandEncoderDescriptor>& commandEncoderDescriptor)
@@ -344,13 +457,29 @@ Ref<GPUCommandEncoder> GPUDevice::createCommandEncoder(const std::optional<GPUCo
     return GPUCommandEncoder::create(m_backing->createCommandEncoder(convertToBacking(commandEncoderDescriptor)));
 }
 
-Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
+ExceptionOr<Ref<GPURenderBundleEncoder>> GPUDevice::createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
 {
+    for (auto& colorFormat : renderBundleEncoderDescriptor.colorFormats) {
+        if (colorFormat) {
+            if (!isSupportedFormat(*colorFormat))
+                return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderBundleEncoder: Unsupported texture format for color format."_s };
+        }
+    }
+    if (renderBundleEncoderDescriptor.depthStencilFormat) {
+        if (!isSupportedFormat(*renderBundleEncoderDescriptor.depthStencilFormat))
+            return Exception { ExceptionCode::TypeError, "GPUDevice.createRenderBundleEncoder: Unsupported texture format for depth format."_s };
+    }
+
     return GPURenderBundleEncoder::create(m_backing->createRenderBundleEncoder(renderBundleEncoderDescriptor.convertToBacking()));
 }
 
-Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor& querySetDescriptor)
+ExceptionOr<Ref<GPUQuerySet>> GPUDevice::createQuerySet(const GPUQuerySetDescriptor& querySetDescriptor)
 {
+    if (querySetDescriptor.type == GPUQueryType::Timestamp) {
+        if (!m_backing->features().features().contains("timestamp-query"_s))
+            return Exception { ExceptionCode::TypeError, "Timestamp queries are not supported."_s };
+    }
+
     return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()), querySetDescriptor);
 }
 

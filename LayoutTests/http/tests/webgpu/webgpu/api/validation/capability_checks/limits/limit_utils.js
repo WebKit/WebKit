@@ -54,38 +54,23 @@ function getBindGroupIndex(bindGroupTest, numBindGroups, i) {
   }
 }
 
-function getBindingIndex(bindGroupTest, numBindGroups, i) {
-  switch (bindGroupTest) {
-    case 'sameGroup':
-      return i;
-    case 'differentGroups':
-      return i / numBindGroups | 0;
-  }
-}
-
 function getWGSLBindings(
-{
-  order,
-  bindGroupTest,
-  storageDefinitionWGSLSnippetFn,
-  numBindGroups
-
-
-
-
-
-},
+order,
+bindGroupTest,
+storageDefinitionWGSLSnippetFn,
 numBindings,
 id)
 {
   return reorder(
     order,
-    range(numBindings, (i) => {
-      const groupNdx = getBindGroupIndex(bindGroupTest, numBindGroups, i);
-      const bindingNdx = getBindingIndex(bindGroupTest, numBindGroups, i);
-      const storageWGSL = storageDefinitionWGSLSnippetFn(i, id);
-      return `@group(${groupNdx}) @binding(${bindingNdx}) ${storageWGSL};`;
-    })
+    range(
+      numBindings,
+      (i) =>
+      `@group(${getBindGroupIndex(
+        bindGroupTest,
+        i
+      )}) @binding(${i}) ${storageDefinitionWGSLSnippetFn(i, id)};`
+    )
   ).join('\n        ');
 }
 
@@ -95,16 +80,9 @@ order,
 bindGroupTest,
 storageDefinitionWGSLSnippetFn,
 bodyFn,
-numBindGroups,
 numBindings,
 extraWGSL = '')
 {
-  const bindingParams = {
-    order,
-    bindGroupTest,
-    storageDefinitionWGSLSnippetFn,
-    numBindGroups
-  };
   switch (bindingCombination) {
     case 'vertex':
       return `
@@ -185,7 +163,6 @@ order,
 bindGroupTest,
 storageDefinitionWGSLSnippetFn,
 usageWGSLSnippetFn,
-maxBindGroups,
 numBindings,
 extraWGSL = '')
 {
@@ -196,7 +173,6 @@ extraWGSL = '')
     storageDefinitionWGSLSnippetFn,
     (numBindings, set) =>
     `${range(numBindings, (i) => usageWGSLSnippetFn(i, set)).join('\n          ')}`,
-    maxBindGroups,
     numBindings,
     extraWGSL
   );
@@ -208,7 +184,6 @@ order,
 bindGroupTest,
 storageDefinitionWGSLSnippetFn,
 usageWGSLSnippetFn,
-numBindGroups,
 numBindings,
 extraWGSL = '')
 {
@@ -219,7 +194,6 @@ extraWGSL = '')
     storageDefinitionWGSLSnippetFn,
     (numBindings, set) =>
     `${range(numBindings, (i) => usageWGSLSnippetFn(i, set)).join('\n          ')}`,
-    numBindGroups,
     numBindings,
     extraWGSL
   );

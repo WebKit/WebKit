@@ -63,6 +63,9 @@ void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         m_width,
         m_height,
         WGPUPresentMode_Immediate,
+        canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
+            return convertToBackingContext.convertToBacking(colorFormat);
+        })
     };
 
     m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing.get(), &backingDescriptor));

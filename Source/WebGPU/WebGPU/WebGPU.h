@@ -1084,6 +1084,9 @@ typedef struct WGPUSwapChainDescriptor {
     uint32_t width;
     uint32_t height;
     WGPUPresentMode presentMode;
+#ifdef __cplusplus
+    Vector<WGPUTextureFormat> viewFormats;
+#endif
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUTextureBindingLayout {

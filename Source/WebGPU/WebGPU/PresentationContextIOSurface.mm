@@ -78,16 +78,15 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     if (descriptor.nextInChain)
         return;
 
-    if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
-        return;
-
-    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage))
-        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
-
     m_device = &device;
+    auto allowedFormat = ^(WGPUTextureFormat format) {
+        return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
+    };
 
-    auto width = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.width);
-    auto height = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.height);
+    auto& limits = device.limits();
+    auto width = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.width);
+    auto height = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.height);
+    auto effectiveFormat = allowedFormat(descriptor.format) ? descriptor.format : WGPUTextureFormat_BGRA8Unorm;
     WGPUTextureDescriptor wgpuTextureDescriptor = {
         nullptr,
         descriptor.label,
@@ -97,16 +96,16 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             height,
             1,
         },
-        descriptor.format,
+        effectiveFormat,
         1,
         1,
         1,
-        &descriptor.format,
+        &effectiveFormat,
     };
     WGPUTextureViewDescriptor wgpuTextureViewDescriptor = {
         nullptr,
         descriptor.label,
-        descriptor.format,
+        effectiveFormat,
         WGPUTextureViewDimension_2D,
         0,
         1,
@@ -114,17 +113,39 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         1,
         WGPUTextureAspect_All,
     };
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:width height:height mipmapped:NO];
-    textureDescriptor.usage = Texture::usage(descriptor.usage, descriptor.format);
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
+    textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
     for (IOSurface *iosurface in m_ioSurfaces) {
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);
-        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
+        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(effectiveFormat) };
         auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
         parentTexture->makeCanvasBacking();
         m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { width, height, 1 } }, parentTexture, device) });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+
+    if (!allowedFormat(descriptor.format)) {
+        device.generateAValidationError("Requested texture format BGRA8UnormStorage is not enabled"_s);
+        return;
+    }
+
+    if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
+        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
+        return;
+    }
+
+    for (auto viewFormat : descriptor.viewFormats) {
+        if (!allowedFormat(viewFormat)) {
+            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            return;
+        }
+    }
+
+    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+        return;
+    }
 }
 
 void PresentationContextIOSurface::unconfigure()

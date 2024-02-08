@@ -68,7 +68,7 @@ public:
     void drawBufferToCanvas(SurfaceBuffer) override;
     // GPUCanvasContext methods:
     CanvasType canvas() override;
-    void configure(GPUCanvasConfiguration&&) override;
+    ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
     RefPtr<GPUTexture> getCurrentTexture() override;
 

@@ -309,156 +309,16 @@ PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="atLimit";s
 PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="r8unorm"
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rg8unorm    (offset:  0, align: 1, size: 2)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg8unorm    (offset: 20, align: 1, size: 2)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   rg8unorm    (offset: 30, align: 1, size: 2)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   r8unorm     (offset: 30, align: 1, size: 1)
-        //   rg8unorm    (offset: 31, align: 1, size: 2)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rg8unorm    (offset:  0, align: 1, size: 2)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg8unorm    (offset: 20, align: 1, size: 2)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   rg8unorm    (offset: 30, align: 1, size: 2)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   r8unorm     (offset: 30, align: 1, size: 1)
-        //   rg8unorm    (offset: 31, align: 1, size: 2)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm"
+PASS :createRenderBundle,at_over:limitTest="atDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm"
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba16float"
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=1;interleaveFormat="rg16float"
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba8unorm"
@@ -469,156 +329,16 @@ PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="atLimit";sampleCount=4;interleaveFormat="r8unorm"
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   rg8unorm    (offset:  0, align: 1, size: 2)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg8unorm    (offset: 20, align: 1, size: 2)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   rg8unorm    (offset: 30, align: 1, size: 2)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 1
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   r8unorm     (offset: 30, align: 1, size: 1)
-        //   rg8unorm    (offset: 31, align: 1, size: 2)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   rg8unorm    (offset:  0, align: 1, size: 2)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg8unorm    (offset: 20, align: 1, size: 2)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   rg8unorm    (offset: 30, align: 1, size: 2)
-        //   r8unorm     (offset: 32, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 33
-        // actualLimit: 32
-        // sampleCount: 4
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba16float (offset: 22, align: 2, size: 8)
-        //   r8unorm     (offset: 30, align: 1, size: 1)
-        //   rg8unorm    (offset: 31, align: 1, size: 2)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm"
+PASS :createRenderBundle,at_over:limitTest="underDefault";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba16float"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rg16float"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba8unorm"
@@ -629,136 +349,16 @@ PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueN
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="r8unorm"
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 1
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 1
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   rg16float   (offset: 40, align: 2, size: 4)
-        //   rg8unorm    (offset: 44, align: 1, size: 2)
-        //   rg8unorm    (offset: 46, align: 1, size: 2)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 1
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm"
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 1
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   r8unorm     (offset: 40, align: 1, size: 1)
-        //   rgba8unorm  (offset: 41, align: 1, size: 8)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 4
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 4
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   rg16float   (offset: 40, align: 2, size: 4)
-        //   rg8unorm    (offset: 44, align: 1, size: 2)
-        //   rg8unorm    (offset: 46, align: 1, size: 2)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 4
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   r8unorm     (offset: 48, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm"
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm"
-FAIL :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 49
-        // actualLimit: 48
-        // sampleCount: 4
-        // targets:
-        //   r8unorm     (offset:  0, align: 1, size: 1)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   r8unorm     (offset: 20, align: 1, size: 1)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   r8unorm     (offset: 40, align: 1, size: 1)
-        //   rgba8unorm  (offset: 41, align: 1, size: 8)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba16float"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rg16float"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba8unorm"
@@ -769,112 +369,14 @@ PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";s
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="atLimit";sampleCount=4;interleaveFormat="r8unorm"
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 1
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   rgba16float (offset: 48, align: 2, size: 8)
-        //   rgba16float (offset: 56, align: 2, size: 8)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 1
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   rg16float   (offset: 40, align: 2, size: 4)
-        //   rgba32float (offset: 44, align: 4, size: 16)
-        //   rg16float   (offset: 60, align: 2, size: 4)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 1
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   rgba8unorm  (offset: 48, align: 1, size: 8)
-        //   rgba16float (offset: 56, align: 2, size: 8)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=1;interleaveFormat="r8unorm"
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 4
-        // targets:
-        //   rgba16float (offset:  0, align: 2, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba16float (offset: 24, align: 2, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   rgba16float (offset: 48, align: 2, size: 8)
-        //   rgba16float (offset: 56, align: 2, size: 8)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 4
-        // targets:
-        //   rg16float   (offset:  0, align: 2, size: 4)
-        //   rgba32float (offset:  4, align: 4, size: 16)
-        //   rg16float   (offset: 20, align: 2, size: 4)
-        //   rgba32float (offset: 24, align: 4, size: 16)
-        //   rg16float   (offset: 40, align: 2, size: 4)
-        //   rgba32float (offset: 44, align: 4, size: 16)
-        //   rg16float   (offset: 60, align: 2, size: 4)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm" assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-        // testValue  : 65
-        // actualLimit: 64
-        // sampleCount: 4
-        // targets:
-        //   rgba8unorm  (offset:  0, align: 1, size: 8)
-        //   rgba32float (offset:  8, align: 4, size: 16)
-        //   rgba8unorm  (offset: 24, align: 1, size: 8)
-        //   rgba32float (offset: 32, align: 4, size: 16)
-        //   rgba8unorm  (offset: 48, align: 1, size: 8)
-        //   rgba16float (offset: 56, align: 2, size: 8)
-        //   r8unorm     (offset: 64, align: 1, size: 1)
-
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba16float"
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg16float"
+PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rgba8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="rg8unorm"
 PASS :createRenderBundle,at_over:limitTest="atMaximum";testValueName="overLimit";sampleCount=4;interleaveFormat="r8unorm"
 PASS :createRenderBundle,at_over:limitTest="overMaximum";testValueName="atLimit";sampleCount=1;interleaveFormat="rgba16float"

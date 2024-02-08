@@ -131,6 +131,11 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
     uint32_t bytesPerSample = 0;
     const auto maxColorAttachmentBytesPerSample = limits().maxColorAttachmentBytesPerSample;
 
+    if (descriptor.colorFormatCount > limits().maxColorAttachments) {
+        NSString* error = [NSString stringWithFormat:@"descriptor.colorFormatCount(%zu) > limits().maxColorAttachments(%u)", descriptor.colorFormatCount, limits().maxColorAttachments];
+        generateAValidationError(error);
+        return RenderBundleEncoder::createInvalid(*this, error);
+    }
     for (size_t i = 0, colorFormatCount = descriptor.colorFormatCount; i < colorFormatCount; ++i) {
         auto textureFormat = descriptor.colorFormats[i];
         if (!Texture::isColorRenderableFormat(textureFormat, *this)) {
@@ -695,8 +700,10 @@ bool RenderBundleEncoder::validToEncodeCommand() const
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
-    if (!m_icbDescriptor || m_debugGroupStackSize)
+    if (!m_icbDescriptor || m_debugGroupStackSize) {
+        m_device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
+    }
 
     m_requiresCommandReplay = m_requiresCommandReplay ?: (m_requiresMetalWorkaround || !m_currentCommandIndex);
 
@@ -711,7 +718,11 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         m_icbDescriptor.maxFragmentBufferBindCount = 0;
 
         RELEASE_ASSERT(m_icbArray || m_lastErrorString);
-        return m_icbArray ? RenderBundle::create(m_icbArray, nullptr, m_descriptor, m_currentCommandIndex, m_device) : RenderBundle::createInvalid(m_device, m_lastErrorString);
+        if (m_icbArray)
+            return RenderBundle::create(m_icbArray, nullptr, m_descriptor, m_currentCommandIndex, m_device);
+
+        m_device->generateAValidationError(m_lastErrorString);
+        return RenderBundle::createInvalid(m_device, m_lastErrorString);
     };
 
     auto renderBundle = createRenderBundle();

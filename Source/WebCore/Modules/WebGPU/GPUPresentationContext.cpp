@@ -27,6 +27,7 @@
 #include "GPUPresentationContext.h"
 
 #include "GPUCanvasConfiguration.h"
+#include "GPUDevice.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 
@@ -34,6 +35,7 @@ namespace WebCore {
 
 void GPUPresentationContext::configure(const GPUCanvasConfiguration& canvasConfiguration)
 {
+    m_device = canvasConfiguration.device;
     m_backing->configure(canvasConfiguration.convertToBacking());
 }
 
@@ -44,11 +46,11 @@ void GPUPresentationContext::unconfigure()
 
 RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
-    if (!m_currentTexture) {
+    if (!m_currentTexture && m_device.get()) {
         if (auto currentTexture = m_backing->getCurrentTexture()) {
             GPUTextureDescriptor textureDescriptor;
             textureDescriptor.format = GPUTextureFormat::Bgra8unorm;
-            m_currentTexture = GPUTexture::create(*currentTexture, textureDescriptor).ptr();
+            m_currentTexture = GPUTexture::create(*currentTexture, textureDescriptor, *m_device.get()).ptr();
         }
     }
 

@@ -937,7 +937,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 auto& apiBuffer = WebGPU::fromAPI(entry.buffer);
                 id<MTLBuffer> buffer = apiBuffer.buffer();
-                uint32_t entrySize = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
+                auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size;
                 if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
                     dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.size() });
                     appendedBufferToDynamicBuffers = true;

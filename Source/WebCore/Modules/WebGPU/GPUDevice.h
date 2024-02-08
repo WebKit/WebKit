@@ -99,26 +99,27 @@ public:
     void destroy(ScriptExecutionContext&);
 
     ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
-    Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
+    ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
+    bool isSupportedFormat(GPUTextureFormat) const;
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
 
-    Ref<GPUBindGroupLayout> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
+    ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
     Ref<GPUPipelineLayout> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
     Ref<GPUBindGroup> createBindGroup(const GPUBindGroupDescriptor&);
 
     Ref<GPUShaderModule> createShaderModule(const GPUShaderModuleDescriptor&);
     Ref<GPUComputePipeline> createComputePipeline(const GPUComputePipelineDescriptor&);
-    Ref<GPURenderPipeline> createRenderPipeline(const GPURenderPipelineDescriptor&);
+    ExceptionOr<Ref<GPURenderPipeline>> createRenderPipeline(const GPURenderPipelineDescriptor&);
     using CreateComputePipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPUComputePipeline>>;
     void createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&);
     using CreateRenderPipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPURenderPipeline>>;
-    void createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
+    ExceptionOr<void> createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
 
     Ref<GPUCommandEncoder> createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&);
-    Ref<GPURenderBundleEncoder> createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&);
+    ExceptionOr<Ref<GPURenderBundleEncoder>> createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&);
 
-    Ref<GPUQuerySet> createQuerySet(const GPUQuerySetDescriptor&);
+    ExceptionOr<Ref<GPUQuerySet>> createQuerySet(const GPUQuerySetDescriptor&);
 
     void pushErrorScope(GPUErrorFilter);
     using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>, IDLInterface<GPUInternalError>>>>;

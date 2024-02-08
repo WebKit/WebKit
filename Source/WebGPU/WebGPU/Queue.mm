@@ -55,12 +55,6 @@ Queue::Queue(Device& device)
 
 Queue::~Queue()
 {
-    // If we're not idle, then there's a pending completed handler to be run,
-    // but the completed handler should have retained us,
-    // which means we shouldn't be being destroyed.
-    // So we must be idle.
-    ASSERT(isIdle());
-
     // We can't actually call finalizeBlitCommandEncoder() here because, if there are pending copies,
     // that would cause them to be committed, which ends up retaining this in the completed handler.
     // It's actually fine, though, because we can just drop any pending copies on the floor.
@@ -180,7 +174,7 @@ NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<Comma
 
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
-    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted)
+    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted || !isValid())
         return;
 
     ASSERT(commandBuffer.commandQueue == m_commandQueue);

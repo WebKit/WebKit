@@ -5,144 +5,48 @@ PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="atLimit";p
 PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=2
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=2
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="atDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipeline";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipeline";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipeline";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=2
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipeline";axis=2
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="underDefault";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=2
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=2
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="atLimit";pipelineType="createComputePipelineAsync";axis=2
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
-FAIL :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2 assert_unreached:
-  - EXPECTATION FAILED: no error when one was expected:
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:277:43
-    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:480:16
- Reached unreachable code
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipeline";axis=2
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1
+PASS :dispatchWorkgroups,at_over:limitTest="atMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="atLimit";pipelineType="createComputePipeline";axis=2
@@ -155,4 +59,5 @@ PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="overLimi
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=0
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=1
 PASS :dispatchWorkgroups,at_over:limitTest="overMaximum";testValueName="overLimit";pipelineType="createComputePipelineAsync";axis=2
+PASS :validate:
 

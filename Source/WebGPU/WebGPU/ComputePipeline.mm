@@ -63,10 +63,10 @@ static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::Constan
     return MTLSizeMake(width, height, depth);
 }
 
-static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync)
+static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
 {
     if (!isAsync)
-        object.generateAValidationError("createComputePipeline failed"_s);
+        object.generateAValidationError(error ?: @"createComputePipeline failed");
     return ComputePipeline::createInvalid(object);
 }
 
@@ -80,8 +80,10 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return returnInvalidComputePipeline(*this, isAsync);
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
+    auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint(), label);
+    auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
         return returnInvalidComputePipeline(*this, isAsync);
 
@@ -98,16 +100,22 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return returnInvalidComputePipeline(*this, isAsync);
 
     auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
-    auto& deviceLimits = limits();
+    if (entryPointInformation.sizeForWorkgroupVariables > deviceLimits.maxComputeWorkgroupStorageSize)
+        return returnInvalidComputePipeline(*this, isAsync);
+
     if (size.width > deviceLimits.maxComputeWorkgroupSizeX || size.height > deviceLimits.maxComputeWorkgroupSizeY || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
         return returnInvalidComputePipeline(*this, isAsync);
 
     if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
         Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
-        addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
+        if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
+            return returnInvalidComputePipeline(*this, isAsync, error);
 
-        auto computePipelineState = createComputePipelineState(m_device, function, generatePipelineLayout(bindGroupEntries), size, label);
-        return ComputePipeline::create(computePipelineState, generatePipelineLayout(bindGroupEntries), size, *this);
+        auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
+        if (!generatedPipelineLayout->isValid())
+            return returnInvalidComputePipeline(*this, isAsync);
+        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label);
+        return ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, *this);
     }
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);

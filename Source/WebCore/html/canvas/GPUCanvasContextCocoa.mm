@@ -188,17 +188,25 @@ GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
     return htmlOrOffscreenCanvas();
 }
 
-void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
+ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
 {
     if (isConfigured())
-        return;
+        return { };
 
     if (!m_width || !m_height)
-        return; // FIXME: This should probably do something more sensible.
+        return { }; // FIXME: This should probably do something more sensible.
 
     ASSERT(configuration.device);
     if (!configuration.device)
-        return;
+        return { };
+
+    if (!configuration.device->isSupportedFormat(configuration.format))
+        return Exception { ExceptionCode::TypeError, "Unsupported texture format."_s };
+
+    for (auto viewFormat : configuration.viewFormats) {
+        if (!configuration.device->isSupportedFormat(viewFormat))
+            return Exception { ExceptionCode::TypeError, "Unsupported texture view format."_s };
+    }
 
     auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height);
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
@@ -216,6 +224,7 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
         WTFMove(renderBuffers),
         0,
     };
+    return { };
 }
 
 void GPUCanvasContextCocoa::unconfigure()
