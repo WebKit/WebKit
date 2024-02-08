@@ -2744,3 +2744,5 @@ css1/units/rounding.html [ Failure ]
 
 # Failing with non-English keyboard
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
+
+webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
