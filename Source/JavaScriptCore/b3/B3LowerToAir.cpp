@@ -3393,7 +3393,7 @@ private:
                 if (lowWidth + highWidth != datasize || maskBitCount != lowWidth || lowWidth == datasize)
                     return false;
 
-                ASSERT(0 <= lowWidth && lowWidth < datasize);
+                ASSERT(lowWidth < datasize);
                 append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));
                 return true;
             };
