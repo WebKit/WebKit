@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skia+WebGPU compiled with Bazel</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="/build/hello-world.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #000;
+        }
+        p {
+            color: white;
+            font-family: sans-serif;
+        }
+        button {
+            margin: 20px;
+            color: white;
+            background-color: black;
+            border: none;
+            text-decoration: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <p id="log"></p>
+    <canvas id="webgpu-demo-canvas" width=600 height=600></canvas>
+    <div id="buttons">
+        <button id="solid-color">Solid Color</button>
+        <button id="gradient">Gradient</button>
+        <button id="runtime-effect">Runtime Effect</button>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+      if (navigator.gpu) {
+        log("WebGPU detected")
+        WebGPUDemo();
+      } else {
+        log("No WebGPU support.")
+      }
+
+      function log(s) {
+        document.getElementById("log").innerText = s;
+      }
+
+      async function WebGPUDemo() {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+          log("Could not load an adapter. For Chrome, try running with --enable-features=Vulkan --enable-unsafe-webgpu");
+          return;
+        }
+        const device = await adapter.requestDevice();
+        console.log(adapter, device);
+
+        const wk = await WebGPUKitInit({locateFile: (file) => "/build/"+file});
+        // https://github.com/emscripten-core/emscripten/issues/12750#issuecomment-725001907
+        wk.preinitializedWebGPUDevice = device;
+
+        const demo = new wk.Demo();
+        if (!demo.init("#webgpu-demo-canvas", 600, 600)) {
+            log("Failed to initialize Skia context");
+            return;
+        }
+
+        let demoKind = wk.DemoKind.RUNTIME_EFFECT;
+        demo.setKind(demoKind);
+        document.getElementById("runtime-effect").style["text-decoration"] = "underline";
+
+        document.getElementById("solid-color").onclick = function() {
+          demoKind = wk.DemoKind.SOLID_COLOR;
+          document.getElementById("solid-color").style["text-decoration"] = "underline";
+          document.getElementById("gradient").style["text-decoration"] = "none";
+          document.getElementById("runtime-effect").style["text-decoration"] = "none";
+        };
+        document.getElementById("gradient").onclick = function() {
+          demoKind = wk.DemoKind.GRADIENT;
+          document.getElementById("solid-color").style["text-decoration"] = "none";
+          document.getElementById("gradient").style["text-decoration"] = "underline";
+          document.getElementById("runtime-effect").style["text-decoration"] = "none";
+        };
+        document.getElementById("runtime-effect").onclick = function() {
+          demoKind = wk.DemoKind.RUNTIME_EFFECT;
+          document.getElementById("solid-color").style["text-decoration"] = "none";
+          document.getElementById("gradient").style["text-decoration"] = "none";
+          document.getElementById("runtime-effect").style["text-decoration"] = "underline";
+        };
+
+        let timestamp = 0;
+        async function frame(now) {
+          if (demoKind == wk.DemoKind.RUNTIME_EFFECT || timestamp == 0 || now - timestamp >= 1000) {
+              timestamp = now;
+              demo.setKind(demoKind);
+              await demo.draw(timestamp);
+          }
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+    </script>
+</body>
+</html>

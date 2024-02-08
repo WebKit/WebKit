@@ -1,0 +1,18 @@
+half4 main(float2 coords) {
+    bool3  B;
+    B.x = bool(1.23);
+    B.y = bool(1);
+    B.z = bool(true);
+
+    float3 F;
+    F.x = float(1.23);
+    F.y = float(0);
+    F.z = float(true);
+
+    int3   I;
+    I.x = int(1.23);
+    I.y = int(1);
+    I.z = int(true);
+
+    return half4(half(F.x * F.y * F.z), half(B.x && B.y && B.z), 0, half(I.x * I.y * I.z));
+}

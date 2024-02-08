@@ -1,0 +1,37 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "GrGLAssembleHelpers.h",
+        "GrGLAssembleInterface.h",
+        "GrGLConfig.h",
+        "GrGLExtensions.h",
+        "GrGLFunctions.h",
+        "GrGLInterface.h",
+        "GrGLTypes.h",
+    ] + select({
+        "@platforms//os:android": ["//include/gpu/gl/egl:public_hdrs"],
+        "@platforms//os:linux": ["//include/gpu/gl/glx:public_hdrs"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//include/gpu:__pkg__"],
+)
+
+skia_filegroup(
+    name = "ganesh_gl_hdrs",
+    srcs = [
+        "GrGLAssembleHelpers.h",
+        "GrGLAssembleInterface.h",
+        "GrGLConfig.h",
+        "GrGLExtensions.h",
+        "GrGLFunctions.h",
+        "GrGLInterface.h",
+        "GrGLTypes.h",
+    ],
+    visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+)

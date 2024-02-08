@@ -1,0 +1,37 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+XML_FILES = [
+    "SkDOM.cpp",
+    "SkDOM.h",
+    "SkXMLParser.cpp",
+    "SkXMLParser.h",
+    "SkXMLWriter.cpp",
+    "SkXMLWriter.h",
+]
+
+split_srcs_and_hdrs(
+    name = "xml",
+    files = XML_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":xml_srcs"],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":xml_hdrs"],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_cc_deps(
+    name = "deps",
+    visibility = ["//src:__pkg__"],
+    deps = ["@expat"],
+)

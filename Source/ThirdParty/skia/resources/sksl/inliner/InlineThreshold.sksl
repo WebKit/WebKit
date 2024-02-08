@@ -1,0 +1,13 @@
+uniform half4 colorGreen;
+
+void tooBig(inout int x) {
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+}
+
+half4 main(float2 coords) {
+    int x = 0;
+    tooBig(x);
+    tooBig(x);
+    return colorGreen;
+}

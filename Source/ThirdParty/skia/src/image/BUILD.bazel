@@ -1,0 +1,74 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+IMAGE_FILES = [
+    "SkImage.cpp",
+    "SkImageGeneratorPriv.h",
+    "SkImage_Base.cpp",
+    "SkImage_Base.h",
+    "SkImage_Lazy.cpp",
+    "SkImage_Lazy.h",
+    "SkImage_LazyFactories.cpp",
+    "SkImage_Picture.cpp",
+    "SkImage_Picture.h",
+    "SkImage_Raster.cpp",
+    "SkImage_Raster.h",
+    "SkImage_RasterFactories.cpp",
+    "SkPictureImageGenerator.cpp",
+    "SkPictureImageGenerator.h",
+    "SkRescaleAndReadPixels.cpp",
+    "SkRescaleAndReadPixels.h",
+    "SkSurface.cpp",
+    "SkSurface_Base.cpp",
+    "SkSurface_Base.h",
+    "SkSurface_Null.cpp",
+    "SkSurface_Raster.cpp",
+    "SkSurface_Raster.h",
+    "SkTiledImageUtils.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "image",
+    files = IMAGE_FILES,
+)
+
+skia_filegroup(
+    name = "android_srcs",
+    srcs = ["SkImage_AndroidFactories.cpp"],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":image_srcs"],
+    visibility = [
+        "//src:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":image_hdrs"],
+    visibility = [
+        "//src:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [":image_hdrs"],
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [":image_srcs"],
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)

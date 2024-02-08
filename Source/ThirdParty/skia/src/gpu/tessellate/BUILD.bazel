@@ -1,0 +1,40 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+TESSELLATE_FILES = [
+    "AffineMatrix.h",
+    "CullTest.h",
+    "FixedCountBufferUtils.cpp",
+    "FixedCountBufferUtils.h",
+    "LinearTolerances.h",
+    "MiddleOutPolygonTriangulator.h",
+    "MidpointContourParser.h",
+    "PatchWriter.h",
+    "StrokeIterator.h",
+    "Tessellation.cpp",
+    "Tessellation.h",
+    "WangsFormula.h",
+]
+
+split_srcs_and_hdrs(
+    name = "tessellate",
+    files = TESSELLATE_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":tessellate_srcs"],
+    visibility = ["//src/gpu:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":tessellate_hdrs"],
+    visibility = [
+        "//src/gpu:__pkg__",
+        "//src/gpu/ganesh:__pkg__",
+    ],
+)

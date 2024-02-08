@@ -1,0 +1,127 @@
+# Copyright 2019 Google LLC.
+
+import("../../gn/skia.gni")
+import("../skshaper/skshaper.gni")
+import("../skunicode/skunicode.gni")
+import("skparagraph.gni")
+
+declare_args() {
+  skia_enable_skparagraph = true
+  paragraph_gms_enabled = true
+  paragraph_tests_enabled = true
+  paragraph_bench_enabled = false
+}
+
+if (skia_enable_skparagraph && skia_enable_skshaper && skia_enable_skunicode &&
+    skia_use_harfbuzz) {
+  config("public_config") {
+    defines = [ "SK_ENABLE_PARAGRAPH" ]
+    include_dirs = [
+      "include",
+      "utils",
+    ]
+  }
+
+  skia_component("skparagraph") {
+    import("skparagraph.gni")
+    public_configs = [ ":public_config" ]
+    public = skparagraph_public
+    sources = skparagraph_sources
+    public_deps = [
+      "../..:skia",
+      "../skunicode",
+    ]
+    deps = [ "../skshaper" ]
+  }
+
+  config("utils_config") {
+    include_dirs = [ "utils" ]
+  }
+
+  if (defined(is_skia_standalone) && skia_enable_tools) {
+    import("skparagraph.gni")
+    skia_source_set("utils") {
+      public_configs = [ ":utils_config" ]
+      configs = [ "../../:skia_private" ]
+      sources = skparagraph_utils
+      deps = [
+        "../..:skia",
+        "../skshaper",
+      ]
+    }
+
+    skia_source_set("gm") {
+      if (paragraph_gms_enabled &&
+          (skia_use_icu || skia_use_libgrapheme || skia_use_icu4x)) {
+        testonly = true
+        sources = [ "gm/simple_gm.cpp" ]
+        deps = [
+          ":skparagraph",
+          "../..:gpu_tool_utils",
+          "../..:skia",
+          "../skshaper",
+        ]
+      } else {
+        sources = []
+      }
+    }
+
+    skia_source_set("tests") {
+      if (paragraph_tests_enabled &&
+          (skia_use_icu || skia_use_libgrapheme || skia_use_icu4x)) {
+        testonly = true
+        sources = skparagraph_tests
+        deps = [
+          ":skparagraph",
+          "../..:skia",
+          "../..:test",
+          "../skshaper",
+          "../skunicode",
+        ]
+      } else {
+        sources = []
+      }
+    }
+
+    skia_source_set("bench") {
+      if (paragraph_bench_enabled &&
+          (skia_use_icu || skia_use_libgrapheme || skia_use_icu4x)) {
+        testonly = true
+        sources = [ "bench/ParagraphBench.cpp" ]
+        deps = [
+          ":skparagraph",
+          "../..:skia",
+          "../skshaper",
+        ]
+      } else {
+        sources = []
+      }
+    }
+
+    skia_source_set("slides") {
+      if (skia_use_icu || skia_use_libgrapheme) {
+        testonly = true
+        sources = [ "slides/ParagraphSlide.cpp" ]
+        deps = [
+          ":skparagraph",
+          ":utils",
+          "../..:skia",
+          "../skshaper",
+        ]
+      }
+    }
+  }
+} else {
+  group("skparagraph") {
+  }
+  group("utils") {
+  }
+  group("gm") {
+  }
+  group("tests") {
+  }
+  group("bench") {
+  }
+  group("slides") {
+  }
+}

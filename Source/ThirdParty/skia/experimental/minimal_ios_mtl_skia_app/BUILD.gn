@@ -1,0 +1,28 @@
+# Copyright 2019 Google LLC.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../gn/ios.gni")
+
+if (is_ios && skia_use_metal && skia_enable_ganesh) {
+  ios_app_bundle("minimal_ios_mtl_skia_app") {
+    sources = [
+      "../../tools/skottie_ios_app/GrContextHolder.h",
+      "../../tools/skottie_ios_app/GrContextHolder.mm",
+      "../../tools/skottie_ios_app/SkMetalViewBridge.h",
+      "../../tools/skottie_ios_app/SkMetalViewBridge.mm",
+      "main.mm",
+    ]
+    deps = [ "../..:skia" ]
+    cflags_objcc = [
+      "-std=c++17",
+      "-w",
+    ]
+    frameworks = [
+      "Metal.framework",
+      "MetalKit.framework",
+      "UIKit.framework",
+    ]
+    launchscreen = "../../platform_tools/ios/app/LaunchScreen.storyboard"
+  }
+}

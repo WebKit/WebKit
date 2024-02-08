@@ -1,0 +1,240 @@
+# This file contains the build configurations of Skia that we use for testing on the CI.
+# These allow a short-form reference for our supported combinations of build features.
+# https://bazel.build/docs/bazelrc#config
+#
+# For most build configurations, we will want to set the --cc_output_directory_tag [1]
+# with a unique identifier per configuration name.
+#
+# By default, Bazel's "unique target BuildConfiguration" [2] incorporates the compilation_mode,
+# the target platform, and some suffixes to avoid Bazel-caused and user-caused conflicts. [3] [4]
+# For example, a default output directory might look like "k8-fastbuild-ST-6a54c1377847".
+# Inside this output directory is a subfolder for the target (e.g. executable) name.
+#
+# Note that multiple definitions of a config are allowed - in this event, they are added together.
+# This is handy if we need to comment on why certain settings are necessary. Otherwise, escaping
+# the trailing newline (and thus having a multi-line definition) is preferred for brevity.
+#
+# Notably, the flags that we turn on and off via //bazel/common_config_settings do not affect
+# the output directory. The output directory is used to store compiled object files (.o files)
+# and generated dependency files (e.g. the output of clang --write-dependencies [5]), so having
+# these be overwritten unnecessarily will slow down incremental rebuilds when switching between
+# building different configurations of the same targets.
+#
+# [1] https://bazel.build/reference/command-line-reference#flag--cc_output_directory_tag
+# [2] https://bazel.build/docs/output_directories#layout-diagram
+# [3] https://github.com/bazelbuild/bazel/blob/ad37a3748c78e0ee903b56366322c70ab8b22187/CODEBASE.md#the-structure-of-the-output-directory
+# [4] https://github.com/bazelbuild/bazel/blob/e0e589658463beb9605030b4820dcc97e6a36f48/src/main/java/com/google/devtools/build/lib/analysis/config/OutputDirectories.java#L198-L236
+# [5] https://clang.llvm.org/docs/ClangCommandLineReference.html#dependency-file-generation
+
+# =============================================================================
+# Targets (what to build for)
+# =============================================================================
+
+# --platforms refers to the target for which we are compiling. By setting the target to be a
+# platform which has our own custom constraint_setting and constraint_value
+# (skia_hermetic_toolchain=use_hermetic_toolchain), this causes Bazel to resolve the toolchain
+# to be our hermetic one because our hermetic toolchains have that same constraint set in their
+# target_compatible_with list.
+build:for_linux_x64_debug --platforms=//bazel/platform:linux_x64_hermetic \
+                          --compilation_mode=dbg \
+                          --cc_output_directory_tag=linux_x64_debug
+build:for_linux_x64_release --platforms=//bazel/platform:linux_x64_hermetic \
+                            --compilation_mode=opt \
+                            --cc_output_directory_tag=linux_x64_release
+build:for_linux_x64_fastbuild --platforms=//bazel/platform:linux_x64_hermetic \
+                              --compilation_mode=fastbuild \
+                              --cc_output_directory_tag=linux_x64_fastbuild
+
+build:for_linux_x64_debug_with_rbe --config=for_linux_x64_debug --config=linux_rbe
+build:for_linux_x64_release_with_rbe --config=for_linux_x64_release --config=linux_rbe
+build:for_linux_x64_fastbuild_with_rbe --config=for_linux_x64_fastbuild --config=linux_rbe
+
+# Shorter config names defaulting to fastbuild (same default as --compilation_mode, see
+# https://bazel.build/docs/user-manual#compilation-mode).
+build:for_linux_x64 --config=for_linux_x64_fastbuild
+build:for_linux_x64_with_rbe --config=for_linux_x64_fastbuild_with_rbe
+
+build:for_mac_arm64_debug --platforms=//bazel/platform:mac_arm64_hermetic \
+                          --compilation_mode=dbg \
+                          --cc_output_directory_tag=mac_arm64_debug
+build:for_mac_arm64_release --platforms=//bazel/platform:mac_arm64_hermetic \
+                            --compilation_mode=opt \
+                            --cc_output_directory_tag=mac_arm64_release
+build:for_mac_arm64_fastbuild --platforms=//bazel/platform:mac_arm64_hermetic \
+                              --compilation_mode=fastbuild \
+                              --cc_output_directory_tag=mac_arm64_fastbuild
+
+build:for_mac_x64_debug --platforms=//bazel/platform:mac_x64_hermetic \
+                        --compilation_mode=dbg \
+                        --cc_output_directory_tag=mac_x64_debug
+build:for_mac_x64_release --platforms=//bazel/platform:mac_x64_hermetic \
+                          --compilation_mode=opt \
+                          --cc_output_directory_tag=mac_x64_release
+build:for_mac_x64_fastbuild --platforms=//bazel/platform:mac_x64_hermetic \
+                            --compilation_mode=fastbuild \
+                            --cc_output_directory_tag=mac_x64_fastbuild
+
+# Shorter config names defaulting to fastbuild (same default as --compilation_mode, see
+# https://bazel.build/docs/user-manual#compilation-mode).
+build:for_mac_arm64 --config=for_mac_arm64_fastbuild
+build:for_mac_x64 --config=for_mac_x64_fastbuild
+
+# Some aliases using more common lingo.
+build:for_mac_m1 --config=for_mac_arm64
+build:for_mac_intel --config=for_mac_x64
+
+# Android configuration for 32-bit ARM (armeabi-v7a ABI).
+build:for_android_arm32_debug --platforms=//bazel/platform:android_arm32 \
+                              --compilation_mode=dbg \
+                              --cc_output_directory_tag=android_arm32_debug
+build:for_android_arm32_release --platforms=//bazel/platform:android_arm32 \
+                                --compilation_mode=opt \
+                                --cc_output_directory_tag=android_arm32_release
+build:for_android_arm32_fastbuild --platforms=//bazel/platform:android_arm32 \
+                                  --compilation_mode=fastbuild \
+                                  --cc_output_directory_tag=android_arm32_fastbuild
+
+build:for_android_arm32_debug_with_rbe --config=for_android_arm32_debug --config=linux_rbe
+build:for_android_arm32_release_with_rbe --config=for_android_arm32_release --config=linux_rbe
+build:for_android_arm32_fastbuild_with_rbe --config=for_android_arm32_fastbuild --config=linux_rbe
+
+# Shorter config names defaulting to fastbuild (same default as --compilation_mode, see
+# https://bazel.build/docs/user-manual#compilation-mode).
+build:for_android_arm32 --config=for_android_arm32_fastbuild
+build:for_android_arm32_with_rbe --config=for_android_arm32_fastbuild_with_rbe
+build:android_arm32_rbe --config=for_android_arm32_fastbuild_with_rbe
+
+# Android configuration for 64-bit ARM (arm64-v8a ABI).
+build:for_android_arm64_debug --platforms=//bazel/platform:android_arm64 \
+                              --compilation_mode=dbg \
+                              --cc_output_directory_tag=android_arm64_debug
+build:for_android_arm64_release --platforms=//bazel/platform:android_arm64 \
+                                --compilation_mode=opt \
+                                --cc_output_directory_tag=android_arm64_release
+build:for_android_arm64_fastbuild --platforms=//bazel/platform:android_arm64 \
+                                  --compilation_mode=fastbuild \
+                                  --cc_output_directory_tag=android_arm64_fastbuild
+
+build:for_android_arm64_debug_with_rbe --config=for_android_arm64_debug --config=linux_rbe
+build:for_android_arm64_release_with_rbe --config=for_android_arm64_release --config=linux_rbe
+build:for_android_arm64_fastbuild_with_rbe --config=for_android_arm64_fastbuild --config=linux_rbe
+
+# Shorter config names defaulting to fastbuild (same default as --compilation_mode, see
+# https://bazel.build/docs/user-manual#compilation-mode).
+build:for_android_arm64 --config=for_android_arm64_fastbuild
+build:for_android_arm64_with_rbe --config=for_android_arm64_fastbuild_with_rbe
+build:android_rbe --config=for_android_arm64_fastbuild_with_rbe
+
+# =============================================================================
+# Configurations (what features we want on)
+# =============================================================================
+# These are examples of the syntax to create build configurations. As of May 2022, our
+# Bazel configurations are still being made.
+build:release --compilation_mode=opt
+build:debug --compilation_mode=dbg
+
+# See also https://github.com/emscripten-core/emsdk/issues/984 for disabling cc_toolchain_resolution
+build:canvaskit_full --noincompatible_enable_cc_toolchain_resolution \
+                     --include_decoder=gif_decode_codec --include_decoder=jpeg_decode_codec \
+                     --include_decoder=png_decode_codec --include_decoder=webp_decode_codec \
+                     \
+                     --include_encoder=jpeg_encode_codec --include_encoder=png_encode_codec \
+                     --include_encoder=webp_encode_codec \
+                     \
+                     --with_harfbuzz --with_icu --include_fontmgr=custom_embedded_fontmgr \
+                     --ck_enable_fonts --ck_enable_embedded_font \
+                     \
+                     --disable_tracing --enable_sksl_tracing \
+                     \
+                     --ck_enable_canvas_polyfill --ck_enable_skp_serialization --ck_enable_skottie \
+                     --ck_enable_runtime_effect --ck_enable_matrix_js
+
+build:ck_webgl2 --with_gl_standard=webgl_standard --gpu_backend=gl_ganesh \
+                --disable_legacy_shader_context
+# CPU build needs legacy shader context otherwise SkPerlinNoiseShader does not render
+build:ck_cpu --enable_legacy_shader_context
+
+# flags for using the CanvasKit debugger.
+build:ck_debugger --enable_build_for_debugger
+
+build:ck_full_webgl2_release --config=canvaskit_full --config=ck_webgl2 --config=release
+build:ck_full_webgl2_debug --config=canvaskit_full --config=ck_webgl2 --config=debug
+build:ck_full_cpu_release --config=canvaskit_full --config=ck_cpu --config=release
+build:ck_full_cpu_debug --config=canvaskit_full --config=ck_cpu --config=debug
+build:ck_full_webgl2_release_debugger --config=canvaskit_full --config=ck_webgl2 \
+                                    --config=release --config=ck_debugger
+# TODO(kjlubick) We should be able to configure testing on Chrome or Firefox with this.
+build:ck_full_webgl2_release_chrome --config=ck_full_webgl2_release
+build:ck_full_cpu_release_chrome --config=ck_full_cpu_release
+
+# config when building //infra/debugger-app:debugger_container.
+# This is invoked in a Louhi flow.
+build:debugger_app_container --config=ck_full_webgl2_release_debugger \
+                             --workspace_status_command=bazel/get_workspace_status.sh
+
+# config when building //infra/jsfiddle:jsfiddle_container.
+# This is invoked in a Louhi flow.
+build:jsfiddle_container --config=ck_full_webgl2_release \
+                         --workspace_status_command=bazel/get_workspace_status.sh
+
+# config when building //infra/shaders:shaders_container.
+# This is invoked in a Louhi flow.
+build:shaders_container --config=ck_full_webgl2_release \
+                        --workspace_status_command=bazel/get_workspace_status.sh
+
+# config when building //infra/skottie:skottie_container.
+# This is invoked in a Louhi flow.
+build:skottie_container --config=ck_full_webgl2_release \
+                        --workspace_status_command=bazel/get_workspace_status.sh
+
+# We only want to enforce IWYU on debug builds because we have some things that are only
+# necessary to include in debug mode (e.g. SkDEBUGCODE), but very rarely something that is
+# only needed in release mode. Thus our C++ debug includes should be a superset of the
+# release includes.
+build:enforce_iwyu --features=skia_enforce_iwyu --cc_output_directory_tag=iwyu \
+                   --compilation_mode=dbg --keep_going \
+                   --with_gl_standard=gl_standard --gpu_backend=gl_ganesh \
+                   --gpu_backend=vulkan_ganesh \
+                   --enable_gpu_test_utils \
+                   --include_fontmgr=custom_directory_fontmgr --include_fontmgr=custom_embedded_fontmgr \
+                   --include_fontmgr=custom_empty_fontmgr \
+                   --include_decoder=avif_decode_codec --include_decoder=gif_decode_codec \
+                   --include_decoder=jpeg_decode_codec --include_decoder=jxl_decode_codec \
+                   --include_decoder=png_decode_codec --include_decoder=raw_decode_codec \
+                   --include_decoder=webp_decode_codec \
+                   --include_encoder=jpeg_encode_codec --include_encoder=png_encode_codec \
+                   --include_encoder=webp_encode_codec \
+                   --with_harfbuzz --with_icu \
+                   --enable_sksl_tracing \
+                   --enable_svg_canvas --enable_pdf_backend \
+                   --compile_generated_cpp_files_for_headers
+
+
+build:use_linux_rbe_pool --config=linux_rbe --remote_download_minimal
+
+build:cpu_only --cc_output_directory_tag=cpu_tests
+build:cpu_only_debug --config=cpu --config=debug
+build:cpu_only_release --config=cpu --config=release
+build:cpu_only_debug_rbe --config=cpu_only_debug --config=use_linux_rbe_pool
+build:cpu_only_release_rbe --config=cpu_only_release --config=use_linux_rbe_pool
+
+build:gl_ganesh --enable_gpu_test_utils --gpu_backend=gl_ganesh \
+                 --cc_output_directory_tag=gl_ganesh
+# We need to have this environment variable set when testing our Ganesh GL backend on Unix,
+# otherwise, we get "Failed to open X display." and connect make a GL context for testing.
+build:gl_ganesh --action_env=DISPLAY=:1
+
+build:vulkan_ganesh --enable_gpu_test_utils --gpu_backend=vulkan_ganesh \
+                    --cc_output_directory_tag=vulkan_ganesh
+
+build:metal_ganesh --enable_gpu_test_utils --gpu_backend=metal_ganesh\
+                    --cc_output_directory_tag=metal_ganesh
+
+# Short-hand aliases
+build:cpu --config=cpu_only
+build:gl --config=gl_ganesh
+build:vk --config=vulkan_ganesh
+
+# Layering check does not work without sandboxing because the system headers are not in the
+# right spot and so they are not found.
+build:no_sandbox --spawn_strategy=local --features=-layering_check

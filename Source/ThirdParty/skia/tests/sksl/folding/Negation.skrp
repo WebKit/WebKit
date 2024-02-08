@@ -1,0 +1,49 @@
+38 instructions
+
+[immutable slots]
+i0 = 0xFFFFFFFF
+i1 = 0x00000001 (1.401298e-45)
+i2 = 0x00000002 (2.802597e-45)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+store_condition_mask           $12 = CondMask
+store_condition_mask           $21 = CondMask
+copy_constant                  $22 = 0xFFFFFFFF
+copy_constant                  $13 = 0
+merge_condition_mask           CondMask = $21 & $22
+branch_if_no_lanes_active      branch_if_no_lanes_active +20 (label 2 at #28)
+copy_constant                  ok = 0xFFFFFFFF
+copy_slot_unmasked             $14 = ok
+copy_constant                  $15 = 0x00000001 (1.401298e-45)
+mul_imm_int                    $15 *= 0xFFFFFFFF
+copy_constant                  $16 = 0x00000001 (1.401298e-45)
+add_imm_int                    $16 += 0x00000001
+splat_2_constants              $17..18 = 0xFFFFFFFF
+mul_2_ints                     $15..16 *= $17..18
+copy_constant                  $17 = 0x00000001 (1.401298e-45)
+add_imm_int                    $17 += 0xFFFFFFFE
+copy_constant                  $18 = 0x00000002 (2.802597e-45)
+splat_2_constants              $19..20 = 0xFFFFFFFF
+mul_2_ints                     $17..18 *= $19..20
+cmpeq_2_ints                   $15..16 = equal($15..16, $17..18)
+bitwise_and_int                $15 &= $16
+bitwise_and_int                $14 &= $15
+copy_slot_masked               ok = Mask($14)
+label                          label 0x00000003
+copy_slot_masked               $13 = Mask($14)
+label                          label 0x00000002
+load_condition_mask            CondMask = $21
+copy_constant                  $0 = 0
+merge_condition_mask           CondMask = $12 & $13
+branch_if_no_lanes_active      branch_if_no_lanes_active +4 (label 1 at #36)
+copy_constant                  $1 = 0xFFFFFFFF
+label                          label 0x00000004
+copy_slot_masked               $0 = Mask($1)
+label                          label 0x00000001
+load_condition_mask            CondMask = $12
+swizzle_4                      $0..3 = ($0..3).xxxx
+copy_4_uniforms                $4..7 = colorRed
+copy_4_uniforms                $8..11 = colorGreen
+mix_4_ints                     $0..3 = mix($4..7, $8..11, $0..3)
+load_src                       src.rgba = $0..3

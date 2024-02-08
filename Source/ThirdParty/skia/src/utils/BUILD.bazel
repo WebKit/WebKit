@@ -1,0 +1,216 @@
+load("//bazel:flags.bzl", "selects")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# In own group for exporting to sksl.gni:skslc_deps.
+CORE_SKSLC_FILES = [
+    "SkParse.cpp",
+    "SkOSPath.h",
+    "SkOSPath.cpp",
+    "SkShaderUtils.cpp",
+    "SkShaderUtils.h",
+]
+
+split_srcs_and_hdrs(
+    name = "utils_skslc",
+    files = CORE_SKSLC_FILES,
+)
+
+UTIL_FILES = [
+    "SkBitSet.h",
+    "SkCallableTraits.h",
+    "SkCamera.cpp",
+    "SkCanvasStack.cpp",
+    "SkCanvasStack.h",
+    "SkCanvasStateUtils.cpp",
+    "SkCharToGlyphCache.cpp",
+    "SkCharToGlyphCache.h",
+    "SkClipStackUtils.cpp",
+    "SkClipStackUtils.h",
+    "SkCustomTypeface.cpp",
+    "SkDashPath.cpp",
+    "SkDashPathPriv.h",
+    "SkEventTracer.cpp",
+    "SkFloatToDecimal.cpp",
+    "SkFloatToDecimal.h",
+    "SkFloatUtils.h",
+    "SkMatrix22.cpp",
+    "SkMatrix22.h",
+    "SkMultiPictureDocument.cpp",
+    "SkMultiPictureDocumentPriv.h",
+    "SkNWayCanvas.cpp",
+    "SkNullCanvas.cpp",
+    "SkOrderedFontMgr.cpp",
+    "SkPaintFilterCanvas.cpp",
+    "SkParseColor.cpp",
+    "SkParsePath.cpp",
+    "SkPatchUtils.cpp",
+    "SkPatchUtils.h",
+    "SkPolyUtils.cpp",
+    "SkPolyUtils.h",
+    "SkShaderUtils.cpp",
+    "SkShaderUtils.h",
+    "SkShadowTessellator.cpp",
+    "SkShadowTessellator.h",
+    "SkShadowUtils.cpp",
+    "SkTextUtils.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "utils",
+    files = UTIL_FILES,
+)
+
+GPU_ONLY_FILES = [
+    "SkTestCanvas.h",
+    "SkTestCanvas.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "gpu",
+    files = GPU_ONLY_FILES,
+)
+
+skia_filegroup(
+    name = "json_hdrs",
+    srcs = [
+        "SkJSON.h",
+        "SkJSONWriter.h",
+    ],
+    visibility = [
+        "//modules/skottie:__pkg__",
+        "//tools/debugger:__pkg__",
+        "//tools/testrunners/benchmark:__pkg__",
+        "//tools/testrunners/gm:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "json_srcs",
+    srcs = [
+        "SkJSON.cpp",
+        "SkJSONWriter.cpp",
+    ],
+    visibility = [
+        "//modules/skottie:__pkg__",
+        "//tools/debugger:__pkg__",
+        "//tools/testrunners/benchmark:__pkg__",
+        "//tools/testrunners/gm:__pkg__",
+    ],
+)
+
+selects.config_setting_group(
+    name = "needs_json",
+    match_any = [
+        "//src/gpu:enable_gpu_test_utils_true",
+        "//src/sksl:enable_sksl_tracing_true",
+    ],
+)
+
+skia_filegroup(
+    name = "chromium_hdrs",
+    # We allow chromium to use this as a diagnostic tool, but it is not
+    # part of Skia's public API. It is in its own filegroup to create
+    # a gni entry containing it.
+    srcs = [
+        "SkMultiPictureDocument.h",
+    ],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        ":utils_skslc_srcs",
+        ":utils_srcs",
+    ] + select({
+        ":needs_json": [":json_srcs"],
+        "//conditions:default": [],
+    }) + select({
+        "//src/gpu:has_ganesh_backend": [":gpu_srcs"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        ":chromium_hdrs",
+        ":utils_hdrs",
+        ":utils_skslc_hdrs",
+    ] + select({
+        ":needs_json": [":json_hdrs"],
+        "//conditions:default": [],
+    }) + select({
+        "//src/gpu:has_ganesh_backend": [":gpu_hdrs"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        "SkBitSet.h",
+        "SkCallableTraits.h",
+        "SkCanvasStack.h",
+        "SkDashPathPriv.h",
+        "SkMatrix22.h",
+        "SkOSPath.h",
+        "SkPatchUtils.h",
+        "SkPolyUtils.h",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        "SkCanvasStack.cpp",
+        "SkCustomTypeface.cpp",
+        "SkDashPath.cpp",
+        "SkEventTracer.cpp",
+        "SkMatrix22.cpp",
+        "SkNWayCanvas.cpp",
+        "SkOSPath.cpp",
+        "SkPaintFilterCanvas.cpp",
+        "SkParse.cpp",
+        "SkParseColor.cpp",
+        "SkParsePath.cpp",
+        "SkPatchUtils.cpp",
+        "SkPolyUtils.cpp",
+        "SkShadowTessellator.cpp",
+        "SkShadowTessellator.h",
+        "SkShadowUtils.cpp",
+        "SkTextUtils.cpp",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "char_to_glyphcache",
+    srcs = [
+        "SkCharToGlyphCache.cpp",
+        "SkCharToGlyphCache.h",
+    ],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "shader_utils_hdrs",
+    srcs = [
+        "SkShaderUtils.h",
+    ],
+    visibility = ["//src/gpu:__subpackages__"],
+)
+
+skia_filegroup(
+    name = "shader_utils_srcs",
+    srcs = [
+        "SkShaderUtils.cpp",
+    ],
+    visibility = ["//src/gpu:__subpackages__"],
+)

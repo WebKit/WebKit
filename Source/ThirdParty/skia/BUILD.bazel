@@ -1,0 +1,315 @@
+load("@skia_user_config//:copts.bzl", "DEFAULT_OBJC_COPTS")
+load("//:defines.bzl", "DEFAULT_DEFINES", "DEFAULT_LOCAL_DEFINES")
+load("//bazel:gen_compile_flags_txt_linux_amd64.bzl", "gen_compile_flags_txt_linux_amd64")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_objc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# All the mm files from the Skia library are rolled up to this objc library since cc_library
+# ignores mm files. This private library is then deps'ed into the public and internal versions
+# of the SKia library below. The Skia library Objective-C code requires ARC, while non-library code
+# does not.
+skia_objc_library(
+    name = "skia_objc",
+    srcs = [
+        "//src:objc_srcs",
+    ],
+    copts = DEFAULT_OBJC_COPTS + ["-fobjc-arc"],
+    defines = DEFAULT_DEFINES,
+    deps = [
+        "//src:deps",
+        "@skia_user_config//:user_config",
+    ],
+)
+
+# This target exposes the Skia public API. It is what external clients should use.
+skia_cc_library(
+    name = "skia_public",
+    srcs = [
+        "//include:private_hdrs",
+        "//include:srcs",
+        "//src:private_hdrs",
+        "//src:srcs",
+    ],
+    hdrs = ["//include:public_hdrs"],
+    defines = DEFAULT_DEFINES,
+    local_defines = DEFAULT_LOCAL_DEFINES,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//src:deps",
+        "@skia_user_config//:user_config",
+    ] + select({
+        "//src/gpu:metal_ganesh": ["//:skia_objc"],
+        "//conditions:default": [],
+    }),
+)
+
+# This target exposes headers beyond the public, supported API. It is intended to be
+# used by Skia's tests and tooling.
+skia_cc_library(
+    name = "skia_internal",
+    srcs = [
+        "//include:srcs",
+        "//src:srcs",
+    ],
+    hdrs = [
+        "//include:private_hdrs",
+        "//include:public_hdrs",
+        "//src:private_hdrs",
+    ],
+    defines = DEFAULT_DEFINES,
+    local_defines = DEFAULT_LOCAL_DEFINES,
+    visibility = [
+        "//bench:__subpackages__",
+        "//dm:__subpackages__",
+        "//gm:__subpackages__",
+        "//modules:__subpackages__",
+        "//tests:__subpackages__",
+        "//tools:__subpackages__",
+    ],
+    deps = [
+        "//src:deps",
+        "@skia_user_config//:user_config",
+    ] + select({
+        "//src/gpu:metal_ganesh": ["//:skia_objc"],
+        "//conditions:default": [],
+    }),
+)
+
+####################################################################
+# Experimental public buffet targets below
+
+alias(
+    name = "core",
+    actual = "//src/core:core",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "pathops",
+    actual = "//src/pathops:pathops",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "ganesh_gl",
+    actual = "//src/gpu/ganesh/gl:ganesh_gl",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_glx_factory",
+    actual = "//src/gpu/ganesh/gl/glx:glx_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_vulkan",
+    actual = "//src/gpu/ganesh/vk:ganesh_vulkan",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "bmp_decode_codec",
+    actual = "//src/codec:bmp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "gif_decode_codec",
+    actual = "//src/codec:gif_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ico_decode_codec",
+    actual = "//src/codec:ico_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpeg_encode_codec",
+    actual = "//src/encode:jpeg_encode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpeg_decode_codec",
+    actual = "//src/codec:jpeg_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpegxl_decode_codec",
+    actual = "//src/codec:jpegxl_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_decode_codec",
+    actual = "//src/codec:png_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_encode_codec",
+    actual = "//src/encode:png_encode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "wbmp_decode_codec",
+    actual = "//src/codec:wbmp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "webp_decode_codec",
+    actual = "//src/codec:webp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "webp_encode_codec",
+    actual = "//src/encode:webp_encode",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "fontmgr_fontconfig_freetype",
+    actual = "//src/ports:fontmgr_fontconfig_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_empty_freetype",
+    actual = "//src/ports:fontmgr_empty_freetype",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skparagraph_harfbuzz_icu",
+    actual = "//modules/skparagraph:skparagraph_harfbuzz_icu",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skresources",
+    actual = "//modules/skresources:skresources",
+    visibility = ["//visibility:public"],
+)
+
+# Load bearing comment below - gazelle looks here (and not in any other BUILD.bazel files)
+# for a special comment indicating the prefix.
+# gazelle:prefix go.skia.org/skia
+
+# This is an alias to avoid having to load the golang toolchain code just to
+# create the rules in our primary BUILD.bazel file
+alias(
+    name = "gazelle",
+    actual = "//infra:gazelle",
+    visibility = ["//visibility:public"],
+)
+
+test_suite(
+    name = "all_go_tests",
+    tests = [
+        # Go tests in this list will be tested in CI. Please add any new Go tests to this suite.
+        "//bazel/device_specific_configs:device_specific_configs_test",
+        "//bazel/exporter:exporter_test",
+        "//infra/bots/task_drivers/bazel_test_benchmark:bazel_test_benchmark_test",
+        "//infra/bots/task_drivers/bazel_test_gm:bazel_test_gm_test",
+        "//infra/bots/task_drivers/bazel_test_precompiled:bazel_test_precompiled_test",
+        "//infra/bots/task_drivers/codesize:codesize_test",
+        "//infra/bots/task_drivers/common:common_test",
+        "//infra/bots/task_drivers/perf_puppeteer_canvas:perf_puppeteer_canvas_test",
+        "//infra/bots/task_drivers/perf_puppeteer_render_skps:perf_puppeteer_render_skps_test",
+        "//infra/bots/task_drivers/perf_puppeteer_skottie_frames:perf_puppeteer_skottie_frames_test",
+        "//tools/testrunners/common/android/adb_test_runner:adb_test_runner_test",
+    ],
+)
+
+# Generates a compile_flags.txt file for use with clangd against the Bazel-downloaded Linux AMD64
+# clang hermetic toolchain.
+#
+# This command prints to standard output a compile_flags.txt file that can be used with clangd to
+# enable autocompletion on editors that support it. See:
+# https://clangd.llvm.org/design/compile-commands.
+#
+# Note that this is implemented on a best effort basis. The produced compile_flags.txt file will
+# contain the subset of flags used by most targets, but some targets might require additional
+# flags. If that's the case, please manually add them to your compile_flags.txt file.
+#
+# Sample usage:
+#
+#     $ bazel run //:gen_compile_flags_txt_linux_amd64 > compile_flags.txt
+#
+# Invoke with --config=<some config> to generate flags with the defines and includes required for
+# your build. For example, if you build your binary as follows:
+#
+#     $ bazel build //path/to:binary --config=gl_ganesh
+#
+# Then your compile_flags.txt file should be generated with:
+#
+#     $ bazel run //:gen_compile_flags_txt_linux_amd64 --config=gl_ganesh > compile_flags.txt
+#
+# This was tested with Visual Studio Code and the clangd extension:
+# https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd.
+gen_compile_flags_txt_linux_amd64(
+    name = "gen_compile_flags_txt_linux_amd64",
+)
+
+######
+# go #
+######
+
+# Sample usage: "bazel run //:go -- generate ./...".
+alias(
+    name = "go",
+    actual = "@go_sdk//:bin/go",
+    visibility = ["//visibility:public"],
+)
+
+#########
+# gofmt #
+#########
+
+# Sample usage: "bazel run //:gofmt -- -s -w .".
+alias(
+    name = "gofmt",
+    actual = "@go_sdk//:bin/gofmt",
+    visibility = ["//visibility:public"],
+)
+
+############
+# Errcheck #
+############
+
+# Sample usage: "bazel run //:errcheck -- go.skia.org/skia/...".
+alias(
+    name = "errcheck",
+    actual = "//infra:errcheck",
+    visibility = ["//visibility:public"],
+)
+
+##############
+# buildifier #
+##############
+
+# Sample usage: "bazel run //:buildifier".
+alias(
+    name = "buildifier",
+    actual = "//bazel:buildifier",
+)

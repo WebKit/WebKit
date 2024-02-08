@@ -1,0 +1,121 @@
+load("//bazel:cc_binary_with_flags.bzl", "cc_binary_with_flags")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_binary", "skia_cc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_cc_library(
+    name = "legacy_skottie",
+    srcs = [
+        "//modules/skottie/src:srcs",
+        "//src/utils:json_hdrs",
+        "//src/utils:json_srcs",
+    ],
+    hdrs = ["//modules/skottie/include:hdrs"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:skia_internal",
+        "//modules/skresources:legacy_skresources",
+        "//modules/sksg:legacy_sksg",
+        "//modules/skshaper:legacy_skshaper",
+        "//modules/skunicode:legacy_skunicode",
+    ],
+)
+
+skia_cc_library(
+    name = "legacy_utils",
+    srcs = ["//modules/skottie/utils:srcs"],
+    hdrs = ["//modules/skottie/utils:hdrs"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":legacy_skottie",
+        "//tools/skui",
+    ],
+)
+
+skia_cc_binary(
+    name = "skottie_tool_cpu",
+    testonly = True,
+    srcs = [
+        "//modules/skottie/src:skottie_tool",
+        "//tools/flags",
+    ],
+    defines = ["CPU_ONLY"],
+    features = ["layering_check"],
+    deps = [
+        ":skottie_harfbuzz_icu",
+        ":utils",
+        "//:core",
+        "//:fontmgr_empty_freetype",
+        "//:jpeg_decode_codec",
+        "//:png_decode_codec",
+        "//:png_encode_codec",
+        "//:webp_decode_codec",
+        "//modules/skresources",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+cc_binary_with_flags(
+    name = "skottie_tool_gpu",
+    testonly = True,
+    srcs = [
+        "//modules/skottie/src:skottie_tool",
+        "//tools/flags",
+    ],
+    defines = ["GPU_ONLY"],
+    set_flags = {
+        "enable_gpu_test_utils": ["True"],
+        "include_fontmgr": ["custom_empty_fontmgr"],
+        "gpu_backend": ["gl_ganesh"],
+        "include_decoder": [
+            "jpeg_decode_codec",
+            "png_decode_codec",
+            "webp_decode_codec",
+        ],
+        "use_harfbuzz": ["True"],
+        "use_icu": ["True"],
+        "with_gl_standard": ["gl_standard"],
+    },
+    deps = [
+        ":legacy_skottie",
+        ":legacy_utils",
+        "//tools/gpu:utils",
+    ],
+)
+
+skia_cc_library(
+    name = "skottie_harfbuzz_icu",
+    srcs = [
+        "//modules/skottie/src:srcs",
+        "//src/utils:json_hdrs",
+        "//src/utils:json_srcs",
+    ],
+    hdrs = ["//modules/skottie/include:hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//modules/skresources",
+        "//modules/sksg",
+        "//modules/sksg:sksg_priv",
+        "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skunicode:skunicode_icu",
+        "//src/base",
+        "//src/codec:codec_support_priv",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "utils",
+    srcs = ["//modules/skottie/utils:srcs"],
+    hdrs = ["//modules/skottie/utils:hdrs"],
+    deps = [
+        ":skottie_harfbuzz_icu",
+        "//:core",
+        "//tools/skui",
+    ],
+)

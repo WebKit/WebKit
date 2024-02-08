@@ -1,0 +1,7 @@
+void func() {
+    float x = 3.41e+38;
+}
+
+/*%%*
+floating-point value is too large:
+*%%*/

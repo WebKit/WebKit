@@ -1,0 +1,14 @@
+uniform half4 colorGreen, colorRed;
+uniform float testArray[5];
+
+half4 main(float2 coords) {
+    float one = testArray[0];
+    float two = testArray[1];
+    float three = testArray[2];
+    half four = half(testArray[3]);
+    half five = half(testArray[4]);
+
+    return (fma(one, two, three)         == (1 * 2 + 3)) &&
+           (fma(half(three), four, five) == (3 * 4 + 5)) &&
+           (fma(6, 7, 8)                 == (6 * 7 + 8)) ? colorGreen : colorRed;
+}

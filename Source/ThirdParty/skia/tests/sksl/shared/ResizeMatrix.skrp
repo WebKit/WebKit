@@ -1,0 +1,63 @@
+30 instructions
+
+[immutable slots]
+i0 = 0x3F800000 (1.0)
+i1 = 0
+i2 = 0
+i3 = 0x3F800000 (1.0)
+i4 = 0x3F800000 (1.0)
+i5 = 0
+i6 = 0
+i7 = 0
+i8 = 0x3F800000 (1.0)
+i9 = 0
+i10 = 0
+i11 = 0
+i12 = 0x3F800000 (1.0)
+i13 = 0x3F800000 (1.0)
+i14 = 0
+i15 = 0
+i16 = 0
+i17 = 0
+i18 = 0x3F800000 (1.0)
+i19 = 0
+i20 = 0
+i21 = 0
+i22 = 0
+i23 = 0x3F800000 (1.0)
+i24 = 0
+i25 = 0
+i26 = 0
+i27 = 0
+i28 = 0x3F800000 (1.0)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_constant                  result = 0
+copy_slot_unmasked             $0 = result
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+copy_slot_unmasked             $0 = result
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+copy_slot_unmasked             $0 = result
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+copy_constant                  $1 = 0x3F800000 (1.0)
+add_float                      $0 += $1
+copy_slot_unmasked             result = $0
+cmpeq_imm_float                $0 = equal($0, 0x40C00000 (6.0))
+swizzle_4                      $0..3 = ($0..3).xxxx
+copy_4_uniforms                $4..7 = colorRed
+copy_4_uniforms                $8..11 = colorGreen
+mix_4_ints                     $0..3 = mix($4..7, $8..11, $0..3)
+load_src                       src.rgba = $0..3

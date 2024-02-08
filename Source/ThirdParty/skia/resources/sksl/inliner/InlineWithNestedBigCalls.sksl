@@ -1,0 +1,17 @@
+inline half BigX(half x) {
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+    --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x;
+    x = 1;
+    return x;
+}
+
+inline half BigY(half x) {
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+    --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x; --x;
+    x = 0;
+    return x;
+}
+
+half4 main(float2 coords) {
+    return BigX(BigY(12345)).0x0x;
+}

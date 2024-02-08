@@ -1,0 +1,17 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "hdrs",
+    srcs = [
+        "ExternalLayer.h",
+        "Skottie.h",
+        "SkottieProperty.h",
+        "SlotManager.h",
+        "TextShaper.h",
+    ],
+    visibility = ["//modules/skottie:__pkg__"],
+)

@@ -1,0 +1,51 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+VK_FILES = [
+    "VulkanAMDMemoryAllocator.cpp",
+    "VulkanAMDMemoryAllocator.h",
+    "VulkanExtensions.cpp",
+    "VulkanInterface.cpp",
+    "VulkanInterface.h",
+    "VulkanMemory.cpp",
+    "VulkanMemory.h",
+    "VulkanUtilsPriv.cpp",
+    "VulkanUtilsPriv.h",
+    "VulkanMutableTextureStatePriv.h",
+    "VulkanMutableTextureState.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "vk",
+    files = VK_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":vk_srcs"],
+    visibility = [
+        "//src/gpu:__pkg__",
+        "//src/gpu/ganesh/vk:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":vk_hdrs"],
+    visibility = [
+        "//src/gpu:__pkg__",
+        "//src/gpu/ganesh/vk:__pkg__",
+    ],
+)
+
+skia_cc_deps(
+    name = "deps",
+    visibility = ["//src/gpu:__pkg__"],
+    deps = select({
+        "//src/gpu:vulkan_with_vma": ["//third_party/vulkanmemoryallocator"],
+        "//conditions:default": [],
+    }),
+)

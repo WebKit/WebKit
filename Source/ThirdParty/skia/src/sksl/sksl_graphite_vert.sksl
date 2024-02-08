@@ -1,0 +1,1075 @@
+// Graphite-specific vertex shader code
+
+const float $PI = 3.141592653589793238;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Support functions for tessellating path renderers
+
+const float $kCubicCurveType = 0;            // skgpu::tess::kCubicCurveType
+const float $kConicCurveType = 1;            // skgpu::tess::kConicCurveType
+const float $kTriangularConicCurveType = 2;  // skgpu::tess::kTriangularConicCurveType
+
+// This function can be used on GPUs with infinity support to infer the curve type from the specific
+// path control-point encoding used by tessellating path renderers. Calling this function on a
+// platform that lacks infinity support may result in a shader compilation error.
+$pure float curve_type_using_inf_support(float4 p23) {
+    return isinf(p23.z) ? $kTriangularConicCurveType :
+           isinf(p23.w) ? $kConicCurveType :
+                          $kCubicCurveType;
+}
+
+$pure bool $is_conic_curve(float curveType) {
+    return curveType != $kCubicCurveType;
+}
+
+$pure bool $is_triangular_conic_curve(float curveType) {
+    return curveType == $kTriangularConicCurveType;
+}
+
+// Wang's formula gives the minimum number of evenly spaced (in the parametric sense) line segments
+// that a bezier curve must be chopped into in order to guarantee all lines stay within a distance
+// of "1/precision" pixels from the true curve. Its definition for a bezier curve of degree "n" is
+// as follows:
+//
+//     maxLength = max([length(p[i+2] - 2p[i+1] + p[i]) for (0 <= i <= n-2)])
+//     numParametricSegments = sqrt(maxLength * precision * n*(n - 1)/8)
+//
+// (Goldman, Ron. (2003). 5.6.3 Wang's Formula. "Pyramid Algorithms: A Dynamic Programming Approach
+// to Curves and Surfaces for Geometric Modeling". Morgan Kaufmann Publishers.)
+
+const float $kDegree = 3;
+const float $kPrecision = 4; // Must match skgpu::tess::kPrecision
+const float $kLengthTerm     = ($kDegree * ($kDegree - 1) / 8.0) * $kPrecision;
+const float $kLengthTermPow2 = (($kDegree * $kDegree) * (($kDegree - 1) * ($kDegree - 1)) / 64.0) *
+                               ($kPrecision * $kPrecision);
+
+// Returns the length squared of the largest forward difference from Wang's cubic formula.
+$pure float $wangs_formula_max_fdiff_p2(float2 p0, float2 p1, float2 p2, float2 p3,
+                                        float2x2 matrix) {
+    float2 d0 = matrix * (fma(float2(-2), p1, p2) + p0);
+    float2 d1 = matrix * (fma(float2(-2), p2, p3) + p1);
+    return max(dot(d0,d0), dot(d1,d1));
+}
+
+$pure float $wangs_formula_cubic(float2 p0, float2 p1, float2 p2, float2 p3,
+                                 float2x2 matrix) {
+    float m = $wangs_formula_max_fdiff_p2(p0, p1, p2, p3, matrix);
+    return max(ceil(sqrt($kLengthTerm * sqrt(m))), 1.0);
+}
+
+$pure float $wangs_formula_cubic_log2(float2 p0, float2 p1, float2 p2, float2 p3,
+                                      float2x2 matrix) {
+    float m = $wangs_formula_max_fdiff_p2(p0, p1, p2, p3, matrix);
+    return ceil(log2(max($kLengthTermPow2 * m, 1.0)) * .25);
+}
+
+$pure float $wangs_formula_conic_p2(float2 p0, float2 p1, float2 p2, float w) {
+    // Translate the bounding box center to the origin.
+    float2 C = (min(min(p0, p1), p2) + max(max(p0, p1), p2)) * 0.5;
+    p0 -= C;
+    p1 -= C;
+    p2 -= C;
+
+    // Compute max length.
+    float m = sqrt(max(max(dot(p0,p0), dot(p1,p1)), dot(p2,p2)));
+
+    // Compute forward differences.
+    float2 dp = fma(float2(-2.0 * w), p1, p0) + p2;
+    float dw = abs(fma(-2.0, w, 2.0));
+
+    // Compute numerator and denominator for parametric step size of linearization. Here, the
+    // epsilon referenced from the cited paper is 1/precision.
+    float rp_minus_1 = max(0.0, fma(m, $kPrecision, -1.0));
+    float numer = length(dp) * $kPrecision + rp_minus_1 * dw;
+    float denom = 4 * min(w, 1.0);
+
+    return numer/denom;
+}
+
+$pure float $wangs_formula_conic(float2 p0, float2 p1, float2 p2, float w) {
+    float n2 = $wangs_formula_conic_p2(p0, p1, p2, w);
+    return max(ceil(sqrt(n2)), 1.0);
+}
+
+$pure float $wangs_formula_conic_log2(float2 p0, float2 p1, float2 p2, float w) {
+    float n2 = $wangs_formula_conic_p2(p0, p1, p2, w);
+    return ceil(log2(max(n2, 1.0)) * .5);
+}
+
+// Returns the normalized difference between a and b, i.e. normalize(a - b), with care taken for
+// if 'a' and/or 'b' have large coordinates.
+$pure float2 $robust_normalize_diff(float2 a, float2 b) {
+    float2 diff = a - b;
+    if (diff == float2(0.0)) {
+        return float2(0.0);
+    } else {
+        float invMag = 1.0 / max(abs(diff.x), abs(diff.y));
+        return normalize(invMag * diff);
+    }
+}
+
+// Returns the cosine of the angle between a and b, assuming a and b are unit vectors already.
+// Guaranteed to be between [-1, 1].
+$pure float $cosine_between_unit_vectors(float2 a, float2 b) {
+    // Since a and b are assumed to be normalized, the cosine is equal to the dot product, although
+    // we clamp that to ensure it falls within the expected range of [-1, 1].
+    return clamp(dot(a, b), -1.0, 1.0);
+}
+
+// Extends the middle radius to either the miter point, or the bevel edge if we surpassed the
+// miter limit and need to revert to a bevel join.
+$pure float $miter_extent(float cosTheta, float miterLimit) {
+    float x = fma(cosTheta, .5, .5);
+    return (x * miterLimit * miterLimit >= 1.0) ? inversesqrt(x) : sqrt(x);
+}
+
+// Returns the number of radial segments required for each radian of rotation, in order for the
+// curve to appear "smooth" as defined by the approximate device-space stroke radius.
+$pure float $num_radial_segments_per_radian(float approxDevStrokeRadius) {
+    return .5 / acos(max(1.0 - (1.0 / $kPrecision) / approxDevStrokeRadius, -1.0));
+}
+
+// Unlike mix(), this does not return b when t==1. But it otherwise seems to get better
+// precision than "a*(1 - t) + b*t" for things like chopping cubics on exact cusp points.
+// We override this result anyway when t==1 so it shouldn't be a problem.
+$pure float $unchecked_mix(float a, float b, float T) {
+    return fma(b - a, T, a);
+}
+$pure float2 $unchecked_mix(float2 a, float2 b, float T) {
+    return fma(b - a, float2(T), a);
+}
+$pure float4 $unchecked_mix(float4 a, float4 b, float4 T) {
+    return fma(b - a, T, a);
+}
+
+// Compute a vertex position for the curve described by p01 and p23 packed control points,
+// tessellated to the given resolve level, and assuming it will be drawn as a filled curve.
+$pure float2 tessellate_filled_curve(float2x2 vectorXform,
+                                     float resolveLevel, float idxInResolveLevel,
+                                     float4 p01, float4 p23,
+                                     float curveType) {
+    float2 localcoord;
+    if ($is_triangular_conic_curve(curveType)) {
+        // This patch is an exact triangle.
+        localcoord = (resolveLevel != 0)      ? p01.zw
+                   : (idxInResolveLevel != 0) ? p23.xy
+                                              : p01.xy;
+    } else {
+        float2 p0=p01.xy, p1=p01.zw, p2=p23.xy, p3=p23.zw;
+        float w = -1;  // w < 0 tells us to treat the instance as an integral cubic.
+        float maxResolveLevel;
+        if ($is_conic_curve(curveType)) {
+            // Conics are 3 points, with the weight in p3.
+            w = p3.x;
+            maxResolveLevel = $wangs_formula_conic_log2(vectorXform*p0,
+                                                        vectorXform*p1,
+                                                        vectorXform*p2, w);
+            p1 *= w;  // Unproject p1.
+            p3 = p2;  // Duplicate the endpoint for shared code that also runs on cubics.
+        } else {
+            // The patch is an integral cubic.
+            maxResolveLevel = $wangs_formula_cubic_log2(p0, p1, p2, p3, vectorXform);
+        }
+        if (resolveLevel > maxResolveLevel) {
+            // This vertex is at a higher resolve level than we need. Demote to a lower
+            // resolveLevel, which will produce a degenerate triangle.
+            idxInResolveLevel = floor(ldexp(idxInResolveLevel,
+                                            int(maxResolveLevel - resolveLevel)));
+            resolveLevel = maxResolveLevel;
+        }
+        // Promote our location to a discrete position in the maximum fixed resolve level.
+        // This is extra paranoia to ensure we get the exact same fp32 coordinates for
+        // colocated points from different resolve levels (e.g., the vertices T=3/4 and
+        // T=6/8 should be exactly colocated).
+        float fixedVertexID = floor(.5 + ldexp(idxInResolveLevel, int(5 - resolveLevel)));
+        if (0 < fixedVertexID && fixedVertexID < 32) {
+            float T = fixedVertexID * (1 / 32.0);
+
+            // Evaluate at T. Use De Casteljau's for its accuracy and stability.
+            float2 ab = mix(p0, p1, T);
+            float2 bc = mix(p1, p2, T);
+            float2 cd = mix(p2, p3, T);
+            float2 abc = mix(ab, bc, T);
+            float2 bcd = mix(bc, cd, T);
+            float2 abcd = mix(abc, bcd, T);
+
+            // Evaluate the conic weight at T.
+            float u = mix(1.0, w, T);
+            float v = w + 1 - u;  // == mix(w, 1, T)
+            float uv = mix(u, v, T);
+
+            localcoord = (w < 0) ? /*cubic*/ abcd : /*conic*/ abc/uv;
+        } else {
+            localcoord = (fixedVertexID == 0) ? p0.xy : p3.xy;
+        }
+    }
+    return localcoord;
+}
+
+// Device coords are in xy, local coords are in zw, since for now perspective isn't supported.
+$pure float4 tessellate_stroked_curve(float edgeID, float maxEdges,
+                                      float2x2 affineMatrix,
+                                      float2 translate,
+                                      float maxScale /* derived from affineMatrix */,
+                                      float4 p01, float4 p23,
+                                      float2 lastControlPoint,
+                                      float2 strokeParams,
+                                      float curveType) {
+    float2 p0=p01.xy, p1=p01.zw, p2=p23.xy, p3=p23.zw;
+    float w = -1;  // w<0 means the curve is an integral cubic.
+    if ($is_conic_curve(curveType)) {
+        // Conics are 3 points, with the weight in p3.
+        w = p3.x;
+        p3 = p2;  // Setting p3 equal to p2 works for the remaining rotational logic.
+    }
+
+    // Call Wang's formula to determine parametric segments before transform points for hairlines
+    // so that it is consistent with how the CPU tested the control points for chopping.
+    float numParametricSegments;
+    if (w < 0) {
+        if (p0 == p1 && p2 == p3) {
+            numParametricSegments = 1; // a line
+        } else {
+            numParametricSegments = $wangs_formula_cubic(p0, p1, p2, p3, affineMatrix);
+        }
+    } else {
+        numParametricSegments = $wangs_formula_conic(affineMatrix * p0,
+                                                     affineMatrix * p1,
+                                                     affineMatrix * p2, w);
+    }
+
+    // Matches skgpu::tess::StrokeParams
+    float strokeRadius = strokeParams.x;
+    float joinType = strokeParams.y; // <0 = round join, ==0 = bevel join, >0 encodes miter limit
+    bool isHairline = strokeParams.x == 0.0;
+    float numRadialSegmentsPerRadian;
+    if (isHairline) {
+        numRadialSegmentsPerRadian = $num_radial_segments_per_radian(1.0);
+        strokeRadius = 0.5;
+    } else {
+        numRadialSegmentsPerRadian = $num_radial_segments_per_radian(maxScale * strokeParams.x);
+    }
+
+    if (isHairline) {
+        // Hairline case. Transform the points before tessellation. We can still hold off on the
+        // translate until the end; we just need to perform the scale and skew right now.
+        p0 = affineMatrix * p0;
+        p1 = affineMatrix * p1;
+        p2 = affineMatrix * p2;
+        p3 = affineMatrix * p3;
+        lastControlPoint = affineMatrix * lastControlPoint;
+    }
+
+    // Find the starting and ending tangents.
+    float2 tan0 = $robust_normalize_diff((p0 == p1) ? ((p1 == p2) ? p3 : p2) : p1, p0);
+    float2 tan1 = $robust_normalize_diff(p3, (p3 == p2) ? ((p2 == p1) ? p0 : p1) : p2);
+    if (tan0 == float2(0)) {
+        // The stroke is a point. This special case tells us to draw a stroke-width circle as a
+        // 180 degree point stroke instead.
+        tan0 = float2(1,0);
+        tan1 = float2(-1,0);
+    }
+
+    // Determine how many edges to give to the join. We emit the first and final edges
+    // of the join twice: once full width and once restricted to half width. This guarantees
+    // perfect seaming by matching the vertices from the join as well as from the strokes on
+    // either side.
+    float numEdgesInJoin;
+    if (joinType >= 0 /*Is the join not a round type?*/) {
+        // Bevel(0) and miter(+) joins get 1 and 2 segments respectively.
+        // +2 because we emit the beginning and ending edges twice (see above comments).
+        numEdgesInJoin = sign(joinType) + 1 + 2;
+    } else {
+        float2 prevTan = $robust_normalize_diff(p0, lastControlPoint);
+        float joinRads = acos($cosine_between_unit_vectors(prevTan, tan0));
+        float numRadialSegmentsInJoin = max(ceil(joinRads * numRadialSegmentsPerRadian), 1);
+        // +2 because we emit the beginning and ending edges twice (see above comment).
+        numEdgesInJoin = numRadialSegmentsInJoin + 2;
+        // The stroke section needs at least two edges. Don't assign more to the join than
+        // "maxEdges - 2". (This is only relevant when the ideal max edge count calculated
+        // on the CPU had to be limited to maxEdges in the draw call).
+        numEdgesInJoin = min(numEdgesInJoin, maxEdges - 2);
+    }
+
+    // Find which direction the curve turns.
+    // NOTE: Since the curve is not allowed to inflect, we can just check F'(.5) x F''(.5).
+    // NOTE: F'(.5) x F''(.5) has the same sign as (P2 - P0) x (P3 - P1)
+    float turn = cross_length_2d(p2 - p0, p3 - p1);
+    float combinedEdgeID = abs(edgeID) - numEdgesInJoin;
+    if (combinedEdgeID < 0) {
+        tan1 = tan0;
+        // Don't let tan0 become zero. The code as-is isn't built to handle that case. tan0=0
+        // means the join is disabled, and to disable it with the existing code we can leave
+        // tan0 equal to tan1.
+        if (lastControlPoint != p0) {
+            tan0 = $robust_normalize_diff(p0, lastControlPoint);
+        }
+        turn = cross_length_2d(tan0, tan1);
+    }
+
+    // Calculate the curve's starting angle and rotation.
+    float cosTheta = $cosine_between_unit_vectors(tan0, tan1);
+    float rotation = acos(cosTheta);
+    if (turn < 0) {
+        // Adjust sign of rotation to match the direction the curve turns.
+        rotation = -rotation;
+    }
+
+    float numRadialSegments;
+    float strokeOutset = sign(edgeID);
+    if (combinedEdgeID < 0) {
+        // We belong to the preceding join. The first and final edges get duplicated, so we only
+        // have "numEdgesInJoin - 2" segments.
+        numRadialSegments = numEdgesInJoin - 2;
+        numParametricSegments = 1;  // Joins don't have parametric segments.
+        p3 = p2 = p1 = p0;  // Colocate all points on the junction point.
+        // Shift combinedEdgeID to the range [-1, numRadialSegments]. This duplicates the first
+        // edge and lands one edge at the very end of the join. (The duplicated final edge will
+        // actually come from the section of our strip that belongs to the stroke.)
+        combinedEdgeID += numRadialSegments + 1;
+        // We normally restrict the join on one side of the junction, but if the tangents are
+        // nearly equivalent this could theoretically result in bad seaming and/or cracks on the
+        // side we don't put it on. If the tangents are nearly equivalent then we leave the join
+        // double-sided.
+        float sinEpsilon = 1e-2;  // ~= sin(180deg / 3000)
+        bool tangentsNearlyParallel =
+                (abs(turn) * inversesqrt(dot(tan0, tan0) * dot(tan1, tan1))) < sinEpsilon;
+        if (!tangentsNearlyParallel || dot(tan0, tan1) < 0) {
+            // There are two edges colocated at the beginning. Leave the first one double sided
+            // for seaming with the previous stroke. (The double sided edge at the end will
+            // actually come from the section of our strip that belongs to the stroke.)
+            if (combinedEdgeID >= 0) {
+                strokeOutset = (turn < 0) ? min(strokeOutset, 0) : max(strokeOutset, 0);
+            }
+        }
+        combinedEdgeID = max(combinedEdgeID, 0);
+    } else {
+        // We belong to the stroke. Unless numRadialSegmentsPerRadian is incredibly high,
+        // clamping to maxCombinedSegments will be a no-op because the draw call was invoked with
+        // sufficient vertices to cover the worst case scenario of 180 degree rotation.
+        float maxCombinedSegments = maxEdges - numEdgesInJoin - 1;
+        numRadialSegments = max(ceil(abs(rotation) * numRadialSegmentsPerRadian), 1);
+        numRadialSegments = min(numRadialSegments, maxCombinedSegments);
+        numParametricSegments = min(numParametricSegments,
+                                    maxCombinedSegments - numRadialSegments + 1);
+    }
+
+    // Additional parameters for final tessellation evaluation.
+    float radsPerSegment = rotation / numRadialSegments;
+    float numCombinedSegments = numParametricSegments + numRadialSegments - 1;
+    bool isFinalEdge = (combinedEdgeID >= numCombinedSegments);
+    if (combinedEdgeID > numCombinedSegments) {
+        strokeOutset = 0;  // The strip has more edges than we need. Drop this one.
+    }
+    // Edge #2 extends to the miter point.
+    if (abs(edgeID) == 2 && joinType > 0/*Is the join a miter type?*/) {
+        strokeOutset *= $miter_extent(cosTheta, joinType/*miterLimit*/);
+    }
+
+    float2 tangent, strokeCoord;
+    if (combinedEdgeID != 0 && !isFinalEdge) {
+        // Compute the location and tangent direction of the stroke edge with the integral id
+        // "combinedEdgeID", where combinedEdgeID is the sorted-order index of parametric and radial
+        // edges. Start by finding the tangent function's power basis coefficients. These define a
+        // tangent direction (scaled by some uniform value) as:
+        //                                                 |T^2|
+        //     Tangent_Direction(T) = dx,dy = |A  2B  C| * |T  |
+        //                                    |.   .  .|   |1  |
+        float2 A, B, C = p1 - p0;
+        float2 D = p3 - p0;
+        if (w >= 0.0) {
+            // P0..P2 represent a conic and P3==P2. The derivative of a conic has a cumbersome
+            // order-4 denominator. However, this isn't necessary if we are only interested in a
+            // vector in the same *direction* as a given tangent line. Since the denominator scales
+            // dx and dy uniformly, we can throw it out completely after evaluating the derivative
+            // with the standard quotient rule. This leaves us with a simpler quadratic function
+            // that we use to find a tangent.
+            C *= w;
+            B = .5*D - C;
+            A = (w - 1.0) * D;
+            p1 *= w;
+        } else {
+            float2 E = p2 - p1;
+            B = E - C;
+            A = fma(float2(-3), E, D);
+        }
+        // FIXME(crbug.com/800804,skbug.com/11268): Consider normalizing the exponents in A,B,C at
+        // this point in order to prevent fp32 overflow.
+
+        // Now find the coefficients that give a tangent direction from a parametric edge ID:
+        //
+        //                                                                 |parametricEdgeID^2|
+        //     Tangent_Direction(parametricEdgeID) = dx,dy = |A  B_  C_| * |parametricEdgeID  |
+        //                                                   |.   .   .|   |1                 |
+        //
+        float2 B_ = B * (numParametricSegments * 2.0);
+        float2 C_ = C * (numParametricSegments * numParametricSegments);
+
+        // Run a binary search to determine the highest parametric edge that is located on or before
+        // the combinedEdgeID. A combined ID is determined by the sum of complete parametric and
+        // radial segments behind it. i.e., find the highest parametric edge where:
+        //
+        //    parametricEdgeID + floor(numRadialSegmentsAtParametricT) <= combinedEdgeID
+        //
+        float lastParametricEdgeID = 0.0;
+        float maxParametricEdgeID = min(numParametricSegments - 1.0, combinedEdgeID);
+        float negAbsRadsPerSegment = -abs(radsPerSegment);
+        float maxRotation0 = (1.0 + combinedEdgeID) * abs(radsPerSegment);
+        for (int exp = 5 /*max resolve level*/ - 1; exp >= 0; --exp) {
+            // Test the parametric edge at lastParametricEdgeID + 2^exp.
+            float testParametricID = lastParametricEdgeID + exp2(float(exp));
+            if (testParametricID <= maxParametricEdgeID) {
+                float2 testTan = fma(float2(testParametricID), A, B_);
+                testTan = fma(float2(testParametricID), testTan, C_);
+                float cosRotation = dot(normalize(testTan), tan0);
+                float maxRotation = fma(testParametricID, negAbsRadsPerSegment, maxRotation0);
+                maxRotation = min(maxRotation, $PI);
+                // Is rotation <= maxRotation? (i.e., is the number of complete radial segments
+                // behind testT, + testParametricID <= combinedEdgeID?)
+                if (cosRotation >= cos(maxRotation)) {
+                    // testParametricID is on or before the combinedEdgeID. Keep it!
+                    lastParametricEdgeID = testParametricID;
+                }
+            }
+        }
+
+        // Find the T value of the parametric edge at lastParametricEdgeID.
+        float parametricT = lastParametricEdgeID / numParametricSegments;
+
+        // Now that we've identified the highest parametric edge on or before the
+        // combinedEdgeID, the highest radial edge is easy:
+        float lastRadialEdgeID = combinedEdgeID - lastParametricEdgeID;
+
+        // Find the angle of tan0, i.e. the angle between tan0 and the positive x axis.
+        float angle0 = acos(clamp(tan0.x, -1.0, 1.0));
+        angle0 = tan0.y >= 0.0 ? angle0 : -angle0;
+
+        // Find the tangent vector on the edge at lastRadialEdgeID. By construction it is already
+        // normalized.
+        float radialAngle = fma(lastRadialEdgeID, radsPerSegment, angle0);
+        tangent = float2(cos(radialAngle), sin(radialAngle));
+        float2 norm = float2(-tangent.y, tangent.x);
+
+        // Find the T value where the tangent is orthogonal to norm. This is a quadratic:
+        //
+        //     dot(norm, Tangent_Direction(T)) == 0
+        //
+        //                         |T^2|
+        //     norm * |A  2B  C| * |T  | == 0
+        //            |.   .  .|   |1  |
+        //
+        float a=dot(norm,A), b_over_2=dot(norm,B), c=dot(norm,C);
+        float discr_over_4 = max(b_over_2*b_over_2 - a*c, 0.0);
+        float q = sqrt(discr_over_4);
+        if (b_over_2 > 0.0) {
+            q = -q;
+        }
+        q -= b_over_2;
+
+        // Roots are q/a and c/q. Since each curve section does not inflect or rotate more than 180
+        // degrees, there can only be one tangent orthogonal to "norm" inside 0..1. Pick the root
+        // nearest .5.
+        float _5qa = -.5*q*a;
+        float2 root = (abs(fma(q,q,_5qa)) < abs(fma(a,c,_5qa))) ? float2(q,a) : float2(c,q);
+        float radialT = (root.t != 0.0) ? root.s / root.t : 0.0;
+        radialT = clamp(radialT, 0.0, 1.0);
+
+        if (lastRadialEdgeID == 0.0) {
+            // The root finder above can become unstable when lastRadialEdgeID == 0 (e.g., if
+            // there are roots at exatly 0 and 1 both). radialT should always == 0 in this case.
+            radialT = 0.0;
+        }
+
+        // Now that we've identified the T values of the last parametric and radial edges, our final
+        // T value for combinedEdgeID is whichever is larger.
+        float T = max(parametricT, radialT);
+
+        // Evaluate the cubic at T. Use De Casteljau's for its accuracy and stability.
+        float2 ab = $unchecked_mix(p0, p1, T);
+        float2 bc = $unchecked_mix(p1, p2, T);
+        float2 cd = $unchecked_mix(p2, p3, T);
+        float2 abc = $unchecked_mix(ab, bc, T);
+        float2 bcd = $unchecked_mix(bc, cd, T);
+        float2 abcd = $unchecked_mix(abc, bcd, T);
+
+        // Evaluate the conic weight at T.
+        float u = $unchecked_mix(1.0, w, T);
+        float v = w + 1 - u;  // == mix(w, 1, T)
+        float uv = $unchecked_mix(u, v, T);
+
+        // If we went with T=parametricT, then update the tangent. Otherwise leave it at the radial
+        // tangent found previously. (In the event that parametricT == radialT, we keep the radial
+        // tangent.)
+        if (T != radialT) {
+            // We must re-normalize here because the tangent is determined by the curve coefficients
+            tangent = w >= 0.0 ? $robust_normalize_diff(bc*u, ab*v)
+                               : $robust_normalize_diff(bcd, abc);
+        }
+
+        strokeCoord = (w >= 0.0) ? abc/uv : abcd;
+    } else {
+        // Edges at the beginning and end of the strip use exact endpoints and tangents. This
+        // ensures crack-free seaming between instances.
+        tangent = (combinedEdgeID == 0) ? tan0 : tan1;
+        strokeCoord = (combinedEdgeID == 0) ? p0 : p3;
+    }
+
+    // At this point 'tangent' is normalized, so the orthogonal vector is also normalized.
+    float2 ortho = float2(tangent.y, -tangent.x);
+    strokeCoord += ortho * (strokeRadius * strokeOutset);
+
+    if (isHairline) {
+        // Hairline case. The scale and skew already happened before tessellation.
+        // TODO: There's probably a more efficient way to tessellate the hairline that lets us
+        // avoid inverting the affine matrix to get back to local coords, but it's just a 2x2 so
+        // this works for now.
+        return float4(strokeCoord + translate, inverse(affineMatrix) * strokeCoord);
+    } else {
+        // Normal case. Do the transform after tessellation.
+        return float4(affineMatrix * strokeCoord + translate, strokeCoord);
+    }
+}
+
+float4 analytic_rrect_vertex_fn(// Vertex Attributes
+                                float2 position,
+                                float2 normal,
+                                float normalScale,
+                                float centerWeight,
+                                // Instance Attributes
+                                float4 xRadiiOrFlags,
+                                float4 radiiOrQuadXs,
+                                float4 ltrbOrQuadYs,
+                                float4 center,
+                                float depth,
+                                float3x3 localToDevice,
+                                // Varyings
+                                out float4 jacobian,
+                                out float4 edgeDistances,
+                                out float4 xRadii,
+                                out float4 yRadii,
+                                out float2 strokeParams,
+                                out float2 perPixelControl,
+                                // Render Step
+                                out float2 stepLocalCoords) {
+    const int kCornerVertexCount = 9; // KEEP IN SYNC WITH C++'s
+                                      // AnalyticRRectRenderStep::kCornerVertexCount
+    const float kMiterScale = 1.0;
+    const float kBevelScale = 0.0;
+    const float kRoundScale = 0.41421356237; // sqrt(2)-1
+
+    const float kEpsilon = 0.00024; // SK_ScalarNearlyZero
+
+    // Default to miter'ed vertex positioning. Corners with sufficiently large corner radii, or
+    // bevel'ed strokes will adjust vertex placement on a per corner basis. This will not affect
+    // the final coverage calculations in the fragment shader.
+    float joinScale = kMiterScale;
+
+    // Unpack instance-level state that determines the vertex placement and style of shape.
+    bool bidirectionalCoverage = center.z <= 0.0;
+    bool deviceSpaceDistances = false;
+    float4 xs, ys; // ordered TL, TR, BR, BL
+    float4 edgeAA = float4(1.0); // ordered L,T,R,B. 1 = AA, 0 = no AA
+    bool strokedLine = false;
+    if (xRadiiOrFlags.x < -1.0) {
+        // Stroked [round] rect or line
+        // If y > 0, unpack the line end points, otherwise unpack the rect edges
+        strokedLine = xRadiiOrFlags.y > 0.0;
+        xs = strokedLine ? ltrbOrQuadYs.LLRR : ltrbOrQuadYs.LRRL;
+        ys = ltrbOrQuadYs.TTBB;
+
+        if (xRadiiOrFlags.y < 0.0) {
+            // A hairline [r]rect so the X radii are encoded as negative values in this field,
+            // and Y radii are stored directly in the subsequent float4.
+            xRadii = -xRadiiOrFlags - 2.0;
+            yRadii = radiiOrQuadXs;
+
+            // All hairlines use miter joins (join style > 0)
+            strokeParams = float2(0.0, 1.0);
+        } else {
+            xRadii = radiiOrQuadXs;
+            yRadii = xRadii; // regular strokes are circular
+            strokeParams = xRadiiOrFlags.zw;
+
+            if (strokeParams.y < 0.0) {
+                joinScale = kRoundScale; // the stroke radius rounds rectangular corners
+            }  else if (strokeParams.y == 0.0) {
+                joinScale = kBevelScale;
+            } // else stay mitered
+        }
+    } else if (any(greaterThan(xRadiiOrFlags, float4(0.0)))) {
+        // Filled round rect
+        xs = ltrbOrQuadYs.LRRL;
+        ys = ltrbOrQuadYs.TTBB;
+
+        xRadii = xRadiiOrFlags;
+        yRadii = radiiOrQuadXs;
+
+        strokeParams = float2(0.0, -1.0); // A negative join style is "round"
+    } else {
+        // Per-edge quadrilateral, so we have to calculate the corner's basis from the
+        // quad's edges.
+        xs = radiiOrQuadXs;
+        ys = ltrbOrQuadYs;
+        edgeAA = -xRadiiOrFlags; // AA flags needed to be < 0 on upload, so flip the sign.
+
+        xRadii = float4(0.0);
+        yRadii = float4(0.0);
+
+        strokeParams = float2(0.0, 1.0); // Will be ignored, but set to a "miter"
+        deviceSpaceDistances = true;
+    }
+
+    // Adjust state on a per-corner basis
+    int cornerID = sk_VertexID / kCornerVertexCount;
+    float2 cornerRadii = float2(xRadii[cornerID], yRadii[cornerID]);
+    if (cornerID % 2 != 0) {
+        // Corner radii are uploaded in the local coordinate frame, but vertex placement happens
+        // in a consistent winding before transforming to final local coords, so swap the
+        // radii for odd corners.
+        cornerRadii = cornerRadii.yx;
+    }
+
+    float2 cornerAspectRatio = float2(1.0);
+    if (all(greaterThan(cornerRadii, float2(0.0)))) {
+        // Position vertices for an elliptical corner; overriding any previous join style since
+        // that only applies when radii are 0.
+        joinScale = kRoundScale;
+        cornerAspectRatio = cornerRadii.yx;
+    }
+
+    // Calculate the local edge vectors, ordered L, T, R, B starting from the bottom left point.
+    // For quadrilaterals these are not necessarily axis-aligned, but in all cases they orient
+    // the +X/+Y normalized vertex template for each corner.
+    float4 dx = xs - xs.wxyz;
+    float4 dy = ys - ys.wxyz;
+    float4 edgeSquaredLen = dx*dx + dy*dy;
+
+    float4 edgeMask = sign(edgeSquaredLen); // 0 for zero-length edge, 1 for non-zero edge.
+    float4 edgeBias = float4(0.0); // adjustment to edge distance for butt cap correction
+    float2 strokeRadius = float2(strokeParams.x);
+    if (any(equal(edgeMask, float4(0.0)))) {
+        // Must clean up (dx,dy) depending on the empty edge configuration
+        if (all(equal(edgeMask, float4(0.0)))) {
+            // A point so use the canonical basis
+            dx = float4( 0.0, 1.0, 0.0, -1.0);
+            dy = float4(-1.0, 0.0, 1.0,  0.0);
+            edgeSquaredLen = float4(1.0);
+        } else {
+            // Triangles (3 non-zero edges) copy the adjacent edge. Otherwise it's a line so
+            // replace empty edges with the left-hand normal vector of the adjacent edge.
+            bool triangle = (edgeMask[0] + edgeMask[1] + edgeMask[2] + edgeMask[3]) > 2.5;
+            float4 edgeX = triangle ? dx.yzwx :  dy.yzwx;
+            float4 edgeY = triangle ? dy.yzwx : -dx.yzwx;
+
+            dx = mix(edgeX, dx, edgeMask);
+            dy = mix(edgeY, dy, edgeMask);
+            edgeSquaredLen = mix(edgeSquaredLen.yzwx, edgeSquaredLen, edgeMask);
+            edgeAA = mix(edgeAA.yzwx, edgeAA, edgeMask);
+
+            if (!triangle && joinScale == kBevelScale) {
+                // Don't outset by stroke radius for butt caps on the zero-length edge, but
+                // adjust edgeBias and strokeParams to calculate an AA miter'ed shape with the
+                // non-uniform stroke outset.
+                strokeRadius *= float2(edgeMask[cornerID], edgeMask.yzwx[cornerID]);
+                edgeBias = (edgeMask - 1.0) * strokeParams.x;
+                strokeParams.y = 1.0;
+                joinScale = kMiterScale;
+            }
+        }
+    }
+
+    float4 inverseEdgeLen = inversesqrt(edgeSquaredLen);
+    dx *= inverseEdgeLen;
+    dy *= inverseEdgeLen;
+
+    // Calculate local coordinate for the vertex (relative to xAxis and yAxis at first).
+    float2 xAxis = -float2(dx.yzwx[cornerID], dy.yzwx[cornerID]);
+    float2 yAxis =  float2(dx.xyzw[cornerID], dy.xyzw[cornerID]);
+    float2 localPos;
+    bool snapToCenter = false;
+    if (normalScale < 0.0) {
+        // Vertex is inset from the base shape, so we scale by (cornerRadii - strokeRadius)
+        // and have to check for the possibility of an inner miter. It is always inset by an
+        // additional conservative AA amount.
+        if (center.w < 0.0 || centerWeight * center.z != 0.0) {
+            snapToCenter = true;
+        } else {
+            float localAARadius = center.w;
+            float2 insetRadii =
+                    cornerRadii + (bidirectionalCoverage ? -strokeRadius : strokeRadius);
+            if (joinScale == kMiterScale ||
+                any(lessThanEqual(insetRadii, float2(localAARadius)))) {
+                // Miter the inset position
+                localPos = (insetRadii - localAARadius);
+            } else {
+                localPos = insetRadii*position - localAARadius*normal;
+            }
+        }
+    } else {
+        // Vertex is outset from the base shape (and possibly with an additional AA outset later
+        // in device space).
+        localPos = (cornerRadii + strokeRadius) * (position + joinScale*position.yx);
+    }
+
+    if (snapToCenter) {
+        // Center is already relative to true local coords, not the corner basis.
+        localPos = center.xy;
+    } else {
+        // Transform from corner basis to true local coords.
+        localPos -= cornerRadii;
+        localPos = float2(xs[cornerID], ys[cornerID]) + xAxis*localPos.x + yAxis*localPos.y;
+    }
+
+    // Calculate edge distances and device space coordinate for the vertex
+    edgeDistances = dy*(xs - localPos.x) - dx*(ys - localPos.y) + edgeBias;
+
+    // NOTE: This 3x3 inverse is different than just taking the 1st two columns of the 4x4
+    // inverse of the original SkM44 local-to-device matrix. We could calculate the 3x3 inverse
+    // and upload it, but it does not seem to be a bottleneck and saves on bandwidth to
+    // calculate it here instead.
+    float3x3 deviceToLocal = inverse(localToDevice);
+    float3 devPos = localToDevice * localPos.xy1;
+    jacobian = float4(deviceToLocal[0].xy - deviceToLocal[0].z*localPos,
+                      deviceToLocal[1].xy - deviceToLocal[1].z*localPos);
+
+    if (deviceSpaceDistances) {
+        // Apply the Jacobian in the vertex shader so any quadrilateral normals do not have to
+        // be passed to the fragment shader. However, it's important to use the Jacobian at a
+        // vertex on the edge, not the current vertex's Jacobian.
+        float4 gx = -dy*(deviceToLocal[0].x - deviceToLocal[0].z*xs) +
+                     dx*(deviceToLocal[0].y - deviceToLocal[0].z*ys);
+        float4 gy = -dy*(deviceToLocal[1].x - deviceToLocal[1].z*xs) +
+                     dx*(deviceToLocal[1].y - deviceToLocal[1].z*ys);
+        // NOTE: The gradient is missing a W term so edgeDistances must still be multiplied by
+        // 1/w in the fragment shader. The same goes for the encoded coverage scale.
+        edgeDistances *= inversesqrt(gx*gx + gy*gy);
+
+        // Bias non-AA edge distances by device W so its coverage contribution is >= 1.0
+        edgeDistances += (1 - edgeAA)*abs(devPos.z);
+
+        // Mixed edge AA shapes do not use subpixel scale+bias for coverage, since they tile
+        // to a large shape of unknown--but likely not subpixel--size. Triangles and quads do
+        // not use subpixel coverage since the scale+bias is not constant over the shape, but
+        // we can't evaluate per-fragment since we aren't passing down their arbitrary normals.
+        bool subpixelCoverage = edgeAA == float4(1.0) &&
+                                dot(abs(dx*dx.yzwx + dy*dy.yzwx), float4(1.0)) < kEpsilon;
+        if (subpixelCoverage) {
+            // Reconstructs the actual device-space width and height for all rectangle vertices.
+            float2 dim = edgeDistances.xy + edgeDistances.zw;
+            perPixelControl.y = 1.0 + min(min(dim.x, dim.y), abs(devPos.z));
+        } else {
+            perPixelControl.y = 1.0 + abs(devPos.z); // standard 1px width pre W division.
+        }
+    }
+
+    // Only outset for a vertex that is in front of the w=0 plane to avoid dealing with outset
+    // triangles rasterizing differently from the main triangles as w crosses 0.
+    if (normalScale > 0.0 && devPos.z > 0.0) {
+        // Note that when there's no perspective, the jacobian is equivalent to the normal
+        // matrix (inverse transpose), but produces correct results when there's perspective
+        // because it accounts for the position's influence on a line's projected direction.
+        float2x2 J = float2x2(jacobian);
+
+        float2 edgeAANormal = float2(edgeAA[cornerID], edgeAA.yzwx[cornerID]) * normal;
+        float2 nx = cornerAspectRatio.x * edgeAANormal.x * perp(-yAxis) * J;
+        float2 ny = cornerAspectRatio.y * edgeAANormal.y * perp( xAxis) * J;
+
+        bool isMidVertex = edgeAANormal.x != 0.0 && edgeAANormal.y != 0.0;
+        if (joinScale == kMiterScale && isMidVertex) {
+            // Produce a bisecting vector in device space.
+            nx = normalize(nx);
+            ny = normalize(ny);
+            if (dot(nx, ny) < -0.8) {
+                // Normals are in nearly opposite directions, so adjust to avoid float error.
+                float s = sign(cross_length_2d(nx, ny));
+                nx =  s*perp(nx);
+                ny = -s*perp(ny);
+            }
+        }
+        // Adding the normal components together directly results in what we'd have
+        // calculated if we'd just transformed 'normal' in one go, assuming they weren't
+        // normalized in the if-block above. If they were normalized, the sum equals the
+        // bisector between the original nx and ny.
+        //
+        // We multiply by W so that after perspective division the new point is offset by the
+        // now-unit normal.
+        // NOTE: (nx + ny) can become the zero vector if the device outset is for an edge
+        // marked as non-AA. In this case normalize() could produce the zero vector or NaN.
+        // Until a counter-example is found, GPUs seem to discard triangles with NaN vertices,
+        // which has the same effect as outsetting by the zero vector with this mesh, so we
+        // don't bother guarding the normalize() (yet).
+        devPos.xy += devPos.z * normalize(nx + ny);
+
+        // By construction these points are 1px away from the outer edge in device space.
+        if (deviceSpaceDistances) {
+            // Apply directly to edgeDistances to save work per pixel later on.
+            edgeDistances -= devPos.z;
+        } else {
+            // Otherwise store separately so edgeDistances can be used to reconstruct corner pos
+            perPixelControl.y = -devPos.z;
+        }
+    } else if (!deviceSpaceDistances) {
+        // Triangles are within the original shape so there's no additional outsetting to
+        // take into account for coverage calculations.
+        perPixelControl.y = 0.0;
+    }
+
+    perPixelControl.x = (centerWeight != 0.0)
+            // A positive value signals that a pixel is trivially full coverage.
+            ? 1.0
+            // A negative value signals bidirectional coverage, and a zero value signals a solid
+            // interior with per-pixel coverage.
+            : bidirectionalCoverage ? -1.0 : 0.0;
+
+    // The fragment shader operates in a canonical basis (x-axis = (1,0), y-axis = (0,1)). For
+    // stroked lines, incorporate their local orientation into the Jacobian to preserve this.
+    if (strokedLine) {
+        // The updated Jacobian is J' = B^-1 * J, where B is float2x2(xAxis, yAxis) for the
+        // top-left corner (so that B^-1 is constant over the whole shape). Since it's a line
+        // the basis was constructed to be orthonormal, det(B) = 1 and B^-1 is trivial.
+        // NOTE: float2x2 is column-major.
+        jacobian = float4(float2x2(dy[0], -dy[1], -dx[0], dx[1]) * float2x2(jacobian));
+    }
+
+    // Write out final results
+    stepLocalCoords = localPos;
+    return float4(devPos.xy, devPos.z*depth, devPos.z);
+}
+
+float4 per_edge_aa_quad_vertex_fn(// Vertex Attributes
+                                  float2 normal,
+                                  // Instance Attributes
+                                  float4 edgeAA,
+                                  float4 xs, // ordered TL, TR, BR, BL
+                                  float4 ys,
+                                  float depth,
+                                  float3x3 localToDevice,
+                                  // Varyings
+                                  out float4 edgeDistances,
+                                  // Render Step
+                                  out float2 stepLocalCoords) {
+    const int kCornerVertexCount = 4; // KEEP IN SYNC WITH C++'s
+                                      // PerEdgeAAQuadRenderStep::kCornerVertexCount
+
+    const float kEpsilon = 0.00024; // SK_ScalarNearlyZero
+
+    // Calculate the local edge vectors, ordered L, T, R, B starting from the bottom left point.
+    // For quadrilaterals these are not necessarily axis-aligned, but in all cases they orient
+    // the +X/+Y normalized vertex template for each corner.
+    float4 dx = xs - xs.wxyz;
+    float4 dy = ys - ys.wxyz;
+    float4 edgeSquaredLen = dx*dx + dy*dy;
+
+    float4 edgeMask = sign(edgeSquaredLen); // 0 for zero-length edge, 1 for non-zero edge.
+    if (any(equal(edgeMask, float4(0.0)))) {
+        // Must clean up (dx,dy) depending on the empty edge configuration
+        if (all(equal(edgeMask, float4(0.0)))) {
+            // A point so use the canonical basis
+            dx = float4( 0.0, 1.0, 0.0, -1.0);
+            dy = float4(-1.0, 0.0, 1.0,  0.0);
+            edgeSquaredLen = float4(1.0);
+        } else {
+            // Triangles (3 non-zero edges) copy the adjacent edge. Otherwise it's a line so
+            // replace empty edges with the left-hand normal vector of the adjacent edge.
+            bool triangle = (edgeMask[0] + edgeMask[1] + edgeMask[2] + edgeMask[3]) > 2.5;
+            float4 edgeX = triangle ? dx.yzwx :  dy.yzwx;
+            float4 edgeY = triangle ? dy.yzwx : -dx.yzwx;
+
+            dx = mix(edgeX, dx, edgeMask);
+            dy = mix(edgeY, dy, edgeMask);
+            edgeSquaredLen = mix(edgeSquaredLen.yzwx, edgeSquaredLen, edgeMask);
+            edgeAA = mix(edgeAA.yzwx, edgeAA, edgeMask);
+        }
+    }
+
+    float4 inverseEdgeLen = inversesqrt(edgeSquaredLen);
+    dx *= inverseEdgeLen;
+    dy *= inverseEdgeLen;
+
+    // Calculate local coordinate for the vertex (relative to xAxis and yAxis at first).
+    int cornerID = sk_VertexID / kCornerVertexCount;
+    float2 xAxis = -float2(dx.yzwx[cornerID], dy.yzwx[cornerID]);
+    float2 yAxis =  float2(dx.xyzw[cornerID], dy.xyzw[cornerID]);
+
+    // Vertex is outset from the base shape (and possibly with an additional AA outset later
+    // in device space).
+    float2 localPos = float2(xs[cornerID], ys[cornerID]);
+
+    // Calculate edge distances and device space coordinate for the vertex
+    edgeDistances = dy*(xs - localPos.x) - dx*(ys - localPos.y);
+
+    // NOTE: This 3x3 inverse is different than just taking the 1st two columns of the 4x4
+    // inverse of the original SkM44 local-to-device matrix. We could calculate the 3x3 inverse
+    // and upload it, but it does not seem to be a bottleneck and saves on bandwidth to
+    // calculate it here instead.
+    float3x3 deviceToLocal = inverse(localToDevice);
+    float3 devPos = localToDevice * localPos.xy1;
+
+    // Apply the Jacobian in the vertex shader so any quadrilateral normals do not have to
+    // be passed to the fragment shader. However, it's important to use the Jacobian at a
+    // vertex on the edge, not the current vertex's Jacobian.
+    float4 gx = -dy*(deviceToLocal[0].x - deviceToLocal[0].z*xs) +
+                 dx*(deviceToLocal[0].y - deviceToLocal[0].z*ys);
+    float4 gy = -dy*(deviceToLocal[1].x - deviceToLocal[1].z*xs) +
+                 dx*(deviceToLocal[1].y - deviceToLocal[1].z*ys);
+    // NOTE: The gradient is missing a W term so edgeDistances must still be multiplied by
+    // 1/w in the fragment shader. The same goes for the encoded coverage scale.
+    edgeDistances *= inversesqrt(gx*gx + gy*gy);
+
+    // Bias non-AA edge distances by device W so its coverage contribution is >= 1.0
+    // Add additional 1/2 bias here so we don't have to do so in the fragment shader.
+    edgeDistances += (1.5 - edgeAA)*abs(devPos.z);
+
+    // Only outset for a vertex that is in front of the w=0 plane to avoid dealing with outset
+    // triangles rasterizing differently from the main triangles as w crosses 0.
+    if (any(notEqual(normal, float2(0.0))) && devPos.z > 0.0) {
+        // Note that when there's no perspective, the jacobian is equivalent to the normal
+        // matrix (inverse transpose), but produces correct results when there's perspective
+        // because it accounts for the position's influence on a line's projected direction.
+        float2x2 J = float2x2(deviceToLocal[0].xy - deviceToLocal[0].z*localPos,
+                              deviceToLocal[1].xy - deviceToLocal[1].z*localPos);
+
+        float2 edgeAANormal = float2(edgeAA[cornerID], edgeAA.yzwx[cornerID]) * normal;
+        float2 nx = edgeAANormal.x * perp(-yAxis) * J;
+        float2 ny = edgeAANormal.y * perp( xAxis) * J;
+
+        bool isMidVertex = edgeAANormal.x != 0.0 && edgeAANormal.y != 0.0;
+        if (isMidVertex) {
+            // Produce a bisecting vector in device space.
+            nx = normalize(nx);
+            ny = normalize(ny);
+            if (dot(nx, ny) < -0.8) {
+                // Normals are in nearly opposite directions, so adjust to avoid float error.
+                float s = sign(cross_length_2d(nx, ny));
+                nx =  s*perp(nx);
+                ny = -s*perp(ny);
+            }
+        }
+        // Adding the normal components together directly results in what we'd have
+        // calculated if we'd just transformed 'normal' in one go, assuming they weren't
+        // normalized in the if-block above. If they were normalized, the sum equals the
+        // bisector between the original nx and ny.
+        //
+        // We multiply by W so that after perspective division the new point is offset by the
+        // now-unit normal.
+        // NOTE: (nx + ny) can become the zero vector if the device outset is for an edge
+        // marked as non-AA. In this case normalize() could produce the zero vector or NaN.
+        // Until a counter-example is found, GPUs seem to discard triangles with NaN vertices,
+        // which has the same effect as outsetting by the zero vector with this mesh, so we
+        // don't bother guarding the normalize() (yet).
+        devPos.xy += devPos.z * normalize(nx + ny);
+
+        // By construction these points are 1px away from the outer edge in device space.
+        // Apply directly to edgeDistances to save work per pixel later on.
+        edgeDistances -= devPos.z;
+    }
+
+    // Write out final results
+    stepLocalCoords = localPos;
+    return float4(devPos.xy, devPos.z*depth, devPos.z);
+}
+
+float4 text_vertex_fn(float2 baseCoords,
+                      // Uniforms
+                      float4x4 subRunDeviceMatrix,
+                      float4x4 deviceToLocal,
+                      float2 atlasSizeInv,
+                      // Instance Attributes
+                      float2 size,
+                      float2 uvPos,
+                      float2 xyPos,
+                      float strikeToSourceScale,
+                      float depth,
+                      // Varyings
+                      out float2 textureCoords,
+                      out float2 unormTexCoords,  // used as varying in SDFText
+                      // Render Step
+                      out float2 stepLocalCoords) {
+    baseCoords.xy *= float2(size);
+
+    // Sub runs have a decomposed transform and are sometimes already transformed into device
+    // space, in which `subRunCoords` represents the bounds projected to device space without
+    // the local-to-device translation and `subRunDeviceMatrix` contains the translation.
+    float2 subRunCoords = strikeToSourceScale * baseCoords + xyPos;
+    float4 position = subRunDeviceMatrix * subRunCoords.xy01;
+
+    // Calculate the local coords used for shading.
+    // TODO(b/246963258): This is incorrect if the transform has perspective, which would
+    // require a division + a valid z coordinate (which is currently set to 0).
+    stepLocalCoords = (deviceToLocal * position).xy;
+
+    unormTexCoords = baseCoords + uvPos;
+    textureCoords = unormTexCoords * atlasSizeInv;
+
+    return float4(position.xy, depth*position.w, position.w);
+}
+
+float4 coverage_mask_vertex_fn(float2 quadCoords,
+                               // Uniforms
+                               float3x3 maskToDeviceRemainder,
+                               // Instance Attributes
+                               float4 drawBounds,
+                               float4 maskBoundsIn,
+                               float2 deviceOrigin,
+                               float depth,
+                               float3x3 deviceToLocal,
+                               // Varyings
+                               out float4 maskBounds,
+                               out float2 textureCoords,
+                               out half invert,
+                               // Render Step
+                               out float2 stepLocalCoords) {
+    // An atlas shape is an axis-aligned rectangle tessellated as a triangle strip.
+    //
+    // The bounds coordinates are in an intermediate space, pixel-aligned with the mask texture
+    // that's sampled in the fragment shader. The coords must be transformed by both
+    // maskToDeviceRemainder and translated by deviceOrigin to get device coords.
+    textureCoords = mix(drawBounds.xy, drawBounds.zw, quadCoords);
+    float3 drawCoords = maskToDeviceRemainder*((textureCoords + deviceOrigin).xy1);
+
+    // Local coordinates used for shading are derived from the final device coords and the inverse
+    // of the original local-to-device matrix.
+    float3 localCoords = deviceToLocal * drawCoords;
+    // TODO: Support float3 local coordinates if the matrix has perspective so that W is
+    // interpolated correctly to the fragment shader.
+    stepLocalCoords = localCoords.xy / localCoords.z;
+
+    // For an inverse fill, `textureCoords` will get clamped to `maskBounds` and the edge pixels
+    // will always land on a 0-coverage border pixel assuming the atlas was prepared with 1px
+    // padding around each mask entry. This includes inverse fills where the mask was fully clipped
+    // out, since then maskBounds.RBLT == (0,0,-1,-1) and we sample the top-left-most pixel of the
+    // atlas, which is guaranteed to be transparent.
+    if (all(lessThanEqual(maskBoundsIn.LT, maskBoundsIn.RB))) {
+        // Regular fill
+        maskBounds = maskBoundsIn;
+        invert = 0;
+    } else {
+        // Re-arrange the mask bounds to sorted order for texture clamping in the fragment shader
+        maskBounds = maskBoundsIn.RBLT;
+        invert = 1;
+    }
+
+    return float4(drawCoords.xy, depth*drawCoords.z, drawCoords.z);
+}
+
+float4 cover_bounds_vertex_fn(float2 corner,
+                              float4 bounds,
+                              float depth,
+                              float3x3 matrix,
+                              out float2 stepLocalCoords) {
+    if (all(lessThanEqual(bounds.LT, bounds.RB))) {
+        // A regular fill
+        corner = mix(bounds.LT, bounds.RB, corner);
+        float3 devCorner = matrix * corner.xy1;
+        stepLocalCoords = corner;
+        return float4(devCorner.xy, depth*devCorner.z, devCorner.z);
+    } else {
+        // An inverse fill
+        corner = mix(bounds.RB, bounds.LT, corner);
+        // TODO: Support float3 local coordinates if the matrix has perspective so that W is
+        // interpolated correctly to the fragment shader.
+        float3 localCoords = matrix * corner.xy1;
+        stepLocalCoords = localCoords.xy / localCoords.z;
+        return float4(corner, depth, 1.0);
+    }
+}

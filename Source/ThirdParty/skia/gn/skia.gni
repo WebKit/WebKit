@@ -1,0 +1,251 @@
+# Copyright 2019 Google LLC.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (!defined(is_skia_standalone)) {
+  is_skia_standalone = false
+}
+
+is_skia_dev_build = is_skia_standalone && !is_official_build
+
+declare_args() {
+  skia_android_serial = ""
+  skia_compile_modules = false
+  skia_compile_sksl_tests = false
+  skia_dwritecore_sdk = ""
+  skia_enable_api_available_macro = true
+  skia_enable_android_utils = is_skia_dev_build
+  skia_enable_discrete_gpu = true
+  skia_enable_flutter_defines = false
+  skia_enable_fontmgr_empty = false
+  skia_enable_fontmgr_fuchsia = is_fuchsia
+  skia_enable_fontmgr_win = is_win
+  skia_enable_gpu_debug_layers = is_skia_dev_build && is_debug
+  skia_enable_optimize_size = false
+  skia_enable_pdf = !is_wasm
+  skia_enable_precompile = true
+  skia_enable_skottie = !is_component_build
+  skia_enable_svg = !is_component_build
+  skia_enable_tools = is_skia_dev_build
+  skia_disable_tracing = is_official_build
+  skia_enable_vello_shaders = false
+  skia_disable_vma_stl_shared_mutex = false
+  skia_enable_winuwp = false
+  skia_generate_workarounds = false
+  skia_include_multiframe_procs = false
+  skia_lex = false
+  skia_print_sksl_shaders = false
+  skia_print_native_shaders = false
+  skia_tools_require_resources = false
+  skia_update_fuchsia_sdk = false
+  skia_use_angle = false
+  skia_use_client_icu = false
+  skia_use_dawn = false
+  skia_use_direct3d = false
+  skia_use_egl = false
+  skia_use_expat = !is_wasm
+  skia_use_ffmpeg = false
+  skia_use_fixed_gamma_text = is_android
+  skia_use_fontconfig = is_linux
+  skia_use_fontations = false
+  skia_use_fonthost_mac = is_mac || is_ios
+  skia_use_freetype = is_android || is_fuchsia || is_linux || is_wasm
+  skia_use_harfbuzz = true
+  skia_use_gl = !is_fuchsia
+  skia_use_icu = !is_fuchsia
+  skia_use_icu4x = false
+  skia_use_jpeg_gainmaps = is_skia_dev_build
+  skia_use_libavif = false
+  skia_use_libgrapheme = false
+  skia_use_libheif = is_skia_dev_build
+  skia_use_libjpeg_turbo_decode = true
+  skia_use_libjpeg_turbo_encode = true
+  skia_use_no_jpeg_encode = false
+  skia_use_libjxl_decode = false
+  skia_use_libpng_decode = true
+  skia_use_libpng_encode = true
+  skia_use_no_png_encode = false
+  skia_use_libwebp_decode = true
+  skia_use_libwebp_encode = !is_wasm
+  skia_use_no_webp_encode = false
+  skia_use_lua = is_skia_dev_build && !is_ios
+  skia_use_metal = false
+  skia_use_ndk_images = is_android && defined(ndk_api) && ndk_api >= 30
+  skia_use_perfetto = is_linux || is_mac || is_android
+
+  # Currently only supported in Android framework
+  skia_android_framework_use_perfetto = false
+  skia_use_piex = !is_win && !is_wasm
+  skia_use_sfml = false
+  skia_use_webgl = is_wasm
+  skia_use_webgpu = is_wasm
+  skia_use_wuffs = true
+  skia_use_x11 = is_linux
+  skia_use_xps = true
+
+  # Use the safe mode for libcxx
+  # See: https://libcxx.llvm.org/UsingLibcxx.html#enabling-the-safe-libc-mode
+  skia_use_safe_libcxx = false
+
+  # deprecated, we will eventually use just skia_enable_ganesh
+  skia_enable_gpu = true
+  skia_enable_graphite = false
+  skia_use_zlib = true
+
+  if (is_ios) {
+    skia_ios_identity = ".*Google.*"
+    skia_ios_profile = "Google Development"
+  }
+
+  skia_build_rust_targets = false
+}
+
+declare_args() {
+  skia_enable_ganesh = skia_enable_gpu
+}
+
+declare_args() {
+  skia_enable_sksl_tracing = is_skia_dev_build && !skia_enable_optimize_size
+}
+
+declare_args() {
+  if (is_mac) {
+    skia_gl_standard = "gl"
+  } else if (is_ios) {
+    skia_gl_standard = "gles"
+  } else if (is_wasm && skia_enable_ganesh) {
+    skia_gl_standard = "webgl"
+  } else {
+    skia_gl_standard = ""
+  }
+
+  if (is_fuchsia) {
+    skia_use_vulkan = true
+  } else {
+    skia_use_vulkan = false
+  }
+
+  skia_build_fuzzers = is_clang && is_linux && target_cpu == "x64"
+  skia_use_libfuzzer_defaults = true
+}
+
+declare_args() {
+  skia_enable_skunicode = skia_use_icu || skia_use_client_icu ||
+                          skia_use_libgrapheme || skia_use_icu4x
+}
+
+if (skia_use_angle && skia_gl_standard != "gles") {
+  skia_gl_standard = ""
+}
+
+declare_args() {
+  skia_pdf_subset_harfbuzz = skia_use_harfbuzz
+}
+
+declare_args() {
+  skia_enable_fontmgr_android = skia_use_expat && skia_use_freetype
+  skia_enable_fontmgr_custom_directory =
+      skia_use_freetype && !is_fuchsia && !is_wasm
+  skia_enable_fontmgr_custom_embedded = skia_use_freetype && !is_fuchsia
+  skia_enable_fontmgr_custom_empty = skia_use_freetype && !is_wasm
+  skia_enable_fontmgr_fontconfig = skia_use_freetype && skia_use_fontconfig
+  skia_enable_fontmgr_win_gdi = is_win && !skia_enable_winuwp
+  skia_enable_fontmgr_FontConfigInterface =
+      skia_use_freetype && skia_use_fontconfig
+  skia_enable_spirv_validation = is_skia_dev_build && is_debug && !skia_use_dawn
+  skia_use_dng_sdk =
+      !is_fuchsia && !is_wasm && skia_use_libjpeg_turbo_decode && skia_use_zlib
+  skia_use_sfntly = skia_use_icu
+  skia_enable_vulkan_debug_layers = skia_enable_gpu_debug_layers
+  skia_enable_direct3d_debug_layer = skia_enable_gpu_debug_layers
+  skia_enable_metal_debug_info = skia_enable_gpu_debug_layers
+  skia_use_vma = skia_use_vulkan
+  skia_vulkan_memory_allocator_dir =
+      "//third_party/externals/vulkanmemoryallocator"
+  skia_build_for_debugger = false
+
+  # icu_bidi sources
+  skia_icu_bidi_third_party_dir = "//third_party/icu_bidi"
+
+  # libgrapheme sources
+  skia_libgrapheme_third_party_dir = "//third_party/libgrapheme"
+}
+
+assert(!skia_use_dawn || skia_enable_graphite)  # Dawn is Graphite-only
+
+# Our tools require static linking (they use non-exported symbols), and the Ganesh backend.
+skia_enable_tools =
+    skia_enable_tools && !is_component_build && skia_enable_ganesh
+
+if (skia_enable_optimize_size) {
+  assert(
+      !is_debug,
+      "Must set is_debug to false for skia_enable_optimize_size to do anything. If you want to build with debug mode and the correct define, add extra_cflags=['-DSK_ENABLE_OPTIMIZE_SIZE'] to your GN args.")
+}
+
+# Current Perfetto integrations are mutually exclusive
+assert(!skia_use_perfetto || !skia_android_framework_use_perfetto)
+
+# Skia's targets may be built inside other gn build systems.
+# Skia builds other project's build targets inside its build.
+# This is easier if the built-in target types remain generic.
+# Place Skia target specific configs in skia_target_default_configs.
+# These will be applied by the 'skia_*' templates.
+# In the Skia build these configs apply many warnings as errors.
+# Other projects may optionally set these configs as they see fit.
+template("skia_target") {
+  target(invoker._skia_target_type, target_name) {
+    # set_defaults(invoker._skia_target_type) might not exist or set configs
+    if (!defined(configs)) {
+      configs = []
+    }
+
+    # Explicit configs instead of set_defaults("skia_target")
+    # Allows template("skia_*") below to avoid the configs dance.
+    if (defined(skia_target_default_configs)) {
+      configs += skia_target_default_configs
+    }
+
+    # "*" clobbers the current scope; append to existing configs
+    forward_variables_from(invoker, "*", [ "configs" ])
+    if (defined(invoker.configs)) {
+      configs += invoker.configs
+    }
+  }
+}
+
+template("skia_executable") {
+  skia_target(target_name) {
+    assert(!defined(configs), "No set_defaults(skia_target)")
+    _skia_target_type = "executable"
+    forward_variables_from(invoker, "*")
+  }
+}
+template("skia_source_set") {
+  skia_target(target_name) {
+    assert(!defined(configs), "No set_defaults(skia_target)")
+    _skia_target_type = "source_set"
+    forward_variables_from(invoker, "*")
+  }
+}
+template("skia_static_library") {
+  skia_target(target_name) {
+    assert(!defined(configs), "No set_defaults(skia_target)")
+    _skia_target_type = "static_library"
+    forward_variables_from(invoker, "*")
+  }
+}
+template("skia_shared_library") {
+  skia_target(target_name) {
+    assert(!defined(configs), "No set_defaults(skia_target)")
+    _skia_target_type = "shared_library"
+    forward_variables_from(invoker, "*")
+  }
+}
+template("skia_component") {
+  skia_target(target_name) {
+    assert(!defined(configs), "No set_defaults(skia_target)")
+    _skia_target_type = "component"
+    forward_variables_from(invoker, "*")
+  }
+}

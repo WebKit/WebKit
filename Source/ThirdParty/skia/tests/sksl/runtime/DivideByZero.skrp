@@ -1,0 +1,23 @@
+21 instructions
+
+store_src_rg                   xy = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_uniform                   $0 = colorGreen(1)
+cast_to_int_from_float         $0 = FloatToInt($0)
+copy_slot_unmasked             one = $0
+copy_uniform                   $0 = colorGreen(0)
+cast_to_int_from_float         $0 = FloatToInt($0)
+copy_slot_unmasked             zero = $0
+copy_2_slots_unmasked          $0..1 = one, zero
+div_int                        $0 /= $1
+copy_slot_unmasked             $1 = zero
+copy_slot_unmasked             $2 = zero
+div_int                        $1 /= $2
+add_int                        $0 += $1
+copy_slot_unmasked             undefined = $0
+cmpne_imm_int                  $0 = notEqual($0, 0x0096B43F)
+swizzle_4                      $0..3 = ($0..3).xxxx
+copy_4_uniforms                $4..7 = colorRed
+copy_4_uniforms                $8..11 = colorGreen
+mix_4_ints                     $0..3 = mix($4..7, $8..11, $0..3)
+load_src                       src.rgba = $0..3

@@ -1,0 +1,13 @@
+uniform half4 colorGreen, colorRed;
+
+inline half4 ifBody() {
+    half4 x = colorGreen;
+    return x;
+}
+
+half4 main(float2 coords) {
+    half4 c = colorRed;
+    if (colorGreen.g == 1)
+        c = ifBody();
+    return c;
+}

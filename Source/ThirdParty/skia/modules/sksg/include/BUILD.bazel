@@ -1,0 +1,35 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "hdrs",
+    srcs = [
+        "SkSGClipEffect.h",
+        "SkSGColorFilter.h",
+        "SkSGDraw.h",
+        "SkSGEffectNode.h",
+        "SkSGGeometryEffect.h",
+        "SkSGGeometryNode.h",
+        "SkSGGradient.h",
+        "SkSGGroup.h",
+        "SkSGImage.h",
+        "SkSGInvalidationController.h",
+        "SkSGMaskEffect.h",
+        "SkSGMerge.h",
+        "SkSGNode.h",
+        "SkSGOpacityEffect.h",
+        "SkSGPaint.h",
+        "SkSGPath.h",
+        "SkSGPlane.h",
+        "SkSGRect.h",
+        "SkSGRenderEffect.h",
+        "SkSGRenderNode.h",
+        "SkSGScene.h",
+        "SkSGText.h",
+        "SkSGTransform.h",
+    ],
+    visibility = ["//modules/sksg:__pkg__"],
+)

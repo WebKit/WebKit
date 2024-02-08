@@ -1,0 +1,9 @@
+void main() {
+    int x = 0;
+    int y = 0;
+    int z = 0;
+    if (sk_Caps.floatIs32Bits) x = 1;
+    if (sk_Caps.integerSupport) y = 1;
+    if (sk_Caps.builtinDeterminantSupport) z = 1;
+    sk_FragColor.rgb = half3(x, y, z);
+}

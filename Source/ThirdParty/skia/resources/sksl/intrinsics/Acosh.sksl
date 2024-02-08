@@ -1,0 +1,14 @@
+uniform half4 inputVal, expected;
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    const half4 constVal1 = half4(1, 1, 1.54308063481524377, 3.7621956910836314);
+    return (acosh(inputVal.x)     == expected.x     &&
+            acosh(inputVal.xy)    == expected.xy    &&
+            acosh(inputVal.xyz)   == expected.xyz   &&
+            acosh(inputVal.xyzw)  == expected.xyzw  &&
+            acosh(constVal1.x)    == expected.x     &&
+            acosh(constVal1.xy)   == expected.xy    &&
+            acosh(constVal1.xyz)  == expected.xyz   &&
+            acosh(constVal1.xyzw) == expected.xyzw) ? colorGreen : colorRed;
+}

@@ -1,0 +1,20 @@
+uniform half4 colorWhite;
+
+inline bool testA(half4 v) {
+    return bool(v.r);
+}
+
+inline bool testB(half4 v) {
+    return bool(v.g);
+}
+
+half4 main(float2 coords) {
+    half4 result = half4(0);
+    if (testA(colorWhite) && testB(colorWhite)) {
+       result.g = 1;
+    }
+    if (testB(colorWhite) || testA(colorWhite)) {
+       result.a = 1;
+    }
+    return result;
+}

@@ -1,0 +1,753 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (is_fuchsia) {
+  import("//build/fuchsia/sdk.gni")
+}
+if (is_wasm) {
+  import("../toolchain/wasm.gni")
+}
+
+import("../skia.gni")
+
+declare_args() {
+  extra_asmflags = []
+  extra_cflags = []
+  extra_cflags_c = []
+  extra_cflags_cc = []
+  extra_ldflags = []
+
+  malloc = ""
+  werror = false
+  xcode_sysroot = ""
+}
+
+if (is_ios && xcode_sysroot == "") {
+  if (is_tvos) {
+    sdk = "appletvos"
+    if (ios_use_simulator) {
+      sdk = "appletvsimulator"
+    }
+  } else {
+    sdk = "iphoneos"
+    if (ios_use_simulator) {
+      sdk = "iphonesimulator"
+    }
+  }
+  xcode_sysroot =
+      exec_script("../find_xcode_sysroot.py", [ sdk ], "trim string")
+}
+
+# If building for mac on a mac then lookup all the system includes so that goma and the clang
+# shipped with chrome can find them. When the gn_to_bp.py tool is run, then the host_os != mac.
+# In this case leave the xcode_sysroot empty, and the cc/c++ that come with XCode will be able to
+# find needed include paths.
+if (is_mac && host_os == "mac" && xcode_sysroot == "") {
+  xcode_sysroot =
+      exec_script("../find_xcode_sysroot.py", [ "macosx" ], "trim string")
+}
+
+config("default") {
+  asmflags = []
+  cflags = []
+  cflags_c = []
+  cflags_cc = []
+  cflags_objcc = []
+  defines = []
+  ldflags = []
+  libs = []
+
+  # Disable warnings about unknown attributes.
+  # (These unknown attribute warnings are on by default, so we don't make
+  # disabling them part of :warnings, as some targets remove :warnings.)
+  if (is_win && !is_clang) {
+    cflags += [
+      "/wd5030",
+      "/wd5051",
+    ]
+  } else {
+    cflags += [ "-Wno-attributes" ]
+  }
+
+  if (is_clang && !is_win) {
+    # In Clang 14, this default was changed. We turn this off to (hopefully) make our
+    # GMs more consistent in the transition.
+    cflags += [ "-ffp-contract=off" ]
+  }
+
+  if (is_fuchsia && using_fuchsia_sdk) {
+    ldflags += [
+      "-v",
+      "--sysroot=" + rebase_path("$fuchsia_sdk_path/arch/$current_cpu/sysroot"),
+    ]
+    cflags += [ "--sysroot=" +
+                rebase_path("$fuchsia_sdk_path/arch/$current_cpu/sysroot") ]
+    if (current_cpu == "x64") {
+      current_cpu = "--target=x86_64-${current_os}"
+    } else if (current_cpu == "arm64") {
+      target_triple = "--target=aarch64-unknown-${current_os}"
+    } else {
+      print("Unknown target CPU for Fuchsia target build.")
+      assert(false)
+    }
+    ldflags += [ target_triple ]
+    cflags += [ target_triple ]
+    asmflags += [ target_triple ]
+  }
+
+  if (is_win) {
+    if (is_clang && current_cpu == "arm64") {
+      cflags += [ "--target=arm64-windows" ]
+    }
+    cflags += [
+      "/bigobj",  # Some of our files are bigger than the regular limits.
+      "/utf-8",  # Set Source and Executable character sets to UTF-8.
+    ]
+    cflags_cc += [ "/std:c++17" ]
+    defines += [
+      "_CRT_SECURE_NO_WARNINGS",  # Disables warnings about sscanf().
+      "_HAS_EXCEPTIONS=0",  # Disables exceptions in MSVC STL.
+      "WIN32_LEAN_AND_MEAN",
+      "NOMINMAX",
+    ]
+
+    _include_dirs = [
+      "$win_vc/Tools/MSVC/$win_toolchain_version/include",
+      "$win_sdk/Include/$win_sdk_version/shared",
+      "$win_sdk/Include/$win_sdk_version/ucrt",
+      "$win_sdk/Include/$win_sdk_version/um",
+      "$win_sdk/Include/$win_sdk_version/winrt",
+    ]
+
+    if (is_clang) {
+      foreach(dir, _include_dirs) {
+        cflags += [
+          "-imsvc",
+          dir,
+        ]
+      }
+    } else {
+      include_dirs = _include_dirs
+    }
+
+    lib_dirs = [
+      "$win_sdk/Lib/$win_sdk_version/ucrt/$current_cpu",
+      "$win_sdk/Lib/$win_sdk_version/um/$current_cpu",
+      "$win_vc/Tools/MSVC/$win_toolchain_version/lib/$current_cpu",
+    ]
+  } else {
+    cflags += [
+      "-fstrict-aliasing",
+      "-fPIC",
+      "-fvisibility=hidden",
+    ]
+    cflags_cc += [
+      "-std=c++17",
+      "-fvisibility-inlines-hidden",
+    ]
+  }
+
+  if (current_cpu == "arm") {
+    cflags += [
+      "-march=armv7-a",
+      "-mfpu=neon",
+      "-mthumb",
+    ]
+  } else if (current_cpu == "x86" && !is_win) {
+    asmflags += [ "-m32" ]
+    cflags += [
+      "-m32",
+      "-msse2",
+      "-mfpmath=sse",
+    ]
+    ldflags += [ "-m32" ]
+  }
+
+  if (malloc != "" && !is_win) {
+    cflags += [
+      "-fno-builtin-malloc",
+      "-fno-builtin-calloc",
+      "-fno-builtin-realloc",
+      "-fno-builtin-free",
+    ]
+    libs += [ malloc ]
+  }
+
+  if (is_android) {
+    cflags += [ "--sysroot=$ndk/toolchains/llvm/prebuilt/$ndk_host/sysroot" ]
+    ldflags += [ "-static-libstdc++" ]
+  }
+
+  if (show_includes) {
+    assert(is_clang, "show_includes requires clang to build.")
+    if (is_win) {
+      cflags += [
+        "/clang:-H",
+        "/clang:-fshow-skipped-includes",
+      ]
+    } else {
+      cflags += [
+        "-H",
+        "-fshow-skipped-includes",
+      ]
+    }
+  }
+
+  if (is_ios) {
+    if (current_cpu == "arm") {
+      _arch_flags = [
+        "-arch",
+        "armv7",
+      ]
+    } else if (current_cpu == "arm64") {
+      _arch_flags = [
+        "-arch",
+        "arm64",
+        "-arch",
+        "arm64e",
+      ]
+    } else if (current_cpu == "x86") {
+      _arch_flags = [
+        "-arch",
+        "i386",
+      ]
+    } else if (current_cpu == "x64") {
+      _arch_flags = [
+        "-arch",
+        "x86_64",
+      ]
+    } else {
+      _arch_flags = [
+        "-arch",
+        current_cpu,
+      ]
+    }
+
+    asmflags += [
+                  "-isysroot",
+                  xcode_sysroot,
+                ] + _arch_flags
+    cflags += [
+                "-isysroot",
+                xcode_sysroot,
+              ] + _arch_flags
+    cflags_cc += [
+      "-stdlib=libc++",
+      "-fno-aligned-allocation",
+    ]
+    ldflags += [
+                 "-isysroot",
+                 xcode_sysroot,
+                 "-stdlib=libc++",
+               ] + _arch_flags
+    libs += [ "objc" ]
+    if (ios_min_target != "") {
+      cflags += [ "-miphoneos-version-min=$ios_min_target" ]
+      asmflags += [ "-miphoneos-version-min=$ios_min_target" ]
+      ldflags += [ "-miphoneos-version-min=$ios_min_target" ]
+    }
+  }
+
+  if (is_linux) {
+    libs += [ "pthread" ]
+  }
+
+  if (is_mac) {
+    # If there was a xcode_sysroot set in args or calculated then use it, else don't set anything
+    # because the XCode cc/c++ already know all this stuff.
+    if (xcode_sysroot != "") {
+      asmflags += [
+        "-isysroot",
+        xcode_sysroot,
+      ]
+      cflags += [
+        "-isysroot",
+        xcode_sysroot,
+      ]
+      ldflags += [
+        "-isysroot",
+        xcode_sysroot,
+      ]
+    }
+
+    # Disable linker warnings.  They're usually just annoyances like,
+    #   ld: warning: text-based stub file
+    #     /System/Library/Frameworks/foo.framework/foo.tbd and library file
+    #     /System/Library/Frameworks/foo.framework/foo are out of sync.
+    #     Falling back to library file for linking.
+    ldflags += [ "-Wl,-w" ]
+
+    # As of 11/2020, gn is an x86 binary and defaults the host_cpu to x86_64.
+    # This allows you to build arm64 mac binaries by setting target_cpu = "arm64"
+    if (current_cpu == "arm64") {
+      asmflags += [
+        "-target",
+        "arm64-apple-macos11",
+      ]
+      cflags += [
+        "-target",
+        "arm64-apple-macos11",
+      ]
+      ldflags += [
+        "-target",
+        "arm64-apple-macos11",
+      ]
+    } else {
+      asmflags += [
+        "-target",
+        "x86_64-apple-macos10.13",
+      ]
+      cflags += [
+        "-target",
+        "x86_64-apple-macos10.13",
+      ]
+      ldflags += [
+        "-target",
+        "x86_64-apple-macos10.13",
+      ]
+    }
+  }
+
+  if (is_wasm) {
+    cflags += [ "--sysroot=$skia_emsdk_dir/upstream/emscripten/cache/sysroot" ]
+    ldflags += [ "--sysroot=$skia_emsdk_dir/upstream/emscripten/cache/sysroot" ]
+  }
+
+  # sanitize only applies to the default toolchain (usually the target).
+  if (current_toolchain != default_toolchain) {
+    sanitize = ""
+  }
+
+  if (is_win && !is_clang && sanitize == "ASAN") {
+    sanitizers = "address"
+    cflags += [ "/fsanitize=$sanitizers" ]
+  } else if (sanitize != "" && sanitize != "MSVC") {
+    # You can either pass the sanitizers directly, e.g. "address,undefined",
+    # or pass one of the couple common aliases used by the bots.
+    sanitizers = sanitize
+
+    if (sanitize == "ASAN") {
+      # ASAN implicitly runs all UBSAN checks also.
+      sanitizers = "undefined,address,float-divide-by-zero"
+
+      if (is_android) {
+        # TODO(skia:13344): work out UBSAN link errors
+        sanitizers = "address"
+      }
+    } else if (sanitize == "HWASAN") {
+      sanitizers = "hwaddress"
+    } else if (sanitize == "TSAN") {
+      sanitizers = "thread"
+    } else if (sanitize == "MSAN") {
+      sanitizers = "memory"
+    }
+
+    _suppressions = rebase_path("../../tools/xsan.supp")
+
+    cflags += [
+      "-fsanitize=$sanitizers",
+      "-fno-sanitize-recover=$sanitizers",
+      "-fsanitize-blacklist=$_suppressions",
+    ]
+
+    if (is_win) {
+      cflags += [
+        # On Release builds, we get strange warnings about string literals.
+        "/GF-",
+      ]
+
+      assert(clang_win != "")
+      libs += [ "$clang_win/lib/clang/$clang_win_version/lib/windows/clang_rt.asan-x86_64.lib" ]
+    } else {
+      cflags += [ "-fno-omit-frame-pointer" ]
+
+      ldflags += [ "-fsanitize=$sanitizers" ]
+    }
+
+    if (is_linux) {
+      cflags_cc += [ "-stdlib=libc++" ]
+      ldflags += [ "-stdlib=libc++" ]
+    }
+
+    if (sanitizers == "memory") {
+      cflags += [ "-fsanitize-memory-track-origins" ]
+    }
+    if (sanitizers == "safe-stack") {
+      cflags_cc += [ "-fno-aligned-allocation" ]
+    }
+  }
+
+  cflags_objcc += cflags_cc
+}
+
+# See skia:9731.
+config("recover_pointer_overflow") {
+  if (sanitize == "ASAN" && !(is_win && !is_clang)) {
+    cflags = [ "-fsanitize-recover=pointer-overflow" ]
+  }
+}
+
+config("no_exceptions") {
+  # Exceptions are disabled by default on Windows.  (Use /EHsc to enable them.)
+  if (!is_win) {
+    cflags_cc = [ "-fno-exceptions" ]
+    cflags_objcc = cflags_cc
+  }
+}
+
+config("warnings") {
+  cflags = []
+  cflags_cc = []
+  cflags_objc = []
+  cflags_objcc = []
+
+  if (werror) {
+    if (is_win) {
+      cflags += [ "/WX" ]
+    } else {
+      cflags += [ "-Werror" ]
+    }
+  }
+
+  if (is_win) {
+    cflags += [
+      "/W3",  # Turn on lots of warnings.
+
+      # Disable a bunch of warnings:
+      "/wd4244",  # conversion from 'float' to 'int', possible loss of data
+      "/wd4267",  # conversion from 'size_t' to 'int', possible loss of data
+      "/wd4800",  # forcing value to bool 'true' or 'false' (performance
+                  # warning)
+
+      # Probably only triggers when /EHsc is enabled.
+      "/wd4291",  # no matching operator delete found;
+                  # memory will not be freed if initialization throws an
+                  # exception
+
+      # These only show up in shared builds:
+      "/wd4251",  # class 'type' needs to have dll-interface to be used by
+                  # clients of class 'type2'
+      "/wd4275",  # non dll-interface class 'base' used as base for
+                  # dll-interface class 'derived'
+
+      # It'd be nice to fix these and turn this on:
+      "/wd5041",  # out-of-line definition for constexpr static data member is
+                  # not needed and is deprecated in C++17
+    ]
+    if (is_clang) {
+      cflags += [
+        "-Wno-unused-parameter",  # Re-enabled for header sources
+      ]
+    }
+  } else {
+    cflags += [
+      "-Wall",
+      "-Wextra",
+      "-Winit-self",
+      "-Wpointer-arith",
+      "-Wsign-compare",
+      "-Wvla",
+
+      "-Wno-deprecated-declarations",
+      "-Wno-maybe-uninitialized",
+      "-Wno-psabi",
+      "-Wno-switch-default",  # Warns even when all enum values are covered
+      "-Wno-unused-parameter",  # Re-enabled for header sources
+    ]
+    cflags_cc += [
+      "-Wnon-virtual-dtor",
+      "-Wno-noexcept-type",
+    ]
+  }
+
+  if (is_clang) {
+    cflags += [
+      "-fcolor-diagnostics",
+      "-Weverything",
+      "-Wno-unknown-warning-option",  # Let older Clangs ignore newer Clangs'
+                                      # warnings.
+
+      # This was deprecated in Clang 14 and removed in Clang 15. It might still
+      # fire with older Clangs, so disable it explicitly.
+      "-Wno-weak-template-vtables",
+    ]
+
+    # See https://crbug.com/1042470: This flag prevents implicit conversions among vector types.
+    # This also gives behavior closer to GCC's default. However:
+    #   - clang-cl doesn't recognize the flag
+    #   - The (old) Mac/iOS SDK used on the bots breaks this rule in various headers
+    #     TODO: Re-enable on Apple when we update XCode
+    if (!is_win && !is_apple) {
+      cflags += [ "-fno-lax-vector-conversions" ]
+    }
+
+    if (current_cpu == "arm" && is_ios) {
+      # Clang seems to think new/malloc will only be 4-byte aligned on 32-bit iOS.
+      # We're pretty sure it's actually 8-byte alignment.
+      cflags += [ "-Wno-over-aligned" ]
+    }
+    if (current_cpu == "x86" && is_android) {
+      # Clang seems to think new/malloc will only be 4-byte aligned on 32-bit x86 Android builds.
+      # We're pretty sure it's actually 8-byte alignment.  See OverAlignedTest.cpp for more info.
+      cflags += [ "-Wno-over-aligned" ]
+    }
+
+    # Shouldn't be necessary for local builds. With distributed Windows builds, files may lose
+    # their case during copy, causing case-sensitivity mismatch on remote machines.
+    cflags += [
+      "-Wno-nonportable-include-path",
+      "-Wno-nonportable-system-include-path",
+    ]
+
+    # TODO: These would all be really great warnings to turn on.
+    cflags += [
+      "-Wno-cast-align",
+      "-Wno-conversion",  # -Wsign-conversion and -Wshorten-64-to-32,
+                          # are re-enabled for header sources
+      "-Wno-disabled-macro-expansion",
+      "-Wno-documentation",
+      "-Wno-documentation-unknown-command",
+      "-Wno-double-promotion",
+      "-Wno-exit-time-destructors",  # TODO: OK outside libskia
+      "-Wno-float-equal",
+      "-Wno-global-constructors",  # TODO: OK outside libskia
+      "-Wno-missing-prototypes",
+      "-Wno-missing-variable-declarations",
+      "-Wno-pedantic",
+      "-Wno-reserved-id-macro",
+      "-Wno-reserved-identifier",
+      "-Wno-shift-sign-overflow",
+      "-Wno-signed-enum-bitfield",
+      "-Wno-switch-enum",
+      "-Wno-thread-safety-negative",
+      "-Wno-undef",
+      "-Wno-unreachable-code-break",
+      "-Wno-unreachable-code-return",
+      "-Wno-unused-macros",
+      "-Wno-unused-member-function",
+      "-Wno-non-c-typedef-for-linkage",  # Dawn, not Skia per se.
+
+      # We would like to fix this, otherwise it could cause runtime issues
+      # when compiled for WASM.
+      # https://github.com/emscripten-core/emscripten/issues/16126
+      "-Wno-cast-function-type-strict",
+    ]
+    cflags_cc += [
+      "-Wno-abstract-vbase-init",
+      "-Wno-weak-vtables",
+    ]
+
+    # We are unlikely to want to fix these.
+    cflags += [
+      "-Wno-covered-switch-default",
+      "-Wno-deprecated",
+      "-Wno-missing-noreturn",
+      "-Wno-old-style-cast",
+      "-Wno-newline-eof",
+      "-Wno-padded",
+      "-Wno-return-std-move-in-c++11",  # we no longer support C++11, and don't
+                                        # need C++11-only performance warnings
+      "-Wno-shadow-field-in-constructor",
+      "-Wno-shadow-uncaptured-local",
+      "-Wno-zero-as-null-pointer-constant",  # VK_NULL_HANDLE is defined as 0
+      "-Wno-declaration-after-statement",
+      "-Wno-unsafe-buffer-usage",  # Treats most array accesses as warnings
+
+      # https://quuxplusone.github.io/blog/2020/08/26/wrange-loop-analysis/
+      # https://bugzilla.mozilla.org/show_bug.cgi?id=1683213
+      # https://reviews.llvm.org/D73007
+      # May be re-enabled once clang > 12 or XCode > 12 are required.
+      # When this line is removed the -Wrange-loop-construct line below can also be removed.
+      "-Wno-range-loop-analysis",
+    ]
+    cflags_cc += [
+      "-Wno-c++98-compat",
+      "-Wno-c++98-compat-pedantic",
+      "-Wno-undefined-func-template",
+    ]
+    cflags_objc += [
+      "-Wno-direct-ivar-access",
+      "-Wno-objc-interface-ivars",
+    ]
+    cflags_objcc += [
+      "-Wno-direct-ivar-access",
+      "-Wno-objcc-interface-ivars",
+    ]
+
+    # Wno-range-loop-analysis turns off the whole group, but this warning was later split into
+    # range-loop-construct and range-loop-bind-reference. We want the former but not the latter.
+    # Created from clang/include/clang/Basic/DiagnosticGroups.td
+    cflags += [ "-Wrange-loop-construct" ]
+
+    # Wno-deprecated turns off the whole group, but also has its own warnings like
+    # out-of-line definition of constexpr static data member is redundant in C++17 and is deprecated [-Werror,-Wdeprecated]
+    # but we would like others. Created from clang/include/clang/Basic/DiagnosticGroups.td
+    cflags += [
+      "-Wdeprecated-anon-enum-enum-conversion",
+      "-Wdeprecated-array-compare",
+      "-Wdeprecated-attributes",
+      "-Wdeprecated-comma-subscript",
+      "-Wdeprecated-copy",
+      "-Wdeprecated-copy-dtor",
+
+      #"-Wdeprecated-declarations",
+      "-Wdeprecated-dynamic-exception-spec",
+      "-Wdeprecated-enum-compare",
+      "-Wdeprecated-enum-compare-conditional",
+      "-Wdeprecated-enum-enum-conversion",
+      "-Wdeprecated-enum-float-conversion",
+      "-Wdeprecated-increment-bool",
+      "-Wdeprecated-register",
+      "-Wdeprecated-this-capture",
+      "-Wdeprecated-volatile",
+      "-Wdeprecated-writable-str",
+      "-Wc++98-compat-extra-semi",
+    ]
+  }
+
+  # !is_clang is a proxy for gcc.
+  if (!is_clang && !is_win) {
+    cflags += [
+      "-Wno-unreachable-code",  # Causes false positives in old GCC; removed
+                                # from modern GCC entirely
+    ]
+  }
+
+  cflags_objcc += cflags_cc
+}
+
+config("warnings_for_public_headers") {
+  if (is_clang) {
+    cflags = [
+      "-Wsign-conversion",
+      "-Wunused-parameter",
+      "-Wshorten-64-to-32",
+    ]
+  }
+}
+
+config("extra_flags") {
+  # extra_flags only applies to the default toolchain (usually the target).
+  if (current_toolchain == default_toolchain) {
+    asmflags = extra_asmflags
+    cflags = extra_cflags
+    cflags_c = extra_cflags_c
+    cflags_cc = extra_cflags_cc
+    ldflags = extra_ldflags
+  }
+}
+
+config("debug_symbols") {
+  # It's annoying to wait for full debug symbols to push over
+  # to Android devices.  -gline-tables-only is a lot slimmer.
+  if (is_android) {
+    cflags = [
+      "-gline-tables-only",
+      "-funwind-tables",  # Helps make in-process backtraces fuller.
+    ]
+  } else if (is_win) {
+    cflags = [ "/Z7" ]
+    if (is_clang) {
+      cflags += [ "-gcodeview-ghash" ]
+      ldflags = [ "/DEBUG:GHASH" ]
+    } else {
+      ldflags = [ "/DEBUG:FASTLINK" ]
+    }
+  } else {
+    cflags = [
+      "-g",
+      "-gdwarf-4",  # older versions of addr2line do not work well with v5
+    ]
+  }
+}
+
+config("no_rtti") {
+  if (sanitize != "ASAN") {  # -fsanitize=vptr requires RTTI
+    if (is_win) {
+      cflags_cc = [ "/GR-" ]
+    } else {
+      cflags_cc = [ "-fno-rtti" ]
+      cflags_objcc = cflags_cc
+    }
+  }
+}
+
+config("optimize") {
+  ldflags = []
+  if (is_win) {
+    cflags = [
+      "/O2",
+      "/Zc:inline",
+    ]
+    if (skia_enable_optimize_size) {
+      cflags += [ "/Os" ]
+    }
+    ldflags += [
+      "/OPT:ICF",
+      "/OPT:REF",
+    ]
+  } else {
+    if (skia_enable_optimize_size) {
+      cflags = [
+        "-Oz",
+
+        # We currently use bloaty 1.0 on the CI. Newer versions of Bloaty do not
+        # seem to handle newer DWARF data as well.
+        "-gdwarf-4",
+      ]
+      if (!is_android) {
+        cflags += [
+          # Clang 15 turns PIE (Position-indendendent Executable) on by default.
+          "-fno-PIE",
+          "-fno-pie",
+        ]
+        ldflags += [ "-nopie" ]
+      }
+    } else {
+      cflags = [ "-O3" ]
+    }
+    if (is_mac || is_ios) {
+      ldflags += [ "-dead_strip" ]
+    } else if (!is_wasm) {
+      cflags += [
+        "-fdata-sections",
+        "-ffunction-sections",
+      ]
+      ldflags += [ "-Wl,--gc-sections" ]
+    }
+  }
+}
+
+config("NDEBUG") {
+  defines = [ "NDEBUG" ]
+}
+
+config("trivial_abi") {
+  if (is_clang) {
+    defines = [ "SK_TRIVIAL_ABI=[[clang::trivial_abi]]" ]
+  }
+}
+
+config("executable") {
+  if (is_android) {
+    ldflags = [
+      "-pie",
+      "-rdynamic",
+    ]
+  } else if (is_mac) {
+    ldflags = [ "-Wl,-rpath,@loader_path/." ]
+  } else if (is_linux) {
+    ldflags = [
+      "-rdynamic",
+      "-Wl,-rpath,\$ORIGIN",
+    ]
+  } else if (is_win) {
+    ldflags = [
+      "/SUBSYSTEM:CONSOLE",  # Quiet "no subsystem specified; CONSOLE assumed".
+      "/INCREMENTAL:NO",  # Quiet warnings about failing to incrementally link
+                          # by never trying to.
+    ]
+  }
+}

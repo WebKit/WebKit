@@ -1,0 +1,52 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("//bazel:skia_rules.bzl", "exports_files_legacy")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+go_library(
+    name = "exporter",
+    srcs = [
+        "bazel_query_command.go",
+        "bazel_util.go",
+        "cmake_exporter.go",
+        "cmake_rule.go",
+        "cmake_workspace.go",
+        "gni_exporter.go",
+    ],
+    importpath = "go.skia.org/skia/bazel/exporter",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bazel/exporter/build_proto/analysis_v2",
+        "//bazel/exporter/build_proto/build",
+        "//bazel/exporter/interfaces",
+        "@org_golang_google_protobuf//proto",
+        "@org_skia_go_infra//go/skerr",
+        "@org_skia_go_infra//go/util",
+    ],
+)
+
+go_test(
+    name = "exporter_test",
+    srcs = [
+        "bazel_util_test.go",
+        "cmake_exporter_test.go",
+        "cmake_rule_test.go",
+        "cmake_workspace_test.go",
+        "gni_exporter_test.go",
+        "util_test.go",
+    ],
+    embed = [":exporter"],
+    deps = [
+        "//bazel/exporter/build_proto/analysis_v2",
+        "//bazel/exporter/build_proto/build",
+        "//bazel/exporter/interfaces/mocks",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+        "@com_github_stretchr_testify//require",
+        "@org_golang_google_protobuf//encoding/prototext",
+        "@org_golang_google_protobuf//proto",
+        "@org_skia_go_infra//go/skerr",
+    ],
+)

@@ -1,0 +1,726 @@
+load("@py_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# This file will be copied into //third_party/externals/dawn via the new_local_repository
+# rule in WORKSPACE.bazel, so all files should be relative to that path.
+
+# We define this here because the emscripten toolchain calls the cpu wasm, whereas the
+# bazelbuild/platforms call it wasm32. https://github.com/emscripten-core/emsdk/issues/919
+config_setting(
+    name = "cpu_wasm",
+    values = {
+        "cpu": "wasm",
+    },
+)
+
+py_binary(
+    name = "dawn_json_generator",
+    srcs = [
+        "generator/dawn_json_generator.py",
+        "generator/generator_lib.py",
+    ],
+    deps = [
+        requirement("jinja2"),
+        # jinja2 has a dep on MarkupSafe. Declaring MarkupSafe here is not necessary, but it makes
+        # the link easier to find than searching the Bazel cache for generated deps.
+        requirement("MarkupSafe"),
+    ],
+)
+
+genrule(
+    name = "generate_webgpu_cpp",
+    srcs = [
+        "generator/templates/api_cpp.h",
+        "generator/templates/api_cpp_chained_struct.h",
+        "generator/templates/api_cpp_print.h",
+        "generator/templates/BSD_LICENSE",
+        "dawn.json",
+        "dawn_wire.json",
+    ],
+    outs = [
+        "include/dawn/webgpu_cpp.h",
+        "include/dawn/webgpu_cpp_chained_struct.h",
+        "include/dawn/webgpu_cpp_print.h",
+    ],
+    cmd = "$(location :dawn_json_generator) " +
+          "--dawn-json $(location dawn.json) " +
+          "--wire-json $(location dawn_wire.json) " +
+          "--template-dir $$(dirname $(location generator/templates/api_cpp.h)) " +
+          "--targets cpp_headers " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_json_generator"],
+)
+
+genrule(
+    name = "generate_webgpu",
+    srcs = [
+        "generator/templates/api.h",
+        "generator/templates/dawn_proc_table.h",
+        "generator/templates/BSD_LICENSE",
+        "dawn.json",
+        "dawn_wire.json",
+    ],
+    outs = [
+        "include/dawn/webgpu.h",
+        "include/dawn/dawn_proc_table.h",
+    ],
+    cmd = "$(location :dawn_json_generator) " +
+          "--dawn-json $(location dawn.json) " +
+          "--wire-json $(location dawn_wire.json) " +
+          "--template-dir $$(dirname $(location generator/templates/api.h)) " +
+          "--targets headers " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_json_generator"],
+)
+
+genrule(
+    name = "generate_proc",
+    srcs = [
+        "dawn.json",
+        "dawn_wire.json",
+        "generator/templates/BSD_LICENSE",
+        "generator/templates/dawn_proc.c",
+        "generator/templates/dawn_thread_dispatch_proc.cpp",
+    ],
+    outs = [
+        "src/dawn/dawn_proc.c",
+        "src/dawn/dawn_thread_dispatch_proc.cpp",
+    ],
+    cmd = "$(location :dawn_json_generator) " +
+          "--dawn-json $(location dawn.json) " +
+          "--wire-json $(location dawn_wire.json) " +
+          "--template-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--targets proc " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_json_generator"],
+)
+
+genrule(
+    name = "generate_dawn_cpp",
+    srcs = [
+        "dawn.json",
+        "dawn_wire.json",
+        "generator/templates/BSD_LICENSE",
+        "generator/templates/api_cpp.cpp",
+    ],
+    outs = [
+        "src/dawn/webgpu_cpp.cpp",
+    ],
+    cmd = "$(location :dawn_json_generator) " +
+          "--dawn-json $(location dawn.json) " +
+          "--wire-json $(location dawn_wire.json) " +
+          "--template-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--targets cpp " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_json_generator"],
+)
+
+genrule(
+    name = "generate_utils",
+    srcs = [
+        "dawn.json",
+        "dawn_wire.json",
+        "generator/templates/BSD_LICENSE",
+        "generator/templates/dawn/native/ChainUtils.cpp",
+        "generator/templates/dawn/native/ChainUtils.h",
+        "generator/templates/dawn/native/Features.h",
+        "generator/templates/dawn/native/Features.inl",
+        "generator/templates/dawn/native/ObjectType.cpp",
+        "generator/templates/dawn/native/ObjectType.h",
+        "generator/templates/dawn/native/ProcTable.cpp",
+        "generator/templates/dawn/native/ValidationUtils.cpp",
+        "generator/templates/dawn/native/ValidationUtils.h",
+        "generator/templates/dawn/native/api_StreamImpl.cpp",
+        "generator/templates/dawn/native/api_absl_format.cpp",
+        "generator/templates/dawn/native/api_absl_format.h",
+        "generator/templates/dawn/native/api_structs.cpp",
+        "generator/templates/dawn/native/api_structs.h",
+        "generator/templates/dawn/native/dawn_platform.h",
+    ],
+    outs = [
+        "src/dawn/native/ChainUtils_autogen.cpp",
+        "src/dawn/native/ChainUtils_autogen.h",
+        "src/dawn/native/Features_autogen.h",
+        "src/dawn/native/Features_autogen.inl",
+        "src/dawn/native/ObjectType_autogen.cpp",
+        "src/dawn/native/ObjectType_autogen.h",
+        "src/dawn/native/ProcTable.cpp",
+        "src/dawn/native/ValidationUtils_autogen.cpp",
+        "src/dawn/native/ValidationUtils_autogen.h",
+        "src/dawn/native/dawn_platform_autogen.h",
+        "src/dawn/native/webgpu_StreamImpl_autogen.cpp",
+        "src/dawn/native/webgpu_absl_format_autogen.cpp",
+        "src/dawn/native/webgpu_absl_format_autogen.h",
+        "src/dawn/native/wgpu_structs_autogen.cpp",
+        "src/dawn/native/wgpu_structs_autogen.h",
+    ],
+    cmd = "$(location :dawn_json_generator) " +
+          "--dawn-json $(location dawn.json) " +
+          "--wire-json $(location dawn_wire.json) " +
+          "--template-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--targets native_utils " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_json_generator"],
+)
+
+py_binary(
+    name = "dawn_gpu_info_generator",
+    srcs = [
+        "generator/dawn_gpu_info_generator.py",
+        "generator/generator_lib.py",
+    ],
+    deps = [
+        requirement("jinja2"),
+        # jinja2 has a dep on MarkupSafe. Declaring MarkupSafe here is not necessary, but it makes
+        # the link easier to find than searching the Bazel cache for generated deps.
+        requirement("MarkupSafe"),
+    ],
+)
+
+genrule(
+    name = "generate_gpuinfo",
+    srcs = [
+        "src/dawn/gpu_info.json",
+        "generator/templates/BSD_LICENSE",
+        "generator/templates/dawn/common/GPUInfo.h",
+        "generator/templates/dawn/common/GPUInfo.cpp",
+    ],
+    outs = [
+        "src/dawn/common/GPUInfo_autogen.h",
+        "src/dawn/common/GPUInfo_autogen.cpp",
+    ],
+    cmd = "$(location :dawn_gpu_info_generator) " +
+          "--gpu-info-json $(location src/dawn/gpu_info.json) " +
+          "--template-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--output-dir $(RULEDIR)",
+    tools = [":dawn_gpu_info_generator"],
+)
+
+py_binary(
+    name = "dawn_version_generator",
+    srcs = [
+        "generator/dawn_version_generator.py",
+        "generator/generator_lib.py",
+    ],
+    deps = [
+        requirement("jinja2"),
+        # jinja2 has a dep on MarkupSafe. Declaring MarkupSafe here is not necessary, but it makes
+        # the link easier to find than searching the Bazel cache for generated deps.
+        requirement("MarkupSafe"),
+    ],
+)
+
+# This currently has a blank version, which "disables caching" according to
+# https://dawn.googlesource.com/dawn/+/bd30d9e594226e96c07ec3cd46dbdc68928aef41/generator/dawn_version_generator.py#39
+# We don't anticipate that being a real issue. Should we need to make this work,
+# the easiest way is to use cat to read in .git/HEAD and specify that directly
+# to the dawn_version_generator script (which needs a patch to accept that argument.
+genrule(
+    name = "generate_version",
+    srcs = [
+        "generator/templates/BSD_LICENSE",
+        "generator/templates/dawn/common/Version.h",
+    ],
+    outs = [
+        "src/dawn/common/Version_autogen.h",
+    ],
+    cmd = "$(location :dawn_version_generator) " +
+          "--template-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--dawn-dir $$(dirname $(location generator/templates/BSD_LICENSE)) " +
+          "--output-dir $(RULEDIR) 2> /dev/null",
+    tools = [":dawn_version_generator"],
+)
+
+DAWN_HDRS = [
+    "include/dawn/EnumClassBitmasks.h",
+    "include/dawn/dawn_proc.h",
+    "include/dawn/dawn_thread_dispatch_proc.h",
+    "include/dawn/native/D3D12Backend.h",
+    "include/dawn/native/DawnNative.h",
+    "include/dawn/native/MetalBackend.h",
+    "include/dawn/native/NullBackend.h",
+    "include/dawn/native/OpenGLBackend.h",
+    "include/dawn/native/VulkanBackend.h",
+    "include/dawn/native/dawn_native_export.h",
+    "include/dawn/platform/DawnPlatform.h",
+    "include/dawn/platform/dawn_platform_export.h",
+    "include/dawn/wire/Wire.h",
+    "include/dawn/wire/WireClient.h",
+    "include/dawn/wire/WireServer.h",
+    "include/dawn/wire/dawn_wire_export.h",
+    "include/webgpu/webgpu.h",
+    "include/webgpu/webgpu_cpp.h",
+]
+
+DAWN_SRCS = [
+    # Generated files
+    "include/dawn/dawn_proc_table.h",
+    "include/dawn/webgpu.h",
+    "include/dawn/webgpu_cpp.h",
+    "include/dawn/webgpu_cpp_chained_struct.h",
+    # From dawn/src/dawn/native/BUILD.gn:sources
+    "src/dawn/native/DawnNative.cpp",
+    "src/dawn/native/Adapter.cpp",
+    "src/dawn/native/Adapter.h",
+    "src/dawn/native/ApplyClearColorValueWithDrawHelper.cpp",
+    "src/dawn/native/ApplyClearColorValueWithDrawHelper.h",
+    "src/dawn/native/AsyncTask.cpp",
+    "src/dawn/native/AsyncTask.h",
+    "src/dawn/native/AttachmentState.cpp",
+    "src/dawn/native/AttachmentState.h",
+    "src/dawn/native/BackendConnection.cpp",
+    "src/dawn/native/BackendConnection.h",
+    "src/dawn/native/BindGroup.cpp",
+    "src/dawn/native/BindGroup.h",
+    "src/dawn/native/BindGroupLayout.cpp",
+    "src/dawn/native/BindGroupLayout.h",
+    "src/dawn/native/BindGroupLayoutInternal.cpp",
+    "src/dawn/native/BindGroupLayoutInternal.h",
+    "src/dawn/native/BindGroupTracker.h",
+    "src/dawn/native/BindingInfo.cpp",
+    "src/dawn/native/BindingInfo.h",
+    "src/dawn/native/BlitBufferToDepthStencil.cpp",
+    "src/dawn/native/BlitBufferToDepthStencil.h",
+    "src/dawn/native/BlitColorToColorWithDraw.cpp",
+    "src/dawn/native/BlitColorToColorWithDraw.h",
+    "src/dawn/native/BlitDepthToDepth.cpp",
+    "src/dawn/native/BlitDepthToDepth.h",
+    "src/dawn/native/BlitTextureToBuffer.cpp",
+    "src/dawn/native/BlitTextureToBuffer.h",
+    "src/dawn/native/Blob.cpp",
+    "src/dawn/native/Blob.h",
+    "src/dawn/native/BlobCache.cpp",
+    "src/dawn/native/BlobCache.h",
+    "src/dawn/native/BuddyAllocator.cpp",
+    "src/dawn/native/BuddyAllocator.h",
+    "src/dawn/native/BuddyMemoryAllocator.cpp",
+    "src/dawn/native/BuddyMemoryAllocator.h",
+    "src/dawn/native/Buffer.cpp",
+    "src/dawn/native/Buffer.h",
+    "src/dawn/native/CacheKey.cpp",
+    "src/dawn/native/CacheKey.h",
+    "src/dawn/native/CacheRequest.cpp",
+    "src/dawn/native/CacheRequest.h",
+    "src/dawn/native/CacheResult.h",
+    "src/dawn/native/CachedObject.cpp",
+    "src/dawn/native/CachedObject.h",
+    "src/dawn/native/CallbackTaskManager.cpp",
+    "src/dawn/native/CallbackTaskManager.h",
+    "src/dawn/native/ChainUtils.h",
+    "src/dawn/native/ChainUtilsImpl.h",
+    "src/dawn/native/CommandAllocator.cpp",
+    "src/dawn/native/CommandAllocator.h",
+    "src/dawn/native/CommandBuffer.cpp",
+    "src/dawn/native/CommandBuffer.h",
+    "src/dawn/native/CommandBufferStateTracker.cpp",
+    "src/dawn/native/CommandBufferStateTracker.h",
+    "src/dawn/native/CommandEncoder.cpp",
+    "src/dawn/native/CommandEncoder.h",
+    "src/dawn/native/CommandValidation.cpp",
+    "src/dawn/native/CommandValidation.h",
+    "src/dawn/native/Commands.cpp",
+    "src/dawn/native/Commands.h",
+    "src/dawn/native/CompilationMessages.cpp",
+    "src/dawn/native/CompilationMessages.h",
+    "src/dawn/native/ComputePassEncoder.cpp",
+    "src/dawn/native/ComputePassEncoder.h",
+    "src/dawn/native/ComputePipeline.cpp",
+    "src/dawn/native/ComputePipeline.h",
+    "src/dawn/native/CopyTextureForBrowserHelper.cpp",
+    "src/dawn/native/CopyTextureForBrowserHelper.h",
+    "src/dawn/native/CreatePipelineAsyncTask.cpp",
+    "src/dawn/native/CreatePipelineAsyncTask.h",
+    "src/dawn/native/Device.cpp",
+    "src/dawn/native/Device.h",
+    "src/dawn/native/DynamicUploader.cpp",
+    "src/dawn/native/DynamicUploader.h",
+    "src/dawn/native/EncodingContext.cpp",
+    "src/dawn/native/EncodingContext.h",
+    "src/dawn/native/EnumClassBitmasks.h",
+    "src/dawn/native/EnumMaskIterator.h",
+    "src/dawn/native/Error.cpp",
+    "src/dawn/native/Error.h",
+    "src/dawn/native/ErrorData.cpp",
+    "src/dawn/native/ErrorData.h",
+    "src/dawn/native/ErrorInjector.cpp",
+    "src/dawn/native/ErrorInjector.h",
+    "src/dawn/native/ErrorScope.cpp",
+    "src/dawn/native/ErrorScope.h",
+    "src/dawn/native/ExecutionQueue.cpp",
+    "src/dawn/native/ExecutionQueue.h",
+    "src/dawn/native/ExternalTexture.cpp",
+    "src/dawn/native/ExternalTexture.h",
+    "src/dawn/native/Features.cpp",
+    "src/dawn/native/Features.h",
+    "src/dawn/native/Format.cpp",
+    "src/dawn/native/Format.h",
+    "src/dawn/native/Forward.h",
+    "src/dawn/native/IndirectDrawMetadata.cpp",
+    "src/dawn/native/IndirectDrawMetadata.h",
+    "src/dawn/native/IndirectDrawValidationEncoder.cpp",
+    "src/dawn/native/IndirectDrawValidationEncoder.h",
+    "src/dawn/native/Instance.cpp",
+    "src/dawn/native/Instance.h",
+    "src/dawn/native/IntegerTypes.h",
+    "src/dawn/native/InternalPipelineStore.cpp",
+    "src/dawn/native/InternalPipelineStore.h",
+    "src/dawn/native/Limits.cpp",
+    "src/dawn/native/Limits.h",
+    "src/dawn/native/ObjectBase.cpp",
+    "src/dawn/native/ObjectBase.h",
+    "src/dawn/native/ObjectContentHasher.cpp",
+    "src/dawn/native/ObjectContentHasher.h",
+    "src/dawn/native/PassResourceUsage.cpp",
+    "src/dawn/native/PassResourceUsage.h",
+    "src/dawn/native/PassResourceUsageTracker.cpp",
+    "src/dawn/native/PassResourceUsageTracker.h",
+    "src/dawn/native/PerStage.cpp",
+    "src/dawn/native/PerStage.h",
+    "src/dawn/native/PhysicalDevice.cpp",
+    "src/dawn/native/PhysicalDevice.h",
+    "src/dawn/native/Pipeline.cpp",
+    "src/dawn/native/Pipeline.h",
+    "src/dawn/native/PipelineCache.cpp",
+    "src/dawn/native/PipelineCache.h",
+    "src/dawn/native/PipelineLayout.cpp",
+    "src/dawn/native/PipelineLayout.h",
+    "src/dawn/native/PooledResourceMemoryAllocator.cpp",
+    "src/dawn/native/PooledResourceMemoryAllocator.h",
+    "src/dawn/native/ProgrammableEncoder.cpp",
+    "src/dawn/native/ProgrammableEncoder.h",
+    "src/dawn/native/QueryHelper.cpp",
+    "src/dawn/native/QueryHelper.h",
+    "src/dawn/native/QuerySet.cpp",
+    "src/dawn/native/QuerySet.h",
+    "src/dawn/native/Queue.cpp",
+    "src/dawn/native/Queue.h",
+    "src/dawn/native/RefCountedWithExternalCount.cpp",
+    "src/dawn/native/RefCountedWithExternalCount.h",
+    "src/dawn/native/RenderBundle.cpp",
+    "src/dawn/native/RenderBundle.h",
+    "src/dawn/native/RenderBundleEncoder.cpp",
+    "src/dawn/native/RenderBundleEncoder.h",
+    "src/dawn/native/RenderEncoderBase.cpp",
+    "src/dawn/native/RenderEncoderBase.h",
+    "src/dawn/native/RenderPassEncoder.cpp",
+    "src/dawn/native/RenderPassEncoder.h",
+    "src/dawn/native/RenderPipeline.cpp",
+    "src/dawn/native/RenderPipeline.h",
+    "src/dawn/native/ResourceHeap.h",
+    "src/dawn/native/ResourceHeapAllocator.h",
+    "src/dawn/native/ResourceMemoryAllocation.cpp",
+    "src/dawn/native/ResourceMemoryAllocation.h",
+    "src/dawn/native/RingBufferAllocator.cpp",
+    "src/dawn/native/RingBufferAllocator.h",
+    "src/dawn/native/Sampler.cpp",
+    "src/dawn/native/Sampler.h",
+    "src/dawn/native/ScratchBuffer.cpp",
+    "src/dawn/native/ScratchBuffer.h",
+    "src/dawn/native/Serializable.h",
+    "src/dawn/native/ShaderModule.cpp",
+    "src/dawn/native/ShaderModule.h",
+    "src/dawn/native/SharedFence.cpp",
+    "src/dawn/native/SharedFence.h",
+    "src/dawn/native/SharedTextureMemory.cpp",
+    "src/dawn/native/SharedTextureMemory.h",
+    "src/dawn/native/StreamImplTint.cpp",
+    "src/dawn/native/Subresource.cpp",
+    "src/dawn/native/Subresource.h",
+    "src/dawn/native/SubresourceStorage.h",
+    "src/dawn/native/Surface.cpp",
+    "src/dawn/native/Surface.h",
+    "src/dawn/native/SwapChain.cpp",
+    "src/dawn/native/SwapChain.h",
+    "src/dawn/native/Texture.cpp",
+    "src/dawn/native/Texture.h",
+    "src/dawn/native/TintUtils.cpp",
+    "src/dawn/native/TintUtils.h",
+    "src/dawn/native/ToBackend.h",
+    "src/dawn/native/Toggles.cpp",
+    "src/dawn/native/Toggles.h",
+    "src/dawn/native/UsageValidationMode.h",
+    "src/dawn/native/VertexFormat.cpp",
+    "src/dawn/native/VertexFormat.h",
+    "src/dawn/native/VisitableMembers.h",
+    "src/dawn/native/dawn_platform.h",
+    "src/dawn/native/stream/BlobSource.cpp",
+    "src/dawn/native/stream/BlobSource.h",
+    "src/dawn/native/stream/ByteVectorSink.cpp",
+    "src/dawn/native/stream/ByteVectorSink.h",
+    "src/dawn/native/stream/Sink.h",
+    "src/dawn/native/stream/Source.h",
+    "src/dawn/native/stream/Stream.cpp",
+    "src/dawn/native/stream/Stream.h",
+    "src/dawn/native/utils/WGPUHelpers.cpp",
+    "src/dawn/native/utils/WGPUHelpers.h",
+    "src/dawn/native/webgpu_absl_format.cpp",
+    "src/dawn/native/webgpu_absl_format.h",
+    # From dawn/src/dawn/native/BUILD.gn:utils_gen
+    "src/dawn/native/ChainUtils_autogen.cpp",
+    "src/dawn/native/ChainUtils_autogen.h",
+    "src/dawn/native/Features_autogen.h",
+    "src/dawn/native/Features_autogen.inl",
+    "src/dawn/native/ObjectType_autogen.cpp",
+    "src/dawn/native/ObjectType_autogen.h",
+    "src/dawn/native/ProcTable.cpp",
+    "src/dawn/native/ValidationUtils_autogen.cpp",
+    "src/dawn/native/ValidationUtils_autogen.h",
+    "src/dawn/native/dawn_platform_autogen.h",
+    "src/dawn/native/webgpu_StreamImpl_autogen.cpp",
+    "src/dawn/native/webgpu_absl_format_autogen.cpp",
+    "src/dawn/native/webgpu_absl_format_autogen.h",
+    "src/dawn/native/wgpu_structs_autogen.cpp",
+    "src/dawn/native/wgpu_structs_autogen.h",
+    # From dawn/src/dawn/common/BUILD.gn:common
+    "src/dawn/common/Alloc.h",
+    "src/dawn/common/Assert.cpp",
+    "src/dawn/common/Assert.h",
+    "src/dawn/common/BitSetIterator.h",
+    "src/dawn/common/Compiler.h",
+    "src/dawn/common/ConcurrentCache.h",
+    "src/dawn/common/Constants.h",
+    "src/dawn/common/ContentLessObjectCache.h",
+    "src/dawn/common/ContentLessObjectCacheable.h",
+    "src/dawn/common/CoreFoundationRef.h",
+    "src/dawn/common/DynamicLib.cpp",
+    "src/dawn/common/DynamicLib.h",
+    "src/dawn/common/GPUInfo.cpp",
+    "src/dawn/common/GPUInfo.h",
+    "src/dawn/common/HashUtils.h",
+    "src/dawn/common/IOKitRef.h",
+    "src/dawn/common/LinkedList.h",
+    "src/dawn/common/Log.cpp",
+    "src/dawn/common/Log.h",
+    "src/dawn/common/Math.cpp",
+    "src/dawn/common/Math.h",
+    "src/dawn/common/Mutex.cpp",
+    "src/dawn/common/Mutex.h",
+    "src/dawn/common/MutexProtected.h",
+    "src/dawn/common/NSRef.h",
+    "src/dawn/common/NonCopyable.h",
+    "src/dawn/common/Numeric.h",
+    "src/dawn/common/PlacementAllocated.h",
+    "src/dawn/common/Platform.h",
+    "src/dawn/common/Preprocessor.h",
+    "src/dawn/common/Ref.h",
+    "src/dawn/common/RefBase.h",
+    "src/dawn/common/RefCounted.cpp",
+    "src/dawn/common/RefCounted.h",
+    "src/dawn/common/Result.cpp",
+    "src/dawn/common/Result.h",
+    "src/dawn/common/SerialMap.h",
+    "src/dawn/common/SerialQueue.h",
+    "src/dawn/common/SerialStorage.h",
+    "src/dawn/common/SlabAllocator.cpp",
+    "src/dawn/common/SlabAllocator.h",
+    "src/dawn/common/StackContainer.h",
+    "src/dawn/common/SystemUtils.cpp",
+    "src/dawn/common/SystemUtils.h",
+    "src/dawn/common/TypeTraits.h",
+    "src/dawn/common/TypedInteger.h",
+    "src/dawn/common/UnderlyingType.h",
+    "src/dawn/common/WeakRef.h",
+    "src/dawn/common/WeakRefSupport.cpp",
+    "src/dawn/common/WeakRefSupport.h",
+    "src/dawn/common/ityp_array.h",
+    "src/dawn/common/ityp_bitset.h",
+    "src/dawn/common/ityp_span.h",
+    "src/dawn/common/ityp_stack_vec.h",
+    "src/dawn/common/ityp_vector.h",
+    "src/dawn/common/vulkan_platform.h",
+    "src/dawn/common/xlib_with_undefs.h",
+    # Generated files in dawn/src/dawn/common/BUILD.gn
+    "src/dawn/common/GPUInfo_autogen.cpp",
+    "src/dawn/common/GPUInfo_autogen.h",
+    "src/dawn/common/Version_autogen.h",
+    # From dawn/src/dawn/platform/BUILD.gn:platform
+    "include/dawn/platform/DawnPlatform.h",
+    "include/dawn/platform/dawn_platform_export.h",
+    "src/dawn/platform/DawnPlatform.cpp",
+    "src/dawn/platform/WorkerThread.cpp",
+    "src/dawn/platform/WorkerThread.h",
+    "src/dawn/platform/metrics/HistogramMacros.cpp",
+    "src/dawn/platform/metrics/HistogramMacros.h",
+    "src/dawn/platform/tracing/EventTracer.cpp",
+    "src/dawn/platform/tracing/EventTracer.h",
+    "src/dawn/platform/tracing/TraceEvent.h",
+]
+
+DAWN_VULKAN_SRCS = [
+    # From dawn/src/dawn/native/BUILD.gn:sources (dawn_enable_vulkan)
+    "src/dawn/native/SpirvValidation.cpp",
+    "src/dawn/native/SpirvValidation.h",
+    "src/dawn/native/vulkan/BackendVk.cpp",
+    "src/dawn/native/vulkan/BackendVk.h",
+    "src/dawn/native/vulkan/BindGroupLayoutVk.cpp",
+    "src/dawn/native/vulkan/BindGroupLayoutVk.h",
+    "src/dawn/native/vulkan/BindGroupVk.cpp",
+    "src/dawn/native/vulkan/BindGroupVk.h",
+    "src/dawn/native/vulkan/BufferVk.cpp",
+    "src/dawn/native/vulkan/BufferVk.h",
+    "src/dawn/native/vulkan/StreamImplVk.cpp",
+    "src/dawn/native/vulkan/CommandBufferVk.cpp",
+    "src/dawn/native/vulkan/CommandBufferVk.h",
+    "src/dawn/native/vulkan/CommandRecordingContext.h",
+    "src/dawn/native/vulkan/ComputePipelineVk.cpp",
+    "src/dawn/native/vulkan/ComputePipelineVk.h",
+    "src/dawn/native/vulkan/DescriptorSetAllocation.h",
+    "src/dawn/native/vulkan/DescriptorSetAllocator.cpp",
+    "src/dawn/native/vulkan/DescriptorSetAllocator.h",
+    "src/dawn/native/vulkan/DeviceVk.cpp",
+    "src/dawn/native/vulkan/DeviceVk.h",
+    "src/dawn/native/vulkan/ExternalHandle.h",
+    "src/dawn/native/vulkan/FencedDeleter.cpp",
+    "src/dawn/native/vulkan/FencedDeleter.h",
+    "src/dawn/native/vulkan/Forward.h",
+    "src/dawn/native/vulkan/PhysicalDeviceVk.cpp",
+    "src/dawn/native/vulkan/PhysicalDeviceVk.h",
+    "src/dawn/native/vulkan/PipelineCacheVk.cpp",
+    "src/dawn/native/vulkan/PipelineCacheVk.h",
+    "src/dawn/native/vulkan/PipelineLayoutVk.cpp",
+    "src/dawn/native/vulkan/PipelineLayoutVk.h",
+    "src/dawn/native/vulkan/QuerySetVk.cpp",
+    "src/dawn/native/vulkan/QuerySetVk.h",
+    "src/dawn/native/vulkan/QueueVk.cpp",
+    "src/dawn/native/vulkan/QueueVk.h",
+    "src/dawn/native/vulkan/RenderPassCache.cpp",
+    "src/dawn/native/vulkan/RenderPassCache.h",
+    "src/dawn/native/vulkan/RenderPipelineVk.cpp",
+    "src/dawn/native/vulkan/RenderPipelineVk.h",
+    "src/dawn/native/vulkan/ResourceHeapVk.cpp",
+    "src/dawn/native/vulkan/ResourceHeapVk.h",
+    "src/dawn/native/vulkan/ResourceMemoryAllocatorVk.cpp",
+    "src/dawn/native/vulkan/ResourceMemoryAllocatorVk.h",
+    "src/dawn/native/vulkan/SamplerVk.cpp",
+    "src/dawn/native/vulkan/SamplerVk.h",
+    "src/dawn/native/vulkan/ShaderModuleVk.cpp",
+    "src/dawn/native/vulkan/ShaderModuleVk.h",
+    "src/dawn/native/vulkan/SwapChainVk.cpp",
+    "src/dawn/native/vulkan/SwapChainVk.h",
+    "src/dawn/native/vulkan/TextureVk.cpp",
+    "src/dawn/native/vulkan/TextureVk.h",
+    "src/dawn/native/vulkan/UtilsVulkan.cpp",
+    "src/dawn/native/vulkan/UtilsVulkan.h",
+    "src/dawn/native/vulkan/VulkanBackend.cpp",
+    "src/dawn/native/vulkan/VulkanError.cpp",
+    "src/dawn/native/vulkan/VulkanError.h",
+    "src/dawn/native/vulkan/VulkanExtensions.cpp",
+    "src/dawn/native/vulkan/VulkanExtensions.h",
+    "src/dawn/native/vulkan/VulkanFunctions.cpp",
+    "src/dawn/native/vulkan/VulkanFunctions.h",
+    "src/dawn/native/vulkan/VulkanInfo.cpp",
+    "src/dawn/native/vulkan/VulkanInfo.h",
+    "src/dawn/native/vulkan/external_memory/MemoryImportParams.h",
+    "src/dawn/native/vulkan/external_memory/MemoryService.cpp",
+    "src/dawn/native/vulkan/external_memory/MemoryService.h",
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementation.cpp",
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementation.h",
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreService.cpp",
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreService.h",
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreServiceImplementation.cpp",
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreServiceImplementation.h",
+]
+
+DAWN_VULKAN_LINUX_SRCS = [
+    # From dawn/src/dawn/native/BUILD.gn:sources (dawn_enable_vulkan && (is_android || is_linux || is_chromeos))
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreServiceImplementationFD.cpp",
+    "src/dawn/native/vulkan/external_semaphore/SemaphoreServiceImplementationFD.h",
+    # From dawn/src/dawn/native/BUILD.gn:sources (dawn_enable_vulkan && (is_linux || is_chromeos))
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementationDmaBuf.cpp",
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementationDmaBuf.h",
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementationOpaqueFD.cpp",
+    "src/dawn/native/vulkan/external_memory/MemoryServiceImplementationOpaqueFD.h",
+]
+
+DAWN_VULKAN_DEFINES = [
+    # From dawn/src/dawn/common/BUILD.gn:internal_config
+    "DAWN_ENABLE_BACKEND_VULKAN",
+]
+
+cc_library(
+    name = "dawn_native",
+    srcs = DAWN_SRCS + DAWN_VULKAN_SRCS + DAWN_VULKAN_LINUX_SRCS,
+    hdrs = DAWN_HDRS,
+    copts = [
+        # List this as a copt, so as not to propagate it to dependents
+        # Skia has its own vulkan headers and we do not want these to
+        # interfere/override those.
+        "-Iexternal/vulkan_headers/include",
+    ],
+    defines = DAWN_VULKAN_DEFINES,
+    includes = [
+        "include",
+        "src",
+    ],
+    visibility = ["//visibility:private"],  # only used by :dawn
+    deps = [
+        # Dawn specifically depends on dawn/src/tint:libtint
+        ":tint",
+        "@abseil_cpp//absl/strings:str_format",
+        "@vulkan_headers",
+        "@vulkan_tools",
+        "@vulkan_utility_libraries",
+    ],
+)
+
+cc_library(
+    name = "dawn_cpp",
+    srcs = [
+        # From dawn/src/dawn/BUILD.gn#cpp
+        "include/dawn/webgpu.h",
+        "include/dawn/EnumClassBitmasks.h",
+        "include/dawn/webgpu_cpp.h",
+        "include/dawn/webgpu_cpp_chained_struct.h",
+        "src/dawn/webgpu_cpp.cpp",
+    ],
+    includes = [
+        "include",
+    ],
+    visibility = ["//visibility:private"],  # only used by :dawn
+)
+
+cc_library(
+    name = "dawn_proc",
+    srcs = [
+        # From dawn/src/dawn/BUILD.gn#proc
+        "include/dawn/webgpu.h",
+        "include/dawn/dawn_proc.h",
+        "include/dawn/dawn_thread_dispatch_proc.h",
+        "include/dawn/dawn_proc_table.h",
+        "src/dawn/dawn_proc.c",
+        "src/dawn/dawn_thread_dispatch_proc.cpp",
+    ],
+    includes = [
+        "include",
+    ],
+    visibility = ["//visibility:private"],  # only used by :dawn
+)
+
+cc_library(
+    name = "dawn",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":dawn_cpp",
+        ":dawn_native",
+        ":dawn_proc",
+    ],
+)
+
+cc_library(
+    name = "tint",
+    hdrs = glob(
+        [
+            "include/**/*.h",
+        ],
+        allow_empty = False,
+    ),
+    defines = [
+        "TINT_BUILD_WGSL_READER=1",
+        "TINT_BUILD_WGSL_WRITER=1",
+    ],
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@dawn//src/tint/api",
+    ],
+)

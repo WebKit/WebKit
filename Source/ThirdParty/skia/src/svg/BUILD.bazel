@@ -1,0 +1,28 @@
+load("//bazel:flags.bzl", "bool_flag")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+bool_flag(
+    name = "enable_svg_canvas",
+    default = False,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkSVGCanvas.cpp",
+        "SkSVGDevice.cpp",
+    ],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkSVGDevice.h",
+    ],
+    visibility = ["//src:__pkg__"],
+)

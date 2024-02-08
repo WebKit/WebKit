@@ -1,0 +1,152 @@
+load("//bazel:flags.bzl", "bool_flag")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+CORE_FILES = [
+    "GrGLAssembleGLESInterfaceAutogen.cpp",
+    "GrGLAssembleGLInterfaceAutogen.cpp",
+    "GrGLAssembleHelpers.cpp",
+    "GrGLAssembleInterface.cpp",
+    "GrGLAssembleWebGLInterfaceAutogen.cpp",
+    "GrGLAttachment.cpp",
+    "GrGLAttachment.h",
+    "GrGLBuffer.cpp",
+    "GrGLBuffer.h",
+    "GrGLCaps.cpp",
+    "GrGLCaps.h",
+    "GrGLContext.cpp",
+    "GrGLContext.h",
+    "GrGLDefines.h",
+    "GrGLDirectContext.cpp",
+    "GrGLExtensions.cpp",
+    "GrGLBackendSurface.cpp",
+    "GrGLBackendSurfacePriv.h",
+    "GrGLFinishCallbacks.cpp",
+    "GrGLFinishCallbacks.h",
+    "GrGLGLSL.cpp",
+    "GrGLGLSL.h",
+    "GrGLGpu.cpp",
+    "GrGLGpu.h",
+    "GrGLGpuProgramCache.cpp",
+    "GrGLInterfaceAutogen.cpp",
+    "GrGLOpsRenderPass.cpp",
+    "GrGLOpsRenderPass.h",
+    "GrGLProgram.cpp",
+    "GrGLProgram.h",
+    "GrGLProgramDataManager.cpp",
+    "GrGLProgramDataManager.h",
+    "GrGLRenderTarget.cpp",
+    "GrGLRenderTarget.h",
+    "GrGLSemaphore.cpp",
+    "GrGLSemaphore.h",
+    "GrGLTexture.cpp",
+    "GrGLTexture.h",
+    "GrGLTextureRenderTarget.cpp",
+    "GrGLTextureRenderTarget.h",
+    "GrGLTypesPriv.cpp",
+    "GrGLTypesPriv.h",
+    "GrGLUniformHandler.cpp",
+    "GrGLUniformHandler.h",
+    "GrGLUtil.cpp",
+    "GrGLUtil.h",
+    "GrGLVaryingHandler.h",
+    "GrGLVertexArray.cpp",
+    "GrGLVertexArray.h",
+]
+
+split_srcs_and_hdrs(
+    name = "core",
+    files = CORE_FILES,
+)
+
+bool_flag(
+    name = "enable_native_interface",
+    default = True,
+)
+
+# In own group for mapping to //gn/gpu.gni:skia_null_gpu_sources.
+skia_filegroup(
+    name = "native_interface_none",
+    srcs = ["GrGLMakeNativeInterface_none.cpp"],
+)
+
+skia_filegroup(
+    name = "native_interface",
+    srcs = select({
+        "//bazel/common_config_settings:linux_x64": ["//src/gpu/ganesh/gl/glx:srcs"],
+        "//bazel/common_config_settings:cpu_wasm": ["//src/gpu/ganesh/gl/webgl:srcs"],
+        "@platforms//os:android": ["//src/gpu/ganesh/gl/egl:srcs"],
+        "@platforms//os:ios": ["//src/gpu/ganesh/gl/iOS:srcs"],
+        "@platforms//os:macos": ["//src/gpu/ganesh/gl/mac:srcs"],
+        "@platforms//os:windows": ["//src/gpu/ganesh/gl/win:srcs"],
+        "//conditions:default": [":native_interface_none"],
+    }),
+)
+
+skia_filegroup(
+    name = "android_srcs",
+    srcs = ["AHardwareBufferGL.cpp"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        ":android_srcs",
+        ":core_srcs",
+        "//src/gpu/ganesh/gl/builders:srcs",
+    ] + select({
+        ":enable_native_interface_true": [":native_interface"],
+        ":enable_native_interface_false": [":native_interface_none"],
+    }),
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        ":core_hdrs",
+        "//src/gpu/ganesh/gl/builders:private_hdrs",
+    ],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_cc_deps(
+    name = "deps",
+    linkopts = select({
+        "@platforms//os:android": ["-lGLESv2"],
+        "@platforms//os:linux": ["-lGL"],
+        # TODO(kjlubick) need OpenGL32.lib for non-arm windows
+        "//conditions:default": [],
+    }),
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_cc_library(
+    name = "ganesh_gl",
+    srcs = [
+        ":core_hdrs",
+        ":core_srcs",
+        "//src/gpu/ganesh/gl/builders:private_hdrs",
+        "//src/gpu/ganesh/gl/builders:srcs",
+    ],
+    hdrs = [
+        "//include/gpu:ganesh_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
+        "//include/gpu/ganesh/gl:public_hdrs",
+        "//include/gpu/gl:ganesh_gl_hdrs",
+    ],
+    defines = ["SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/ganesh",
+        "//src/sksl/codegen:glsl",
+    ],
+)

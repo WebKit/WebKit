@@ -1,0 +1,54 @@
+layout(binding=0, rgba32f) readonly texture2D src;
+layout(binding=1, rgba32f) writeonly texture2D dest;
+//layout(binding=2, rgba32f) texture2D multipurpose;
+
+// If we add support for read-write textures in SkSL, uncomment `needs_all_access`.
+//void needs_all_access(texture2D t) {}
+
+void overload(layout(rgba32f) readonly texture2D t)       {}
+void overload(layout(rgba32f) writeonly texture2D t, int) {}
+
+void main() {
+    //needs_all_access(src);                          // BAD
+    //needs_all_access(dest);                         // BAD
+    //needs_all_access(multipurpose);                 // OK
+
+    textureRead(dest, sk_GlobalInvocationID.xy);           // BAD
+    textureWrite(src, sk_GlobalInvocationID.xy, half4(1)); // BAD
+
+    overload(src);     //  OK: overload(readonly texture2D t)      exists
+    overload(src, 1);  // BAD: overload(readonly texture2D t, int) missing
+    overload(dest);    // BAD: overload(writeonly texture2D t)      missing
+    overload(dest, 1); //  OK: overload(writeonly texture2D t, int) exists
+}
+
+// If we add support for read-write textures in SkSL, uncomment `function_param_honors_all_access`.
+//void function_param_honors_all_access(texture2D t) {
+//    //needs_all_access(t);                               // OK
+//    textureWidth(t);                                     // OK
+//    textureRead(t, sk_GlobalInvocationID.xy);            // OK
+//    textureWrite(t, sk_GlobalInvocationID.xy, half4(1)); // OK
+//}
+
+void function_param_honors_readonly(layout(rgba32f) readonly texture2D t) {
+    //needs_all_access(t);                               // BAD
+    textureWidth(t);                                     // OK
+    textureRead(t, sk_GlobalInvocationID.xy);            // OK
+    textureWrite(t, sk_GlobalInvocationID.xy, half4(1)); // BAD
+}
+
+void function_param_honors_writeonly(layout(rgba32f) writeonly texture2D t) {
+    //needs_all_access(t);                               // BAD
+    textureWidth(t);                                     // OK
+    textureRead(t, sk_GlobalInvocationID.xy);            // BAD
+    textureWrite(t, sk_GlobalInvocationID.xy, half4(1)); // OK
+}
+
+/*%%*
+no match for textureRead(writeonlyTexture2D, uint2)
+no match for textureWrite(readonlyTexture2D, uint2, half4)
+no match for overload(readonlyTexture2D, int)
+no match for overload(writeonlyTexture2D)
+no match for textureWrite(readonlyTexture2D, uint2, half4)
+no match for textureRead(writeonlyTexture2D, uint2)
+*%%*/

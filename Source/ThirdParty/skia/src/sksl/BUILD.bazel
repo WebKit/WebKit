@@ -1,0 +1,212 @@
+load("//bazel:flags.bzl", "bool_flag", "selects")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "txts",
+    srcs = [
+        "generated/sksl_compute.minified.sksl",
+        "generated/sksl_compute.unoptimized.sksl",
+        "generated/sksl_frag.minified.sksl",
+        "generated/sksl_frag.unoptimized.sksl",
+        "generated/sksl_gpu.minified.sksl",
+        "generated/sksl_gpu.unoptimized.sksl",
+        "generated/sksl_graphite_frag.minified.sksl",
+        "generated/sksl_graphite_frag.unoptimized.sksl",
+        "generated/sksl_graphite_frag_es2.minified.sksl",
+        "generated/sksl_graphite_frag_es2.unoptimized.sksl",
+        "generated/sksl_graphite_vert.minified.sksl",
+        "generated/sksl_graphite_vert.unoptimized.sksl",
+        "generated/sksl_graphite_vert_es2.minified.sksl",
+        "generated/sksl_graphite_vert_es2.unoptimized.sksl",
+        "generated/sksl_public.minified.sksl",
+        "generated/sksl_public.unoptimized.sksl",
+        "generated/sksl_rt_shader.minified.sksl",
+        "generated/sksl_rt_shader.unoptimized.sksl",
+        "generated/sksl_shared.minified.sksl",
+        "generated/sksl_shared.unoptimized.sksl",
+        "generated/sksl_vert.minified.sksl",
+        "generated/sksl_vert.unoptimized.sksl",
+    ],
+)
+
+skia_filegroup(
+    name = "sksl_data",
+    srcs = [
+        "sksl_compute.sksl",
+        "sksl_frag.sksl",
+        "sksl_gpu.sksl",
+        "sksl_graphite_frag.sksl",
+        "sksl_graphite_frag_es2.sksl",
+        "sksl_graphite_vert.sksl",
+        "sksl_graphite_vert_es2.sksl",
+        "sksl_public.sksl",
+        "sksl_rt_shader.sksl",
+        "sksl_shared.sksl",
+        "sksl_vert.sksl",
+    ],
+    visibility = ["//tools/sksl-minify:__pkg__"],
+)
+
+SKSL_SRCS = [
+    "SkSLAnalysis.cpp",
+    "SkSLAnalysis.h",
+    "SkSLBuiltinTypes.cpp",
+    "SkSLBuiltinTypes.h",
+    "SkSLCompiler.cpp",
+    "SkSLCompiler.h",
+    "SkSLConstantFolder.cpp",
+    "SkSLConstantFolder.h",
+    "SkSLContext.cpp",
+    "SkSLContext.h",
+    "SkSLDefines.h",
+    "SkSLErrorReporter.cpp",
+    "SkSLErrorReporter.h",
+    "SkSLFileOutputStream.h",
+    "SkSLGLSL.h",
+    "SkSLInliner.cpp",
+    "SkSLInliner.h",
+    "SkSLIntrinsicList.cpp",
+    "SkSLIntrinsicList.h",
+    "SkSLLexer.cpp",
+    "SkSLLexer.h",
+    "SkSLMangler.cpp",
+    "SkSLMangler.h",
+    "SkSLMemoryLayout.h",
+    "SkSLMemoryPool.h",
+    "SkSLModuleLoader.cpp",
+    "SkSLModuleLoader.h",
+    "SkSLOperator.cpp",
+    "SkSLOperator.h",
+    "SkSLOutputStream.cpp",
+    "SkSLOutputStream.h",
+    "SkSLParser.cpp",
+    "SkSLParser.h",
+    "SkSLPool.cpp",
+    "SkSLPool.h",
+    "SkSLPosition.cpp",
+    "SkSLPosition.h",
+    "SkSLProgramKind.h",
+    "SkSLProgramSettings.h",
+    "SkSLSampleUsage.cpp",
+    "SkSLString.cpp",
+    "SkSLString.h",
+    "SkSLStringStream.h",
+    "SkSLUtil.cpp",
+    "SkSLUtil.h",
+    "spirv.h",
+]
+
+split_srcs_and_hdrs(
+    name = "sksl",
+    files = SKSL_SRCS,
+)
+
+skia_filegroup(
+    name = "gpu_hdrs",
+    srcs = [
+        "GLSL.std.450.h",
+    ],
+    visibility = ["//src/sksl/codegen:__pkg__"],
+)
+
+selects.config_setting_group(
+    name = "use_sksl_gpu_srcs",
+    match_any = [
+        "//src/gpu:has_ganesh_backend",
+        ":enable_skslc_true",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+bool_flag(
+    name = "enable_skslc",
+    default = False,
+)
+
+bool_flag(
+    name = "enable_sksl_tracing",
+    default = False,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        ":sksl_srcs",
+        "//src/sksl/analysis:srcs",
+        "//src/sksl/codegen:srcs",
+        "//src/sksl/ir:srcs",
+        "//src/sksl/tracing:srcs",
+        "//src/sksl/transform:srcs",
+    ],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        ":sksl_hdrs",
+        "//src/sksl/analysis:private_hdrs",
+        "//src/sksl/codegen:private_hdrs",
+        "//src/sksl/ir:private_hdrs",
+        "//src/sksl/tracing:private_hdrs",
+        "//src/sksl/transform:private_hdrs",
+    ] + select({
+        ":use_sksl_gpu_srcs": [":gpu_hdrs"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//src:__pkg__"],
+)
+
+skia_cc_deps(
+    name = "deps",
+    textual_hdrs = [
+        ":txts",
+    ],
+    visibility = ["//src:__pkg__"],
+    deps = [
+        "//src/sksl/codegen:deps",
+    ] + select({
+        "//src/sksl:enable_skslc_true": [
+            "//tools:get_executable_path",
+            "@dawn//:tint",
+            "@dawn//src/tint/lang/wgsl",
+            "@dawn//src/tint/lang/wgsl/reader",
+            "@spirv_tools",
+        ],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        ":sksl_srcs",
+        "//src/sksl/analysis:srcs",
+        "//src/sksl/ir:srcs",
+        "//src/sksl/tracing:core_srcs",
+        "//src/sksl/transform:srcs",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        ":sksl_hdrs",
+        "//src/sksl/analysis:private_hdrs",
+        "//src/sksl/ir:private_hdrs",
+        "//src/sksl/tracing:core_priv_hdrs",
+        "//src/sksl/transform:private_hdrs",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_cc_library(
+    name = "generated_sksl",
+    textual_hdrs = [":txts"],
+    visibility = ["//src/core:__pkg__"],
+)

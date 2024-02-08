@@ -1,0 +1,19 @@
+uniform half4 colorGreen;
+
+inline half4 initLoopVar() {
+    return half4(0.0625);
+}
+
+inline bool shouldLoop(half4 v) {
+    return v.x < 0.5;
+}
+
+inline half4 grow(half4 v) {
+    return v + half4(0.125);
+}
+
+half4 main(float2 coords) {
+    for (half4 color = initLoopVar(); shouldLoop(color); color = grow(color)) {}
+
+    return colorGreen;
+}

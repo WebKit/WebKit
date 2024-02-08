@@ -1,0 +1,49 @@
+void a1() { float[-2]; }
+void b1() { float[-1]; }
+void c1() { float[0]; }
+void d1() { float[1.5]; }
+void e1() { float[4000000000]; }
+void f1() { float[true]; }
+void g1() { float[false]; }
+void h1() { float[int2(2, 2)]; }
+void i1() { float[]; }
+void j1() { float[int3(4000000000)]; }
+void k1() { float[int(1e20)]; }
+
+void a2() { float x[-2]; }
+void b2() { float x[-1]; }
+void c2() { float x[0]; }
+void d2() { float x[1.5]; }
+void e2() { float x[4000000000]; }
+void f2() { float x[true]; }
+void g2() { float x[false]; }
+void h2() { float x[int2(2, 2)]; }
+void i2() { float x[]; }
+void j2() { float x[int3(4000000000)]; }
+void k2() { float x[int(1e20)]; }
+
+/*%%*
+array size must be positive
+array size must be positive
+array size must be positive
+expected 'int', but found 'float'
+value is out of range for type 'int': 4000000000
+array size must be positive
+expected 'int', but found 'bool'
+expected 'int', but found 'bool'
+expected 'int', but found 'int2'
+missing index in '[]'
+value is out of range for type 'int': 4000000000
+value is out of range for type 'int': 100000002004087734272
+array size must be positive
+array size must be positive
+array size must be positive
+array size must be an integer
+array size out of bounds
+array size must be an integer
+array size must be an integer
+array size must be an integer
+unsized arrays are not permitted here
+value is out of range for type 'int': 4000000000
+value is out of range for type 'int': 100000002004087734272
+*%%*/

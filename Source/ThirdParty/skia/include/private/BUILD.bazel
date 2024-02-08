@@ -1,0 +1,87 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# In own skia_filegroup for mapping to the //gn/sksl.gni file.
+skia_filegroup(
+    name = "sksl_private_hdrs",
+    srcs = [
+        "SkSLSampleUsage.h",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkColorData.h",
+        "SkEncodedInfo.h",
+        "SkExif.h",
+        "SkGainmapInfo.h",
+        "SkGainmapShader.h",
+        "SkIDChangeListener.h",
+        "SkJpegMetadataDecoder.h",
+        "SkPathRef.h",
+        "SkWeakRefCnt.h",
+        "SkXmp.h",
+        ":sksl_private_hdrs",
+        "//include/private/base:private_hdrs",
+        "//include/private/chromium:private_hdrs",
+    ] + select({
+        "//src/gpu:has_ganesh_backend": [
+            "//include/private/gpu:private_hdrs",
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//include:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        # Files listed here will be available to Skia internals via the core_priv target.
+        "SkColorData.h",
+        "SkIDChangeListener.h",
+        "SkSLSampleUsage.h",
+        "SkGainmapShader.h",
+        "SkGainmapInfo.h",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        # We really don't want this header to be used outside of SkPath and SkPathBuilder
+        # so we add it to core under srcs instead to enforce that.
+        "SkPathRef.h",
+        "SkWeakRefCnt.h",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "decode_srcs",
+    srcs = [
+        "SkEncodedInfo.h",
+        "SkExif.h",
+    ],
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "jpeg_decode_srcs",
+    srcs = [
+        "SkJpegMetadataDecoder.h",
+    ],
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "opts_srcs",
+    srcs = [
+        "SkColorData.h",
+    ],
+    visibility = ["//src/opts:__pkg__"],
+)

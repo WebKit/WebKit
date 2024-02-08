@@ -1,0 +1,23 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a list of all gni files have file lists which Skia exports for use.
+import("codec.gni")
+import("core.gni")
+import("effects.gni")
+import("effects_imagefilters.gni")
+import("fuzz.gni")
+import("gpu.gni")
+import("graphite.gni")
+import("opts.gni")
+import("pdf.gni")
+import("sksl.gni")
+import("utils.gni")
+import("xml.gni")
+import("xps.gni")
+skia_opts = {
+  hsw_sources = hsw
+  skx_sources = skx
+}

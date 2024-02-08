@@ -1,0 +1,37 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+MOCK_FILES = [
+    "GrMockAttachment.h",
+    "GrMockBuffer.h",
+    "GrMockCaps.cpp",
+    "GrMockCaps.h",
+    "GrMockGpu.cpp",
+    "GrMockGpu.h",
+    "GrMockOpsRenderPass.h",
+    "GrMockRenderTask.h",
+    "GrMockSurfaceProxy.h",
+    "GrMockTexture.h",
+    "GrMockTypes.cpp",
+    "GrMockTypesPriv.h",
+]
+
+split_srcs_and_hdrs(
+    name = "mock",
+    files = MOCK_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":mock_srcs"],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":mock_hdrs"],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

@@ -1,0 +1,15 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkAnimCodecPlayer.cpp",
+        "SkAnimCodecPlayer.h",
+        "SkResources.cpp",
+    ],
+    visibility = ["//modules/skresources:__pkg__"],
+)

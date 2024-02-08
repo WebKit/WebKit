@@ -1,0 +1,25 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_cc_library(
+    name = "vulkan",
+    hdrs = [
+        "vulkan/vk_video/vulkan_video_codec_h264std.h",
+        "vulkan/vk_video/vulkan_video_codec_h264std_decode.h",
+        "vulkan/vk_video/vulkan_video_codec_h265std.h",
+        "vulkan/vk_video/vulkan_video_codec_h265std_decode.h",
+        "vulkan/vk_video/vulkan_video_codecs_common.h",
+        "vulkan/vulkan.h",
+        "vulkan/vulkan_core.h",
+    ],
+    includes = ["."],
+    textual_hdrs = [
+        "vulkan/vk_platform.h",
+        "vulkan/vulkan_android.h",
+        "vulkan/vulkan_xcb.h",
+    ],  #TODO(kjlubick) The other files are necessary on different platforms
+    visibility = ["//:__subpackages__"],
+)

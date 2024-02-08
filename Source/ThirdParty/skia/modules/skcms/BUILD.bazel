@@ -1,0 +1,131 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup")
+load("@skia_user_config//:copts.bzl", "DEFAULT_COPTS")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# A separate group duplicating :skcms.hdrs for
+# export to //modules/skcms/skcms.gni:skcms_public_headers.
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = ["skcms.h"],
+)
+
+# A separate group duplicating :skcms.srcs for
+# export to //modules/skcms/skcms.gni:skcms_sources.
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "skcms.cc",
+        "src/skcms_Transform.h",
+        "src/skcms_TransformBaseline.cc",
+        "src/skcms_TransformHsw.cc",
+        "src/skcms_TransformSkx.cc",
+        "src/skcms_internals.h",
+        "src/skcms_public.h",
+    ],
+)
+
+# A separate group duplicating :skcms.textual_hdrs for
+# export to //modules/skcms/skcms.gni:skcms_sources.
+skia_filegroup(
+    name = "textual_hdrs",
+    srcs = [
+        "src/Transform_inl.h",
+    ],
+)
+
+skia_cc_library(
+    name = "skcms",
+    hdrs = [
+        "skcms.h",
+    ],
+    # The following comment will be replaced with G3-specific settings
+    # SKCMS_REPLACE_IN_GOOGLE3_COMPATIBLE_WITH
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":skcms_TransformBaseline",
+        ":skcms_TransformHsw",
+        ":skcms_TransformSkx",
+        ":skcms_public",
+    ],
+)
+
+skia_cc_library(
+    name = "skcms_public",
+    srcs = [
+        "skcms.cc",
+        "src/skcms_internals.h",
+        "src/skcms_public.h",
+    ],
+    hdrs = [
+        "skcms.h",
+    ],
+    # The following comment will be replaced with G3-specific settings
+    # SKCMS_REPLACE_IN_GOOGLE3_COMPATIBLE_WITH
+    deps = [":skcms_TransformBaseline"] +
+           select({
+               "@platforms//cpu:x86_64": [
+                   ":skcms_TransformHsw",
+                   ":skcms_TransformSkx",
+               ],
+               "//conditions:default": [],
+           }),
+)
+
+skia_cc_library(
+    name = "skcms_TransformBaseline",
+    srcs = [
+        "src/skcms_Transform.h",
+        "src/skcms_TransformBaseline.cc",
+        "src/skcms_internals.h",
+        "src/skcms_public.h",
+    ],
+    # The following comment will be replaced with G3-specific settings
+    # SKCMS_REPLACE_IN_GOOGLE3_COMPATIBLE_WITH
+    # This header does not compile on its own and is meant to be included from skcms_Transform*.cc
+    textual_hdrs = [
+        "src/Transform_inl.h",
+    ],
+)
+
+skia_cc_library(
+    name = "skcms_TransformHsw",
+    srcs = [
+        "src/skcms_Transform.h",
+        "src/skcms_TransformHsw.cc",
+        "src/skcms_internals.h",
+        "src/skcms_public.h",
+    ],
+    # The following comment will be replaced with G3-specific settings
+    # SKCMS_REPLACE_IN_GOOGLE3_COMPATIBLE_WITH
+    copts = DEFAULT_COPTS + select({
+        "@platforms//cpu:x86_64": ["-march=haswell"],
+        "//conditions:default": [],
+    }),
+    # This header does not compile on its own and is meant to be included from skcms_Transform*.cc
+    textual_hdrs = [
+        "src/Transform_inl.h",
+    ],
+)
+
+skia_cc_library(
+    name = "skcms_TransformSkx",
+    srcs = [
+        "src/skcms_Transform.h",
+        "src/skcms_TransformSkx.cc",
+        "src/skcms_internals.h",
+        "src/skcms_public.h",
+    ],
+    # The following comment will be replaced with G3-specific settings
+    # SKCMS_REPLACE_IN_GOOGLE3_COMPATIBLE_WITH
+    copts = DEFAULT_COPTS + select({
+        "@platforms//cpu:x86_64": ["-march=skylake-avx512"],
+        "//conditions:default": [],
+    }),
+    # This header does not compile on its own and is meant to be included from skcms_Transform*.cc
+    textual_hdrs = [
+        "src/Transform_inl.h",
+    ],
+)

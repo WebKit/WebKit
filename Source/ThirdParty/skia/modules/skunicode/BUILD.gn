@@ -1,0 +1,107 @@
+# Copyright 2021 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../gn/skia.gni")
+import("skunicode.gni")
+
+declare_args() {
+  skia_use_runtime_icu = false
+  skunicode_tests_enabled = true
+}
+
+if (skia_use_icu || skia_use_client_icu || skia_use_libgrapheme ||
+    skia_use_icu4x) {
+  config("public_config") {
+    include_dirs = [ "include" ]
+    defines = [ "SK_UNICODE_AVAILABLE" ]
+    if (skia_use_icu) {
+      defines += [ "SK_UNICODE_ICU_IMPLEMENTATION" ]
+    }
+    if (skia_use_client_icu) {
+      defines += [ "SK_UNICODE_CLIENT_IMPLEMENTATION" ]
+    }
+    if (skia_use_libgrapheme) {
+      defines += [ "SK_UNICODE_LIBGRAPHEME_IMPLEMENTATION" ]
+    }
+    if (skia_use_icu4x) {
+      defines += [ "SK_UNICODE_ICU4X_IMPLEMENTATION" ]
+    }
+    if (is_component_build) {
+      defines += [ "SKUNICODE_DLL" ]
+    }
+  }
+
+  component("skunicode") {
+    check_includes = false
+    public_configs = [ ":public_config" ]
+    public = skia_unicode_public
+    deps = [ "../..:skia" ]
+    defines = [ "SKUNICODE_IMPLEMENTATION=1" ]
+    sources = skia_unicode_sources
+    defines += [ "SK_UNICODE_AVAILABLE" ]
+    configs += [ "../../:skia_private" ]
+
+    if (skia_use_icu) {
+      sources += skia_unicode_icu_bidi_sources
+      sources += skia_unicode_icu_sources
+      defines += [ "SK_UNICODE_ICU_IMPLEMENTATION" ]
+
+      # only available for Android at the moment
+      if (skia_use_runtime_icu && (is_android || is_linux)) {
+        sources += skia_unicode_runtime_icu_sources
+        deps += [ "//third_party/icu:headers" ]
+      } else {
+        sources += skia_unicode_builtin_icu_sources
+        deps += [ "//third_party/icu" ]
+      }
+      configs += [ "../../third_party/icu/config:no_cxx" ]
+    }
+    if (skia_use_client_icu) {
+      sources += skia_unicode_client_icu_sources
+      defines += [ "SK_UNICODE_CLIENT_IMPLEMENTATION" ]
+      if (!skia_use_icu) {
+        sources += skia_unicode_icu_bidi_sources
+        deps += [ skia_icu_bidi_third_party_dir ]
+      }
+    }
+    if (skia_use_libgrapheme) {
+      sources += skia_unicode_libgrapheme_sources
+      defines += [ "SK_UNICODE_LIBGRAPHEME_IMPLEMENTATION" ]
+      deps += [ skia_libgrapheme_third_party_dir ]
+      if (!skia_use_icu) {
+        sources += skia_unicode_icu_bidi_sources
+        deps += [ skia_icu_bidi_third_party_dir ]
+      }
+    }
+    if (skia_use_icu4x) {
+      sources += skia_unicode_icu4x_sources
+      defines += [ "SK_UNICODE_ICU4X_IMPLEMENTATION" ]
+      deps += [ "//third_party/icu4x" ]
+    }
+  }
+
+  if (defined(is_skia_standalone) && skia_enable_tools) {
+    skia_source_set("tests") {
+      if (skunicode_tests_enabled &&
+          (skia_use_icu || skia_use_libgrapheme || skia_use_icu4x)) {
+        testonly = true
+        deps = [
+          ":skunicode",
+          "../..:skia",
+          "../..:test",
+        ]
+        sources = skia_unicode_tests
+        deps += [ skia_icu_bidi_third_party_dir ]
+      } else {
+        sources = []
+      }
+    }
+  }
+} else {
+  group("skunicode") {
+  }
+  group("tests") {
+  }
+}

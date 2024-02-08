@@ -1,0 +1,87 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "select_multi", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "android_fontmgr_hdrs",
+    srcs = ["SkFontMgr_android.h"],
+)
+
+skia_filegroup(
+    name = "directory_fontmgr_hdrs",
+    srcs = ["SkFontMgr_directory.h"],
+)
+
+skia_filegroup(
+    name = "embedded_fontmgr_hdrs",
+    srcs = ["SkFontMgr_data.h"],
+)
+
+skia_filegroup(
+    name = "empty_fontmgr_hdrs",
+    srcs = ["SkFontMgr_empty.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "fontconfig_fontmgr_hdrs",
+    srcs = ["SkFontMgr_fontconfig.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "fci_fontmgr_hdrs",
+    srcs = [
+        "SkFontConfigInterface.h",
+        "SkFontMgr_FontConfigInterface.h",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr",
+    srcs = select_multi(
+        {
+            "//bazel/common_config_settings:android_fontmgr": [":android_fontmgr_hdrs"],
+            "//bazel/common_config_settings:custom_directory_fontmgr": [":directory_fontmgr_hdrs"],
+            "//bazel/common_config_settings:custom_embedded_fontmgr": [":embedded_fontmgr_hdrs"],
+            "//bazel/common_config_settings:custom_empty_fontmgr": [":empty_fontmgr_hdrs"],
+            "//bazel/common_config_settings:fci_fontmgr": [":fci_fontmgr_hdrs"],
+            # TODO(kjlubick, bungeman) fuchsia_fontmgr, fontmgr_mac_ct, fontmgr_win
+        },
+    ) + select({
+        "@platforms//os:linux": [":fontconfig_fontmgr_hdrs"],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "SkImageGeneratorCG.h",
+        "SkImageGeneratorNDK.h",
+        "SkImageGeneratorWIC.h",
+        ":fontmgr",
+    ] + select({
+        "@platforms//os:macos": ["SkCFObject.h"],
+        "@platforms//os:ios": ["SkCFObject.h"],
+        "//conditions:default": [],
+    }) + select({
+        "@platforms//os:macos": ["SkTypeface_mac.h"],
+        "@platforms//os:windows": ["SkTypeface_win.h"],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:use_fontations_true": [
+            "SkTypeface_fontations.h",
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//include:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_hdrs",
+    srcs = ["SkImageGeneratorCG.h"],
+    visibility = ["//src/core:__pkg__"],
+)

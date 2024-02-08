@@ -1,0 +1,11 @@
+void func() {
+    switch (1) {
+        default:
+        default:
+            break;
+    }
+}
+
+/*%%*
+expected '}', but found 'default'
+*%%*/

@@ -1,0 +1,28 @@
+26 instructions
+
+store_src_rg                   xy = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+splat_3_constants              f, i, b = 0
+copy_slot_unmasked             $0 = f
+cmpne_imm_float                $0 = notEqual($0, 0)
+copy_slot_unmasked             $1 = i
+cast_to_float_from_int         $1 = IntToFloat($1)
+copy_slot_unmasked             $2 = b
+bitwise_and_imm_int            $2 &= 0x3F800000
+mix_int                        $0 = mix($1, $2, $0)
+copy_slot_unmasked             x = $0
+copy_slot_unmasked             $0 = i
+cmpne_imm_int                  $0 = notEqual($0, 0)
+copy_slot_unmasked             $1 = f
+cast_to_int_from_float         $1 = FloatToInt($1)
+copy_slot_unmasked             $2 = b
+bitwise_and_imm_int            $2 &= 0x00000001
+mix_int                        $0 = mix($1, $2, $0)
+copy_slot_unmasked             y = $0
+copy_slot_unmasked             $0 = x
+swizzle_4                      $0..3 = ($0..3).xxxx
+copy_slot_unmasked             $4 = y
+cast_to_float_from_int         $4 = IntToFloat($4)
+swizzle_4                      $4..7 = ($4..7).xxxx
+mul_4_floats                   $0..3 *= $4..7
+load_src                       src.rgba = $0..3

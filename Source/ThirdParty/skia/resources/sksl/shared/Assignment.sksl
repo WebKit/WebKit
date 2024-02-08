@@ -1,0 +1,66 @@
+uniform half4 colorGreen;
+
+struct S {
+    float f;
+    float af[5];
+    half4 h4;
+    half4 ah4[5];
+};
+
+half4 globalVar;
+S globalStruct;
+
+noinline void keepAlive(inout half h) {}
+noinline void keepAlive(inout float f) {}
+noinline void keepAlive(inout int i) {}
+
+void assignToFunctionParameter(int x, inout float y) {
+    x = 1;
+    y = 1;
+}
+
+half4 main(float2 coords) {
+    /* assign to scalar */               int i; i = 0;
+    /* assign to vector */               int4 i4; i4 = int4(1,2,3,4);
+    /* assign to matrix */               float3x3 f3x3; f3x3 = float3x3(1,2,3,4,5,6,7,8,9);
+    /* assign to swizzle */              half4 x; x.w = 0; x.yx = half2(0);
+    /* assign to array of scalar */      int ai[1]; ai[0] = 0;
+    /* assign to array of vector */      int4 ai4[1]; ai4[0] = int4(1,2,3,4);
+    /* assign to array of matrix */      half3x3 ah3x3[1]; ah3x3[0] = half3x3(1,2,3,4,5,6,7,8,9);
+    /* assign to array swizzle */        float4 af4[1]; af4[0].x = 0; af4[0].ywxz = float4(1);
+
+    /* assign to struct variable */      S s; s.f = 0;
+    /* assign to struct array */         s.af[1] = 0;
+    /* assign to struct swizzle */       s.h4.zxy = half3(9);
+    /* assign to struct array swizzle */ s.ah4[2].yw = half2(5);
+
+    /* assign to global var */           globalVar = half4(0);
+    /* assign to global struct */        globalStruct.f = 0;
+
+    /* assign to function parameter */   assignToFunctionParameter(0, f3x3[0][0]);
+
+// Not allowed in ES2
+//  /* assign to array idx by lookup */  ai[0] = 0; ai[ai[0]] = 0;
+
+// Not allowed natively in GLSL, but SkSL will turn these into valid GLSL expressions.
+    /* assign to folded ternary */       half l, r; (true ? l : r) = 0;
+    /* assign to unary plus */           +ai[0] += +ai4[0][0];
+    /* assign to struct unary plus */    +s.f = 1; +s.af[0] = 2;
+                                         +s.h4 = half4(1); +s.ah4[0] = half4(2);
+
+    /* repeat assignment */              float repeat; repeat = repeat = 1.0;
+
+    keepAlive(af4[0][0]);
+    keepAlive(ah3x3[0][0][0]);
+    keepAlive(i);
+    keepAlive(i4.y);
+    keepAlive(ai[0]);
+    keepAlive(ai4[0][0]);
+    keepAlive(x.y);
+    keepAlive(s.f);
+    keepAlive(l);
+    keepAlive(f3x3[0][0]);
+    keepAlive(repeat);
+
+    return colorGreen;
+}

@@ -1,0 +1,4 @@
+void c=+
+/*%%*
+expected expression, but found ''
+*%%*/

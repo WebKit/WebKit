@@ -1,0 +1,368 @@
+load("//bazel:flags.bzl", "selects")
+load(
+    "//bazel:skia_rules.bzl",
+    "exports_files_legacy",
+    "select_multi",
+    "skia_cc_deps",
+    "skia_cc_library",
+    "skia_filegroup",
+)
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "discardable_memory_pool",
+    srcs = select({
+        "//src/lazy:use_default_global_memory_pool_true": ["SkDiscardableMemory_none.cpp"],
+        "//conditions:default": [],
+    }),
+)
+
+# Any setting that causes this skia_filegroup to be included also needs to have a dependency on freetype.
+# See "deps" and "uses_freetype" at the bottom of this file.
+skia_filegroup(
+    name = "typeface_freetype",
+    srcs = [
+        "SkFontHost_FreeType.cpp",
+        "SkFontHost_FreeType_common.cpp",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_freetype_hdrs",
+    srcs = [
+        "SkFontHost_FreeType_common.h",
+        "SkTypeface_FreeType.h",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_fontations",
+    srcs = select({
+        "//bazel/common_config_settings:use_fontations_true": [
+            "SkTypeface_fontations.cpp",
+        ],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "fontmgr",
+    srcs = select_multi(
+        {
+            "//bazel/common_config_settings:android_fontmgr": [":fontmgr_android"],
+            "//bazel/common_config_settings:custom_directory_fontmgr": [":fontmgr_custom_directory"],
+            "//bazel/common_config_settings:custom_embedded_fontmgr": [":fontmgr_custom_embedded"],
+            "//bazel/common_config_settings:custom_empty_fontmgr": [":fontmgr_custom_empty"],
+            "//bazel/common_config_settings:fci_fontmgr": [":fontmgr_fci"],
+        },
+    ) + select({
+        "@platforms//os:linux": [":legacy_fontmgr_fontconfig"],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "fontmgr_android",
+    srcs = [
+        "SkFontMgr_android.cpp",
+        "SkFontMgr_android_parser.cpp",
+        ":typeface_freetype",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_android_hdrs",
+    srcs = [
+        "SkFontMgr_android_parser.h",
+    ],
+)
+
+skia_filegroup(
+    name = "legacy_fontmgr_custom",
+    srcs = [
+        "SkFontMgr_custom.cpp",
+        ":typeface_freetype",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_custom_directory",
+    srcs = [
+        "SkFontMgr_custom_directory.cpp",
+        ":legacy_fontmgr_custom",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_custom_embedded",
+    srcs = [
+        "SkFontMgr_custom_embedded.cpp",
+        ":legacy_fontmgr_custom",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_custom_empty",
+    srcs = [
+        "SkFontMgr_custom_empty.cpp",
+        ":legacy_fontmgr_custom",
+    ],
+)
+
+# Any setting that causes this skia_filegroup to be included also needs to have a dependency on
+# fontconfig. See "deps" and "uses_fontconfig" at the bottom of this file.
+skia_filegroup(
+    name = "legacy_fontmgr_fontconfig",
+    srcs = [
+        "SkFontMgr_fontconfig.cpp",
+        ":typeface_freetype",
+    ],
+)
+
+# TODO(bungeman, kjlubick) break this up into the direct and Interface part.
+#  Alternatively, delete it.
+# Any setting that causes this skia_filegroup to be included also needs to have a dependency on
+# fontconfig. See "deps" and "uses_fontconfig" at the bottom of this file.
+skia_filegroup(
+    name = "fontmgr_fci",
+    srcs = [
+        "SkFontConfigInterface.cpp",
+        "SkFontConfigInterface_direct.cpp",
+        "SkFontConfigInterface_direct_factory.cpp",
+        "SkFontMgr_FontConfigInterface.cpp",
+        ":typeface_freetype",
+    ],
+)
+
+skia_filegroup(
+    name = "global_init",
+    srcs = ["SkGlobalInitialization_default.cpp"],
+)
+
+# In own group to prevent exporting to *.gni files.
+skia_filegroup(
+    name = "osfile_platform",
+    srcs = select({
+        "@platforms//os:windows": ["SkOSFile_win.cpp"],
+        "@platforms//os:ios": ["SkOSFile_posix.cpp"],
+        "//conditions:default": ["SkOSFile_posix.cpp"],
+    }),
+)
+
+skia_filegroup(
+    name = "osfile",
+    srcs = [
+        "SkOSFile_stdio.cpp",
+        ":osfile_platform",
+    ],
+    visibility = ["//tools/skslc:__pkg__"],
+)
+
+skia_filegroup(
+    name = "malloc",
+    srcs = ["SkMemory_malloc.cpp"],  # TODO(kjlubick) add select() if necessary
+)
+
+skia_filegroup(
+    name = "load_dynamic_library",
+    srcs = select({
+        "@platforms//os:windows": ["SkOSLibrary_win.cpp"],
+        "//conditions:default": ["SkOSLibrary_posix.cpp"],
+    }),
+)
+
+skia_filegroup(
+    name = "skdebug",
+    srcs = select({
+        "@platforms//os:windows": ["SkDebug_win.cpp"],
+        "@platforms//os:android": ["SkDebug_android.cpp"],
+        "//conditions:default": ["SkDebug_stdio.cpp"],
+    }),
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        ":discardable_memory_pool",
+        ":fontmgr",
+        ":global_init",
+        ":load_dynamic_library",
+        ":malloc",
+        ":osfile",
+        ":skdebug",
+        ":typeface_fontations",
+    ],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkOSLibrary.h",
+    ] + select({
+        ":uses_freetype": [
+            "SkFontHost_FreeType_common.h",
+            "SkFontMgr_custom.h",
+            "SkTypeface_FreeType.h",
+        ],
+        "//conditions:default": [],
+    }) + select({
+        "@platforms//os:ios": ["SkOSFile_ios.h"],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:android_fontmgr": [":fontmgr_android_hdrs"],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:fci_fontmgr": [
+            "SkFontConfigInterface_direct.h",
+            "SkFontConfigTypeface.h",
+        ],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:use_fontations_true": [
+            "SkTypeface_fontations_priv.h",
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//src:__pkg__"],
+)
+
+selects.config_setting_group(
+    name = "uses_freetype",
+    match_any = [
+        "//bazel/common_config_settings:android_fontmgr",
+        "//bazel/common_config_settings:custom_directory_fontmgr",
+        "//bazel/common_config_settings:custom_embedded_fontmgr",
+        "//bazel/common_config_settings:custom_empty_fontmgr",
+        "//bazel/common_config_settings:fontconfig_fontmgr",
+        "//bazel/common_config_settings:fci_fontmgr",
+        "@platforms//os:linux",
+    ],
+)
+
+selects.config_setting_group(
+    name = "uses_fontconfig",
+    match_any = [
+        "//bazel/common_config_settings:fontconfig_fontmgr",
+        "//bazel/common_config_settings:fci_fontmgr",
+        "@platforms//os:linux",
+    ],
+)
+
+selects.config_setting_group(
+    name = "uses_fontations",
+    match_any = [
+        # TODO(b/318667611): Fontations does not have a FontMgr yet.
+        "//bazel/common_config_settings:use_fontations_true",
+    ],
+)
+
+skia_cc_deps(
+    name = "deps",
+    linkopts = select({
+        "@platforms//os:linux": ["-ldl"],
+        "@platforms//os:android": [
+            "-llog",  # Provides __android_log_vprint, needed by //src/ports/SkDebug_android.cpp.
+        ],
+        "//conditions:default": [],
+    }),
+    visibility = ["//src:__pkg__"],
+    deps = select({
+        ":uses_freetype": ["@freetype"],
+        "//conditions:default": [],
+    }) + select({
+        ":uses_fontconfig": ["//bazel/external/fontconfig"],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:android_fontmgr": ["@expat"],
+        "//conditions:default": [],
+    }) + select({
+        "//bazel/common_config_settings:use_fontations_true": ["//src/ports/fontations:deps"],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "base_srcs",
+    srcs = [
+        ":skdebug",
+        # TODO(kjlubick) Chromium will need a way to overwrite the malloc impls. Having malloc
+        # be a module doesn't quite work because ld complains "backward reference detected"
+        # when something in a module like pathops uses malloc without depending on it.
+        ":malloc",
+    ],
+    visibility = ["//src/base:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        ":global_init",
+        ":osfile",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_cc_library(
+    name = "freetype_support",
+    srcs = [
+        ":typeface_freetype",
+        "//src/utils:char_to_glyphcache",
+    ],
+    hdrs = [":typeface_freetype_hdrs"],
+    deps = [
+        "//:core",
+        "//:pathops",
+        "@freetype",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_fontconfig_freetype",
+    srcs = [
+        "SkFontMgr_fontconfig.cpp",
+    ],
+    hdrs = [
+        "//include/ports:fontconfig_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FONTCONFIG_AVAILABLE"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":freetype_support",
+        "//:core",
+        "//bazel/external/fontconfig",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+filegroup(
+    name = "fontmgr_custom",
+    srcs = [
+        "SkFontMgr_custom.cpp",
+        "SkFontMgr_custom.h",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_empty_freetype",
+    srcs = [
+        "SkFontMgr_custom_empty.cpp",
+        ":fontmgr_custom",
+    ],
+    hdrs = [
+        "//include/ports:empty_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)

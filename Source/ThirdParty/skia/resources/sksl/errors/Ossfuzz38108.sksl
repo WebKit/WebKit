@@ -1,0 +1,4 @@
+int a,a;
+/*%%*
+symbol 'a' was already defined
+*%%*/

@@ -1,0 +1,5 @@
+int foo() { return; }
+
+/*%%*
+expected function to return 'int'
+*%%*/

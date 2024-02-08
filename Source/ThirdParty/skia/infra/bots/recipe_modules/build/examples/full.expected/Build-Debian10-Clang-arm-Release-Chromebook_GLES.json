@@ -1,0 +1,79 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/cache/work/skia/infra/bots/assets/clang_linux/VERSION",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "Get clang_linux VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@VERSION@42@@@",
+      "@@@STEP_LOG_END@VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-gn"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/armhf_sysroot/lib",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-gn"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cache/work/skia/bin/gn",
+      "gen",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-arm-Release-Chromebook_GLES/Release",
+      "--args=cc=\"[START_DIR]/clang_linux/bin/clang\" cxx=\"[START_DIR]/clang_linux/bin/clang++\" extra_asmflags=[\"--target=armv7a-linux-gnueabihf\",\"--sysroot=[START_DIR]/armhf_sysroot\",\"-march=armv7-a\",\"-mfpu=neon\",\"-mthumb\"] extra_cflags=[\"--target=armv7a-linux-gnueabihf\",\"--sysroot=[START_DIR]/armhf_sysroot\",\"-I[START_DIR]/chromebook_arm_gles/include\",\"-I[START_DIR]/armhf_sysroot/include\",\"-I[START_DIR]/armhf_sysroot/include/c++/10\",\"-I[START_DIR]/armhf_sysroot/include/c++/10/arm-linux-gnueabihf\",\"-DMESA_EGL_NO_X11_HEADERS\",\"-U_GLIBCXX_DEBUG\",\"-DREBUILD_IF_CHANGED_clang_linux_version=42\"] extra_ldflags=[\"--target=armv7a-linux-gnueabihf\",\"--sysroot=[START_DIR]/armhf_sysroot\",\"-static-libstdc++\",\"-static-libgcc\",\"-B[START_DIR]/armhf_sysroot/bin\",\"-B[START_DIR]/armhf_sysroot/gcc-cross\",\"-L[START_DIR]/armhf_sysroot/gcc-cross\",\"-L[START_DIR]/armhf_sysroot/lib\",\"-L[START_DIR]/chromebook_arm_gles/lib\"] is_debug=false skia_use_egl=true skia_use_fontconfig=false skia_use_system_freetype2=false target_cpu=\"arm\" werror=true"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/armhf_sysroot/lib",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "gn gen"
+  },
+  {
+    "cmd": [
+      "ninja",
+      "-C",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-arm-Release-Chromebook_GLES/Release",
+      "nanobench",
+      "dm"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/armhf_sysroot/lib",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "ninja"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-arm-Release-Chromebook_GLES/Release",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Release",
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+    ],
+    "infra_step": true,
+    "name": "copy build products"
+  },
+  {
+    "name": "$result"
+  }
+]

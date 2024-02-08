@@ -1,0 +1,32 @@
+uniform half4 testInputs, colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    half4 v = testInputs;
+    v = half4(v.x, 1, 1, 1);
+    v = half4(v.xy, 1, 1);
+    v = half4(v.x1, 1, 1);
+    v = half4(v.0y, 1, 1);
+    v = half4(v.xyz, 1);
+    v = half4(v.xy1, 1);
+    v = half4(v.x0z, 1);
+    v = half4(v.x10, 1);
+    v = half4(v.1yz, 1);
+    v = half4(v.0y1, 1);
+    v = half4(v.11z, 1);
+    v = v.xyzw;
+    v = v.xyz1;
+    v = v.xy0w;
+    v = v.xy10;
+    v = v.x1zw;
+    v = v.x0z1;
+    v = v.x11w;
+    v = v.x101;
+    v = v.1yzw;
+    v = v.0yz1;
+    v = v.0y1w;
+    v = v.1y11;
+    v = v.00zw;
+    v = v.00z1;
+    v = v.011w;
+    return v == half4(0, 1, 1, 1) ? colorGreen : colorRed;
+}

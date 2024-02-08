@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+
+have_scipy = True
+try:
+    import scipy.stats
+except:
+    have_scipy = False
+
+SIGNIFICANCE_THRESHOLD = 0.0001
+
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description='Compare performance of two runs from nanobench.')
+parser.add_argument('--use_means', action='store_true', default=False,
+                    help='Use means to calculate performance ratios.')
+parser.add_argument('baseline', help='Baseline file.')
+parser.add_argument('experiment', help='Experiment file.')
+args = parser.parse_args()
+
+a,b = {},{}
+for (path, d) in [(args.baseline, a), (args.experiment, b)]:
+    for line in open(path):
+        try:
+            tokens = line.split()
+            if tokens[0] != "Samples:":
+                continue
+            samples  = tokens[1:-1]
+            label    = tokens[-1]
+            d[label] = map(float, samples)
+        except:
+            pass
+
+common = set(a.keys()).intersection(b.keys())
+
+def mean(xs):
+    return sum(xs) / len(xs)
+
+ps = []
+for key in common:
+    p, asem, bsem = 0, 0, 0
+    m = mean if args.use_means else min
+    am, bm = m(a[key]), m(b[key])
+    if have_scipy:
+        _, p = scipy.stats.mannwhitneyu(a[key], b[key])
+        asem, bsem = scipy.stats.sem(a[key]), scipy.stats.sem(b[key])
+    ps.append((bm/am, p, key, am, bm, asem, bsem))
+ps.sort(reverse=True)
+
+def humanize(ns):
+    for threshold, suffix in [(1e9, 's'), (1e6, 'ms'), (1e3, 'us'), (1e0, 'ns')]:
+        if ns > threshold:
+            return "%.3g%s" % (ns/threshold, suffix)
+
+maxlen = max(map(len, common))
+
+# We print only signficant changes in benchmark timing distribution.
+bonferroni = SIGNIFICANCE_THRESHOLD / len(ps)  # Adjust for the fact we've run multiple tests.
+for ratio, p, key, am, bm, asem, bsem in ps:
+    if p < bonferroni:
+        str_ratio = ('%.2gx' if ratio < 1 else '%.3gx') % ratio
+        if args.use_means:
+            print '%*s\t%6s(%6s) -> %6s(%6s)\t%s' % (maxlen, key, humanize(am), humanize(asem),
+                                                     humanize(bm), humanize(bsem), str_ratio)
+        else:
+            print '%*s\t%6s -> %6s\t%s' % (maxlen, key, humanize(am), humanize(bm), str_ratio)

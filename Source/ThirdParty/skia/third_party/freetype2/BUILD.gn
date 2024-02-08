@@ -1,0 +1,101 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../zlib/zlib.gni")
+
+declare_args() {
+  # TODO: build from source all the time for testing?
+  skia_use_system_freetype2 =
+      (is_official_build || !(is_android || sanitize == "MSAN")) &&
+      !is_fuchsia && !is_wasm
+  skia_system_freetype2_include_path = "/usr/include/freetype2"
+  skia_system_freetype2_lib = "freetype"
+
+  skia_use_freetype_woff2 = is_wasm
+  skia_use_freetype_svg = true
+  skia_use_freetype_zlib = true
+  skia_use_freetype_zlib_bundled = !skia_use_system_zlib
+}
+
+import("../third_party.gni")
+
+if (skia_use_system_freetype2) {
+  system("freetype2") {
+    include_dirs = [ skia_system_freetype2_include_path ]
+    libs = [ skia_system_freetype2_lib ]
+  }
+} else {
+  third_party("freetype2") {
+    public_defines =
+        [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION_IS_BUILD_VERSION=1" ]
+    public_include_dirs = [ "include" ]
+
+    deps = [ "//third_party/libpng" ]
+
+    defines = [ "FT2_BUILD_LIBRARY" ]
+    if (target_cpu == "wasm") {
+      public_defines += [
+        "FT_CONFIG_MODULES_H=<freetype-no-type1/freetype/config/ftmodule.h>",
+        "FT_CONFIG_OPTIONS_H=<freetype-no-type1/freetype/config/ftoption.h>",
+      ]
+      public_include_dirs += [ "include/freetype-no-type1" ]
+    } else {
+      public_defines += [
+        "FT_CONFIG_MODULES_H=<freetype-android/freetype/config/ftmodule.h>",
+        "FT_CONFIG_OPTIONS_H=<freetype-android/freetype/config/ftoption.h>",
+      ]
+      public_include_dirs += [ "include/freetype-android" ]
+    }
+    public_include_dirs += [ "../externals/freetype/include" ]
+
+    if (skia_use_freetype_zlib) {
+      public_defines += [ "FT_CONFIG_OPTION_USE_ZLIB" ]
+      if (!skia_use_freetype_zlib_bundled) {
+        deps += [ "//third_party/zlib" ]
+        public_defines += [ "FT_CONFIG_OPTION_SYSTEM_ZLIB" ]
+      }
+    }
+
+    if (skia_use_freetype_woff2) {
+      deps += [ "//third_party/brotli" ]
+      public_defines += [ "FT_CONFIG_OPTION_USE_BROTLI" ]
+    }
+
+    sources = [
+      "../externals/freetype/src/autofit/autofit.c",
+      "../externals/freetype/src/base/ftbase.c",
+      "../externals/freetype/src/base/ftbbox.c",
+      "../externals/freetype/src/base/ftbitmap.c",
+      "../externals/freetype/src/base/ftdebug.c",
+      "../externals/freetype/src/base/ftfstype.c",
+      "../externals/freetype/src/base/ftgasp.c",
+      "../externals/freetype/src/base/ftglyph.c",
+      "../externals/freetype/src/base/ftinit.c",
+      "../externals/freetype/src/base/ftmm.c",
+      "../externals/freetype/src/base/ftpatent.c",
+      "../externals/freetype/src/base/ftstroke.c",
+      "../externals/freetype/src/base/ftsynth.c",
+      "../externals/freetype/src/base/ftsystem.c",
+      "../externals/freetype/src/base/fttype1.c",
+      "../externals/freetype/src/base/ftwinfnt.c",
+      "../externals/freetype/src/cff/cff.c",
+      "../externals/freetype/src/cid/type1cid.c",
+      "../externals/freetype/src/gzip/ftgzip.c",
+      "../externals/freetype/src/psaux/psaux.c",
+      "../externals/freetype/src/pshinter/pshinter.c",
+      "../externals/freetype/src/psnames/psnames.c",
+      "../externals/freetype/src/raster/raster.c",
+      "../externals/freetype/src/sfnt/sfnt.c",
+      "../externals/freetype/src/smooth/smooth.c",
+      "../externals/freetype/src/truetype/truetype.c",
+      "../externals/freetype/src/type1/type1.c",
+    ]
+
+    if (skia_use_freetype_svg) {
+      public_defines += [ "FT_CONFIG_OPTION_SVG" ]
+      sources += [ "../externals/freetype/src/svg/svg.c" ]
+    }
+  }
+}

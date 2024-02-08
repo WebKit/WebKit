@@ -288,6 +288,7 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
+      os.path.join('Source', 'ThirdParty', 'skia'),
       os.path.join('Source', 'ThirdParty', 'xdgmime'),
       os.path.join('Tools', 'WebGPUAPIStructure')],
      ["-",
@@ -488,6 +489,9 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     os.path.join('Source', 'WebCore', 'icu'),
     os.path.join('Source', 'WebKitLegacy', 'mac', 'icu'),
     os.path.join('Source', 'WTF', 'icu'),
+
+    # Skia.
+    os.path.join('Source', 'ThirdParty', 'skia'),
     ]
 
 # Extensions of files which are allowed to contain carriage returns.

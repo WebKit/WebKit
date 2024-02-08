@@ -1,0 +1,7 @@
+5 instructions
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_4_uniforms                $0..3 = colorRed
+swizzle_4                      $0..3 = ($0..3).zwyx
+load_src                       src.rgba = $0..3

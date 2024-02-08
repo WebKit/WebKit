@@ -1,0 +1,52 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "test_font_manager_srcs",
+    testonly = True,
+    srcs = [
+        "FontToolUtils.cpp",
+        "FontToolUtils.h",
+        "TestFontMgr.cpp",
+        "TestFontMgr.h",
+        "TestTypeface.cpp",
+        "TestTypeface.h",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+        "//tools:__subpackages__",
+    ],
+)
+
+skia_filegroup(
+    name = "test_fonts",
+    testonly = True,
+    srcs = [
+        "test_font_index.inc",
+        "test_font_monospace.inc",
+        "test_font_sans_serif.inc",
+        "test_font_serif.inc",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+        "//tools:__subpackages__",
+    ],
+)
+
+skia_filegroup(
+    name = "test_empty_typeface",
+    testonly = True,
+    srcs = ["TestEmptyTypeface.h"],
+    visibility = ["//tests:__pkg__"],
+)
+
+skia_cc_library(
+    name = "random_scaler_context",
+    srcs = ["RandomScalerContext.cpp"],
+    hdrs = ["RandomScalerContext.h"],
+    visibility = ["//tests:__pkg__"],
+    deps = ["//:skia_internal"],
+)

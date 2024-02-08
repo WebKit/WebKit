@@ -1,0 +1,20 @@
+// Expect 3 errors
+void func();
+
+void a;
+void b = func();
+int c;
+
+void m() {
+    // Attempts to assign into a void variable via the switch-hoisting rewrite.
+    switch (c) {
+        case 1: void c = a;
+    }
+}
+
+/*%%*
+variables of type 'void' are not allowed
+variables of type 'void' are not allowed
+unknown identifier 'a'
+variables of type 'void' are not allowed
+*%%*/

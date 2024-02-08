@@ -1,0 +1,137 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+# This first example only needs the core Skia functionality and the pathops
+# module. Thus, the client defines a cc_library (skia_core_and_pathops) with
+# those components and then depending on that library.
+cc_binary(
+    name = "path_combiner",
+    srcs = ["src/path_main.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [":skia_core_and_pathops"],
+)
+
+cc_library(
+    name = "skia_core_and_pathops",
+    deps = [
+        "@skia//:core",
+        "@skia//:pathops",
+    ],
+)
+
+cc_binary(
+    name = "png_decoder",
+    srcs = ["src/decode_png_main.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_decode_codec",
+    ],
+)
+
+cc_binary(
+    name = "decode_everything",
+    srcs = ["src/decode_everything.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = select({
+        "@platforms//os:linux": [
+            "-fuse-ld=lld",
+            "-lpthread",
+        ],
+        "//conditions:default": [],
+    }),
+    deps = [
+        "@skia//:bmp_decode_codec",
+        "@skia//:core",
+        "@skia//:gif_decode_codec",
+        "@skia//:ico_decode_codec",
+        "@skia//:jpeg_decode_codec",
+        "@skia//:jpegxl_decode_codec",
+        "@skia//:png_decode_codec",
+        "@skia//:wbmp_decode_codec",
+        "@skia//:webp_decode_codec",
+    ],
+)
+
+cc_binary(
+    name = "write_text_to_png",
+    srcs = ["src/write_text_to_png.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:fontmgr_fontconfig_freetype",
+        "@skia//:png_encode_codec",
+    ],
+)
+
+cc_binary(
+    name = "shape_text",
+    srcs = ["src/shape_text.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:fontmgr_empty_freetype",
+        "@skia//:jpeg_encode_codec",
+        "@skia//:skparagraph_harfbuzz_icu",
+    ],
+)
+
+cc_binary(
+    name = "use_ganesh_gl",
+    srcs = ["src/ganesh_gl.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-lpthread",
+        "-lGL",
+        "-lX11",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:ganesh_gl",
+        "@skia//:ganesh_glx_factory",
+        "@skia//:webp_encode_codec",
+    ],
+)
+
+cc_binary(
+    name = "use_ganesh_vulkan",
+    srcs = ["src/ganesh_vulkan.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:ganesh_vulkan",
+    ],
+)
+
+cc_binary(
+    name = "use_skresources",
+    srcs = ["src/use_skresources.cpp"],
+    copts = ["-std=c++17"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:jpeg_decode_codec",
+        "@skia//:png_decode_codec",
+        "@skia//:skresources",
+    ],
+)

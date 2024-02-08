@@ -1,0 +1,14 @@
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    bool4 inputVal = bool4(colorGreen.rrgb); // FFTF
+    bool4 expected = bool4(colorGreen.rgga); // FTTT
+
+    const bool4 constVal = bool4(false, false, true, false);
+    return (any(inputVal.xy)   == expected.x &&
+            any(inputVal.xyz)  == expected.y &&
+            any(inputVal.xyzw) == expected.z &&
+            any(constVal.xy)   == expected.x &&
+            any(constVal.xyz)  == expected.y &&
+            any(constVal.xyzw) == expected.z) ? colorGreen : colorRed;
+}

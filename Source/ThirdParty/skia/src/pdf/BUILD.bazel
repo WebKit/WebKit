@@ -1,0 +1,122 @@
+load("//bazel:flags.bzl", "bool_flag", "selects")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+PDF_FILES = [
+    "SkBitmapKey.h",
+    "SkClusterator.cpp",
+    "SkClusterator.h",
+    "SkDeflate.cpp",
+    "SkDeflate.h",
+    "SkKeyedImage.cpp",
+    "SkKeyedImage.h",
+    "SkPDFBitmap.cpp",
+    "SkPDFBitmap.h",
+    "SkPDFDevice.cpp",
+    "SkPDFDevice.h",
+    "SkPDFDocument.cpp",
+    "SkPDFDocumentPriv.h",
+    "SkPDFFont.cpp",
+    "SkPDFFont.h",
+    "SkPDFFormXObject.cpp",
+    "SkPDFFormXObject.h",
+    "SkPDFGlyphUse.h",
+    "SkPDFGradientShader.cpp",
+    "SkPDFGradientShader.h",
+    "SkPDFGraphicStackState.cpp",
+    "SkPDFGraphicStackState.h",
+    "SkPDFGraphicState.cpp",
+    "SkPDFGraphicState.h",
+    "SkPDFMakeCIDGlyphWidthsArray.cpp",
+    "SkPDFMakeCIDGlyphWidthsArray.h",
+    "SkPDFMakeToUnicodeCmap.cpp",
+    "SkPDFMakeToUnicodeCmap.h",
+    "SkPDFMetadata.cpp",
+    "SkPDFMetadata.h",
+    "SkPDFResourceDict.cpp",
+    "SkPDFResourceDict.h",
+    "SkPDFShader.cpp",
+    "SkPDFShader.h",
+    "SkPDFSubsetFont.cpp",
+    "SkPDFSubsetFont.h",
+    "SkPDFTag.cpp",
+    "SkPDFTag.h",
+    "SkPDFType1Font.cpp",
+    "SkPDFType1Font.h",
+    "SkPDFTypes.cpp",
+    "SkPDFTypes.h",
+    "SkPDFUnion.h",
+    "SkPDFUtils.cpp",
+    "SkPDFUtils.h",
+    "SkUUID.h",
+]
+
+split_srcs_and_hdrs(
+    name = "pdf",
+    files = PDF_FILES,
+)
+
+#TODO: remove after Chromium no longer references this.
+skia_filegroup(
+    name = "jpeg_info_libjpeg",
+    srcs = ["SkJpegInfo_libjpegturbo.cpp"],
+)
+
+#TODO: remove after Chromium no longer references this.
+skia_filegroup(
+    name = "jpeg_info_none",
+    srcs = ["SkJpegInfo_none.cpp"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        ":pdf_srcs",
+    ],
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        ":pdf_hdrs",
+    ],
+    visibility = ["//src:__pkg__"],
+)
+
+bool_flag(
+    name = "enable_pdf_backend",
+    default = False,
+)
+
+bool_flag(
+    name = "enable_pdf_subset_harfbuzz",
+    default = True,  # This defaults it to be on if icu and harfbuzz are on
+)
+
+selects.config_setting_group(
+    name = "uses_harfbuzz",
+    match_all = [
+        "//bazel/common_config_settings:use_icu_true",
+        "//bazel/common_config_settings:use_harfbuzz_true",
+        ":enable_pdf_subset_harfbuzz_true",
+    ],
+)
+
+# TODO(kjlubick) sfntly support
+
+skia_cc_deps(
+    name = "deps",
+    visibility = ["//src:__pkg__"],
+    deps = [
+        "@zlib_skia//:zlib",
+        #"//src/codec:jpeg_decode",
+        #"//src/encode:jpeg_encode",
+    ] + select({
+        ":uses_harfbuzz": ["@harfbuzz"],
+        "//conditions:default": [],
+    }),
+)

@@ -1,0 +1,178 @@
+# https://bazel.build/concepts/platforms-intro#cxx
+# This forces Bazel's C++ rules use platforms to select toolchains instead of the default
+# --crosstool_top, --compiler, etc.
+build --incompatible_enable_cc_toolchain_resolution
+
+# We do not want Bazel to detect any C++ toolchains on the local machine
+# https://github.com/bazelbuild/bazel/blob/4ccc21f2f089971e5f4032397764a4be3549c40a/tools/cpp/cc_configure.bzl#L47
+build --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+# We would like developers to not upload to the remote build cache, only the RBE workers themselves.
+build --remote_upload_local_results=false
+
+# Enforce stricter environment rules, which eliminates some non-hermetic behavior and therefore
+# improves both the remote cache hit rate and the correctness and repeatability of the build.
+build --incompatible_strict_action_env=true
+
+# This tells Bazel that the host platform can use the hermetic toolchain. This is a small lie until
+# Windows support is added.
+build --host_platform=//bazel/platform:host_with_hermetic_toolchain
+# Linux users (the only platform where we support remote builds currently) can add the following
+# line (uncommented) to //bazel/user/buildrc to allow interchangeable operation between local
+# operations and remote operations.
+# build --host_platform=//bazel/platform:linux_x64_hermetic
+
+# Register our toolchains. We do this here, and not in WORKSPACE.bazel because
+# --extra_toolchains has priority over register_toolchains and we conditionally add some toolchains
+# for RBE.
+build --extra_toolchains=//toolchain:clang_linux_x64_toolchain
+build --extra_toolchains=//toolchain:clang_mac_x64_toolchain
+build --extra_toolchains=//toolchain:clang_mac_arm64_toolchain
+build --extra_toolchains=//toolchain:clang_host_mac_x64_target_mac_arm64_toolchain
+build --extra_toolchains=//toolchain:linux_amd64_ndk_arm64_toolchain
+build --extra_toolchains=//toolchain:linux_amd64_ndk_arm32_toolchain
+
+# Hide DEBUG messages from Bazel.
+# Many of these are things related to the git checkouts that are not relevent to devs.
+# https://bazel.build/reference/command-line-reference#flag--ui_event_filters
+build --ui_event_filters=-debug
+
+# For some reason, since upgrading to Go v1.21 and rules_go v0.42.0, Go binaries fail at runtime
+# with "fatal error: invalid function symbol table" unless we disable cgo via the below flag.
+# Reference:
+# https://github.com/bazelbuild/rules_go/blob/d74d9ab34e8789e6a55a2d9caf0e2b3c63202e04/go/modes.rst#build-settings.
+build --@io_bazel_rules_go//go/config:pure
+
+# =============================================================================
+# Alias to build configurations below. This makes configuring things from
+# the command line easier.
+#
+# NOTE: Add new enable flags which build new source files, and need to be
+#       included when exporting to other projects (CMake, GNI), to
+#       //bazel/exporter/bazel_query_command.go.
+# Public string flags
+build --flag_alias=gpu_backend=//src/gpu:gpu_backend
+build --flag_alias=include_decoder=//src/codec:include_decoder
+build --flag_alias=include_encoder=//src/encode:include_encoder
+build --flag_alias=include_fontmgr=//bazel/common_config_settings:include_fontmgr
+build --flag_alias=with_gl_standard=//src/gpu:with_gl_standard
+
+# Public boolean flags
+build --flag_alias=disable_discardable_memory=no//src/lazy:enable_discardable_memory
+build --flag_alias=enable_discardable_memory=//src/lazy:enable_discardable_memory
+build --flag_alias=disable_effect_serialization=no//bazel/common_config_settings:enable_effect_serialization
+build --flag_alias=enable_effect_serialization=//bazel/common_config_settings:enable_effect_serialization
+build --flag_alias=disable_legacy_shader_context=no//src/shaders:legacy_shader_context
+build --flag_alias=enable_legacy_shader_context=//src/shaders:legacy_shader_context
+build --flag_alias=disable_native_interface=no//src/gpu/ganesh/gl:enable_native_interface
+build --flag_alias=enable_native_interface=//src/gpu/ganesh/gl:enable_native_interface
+build --flag_alias=disable_pdf_backend=no//src/pdf:enable_pdf_backend
+build --flag_alias=enable_pdf_backend=//src/pdf:enable_pdf_backend
+build --flag_alias=disable_skslc=no//src/sksl:enable_skslc
+build --flag_alias=enable_skslc=//src/sksl:enable_skslc
+build --flag_alias=disable_sksl_tracing=no//src/sksl:enable_sksl_tracing
+build --flag_alias=enable_sksl_tracing=//src/sksl:enable_sksl_tracing
+build --flag_alias=disable_svg_canvas=no//src/svg:enable_svg_canvas
+build --flag_alias=enable_svg_canvas=//src/svg:enable_svg_canvas
+build --flag_alias=disable_tracing=no//bazel/common_config_settings:enable_tracing
+build --flag_alias=enable_tracing=//bazel/common_config_settings:enable_tracing
+build --flag_alias=disable_vma=no//src/gpu:use_vulkan_memory_allocator
+build --flag_alias=enable_vma=//src/gpu:use_vulkan_memory_allocator
+build --flag_alias=with_default_global_memory_pool=//src/lazy:use_default_global_memory_pool
+build --flag_alias=with_no_global_memory_pool=no//src/lazy:use_default_global_memory_pool
+build --flag_alias=with_harfbuzz=//bazel/common_config_settings:use_harfbuzz
+build --flag_alias=with_fontations=//bazel/common_config_settings:use_fontations
+build --flag_alias=with_no_harfbuzz=no//bazel/common_config_settings:use_harfbuzz
+build --flag_alias=with_icu=//bazel/common_config_settings:use_icu
+build --flag_alias=with_no_icu=no//bazel/common_config_settings:use_icu
+build --flag_alias=enable_build_for_debugger=//bazel/common_config_settings:build_for_debugger
+build --flag_alias=disable_build_for_debugger=no//bazel/common_config_settings:build_for_debugger
+
+# Flags used by Skia tools, not to be used by clients
+build --flag_alias=disable_gpu_test_utils=no//src/gpu:enable_gpu_test_utils
+build --flag_alias=enable_gpu_test_utils=//src/gpu:enable_gpu_test_utils
+build --flag_alias=compile_generated_cpp_files_for_headers=//bazel/common_config_settings:compile_generated_cpp_files_for_headers
+build --flag_alias=adb_platform=//tools/testrunners/common/android/adb_test_runner:adb_platform
+
+# Public CanvasKit flags
+build --flag_alias=ck_enable_fonts=//modules/canvaskit:enable_fonts
+build --flag_alias=ck_disable_fonts=no//modules/canvaskit:enable_fonts
+build --flag_alias=ck_enable_canvas_polyfill=//modules/canvaskit:enable_canvas_polyfill
+build --flag_alias=ck_disable_canvas_polyfill=no//modules/canvaskit:enable_canvas_polyfill
+build --flag_alias=ck_enable_embedded_font=//modules/canvaskit:include_embedded_font
+build --flag_alias=ck_disable_embedded_font=no//modules/canvaskit:include_embedded_font
+build --flag_alias=ck_enable_matrix_js=//modules/canvaskit:include_matrix_js
+build --flag_alias=ck_disable_matrix_js=no//modules/canvaskit:include_matrix_js
+build --flag_alias=ck_enable_skottie=//modules/canvaskit:enable_skottie
+build --flag_alias=ck_disable_skottie=no//modules/canvaskit:enable_skottie
+build --flag_alias=ck_enable_skp_serialization=//modules/canvaskit:enable_skp_serialization
+build --flag_alias=ck_disable_skp_serialization=no//modules/canvaskit:enable_skp_serialization
+build --flag_alias=ck_enable_runtime_effect=//modules/canvaskit:enable_runtime_effect
+build --flag_alias=ck_disable_runtime_effect=no//modules/canvaskit:enable_runtime_effect
+
+# =============================================================================
+# REMOTE BUILD EXECUTION
+# =============================================================================
+
+# =====
+# The following was copied from https://github.com/bazelbuild/bazel-toolchains/blob/ea243d43269df23de03a797cff2347e1fc3d02bb/bazelrc/bazel-4.1.0.bazelrc
+# We should be free to modify this as we see fit.
+#
+# Depending on how many machines are in the remote execution instance, setting
+# this higher can make builds faster by allowing more jobs to run in parallel.
+# Setting it too high can result in jobs that timeout, however, while waiting
+# for a remote machine to execute them.
+build:remote --jobs=50
+
+# Set several flags related to specifying the platform, toolchain and java
+# properties.
+build:remote --java_runtime_version=rbe_jdk
+build:remote --tool_java_runtime_version=rbe_jdk
+
+# When a remote configuration is chosen, add "remote" to the list of spawn_strategies.
+build:remote --spawn_strategy=remote,sandboxed
+
+# Enable remote execution so actions are performed on the remote systems.
+build:remote --remote_executor=grpcs://remotebuildexecution.googleapis.com
+
+# Some long running tasks are linking because the workers have relatively little RAM
+# (at least as of now).
+build:remote --remote_timeout=300
+
+# Enable authentication. This will pick up application default credentials by
+# default. You can use --google_credentials=some_file.json to use a service
+# account credential instead.
+# See https://developers.google.com/remote-build-execution/docs/authentication
+# To authenticate, you should run gcloud auth application-default login
+build:remote --google_default_credentials=true
+
+# End of the copied RBE settings
+#=====
+
+# Use the RBE instance on the skia-rbe GCP project.
+build:remote --remote_instance_name projects/skia-rbe/instances/default_instance
+
+# The linxu_rbe config will build on RBE and default to compiling for linux_x64 using
+# the hermetic toolchain.
+build:linux_rbe --config=remote
+# On the RBE instances, we also have the Java and C++ toolchain from the Docker image available.
+# These need to come after the --extra_toolchains flags (above) that register our hermetic
+# toolchains, because we only want these backup toolchains to be used by Bazel internals,
+# if at all.
+build:linux_rbe --extra_toolchains=//bazel/rbe/gce_linux/java:all
+build:linux_rbe --extra_toolchains=//bazel/rbe/gce_linux/config:cc-toolchain
+# Make the Linux platform available for selection as an Execution platform (if it is not already,
+# e.g. on a Linux host)
+build:linux_rbe --extra_execution_platforms=//bazel/platform:linux_x64_hermetic
+
+# Import our specified build configurations
+# https://docs.bazel.build/versions/main/best-practices.html#using-the-bazelrc-file
+# We chose to split our build configurations into their own file to have better organization
+# because we anticipate that file growing large.
+import %workspace%/bazel/buildrc
+
+# Device-specific configurations.
+import %workspace%/bazel/devicesrc
+
+# Import User's custom builds if they have defined any
+try-import %workspace%/bazel/user/buildrc
