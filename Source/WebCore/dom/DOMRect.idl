@@ -26,6 +26,7 @@
 // https://drafts.fxtf.org/geometry-1/#DOMRect
 
 [
+    SkipVTableValidation,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
 ] interface DOMRect : DOMRectReadOnly {

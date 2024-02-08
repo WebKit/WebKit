@@ -44,7 +44,7 @@ class WebCodecsVideoFrame;
 struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderEncodeOptions;
 
-class WebCodecsVideoEncoder
+class WebCodecsVideoEncoder final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
     , public ActiveDOMObject
     , public EventTarget {

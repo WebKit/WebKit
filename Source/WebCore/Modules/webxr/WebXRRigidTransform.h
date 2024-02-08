@@ -40,7 +40,7 @@ namespace WebCore {
 struct DOMPointInit;
 class DOMPointReadOnly;
 
-class WebXRRigidTransform : public RefCounted<WebXRRigidTransform>, public CanMakeWeakPtr<WebXRRigidTransform> {
+class WebXRRigidTransform final : public RefCounted<WebXRRigidTransform>, public CanMakeWeakPtr<WebXRRigidTransform> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRRigidTransform, WEBCORE_EXPORT);
 public:
     static Ref<WebXRRigidTransform> create();

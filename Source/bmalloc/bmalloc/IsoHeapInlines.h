@@ -129,6 +129,7 @@ public: \
     void* operator new(size_t size) \
     { \
         RELEASE_BASSERT(size == sizeof(isoType)); \
+        static_assert(std::is_final_v<isoType> || std::has_virtual_destructor_v<isoType>); \
         return bisoHeap().allocate(); \
     } \
     \

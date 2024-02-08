@@ -42,7 +42,7 @@ namespace Layout {
 class InitialContainingBlock;
 class LayoutState;
 
-class LayoutTree {
+class LayoutTree final {
     WTF_MAKE_ISO_ALLOCATED(LayoutTree);
 public:
     LayoutTree(std::unique_ptr<ElementBox>);

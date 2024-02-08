@@ -121,6 +121,8 @@ public:
     
     Ref<DOMMatrix> cloneAsDOMMatrix() const;
 
+    virtual ~DOMMatrixReadOnly() = default;
+
 protected:
     DOMMatrixReadOnly() = default;
     DOMMatrixReadOnly(const TransformationMatrix&, Is2D);

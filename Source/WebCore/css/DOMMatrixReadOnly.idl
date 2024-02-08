@@ -26,6 +26,7 @@
 // https://drafts.fxtf.org/geometry/#dommatrixreadonly
 
 [
+    SkipVTableValidation,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     TaggedWrapper,

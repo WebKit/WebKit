@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class WebXRViewerPose : public WebXRPose {
+class WebXRViewerPose final : public WebXRPose {
     WTF_MAKE_ISO_ALLOCATED(WebXRViewerPose);
 public:
     static Ref<WebXRViewerPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);

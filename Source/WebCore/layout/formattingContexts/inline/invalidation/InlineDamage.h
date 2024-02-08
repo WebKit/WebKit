@@ -36,7 +36,7 @@ namespace Layout {
 class Box;
 class InlineInvalidation;
 
-class InlineDamage {
+class InlineDamage final {
     WTF_MAKE_ISO_ALLOCATED_INLINE(InlineDamage);
 public:
     InlineDamage() = default;

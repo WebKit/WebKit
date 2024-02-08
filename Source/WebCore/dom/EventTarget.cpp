@@ -59,8 +59,11 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EventTarget);
 
 struct SameSizeAsEventTarget : ScriptWrappable, CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
+    WTF_MAKE_ISO_ALLOCATED(SameSizeAsEventTarget);
     virtual ~SameSizeAsEventTarget() = default; // Allocate vtable pointer.
 };
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SameSizeAsEventTarget);
 
 static_assert(sizeof(EventTarget) == sizeof(SameSizeAsEventTarget), "EventTarget should stay small");
 

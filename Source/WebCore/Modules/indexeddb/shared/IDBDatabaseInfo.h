@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class IDBDatabaseInfo {
+class IDBDatabaseInfo final {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBDatabaseInfo, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID = 0, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap = { });

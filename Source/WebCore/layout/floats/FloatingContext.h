@@ -40,7 +40,7 @@ class Box;
 // by taking the floating boxes into account.
 // Note that a FloatingContext's inline direction always matches the root's inline direction but it may
 // not match the PlacedFloats's inline direction (i.e. PlacedFloats may be constructed by a parent BFC with mismatching inline direction).
-class FloatingContext {
+class FloatingContext final {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
     FloatingContext(const ElementBox& formattingContextRoot, const LayoutState&, const PlacedFloats&);

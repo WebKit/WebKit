@@ -39,7 +39,7 @@ namespace WebCore {
 
 class Element;
 
-class IntersectionObserverEntry : public RefCounted<IntersectionObserverEntry> {
+class IntersectionObserverEntry final : public RefCounted<IntersectionObserverEntry> {
     WTF_MAKE_ISO_ALLOCATED(IntersectionObserverEntry);
 public:
 

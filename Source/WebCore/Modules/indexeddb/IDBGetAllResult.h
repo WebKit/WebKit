@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class IDBGetAllResult {
+class IDBGetAllResult final {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetAllResult, WEBCORE_EXPORT);
 public:
     IDBGetAllResult() = default;

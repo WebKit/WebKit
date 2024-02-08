@@ -46,7 +46,7 @@ class FormattingContext;
 // Note, while the initial containing block is entry point for the initial layout, it does not necessarily need to be the entry point of any
 // subsequent layouts (subtree layout). A non-initial, subtree layout could be initiated on multiple formatting contexts.
 // Each formatting context has an entry point for layout, which potenitally means multiple entry points per layout frame.
-class LayoutContext {
+class LayoutContext final {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
     LayoutContext(LayoutState&);

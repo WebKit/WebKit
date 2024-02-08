@@ -31,7 +31,8 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class DOMMatrix : public DOMMatrixReadOnly {
+class DOMMatrix final : public DOMMatrixReadOnly {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMMatrix, WEBCORE_EXPORT);
 public:
     static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, std::optional<std::variant<String, Vector<double>>>&&);
 

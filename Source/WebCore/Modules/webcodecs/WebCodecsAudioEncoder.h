@@ -45,7 +45,7 @@ class WebCodecsEncodedAudioChunkOutputCallback;
 class WebCodecsAudioData;
 struct WebCodecsEncodedAudioChunkMetadata;
 
-class WebCodecsAudioEncoder
+class WebCodecsAudioEncoder final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
     , public ActiveDOMObject
     , public EventTarget {

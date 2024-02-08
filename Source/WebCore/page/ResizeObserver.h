@@ -52,7 +52,7 @@ struct ResizeObserverData {
 using NativeResizeObserverCallback = void (*)(const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&);
 using JSOrNativeResizeObserverCallback = std::variant<RefPtr<ResizeObserverCallback>, NativeResizeObserverCallback>;
 
-class ResizeObserver : public RefCounted<ResizeObserver>, public CanMakeWeakPtr<ResizeObserver> {
+class ResizeObserver final : public RefCounted<ResizeObserver>, public CanMakeWeakPtr<ResizeObserver> {
     WTF_MAKE_ISO_ALLOCATED(ResizeObserver);
 public:
     static Ref<ResizeObserver> create(Document&, Ref<ResizeObserverCallback>&&);

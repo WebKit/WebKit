@@ -36,7 +36,7 @@ namespace WebCore {
 class WebXRReferenceSpace;
 class WebXRRigidTransform;
 
-class XRReferenceSpaceEvent : public Event {
+class XRReferenceSpaceEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(XRReferenceSpaceEvent);
 public:
     struct Init : EventInit {

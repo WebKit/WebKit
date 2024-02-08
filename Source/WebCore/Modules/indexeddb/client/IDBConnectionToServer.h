@@ -51,7 +51,7 @@ struct IDBIterateCursorData;
 
 namespace IDBClient {
 
-class IDBConnectionToServer : public ThreadSafeRefCounted<IDBConnectionToServer> {
+class IDBConnectionToServer final : public ThreadSafeRefCounted<IDBConnectionToServer> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBConnectionToServer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<IDBConnectionToServer> create(IDBConnectionToServerDelegate&);

@@ -49,7 +49,7 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
+class IDBFactory final : public ThreadSafeRefCounted<IDBFactory> {
     WTF_MAKE_ISO_ALLOCATED(IDBFactory);
 public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);

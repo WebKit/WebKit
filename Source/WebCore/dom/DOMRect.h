@@ -33,7 +33,8 @@ namespace WebCore {
 
 class FloatQuad;
 
-class DOMRect : public DOMRectReadOnly {
+class DOMRect final : public DOMRectReadOnly {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMRect, WEBCORE_EXPORT);
 public:
     static Ref<DOMRect> create() { return adoptRef(*new DOMRect()); }
     static Ref<DOMRect> create(double x, double y, double width, double height) { return adoptRef(*new DOMRect(x, y, width, height)); }

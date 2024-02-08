@@ -41,7 +41,7 @@ class TrustedScript;
 class TrustedScriptURL;
 struct TrustedTypePolicyOptions;
 
-class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
+class TrustedTypePolicy final : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
     WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicy);
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);

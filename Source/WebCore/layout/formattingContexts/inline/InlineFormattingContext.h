@@ -52,7 +52,7 @@ struct InlineLayoutResult {
 
 // This class implements the layout logic for inline formatting context.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-class InlineFormattingContext {
+class InlineFormattingContext final {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);

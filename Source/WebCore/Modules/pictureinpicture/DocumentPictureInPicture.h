@@ -37,7 +37,7 @@ namespace WebCore {
 class DeferredPromise;
 class Document;
 
-class DocumentPictureInPicture : public Supplement<Document> {
+class DocumentPictureInPicture final : public Supplement<Document> {
     WTF_MAKE_ISO_ALLOCATED(DocumentPictureInPicture);
 public:
     virtual ~DocumentPictureInPicture();

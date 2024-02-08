@@ -37,7 +37,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class ScriptModuleLoader;
 
-class ShadowRealmGlobalScope : public RefCounted<ShadowRealmGlobalScope> {
+class ShadowRealmGlobalScope final : public RefCounted<ShadowRealmGlobalScope> {
     friend class JSShadowRealmGlobalScopeBase;
     WTF_MAKE_ISO_ALLOCATED(ShadowRealmGlobalScope);
 

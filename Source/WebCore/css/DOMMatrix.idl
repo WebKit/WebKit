@@ -25,6 +25,7 @@
 
 // FIXME: Should be [LegacyWindowAlias=(SVGMatrix, WebKitCSSMatrix)].
 [
+    SkipVTableValidation,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     LegacyWindowAlias=WebKitCSSMatrix,

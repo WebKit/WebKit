@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class IDBGetResult {
+class IDBGetResult final {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
 public:
     IDBGetResult()

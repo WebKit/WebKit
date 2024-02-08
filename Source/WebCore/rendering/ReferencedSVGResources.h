@@ -52,7 +52,7 @@ class SVGMaskElement;
 class StyleImage;
 class TreeScope;
 
-class ReferencedSVGResources {
+class ReferencedSVGResources final {
     WTF_MAKE_ISO_ALLOCATED(ReferencedSVGResources);
 public:
     ReferencedSVGResources(RenderElement&);

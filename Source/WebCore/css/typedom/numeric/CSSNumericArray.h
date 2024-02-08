@@ -35,7 +35,7 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 
-class CSSNumericArray : public RefCounted<CSSNumericArray> {
+class CSSNumericArray final : public RefCounted<CSSNumericArray> {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericArray);
 public:
     static Ref<CSSNumericArray> create(FixedVector<CSSNumberish>&&);

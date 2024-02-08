@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class WebXRInputSpace : public RefCounted<WebXRInputSpace>, public WebXRSpace {
+class WebXRInputSpace final : public RefCounted<WebXRInputSpace>, public WebXRSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSpace);
 public:
     static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);

@@ -32,17 +32,13 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingState);
-
 FormattingState::FormattingState(Type type, LayoutState& layoutState)
     : m_layoutState(layoutState)
     , m_type(type)
 {
 }
 
-FormattingState::~FormattingState()
-{
-}
+FormattingState::~FormattingState() = default;
 
 BoxGeometry& FormattingState::boxGeometry(const Box& layoutBox)
 {

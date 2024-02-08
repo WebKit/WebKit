@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class WebXRHand : public RefCounted<WebXRHand>, public CanMakeWeakPtr<WebXRHand> {
+class WebXRHand final : public RefCounted<WebXRHand>, public CanMakeWeakPtr<WebXRHand> {
     WTF_MAKE_ISO_ALLOCATED(WebXRHand);
 public:
 

@@ -29,6 +29,7 @@
 #include "DeviceMotionData.h"
 #include "DeviceOrientationAndMotionAccessController.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

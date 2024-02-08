@@ -42,7 +42,7 @@ class ReadableStream;
 class ScriptExecutionContext;
 class WebCodecsVideoFrame;
 
-class MediaStreamTrackProcessor
+class MediaStreamTrackProcessor final
     : public RefCounted<MediaStreamTrackProcessor>
     , public CanMakeWeakPtr<MediaStreamTrackProcessor>
     , private ContextDestructionObserver {

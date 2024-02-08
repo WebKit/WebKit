@@ -34,7 +34,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 class CSSUnparsedValue;
 
-class CSSOMVariableReferenceValue : public RefCounted<CSSOMVariableReferenceValue> {
+class CSSOMVariableReferenceValue final : public RefCounted<CSSOMVariableReferenceValue> {
     WTF_MAKE_ISO_ALLOCATED(CSSOMVariableReferenceValue);
 public:
     static ExceptionOr<Ref<CSSOMVariableReferenceValue>> create(String&&, RefPtr<CSSUnparsedValue>&& fallback = { });
