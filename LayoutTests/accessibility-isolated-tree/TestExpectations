@@ -34,6 +34,11 @@ accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 
+# Fails because we don't compute node-only AX objects as ignored when they're within a display:none container.
+# This causes us to fail to call AXIsolatedTree::addUnconnectedNode in AXObjectCache::addRelation, meaning
+# we never create an isolated object for #menu-item-one, causing ariaLabelledByElementAtIndex(0) to return null.
+accessibility/menuitem-is-selected.html [ Failure ]
+
 # Frames are off by 1px vs. non-ITM mode.
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]

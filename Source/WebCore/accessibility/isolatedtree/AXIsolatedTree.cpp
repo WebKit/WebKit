@@ -1291,11 +1291,9 @@ void AXIsolatedTree::processQueuedNodeUpdates()
     m_needsUpdateChildren.clear();
 
     for (AXID objectID : m_needsUpdateNode) {
-        if (!m_unresolvedPendingAppends.contains(objectID)) {
-            m_unresolvedPendingAppends.ensure(objectID, [] {
-                return AttachWrapper::OnAXThread;
-            });
-        }
+        m_unresolvedPendingAppends.ensure(objectID, [] {
+            return AttachWrapper::OnAXThread;
+        });
     }
     m_needsUpdateNode.clear();
 
