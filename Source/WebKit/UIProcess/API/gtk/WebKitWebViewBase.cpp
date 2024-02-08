@@ -384,10 +384,16 @@ struct _WebKitWebViewBasePrivate {
  */
 
 #if USE(GTK4)
+
+#ifdef GTK_ACCESSIBILITY_ATSPI
 static void webkitWebViewBaseAccessibleInterfaceInit(GtkAccessibleInterface*);
 
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET,
     G_IMPLEMENT_INTERFACE(GTK_TYPE_ACCESSIBLE, webkitWebViewBaseAccessibleInterfaceInit))
+#else
+WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
+#endif // GTK_ACCESSIBILITY_ATSPI
+
 #else
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 #endif
@@ -398,15 +404,13 @@ static void webkitWebViewBaseDidExitFullScreen(WebKitWebViewBase*);
 static void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase*);
 #endif
 
-#if USE(GTK4)
+#if USE(GTK4) && defined(GTK_ACCESSIBILITY_ATSPI)
 static GtkAccessible* webkitWebViewBaseAccessibleGetFirstAccessibleChild(GtkAccessible* accessible)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(accessible);
 
-#ifdef GTK_ACCESSIBILITY_ATSPI
     if (webView->priv->socketAccessible)
         return GTK_ACCESSIBLE(g_object_ref(webView->priv->socketAccessible.get()));
-#endif
 
     if (auto* widget = gtk_widget_get_first_child(GTK_WIDGET(webView)))
         return GTK_ACCESSIBLE(g_object_ref(widget));
