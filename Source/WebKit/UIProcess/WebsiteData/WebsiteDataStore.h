@@ -621,6 +621,10 @@ private:
     bool m_isBlobRegistryPartitioningEnabled { false };
 
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;
+
+#if HAVE(NW_PROXY_CONFIG)
+    std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> m_proxyConfigData;
+#endif
 };
 
 }

@@ -133,7 +133,9 @@ struct NetworkSessionCreationParameters {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled { false };
 #endif
-
+#if HAVE(NW_PROXY_CONFIG)
+    std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> proxyConfigData;
+#endif
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };
 

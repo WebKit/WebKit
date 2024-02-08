@@ -1517,6 +1517,11 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 #endif
 
     activateSessionCleanup(*this, parameters);
+
+#if HAVE(NW_PROXY_CONFIG)
+    if (parameters.proxyConfigData)
+        setProxyConfigData(WTFMove(*parameters.proxyConfigData));
+#endif
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa() = default;
@@ -2183,7 +2188,7 @@ void NetworkSessionCocoa::clearProxyConfigData()
         clearProxies(context);
 }
 
-void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&& proxyConfigurations)
+void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, WTF::UUID>>& proxyConfigurations)
 {
     auto* clearProxies = nw_context_clear_proxiesPtr();
     auto* addProxy = nw_context_add_proxyPtr();
