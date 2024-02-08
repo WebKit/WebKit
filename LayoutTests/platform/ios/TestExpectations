@@ -4697,3 +4697,5 @@ webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongol
 webkit.org/b/263317 media/media-controller-play-then-pause.html [ Failure ]
 
 webkit.org/b/268947 imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Failure ]
+
+webkit.org/b/268929 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html [ Skip ]
