@@ -1423,6 +1423,10 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     if (equalLettersIgnoringASCIICase(host, "roblox.com"_s) || host.endsWithIgnoringASCIICase(".roblox.com"_s))
         return RecommendDesktopClassBrowsingForRequest::No;
 
+    // FIXME: Remove this quirk when <rdar://122481999> is complete
+    if (equalLettersIgnoringASCIICase(host, "spotify.com"_s) || host.endsWithIgnoringASCIICase(".spotify.com"_s) || host.endsWithIgnoringASCIICase(".spotifycdn.com"_s))
+        return RecommendDesktopClassBrowsingForRequest::No;
+
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
