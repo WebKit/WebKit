@@ -1,4 +1,4 @@
 
 PASS createPolicy - duplicate policies are allowed when Trusted Types are not enforced.
-FAIL createPolicy - duplicate "default" policy is never allowed. assert_throws_js: function "_ => trustedTypes.createPolicy("default", policy)" did not throw
+PASS createPolicy - duplicate "default" policy is never allowed.
 
