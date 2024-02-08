@@ -831,6 +831,7 @@
 		E36BA9DE29E275DB00300057 /* WTFProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BA9DC29E275DB00300057 /* WTFProcess.cpp */; };
 		E36BA9DF29E275DB00300057 /* WTFProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BA9DD29E275DB00300057 /* WTFProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E37E96542702AD0B00E1C36A /* ApproximateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E37E96522702AD0700E1C36A /* ApproximateTime.cpp */; };
+		E383AAC92B6C730B00058E60 /* AdaptiveStringSearcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E383AAC82B6C730B00058E60 /* AdaptiveStringSearcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E388886F20C9095100E632BC /* WorkerPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E388886D20C9095100E632BC /* WorkerPool.cpp */; };
 		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
@@ -1769,6 +1770,7 @@
 		E37E96532702AD0700E1C36A /* ApproximateTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApproximateTime.h; sourceTree = "<group>"; };
 		E38020DB2401C0930037CA9E /* CompactRefPtrTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactRefPtrTuple.h; sourceTree = "<group>"; };
 		E3831F922703101A00EF5EB3 /* GenericTimeMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericTimeMixin.h; sourceTree = "<group>"; };
+		E383AAC82B6C730B00058E60 /* AdaptiveStringSearcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveStringSearcher.h; sourceTree = "<group>"; };
 		E388886D20C9095100E632BC /* WorkerPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerPool.cpp; sourceTree = "<group>"; };
 		E388886E20C9095100E632BC /* WorkerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerPool.h; sourceTree = "<group>"; };
 		E38C41261EB4E0680042957D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
@@ -2526,6 +2528,7 @@
 				A5BA15F61824359E00A82E69 /* cf */,
 				A5BA15F11824339F00A82E69 /* cocoa */,
 				1C181C881D307AB800F5FA16 /* icu */,
+				E383AAC82B6C730B00058E60 /* AdaptiveStringSearcher.h */,
 				A8A4731C151A825B004123FF /* ASCIIFastPath.h */,
 				C6F050790D9C432A99085E75 /* ASCIILiteral.cpp */,
 				382029E246C84B0099FD6764 /* ASCIILiteral.h */,
@@ -3021,6 +3024,7 @@
 			files = (
 				FE6997E129D241630078B9C6 /* AbortWithReasonSPI.h in Headers */,
 				E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */,
+				E383AAC92B6C730B00058E60 /* AdaptiveStringSearcher.h in Headers */,
 				DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */,
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,
 				DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */,
