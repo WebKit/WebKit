@@ -51,9 +51,12 @@ public:
     void startAnnotationTracking(RetainPtr<PDFAnnotation>&&, const WebEventType&, const WebMouseEventButton&);
     void finishAnnotationTracking(const WebEventType&, const WebMouseEventButton&);
     const PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
+    bool isBeingHovered() const;
 private:
     void handleMouseDraggedOffTrackedAnnotation();
+    void resetAnnotationTrackingState();
     RetainPtr<PDFAnnotation> m_trackedAnnotation;
+    bool m_isBeingHovered { false };
 };
 
 enum class WebEventModifier : uint8_t;
@@ -211,6 +214,7 @@ private:
     bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override { return true; }
 
     void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
+    void paintPDFOverlays(WebCore::GraphicsContext&);
     void ensureLayers();
     void updateLayerHierarchy();
 

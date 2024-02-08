@@ -432,6 +432,7 @@ void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const 
             isVisibleAndActive = page->isVisibleAndActive();
         [m_currentSelection drawForPage:page.get() withBox:kCGPDFCropBox active:isVisibleAndActive inContext:context.platformContext()];
     }
+    paintPDFOverlays(context);
 }
 
 float UnifiedPDFPlugin::scaleForActualSize() const
@@ -462,6 +463,19 @@ float UnifiedPDFPlugin::scaleForActualSize() const
     return pixelSize / size().width();
 #endif
     return 1;
+}
+
+static const WebCore::Color textAnnotationHoverColor()
+{
+    static constexpr auto textAnnotationHoverAlpha = 0.12;
+    static NeverDestroyed color = WebCore::Color::createAndPreserveColorSpace([[[WebCore::CocoaColor systemBlueColor] colorWithAlphaComponent:textAnnotationHoverAlpha] CGColor]);
+    return color;
+}
+
+void UnifiedPDFPlugin::paintPDFOverlays(WebCore::GraphicsContext& context)
+{
+    if (auto* trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && [trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && m_annotationTrackingState.isBeingHovered())
+        context.fillRect(IntRect { [trackedAnnotation bounds] }, textAnnotationHoverColor());
 }
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
@@ -1072,10 +1086,19 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             auto altKeyIsActive = event.altKey() ? AltKeyIsActive::Yes : AltKeyIsActive::No;
             auto pdfElementTypes = pdfElementTypesForPluginPoint(lastKnownMousePositionInView());
             notifyCursorChanged(toWebCoreCursorType(pdfElementTypes, altKeyIsActive));
-            if (m_annotationTrackingState.trackedAnnotation()) {
+
+            RetainPtr annotationUnderMouse = annotationForRootViewPoint(event.position());
+            bool annotationTrackingStateChanged = false;
+            if (auto* currentTrackedAnnotation = m_annotationTrackingState.trackedAnnotation(); (currentTrackedAnnotation && currentTrackedAnnotation != annotationUnderMouse) || (currentTrackedAnnotation && !m_annotationTrackingState.isBeingHovered())) {
                 m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton);
-                updateLayerHierarchy();
+                annotationTrackingStateChanged = true;
             }
+            if (!m_annotationTrackingState.trackedAnnotation() && annotationUnderMouse && [annotationUnderMouse isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
+                m_annotationTrackingState.startAnnotationTracking(WTFMove(annotationUnderMouse), mouseEventType, mouseEventButton);
+                annotationTrackingStateChanged = true;
+            }
+            if (annotationTrackingStateChanged)
+                updateLayerHierarchy();
             return true;
         }
         case WebMouseEventButton::Left: {
@@ -1130,7 +1153,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
         switch (auto mouseEventButton = event.button()) {
         case WebMouseEventButton::Left:
-            if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation()) {
+            if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && ![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
                 m_annotationTrackingState.finishAnnotationTracking(mouseEventType, mouseEventButton);
 
                 if ([trackedAnnotation isKindOfClass:getPDFAnnotationLinkClass()])
@@ -1523,6 +1546,8 @@ void AnnotationTrackingState::startAnnotationTracking(RetainPtr<PDFAnnotation>&&
 
     if ([m_trackedAnnotation isKindOfClass:getPDFAnnotationButtonWidgetClass()])
         [m_trackedAnnotation setHighlighted:YES];
+    if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::None)
+        m_isBeingHovered = true;
 }
 
 void AnnotationTrackingState::finishAnnotationTracking(const WebEventType& mouseEventType, const WebMouseEventButton& mouseEventButton)
@@ -1541,7 +1566,7 @@ void AnnotationTrackingState::finishAnnotationTracking(const WebEventType& mouse
         }
     } else if (mouseEventType == WebEventType::MouseMove && mouseEventButton == WebMouseEventButton::Left)
         handleMouseDraggedOffTrackedAnnotation();
-    m_trackedAnnotation = nullptr;
+    resetAnnotationTrackingState();
 }
 
 void AnnotationTrackingState::handleMouseDraggedOffTrackedAnnotation()
@@ -1549,7 +1574,19 @@ void AnnotationTrackingState::handleMouseDraggedOffTrackedAnnotation()
     ASSERT(m_trackedAnnotation);
 
     [m_trackedAnnotation setHighlighted:NO];
+}
+
+bool AnnotationTrackingState::isBeingHovered() const
+{
+    ASSERT(m_trackedAnnotation);
+    return m_isBeingHovered;
+}
+
+void AnnotationTrackingState::resetAnnotationTrackingState()
+{
+    ASSERT(m_trackedAnnotation);
     m_trackedAnnotation = nullptr;
+    m_isBeingHovered = false;
 }
 
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
