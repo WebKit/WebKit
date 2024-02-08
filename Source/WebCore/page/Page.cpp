@@ -2887,8 +2887,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         }
 
         forEachDocument([] (Document& document) {
-            if (document.svgExtensions())
-                document.accessSVGExtensions().unpauseAnimations();
+            if (CheckedPtr svgExtensions = document.svgExtensionsIfExists())
+                svgExtensions->unpauseAnimations();
         });
 
         resumeAnimatingImages();
@@ -2908,8 +2908,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         }
 
         forEachDocument([] (Document& document) {
-            if (document.svgExtensions())
-                document.accessSVGExtensions().pauseAnimations();
+            if (CheckedPtr svgExtensions = document.svgExtensionsIfExists())
+                svgExtensions->pauseAnimations();
         });
 
 #if PLATFORM(IOS_FAMILY)

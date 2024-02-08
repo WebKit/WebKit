@@ -776,26 +776,27 @@ unsigned Internals::workerThreadCount() const
 
 ExceptionOr<bool> Internals::areSVGAnimationsPaused() const
 {
-    auto* document = contextDocument();
+    RefPtr document = contextDocument();
     if (!document)
         return Exception { ExceptionCode::InvalidAccessError, "No context document"_s };
 
-    if (!document->svgExtensions())
+    if (!document->svgExtensionsIfExists())
         return Exception { ExceptionCode::NotFoundError, "No SVG animations"_s };
 
-    return document->accessSVGExtensions().areAnimationsPaused();
+    return document->checkedSVGExtensions()->areAnimationsPaused();
 }
 
 ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) const
 {
-    auto* document = contextDocument();
+    RefPtr document = contextDocument();
     if (!document)
         return 0;
 
-    if (!document->svgExtensions())
+    CheckedPtr svgExtensions = document->svgExtensionsIfExists();
+    if (!svgExtensions)
         return 0;
 
-    if (document->accessSVGExtensions().areAnimationsPaused())
+    if (svgExtensions->areAnimationsPaused())
         return 0;
 
     return element.timeContainer().animationFrameDelay().value();
@@ -804,10 +805,10 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
 Vector<Ref<SVGSVGElement>> Internals::allSVGSVGElements() const
 {
     Vector<Ref<SVGSVGElement>> elements;
-    for (auto& document : Document::allDocuments()) {
-        if (!document->svgExtensions())
-            continue;
-        elements.appendVector(document->accessSVGExtensions().allSVGSVGElements());
+    for (auto& checkedDocument : Document::allDocuments()) {
+        Ref document = checkedDocument.get();
+        if (CheckedPtr svgExtensions = document->svgExtensionsIfExists())
+            elements.appendVector(svgExtensions->allSVGSVGElements());
     }
     return elements;
 }

@@ -865,8 +865,8 @@ void Document::commonTeardown()
         fullscreenManager->emptyEventQueue();
 #endif
 
-    if (svgExtensions())
-        accessSVGExtensions().pauseAnimations();
+    if (CheckedPtr svgExtensions = svgExtensionsIfExists())
+        svgExtensions->pauseAnimations();
 
     clearScriptedAnimationController();
 
@@ -3772,8 +3772,8 @@ void Document::implicitClose()
             HTMLStyleElement::dispatchPendingLoadEvents(currentPage.get());
         }
 
-        if (svgExtensions())
-            accessSVGExtensions().dispatchLoadEventToOutermostSVGElements();
+        if (CheckedPtr svgExtensions = svgExtensionsIfExists())
+            svgExtensions->dispatchLoadEventToOutermostSVGElements();
     }
 
     dispatchWindowLoadEvent();
@@ -3832,8 +3832,8 @@ void Document::implicitClose()
     }
 #endif
 
-    if (svgExtensions())
-        accessSVGExtensions().startAnimations();
+    if (CheckedPtr svgExtensions = svgExtensionsIfExists())
+        svgExtensions->startAnimations();
 }
 
 void Document::setParsing(bool b)
@@ -7061,11 +7061,16 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
     return Attr::create(*this, parsedName, emptyAtom());
 }
 
-SVGDocumentExtensions& Document::accessSVGExtensions()
+SVGDocumentExtensions& Document::svgExtensions()
 {
     if (!m_svgExtensions)
         m_svgExtensions = makeUnique<SVGDocumentExtensions>(*this);
     return *m_svgExtensions;
+}
+
+CheckedRef<SVGDocumentExtensions> Document::checkedSVGExtensions()
+{
+    return svgExtensions();
 }
 
 bool Document::hasSVGRootNode() const

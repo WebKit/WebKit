@@ -201,8 +201,8 @@ const Settings& Resolver::settings() const
 
 void Resolver::addCurrentSVGFontFaceRules()
 {
-    if (document().svgExtensions()) {
-        auto& svgFontFaceElements = document().svgExtensions()->svgFontFaceElements();
+    if (document().svgExtensionsIfExists()) {
+        auto& svgFontFaceElements = document().svgExtensionsIfExists()->svgFontFaceElements();
         for (auto& svgFontFaceElement : svgFontFaceElements)
             document().fontSelector().addFontFaceRule(svgFontFaceElement.fontFaceRule(), svgFontFaceElement.isInUserAgentShadowTree());
     }

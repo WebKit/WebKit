@@ -303,7 +303,7 @@ Node::InsertedIntoAncestorResult SVGFontFaceElement::insertedIntoAncestor(Insert
         ASSERT(!m_fontElement);
         return InsertedIntoAncestorResult::Done;
     }
-    document().accessSVGExtensions().registerSVGFontFaceElement(*this);
+    protectedDocument()->svgExtensions().registerSVGFontFaceElement(*this);
 
     rebuildFontFace();
     return result;
@@ -315,13 +315,14 @@ void SVGFontFaceElement::removedFromAncestor(RemovalType removalType, ContainerN
 
     if (removalType.disconnectedFromDocument) {
         m_fontElement = nullptr;
-        document().accessSVGExtensions().unregisterSVGFontFaceElement(*this);
-        auto& fontFaceSet = document().fontSelector().cssFontFaceSet();
+        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        document->svgExtensions().unregisterSVGFontFaceElement(*this);
+        auto& fontFaceSet = document->fontSelector().cssFontFaceSet();
         if (auto* fontFace = fontFaceSet.lookUpByCSSConnection(m_fontFaceRule))
             fontFaceSet.remove(*fontFace);
         m_fontFaceRule->mutableProperties().clear();
 
-        document().styleScope().didChangeStyleSheetEnvironment();
+        document->checkedStyleScope()->didChangeStyleSheetEnvironment();
     } else
         ASSERT(!m_fontElement);
 }

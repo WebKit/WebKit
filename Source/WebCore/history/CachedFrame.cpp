@@ -112,8 +112,8 @@ void CachedFrameBase::restore()
         if (localFrame)
             m_cachedFrameScriptData->restore(*localFrame);
 
-        if (document->svgExtensions())
-            document->accessSVGExtensions().unpauseAnimations();
+        if (CheckedPtr svgExtensions = document->svgExtensionsIfExists())
+            svgExtensions->unpauseAnimations();
 
         document->resume(ReasonForSuspension::BackForwardCache);
 

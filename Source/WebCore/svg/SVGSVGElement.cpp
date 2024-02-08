@@ -91,8 +91,9 @@ SVGSVGElement::~SVGSVGElement()
 {
     if (m_viewSpec)
         m_viewSpec->resetContextElement();
-    document().unregisterForDocumentSuspensionCallbacks(*this);
-    document().accessSVGExtensions().removeTimeContainer(*this);
+    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    document->unregisterForDocumentSuspensionCallbacks(*this);
+    document->checkedSVGExtensions()->removeTimeContainer(*this);
 }
 
 void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -496,14 +497,16 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument) {
-        document().accessSVGExtensions().addTimeContainer(*this);
-        if (!document().accessSVGExtensions().areAnimationsPaused())
+        Ref document = this->document();
+        CheckedRef svgExtensions = document->svgExtensions();
+        svgExtensions->addTimeContainer(*this);
+        if (!svgExtensions->areAnimationsPaused())
             unpauseAnimations();
 
         // Animations are started at the end of document parsing and after firing the load event,
         // but if we miss that train (deferred programmatic element insertion for example) we need
         // to initialize the time container here.
-        if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished())
+        if (!document->parsing() && !document->processingLoadEvent() && document->loadEventFinished())
             m_timeContainer->begin();
     }
     return SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
@@ -512,7 +515,8 @@ Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionTy
 void SVGSVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument) {
-        document().accessSVGExtensions().removeTimeContainer(*this);
+        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        document->checkedSVGExtensions()->removeTimeContainer(*this);
         pauseAnimations();
     }
     SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);

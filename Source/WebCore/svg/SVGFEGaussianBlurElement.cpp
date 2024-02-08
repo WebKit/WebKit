@@ -74,7 +74,7 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
         if (propertyValue != EdgeModeType::Unknown)
             m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
-            document().accessSVGExtensions().reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + newValue + "\". Filtered element will not be displayed.");
+            protectedDocument()->checkedSVGExtensions()->reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + newValue + "\". Filtered element will not be displayed.");
         break;
     }
     default:

@@ -818,8 +818,8 @@ void ContainerNode::stringReplaceAll(String&& string)
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
 {
     RefAllowingPartiallyDestroyed<Document> document = this->document();
-    if (document->svgExtensions() && !is<SVGUseElement>(shadowHost()))
-        document->accessSVGExtensions().rebuildElements();
+    if (document->svgExtensionsIfExists() && !is<SVGUseElement>(shadowHost()))
+        document->checkedSVGExtensions()->rebuildElements();
 }
 
 // this differs from other remove functions because it forcibly removes all the children,

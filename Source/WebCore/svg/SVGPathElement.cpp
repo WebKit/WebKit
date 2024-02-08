@@ -118,7 +118,7 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
         else if (m_pathSegList->baseVal()->parse(newValue))
             cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
         else
-            document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
+            protectedDocument()->checkedSVGExtensions()->reportError("Problem parsing d=\"" + newValue + "\"");
     }
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

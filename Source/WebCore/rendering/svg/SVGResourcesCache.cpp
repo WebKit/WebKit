@@ -89,7 +89,7 @@ static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement&
         RELEASE_ASSERT_NOT_REACHED();
 #endif
 
-    return renderer.document().accessSVGExtensions().resourcesCache();
+    return renderer.document().svgExtensions().resourcesCache();
 }
 
 SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement& renderer)

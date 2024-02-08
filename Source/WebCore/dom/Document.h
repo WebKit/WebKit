@@ -1341,8 +1341,9 @@ public:
 
     void removeAllEventListeners() final;
 
-    const SVGDocumentExtensions* svgExtensions() { return m_svgExtensions.get(); }
-    WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
+    SVGDocumentExtensions* svgExtensionsIfExists() { return m_svgExtensions.get(); }
+    WEBCORE_EXPORT SVGDocumentExtensions& svgExtensions();
+    WEBCORE_EXPORT CheckedRef<SVGDocumentExtensions> checkedSVGExtensions();
 
     void initSecurityContext();
     void initContentSecurityPolicy();

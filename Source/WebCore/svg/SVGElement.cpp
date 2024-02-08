@@ -89,7 +89,9 @@ SVGElement::~SVGElement()
         RELEASE_ASSERT(!m_svgRareData->correspondingElement());
         m_svgRareData = nullptr;
     }
-    document().accessSVGExtensions().removeElementToRebuild(*this);
+
+    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    document->checkedSVGExtensions()->removeElementToRebuild(*this);
 
     if (hasPendingResources()) {
         treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
@@ -153,15 +155,16 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
         return;
 
     String errorString = "<" + tagName() + "> attribute " + name.toString() + "=\"" + value + "\"";
-    SVGDocumentExtensions& extensions = document().accessSVGExtensions();
+    Ref document = this->document();
+    CheckedRef extensions = document->svgExtensions();
 
     if (error == NegativeValueForbiddenError) {
-        extensions.reportError("Invalid negative value for " + errorString);
+        extensions->reportError("Invalid negative value for " + errorString);
         return;
     }
 
     if (error == ParsingAttributeFailedError) {
-        extensions.reportError("Invalid value for " + errorString);
+        extensions->reportError("Invalid value for " + errorString);
         return;
     }
 
@@ -182,15 +185,16 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
 
     if (removalType.disconnectedFromDocument) {
-        auto& extensions = document().accessSVGExtensions();
+        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        CheckedRef extensions = document->svgExtensions();
         if (m_svgRareData) {
-            for (auto& element : m_svgRareData->takeReferencingElements()) {
-                extensions.addElementToRebuild(element);
-                Ref { element }->clearTarget();
+            for (Ref element : m_svgRareData->takeReferencingElements()) {
+                extensions->addElementToRebuild(element);
+                element->clearTarget();
             }
             RELEASE_ASSERT(m_svgRareData->referencingElements().isEmptyIgnoringNullReferences());
         }
-        extensions.removeElementToRebuild(*this);
+        extensions->removeElementToRebuild(*this);
     }
     invalidateInstances();
 
@@ -511,7 +515,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 
     switch (name.nodeName()) {
     case AttributeNames::idAttr:
-        document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
+        protectedDocument()->checkedSVGExtensions()->rebuildAllElementReferencesForTarget(*this);
         break;
     case AttributeNames::classAttr:
         m_className->setBaseValInternal(newValue);
