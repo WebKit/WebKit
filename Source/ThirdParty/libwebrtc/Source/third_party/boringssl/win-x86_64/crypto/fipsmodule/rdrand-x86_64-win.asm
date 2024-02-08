@@ -6,7 +6,6 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
-%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -22,13 +21,12 @@ global	CRYPTO_rdrand
 ALIGN	16
 CRYPTO_rdrand:
 
-_CET_ENDBR
 	xor	rax,rax
 DB	73,15,199,240
 
 	adc	rax,rax
 	mov	QWORD[rcx],r8
-	ret
+	DB	0F3h,0C3h		;repret
 
 
 
@@ -41,7 +39,6 @@ global	CRYPTO_rdrand_multiple8_buf
 ALIGN	16
 CRYPTO_rdrand_multiple8_buf:
 
-_CET_ENDBR
 	test	rdx,rdx
 	jz	NEAR $L$out
 	mov	r8,8
@@ -54,10 +51,10 @@ DB	73,15,199,241
 	jnz	NEAR $L$loop
 $L$out:
 	mov	rax,1
-	ret
+	DB	0F3h,0C3h		;repret
 $L$err:
 	xor	rax,rax
-	ret
+	DB	0F3h,0C3h		;repret
 
 
 %else

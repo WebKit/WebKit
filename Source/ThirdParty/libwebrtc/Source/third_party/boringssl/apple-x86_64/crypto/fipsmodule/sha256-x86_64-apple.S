@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 
 
@@ -13,7 +20,6 @@
 .p2align	4
 _sha256_block_data_order:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%r11
 	movl	0(%r11),%r9d
 	movl	4(%r11),%r10d
@@ -1730,7 +1736,7 @@ L$rounds_16_xx:
 	leaq	(%rsi),%rsp
 
 L$epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 .section	__DATA,__const
@@ -1984,7 +1990,7 @@ L$oop_shaext:
 
 	movdqu	%xmm1,(%rdi)
 	movdqu	%xmm2,16(%rdi)
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3097,7 +3103,7 @@ L$ssse3_00_47:
 	leaq	(%rsi),%rsp
 
 L$epilogue_ssse3:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -4172,7 +4178,11 @@ L$avx_00_47:
 	leaq	(%rsi),%rsp
 
 L$epilogue_avx:
-	ret
+	.byte	0xf3,0xc3
 
 
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif

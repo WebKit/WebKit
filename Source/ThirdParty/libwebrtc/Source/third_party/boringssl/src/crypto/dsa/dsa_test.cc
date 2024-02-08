@@ -257,10 +257,7 @@ TEST(DSATest, Verify) {
 TEST(DSATest, InvalidGroup) {
   bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
   ASSERT_TRUE(dsa);
-  bssl::UniquePtr<BIGNUM> zero(BN_new());
-  ASSERT_TRUE(zero);
-  ASSERT_TRUE(DSA_set0_pqg(dsa.get(), /*p=*/nullptr, /*q=*/nullptr,
-                           /*g=*/zero.release()));
+  BN_zero(dsa->g);
 
   std::vector<uint8_t> sig(DSA_size(dsa.get()));
   unsigned sig_len;
@@ -308,10 +305,7 @@ TEST(DSATest, MissingPrivate) {
 TEST(DSATest, ZeroPrivateKey) {
   bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
   ASSERT_TRUE(dsa);
-  bssl::UniquePtr<BIGNUM> zero(BN_new());
-  ASSERT_TRUE(zero);
-  ASSERT_TRUE(DSA_set0_key(dsa.get(), /*pub_key=*/nullptr,
-                           /*priv_key=*/zero.release()));
+  BN_zero(dsa->priv_key);
 
   static const uint8_t kZeroDigest[32] = {0};
   std::vector<uint8_t> sig(DSA_size(dsa.get()));

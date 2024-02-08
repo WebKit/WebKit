@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 
 
@@ -14,7 +21,6 @@
 .p2align	6
 _bn_mul_mont_gather5:
 
-_CET_ENDBR
 	movl	%r9d,%r9d
 	movq	%rsp,%rax
 
@@ -449,7 +455,7 @@ L$copy:
 	leaq	(%rsi),%rsp
 
 L$mul_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -554,7 +560,7 @@ L$mul4x_body:
 	leaq	(%rsi),%rsp
 
 L$mul4x_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1093,7 +1099,6 @@ L$inner4x:
 .p2align	5
 _bn_power5:
 
-_CET_ENDBR
 	movq	%rsp,%rax
 
 	leaq	_OPENSSL_ia32cap_P(%rip),%r11
@@ -1221,7 +1226,7 @@ L$power5_body:
 	leaq	(%rsi),%rsp
 
 L$power5_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1233,7 +1238,6 @@ L$power5_epilogue:
 _bn_sqr8x_internal:
 __bn_sqr8x_internal:
 
-_CET_ENDBR
 
 
 
@@ -2007,7 +2011,7 @@ L$8x_no_tail:
 
 	cmpq	%rdx,%rdi
 	jb	L$8x_reduction_loop
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2063,7 +2067,7 @@ L$sqr4x_sub_entry:
 
 	movq	%r9,%r10
 	negq	%r9
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2173,7 +2177,7 @@ L$mulx4x_body:
 	leaq	(%rsi),%rsp
 
 L$mulx4x_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2734,7 +2738,7 @@ L$powerx5_body:
 	leaq	(%rsi),%rsp
 
 L$powerx5_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2746,7 +2750,6 @@ L$powerx5_epilogue:
 _bn_sqrx8x_internal:
 __bn_sqrx8x_internal:
 
-_CET_ENDBR
 
 
 
@@ -3357,7 +3360,7 @@ L$sqrx8x_no_tail:
 	leaq	64(%rdi,%rcx,1),%rdi
 	cmpq	8+8(%rsp),%r8
 	jb	L$sqrx8x_reduction_loop
-	ret
+	.byte	0xf3,0xc3
 
 
 .p2align	5
@@ -3410,7 +3413,7 @@ L$sqrx4x_sub_entry:
 
 	negq	%r9
 
-	ret
+	.byte	0xf3,0xc3
 
 
 .globl	_bn_scatter5
@@ -3419,7 +3422,6 @@ L$sqrx4x_sub_entry:
 .p2align	4
 _bn_scatter5:
 
-_CET_ENDBR
 	cmpl	$0,%esi
 	jz	L$scatter_epilogue
 
@@ -3440,7 +3442,7 @@ L$scatter:
 	subl	$1,%esi
 	jnz	L$scatter
 L$scatter_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3451,7 +3453,6 @@ L$scatter_epilogue:
 _bn_gather5:
 
 L$SEH_begin_bn_gather5:
-_CET_ENDBR
 
 .byte	0x4c,0x8d,0x14,0x24
 
@@ -3610,7 +3611,7 @@ L$gather:
 
 	leaq	(%r10),%rsp
 
-	ret
+	.byte	0xf3,0xc3
 L$SEH_end_bn_gather5:
 
 
@@ -3621,4 +3622,8 @@ L$inc:
 .long	2,2, 2,2
 .byte	77,111,110,116,103,111,109,101,114,121,32,77,117,108,116,105,112,108,105,99,97,116,105,111,110,32,119,105,116,104,32,115,99,97,116,116,101,114,47,103,97,116,104,101,114,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .text	
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif

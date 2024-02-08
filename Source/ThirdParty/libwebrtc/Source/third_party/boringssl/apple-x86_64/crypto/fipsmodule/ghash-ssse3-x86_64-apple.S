@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 
 
@@ -17,7 +24,6 @@
 _gcm_gmult_ssse3:
 
 
-_CET_ENDBR
 	movdqu	(%rdi),%xmm0
 	movdqa	L$reverse_bytes(%rip),%xmm10
 	movdqa	L$low4_mask(%rip),%xmm2
@@ -192,7 +198,7 @@ L$oop_row_3:
 	pxor	%xmm4,%xmm4
 	pxor	%xmm5,%xmm5
 	pxor	%xmm6,%xmm6
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -208,7 +214,6 @@ L$oop_row_3:
 _gcm_ghash_ssse3:
 
 
-_CET_ENDBR
 	movdqu	(%rdi),%xmm0
 	movdqa	L$reverse_bytes(%rip),%xmm10
 	movdqa	L$low4_mask(%rip),%xmm11
@@ -405,7 +410,7 @@ L$oop_row_6:
 	pxor	%xmm4,%xmm4
 	pxor	%xmm5,%xmm5
 	pxor	%xmm6,%xmm6
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -420,4 +425,8 @@ L$reverse_bytes:
 L$low4_mask:
 .quad	0x0f0f0f0f0f0f0f0f, 0x0f0f0f0f0f0f0f0f
 .text	
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif

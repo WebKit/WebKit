@@ -121,7 +121,12 @@ int EVP_EncodedLength(size_t *out_len, size_t len) {
 }
 
 EVP_ENCODE_CTX *EVP_ENCODE_CTX_new(void) {
-  return OPENSSL_zalloc(sizeof(EVP_ENCODE_CTX));
+  EVP_ENCODE_CTX *ret = OPENSSL_malloc(sizeof(EVP_ENCODE_CTX));
+  if (ret == NULL) {
+    return NULL;
+  }
+  OPENSSL_memset(ret, 0, sizeof(EVP_ENCODE_CTX));
+  return ret;
 }
 
 void EVP_ENCODE_CTX_free(EVP_ENCODE_CTX *ctx) {
