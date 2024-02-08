@@ -170,12 +170,6 @@ bool MacApplication::isHRBlock()
     return isHRBlock;
 }
 
-bool MacApplication::isIAdProducer()
-{
-    static bool isIAdProducer = applicationBundleIsEqualTo("com.apple.iAdProducer"_s);
-    return isIAdProducer;
-}
-
 bool MacApplication::isSolidStateNetworksDownloader()
 {
     static bool isSolidStateNetworksDownloader = applicationBundleIsEqualTo("com.solidstatenetworks.awkhost"_s);

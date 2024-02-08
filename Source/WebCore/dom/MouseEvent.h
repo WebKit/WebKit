@@ -72,10 +72,6 @@ public:
         int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         int16_t button, EventTarget* relatedTarget);
 
-    void initMouseEventQuirk(JSC::JSGlobalObject&, ScriptExecutionContext&, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
-        int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        int16_t button, JSC::JSValue relatedTarget);
-
     MouseButton button() const;
     int16_t buttonAsShort() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
