@@ -1,0 +1,4 @@
+
+FAIL Property field-sizing value 'fixed' assert_true: field-sizing doesn't seem to be supported in the computed style expected true got false
+FAIL Property field-sizing value 'content' assert_true: field-sizing doesn't seem to be supported in the computed style expected true got false
+

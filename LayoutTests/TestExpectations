@@ -831,8 +831,6 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/bo
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/input-image-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
@@ -1060,6 +1058,12 @@ imported/w3c/web-platform-tests/css/css-ui/caret-color-020.html [ Skip ]
 
 # Dump console messages to stderr for all the imported Content Security Policy tests to avoid flakiness.
 imported/w3c/web-platform-tests/content-security-policy [ DumpJSConsoleLogInStdErr ]
+
+# field-sizing is not supported
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.html [ Skip ]
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.html [ Skip ]
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.html [ Skip ]
+imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests that are dumping the render tree instead of text:
 imported/w3c/web-platform-tests/content-security-policy/svg/scripted.svg [ Skip ]
