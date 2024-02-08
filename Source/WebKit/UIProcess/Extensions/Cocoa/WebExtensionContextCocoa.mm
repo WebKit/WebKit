@@ -418,7 +418,9 @@ bool WebExtensionContext::extensionCanAccessWebPage(WebPageProxyIdentifier webPa
         return true;
 
     RELEASE_LOG_ERROR(Extensions, "Access to this tab is not allowed for this extension");
-    RELEASE_ASSERT_NOT_REACHED();
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
