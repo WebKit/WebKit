@@ -1729,8 +1729,9 @@ layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
+layout/formattingContexts/flex/FlexFormattingGeometry.cpp
 layout/formattingContexts/flex/FlexLayout.cpp
-layout/formattingContexts/flex/FlexFormattingUtils.cpp
+layout/formattingContexts/flex/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp

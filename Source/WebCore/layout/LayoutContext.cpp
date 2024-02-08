@@ -28,6 +28,9 @@
 
 #include "BlockFormattingContext.h"
 #include "BlockFormattingState.h"
+#include "FlexFormattingContext.h"
+#include "FlexFormattingState.h"
+#include "InlineFormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
@@ -86,6 +89,11 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
         if (formattingContextRoot.isTableWrapperBox())
             return makeUnique<TableWrapperBlockFormattingContext>(formattingContextRoot, blockFormattingState);
         return makeUnique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
+    }
+
+    if (formattingContextRoot.establishesFlexFormattingContext()) {
+        auto& flexFormattingState = layoutState.ensureFlexFormattingState(formattingContextRoot);
+        return makeUnique<FlexFormattingContext>(formattingContextRoot, flexFormattingState);
     }
 
     if (formattingContextRoot.establishesTableFormattingContext()) {
